@@ -1,0 +1,235 @@
+{
+  "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
+  "definitions": {
+    "CurvePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FeaturePlaceRelationship": {
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "place": {
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@id",
+        "entityType",
+        "place"
+      ]
+    },
+    "LocationSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PlaceSpecification": {
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@id",
+        "entityType"
+      ]
+    },
+    "PointPositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "SurfacePositionSpecification": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS10_FT1": {
+      "type": "object",
+      "properties": {
+        "entityType": {
+          "type": "string"
+        },
+        "@id": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "place": {
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/FeaturePlaceRelationship"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "place": {
+                      "oneOf": [
+                        {
+                          "$ref": "https://example.org/jsonschema/byreference.json"
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "entityType": {
+                                "const": "LocationSpecification"
+                              }
+                            }
+                          },
+                          "then": {
+                            "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+                          },
+                          "else": {
+                            "if": {
+                              "properties": {
+                                "entityType": {
+                                  "const": "PointPositionSpecification"
+                                }
+                              }
+                            },
+                            "then": {
+                              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                            },
+                            "else": false
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "@id",
+        "entityType",
+        "place"
+      ]
+    },
+    "TS10_FT2": {
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/FeaturePlaceRelationship"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "place": {
+                          "oneOf": [
+                            {
+                              "$ref": "https://example.org/jsonschema/byreference.json"
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "entityType": {
+                                    "const": "PointPositionSpecification"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                              },
+                              "else": false
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

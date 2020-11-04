@@ -37,10 +37,20 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jgrapht.alg.cycle.DirectedSimpleCycles;
+import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
+import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
+import org.jgrapht.alg.cycle.TarjanSimpleCycles;
+import org.jgrapht.alg.cycle.TiernanSimpleCycles;
+import org.jgrapht.graph.DirectedMultigraph;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -51,6 +61,7 @@ import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.BetweenExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.ColumnExpression;
@@ -79,12 +90,12 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.UniqueConstraint;
+import de.interactive_instruments.ShapeChange.Transformation.Flattening.PropertySetEdge;
 
 /**
  * Builds SQL statements for model elements.
  *
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SqlBuilder implements MessageSource {
@@ -113,46 +124,55 @@ public class SqlBuilder implements MessageSource {
     private List<Statement> geometryIndexStatements = new ArrayList<>();
     private List<Insert> insertStatements = new ArrayList<>();
     private List<Comment> commentStatements = new ArrayList<>();
+    private List<Statement> schemaInitializationStatements = new ArrayList<>();
 
     private SqlNamingScheme namingScheme;
-    private SqlDdl sqlddl;
 
-    public SqlBuilder(SqlDdl sqlddl, ShapeChangeResult result, Options options, Model model,
-	    SqlNamingScheme namingScheme) {
+    public SqlBuilder(ShapeChangeResult result, Options options) {
 
-	this.sqlddl = sqlddl;
 	this.result = result;
 	this.options = options;
 
-	this.model = model;
-	this.namingScheme = namingScheme;
+	this.model = SqlDdl.model;
+	this.namingScheme = SqlDdl.namingScheme;
     }
 
     /**
      * NOTE: only works for attributes, NOT association roles
      *
      * @param pi
+     * @param referencedTable
      */
-    private Table createAssociativeTableForAttribute(PropertyInfo pi) {
+    private Table createAssociativeTableForAttribute(PropertyInfo pi, Table referencedTable) {
 
 	if (!pi.isAttribute()) {
 	    return null;
 	}
 
-	// identify table name - using tagged value or default name
-	String tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+	String schemaName = referencedTable.getSchemaName();
+	String tableName;
 
-	if (tableName == null || tableName.trim().length() == 0) {
+	if (map(pi.inClass()) != referencedTable) {
 
-	    tableName = pi.inClass().name() + "_" + pi.name();
+	    tableName = referencedTable.getName() + "_" + pi.name();
+	    result.addInfo(this, 40, pi.name(), pi.inClass().name(), referencedTable.getName(), tableName);
 
-	    result.addInfo(this, 12, pi.name(), pi.inClass().name(), tableName);
+	} else {
+	    // identify table name - using tagged value or default name
+	    tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+
+	    if (tableName == null || tableName.trim().length() == 0) {
+
+		tableName = pi.inClass().name() + "_" + pi.name();
+
+		result.addInfo(this, 12, pi.name(), pi.inClass().name(), tableName);
+	    }
 	}
 
 	CreateTable createTable = new CreateTable();
 	this.createTableStatements.add(createTable);
 
-	Table table = map(tableName);
+	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setAssociativeTable(true);
@@ -163,21 +183,22 @@ public class SqlBuilder implements MessageSource {
 	table.setColumns(columns);
 
 	/*
-	 * Add field to reference pi.inClass
+	 * Add field to reference pi.inClass (referenced table may be datatype usage
+	 * specific)
 	 * 
 	 * NOTE: the primary key for the table will be defined later
 	 */
-	String classReferenceFieldName = pi.inClass().name() + SqlDdl.idColumnName;
+	String classReferenceFieldName = pi.inClass().name() + determineForeignKeyColumnSuffix(pi.inClass());
 	Column cdInClassReference = createColumn(table, null, null, classReferenceFieldName,
 		SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
-	cdInClassReference.setReferencedTable(map(pi.inClass()));
+	cdInClassReference.setReferencedTable(referencedTable);
 	columns.add(cdInClassReference);
 
 	Column cdPi = null;
 
 	if (refersToTypeRepresentedByTable(pi)) {
 
-	    String piFieldName = determineTableNameForValueType(pi) + SqlDdl.idColumnName;
+	    String piFieldName = determineTableNameForValueType(pi) + determineForeignKeyColumnSuffix(pi);
 	    String piDocumentation = pi.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 
 	    if (pi.categoryOfValue() == Options.CODELIST
@@ -237,11 +258,28 @@ public class SqlBuilder implements MessageSource {
 	return table;
     }
 
+    private String determineForeignKeyColumnSuffix(PropertyInfo pi) {
+	if (SqlDdl.applyForeignKeyColumnSuffixesInAssociativeTables) {
+	    return identifyForeignKeyColumnSuffix(pi);
+	} else {
+	    return SqlDdl.idColumnName;
+	}
+    }
+
+    private String determineForeignKeyColumnSuffix(ClassInfo ci) {
+	if (SqlDdl.applyForeignKeyColumnSuffixesInAssociativeTables) {
+	    return identifyForeignKeyColumnSuffix(ci);
+	} else {
+	    return SqlDdl.idColumnName;
+	}
+    }
+
     private Table map(PropertyInfo pi) {
 
 	String tableName = determineTableNameForValueType(pi);
+	String schemaName = determineSchemaNameForValueType(pi);
 
-	return map(tableName);
+	return map(schemaName, tableName);
     }
 
     /**
@@ -251,7 +289,7 @@ public class SqlBuilder implements MessageSource {
      * @param ci
      */
     private Table createTables(ClassInfo ci) {
-	return createTables(ci, ci.name());
+	return createTables(ci, determineSchemaNameForType(ci), ci.name());
     }
 
     /**
@@ -260,7 +298,9 @@ public class SqlBuilder implements MessageSource {
      * 
      * @param ci
      */
-    private Table createTables(ClassInfo ci, String tableName) {
+    private Table createTables(ClassInfo ci, String schemaName, String tableName) {
+
+	Table table = map(schemaName, tableName);
 
 	/*
 	 * Identify all properties that will be converted to columns. Create associative
@@ -325,9 +365,11 @@ public class SqlBuilder implements MessageSource {
 			    && options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql")) == null
 			    && typeCi != null && typeCi.category() == Options.DATATYPE
 			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
-			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
-			    && typeCi.matches(
-				    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE)) {
+			    && ((typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
+				    && typeCi.matches(
+					    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE))
+				    || (typeCi.matches(
+					    SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)))) {
 			/*
 			 * Ignore the attribute. Either the property type is mapped to a database
 			 * specific type, or the table that will be created for the (data) type of the
@@ -354,7 +396,7 @@ public class SqlBuilder implements MessageSource {
 			 */
 
 		    } else {
-			createAssociativeTableForAttribute(pi);
+			createAssociativeTableForAttribute(pi, table);
 		    }
 
 		} else {
@@ -464,7 +506,6 @@ public class SqlBuilder implements MessageSource {
 	CreateTable createTable = new CreateTable();
 	createTableStatements.add(createTable);
 
-	Table table = map(tableName);
 	createTable.setTable(table);
 
 	table.setRepresentedClass(ci);
@@ -487,7 +528,7 @@ public class SqlBuilder implements MessageSource {
 
 	if (countIdentifierAttributes == 0) {
 
-	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName,
+	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName + SqlDdl.identifierColumnSuffix,
 		    SqlDdl.databaseStrategy.primaryKeyDataType(), SqlDdl.primaryKeySpec, true, false);
 	    columns.add(id_cd);
 	    id_cd.setObjectIdentifierColumn(true);
@@ -513,6 +554,7 @@ public class SqlBuilder implements MessageSource {
 	    if (!identifierSet && pi.isAttribute() && pi.stereotype("identifier")
 		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_IDENTIFIER_STEREOTYPE)) {
 
+		cd.setName(cd.getName() + SqlDdl.identifierColumnSuffix);
 		cd.removeSpecification(SqlConstants.NOT_NULL_COLUMN_SPEC);
 		cd.addSpecification(SqlDdl.primaryKeySpec);
 		identifierSet = true;
@@ -574,6 +616,7 @@ public class SqlBuilder implements MessageSource {
 
 	// identify table name - using tagged value or default name
 	String tableName = ai.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
+	String schemaName = null;
 
 	String tableNameEnd1InClass = determineTableNameForType(ai.end1().inClass());
 	String tableNameEnd2InClass = determineTableNameForType(ai.end2().inClass());
@@ -605,10 +648,36 @@ public class SqlBuilder implements MessageSource {
 		    ai.end2().inClass().name() + " (context property '" + ai.end2().name() + "')", tableName);
 	}
 
+	if (ai.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+
+	    schemaName = ai.taggedValuesAll().getFirstValue(SqlConstants.TV_SQLSCHEMA);
+
+	    if (StringUtils.isBlank(schemaName)) {
+
+		if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
+
+		    // choose name based on alphabetical order of represented tables
+		    if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+			schemaName = determineSchemaNameForType(ai.end1().inClass());
+		    } else {
+			schemaName = determineSchemaNameForType(ai.end2().inClass());
+		    }
+		} else if (ai.end1().isNavigable()) {
+		    schemaName = determineSchemaNameForType(ai.end1().inClass());
+		} else {
+		    // ai.end2 is navigable
+		    schemaName = determineSchemaNameForType(ai.end2().inClass());
+		}
+
+		result.addInfo(this, 39, ai.end1().inClass().name() + " (context property '" + ai.end1().name() + "')",
+			ai.end2().inClass().name() + " (context property '" + ai.end2().name() + "')", schemaName);
+	    }
+	}
+
 	CreateTable createTable = new CreateTable();
 	this.createTableStatements.add(createTable);
 
-	Table table = map(tableName);
+	Table table = map(schemaName, tableName);
 	createTable.setTable(table);
 
 	table.setAssociativeTable(true);
@@ -625,8 +694,10 @@ public class SqlBuilder implements MessageSource {
 	PropertyInfo pi1, pi2;
 
 	if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+
 	    pi1 = ai.end1();
 	    pi2 = ai.end2();
+
 	} else {
 	    pi1 = ai.end2();
 	    pi2 = ai.end1();
@@ -642,7 +713,7 @@ public class SqlBuilder implements MessageSource {
 
 	// add field for first reference
 	String name_1 = determineTableNameForType(pi1.inClass()) + (reflexive ? "_" + pi1.name() : "")
-		+ SqlDdl.idColumnName;
+		+ determineForeignKeyColumnSuffix(pi1);
 	String documentation_1 = pi2.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 	Column cd1 = createColumn(table, pi2, documentation_1, name_1, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
@@ -651,7 +722,7 @@ public class SqlBuilder implements MessageSource {
 
 	// add field for second reference
 	String name_2 = determineTableNameForType(pi2.inClass()) + (reflexive ? "_" + pi2.name() : "")
-		+ SqlDdl.idColumnName;
+		+ determineForeignKeyColumnSuffix(pi2);
 	String documentation_2 = pi1.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 	Column cd2 = createColumn(table, pi1, documentation_2, name_2, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
@@ -668,8 +739,9 @@ public class SqlBuilder implements MessageSource {
     private Table map(ClassInfo ci) {
 
 	String tableName = determineTableNameForType(ci);
+	String schemaName = determineSchemaNameForType(ci);
 
-	return map(tableName);
+	return map(schemaName, tableName);
     }
 
     /**
@@ -695,7 +767,7 @@ public class SqlBuilder implements MessageSource {
 	table.setColumns(columns);
 
 	// create required column to store the code name
-	String name = SqlDdl.codeNameColumnName;
+	String name = SqlDdl.codeNameColumnName + SqlDdl.identifierColumnSuffix;
 	String codeNameColumnDocumentation = SqlDdl.codeNameColumnDocumentation;
 
 	Column cd_codename = null;
@@ -790,7 +862,7 @@ public class SqlBuilder implements MessageSource {
 				cd_codeStatusCl.setDataType(mappedType);
 			    } else {
 				result.addError(this, 31, codeStatusCLType.name(), SqlDdl.nameCodeStatusCLColumn,
-					table.getName());
+					table.getFullName());
 			    }
 			}
 
@@ -801,11 +873,12 @@ public class SqlBuilder implements MessageSource {
 
 		    } else {
 			result.addError(this, 30, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn,
-				table.getName());
+				table.getFullName());
 		    }
 
 		} else {
-		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn, table.getName());
+		    result.addError(this, 26, SqlDdl.codeStatusCLType, SqlDdl.nameCodeStatusCLColumn,
+			    table.getFullName());
 		}
 
 		columns.add(cd_codeStatusCl);
@@ -833,10 +906,10 @@ public class SqlBuilder implements MessageSource {
 
     /**
      * @param ci
-     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is defined for
-     *         the given class, the targetType defined by the map entry is returned.
-     *         Else if a table has already been created for the class, its name is
-     *         returned. Otherwise the name of the class is returned.
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the given class, the targetType defined by the map entry
+     *         is returned. Else if a table has already been created for the class,
+     *         its name is returned. Otherwise the name of the class is returned.
      */
     private String determineTableNameForType(ClassInfo ci) {
 
@@ -855,6 +928,46 @@ public class SqlBuilder implements MessageSource {
 	    }
 
 	    return ci.name();
+	}
+    }
+
+    /**
+     * @param ci
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the given class, the schema name encoded in the
+     *         targetType defined by the map entry is returned. Else if a table has
+     *         already been created for the class, its schema name is returned.
+     *         Otherwise, the schema package to which the class belongs is analyzed:
+     *         if TV 'sqlSchema' has a non-empty value, use it; otherwise, if TV
+     *         'xmlns' has non-empty value, use it; otherwise, use value 'fixme'.
+     */
+    private String determineSchemaNameForType(ClassInfo ci) {
+
+	/*
+	 * Look up the conceptual schema to which ci belongs, and use TV sqlName defined
+	 * there
+	 */
+
+	if (!ci.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+	    return null;
+	} else {
+
+	    ProcessMapEntry pme = options.targetMapEntry(ci.name(), ci.encodingRule("sql"));
+
+	    if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(pme, SqlConstants.ME_PARAM_TABLE)) {
+
+		return sqlSchemaName(pme);
+
+	    } else {
+
+		for (CreateTable ct : this.createTableStatements) {
+		    if (ct.getTable() != null && ct.getTable().representsClass(ci)) {
+			return ct.getTable().getSchemaName();
+		    }
+		}
+
+		return sqlSchemaName(ci);
+	    }
 	}
     }
 
@@ -1060,7 +1173,8 @@ public class SqlBuilder implements MessageSource {
 
 	    if (valueType != null) {
 		for (CreateTable ct : this.createTableStatements) {
-		    if (ct.getTable().representsClass(valueType)) {
+		    Table t = ct.getTable();
+		    if (t.representsClass(valueType) && !t.isUsageSpecificTable()) {
 			return ct.getTable().getName();
 		    }
 		}
@@ -1068,6 +1182,88 @@ public class SqlBuilder implements MessageSource {
 
 	    return pi.typeInfo().name;
 	}
+    }
+
+    /**
+     * @param pi
+     * @return If a map entry with param = {@value SqlConstants#ME_PARAM_TABLE} is
+     *         defined for the value type of the property, the schema name encoded
+     *         in the targetType defined by the map entry is returned. Else if a
+     *         table has already been created for the value type, its schema name is
+     *         returned. Otherwise, the schema package to which the value type
+     *         belongs is analyzed: if TV 'sqlSchema' has a non-empty value, use it;
+     *         otherwise, if TV 'xmlns' has non-empty value, use it; otherwise, use
+     *         value 'fixme'.
+     */
+    private String determineSchemaNameForValueType(PropertyInfo pi) {
+
+	if (!pi.matches(SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS)) {
+	    return null;
+	} else {
+
+	    String valueTypeName = pi.typeInfo().name;
+	    String piEncodingRule = pi.encodingRule("sql");
+
+	    ProcessMapEntry pme = options.targetMapEntry(valueTypeName, piEncodingRule);
+
+	    if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName, piEncodingRule,
+		    SqlConstants.ME_PARAM_TABLE)) {
+
+		return sqlSchemaName(pme);
+
+	    } else {
+
+		/*
+		 * If no map entry with table parameter was found for the value type, try
+		 * looking up the table that represents the value type first
+		 */
+
+		ClassInfo valueType = model.classById(pi.typeInfo().id);
+		if (valueType == null) {
+		    valueType = model.classByName(pi.typeInfo().name);
+		}
+
+		if (valueType != null) {
+		    for (CreateTable ct : this.createTableStatements) {
+			Table t = ct.getTable();
+			if (t.representsClass(valueType) && !t.isUsageSpecificTable()) {
+			    return ct.getTable().getSchemaName();
+			}
+		    }
+		}
+
+		return sqlSchemaName(valueType);
+	    }
+	}
+    }
+
+    private String sqlSchemaName(ProcessMapEntry pme) {
+
+	String targetType = pme.getTargetType();
+
+	int numberOfDots = StringUtils.countMatches(targetType, ".");
+	if (numberOfDots == 0) {
+	    return null;
+	} else if (numberOfDots == 1) {
+	    return targetType.split("\\.")[0];
+	} else {
+	    // should be of the form database.schema.table
+	    return targetType.split("\\.")[1];
+	}
+    }
+
+    private String sqlSchemaName(ClassInfo ci) {
+
+	PackageInfo schemaPkg = model.schemaPackage(ci);
+
+	String schemaName = schemaPkg.taggedValue(SqlConstants.TV_SQLSCHEMA);
+	if (StringUtils.isBlank(schemaName)) {
+	    schemaName = schemaPkg.taggedValue("xmlns");
+	}
+	if (StringUtils.isBlank(schemaName)) {
+	    schemaName = "fixme";
+	}
+	return schemaName;
     }
 
     /**
@@ -1317,7 +1513,7 @@ public class SqlBuilder implements MessageSource {
     }
 
     private String identifyForeignKeyColumnSuffix(PropertyInfo pi) {
-	
+
 	boolean isReflexiveProperty = pi.inClass().id().equals(pi.typeInfo().id);
 
 	String typeName = pi.typeInfo().name;
@@ -1336,8 +1532,9 @@ public class SqlBuilder implements MessageSource {
 	    } else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
 		return SqlDdl.foreignKeyColumnSuffixCodelist;
 	    } else {
-		return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
-		    SqlDdl.foreignKeyColumnSuffix;
+		return (isReflexiveProperty && SqlDdl.reflexiveRelationshipFieldSuffix != null)
+			? SqlDdl.reflexiveRelationshipFieldSuffix
+			: SqlDdl.foreignKeyColumnSuffix;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.DATATYPE) {
@@ -1345,8 +1542,39 @@ public class SqlBuilder implements MessageSource {
 	} else if (pi.categoryOfValue() == Options.CODELIST) {
 	    return SqlDdl.foreignKeyColumnSuffixCodelist;
 	} else {
-	    return isReflexiveProperty ? SqlDdl.reflexiveRelationshipFieldSuffix : 
-		    SqlDdl.foreignKeyColumnSuffix;
+	    return (isReflexiveProperty && SqlDdl.reflexiveRelationshipFieldSuffix != null)
+		    ? SqlDdl.reflexiveRelationshipFieldSuffix
+		    : SqlDdl.foreignKeyColumnSuffix;
+	}
+    }
+
+    private String identifyForeignKeyColumnSuffix(ClassInfo ci) {
+
+	String typeName = ci.name();
+	String ciEncodingRule = ci.encodingRule("sql");
+
+	ProcessMapEntry pme = options.targetMapEntry(typeName, ciEncodingRule);
+
+	if (pme != null && SqlDdl.mapEntryParamInfos.hasCharacteristic(typeName, ciEncodingRule,
+		SqlConstants.ME_PARAM_TABLE, SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT)) {
+
+	    String repCat = SqlDdl.mapEntryParamInfos.getCharacteristic(typeName, ciEncodingRule,
+		    SqlConstants.ME_PARAM_TABLE, SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT);
+
+	    if (repCat != null && repCat.equalsIgnoreCase("datatype")) {
+		return SqlDdl.foreignKeyColumnSuffixDatatype;
+	    } else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
+		return SqlDdl.foreignKeyColumnSuffixCodelist;
+	    } else {
+		return SqlDdl.foreignKeyColumnSuffix;
+	    }
+
+	} else if (ci.category() == Options.DATATYPE) {
+	    return SqlDdl.foreignKeyColumnSuffixDatatype;
+	} else if (ci.category() == Options.CODELIST) {
+	    return SqlDdl.foreignKeyColumnSuffixCodelist;
+	} else {
+	    return SqlDdl.foreignKeyColumnSuffix;
 	}
     }
 
@@ -1357,8 +1585,8 @@ public class SqlBuilder implements MessageSource {
      * there is no direct standard mapping, then conditional mappings based upon the
      * category/stereotype of the type is performed: enumeration, codelist and
      * object types are mapped to 'text' or 'character varying'. If the type is a
-     * feature, 'bigserial' is returned. If all else fails,
-     * 'unknown' is returned as type.
+     * feature, 'bigserial' is returned. If all else fails, 'unknown' is returned as
+     * type.
      *
      * @param pi
      * @return the type to use in the SQL definition of the property
@@ -1802,9 +2030,15 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
-    public List<Statement> process(List<ClassInfo> cisToProcess) {
+    public List<Statement> process(List<ClassInfo> cisToProcess) throws Exception {
 
 	checkRequirements(cisToProcess);
+
+	// ----------------------------------------
+	// Apply rule-sql-cls-data-types-oneToMany-severalTables
+	// Create usage specific tables for datatypes
+	// ----------------------------------------
+	identifyTablesFor_DataTypesOneToManySeveralTables(cisToProcess);
 
 	// ----------------------------------------
 	// Create tables ("normal" and associative)
@@ -1822,41 +2056,11 @@ public class SqlBuilder implements MessageSource {
 		 * created.
 		 */
 
-		/*
-		 * Check if we have a data type that matches both
-		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES and
-		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED.
-		 * Do not create a table for it, unless an attribute in the classes selected for
-		 * processing exists that has the data type as type, and max cardinality 1.
-		 */
 		if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
-			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES) && ci.matches(
-				SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED)) {
+			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
 
-		    boolean singleValuedCaseExists = false;
-
-		    /*
-		     * Screen all cisToProcess to identify properties that have ci as value type (in
-		     * a one-to-one relationship).
-		     */
-		    outer: for (ClassInfo ci_other : cisToProcess) {
-
-			if (ci_other != ci) {
-
-			    for (PropertyInfo pi_other : ci_other.properties().values()) {
-
-				if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs == 1
-					&& ci.id().equals(pi_other.typeInfo().id)) {
-				    singleValuedCaseExists = true;
-				    break outer;
-				}
-			    }
-			}
-		    }
-
-		    if (singleValuedCaseExists) {
-			createTables(ci);
-		    }
+		    // nothing to do - has been handled before
+		    // see identifyTablesFor_DataTypesOneToManySeveralTables(cisToProcess);
 
 		} else {
 
@@ -1878,48 +2082,12 @@ public class SqlBuilder implements MessageSource {
 
 		/*
 		 * NOTE: rule-sql-cls-data-types-oneToMany-severalTables has higher priority
-		 * than rule-sql-cls-data-types-oneToMany-oneTable
+		 * than rule-sql-cls-data-types-oneToMany-oneTable, so if the former applies, do
+		 * not execute the latter.
 		 */
 
-		if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
-
-		    /*
-		     * Screen all cisToProcess to identify properties that have ci as value type (in
-		     * a one-to-many relationship); then a specific table must be created for each
-		     * such case.
-		     */
-		    for (ClassInfo ci_other : cisToProcess) {
-
-			if (ci_other != ci) {
-
-			    for (PropertyInfo pi_other : ci_other.properties().values()) {
-
-				if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs > 1
-					&& ci.id().equals(pi_other.typeInfo().id)) {
-
-				    String tableName = ci_other.name() + "_" + pi_other.name();
-
-				    Table table = createTables(ci, tableName);
-				    table.setRepresentedProperty(pi_other);
-
-				    /*
-				     * Add the column that supports referencing the owner of the data type.
-				     */
-
-				    String columnName = ci_other.name() + SqlDdl.idColumnName;
-
-				    Column dtOwner_cd = createColumn(table, null, null, columnName,
-					    SqlDdl.foreignKeyColumnDataType, SqlConstants.NOT_NULL_COLUMN_SPEC, false,
-					    true);
-				    dtOwner_cd.setReferencedTable(map(ci_other));
-
-				    table.addColumn(dtOwner_cd);
-				}
-			    }
-			}
-		    }
-
-		} else if (ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)) {
+		if (!ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)
+			&& ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)) {
 
 		    /*
 		     * Get the table that has already been created for the data type and add the
@@ -1946,8 +2114,9 @@ public class SqlBuilder implements MessageSource {
 			dtOwnerRef_columnSpec = SqlConstants.NOT_NULL_COLUMN_SPEC;
 		    }
 
-		    Column dtOwnerRef_cd = createColumn(table, null, null, columnName + SqlDdl.idColumnName,
-			    SqlDdl.foreignKeyColumnDataType, dtOwnerRef_columnSpec, false, true);
+		    Column dtOwnerRef_cd = createColumn(table, null, null,
+			    columnName + determineForeignKeyColumnSuffix(ci), SqlDdl.foreignKeyColumnDataType,
+			    dtOwnerRef_columnSpec, false, true);
 
 		    table.addColumn(dtOwnerRef_cd);
 		}
@@ -1976,11 +2145,19 @@ public class SqlBuilder implements MessageSource {
 
 			    ColumnDataType refColdt = refCol.getDataType();
 
-			    /*
-			     * e.g. for reference to numerically valued code list
-			     */
-			    col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
-				    refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+			    if (refColdt.getName().equals(SqlDdl.databaseStrategy.primaryKeyDataType().getName())) {
+				/*
+				 * We can keep the datatype of col as currently set (e.g. bigint - via
+				 * configuration parameter foreignKeyColumnDatatype).
+				 */
+			    } else {
+
+				/*
+				 * e.g. for reference to numerically valued code list
+				 */
+				col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
+					refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+			    }
 			}
 		    }
 		}
@@ -2088,7 +2265,7 @@ public class SqlBuilder implements MessageSource {
 			    && "true".equalsIgnoreCase(pi.taggedValue("sqlUnique"))) {
 
 			if (pi.cardinality().maxOccurs > 1) {
-			    result.addWarning(this, 33, col.getName(), table.getName());
+			    result.addWarning(this, 33, col.getName(), table.getFullName());
 			} else {
 
 			    String constraintName = namingScheme.nameForUniqueConstraint(
@@ -2324,17 +2501,163 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 
+	// ----------------------------------------
+	// Create schema initialization statements
+	// ----------------------------------------
+
+	SortedSet<String> schemaNames = new TreeSet<>();
+	for (CreateTable ct : this.createTableStatements) {
+
+	    Table t = ct.getTable();
+	    if (StringUtils.isNotBlank(t.getSchemaName())) {
+		schemaNames.add(t.getSchemaName().trim());
+	    }
+	}
+	this.schemaInitializationStatements = SqlDdl.databaseStrategy.schemaInitializationStatements(schemaNames);
+
 	// -------------
 	// Build result
 	// -------------
-	List<Statement> result = this.statements();
+	List<Statement> result_tmp = this.statements();
 
 	// normalize names
-	this.namingScheme.getNameNormalizer().visit(result);
+	this.namingScheme.getNameNormalizer().visit(result_tmp);
 
-	Collections.sort(result, STATEMENT_COMPARATOR);
+	Collections.sort(result_tmp, STATEMENT_COMPARATOR);
+
+	/*
+	 * ensure that some statements - like the schema initialization statements - are
+	 * added at the top, no matter what
+	 */
+	List<Statement> result = new ArrayList<>();
+	result.addAll(schemaInitializationStatements);
+	result.addAll(result_tmp);
 
 	return result;
+    }
+
+    private void identifyTablesFor_DataTypesOneToManySeveralTables(List<ClassInfo> cisToProcess) {
+
+	/*
+	 * 2020-08-24 JE: The commented code sections are in support of
+	 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED,
+	 * which has been removed since v2.10.0.
+	 */
+//	// first, handle single valued cases
+//
+//	Set<ClassInfo> dataTypesWithSingleValuedUse = new HashSet<>();
+//
+//	for (ClassInfo ci : cisToProcess) {
+//
+//	    if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+//		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
+//
+//		boolean singleValuedCaseExists = false;
+//
+//		/*
+//		 * Screen all cisToProcess to identify properties that have ci as value type (in
+//		 * a one-to-one relationship).
+//		 */
+//		outer: for (ClassInfo ci_other : cisToProcess) {
+//
+//		    for (PropertyInfo pi_other : ci_other.properties().values()) {
+//
+//			if (pi_other.isAttribute() && pi_other.cardinality().maxOccurs == 1
+//				&& ci.id().equals(pi_other.typeInfo().id)) {
+//			    singleValuedCaseExists = true;
+//			    dataTypesWithSingleValuedUse.add(ci);
+//			    break outer;
+//			}
+//		    }
+//		}
+//
+//		/*
+//		 * If ci matches
+//		 * RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED,
+//		 * only create a table if single valued use applies.
+//		 */
+//		if (ci.matches(
+//			SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES_AVOID_TABLE_FOR_DATATYPE_IF_UNUSED)) {
+//
+//		    if (singleValuedCaseExists) {
+//			createTables(ci);
+//		    }
+//
+//		} else {
+//		    createTables(ci);
+//		}
+//	    }
+//	}
+
+	// NOTE: Circles would have already been detected in the requirements check
+
+	/*
+	 * Create usage specific tables
+	 */
+	for (ClassInfo ci : cisToProcess) {
+	    /*
+	     * Start processing at level of feature or object types
+	     */
+	    if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT) {
+		createDataTypeUseSpecificTables(ci, map(ci));
+	    }
+
+//	    /*
+//	     * Handle cases where a datatype d1 references another datatype d2 with max mult
+//	     * > 1, and d1 is referenced by a property with max mult 1. Then d2 must also be
+//	     * usage specific for the table that represents d1 non-usage-specific
+//	     */
+//
+//	    if (ci.category() == Options.DATATYPE && dataTypesWithSingleValuedUse.contains(ci)) {
+//		createDataTypeUseSpecificTables(ci, map(ci));
+//	    }
+	}
+    }
+
+    private void createDataTypeUseSpecificTables(ClassInfo ci, Table parentTable) {
+
+	/*
+	 * parentTable is a (!) table representation of ci ... in case of a datatype,
+	 * multiple such tables may have been created
+	 */
+
+	for (PropertyInfo pi : ci.properties().values()) {
+
+//	    if (pi.isAttribute() && pi.cardinality().maxOccurs > 1 && pi.categoryOfValue() == Options.DATATYPE) {
+	    if (pi.categoryOfValue() == Options.DATATYPE) {
+
+		ClassInfo typeCi = model.classByIdOrName(pi.typeInfo());
+
+		if (typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+			&& typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)
+			&& model.isInSelectedSchemas(typeCi)) {
+
+		    // create usage specific table for the data type (value type of pi)
+		    String tableName = parentTable.getName() + "_" + pi.name();
+
+		    Table table = createTables(typeCi, parentTable.getSchemaName(), tableName);
+		    table.setRepresentedProperty(pi);
+		    table.setUsageSpecificTable(true);
+
+		    /*
+		     * Add the column that supports referencing the owner of the usage specific data
+		     * type.
+		     */
+
+		    String columnName = ci.name() + determineForeignKeyColumnSuffix(ci);
+
+		    Column dtOwner_cd = createColumn(table, null, null, columnName, SqlDdl.foreignKeyColumnDataType,
+			    SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
+
+		    // the referenced table must be usage specific
+		    dtOwner_cd.setReferencedTable(parentTable);
+
+		    table.addColumn(dtOwner_cd);
+
+		    createDataTypeUseSpecificTables(typeCi, table);
+		}
+	    }
+	}
     }
 
     private void alterTableAddCheckConstraintForRange(Column column, Double lowerBound, Double upperBound) {
@@ -2404,11 +2727,11 @@ public class SqlBuilder implements MessageSource {
 	return alter;
     }
 
-    private void checkRequirements(List<ClassInfo> cisToProcess) {
+    private void checkRequirements(List<ClassInfo> cisToProcess) throws Exception {
 
 	/*
-	 * TODO Checking requirements on an input model should be a common
-	 * pre-processing routine for targets and transformations
+	 * TBD Checking requirements on an input model should be a common pre-processing
+	 * routine for targets and transformations
 	 */
 
 	for (ClassInfo ci : cisToProcess) {
@@ -2446,6 +2769,199 @@ public class SqlBuilder implements MessageSource {
 		}
 	    }
 	}
+
+	// determine if circle of datatypes used in attributes with max mult > 1 exists
+	Map<String, ClassInfo> dataTypesToProcessById = new HashMap<>();
+	for (ClassInfo ci : cisToProcess) {
+	    if (ci.category() == Options.DATATYPE && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
+		    && ci.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES)) {
+		dataTypesToProcessById.put(ci.id(), ci);
+	    }
+	}
+	if (hasCircularDependencies(dataTypesToProcessById)) {
+	    throw new Exception("Circular dependencies in datatypes detected.");
+	}
+    }
+
+    private boolean hasCircularDependencies(Map<String, ClassInfo> dataTypesToProcessById) {
+
+	if (dataTypesToProcessById == null || dataTypesToProcessById.isEmpty()) {
+	    return false;
+	}
+
+	boolean outcome = false;
+
+	result.addInfo(this, 1001);
+
+	DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
+		PropertySetEdge.class);
+
+	// establish graph vertices
+	for (ClassInfo typeToProcess : dataTypesToProcessById.values()) {
+	    graph.addVertex(typeToProcess.pkg().name() + "::" + typeToProcess.name());
+	}
+
+	// establish edges
+
+	/*
+	 * key: name of data type with reflexive relationship(s); value: properties that
+	 * cause the reflexive relationship(s)
+	 */
+	Map<String, Set<String>> refTypeInfo = new TreeMap<String, Set<String>>();
+
+	for (ClassInfo typeToProcess : dataTypesToProcessById.values()) {
+
+	    String typeToProcessKey = typeToProcess.pkg().name() + "::" + typeToProcess.name();
+
+	    /*
+	     * key: {value type package name}::{value type name}, value: names of properties
+	     * of typeToProcess that have that value type
+	     */
+	    Map<String, Set<String>> propertiesByValueTypeName = new HashMap<String, Set<String>>();
+
+	    for (PropertyInfo pi : typeToProcess.properties().values()) {
+
+		/*
+		 * skip the property if it is not navigable, or if its value type is not in the
+		 * collection of data types to process
+		 */
+		if (!pi.isNavigable() || !dataTypesToProcessById.containsKey(pi.typeInfo().id)) {
+		    continue;
+		}
+
+		ClassInfo targetType = dataTypesToProcessById.get(pi.typeInfo().id);
+
+		String key = targetType.pkg().name() + "::" + targetType.name();
+		Set<String> props;
+		if (propertiesByValueTypeName.containsKey(key)) {
+		    props = propertiesByValueTypeName.get(key);
+		} else {
+		    props = new TreeSet<String>();
+		    propertiesByValueTypeName.put(key, props);
+		}
+		props.add(pi.name());
+	    }
+
+	    /*
+	     * create directed edges and thereby identify reflexive relationships
+	     */
+	    for (String targetKey : propertiesByValueTypeName.keySet()) {
+
+		Set<String> props = propertiesByValueTypeName.get(targetKey);
+
+		if (typeToProcessKey.equals(targetKey)) {
+		    /*
+		     * loops are not supported in cycle detection of JGraphT, thus log infos to
+		     * create an error later on
+		     */
+		    refTypeInfo.put(typeToProcessKey, props);
+
+		} else {
+
+		    graph.addEdge(typeToProcessKey, targetKey, new PropertySetEdge(typeToProcessKey, targetKey, props));
+		}
+	    }
+	}
+
+	/*
+	 * Log occurrence of reflexive relationships.
+	 */
+	if (refTypeInfo.isEmpty()) {
+	    result.addInfo(this, 1003);
+	} else {
+	    outcome = true;
+	    for (String key : refTypeInfo.keySet()) {
+		result.addError(this, 1002, key, StringUtils.join(refTypeInfo.get(key), ","));
+	    }
+	}
+
+	/*
+	 * 2015-01-19 JE: these are alternative algorithms for cycle detection; not sure
+	 * which one is the best, so I just picked one.
+	 */
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// JohnsonSimpleCycles<String, PropertySetEdge<String>>(
+	// graph);
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// SzwarcfiterLauerSimpleCycles<String, PropertySetEdge<String>>(
+	// graph);
+
+	// DirectedSimpleCycles<String, PropertySetEdge<String>> alg = new
+	// TarjanSimpleCycles<String, PropertySetEdge<String>>(graph);
+
+	DirectedSimpleCycles<String, PropertySetEdge> alg = new TiernanSimpleCycles<String, PropertySetEdge>(graph);
+
+	List<List<String>> cycles = alg.findSimpleCycles();
+
+	if (cycles != null && cycles.size() > 0) {
+
+	    for (List<String> cycle : cycles) {
+
+		outcome = true;
+		result.addInfo(this, 1004);
+
+		for (int i = 0; i < cycle.size(); i++) {
+
+		    String source, target;
+
+		    if (alg instanceof JohnsonSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == 0) {
+			    target = cycle.get(cycle.size() - 1);
+			} else {
+			    target = cycle.get(i - 1);
+			}
+
+		    } else if (alg instanceof SzwarcfiterLauerSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+
+		    } else if (alg instanceof TarjanSimpleCycles<?, ?>) {
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+
+		    } else {
+
+			// alg instanceof TiernanSimpleCycles
+
+			source = cycle.get(i);
+
+			if (i == cycle.size() - 1) {
+			    target = cycle.get(0);
+			} else {
+			    target = cycle.get(i + 1);
+			}
+		    }
+
+		    PropertySetEdge edge = graph.getEdge(source, target);
+
+		    result.addInfo(this, 1005, source, target, edge.toString());
+		}
+	    }
+	} else {
+	    result.addInfo(this, 1006);
+	}
+
+	alg = null;
+	graph = null;
+
+	return outcome;
     }
 
     private List<Statement> statements() {
@@ -2548,7 +3064,7 @@ public class SqlBuilder implements MessageSource {
 
 			MessageContext mc = result.addWarning(this, 37, column.getName());
 			if (relevantInfo != null && mc != null) {
-			    mc.addDetail(this, 102, table.getName(), column.getName());
+			    mc.addDetail(this, 102, table.getFullName(), column.getName());
 			    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 			}
 		    }
@@ -2565,7 +3081,7 @@ public class SqlBuilder implements MessageSource {
 		    MessageContext mc = result.addInfo(this, 35, o.toString(),
 			    isOnDelete ? "sqlOnDelete" : "sqlOnUpdate", isOnDelete ? "ON DELETE" : "ON UPDATE");
 		    if (mc != null) {
-			mc.addDetail(this, 102, table.getName(), column.getName());
+			mc.addDetail(this, 102, table.getFullName(), column.getName());
 			mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 		    }
 		}
@@ -2573,7 +3089,7 @@ public class SqlBuilder implements MessageSource {
 	    } catch (IllegalArgumentException e) {
 		MessageContext mc = result.addError(this, 34, optionValue, isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
 		if (mc != null) {
-		    mc.addDetail(this, 102, table.getName(), column.getName());
+		    mc.addDetail(this, 102, table.getFullName(), column.getName());
 		    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
 		}
 	    }
@@ -2595,22 +3111,25 @@ public class SqlBuilder implements MessageSource {
     }
 
     /**
-     * Look up the table with the given name. If no such table exists, a new one is
-     * created (this is logged on debug level) and returned.
+     * Look up the table with the given name and, optionally, schema. If no such
+     * table exists, a new one is created (this is logged on debug level) and
+     * returned.
      * 
-     * @param tableName name of the table to look up, must not be <code>null</code>
+     * @param schemaName name of the schema to which the table belongs, can be
+     *                   <code>null</code>
+     * @param tableName  name of the table to look up, must not be <code>null</code>
      * @return
      */
-    private Table map(String tableName) {
+    private Table map(String schemaName, String tableName) {
 
 	for (Table t : this.tables) {
-	    if (tableName.equals(t.getName())) {
+	    if (StringUtils.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName())) {
 		return t;
 	    }
 	}
 
-	result.addDebug(this, 23, tableName);
-	Table t = new Table(tableName);
+	result.addDebug(this, 23, StringUtils.isBlank(schemaName) ? tableName : schemaName + "." + tableName);
+	Table t = new Table(schemaName, tableName);
 	this.tables.add(t);
 	return t;
     }
@@ -2672,7 +3191,7 @@ public class SqlBuilder implements MessageSource {
 	case 20:
 	    return "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
 	case 21:
-	    return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries. It will be mapped to 'unknown'.";
+	    return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries, or conversion of the category of classes to which the type belongs is generally not supported by the target. It will be mapped to 'unknown'.";
 	case 22:
 	    return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
 	case 23:
@@ -2713,6 +3232,14 @@ public class SqlBuilder implements MessageSource {
 	    return "Foreign key option is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key option is ignored.";
 	case 38:
 	    return "Model element that defines the option: '$1$'";
+	case 39:
+	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
+		    + SqlConstants.TV_SQLSCHEMA
+		    + "' not set on this association, thus using default naming pattern, which leads to database schema name: '$3$'.";
+	case 40:
+	    return "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
+		    + SqlConstants.TV_ASSOCIATIVETABLE
+		    + "' is ignored on this attribute, because a usage specific table must be created, which leads to table name: '$4$'.";
 
 	case 100:
 	    return "Context: property '$1$'.";
@@ -2720,6 +3247,20 @@ public class SqlBuilder implements MessageSource {
 	    return "Context: class '$1$'.";
 	case 102:
 	    return "Context: table '$1$', column '$2$'.";
+
+	case 1001:
+	    return "---------- Checking for reflexive relationships and cyles in data types ----------";
+	case 1002:
+	    return "--- Reflexive relationship detected for data type '$1$' (via properties: $2$).";
+	case 1003:
+	    return "--- No reflexive relationships detected.";
+	case 1004:
+	    return "--- Found cycle:";
+	case 1005:
+	    return "   Class '$1$' -> class '$2$' (via properties: $3$)";
+	case 1006:
+	    return "--- No cycles found.";
+
 	default:
 	    return "(" + SqlBuilder.class.getName() + ") Unknown message with number: " + mnr;
 	}

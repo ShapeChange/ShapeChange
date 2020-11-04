@@ -167,7 +167,7 @@ public abstract class BasicTest {
 	assertTrue(!test.noError(), "Test model execution did not fail with an error. " + details);
     }
 
-    private void multiTestInDirs(Set<String> fileFormatsToCheck, String dirResults, String dirReference) {
+    protected void multiTestInDirs(Set<String> fileFormatsToCheck, String dirResults, String dirReference) {
 
 	String[] extensions = fileFormatsToCheck.toArray(new String[fileFormatsToCheck.size()]);
 

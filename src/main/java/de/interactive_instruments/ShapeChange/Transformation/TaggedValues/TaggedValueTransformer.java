@@ -191,10 +191,12 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 		// execute rules
 
 		if (rules.contains(RULE_TV_INHERITANCE)) {
+		    	result.addProcessFlowInfo(null, 20103, RULE_TV_INHERITANCE);
 			applyRuleTaggedValueInheritance(genModel, trfConfig);
 		}
 
 		if (rules.contains(RULE_TV_COPY_FROM_VALUE_TYPE)) {
+		    	result.addProcessFlowInfo(null, 20103, RULE_TV_COPY_FROM_VALUE_TYPE);
 			applyRuleTaggedValueCopyFromValueType(genModel, trfConfig);
 		}
 

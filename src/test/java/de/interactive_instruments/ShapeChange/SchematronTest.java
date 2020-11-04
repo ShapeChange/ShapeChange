@@ -120,4 +120,11 @@ public class SchematronTest extends BasicTestSCXML {
 				new String[] { "xsd","sch" }, "testResults/sch/valueOrNilReason",
 				"src/test/resources/sch/valueOrNilReason/reference");
 	}
+	
+	@Test
+	public void schematronTest_segmentation() {
+		multiTest("src/test/resources/sch/segmentation/testEA_sch_segmentation.xml",
+				new String[] { "xsd","sch" }, "testResults/sch/segmentation",
+				"src/test/resources/sch/segmentation/reference");
+	}
 }

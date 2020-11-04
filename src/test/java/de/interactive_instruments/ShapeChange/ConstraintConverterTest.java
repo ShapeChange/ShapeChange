@@ -37,25 +37,32 @@ import org.junit.jupiter.api.Test;
 @Tag("SCXML")
 public class ConstraintConverterTest extends BasicTestSCXML {
 
-	@Test
-	public void test_geometryRestrictionToGeometryTV() {
-		
-		/*
-		 * Test rule-trf-cls-constraints-geometryRestrictionToGeometryTV-inclusion
-		 */
-		multiTest(
-				"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_inclusion.xml",
-				new String[] { "xsd" },
-				"testResults/constraintConverter/geometryRestrictionToGeometryTV/inclusion",
-				"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/reference/inclusion");
-		
-		/*
-		 * Test rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion
-		 */
-		multiTest(
-				"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_exclusion.xml",
-				new String[] { "xsd" },
-				"testResults/constraintConverter/geometryRestrictionToGeometryTV/exclusion",
-				"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/reference/exclusion");
-	}	
+    @Test
+    public void test_geometryRestrictionToGeometryTV() {
+
+	/*
+	 * Test rule-trf-cls-constraints-geometryRestrictionToGeometryTV-inclusion
+	 */
+	multiTest(
+		"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_inclusion.xml",
+		new String[] { "xsd" }, "testResults/constraintConverter/geometryRestrictionToGeometryTV/inclusion",
+		"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/reference/inclusion");
+
+	/*
+	 * Test rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion
+	 */
+	multiTest(
+		"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/testEA_ConstraintConverter_geometryRestrictionToGeometryTV_exclusion.xml",
+		new String[] { "xsd" }, "testResults/constraintConverter/geometryRestrictionToGeometryTV/exclusion",
+		"src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/reference/exclusion");
+    }
+
+    @Test
+    public void test_valueTypeRestrictionToTV() {
+
+	multiTest(
+		"src/test/resources/constraintConverter/valueTypeRestrictionToTV/testEA_ConstraintConverter_valueTypeRestrictionToTV.xml",
+		new String[] { "xsd" }, "testResults/constraintConverter/valueTypeRestrictionToTV",
+		"src/test/resources/constraintConverter/valueTypeRestrictionToTV/reference");
+    }
 }

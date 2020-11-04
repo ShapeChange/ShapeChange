@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://example.org/external" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/shapechange/typeconverter/propertyMetadataStereotype" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/typeconverter/propertyMetadataStereotype" version="1.0">
+  <import namespace="http://example.org/external" schemaLocation="external.xsd"/>
+  <import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type"/>
+  <complexType name="FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att1" type="integer"/>
+          <element minOccurs="0" name="att1_metadata" type="t:MetadataTypeBPropertyType"/>
+          <element name="att2" type="integer"/>
+          <element minOccurs="0" name="att2_metadata">
+            <complexType>
+              <sequence>
+                <element ref="ext:ExtMetadataTypeD"/>
+              </sequence>
+            </complexType>
+          </element>
+          <element name="att3" type="integer"/>
+          <element minOccurs="0" name="att3_metadata" type="gmd:MD_Metadata_PropertyType"/>
+          <element name="ft1ToFt2_role1" type="t:FT2PropertyType"/>
+          <element minOccurs="0" name="ft1ToFt2_role1_metadata" type="t:MetadataTypeAPropertyType"/>
+          <element name="ft1ToFt2_role2" type="t:FT2PropertyType"/>
+          <element minOccurs="0" name="ft1ToFt2_role2_metadata">
+            <complexType>
+              <sequence minOccurs="0">
+                <element ref="ext:ExtMetadataTypeC"/>
+              </sequence>
+              <attributeGroup ref="gml:AssociationAttributeGroup"/>
+              <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+            </complexType>
+          </element>
+          <element name="ft1ToFt2_role3" type="t:FT2PropertyType"/>
+          <element minOccurs="0" name="ft1ToFt2_role3_metadata" type="gmd:MD_Metadata_PropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2" substitutionGroup="gml:AbstractFeature" type="t:FT2Type"/>
+  <complexType name="FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MetadataTypeA" substitutionGroup="gml:AbstractGML" type="t:MetadataTypeAType"/>
+  <complexType name="MetadataTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MetadataTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MetadataTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MetadataTypeB" substitutionGroup="gml:AbstractObject" type="t:MetadataTypeBType"/>
+  <complexType name="MetadataTypeBType">
+    <sequence/>
+  </complexType>
+  <complexType name="MetadataTypeBPropertyType">
+    <sequence>
+      <element ref="t:MetadataTypeB"/>
+    </sequence>
+  </complexType>
+</schema>

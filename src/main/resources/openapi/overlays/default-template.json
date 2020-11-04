@@ -1,0 +1,33 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "a title of the API",
+    "version": "a version identifier, e.g. 1.0.0",
+    "description": "a longer description what the API does, supports Markdown markup",
+    "contact": {
+      "name": "name of the organisation",
+      "email": "info@example.org",
+      "url": "https://example.org/"
+    },
+    "license": {
+      "name": "name of the license of the API, e.g. CC-BY 4.0 license",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://data.example.org/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Capabilities",
+      "description": "essential characteristics of this API"
+    },
+    {
+      "name": "Data",
+      "description": "access to data (features)"
+    }
+  ],
+  "paths": {}
+}

@@ -88,4 +88,14 @@ public class UmlModelTest extends WindowsBasicTest {
 				"testResults/uml/authorAndStatus/results",
 				"src/test/resources/uml/authorAndStatus/reference/results");
 	}
+	
+	@Test
+	public void testPreservePackageHierarchy() {
+
+		multiTest(
+				"src/test/resources/uml/preservePackageHierarchy/test_uml_preservePackageHierarchy.xml",
+				new String[] { "eap" },
+				"testResults/uml/preservePackageHierarchy",
+				"src/test/resources/uml/preservePackageHierarchy/reference");
+	}
 }

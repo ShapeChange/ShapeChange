@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,9 +44,12 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataTyp
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.DropSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.PostgreSQLAlterRole;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SqlConstraint;
@@ -59,256 +63,295 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
  * NOTE: Database system specific visitors should be added as needed, to take
  * into account any database system specific syntax.
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DdlVisitor implements StatementVisitor {
 
-	protected StringBuffer sb = new StringBuffer();
-	protected String crlf;
-	protected String indent;
-	protected SqlDdl sqlddl;
+    protected StringBuffer sb = new StringBuffer();
+    protected String crlf;
+    protected String indent;
+    protected SqlDdl sqlddl;
 
-	public DdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
-		this.crlf = crlf;
-		this.indent = indent;
-		this.sqlddl = sqlddl;
+    public DdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
+	this.crlf = crlf;
+	this.indent = indent;
+	this.sqlddl = sqlddl;
+    }
+
+    @Override
+    public void visit(Insert insert) {
+
+	sb.append("INSERT INTO ");
+	sb.append(insert.getTable().getFullName());
+
+	if (insert.getColumns() != null) {
+	    sb.append(" ");
+	    sb.append(SqlUtil.getStringList(insert.getColumns(), true, true));
 	}
 
-	@Override
-	public void visit(Insert insert) {
+	sb.append(" ");
+	sb.append("VALUES ");
 
-		sb.append("INSERT INTO ");
-		sb.append(insert.getTable().getName());
+	if (insert.getExpressionList() != null) {
+	    sb.append(insert.getExpressionList());
+	}
 
-		if (insert.getColumns() != null) {
-			sb.append(" ");
-			sb.append(SqlUtil.getStringList(insert.getColumns(), true, true));
-		}
+	sb.append(";");
+	sb.append(crlf);
+    }
 
+    @Override
+    public void visit(CreateIndex createIndex) {
+
+	Index index = createIndex.getIndex();
+
+	sb.append("CREATE ");
+
+	if (index.getType() != null) {
+	    sb.append(index.getType());
+	    sb.append(" ");
+	}
+
+	sb.append("INDEX ");
+	sb.append(index.getName());
+	sb.append(" ON ");
+	sb.append(createIndex.getTable().getFullName());
+
+	if (index.hasColumns()) {
+	    sb.append(" ");
+	    sb.append(SqlUtil.getStringList(index.getColumns(), true, true));
+	}
+
+	if (index.hasSpecs()) {
+	    sb.append(" ");
+	    sb.append(StringUtils.join(index.getSpecs(), " "));
+	}
+
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void visit(CreateTable ct) {
+
+	Table table = ct.getTable();
+
+	sb.append("CREATE TABLE ");	
+	sb.append(table.getFullName());
+
+	sb.append(" (");
+	sb.append(crlf);
+	sb.append(crlf);
+
+	if (table.getColumns() != null) {
+
+	    for (Iterator<Column> iter = table.getColumns().iterator(); iter.hasNext();) {
+
+		Column col = iter.next();
+
+		sb.append(indent);
+
+		sb.append(col.getName());
 		sb.append(" ");
-		sb.append("VALUES ");
+		ColumnDataType colDataType = col.getDataType();
+		sb.append(colDataType.getName());
 
-		if (insert.getExpressionList() != null) {
-			sb.append(insert.getExpressionList());
-		}
-
-		sb.append(";");
-		sb.append(crlf);
-	}
-
-	@Override
-	public void visit(CreateIndex createIndex) {
-
-		Index index = createIndex.getIndex();
-
-		sb.append("CREATE ");
-
-		if (index.getType() != null) {
-			sb.append(index.getType());
+		if (colDataType.hasPrecision()) {
+		    sb.append("(");
+		    sb.append(colDataType.getPrecision().toString());
+		    if (colDataType.hasScale()) {
+			sb.append(",");
+			sb.append(colDataType.getScale().toString());
+		    }
+		    sb.append(")");
+		} else if (colDataType.hasLength()) {
+		    sb.append("(");
+		    sb.append(colDataType.getLength());
+		    if (colDataType.hasLengthQualifier()) {
 			sb.append(" ");
+			sb.append(colDataType.getLengthQualifier());
+		    }
+		    sb.append(")");
 		}
 
-		sb.append("INDEX ");
-		sb.append(index.getName());
-		sb.append(" ON ");
-		sb.append(createIndex.getTable().getName());
-
-		if (index.hasColumns()) {
-			sb.append(" ");
-			sb.append(SqlUtil.getStringList(index.getColumns(), true, true));
+		if (col.getDefaultValue() != null) {
+		    sb.append(" DEFAULT " + col.getDefaultValue());
 		}
 
-		if (index.hasSpecs()) {
-			sb.append(" ");
-			sb.append(StringUtils.join(index.getSpecs(), " "));
+		if (col.getSpecifications() != null && !col.getSpecifications().isEmpty()) {
+		    sb.append(" ");
+		    sb.append(StringUtils.join(col.getSpecifications(), " "));
 		}
 
-		sb.append(";");
-		sb.append(crlf);
-	}
-
-	@Override
-	public void visit(CreateTable ct) {
-
-		Table table = ct.getTable();
-
-		sb.append("CREATE TABLE ");
-		sb.append(table.getName());
-
-		sb.append(" (");
-		sb.append(crlf);
-		sb.append(crlf);
-
-		if (table.getColumns() != null) {
-
-			for (Iterator<Column> iter = table.getColumns().iterator(); iter
-					.hasNext();) {
-
-				Column col = iter.next();
-
-				sb.append(indent);
-
-				sb.append(col.getName());
-				sb.append(" ");
-				ColumnDataType colDataType = col.getDataType();
-				sb.append(colDataType.getName());
-
-				if (colDataType.hasPrecision()) {
-					sb.append("(");
-					sb.append(colDataType.getPrecision().toString());
-					if (colDataType.hasScale()) {
-						sb.append(",");
-						sb.append(colDataType.getScale().toString());
-					}
-					sb.append(")");
-				} else if (colDataType.hasLength()) {
-					sb.append("(");
-					sb.append(colDataType.getLength());
-					if (colDataType.hasLengthQualifier()) {
-						sb.append(" ");
-						sb.append(colDataType.getLengthQualifier());
-					}
-					sb.append(")");
-				}
-
-				if (col.getDefaultValue() != null) {
-					sb.append(" DEFAULT " + col.getDefaultValue());
-				}
-
-				if (col.getSpecifications() != null
-						&& !col.getSpecifications().isEmpty()) {
-					sb.append(" ");
-					sb.append(StringUtils.join(col.getSpecifications(), " "));
-				}
-
-				if (iter.hasNext() || table.hasConstraints()) {
-					sb.append(",");
-				}
-
-				if (SqlDdl.createDocumentation) {
-
-					if (StringUtils.isNotBlank(col.getDocumentation())) {
-
-						sb.append(" -- " + col.getDocumentation()
-								.replaceAll("\\s+", " ").trim());
-					}
-				}
-
-				sb.append(crlf);
-			}
+		if (iter.hasNext() || table.hasConstraints()) {
+		    sb.append(",");
 		}
 
-		if (table.hasConstraints()) {
+		if (SqlDdl.createDocumentation) {
 
-			for (Iterator<SqlConstraint> iter = table.getConstraints()
-					.iterator(); iter.hasNext();) {
+		    if (StringUtils.isNotBlank(col.getDocumentation())) {
 
-				SqlConstraint constr = iter.next();
-
-				sb.append(indent).append(constr);
-
-				if (iter.hasNext()) {
-					sb.append(",");
-				}
-
-				sb.append(crlf);
-			}
+			sb.append(" -- " + col.getDocumentation().replaceAll("\\s+", " ").trim());
+		    }
 		}
 
-		sb.append(")");
-		sb.append(";");
 		sb.append(crlf);
-		sb.append(crlf);
+	    }
 	}
 
-	@Override
-	public void visit(Alter alter) {
+	if (table.hasConstraints()) {
 
-		Table table = alter.getTable();
+	    for (Iterator<SqlConstraint> iter = table.getConstraints().iterator(); iter.hasNext();) {
 
-		sb.append("ALTER TABLE ");
-		sb.append(table.getName());
-		sb.append(" ");
+		SqlConstraint constr = iter.next();
 
-		AlterExpression ae = alter.getExpression();
+		sb.append(indent).append(constr);
 
-		sb.append(ae.getOperation());
-		sb.append(" ");
-
-		if (ae instanceof ConstraintAlterExpression) {
-
-			ConstraintAlterExpression cae = (ConstraintAlterExpression) ae;
-			sb.append(cae.toString());
+		if (iter.hasNext()) {
+		    sb.append(",");
 		}
 
-		sb.append(";");
 		sb.append(crlf);
+	    }
 	}
 
-	@Override
-	public void visit(List<Statement> stmts) {
+	sb.append(")");
+	sb.append(";");
+	sb.append(crlf);
+	sb.append(crlf);
+    }
 
-		if (stmts != null) {
+    @Override
+    public void visit(Alter alter) {
 
-			Statement last = null;
+	Table table = alter.getTable();
 
-			for (Statement stmt : stmts) {
+	sb.append("ALTER TABLE ");
+	sb.append(table.getFullName());
+	sb.append(" ");
 
-				/*
-				 * Separate different types of statements with additional empty
-				 * row.
-				 */
-				if (last != null && !last.getClass().getName()
-						.equals(stmt.getClass().getName())) {
+	AlterExpression ae = alter.getExpression();
 
-					sb.append(crlf);
-				}
+	sb.append(ae.getOperation());
+	sb.append(" ");
 
-				stmt.accept(this);
+	if (ae instanceof ConstraintAlterExpression) {
 
-				last = stmt;
-			}
+	    ConstraintAlterExpression cae = (ConstraintAlterExpression) ae;
+	    sb.append(cae.toString());
+	}
+
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void visit(List<Statement> stmts) {
+
+	if (stmts != null) {
+
+	    Statement last = null;
+
+	    for (Statement stmt : stmts) {
+
+		/*
+		 * Separate different types of statements with additional empty row.
+		 */
+		if (last != null && !last.getClass().getName().equals(stmt.getClass().getName())) {
+
+		    sb.append(crlf);
 		}
+
+		stmt.accept(this);
+
+		last = stmt;
+	    }
+	}
+    }
+
+    public String getDdl() {
+	return sb.toString();
+    }
+
+    @Override
+    public void visit(Comment comment) {
+
+	sb.append(comment.toString());
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void postprocess() {
+	// ignore
+    }
+
+    @Override
+    public void visit(Select select) {
+
+	sb.append("SELECT ");
+	sb.append(select.getExpression().toString());
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void visit(SQLitePragma pragma) {
+
+	sb.append("PRAGMA ");
+	sb.append(pragma.getName());
+	if (pragma.hasValue()) {
+	    sb.append(" = ");
+	    sb.append(pragma.getValue());
+	}
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void visit(PostgreSQLAlterRole postgreSQLAlterRole) {
+	// ignore
+    }
+    
+    @Override
+    public void visit(CreateSchema createSchema) {
+	// https://www.postgresql.org/docs/10/sql-createschema.html
+
+	String schemaName = createSchema.getSchemaName();
+
+	sb.append("CREATE SCHEMA ");
+
+	if (createSchema.isIfNotExists()) {
+	    sb.append("IF NOT EXISTS ");
 	}
 
-	public String getDdl() {
-		return sb.toString();
+	sb.append(schemaName);
+
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+    @Override
+    public void visit(DropSchema dropSchema) {
+	// https://www.postgresql.org/docs/10/sql-dropschema.html
+
+	SortedSet<String> schemaNames = dropSchema.getSchemaNames();
+
+	sb.append("DROP SCHEMA");
+
+	if (dropSchema.isIfExists()) {
+	    sb.append(" IF EXISTS ");
 	}
 
-	@Override
-	public void visit(Comment comment) {
+	sb.append(StringUtils.join(schemaNames, ", "));
 
-		sb.append(comment.toString());
-		sb.append(";");
-		sb.append(crlf);
+	if (dropSchema.hasSpecs()) {
+	    sb.append(" ");
+	    sb.append(StringUtils.join(dropSchema.getSpecs(), " "));
 	}
 
-	@Override
-	public void postprocess() {
-		// ignore
-	}
-
-	@Override
-	public void visit(Select select) {
-
-		sb.append("SELECT ");
-		sb.append(select.getExpression().toString());
-		sb.append(";");
-		sb.append(crlf);
-	}
-
-	@Override
-	public void visit(SQLitePragma pragma) {
-
-		sb.append("PRAGMA ");
-		sb.append(pragma.getName());
-		if (pragma.hasValue()) {
-			sb.append(" = ");
-			sb.append(pragma.getValue());
-		}
-		sb.append(";");
-		sb.append(crlf);
-	}
+	sb.append(";");
+	sb.append(crlf);
+    }
 }

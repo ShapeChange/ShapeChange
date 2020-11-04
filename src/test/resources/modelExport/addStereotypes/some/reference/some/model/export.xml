@@ -97,6 +97,23 @@
                       <sc:typeName>Integer</sc:typeName>
                       <sc:isComposition>true</sc:isComposition>
                     </sc:Property>
+                    <sc:Property>
+                      <sc:name>role</sc:name>
+                      <sc:id>Tas85</sc:id>
+                      <sc:taggedValues>
+                        <sc:TaggedValue>
+                          <sc:name>sequenceNumber</sc:name>
+                          <sc:values>
+                            <sc:Value>2</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                      </sc:taggedValues>
+                      <sc:sequenceNumber>2</sc:sequenceNumber>
+                      <sc:typeId>167</sc:typeId>
+                      <sc:typeName>Class5</sc:typeName>
+                      <sc:isAttribute>false</sc:isAttribute>
+                      <sc:associationId>as85</sc:associationId>
+                    </sc:Property>
                   </sc:properties>
                 </sc:Class>
                 <sc:Class>
@@ -220,4 +237,31 @@
       </sc:packages>
     </sc:Package>
   </sc:packages>
+  <sc:associations>
+    <sc:Association>
+      <sc:id>as85</sc:id>
+      <sc:end1>
+        <sc:Property>
+          <sc:name>role_Sas85</sc:name>
+          <sc:id>Sas85</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>1</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
+          <sc:isNavigable>false</sc:isNavigable>
+          <sc:sequenceNumber>1</sc:sequenceNumber>
+          <sc:typeId>163</sc:typeId>
+          <sc:typeName>Class1</sc:typeName>
+          <sc:isAttribute>false</sc:isAttribute>
+          <sc:inClassId>167</sc:inClassId>
+          <sc:associationId>as85</sc:associationId>
+        </sc:Property>
+      </sc:end1>
+      <sc:end2 ref="Tas85"></sc:end2>
+    </sc:Association>
+  </sc:associations>
 </sc:Model>

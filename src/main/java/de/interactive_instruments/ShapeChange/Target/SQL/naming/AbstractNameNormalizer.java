@@ -39,114 +39,134 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.DropSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.PostgreSQLAlterRole;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public abstract class AbstractNameNormalizer implements NameNormalizer {
 
-	private boolean isIgnoreCaseWhenNormalizing = false;
+    private boolean isIgnoreCaseWhenNormalizing = false;
 
-	/**
-	 * Instruct the name normalizer whether to change the case of a name while
-	 * normalizing it.
-	 * 
-	 * @param isIgnoreCaseWhenNormalizing tbd
-	 */
-	public void setIgnoreCaseWhenNormalizing(
-			boolean isIgnoreCaseWhenNormalizing) {
-		this.isIgnoreCaseWhenNormalizing = isIgnoreCaseWhenNormalizing;
+    /**
+     * Instruct the name normalizer whether to change the case of a name while
+     * normalizing it.
+     * 
+     * @param isIgnoreCaseWhenNormalizing tbd
+     */
+    public void setIgnoreCaseWhenNormalizing(boolean isIgnoreCaseWhenNormalizing) {
+	this.isIgnoreCaseWhenNormalizing = isIgnoreCaseWhenNormalizing;
+    }
+
+    /**
+     * @return <code>true</code> if case should be changed while normalizing a name,
+     *         else <code>false</code>
+     */
+    public boolean isIgnoreCaseWhenNormalizing() {
+	return isIgnoreCaseWhenNormalizing;
+    }
+
+    @Override
+    public void visit(Insert insert) {
+
+	// nothing specific to normalize here
+    }
+
+    @Override
+    public void visit(Select select) {
+
+	// nothing specific to normalize here
+    }
+
+    @Override
+    public void visit(CreateIndex createIndex) {
+
+	// normalize index name
+	createIndex.getIndex().setName(normalize(createIndex.getIndex().getName()));
+    }
+
+    @Override
+    public void visit(CreateTable createTable) {
+
+	// normalize table name
+	Table table = createTable.getTable();
+	table.setName(normalize(table.getName()));
+
+	// normalize schema name, if set
+	if (table.hasSchemaName()) {
+	    table.setSchemaName(normalize(table.getSchemaName()));
 	}
 
-	/**
-	 * @return <code>true</code> if case should be changed while normalizing a
-	 *         name, else <code>false</code>
-	 */
-	public boolean isIgnoreCaseWhenNormalizing() {
-		return isIgnoreCaseWhenNormalizing;
+	// normalize column names
+	for (Column column : createTable.getTable().getColumns()) {
+	    column.setName(normalize(column.getName()));
 	}
+    }
 
-	@Override
-	public void visit(Insert insert) {
+    @Override
+    public void visit(Alter alter) {
 
-		// nothing specific to normalize here
+	// normalize constraint names
+	AlterExpression expr = alter.getExpression();
+
+	if (expr instanceof ConstraintAlterExpression) {
+
+	    ConstraintAlterExpression cae = (ConstraintAlterExpression) expr;
+
+	    if (cae.getConstraint().hasName()) {
+		cae.getConstraint().setName(normalize(cae.getConstraint().getName()));
+	    }
 	}
-	
-	@Override
-	public void visit(Select select) {
+    }
 
-		// nothing specific to normalize here
+    @Override
+    public void visit(List<Statement> stmts) {
+
+	for (Statement stmt : stmts) {
+	    stmt.accept(this);
 	}
+    }
 
-	@Override
-	public void visit(CreateIndex createIndex) {
+    @Override
+    public void visit(Comment comment) {
+	// ignore
+    }
 
-		// normalize index name
-		createIndex.getIndex()
-				.setName(normalize(createIndex.getIndex().getName()));
-	}
+    @Override
+    public void postprocess() {
+	// ignore
+    }
 
-	@Override
-	public void visit(CreateTable createTable) {
+    @Override
+    public void visit(SQLitePragma pragma) {
+	// ignore
+    }
 
-		// normalize table name
-		createTable.getTable()
-				.setName(normalize(createTable.getTable().getName()));
+    @Override
+    public void visit(PostgreSQLAlterRole postgreSQLAlterRole) {
+	// ignore
+    }
 
-		// normalize column names
-		for (Column column : createTable.getTable().getColumns()) {
-			column.setName(normalize(column.getName()));
-		}
-	}
+    @Override
+    public void visit(DropSchema dropSchema) {
+	// ignore
+    }
 
-	@Override
-	public void visit(Alter alter) {
+    @Override
+    public void visit(CreateSchema createSchema) {
+	createSchema.setSchemaName(normalize(createSchema.getSchemaName()));
+    }
 
-		// normalize constraint names
-		AlterExpression expr = alter.getExpression();
-
-		if (expr instanceof ConstraintAlterExpression) {
-
-			ConstraintAlterExpression cae = (ConstraintAlterExpression) expr;
-
-			if (cae.getConstraint().hasName()) {
-				cae.getConstraint()
-						.setName(normalize(cae.getConstraint().getName()));
-			}
-		}
-	}
-
-	@Override
-	public void visit(List<Statement> stmts) {
-
-		for (Statement stmt : stmts) {
-			stmt.accept(this);
-		}
-	}
-
-	@Override
-	public void visit(Comment comment) {
-		// ignore
-	}
-
-	@Override
-	public void postprocess() {
-		// ignore
-	}
-	
-	@Override
-	public void visit(SQLitePragma pragma) {
-		// ignore
-	}
-
-	public String normalize(String stringToNormalize) {
-		return stringToNormalize.replace(".", "_").replace("-", "_");
-	}
+    public String normalize(String stringToNormalize) {
+	return stringToNormalize.replace(".", "_").replace("-", "_");
+    }
 }

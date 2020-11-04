@@ -34,223 +34,263 @@ package de.interactive_instruments.ShapeChange.Target.SQL.structure;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class Table {
 
-	private String name = null;
-	private String documentation = null;
+    private String schemaName = null;
+    private String name = null;
+    private String documentation = null;
 
-	private List<Column> columns = new ArrayList<Column>();
-	private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
+    private List<Column> columns = new ArrayList<Column>();
+    private List<SqlConstraint> constraints = new ArrayList<SqlConstraint>();
 
-	private boolean isAssociativeTable = false;
-	private ClassInfo representedClass = null;
-	private AssociationInfo representedAssociation = null;
-	private PropertyInfo representedProperty = null;
-	private boolean representsCodeStatusCLType = false;
+    private boolean isAssociativeTable = false;
+    private ClassInfo representedClass = null;
+    private AssociationInfo representedAssociation = null;
+    private PropertyInfo representedProperty = null;
+    private boolean representsCodeStatusCLType = false;
+    private boolean isUsageSpecific = false;
 
-	public Table(String tableName) {
-		this.name = tableName;
+    public Table(String schemaName, String tableName) {
+	this.schemaName = schemaName;
+	this.name = tableName;
+    }
+
+    /**
+     * @return the schema name
+     */
+    public String getSchemaName() {
+	return schemaName;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+	return name;
+    }
+
+    /**
+     * @param schemaName the schema name to set
+     */
+    public void setSchemaName(String schemaName) {
+	this.schemaName = schemaName;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+	this.name = name;
+    }
+
+    /**
+     * @return the columns of this table; can be empty but not <code>null</code>
+     */
+    public List<Column> getColumns() {
+	return columns;
+    }
+
+    /**
+     * @param columns the columns to set
+     */
+    public void setColumns(List<Column> columns) {
+	if (columns != null) {
+	    this.columns = columns;
+	} else {
+	    this.columns = new ArrayList<Column>();
+	}
+    }
+
+    public void removeColumns(List<Column> columnsToRemove) {
+	if (columnsToRemove != null) {
+	    for (Column ctr : columnsToRemove) {
+		this.columns.remove(ctr);
+	    }
+	}
+    }
+
+    /**
+     * @return the constraints defined for this table; can be empty but not
+     *         <code>null</code>
+     */
+    public List<SqlConstraint> getConstraints() {
+	return constraints;
+    }
+
+    /**
+     * @param constraints the constraints to set
+     */
+    public void setConstraints(List<SqlConstraint> constraints) {
+	if (constraints == null) {
+	    this.constraints = new ArrayList<SqlConstraint>();
+	} else {
+	    this.constraints = constraints;
+	}
+    }
+
+    public void addConstraint(SqlConstraint constraint) {
+	this.constraints.add(constraint);
+    }
+
+    public void addConstraints(List<SqlConstraint> constraints) {
+	this.constraints.addAll(constraints);
+    }
+
+    public String toString() {
+	return name;
+    }
+
+    public boolean hasConstraints() {
+	return !constraints.isEmpty();
+    }
+
+    /**
+     * @return the isAssociativeTable
+     */
+    public boolean isAssociativeTable() {
+	return isAssociativeTable;
+    }
+
+    /**
+     * @param isAssociativeTable the isAssociativeTable to set
+     */
+    public void setAssociativeTable(boolean isAssociativeTable) {
+	this.isAssociativeTable = isAssociativeTable;
+    }
+
+    /**
+     * @return the representedClass; can be <code>null</code>
+     */
+    public ClassInfo getRepresentedClass() {
+	return representedClass;
+    }
+
+    /**
+     * @param representedClass the representedClass to set
+     */
+    public void setRepresentedClass(ClassInfo representedClass) {
+	this.representedClass = representedClass;
+    }
+
+    /**
+     * @return the representedAssociation; can be <code>null</code>
+     */
+    public AssociationInfo getRepresentedAssociation() {
+	return representedAssociation;
+    }
+
+    /**
+     * @param representedAssociation the representedAssociation to set
+     */
+    public void setRepresentedAssociation(AssociationInfo representedAssociation) {
+	this.representedAssociation = representedAssociation;
+    }
+
+    /**
+     * @return the representedProperty; can be <code>null</code>
+     */
+    public PropertyInfo getRepresentedProperty() {
+	return representedProperty;
+    }
+
+    /**
+     * @param representedProperty the representedProperty to set
+     */
+    public void setRepresentedProperty(PropertyInfo representedProperty) {
+	this.representedProperty = representedProperty;
+    }
+
+    public boolean representsClass(ClassInfo ci) {
+	return (ci != null && this.representedClass != null && ci == this.representedClass);
+    }
+
+    /**
+     * @return the global ID to represent the table, may be <code>null</code> if no
+     *         such ID could be determined
+     */
+    public String getGlobalId() {
+
+	String globalId = null;
+
+	if (representedClass != null) {
+
+	    globalId = representedClass.globalIdentifier();
+
+	} else if (representedProperty != null && representedProperty.inClass().globalIdentifier() != null
+		&& representedProperty.globalIdentifier() != null) {
+
+	    globalId = representedProperty.inClass().globalIdentifier() + "." + representedProperty.globalIdentifier();
+
+	} else if (representedAssociation != null) {
+
+	    globalId = representedAssociation.globalIdentifier();
 	}
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
+	return globalId;
+    }
+
+    public void addColumn(Column column) {
+
+	this.columns.add(column);
+    }
+
+    public boolean representsCodeStatusCLType() {
+	return representsCodeStatusCLType;
+    }
+
+    public void setRepresentsCodeStatusCLType(boolean representsCodeStatusCLType) {
+	this.representsCodeStatusCLType = representsCodeStatusCLType;
+    }
+
+    public String getDocumentation() {
+	return this.documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+	this.documentation = documentation;
+    }
+
+    public boolean hasSchemaName() {
+	return StringUtils.isNotBlank(this.schemaName);
+    }
+
+    public String getFullName() {
+
+	if (hasSchemaName()) {
+	    return schemaName + "." + name;
+	} else {
+	    return name;
 	}
+    }
 
-	/**
-	 * @param name
-	 *                 the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return <code>true</code> if this table has been created to encode the value
+     *         type of a specific property, <code>false</code> if this table has
+     *         been created to encode the value type in general (so can be used as
+     *         target of a 1:1 relationship)
+     */
+    public boolean isUsageSpecificTable() {
+	return this.isUsageSpecific;
+    }
 
-	/**
-	 * @return the columns of this table; can be empty but not <code>null</code>
-	 */
-	public List<Column> getColumns() {
-		return columns;
-	}
-
-	/**
-	 * @param columns
-	 *                    the columns to set
-	 */
-	public void setColumns(List<Column> columns) {
-		if (columns != null) {
-			this.columns = columns;
-		} else {
-			this.columns = new ArrayList<Column>();
-		}
-	}
-
-	public void removeColumns(List<Column> columnsToRemove) {
-		if (columnsToRemove != null) {
-			for (Column ctr : columnsToRemove) {
-				this.columns.remove(ctr);
-			}
-		}
-	}
-
-	/**
-	 * @return the constraints defined for this table; can be empty but not
-	 *         <code>null</code>
-	 */
-	public List<SqlConstraint> getConstraints() {
-		return constraints;
-	}
-
-	/**
-	 * @param constraints
-	 *                        the constraints to set
-	 */
-	public void setConstraints(List<SqlConstraint> constraints) {
-		if (constraints == null) {
-			this.constraints = new ArrayList<SqlConstraint>();
-		} else {
-			this.constraints = constraints;
-		}
-	}
-
-	public void addConstraint(SqlConstraint constraint) {
-		this.constraints.add(constraint);
-	}
-	
-	public void addConstraints(List<SqlConstraint> constraints) {
-		this.constraints.addAll(constraints);
-	}
-
-	public String toString() {
-		return name;
-	}
-
-	public boolean hasConstraints() {
-		return !constraints.isEmpty();
-	}
-
-	/**
-	 * @return the isAssociativeTable
-	 */
-	public boolean isAssociativeTable() {
-		return isAssociativeTable;
-	}
-
-	/**
-	 * @param isAssociativeTable
-	 *                               the isAssociativeTable to set
-	 */
-	public void setAssociativeTable(boolean isAssociativeTable) {
-		this.isAssociativeTable = isAssociativeTable;
-	}
-
-	/**
-	 * @return the representedClass; can be <code>null</code>
-	 */
-	public ClassInfo getRepresentedClass() {
-		return representedClass;
-	}
-
-	/**
-	 * @param representedClass
-	 *                             the representedClass to set
-	 */
-	public void setRepresentedClass(ClassInfo representedClass) {
-		this.representedClass = representedClass;
-	}
-
-	/**
-	 * @return the representedAssociation; can be <code>null</code>
-	 */
-	public AssociationInfo getRepresentedAssociation() {
-		return representedAssociation;
-	}
-
-	/**
-	 * @param representedAssociation
-	 *                                   the representedAssociation to set
-	 */
-	public void setRepresentedAssociation(
-			AssociationInfo representedAssociation) {
-		this.representedAssociation = representedAssociation;
-	}
-
-	/**
-	 * @return the representedProperty; can be <code>null</code>
-	 */
-	public PropertyInfo getRepresentedProperty() {
-		return representedProperty;
-	}
-
-	/**
-	 * @param representedProperty
-	 *                                the representedProperty to set
-	 */
-	public void setRepresentedProperty(PropertyInfo representedProperty) {
-		this.representedProperty = representedProperty;
-	}
-
-	public boolean representsClass(ClassInfo ci) {
-		return (ci != null && this.representedClass != null
-				&& ci == this.representedClass);
-	}
-
-	/**
-	 * @return the global ID to represent the table, may be <code>null</code> if
-	 *         no such ID could be determined
-	 */
-	public String getGlobalId() {
-
-		String globalId = null;
-
-		if (representedClass != null) {
-
-			globalId = representedClass.globalIdentifier();
-
-		} else if (representedProperty != null
-				&& representedProperty.inClass().globalIdentifier() != null
-				&& representedProperty.globalIdentifier() != null) {
-
-			globalId = representedProperty.inClass().globalIdentifier() + "."
-					+ representedProperty.globalIdentifier();
-
-		} else if (representedAssociation != null) {
-
-			globalId = representedAssociation.globalIdentifier();
-		}
-
-		return globalId;
-	}
-
-	public void addColumn(Column column) {
-
-		this.columns.add(column);
-	}
-
-	public boolean representsCodeStatusCLType() {
-		return representsCodeStatusCLType;
-	}
-
-	public void setRepresentsCodeStatusCLType(
-			boolean representsCodeStatusCLType) {
-		this.representsCodeStatusCLType = representsCodeStatusCLType;
-	}
-
-	public String getDocumentation() {
-		return this.documentation;
-	}
-
-	public void setDocumentation(String documentation) {
-		this.documentation = documentation;
-	}
+    /**
+     * @param isUsageSpecific <code>true</code> if this table has been created to
+     *                        encode the value type of a specific property,
+     *                        <code>false</code> if this table has been created to
+     *                        encode the value type in general (so can be used as
+     *                        target of a 1:1 relationship)
+     */
+    public void setUsageSpecificTable(boolean isUsageSpecific) {
+	this.isUsageSpecific = isUsageSpecific;
+    }
 }

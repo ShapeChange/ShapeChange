@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts4/ts4/test4.json",
+  "$defs": {
+    "TS4_FT1": {
+      "$anchor": "TS4_FT1",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propFT1": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TS4_FT2": {
+      "$anchor": "TS4_FT2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propFT2": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TS4_FT3": {
+      "$anchor": "TS4_FT3",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propFT3": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TS4_FT4": {
+      "$anchor": "TS4_FT4",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT1"
+        },
+        {
+          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_Mixin"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propFT4": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TS4_FT5": {
+      "$anchor": "TS4_FT5",
+      "allOf": [
+        {
+          "$ref": "https://example.org/external/schema/definitions.json#External_Supertype"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propFT5": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TS4_Mixin": {
+      "$anchor": "TS4_Mixin",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "propMixin": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

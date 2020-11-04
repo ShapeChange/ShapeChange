@@ -2,8 +2,8 @@
   <title>Schematron constraints for schema 'Test Schema'</title>
   <ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
   <ns prefix="t1" uri="http://example.org/shapechange/schema"/>
-  <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
   <ns prefix="gml" uri="http://www.opengis.net/gml/3.2"/>
+  <ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
   <pattern>
     <rule context="t1:FeatureType3">
       <assert test="not((t1:roleFT3toFT1/* | //*[concat('#',@gml:id)=current()/t1:roleFT3toFT1/@xlink:href])[t1:p &lt;= 0])">inv_FT1</assert>

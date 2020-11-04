@@ -32,142 +32,144 @@
 package de.interactive_instruments.ShapeChange.Transformation.Profiling;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ProfileConstraintTransformerConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class ProfileConstraintTransformerConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_CLASSES_NOT_TO_BE_PROHIBITED_REGEX,
+	    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
+	    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
+	    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX,
+	    ProfileConstraintTransformer.PARAM_PROFILE_NAME, ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+	    ProfileConstraintTransformer.PARAM_SUBTYPE_NAME_PREFIX).collect(Collectors.toSet()));
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		Map<String, ProcessRuleSet> ruleSets = config.getRuleSets();
+	boolean isValid = true;
 
-		// get the set of all rules defined for the transformation
-		Set<String> rules = new HashSet<String>();
-		if (!ruleSets.isEmpty()) {
-			for (ProcessRuleSet ruleSet : ruleSets.values()) {
-				if (ruleSet.getAdditionalRules() != null) {
-					rules.addAll(ruleSet.getAdditionalRules());
-				}
-			}
+	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
+
+	Map<String, ProcessRuleSet> ruleSets = config.getRuleSets();
+
+	// get the set of all rules defined for the transformation
+	Set<String> rules = new HashSet<String>();
+	if (!ruleSets.isEmpty()) {
+	    for (ProcessRuleSet ruleSet : ruleSets.values()) {
+		if (ruleSet.getAdditionalRules() != null) {
+		    rules.addAll(ruleSet.getAdditionalRules());
 		}
-
-		if (rules.contains(
-				ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS)) {
-
-			isValid &= checkCombinationOfParameters(
-					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
-					config, result,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
-
-			isValid &= checkRequiredParameter(
-					ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
-					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
-					config, result);
-
-			isValid &= checkRequiredParameter(
-					ProfileConstraintTransformer.PARAM_PROFILE_NAME,
-					ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS,
-					config, result);
-		}
-
-		if (rules.contains(
-				ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES)) {
-
-			isValid &= checkCombinationOfParameters(
-					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
-					config, result,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
-					ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
-			
-			isValid &= checkRequiredParameter(
-					ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
-					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
-					config, result);
-
-			isValid &= checkRequiredParameter(
-					ProfileConstraintTransformer.PARAM_PROFILE_NAME,
-					ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
-					config, result);
-		}
-
-		return isValid;
+	    }
 	}
 
-	private boolean checkCombinationOfParameters(String ruleName,
-			ProcessConfiguration config, ShapeChangeResult result,
-			String... parameterNames) {
+	if (rules.contains(ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS)) {
 
-		for (String pn : parameterNames) {
-			String paramValue = config.parameterAsString(pn, null, false, true);
-			if (paramValue != null) {
-				return true;
-			}
-		}
+	    isValid &= checkCombinationOfParameters(
+		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS, config, result,
+		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
+		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
 
-		result.addError(this, 101, StringUtils.join(parameterNames, ", "));
-		return false;
+	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS, config, result);
+
+	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS, config, result);
 	}
 
-	private boolean checkRequiredParameter(String parameterName,
-			String ruleName, ProcessConfiguration config,
-			ShapeChangeResult result) {
+	if (rules.contains(
+		ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES)) {
 
-		String paramValue = config.parameterAsString(parameterName, null, false,
-				true);
+	    isValid &= checkCombinationOfParameters(
+		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+		    config, result, ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
+		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
 
-		if (paramValue == null) {
-			result.addError(this, 100, parameterName, ruleName);
-			return false;
-		} else {
-			return true;
-		}
+	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+		    config, result);
+
+	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
+		    config, result);
 	}
 
-	@Override
-	public String message(int mnr) {
+	return isValid;
+    }
 
-		switch (mnr) {
-		case 0:
-			return "Context: property '$1$'.";
-		case 1:
-			return "Context: class '$1$'.";
-		case 2:
-			return "Context: association class '$1$'.";
-		case 3:
-			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-		case 4:
-			return "Syntax exception for regular expression value of configuration parameter '$1$'. Regular expression value was: $2$. Exception message: $3$.";
+    private boolean checkCombinationOfParameters(String ruleName, ProcessConfiguration config, ShapeChangeResult result,
+	    String... parameterNames) {
 
-		// Validation messages
-		case 100:
-			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-		case 101:
-			return "At least one of the parameters '$1$' must be provided.";
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
-		}
+	for (String pn : parameterNames) {
+	    String paramValue = config.parameterAsString(pn, null, false, true);
+	    if (paramValue != null) {
+		return true;
+	    }
 	}
+
+	result.addError(this, 101, StringUtils.join(parameterNames, ", "));
+	return false;
+    }
+
+    private boolean checkRequiredParameter(String parameterName, String ruleName, ProcessConfiguration config,
+	    ShapeChangeResult result) {
+
+	String paramValue = config.parameterAsString(parameterName, null, false, true);
+
+	if (paramValue == null) {
+	    result.addError(this, 100, parameterName, ruleName);
+	    return false;
+	} else {
+	    return true;
+	}
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "Context: class '$1$'.";
+	case 2:
+	    return "Context: association class '$1$'.";
+	case 3:
+	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 4:
+	    return "Syntax exception for regular expression value of configuration parameter '$1$'. Regular expression value was: $2$. Exception message: $3$.";
+
+	// Validation messages
+	case 100:
+	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 101:
+	    return "At least one of the parameters '$1$' must be provided.";
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

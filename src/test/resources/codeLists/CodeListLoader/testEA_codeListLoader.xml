@@ -53,7 +53,6 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/codeLists/CodeListLoader/results/singleLanguage" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="infoURL" value="http://example.org/info" />
 			<targetParameter name="gmlid" value="name" />
 			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
 		</TargetXmlSchema>

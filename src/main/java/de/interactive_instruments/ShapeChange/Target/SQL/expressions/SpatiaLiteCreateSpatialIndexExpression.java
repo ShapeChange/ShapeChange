@@ -68,7 +68,7 @@ public class SpatiaLiteCreateSpatialIndexExpression implements Expression {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("CreateSpatialIndex('");
-		sb.append(this.table.getName());
+		sb.append(this.table.getFullName());
 		sb.append("', '");
 		sb.append(this.column.getName());
 		sb.append("')");

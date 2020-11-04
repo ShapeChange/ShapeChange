@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/constraintConverter/valueTypeRestrictionToTV/testEA_ConstraintConverter_valueTypeRestrictionToTV.xml" end="Fri Feb 07 10:13:28 CET 2020" resultCode="0" start="Fri Feb 07 10:13:17 CET 2020" version="2.9.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'trf' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'trf' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
+    <Info message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
+    <Info message="---------- now processing: rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion ----------"/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema - Exclusion', target namespace: 'http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/exclusion'"/>
+    <Info message="Now processing target 'XML Schema' for input 'trf'."/>
+    <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'trf'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/constraintConverter/valueTypeRestrictionToTV/trf/cc_exclusion.xsd" scope="http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/exclusion" target="XML Schema">cc_exclusion.xsd</Result>
+  </Results>
+</ShapeChangeResult>

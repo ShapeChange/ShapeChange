@@ -487,9 +487,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
     }
 
     /**
-     * Adds the new property to the set of properties of this class. The behavior
-     * for adding a property that has the same name as an existing one is determined
-     * by a parameter.
+     * Adds the new property to the set of properties of this class (and also
+     * registers the property in the model). The behavior for adding a property that
+     * has the same name as an existing one is determined by a parameter.
      * 
      * WARNING1: if the given property does not have the same name as an existing
      * one but the same sequence number, this will overwrite the existing property
@@ -587,10 +587,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
      * Adds the given constraints to the constraints of this class, preventing
      * duplicates (references to same constraint object).
      * 
+     * @param list constraints to add; can be empty or <code>null</code>
      * NOTE: This may also add constraints defined for a different context element, 
      * e.g. when flattening types.
-     * 
-     * @param list constraints to add; can be empty or <code>null</code>
      */
     public void addConstraints(List<Constraint> list) {
 	if (list == null || list.isEmpty())

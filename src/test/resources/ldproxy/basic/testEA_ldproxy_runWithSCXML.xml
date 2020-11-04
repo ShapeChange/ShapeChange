@@ -34,7 +34,6 @@
 	<targets>	
 		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy.Config" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/ldproxy/basic"/>
-			<targetParameter name="outputBaseFilename" value="ldproxy_config"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="serviceId" value="sid"/>
 			<targetParameter name="serviceLabel" value="label"/>

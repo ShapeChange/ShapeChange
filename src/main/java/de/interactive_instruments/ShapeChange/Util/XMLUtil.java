@@ -53,6 +53,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,8 +63,7 @@ import org.xml.sax.SAXException;
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class XMLUtil {
@@ -272,5 +272,40 @@ public class XMLUtil {
 	} catch (Exception e) {
 	    throw new Exception("Error while writing XML file. Exception message is: " + e.getMessage(), e);
 	}
+    }
+
+    /**
+     * @param nl must not be null
+     * @return a list of element nodes contained in the given node list; can be
+     *         empty but not <code>null</code>
+     */
+    public static List<Element> getElementNodes(NodeList nl) {
+
+	List<Element> result = new ArrayList<Element>();
+
+	if (nl != null && nl.getLength() != 0) {
+	    for (int k = 0; k < nl.getLength(); k++) {
+		Node n = nl.item(k);
+		if (n.getNodeType() == Node.ELEMENT_NODE) {
+		    result.add((Element) n);
+		}
+	    }
+	}
+
+	return result;
+    }
+
+    /**
+     * Adds an attribute to the given element.
+     * 
+     * @param document The document to which the element belongs
+     * @param e        The element to which the attribute shall be added
+     * @param attName  name of the new attribute
+     * @param attValue value of the new attribute
+     */
+    public static void addAttribute(Document document, Element e, String attName, String attValue) {
+	Attr att = document.createAttribute(attName);
+	att.setValue(attValue);
+	e.setAttributeNode(att);
     }
 }

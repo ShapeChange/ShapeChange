@@ -169,6 +169,14 @@ public interface ClassInfo extends Info {
      *         the class itself). Can be empty but not <code>null</code>
      */
     public SortedSet<ClassInfo> supertypeClasses();
+    
+    /**
+     * @return Set with all direct subtypes of this class (WARNING: this can be a
+     *         shallow copy or derived set, thus it is not safe to assume that
+     *         modifications to this set will update the subtype information in
+     *         the class itself). Can be empty but not <code>null</code>
+     */
+    public SortedSet<ClassInfo> subtypeClasses();
 
     /**
      * Check whether the class and the package pi are part of the same schema (= XML
@@ -230,10 +238,12 @@ public interface ClassInfo extends Info {
     /**
      * Get a set of all navigable properties (attributes and association roles) that
      * belong to this class or one of the types in its supertype hierarchy.
+     * Overridden properties are omitted!
      * 
-     * @return A map containing all navigable properties (attributes and association
+     * @return A set containing all navigable properties (attributes and association
      *         roles) that belong to this class or one of the types in its supertype
-     *         hierarchy. The set can be empty but not <code>null</code>.
+     *         hierarchy - excluding overridden properties. The set can be empty but
+     *         not <code>null</code>.
      */
     public SortedSet<PropertyInfo> propertiesAll();
 

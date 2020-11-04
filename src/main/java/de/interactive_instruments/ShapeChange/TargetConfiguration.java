@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.w3c.dom.Element;
 
@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
  */
 public class TargetConfiguration extends ProcessConfiguration {
 
-	private Set<String> inputIds;
+	private SortedSet<String> inputIds;
 	private List<Namespace> namespaces;
 
 	/**
@@ -89,7 +89,7 @@ public class TargetConfiguration extends ProcessConfiguration {
 	public TargetConfiguration(String className, ProcessMode processMode,
 			Map<String, String> parameters,
 			Map<String, ProcessRuleSet> ruleSets,
-			List<ProcessMapEntry> mapEntries, Set<String> inputIds,
+			List<ProcessMapEntry> mapEntries, SortedSet<String> inputIds,
 			List<Namespace> namespaces, Element advancedProcessConfigurations) {
 
 		super(className, processMode, parameters, ruleSets, mapEntries,
@@ -106,7 +106,7 @@ public class TargetConfiguration extends ProcessConfiguration {
 		}
 	}
 
-	public Set<String> getInputIds() {
+	public SortedSet<String> getInputIds() {
 		return inputIds;
 	}
 

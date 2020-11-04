@@ -37,59 +37,74 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.PostgreSQLAlterRole;
 
 /**
  * Creates the DDL representation for the set of visited SQL statements for a
  * PostgreSQL DB.
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class PostgreSQLDdlVisitor extends DdlVisitor {
 
-	public PostgreSQLDdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
-		super(crlf, indent, sqlddl);
+    public PostgreSQLDdlVisitor(String crlf, String indent, SqlDdl sqlddl) {
+	super(crlf, indent, sqlddl);
+    }
+
+    @Override
+    public void visit(CreateIndex createIndex) {
+
+	// Syntax:
+	// https://www.postgresql.org/docs/10/static/sql-createindex.html
+
+	Index index = createIndex.getIndex();
+	Properties indexProps = index.getProperties();
+
+	sb.append("CREATE ");
+
+	if (index.getType() != null) {
+	    sb.append(index.getType());
+	    sb.append(" ");
 	}
 
-	@Override
-	public void visit(CreateIndex createIndex) {
+	sb.append("INDEX ");
+	sb.append(index.getName());
+	sb.append(" ON ");
+	sb.append(createIndex.getTable().getFullName());
 
-		// Syntax:
-		// https://www.postgresql.org/docs/10/static/sql-createindex.html
-
-		Index index = createIndex.getIndex();
-		Properties indexProps = index.getProperties();
-
-		sb.append("CREATE ");
-
-		if (index.getType() != null) {
-			sb.append(index.getType());
-			sb.append(" ");
-		}
-
-		sb.append("INDEX ");
-		sb.append(index.getName());
-		sb.append(" ON ");
-		sb.append(createIndex.getTable().getName());
-
-		if (indexProps.containsKey(PostgreSQLConstants.PROPERTY_METHOD)) {
-			sb.append(" USING ");
-			sb.append(indexProps
-					.getProperty(PostgreSQLConstants.PROPERTY_METHOD));
-		}
-
-		if (index.hasColumns()) {
-			sb.append(" ");
-			sb.append(SqlUtil.getStringList(index.getColumns(), true, true));
-		}
-
-		if (index.hasSpecs()) {
-			sb.append(" ");
-			sb.append(StringUtils.join(index.getSpecs(), " "));
-		}
-
-		sb.append(";");
-		sb.append(crlf);
+	if (indexProps.containsKey(PostgreSQLConstants.PROPERTY_METHOD)) {
+	    sb.append(" USING ");
+	    sb.append(indexProps.getProperty(PostgreSQLConstants.PROPERTY_METHOD));
 	}
+
+	if (index.hasColumns()) {
+	    sb.append(" ");
+	    sb.append(SqlUtil.getStringList(index.getColumns(), true, true));
+	}
+
+	if (index.hasSpecs()) {
+	    sb.append(" ");
+	    sb.append(StringUtils.join(index.getSpecs(), " "));
+	}
+
+	sb.append(";");
+	sb.append(crlf);
+    }
+
+
+    @Override
+    public void visit(PostgreSQLAlterRole postgreSQLAlterRole) {
+
+	// https://www.postgresql.org/docs/10/sql-alterrole.html
+	sb.append("ALTER ROLE ");
+
+	sb.append(postgreSQLAlterRole.getRoleSpecificationOrALL());
+
+	sb.append(" ");
+	sb.append(postgreSQLAlterRole.getSpec());
+
+	sb.append(";");
+	sb.append(crlf);
+    }
 }

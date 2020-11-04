@@ -33,6 +33,7 @@
 package de.interactive_instruments.ShapeChange.Transformation;
 
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.Process;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
@@ -44,7 +45,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
  */
-public interface Transformer {
+public interface Transformer extends Process {
 
 	/**
 	 * Processes the model.

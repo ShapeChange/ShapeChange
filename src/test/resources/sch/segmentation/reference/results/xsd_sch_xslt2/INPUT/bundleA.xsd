@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ex="http://example.org/shapechange/sch/segmentation" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/sch/segmentation" version="1">
+  <include schemaLocation="leafA1.xsd"/>
+  <include schemaLocation="test.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT_BundleA" substitutionGroup="gml:AbstractFeature" type="ex:FT_BundleAType"/>
+  <complexType name="FT_BundleAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_BundleAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_BundleA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT_LeafA2" substitutionGroup="gml:AbstractFeature" type="ex:FT_LeafA2Type"/>
+  <complexType name="FT_LeafA2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_LeafA2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="ex:FT_LeafA2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

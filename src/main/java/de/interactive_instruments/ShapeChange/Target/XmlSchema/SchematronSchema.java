@@ -9,8 +9,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
  * Schema.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public interface SchematronSchema {
@@ -22,7 +21,7 @@ public interface SchematronSchema {
      * 'defaultCodeListValuePattern'. If that also does not result in a non-empty
      * value, us the given default pattern.
      *
-     * @param codelist tbd
+     * @param codelist       tbd
      * @param defaultPattern pattern to use if the lookup via tagged value and
      *                       target parameter did not yield a non-empty result
      * @return tbd
@@ -47,8 +46,8 @@ public interface SchematronSchema {
     /**
      * Auxiliary method to find out the full, namespace adorned name of a property
      * from the model. As a side effect the method makes the namespace also known to
-     * the Schematron schema, appending another &lt;ns&gt; element if necessary. Takes
-     * into account XsdPropertyMapEntry defined in the configuration.
+     * the Schematron schema, appending another &lt;ns&gt; element if necessary.
+     * Takes into account XsdPropertyMapEntry defined in the configuration.
      *
      * @param pi PropertyInfo object
      * @return Element name of property (a QName: {ns prefix}:{property name})
@@ -67,8 +66,8 @@ public interface SchematronSchema {
 
     /**
      * This auxiliary method registers a namespace prefix with the Schematron
-     * schema. It adds another &lt;ns&gt; element when the namespace occurs the first
-     * time
+     * schema. It adds another &lt;ns&gt; element when the namespace occurs the
+     * first time
      *
      * @param xmlns Namespace prefix
      */
@@ -115,9 +114,9 @@ public interface SchematronSchema {
 
     /**
      * Add an assertion statement embodied in an XpathFragment object and output it
-     * as a Schematron &lt;assert&gt; element, which is contained in a proper &lt;rule&gt;
-     * context. &lt;let&gt; elements are searched for identities and are merged
-     * including the necessary name corrections in the text.
+     * as a Schematron &lt;assert&gt; element, which is contained in a proper
+     * &lt;rule&gt; context. &lt;let&gt; elements are searched for identities and
+     * are merged including the necessary name corrections in the text.
      * <p>
      * NOTE: Does NOT add assertions to subtypes of the given class.
      *
@@ -126,17 +125,22 @@ public interface SchematronSchema {
      * @param text  Explanatory text concerning the assertion
      */
     public void addAssertion(ClassInfo ci, XpathFragment xpath, String text);
-    
+
     /**
      * Add an assertion statement embodied in an XpathFragment object and output it
-     * as a Schematron &lt;assert&gt; element, which is contained in a proper &lt;rule&gt;
-     * context. &lt;let&gt; elements are searched for identities and are merged
-     * including the necessary name corrections in the text.
+     * as a Schematron &lt;assert&gt; element, which is contained in a proper
+     * &lt;rule&gt; context. &lt;let&gt; elements are searched for identities and
+     * are merged including the necessary name corrections in the text.
      *
-     * @param ci    ClassInfo object, which is context to the constraint.
-     * @param addToSubtypesInSelectedSchemas - <code>true</code> if the assertion statement shall also be added to subtypes of ci, else <code>false</code>
-     * @param xpath Assertion embodied in an XpathFragment object.
-     * @param text  Explanatory text concerning the assertion
+     * @param ci                             ClassInfo object, which is context to
+     *                                       the constraint.
+     * @param addToSubtypesInSelectedSchemas - <code>true</code> if the assertion
+     *                                       statement shall also be added to
+     *                                       subtypes of ci, else <code>false</code>
+     * @param xpath                          Assertion embodied in an XpathFragment
+     *                                       object.
+     * @param text                           Explanatory text concerning the
+     *                                       assertion
      */
     public void addAssertion(ClassInfo ci, boolean addToSubtypesInSelectedSchemas, XpathFragment xpath, String text);
 
@@ -153,8 +157,8 @@ public interface SchematronSchema {
     /**
      * Add an assertion statement - that will result by translating the given OCL
      * constraint, which is defined for a property, to an XpathFragment object - and
-     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion to
-     * abstract or suppressed classes.
+     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion
+     * to abstract or suppressed classes.
      *
      * <p>
      * The rule context is a class, which is determined by parameter cib. This
@@ -183,8 +187,8 @@ public interface SchematronSchema {
 
     /**
      * Add an assertion statement embodied in an XpathFragment object and output it
-     * as a Schematron &lt;assert&gt; element. Does not add an assertion to abstract or
-     * suppressed classes.
+     * as a Schematron &lt;assert&gt; element. Does not add an assertion to abstract
+     * or suppressed classes.
      *
      * <p>
      * The rule context is the property element, prefixed by the element that
@@ -212,4 +216,15 @@ public interface SchematronSchema {
      */
     public void addAssertionForExplicitProperty(ClassInfo cib, PropertyInfo pi, boolean addToSubtypesInSelectedSchemas,
 	    XpathFragment xpath, String text);
+
+    /**
+     * @return <code>true</code> if the Schematron schema has at least one rule
+     *         (with assertion(s)), else <code>false</code>
+     */
+    public boolean hasRules();
+    
+    /**
+     * @return the file name of this Schematron schema
+     */
+    public String getFileName();
 }

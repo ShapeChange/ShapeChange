@@ -37,12 +37,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -54,6 +54,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -63,12 +64,11 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement;
-import de.interactive_instruments.ShapeChange.ModelDiff.Differ;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement.ElementType;
+import de.interactive_instruments.ShapeChange.ModelDiff.Differ;
 import de.interactive_instruments.ShapeChange.Profile.ModelProfileValidator;
 import de.interactive_instruments.ShapeChange.Profile.ProfileUtil;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**
@@ -418,14 +418,14 @@ public class ProfileLoader implements Transformer, MessageSource {
 				/*
 				 * 0.2 Validate profile definitions of input model
 				 */
-				result.addInfo(this, 111);
+				result.addProcessFlowInfo(this, 111);
 
 				ModelProfileValidator mpv = new ModelProfileValidator(
 						inputModel, result);
 				mpv.validateModelConsistency(inputModelExplicitProfiles, true,
 						!processAllSchemas);
 
-				result.addInfo(this, 115);
+				result.addProcessFlowInfo(this, 115);
 			}
 
 			if (!inputModelExplicitProfiles) {
@@ -536,14 +536,14 @@ public class ProfileLoader implements Transformer, MessageSource {
 						/*
 						 * 2.1 Validate profile definitions in loaded model
 						 */
-						result.addInfo(this, 110, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 110, loadedProfileFileLocation);
 
 						ModelProfileValidator mpv = new ModelProfileValidator(
 								loadedModel, result);
 						mpv.validateModelConsistency(true, true,
 								!processAllSchemas);
 
-						result.addInfo(this, 116, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 116, loadedProfileFileLocation);
 					}
 
 					if (rules.contains(RULE_DIFF_MODELS)) {
@@ -557,7 +557,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 						 * example for re-use in common transformation that
 						 * performs model diffs?
 						 */
-						result.addInfo(this, 105, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 105, loadedProfileFileLocation);
 
 						SortedSet<? extends PackageInfo> schemasToDiff = processAllSchemas
 								? inputModel.schemas(null)
@@ -641,7 +641,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 							}
 						}
 
-						result.addInfo(this, 106, loadedProfileFileLocation);
+						result.addProcessFlowInfo(this, 106, loadedProfileFileLocation);
 					}
 
 					/*

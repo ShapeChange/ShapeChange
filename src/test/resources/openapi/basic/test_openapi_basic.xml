@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/test/resources/openapi/basic/test_openapi_basic.eap"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+<!--  <parameter name="extractSeparator" value="-\-"/>-->
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="none"/>
+   <DescriptorSource descriptor="definition" source="none"/>
+   <DescriptorSource descriptor="description" source="none"/>
+   <DescriptorSource descriptor="example" source="none"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+  <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/openapi/basic/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="model" input="input" mode="enabled"/>
+ </transformers>
+ <targets>
+
+  <Target class="de.interactive_instruments.ShapeChange.Target.OpenApi.OpenApiDefinition" mode="enabled" inputs="model">
+   <advancedProcessConfigurations>
+    <OpenApiConfigItems>
+     <conformanceClasses>      
+      <ConformanceClass uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core" overlay="src/main/resources/openapi/overlays/features-1-10-core.json"/>
+      <ConformanceClass uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson" overlay="src/main/resources/openapi/overlays/features-1-10-geojson.json"/>
+      <ConformanceClass uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html" overlay="src/main/resources/openapi/overlays/features-1-10-html.json"/>
+      <ConformanceClass uri="http://www.opengis.net/spec/ogcapi-features-2/1.0/conf/crs" overlay="src/main/resources/openapi/overlays/features-2-10-crs.json" param="http://www.opengis.net/def/crs/OGC/1.3/CRS84 http://www.opengis.net/def/crs/EPSG/0/4326 http://www.opengis.net/def/crs/EPSG/0/3395"/>      
+     </conformanceClasses>
+     <queryParameters>
+      <QueryParameter name="f" overlay="src/test/resources/openapi/basic/config/f.json" appliesToPhase="pre-feature-identification"/>
+      <QueryParameter name="string" overlay="src/test/resources/openapi/basic/config/string.json" appliesToPhase="finalization"/>
+     </queryParameters>
+    </OpenApiConfigItems>
+   </advancedProcessConfigurations>
+   <targetParameter name="outputDirectory" value="testResults/openapi/basic"/>
+   <targetParameter name="outputFilename" value="openapi.json"/>
+   <targetParameter name="baseTemplate" value="src/main/resources/openapi/overlays/default-template.json"/>
+   <targetParameter name="jsonSchemasBaseLocation" value="https://example.org/schemas/json"/>
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>  
+   <targetParameter name="collections" value="FeatureType1, FeatureType2, TS2_FT2, TS2_FT3, TS2_FT4"/>
+   <targetParameter name="defaultEncodingRule" value="myopenapi"/>
+   <rules>
+    <EncodingRule name="myopenapi">
+     <rule name="rule-openapi-all-explicit-collections"/>
+<!--        <rule name="rule-openapi-cls-instantiable-feature-types"/>   -->
+<!--        <rule name="rule-openapi-cls-top-level-feature-types"/>-->
+    </EncodingRule>
+   </rules>   
+  </Target>
+  <!-- =================================== -->
+  <!-- ====== OpenApi 3.0 - JSON ====== -->
+  <!-- =================================== -->
+  <!--<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="model">
+   <targetParameter name="appSchemaNameRegex" value="Test Schema 01.*"/>   
+   <targetParameter name="outputDirectory" value="testResults/openapi/basic/json_schemas/openapi30/json"/>
+   <targetParameter name="sortedOutput" value="true"/>   
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>   
+   <targetParameter name="jsonBaseUri" value="https://example.org/schemas/json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>   
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/> 
+   <targetParameter name="defaultEncodingRule" value="myGeoJson"/>   
+   <xi:include href="src/main/resources/config/StandardRules.xml"/>
+   <rules>
+    <EncodingRule name="myGeoJson" extends="defaultGeoJson">
+     <rule name="rule-json-cls-union-propertyCount"/>
+    </EncodingRule>
+   </rules> 
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <MapEntry type="MD_Metadata" rule="*" targetType="https://example.org/external/schema/definitions.json#MD_Metadata" param=""/>
+   </mapEntries>
+  </Target>-->
+ </targets>
+</ShapeChangeConfiguration>

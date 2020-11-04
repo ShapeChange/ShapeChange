@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
+    <MapEntry type="Character" rule="*" targetType="string" param="keywords{minLength=1;maxLength=1}"/>
+    <MapEntry type="URI" rule="*" targetType="string" param="keywords{format=uri}"/>
+    <MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
+    <MapEntry type="Integer" rule="*" targetType="integer" param=""/>
+    <MapEntry type="Decimal" rule="*" targetType="number" param=""/>
+    <MapEntry type="Number" rule="*" targetType="number" param=""/>
+    <MapEntry type="Real" rule="*" targetType="number" param=""/>
+    <MapEntry type="Measure" rule="*" targetType="number" param=""/>
+    <MapEntry type="Length" rule="*" targetType="number" param=""/>
+    <MapEntry type="Date" rule="*" targetType="string" param="keywords{format=date}"/>
+    <MapEntry type="DateTime" rule="*" targetType="string" param="keywords{format=date-time}"/>
+	<MapEntry type="Time" rule="*" targetType="string" param="keywords{format=time}"/>
+<MapEntry type="Any" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" param=""/>
+    <!-- ISO/TS 19107 -->
+    <MapEntry type="GM_Curve" rule="*" targetType="https://geojson.org/schema/LineString.json" param="geometry"/>
+    <MapEntry type="GM_MultiCurve" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" param="geometry"/>
+    <MapEntry type="GM_MultiPoint" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" param="geometry"/>
+    <MapEntry type="GM_MultiSurface" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" param="geometry"/>
+    <MapEntry type="GM_Object" rule="*" targetType="https://geojson.org/schema/Geometry.json" param="geometry"/>
+    <MapEntry type="GM_Point" rule="*" targetType="https://geojson.org/schema/Point.json" param="geometry"/>
+    <MapEntry type="GM_Surface" rule="*" targetType="https://geojson.org/schema/Polygon.json" param="geometry"/>
+</mapEntries>

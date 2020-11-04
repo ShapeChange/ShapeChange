@@ -1,0 +1,59 @@
+{
+  "$id": "https://example.org/baseuri/ts5/ts5/test5.json",
+  "definitions": {
+    "TS5_Union": {
+      "type": "object",
+      "properties": {
+        "option1": {
+          "type": "string"
+        },
+        "option2": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1
+    },
+    "TS5_Union_TypeDiscriminator": {
+      "oneOf": [
+        {
+          "$ref": "https://geojson.org/schema/Point.json"
+        },
+        {
+          "type": "string",
+          "format": "date"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "TS5_Union_TypeDiscriminator_OtherType": {
+      "$ref": "https://geojson.org/schema/Point.json"
+    },
+    "TS5_Union_TypeDiscriminator_OtherTypes": {
+      "oneOf": [
+        {
+          "$ref": "https://geojson.org/schema/LineString.json"
+        },
+        {
+          "$ref": "https://geojson.org/schema/Point.json"
+        }
+      ]
+    },
+    "TS5_Union_TypeDiscriminator_SimpleTypes": {
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  }
+}

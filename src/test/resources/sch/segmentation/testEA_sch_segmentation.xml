@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/sch/segmentation/test_sch_segmentation.eap" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation"
+				source="ea:notes" />
+			<DescriptorSource descriptor="alias"
+				source="ea:alias" />
+			<DescriptorSource descriptor="definition"
+				source="sc:extract" token="Definition" />
+			<DescriptorSource descriptor="description"
+				source="sc:extract" token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis"
+				source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language"
+				source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include
+			href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/sch/segmentation/log.xml" />
+	</log>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			mode="enabled" inputs="INPUT">
+			<targetParameter name="outputDirectory"
+				value="testResults/sch/segmentation/results/xsd_sch_xslt2" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule"
+				value="myrule_gml32" />
+			<targetParameter name="documentationTemplate"
+				value="[[definition]]" />
+			<targetParameter name="schematronFileNameTemplate"
+				value="[[SCHEMA_XSD_BASENAME]]_SchematronSchema.sch" />
+			<targetParameter name="schematronQueryBinding" value="xslt2"/>
+			<targetParameter name="segmentSchematron" value="true"/>
+			<rules>
+				<EncodingRule name="myrule_gml32"
+					extends="iso19136_2007">
+					<rule name="rule-xsd-prop-nillable" />
+					<rule name="rule-xsd-pkg-schematron" />
+				</EncodingRule>				
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardNamespaces.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

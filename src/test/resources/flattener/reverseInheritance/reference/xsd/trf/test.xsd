@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://example.org/shapechange/schema/external" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/shapechange/schema/test" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema/test" version="1.0">
+  <annotation>
+    <documentation>Alias: applicationSchema</documentation>
+  </annotation>
+  <import namespace="http://example.org/shapechange/schema/external"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DTRoot1" substitutionGroup="gml:AbstractObject" type="t:DTRoot1Type">
+    <annotation>
+      <documentation>Alias: DTR1</documentation>
+    </annotation>
+  </element>
+  <complexType name="DTRoot1Type">
+    <sequence>
+      <element name="_type" type="t:DTRoot1TypeType">
+        <annotation>
+          <documentation>Alias: _type</documentation>
+        </annotation>
+      </element>
+      <element name="attDT1" type="boolean">
+        <annotation>
+          <documentation>Alias: adt1</documentation>
+        </annotation>
+      </element>
+      <element maxOccurs="unbounded" name="attDT2" type="t:DTRoot2PropertyType">
+        <annotation>
+          <documentation>Alias: adt2</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attDTSubtype1_DTSubtype1A" type="double">
+        <annotation>
+          <documentation>Alias: adts1_DTS1A</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attDTSubtype1_DTSubtype1B" type="string">
+        <annotation>
+          <documentation>Alias: adts1_DTS1B</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attExtDTSubtype1" type="double">
+        <annotation>
+          <documentation>Alias: aedts1</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attExtDTSubtype2" type="double">
+        <annotation>
+          <documentation>Alias: aedts2</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attExtDTSubtype3" type="string">
+        <annotation>
+          <documentation>Alias: aedts3</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attExtDTSubtype45_ExtDTSubtype4" type="string">
+        <annotation>
+          <documentation>Alias: aedts45_EDTS4</documentation>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="attExtDTSubtype45_ExtDTSubtype5" type="boolean">
+        <annotation>
+          <documentation>Alias: aedts45_EDTS5</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="DTRoot1PropertyType">
+    <sequence>
+      <element ref="t:DTRoot1"/>
+    </sequence>
+  </complexType>
+  <simpleType name="DTRoot1TypeType">
+    <annotation>
+      <documentation>Alias: DTR1_TE</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="DTSubtype1A">
+        <annotation>
+          <documentation>Alias: DTS1A</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="DTSubtype1B">
+        <annotation>
+          <documentation>Alias: DTS1B</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtDTSubtype1">
+        <annotation>
+          <documentation>Alias: EDTS1</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtDTSubtype2">
+        <annotation>
+          <documentation>Alias: EDTS2</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtDTSubtype4">
+        <annotation>
+          <documentation>Alias: EDTS4</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtDTSubtype5">
+        <annotation>
+          <documentation>Alias: EDTS5</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="DTRoot2" substitutionGroup="ext:ExtDTSupertype" type="t:DTRoot2Type">
+    <annotation>
+      <documentation>Alias: DTR2</documentation>
+    </annotation>
+  </element>
+  <complexType name="DTRoot2Type">
+    <complexContent>
+      <extension base="ext:ExtDTSupertypeType">
+        <sequence>
+          <element name="_type" type="t:DTRoot2TypeType">
+            <annotation>
+              <documentation>Alias: _type</documentation>
+            </annotation>
+          </element>
+          <element name="attDT2" type="integer">
+            <annotation>
+              <documentation>Alias: adt2</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attDTSubtype2A" type="boolean">
+            <annotation>
+              <documentation>Alias: adts2a</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attDTSubtype2B" type="string">
+            <annotation>
+              <documentation>Alias: adts2b</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="DTRoot2PropertyType">
+    <sequence>
+      <element ref="t:DTRoot2"/>
+    </sequence>
+  </complexType>
+  <simpleType name="DTRoot2TypeType">
+    <annotation>
+      <documentation>Alias: DTR2_TE</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="DTRoot2">
+        <annotation>
+          <documentation>Alias: DTR2</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="DTSubtype2B">
+        <annotation>
+          <documentation>Alias: DTS2B</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="FT2" substitutionGroup="gml:AbstractFeature" type="t:FT2Type">
+    <annotation>
+      <documentation>Alias: FT2</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT3" substitutionGroup="gml:AbstractFeature" type="t:FT3Type">
+    <annotation>
+      <documentation>Alias: FT3</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attFT3" type="double">
+            <annotation>
+              <documentation>Alias: aft3</documentation>
+            </annotation>
+          </element>
+          <element name="roleFT3toExtFTSubtype2" type="t:FTRoot1PropertyType">
+            <annotation>
+              <documentation>Alias: rft3efts2</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleExtFTSubtypeToFT3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="roleFT3toExtFTSubtype3" type="t:FTRoot1PropertyType">
+            <annotation>
+              <documentation>Alias: rft3efts3</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ext:roleExtFTSubtypeToFT3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT4" substitutionGroup="gml:AbstractFeature" type="t:FT4Type">
+    <annotation>
+      <documentation>Alias: FT4</documentation>
+    </annotation>
+  </element>
+  <complexType name="FT4Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleFT4toFT1Subtype1C" type="t:FTRoot1PropertyType">
+            <annotation>
+              <documentation>Alias: rft4ft1s1c</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFTSubtype1CtoFT4</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT4PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT4"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FTRoot1" substitutionGroup="gml:AbstractFeature" type="t:FTRoot1Type">
+    <annotation>
+      <documentation>Alias: FTR1</documentation>
+    </annotation>
+  </element>
+  <complexType name="FTRoot1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="_type" type="t:FTRoot1TypeType">
+            <annotation>
+              <documentation>Alias: _type</documentation>
+            </annotation>
+          </element>
+          <element name="roleFTRoot1ToFT2" type="t:FT2PropertyType">
+            <annotation>
+              <documentation>Alias: rftr1ft2</documentation>
+            </annotation>
+          </element>
+          <element name="attFTRoot1" type="double">
+            <annotation>
+              <documentation>Alias: aftr1</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attExtFTSubtype1" type="double">
+            <annotation>
+              <documentation>Alias: aefts1</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attExtFTSubtype2" type="ext:ExtDTSupertypePropertyType">
+            <annotation>
+              <documentation>Alias: aefts2</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attFTSubtype1A" type="double">
+            <annotation>
+              <documentation>Alias: afts1a</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attFTSubtype1B" type="integer">
+            <annotation>
+              <documentation>Alias: afts1b</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attFTSubtype1C" type="integer">
+            <annotation>
+              <documentation>Alias: afts1c</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attMixin1" type="string">
+            <annotation>
+              <documentation>Alias: am1</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attMixin2" type="integer">
+            <annotation>
+              <documentation>Alias: am2</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="roleExtFTSubtypeToFT3" type="t:FT3PropertyType">
+            <annotation>
+              <documentation>Alias: reftsft3</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFT3toExtFTSubtype2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="roleFTSubtype1CtoFT4" type="t:FT4PropertyType">
+            <annotation>
+              <documentation>Alias: rfts1cft4</documentation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFT4toFT1Subtype1C</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="roleFTSubtype1toFTSubtype2_FTSubtype1A" type="t:FTRoot2PropertyType">
+            <annotation>
+              <documentation>Alias: rfts1fts2_FTS1A</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="roleFTSubtype1toFTSubtype2_FTSubtype1B" type="t:FTRoot2PropertyType">
+            <annotation>
+              <documentation>Alias: rfts1fts2_FTS1B</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FTRoot1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FTRoot1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="FTRoot1TypeType">
+    <annotation>
+      <documentation>Alias: FTR1_TE</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="ExtFTSubtype1">
+        <annotation>
+          <documentation>Alias: EFTS1</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtFTSubtype2">
+        <annotation>
+          <documentation>Alias: EFTS2</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="ExtFTSubtype3">
+        <annotation>
+          <documentation>Alias: EFTS3</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTRoot1">
+        <annotation>
+          <documentation>Alias: FTR1</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype1A">
+        <annotation>
+          <documentation>Alias: FTS1A</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype1C">
+        <annotation>
+          <documentation>Alias: FTS1C</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="FTRoot2" substitutionGroup="ext:ExtFTSupertype" type="t:FTRoot2Type">
+    <annotation>
+      <documentation>Alias: FTR2</documentation>
+    </annotation>
+  </element>
+  <complexType name="FTRoot2Type">
+    <complexContent>
+      <extension base="ext:ExtFTSupertypeType">
+        <sequence>
+          <element name="_type" type="t:FTRoot2TypeType">
+            <annotation>
+              <documentation>Alias: _type</documentation>
+            </annotation>
+          </element>
+          <element name="attFTRoot2" type="string">
+            <annotation>
+              <documentation>Alias: aftr2</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attFTSubtype2A" type="integer">
+            <annotation>
+              <documentation>Alias: afts2a</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attFTSubtype2B" type="string">
+            <annotation>
+              <documentation>Alias: afts2b</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FTRoot2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FTRoot2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="FTRoot2TypeType">
+    <annotation>
+      <documentation>Alias: FTR2_TE</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="FTSubtype2A">
+        <annotation>
+          <documentation>Alias: FTS2A</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype2B">
+        <annotation>
+          <documentation>Alias: FTS2B</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+</schema>

@@ -31,74 +31,85 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Codelists;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class CodelistDictionariesMLConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class CodelistDictionariesMLConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(CodelistDictionariesML.PARAM_DEFAULT_LANG, CodelistDictionariesML.PARAM_LANGUAGES,
+		    CodelistDictionariesML.PARAM_NO_NEWLINE_OMIT, CodelistDictionariesML.PARAM_CLPACKAGENAME,
+		    CodelistDictionariesML.PARAM_INFOURL).collect(Collectors.toSet()));
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream.of(Pattern.compile("localeRef_.*"))
+	    .collect(Collectors.toList());
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		String defaultLang = config.parameterAsString(
-				CodelistDictionariesML.PARAM_DEFAULT_LANG, "de", false, true);
+	boolean isValid = true;
 
-		String sLangs = config.parameterAsString(
-				CodelistDictionariesML.PARAM_LANGUAGES, null, false, true);
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
-		String[] langs;
-		if (sLangs != null) {
-			langs = sLangs.split(" ");
-		} else {
-			langs = new String[] { defaultLang };
-		}
+	String defaultLang = config.parameterAsString(CodelistDictionariesML.PARAM_DEFAULT_LANG, "de", false, true);
 
-		/*
-		 * For each language other than the default language, a corresponding
-		 * localeRef must be given.
-		 */
-		for (String lang : langs) {
+	String sLangs = config.parameterAsString(CodelistDictionariesML.PARAM_LANGUAGES, null, false, true);
 
-			if (!lang.equalsIgnoreCase(defaultLang)) {
-
-				String localeVal = config.parameterAsString("localeRef_" + lang,
-						null, false, true);
-
-				if (StringUtils.isBlank(localeVal)) {
-					isValid = false;
-					result.addError(this, 100, lang);
-				}
-			}
-		}
-
-		return isValid;
+	String[] langs;
+	if (sLangs != null) {
+	    langs = sLangs.split(" ");
+	} else {
+	    langs = new String[] { defaultLang };
 	}
 
-	@Override
-	public String message(int mnr) {
+	/*
+	 * For each language other than the default language, a corresponding localeRef
+	 * must be given.
+	 */
+	for (String lang : langs) {
 
-		switch (mnr) {
+	    if (!lang.equalsIgnoreCase(defaultLang)) {
 
-		// 100 - 199: parameter validation
-		case 100:
-			return "Configuration parameter for locale reference is missing for language '$1$'. A locale reference must be provided for each language other than the default language.";
+		String localeVal = config.parameterAsString("localeRef_" + lang, null, false, true);
 
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
+		if (StringUtils.isBlank(localeVal)) {
+		    isValid = false;
+		    result.addError(this, 100, lang);
 		}
+	    }
 	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	// 100 - 199: parameter validation
+	case 100:
+	    return "Configuration parameter for locale reference is missing for language '$1$'. A locale reference must be provided for each language other than the default language.";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

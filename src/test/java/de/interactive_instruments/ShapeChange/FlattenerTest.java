@@ -134,4 +134,36 @@ public class FlattenerTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/flattening/flattenTypes_propertyCopyDuplicateBehavior",
 		"src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/reference");
     }
+    
+    @Test
+    public void test_measureTypedProperties() {
+	multiTest(
+		"src/test/resources/flattener/measureTypedProperties/testEA_flatten_measureTypedProperties.xml",
+		new String[] { "xsd" }, "testResults/flattening/measureTypedProperties",
+		"src/test/resources/flattener/measureTypedProperties/reference");
+    }
+    
+    @Test
+    public void test_explicitTimeInterval() {
+	multiTest(
+		"src/test/resources/flattener/explicitTimeInterval/testEA_flatten_explicitTimeInterval.xml",
+		new String[] { "xsd" }, "testResults/flattening/explicitTimeInterval",
+		"src/test/resources/flattener/explicitTimeInterval/reference");
+    }
+    
+    @Test
+    public void test_reverseInheritance() {
+	multiTest(
+		"src/test/resources/flattener/reverseInheritance/test_flattener_reverseInheritance.xml",
+		new String[] { "xsd" }, "testResults/flattening/reverseInheritance",
+		"src/test/resources/flattener/reverseInheritance/reference");
+    }
+    
+    @Test
+    public void test_nonDefaultGeometryToFeatureType() {
+	multiTest(
+		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/test_flattener_nonDefaultGeometryToFeatureType.xml",
+		new String[] { "xsd" }, "testResults/flattening/nonDefaultGeometryToFeatureType",
+		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/reference");
+    }    
 }

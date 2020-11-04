@@ -42,14 +42,15 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
-import de.interactive_instruments.ShapeChange.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -63,7 +64,6 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.Propert
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel.PropertyCopyPositionIndicator;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
 
 /**

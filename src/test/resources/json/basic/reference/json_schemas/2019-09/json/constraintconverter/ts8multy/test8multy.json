@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts8/multipleGeometries/ts8multy/test8multy.json",
+  "$defs": {
+    "TS8_Type1": {
+      "$anchor": "TS8_Type1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "propGeomCurve": {
+          "$ref": "https://geojson.org/schema/LineString.json"
+        },
+        "propGeomSurface": {
+          "$ref": "https://geojson.org/schema/Polygon.json"
+        }
+      },
+      "required": [
+        "@type",
+        "propGeomCurve",
+        "propGeomSurface"
+      ]
+    },
+    "TS8_Type2": {
+      "$anchor": "TS8_Type2",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri/ts8/multipleGeometries/ts8multy/test8multy.json#TS8_Type1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://geojson.org/schema/Point.json"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

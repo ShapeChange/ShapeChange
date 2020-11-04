@@ -43,336 +43,319 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
  * Parses information from the 'param' attribute of a map entry and provides
  * access to the resulting information.
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class MapEntryParamInfos implements MessageSource {
 
-	/**
-	 * Regular expression
-	 * ((\w+)(\{(([^;=\}]+)=?((?&lt;==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match
-	 * valid values of the 'param' attribute in a map entry.
-	 * 
-	 * Parameters are separated by comma, characteristics are separated by semicolon.
-	 * 
-	 * Examples of valid values are:
-	 * <ul>
-	 * <li>paramX</li>
-	 * <li>paramX{a=xyz;b=42;c}</li>
-	 * <li>paramX{a=xyz},paramY</li>
-	 * <li>paramX{a=xyz},paramY{d=(80.2,20.4)}</li>
-	 * <li>paramX{a=xyz},paramY{d=(80.2,20.4)},paramZ{d}</li>
-	 * </ul>
-	 */
-	public static final String PARAM_VALIDATION_PATTERN = "((\\w+)(\\{(([^;=\\}]+)=?((?<==)[^;=\\}]+)?[\\s;]*)+\\})?[\\s,]*)+";
+    /**
+     * Regular expression
+     * ((\w+)(\{(([^;=\}]+)=?((?&lt;==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match valid
+     * values of the 'param' attribute in a map entry.
+     * 
+     * Parameters are separated by comma, characteristics are separated by
+     * semicolon.
+     * 
+     * Examples of valid values are:
+     * <ul>
+     * <li>paramX</li>
+     * <li>paramX{a=xyz;b=42;c}</li>
+     * <li>paramX{a=xyz},paramY</li>
+     * <li>paramX{a=xyz},paramY{d=(80.2,20.4)}</li>
+     * <li>paramX{a=xyz},paramY{d=(80.2,20.4)},paramZ{d}</li>
+     * </ul>
+     */
+    public static final String PARAM_VALIDATION_PATTERN = "((\\w+)(\\{(([^;=\\}]+)=?((?<==)[^;=\\}]+)?[\\s;]*)+\\})?[\\s,]*)+";
 
-	/**
-	 * Regular expression (\w+)\{?((?&lt;=\{)[^\}]+(?=\}))?\}?[\s;]* to find
-	 * individual parameters contained in the value of the 'param' attribute in
-	 * a map entry, together with their characteristics (given inside curly
-	 * braces: {&lt;characteristics&gt;}).
-	 * 
-	 * Upon each find(), the parameter name is contained in group 1 while group
-	 * 2 either contains the characteristics or is <code>null</code> if none are
-	 * provided for the parameter.
-	 */
-	public static final String PARAMETER_IDENTIFICATION_PATTERN = "(\\w+)\\{?((?<=\\{)[^\\}]+(?=\\}))?\\}?[\\s;]*";
+    /**
+     * Regular expression (\w+)\{?((?&lt;=\{)[^\}]+(?=\}))?\}?[\s;]* to find
+     * individual parameters contained in the value of the 'param' attribute in a
+     * map entry, together with their characteristics (given inside curly braces:
+     * {&lt;characteristics&gt;}).
+     * 
+     * Upon each find(), the parameter name is contained in group 1 while group 2
+     * either contains the characteristics or is <code>null</code> if none are
+     * provided for the parameter.
+     */
+    public static final String PARAMETER_IDENTIFICATION_PATTERN = "(\\w+)\\{?((?<=\\{)[^\\}]+(?=\\}))?\\}?[\\s;]*";
 
-	/**
-	 * Regular expression ([^;=]+)=?((?&lt;==)[^;=]+)?[\s;]* to parse the
-	 * individual characteristics of a parameter. Characteristics are separated
-	 * by semicolon, and consist of an identifier and an optional value
-	 * (separated by '=').
-	 * 
-	 * Upon each find(), the identifier of the characteristic is contained in
-	 * group 1 while group 2 either contains the value or is <code>null</code>
-	 * if none is provided for the characteristic.
-	 */
-	public static final String CHARACTERISTICS_IDENTIFICATION_PATTERN = "([^;=]+)=?((?<==)[^;=]+)?[\\s;]*";
+    /**
+     * Regular expression ([^;=]+)=?((?&lt;==)[^;=]+)?[\s;]* to parse the individual
+     * characteristics of a parameter. Characteristics are separated by semicolon,
+     * and consist of an identifier and an optional value (separated by '=').
+     * 
+     * Upon each find(), the identifier of the characteristic is contained in group
+     * 1 while group 2 either contains the value or is <code>null</code> if none is
+     * provided for the characteristic.
+     */
+    public static final String CHARACTERISTICS_IDENTIFICATION_PATTERN = "([^;=]+)=?((?<==)[^;=]+)?[\\s;]*";
 
-	private Pattern validationPattern;
-	private Pattern paramIdentPattern;
-	private Pattern charactIdentPattern;
+    private Pattern validationPattern;
+    private Pattern paramIdentPattern;
+    private Pattern charactIdentPattern;
 
-	/**
-	 * key: {map entry type name}#{map entry rule name}
-	 * 
-	 * value: sub-map with key: parameter name, value: subsub-map with key:
-	 * identifier of characteristic, value: value of characteristic (can be
-	 * <code>null</code>).
-	 * 
-	 * If no non-empty and valid parameter value is provided for a type defined
-	 * in a type mapping, then no information will be contained for that type in
-	 * the map.
-	 */
-	private Map<String, Map<String, Map<String, String>>> paramCache;
-	private Collection<ProcessMapEntry> mapEntries;
+    /**
+     * key: {map entry type name}#{map entry rule name} (in lower case)
+     * 
+     * value: sub-map with key: parameter name, value: subsub-map with key:
+     * identifier of characteristic, value: value of characteristic (can be
+     * <code>null</code>).
+     * 
+     * If no non-empty and valid parameter value is provided for a type defined in a
+     * type mapping, then no information will be contained for that type in the map.
+     */
+    private Map<String, Map<String, Map<String, String>>> paramCache;
+    private Collection<ProcessMapEntry> mapEntries;
 
-	private ShapeChangeResult result;
-	private Options options;
+    private ShapeChangeResult result;
+    private Options options;
 
-	private boolean allParamsInMapEntriesAreValid = true;
+    private boolean allParamsInMapEntriesAreValid = true;
 
-	public MapEntryParamInfos(ShapeChangeResult result,
-			Collection<ProcessMapEntry> pmes) {
+    public MapEntryParamInfos(ShapeChangeResult result, Collection<ProcessMapEntry> pmes) {
 
-		this.result = result;
-		this.options = result.options();
+	this.result = result;
+	this.options = result.options();
 
-		this.validationPattern = Pattern.compile(PARAM_VALIDATION_PATTERN);
-		this.paramIdentPattern = Pattern
-				.compile(PARAMETER_IDENTIFICATION_PATTERN);
-		this.charactIdentPattern = Pattern
-				.compile(CHARACTERISTICS_IDENTIFICATION_PATTERN);
+	this.validationPattern = Pattern.compile(PARAM_VALIDATION_PATTERN);
+	this.paramIdentPattern = Pattern.compile(PARAMETER_IDENTIFICATION_PATTERN);
+	this.charactIdentPattern = Pattern.compile(CHARACTERISTICS_IDENTIFICATION_PATTERN);
 
-		this.mapEntries = pmes;
-		paramCache = new HashMap<String, Map<String, Map<String, String>>>();
+	this.mapEntries = pmes;
+	paramCache = new HashMap<String, Map<String, Map<String, String>>>();
 
-		if (pmes != null) {
+	if (pmes != null) {
 
-			for (ProcessMapEntry pme : pmes) {
+	    for (ProcessMapEntry pme : pmes) {
 
-				if (pme.hasParam()) {
+		if (pme.hasParam()) {
 
-					String param = pme.getParam();
-					String pmeKey = pme.getType() + "#" + pme.getRule();
+		    String param = pme.getParam();
+		    String pmeKey = pme.getType() + "#" + pme.getRule().toLowerCase();
 
-					/*
-					 * validate the param value - continue parsing only if a
-					 * match was detected
-					 */
-					Matcher vm = validationPattern.matcher(param);
+		    /*
+		     * validate the param value - continue parsing only if a match was detected
+		     */
+		    Matcher vm = validationPattern.matcher(param);
 
-					if (vm.matches()) {
+		    if (vm.matches()) {
 
-						if (paramCache.containsKey(pmeKey)) {
+			if (paramCache.containsKey(pmeKey)) {
 
-							MessageContext mc = result.addWarning(this, 4);
-							mc.addDetail(this, 1, pme.getType(), pme.getRule(),
-									param);
+			    MessageContext mc = result.addWarning(this, 4);
+			    mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
 
-						} else {
+			} else {
 
-							Map<String, Map<String, String>> charactByParameterName = new HashMap<String, Map<String, String>>();
+			    Map<String, Map<String, String>> charactByParameterName = new HashMap<String, Map<String, String>>();
 
-							paramCache.put(pmeKey, charactByParameterName);
+			    paramCache.put(pmeKey, charactByParameterName);
 
-							/*
-							 * Find and add all individual parameters defined
-							 * for the 'param' attribute.
-							 */
-							Matcher pim = paramIdentPattern.matcher(param);
+			    /*
+			     * Find and add all individual parameters defined for the 'param' attribute.
+			     */
+			    Matcher pim = paramIdentPattern.matcher(param);
 
-							while (pim.find()) {
+			    while (pim.find()) {
 
-								String parameterName = pim.group(1);
+				String parameterName = pim.group(1);
 
-								Map<String, String> characteristics = new HashMap<String, String>();
-								charactByParameterName.put(parameterName,
-										characteristics);
+				Map<String, String> characteristics = new HashMap<String, String>();
+				charactByParameterName.put(parameterName, characteristics);
 
-								String parameterValue = pim.group(2);
+				String parameterValue = pim.group(2);
 
-								if (parameterValue != null) {
+				if (parameterValue != null) {
 
-									/*
-									 * Find and add all individual
-									 * characteristics.
-									 */
-									Matcher cim = charactIdentPattern
-											.matcher(parameterValue);
+				    /*
+				     * Find and add all individual characteristics.
+				     */
+				    Matcher cim = charactIdentPattern.matcher(parameterValue);
 
-									while (cim.find()) {
+				    while (cim.find()) {
 
-										String characteristicId = cim.group(1);
-										String characteristicValue = cim
-												.group(2);
+					String characteristicId = cim.group(1);
+					String characteristicValue = cim.group(2);
 
-										characteristics.put(characteristicId,
-												characteristicValue);
-									}
-								}
-							}
-						}
-
-					} else {
-
-						allParamsInMapEntriesAreValid = false;
-
-						MessageContext mc = result.addError(this, 3);
-						mc.addDetail(this, 1, pme.getType(), pme.getRule(),
-								param);
-					}
+					characteristics.put(characteristicId, characteristicValue);
+				    }
 				}
+			    }
 			}
+
+		    } else {
+
+			allParamsInMapEntriesAreValid = false;
+
+			MessageContext mc = result.addError(this, 3);
+			mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
+		    }
 		}
+	    }
 	}
+    }
 
-	public boolean hasParameter(String typeName, String encodingRule,
-			String parameterName) {
+    public boolean hasParameter(String typeName, String encodingRule, String parameterName) {
 
-		/*
-		 * Identify relevant map entry based upon the encoding rule (may require
-		 * a look up through extended rules, which Options handles for us).
-		 */
-		ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName,
-				encodingRule);
-
-		return hasParameter(relevantMapEntry, parameterName);
-	}
-
-	public boolean hasParameter(ProcessMapEntry pme, String parameterName) {
-
-		if (pme == null) {
-			return false;
-		} else {
-			String pmeKey = pme.getType() + "#" + pme.getRule();
-			if (paramCache.containsKey(pmeKey)
-					&& paramCache.get(pmeKey).containsKey(parameterName)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	public boolean hasCharacteristic(String typeName, String encodingRule,
-			String parameter, String characteristic) {
-
-		Map<String, String> characteristics = this.getCharacteristics(typeName,
-				encodingRule, parameter);
-
-		if (characteristics == null) {
-			return false;
-		} else {
-			if (characteristics.containsKey(characteristic)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	/**
-	 * @param typeName tbd
-	 * @param encodingRule  tbd
-	 * @param parameter tbd
-	 * @return A map with the characteristics defined for the parameter in the
-	 *         map entry that applies to the named type under the given encoding
-	 *         rule, or <code>null</code> if they don't exist.
+	/*
+	 * Identify relevant map entry based upon the encoding rule (may require a look
+	 * up through extended rules, which Options handles for us).
 	 */
-	public Map<String, String> getCharacteristics(String typeName,
-			String encodingRule, String parameter) {
+	ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName, encodingRule);
 
-		/*
-		 * Identify relevant map entry based upon the encoding rule (may require
-		 * a look up through extended rules, which Options handles for us).
-		 */
-		ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName,
-				encodingRule);
+	return hasParameter(relevantMapEntry, parameterName);
+    }
 
-		/*
-		 * If we were able to identify the relevant map entry, we can grab the
-		 * parameter info (if @param was set for that map entry).
-		 */
+    public boolean hasParameter(ProcessMapEntry pme, String parameterName) {
 
-		if (relevantMapEntry == null) {
-
-			return null;
-
-		} else {
-
-			String pmeKey = typeName + "#" + relevantMapEntry.rule;
-
-			if (!paramCache.containsKey(pmeKey)) {
-
-				// then no valid parameter was defined in the map entry
-				return null;
-
-			} else {
-
-				return paramCache.get(pmeKey).get(parameter);
-			}
-		}
+	if (pme == null) {
+	    return false;
+	} else {
+	    String pmeKey = pme.getType() + "#" + pme.getRule().toLowerCase();
+	    if (paramCache.containsKey(pmeKey) && paramCache.get(pmeKey).containsKey(parameterName)) {
+		return true;
+	    } else {
+		return false;
+	    }
 	}
+    }
 
-	public ProcessMapEntry getMapEntry(String typeName, String encodingRule) {
+    public boolean hasCharacteristic(String typeName, String encodingRule, String parameter, String characteristic) {
 
-		/*
-		 * Identify relevant map entry based upon the encoding rule (may require
-		 * a look up through extended rules, which Options handles for us).
-		 */
-		ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName,
-				encodingRule);
+	Map<String, String> characteristics = this.getCharacteristics(typeName, encodingRule, parameter);
 
-		/*
-		 * If we were able to identify the relevant map entry, we can grab the
-		 * process map entry.
-		 */
-
-		if (relevantMapEntry == null) {
-			return null;
-		} else {
-			String pmeKey = typeName + "#" + relevantMapEntry.rule;
-			for (ProcessMapEntry pme : this.mapEntries) {
-				if (pmeKey.equalsIgnoreCase(
-						pme.getType() + "#" + pme.getRule())) {
-					return pme;
-				}
-			}
-			return null;
-		}
+	if (characteristics == null) {
+	    return false;
+	} else {
+	    if (characteristics.containsKey(characteristic)) {
+		return true;
+	    } else {
+		return false;
+	    }
 	}
+    }
 
-	/**
-	 * @param typeName tbd
-	 * @param encodingRule  tbd
-	 * @param parameter tbd
-	 * @param characteristic tbd
-	 * @return The value of the characteristic of the parameter in the map entry
-	 *         for the named type, can be <code>null</code> if no value was
-	 *         provided or if the characteristic was not specified for the
-	 *         parameter.
+    /**
+     * @param typeName     tbd
+     * @param encodingRule tbd
+     * @param parameter    tbd
+     * @return A map with the characteristics defined for the parameter in the map
+     *         entry that applies to the named type under the given encoding rule,
+     *         or <code>null</code> if they don't exist.
+     */
+    public Map<String, String> getCharacteristics(String typeName, String encodingRule, String parameter) {
+
+	/*
+	 * Identify relevant map entry based upon the encoding rule (may require a look
+	 * up through extended rules, which Options handles for us).
 	 */
-	public String getCharacteristic(String typeName, String encodingRule,
-			String parameter, String characteristic) {
+	ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName, encodingRule);
 
-		Map<String, String> characteristics = this.getCharacteristics(typeName,
-				encodingRule, parameter);
+	/*
+	 * If we were able to identify the relevant map entry, we can grab the parameter
+	 * info (if @param was set for that map entry).
+	 */
 
-		if (characteristics == null) {
-			return null;
-		} else {
-			return characteristics.get(characteristic);
+	if (relevantMapEntry == null) {
+
+	    return null;
+
+	} else {
+
+	    String pmeKey = typeName + "#" + relevantMapEntry.rule.toLowerCase();
+
+	    if (!paramCache.containsKey(pmeKey)) {
+
+		// then no valid parameter was defined in the map entry
+		return null;
+
+	    } else {
+
+		return paramCache.get(pmeKey).get(parameter);
+	    }
+	}
+    }
+
+    /**
+     * @param typeName     name of the type for which to look up the map entry
+     * @param encodingRule encoding rule for which to look up the map entry (does
+     *                     not necessarily need to be the encoding rule defined on
+     *                     the type in the model itself, it typically should be the
+     *                     encoding rule that applies to the model element that uses
+     *                     the type, either as value type or as supertype)
+     * @return the map entry defined for the type and encoding rule; can be
+     *         <code>null</code> if no such map entry exists
+     */
+    public ProcessMapEntry getMapEntry(String typeName, String encodingRule) {
+
+	/*
+	 * Identify relevant map entry based upon the encoding rule (may require a look
+	 * up through extended rules, which Options handles for us).
+	 */
+	ProcessMapEntry relevantMapEntry = options.targetMapEntry(typeName, encodingRule);
+
+	/*
+	 * If we were able to identify the relevant map entry, we can grab the process
+	 * map entry.
+	 */
+
+	if (relevantMapEntry == null) {
+	    return null;
+	} else {
+	    String pmeKey = typeName + "#" + relevantMapEntry.rule;
+	    for (ProcessMapEntry pme : this.mapEntries) {
+		if (pmeKey.equalsIgnoreCase(pme.getType() + "#" + pme.getRule())) {
+		    return pme;
 		}
+	    }
+	    return null;
 	}
+    }
 
-	public Map<String, Map<String, Map<String, String>>> getParameterCache() {
-		return paramCache;
+    /**
+     * @param typeName       tbd
+     * @param encodingRule   tbd
+     * @param parameter      tbd
+     * @param characteristic tbd
+     * @return The value of the characteristic of the parameter in the map entry for
+     *         the named type, can be <code>null</code> if no value was provided or
+     *         if the characteristic was not specified for the parameter.
+     */
+    public String getCharacteristic(String typeName, String encodingRule, String parameter, String characteristic) {
+
+	Map<String, String> characteristics = this.getCharacteristics(typeName, encodingRule, parameter);
+
+	if (characteristics == null) {
+	    return null;
+	} else {
+	    return characteristics.get(characteristic);
 	}
+    }
 
-	public boolean isValid() {
-		return allParamsInMapEntriesAreValid;
+    public Map<String, Map<String, Map<String, String>>> getParameterCache() {
+	return paramCache;
+    }
+
+    public boolean isValid() {
+	return allParamsInMapEntriesAreValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+	case 1:
+	    return "Context: map entry with @type='$1$', @rule='$2$' and @param='$3$'.";
+	case 2:
+	    return "";
+	case 3:
+	    return "Found invalid value for 'param' attribute in map entry. The entry will be ignored. Ensure that the value matches the regular expression "
+		    + PARAM_VALIDATION_PATTERN + ".";
+	case 4:
+	    return "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
+
+	default:
+	    return "(" + MapEntryParamInfos.class.getName() + ") Unknown message with number: " + mnr;
 	}
-
-	@Override
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 1:
-			return "Context: map entry with @type='$1$', @rule='$2$' and @param='$3$'.";
-		case 2:
-			return "";
-		case 3:
-			return "Found invalid value for 'param' attribute in map entry. The entry will be ignored. Ensure that the value matches the regular expression "
-					+ PARAM_VALIDATION_PATTERN + ".";
-		case 4:
-			return "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
-
-		default:
-			return "(" + MapEntryParamInfos.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
+    }
 }

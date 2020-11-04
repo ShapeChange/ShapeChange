@@ -36,191 +36,183 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class TaggedValueTransformerConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class TaggedValueTransformerConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
+		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
+		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST,
+		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
+		    TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
+		    TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST).collect(Collectors.toSet()));
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
-		TransformerConfiguration trfConfig = (TransformerConfiguration) config;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		boolean isValid = true;
+	TransformerConfiguration trfConfig = (TransformerConfiguration) config;
 
-		if (trfConfig.hasRule(TaggedValueTransformer.RULE_TV_INHERITANCE)) {
+	boolean isValid = true;
 
-			// check that required parameter is set
-			List<String> generalIn = config.parameterAsStringList(
-					TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
-					null, true, true);
-			List<String> overwriteIn = config.parameterAsStringList(
-					TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST,
-					null, true, true);
-			List<String> appendIn = config.parameterAsStringList(
-					TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST,
-					null, true, true);
+	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
-			if (generalIn.isEmpty()) {
-				isValid = false;
-				result.addError(this, 100,
-						TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
-						TaggedValueTransformer.RULE_TV_INHERITANCE);
-			}
+	if (trfConfig.hasRule(TaggedValueTransformer.RULE_TV_INHERITANCE)) {
 
-			/*
-			 * determine if overwrite and append list contain tagged values that
-			 * would be ignored
-			 */
-			SortedSet<String> generalTVs = new TreeSet<String>();
-			SortedSet<String> overwriteTVs = new TreeSet<String>();
-			SortedSet<String> appendTVs = new TreeSet<String>();
+	    // check that required parameter is set
+	    List<String> generalIn = config
+		    .parameterAsStringList(TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);
+	    List<String> overwriteIn = config.parameterAsStringList(
+		    TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST, null, true, true);
+	    List<String> appendIn = config
+		    .parameterAsStringList(TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST, null, true, true);
 
-			for (String tv : generalIn) {
-				generalTVs.add(options.normalizeTag(tv));
-			}
+	    if (generalIn.isEmpty()) {
+		isValid = false;
+		result.addError(this, 100, TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
+			TaggedValueTransformer.RULE_TV_INHERITANCE);
+	    }
 
-			for (String tv : overwriteIn) {
+	    /*
+	     * determine if overwrite and append list contain tagged values that would be
+	     * ignored
+	     */
+	    SortedSet<String> generalTVs = new TreeSet<String>();
+	    SortedSet<String> overwriteTVs = new TreeSet<String>();
+	    SortedSet<String> appendTVs = new TreeSet<String>();
 
-				String normalizedTV = options.normalizeTag(tv);
+	    for (String tv : generalIn) {
+		generalTVs.add(options.normalizeTag(tv));
+	    }
 
-				if (generalTVs.contains(normalizedTV)) {
+	    for (String tv : overwriteIn) {
 
-					if (overwriteTVs.contains(normalizedTV)) {
+		String normalizedTV = options.normalizeTag(tv);
 
-						result.addInfo(this, 101, tv);
+		if (generalTVs.contains(normalizedTV)) {
 
-					} else {
-						overwriteTVs.add(normalizedTV);
-					}
+		    if (overwriteTVs.contains(normalizedTV)) {
 
-				} else {
-					result.addWarning(this, 102, tv);
-				}
-			}
+			result.addInfo(this, 101, tv);
 
-			for (String tv : appendIn) {
+		    } else {
+			overwriteTVs.add(normalizedTV);
+		    }
 
-				String normalizedTV = options.normalizeTag(tv);
-
-				if (generalTVs.contains(normalizedTV)) {
-
-					if (overwriteTVs.contains(normalizedTV)) {
-
-						result.addWarning(this, 103, tv);
-
-					} else if (appendTVs.contains(normalizedTV)) {
-
-						result.addInfo(this, 104, tv);
-
-					} else {
-
-						appendTVs.add(normalizedTV);
-					}
-
-				} else {
-
-					result.addWarning(this, 105, tv);
-				}
-			}
+		} else {
+		    result.addWarning(this, 102, tv);
 		}
+	    }
 
-		if (trfConfig
-				.hasRule(TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE)) {
+	    for (String tv : appendIn) {
 
-			List<String> tvsToCopy = trfConfig.parameterAsStringList(
-					TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
-					null, true, true);
+		String normalizedTV = options.normalizeTag(tv);
 
-			if (tvsToCopy.isEmpty()) {
-				result.addError(this, 100,
-						TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
-						TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE);
-				isValid = false;
-			}
+		if (generalTVs.contains(normalizedTV)) {
 
-			String typeNameRegexParamValue = trfConfig.parameterAsString(
-					TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
-					".*", false, true);
-			try {
-				Pattern.compile(typeNameRegexParamValue);
-			} catch (PatternSyntaxException e) {
-				result.addError(this, 10, typeNameRegexParamValue,
-						TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
-						e.getMessage());
-				isValid = false;
-			}
+		    if (overwriteTVs.contains(normalizedTV)) {
+
+			result.addWarning(this, 103, tv);
+
+		    } else if (appendTVs.contains(normalizedTV)) {
+
+			result.addInfo(this, 104, tv);
+
+		    } else {
+
+			appendTVs.add(normalizedTV);
+		    }
+
+		} else {
+
+		    result.addWarning(this, 105, tv);
 		}
-
-		return isValid;
+	    }
 	}
 
-	@Override
-	public String message(int mnr) {
+	if (trfConfig.hasRule(TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE)) {
 
-		switch (mnr) {
-		case 0:
-			return "Context: property '$1$'.";
-		case 1:
-			return "Context: class '$1$'.";
-		case 2:
-			return "Context: association class '$1$'.";
-		case 3:
-			return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	    List<String> tvsToCopy = trfConfig.parameterAsStringList(
+		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true, true);
 
-		case 10:
-			return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
-			
-		// Validation messages
-		case 100:
-			return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-		case 101:
-			return "?? Duplicate tag in parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
-					+ "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
-		case 102:
-			return "?? Tag '$1$' specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
-					+ "' is not specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
-					+ "'. The tag will be ignored.";
-		case 103:
-			return "?? Tag '$1$' specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
-					+ "' is also specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
-					+ "'. The tag will be ignored in the append list. These tags will therefore be overwritten, which may or may not be the intent.";
-		case 104:
-			return "?? Duplicate tag in parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
-					+ "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
-		case 105:
-			return "?? Tag '$1$' specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
-					+ "' is not specified by parameter '"
-					+ TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
-					+ "'. The tag will be ignored.";
+	    if (tvsToCopy.isEmpty()) {
+		result.addError(this, 100, TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
+			TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE);
+		isValid = false;
+	    }
 
-		case 200:
-			return "Required parameter '"
-					+ TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
-					+ "' was not set or does not contain any value. '";
-
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
-		}
+	    String typeNameRegexParamValue = trfConfig.parameterAsString(
+		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, ".*", false, true);
+	    try {
+		Pattern.compile(typeNameRegexParamValue);
+	    } catch (PatternSyntaxException e) {
+		result.addError(this, 10, typeNameRegexParamValue,
+			TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, e.getMessage());
+		isValid = false;
+	    }
 	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "Context: class '$1$'.";
+	case 2:
+	    return "Context: association class '$1$'.";
+	case 3:
+	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
+	case 10:
+	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
+
+	// Validation messages
+	case 100:
+	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 101:
+	    return "?? Duplicate tag in parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
+	case 102:
+	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+		    + "' is not specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
+		    + "'. The tag will be ignored.";
+	case 103:
+	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
+		    + "' is also specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+		    + "'. The tag will be ignored in the append list. These tags will therefore be overwritten, which may or may not be the intent.";
+	case 104:
+	    return "?? Duplicate tag in parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
+		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
+	case 105:
+	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
+		    + "' is not specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
+		    + "'. The tag will be ignored.";
+
+	case 200:
+	    return "Required parameter '" + TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
+		    + "' was not set or does not contain any value. '";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

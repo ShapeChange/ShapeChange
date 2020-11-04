@@ -99,7 +99,7 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 
 		if (rules.contains(RULE_PREPEND_TEXT)) {
 
-			result.addInfo(null, 20103, RULE_PREPEND_TEXT);
+			result.addProcessFlowInfo(null, 20103, RULE_PREPEND_TEXT);
 			applyRulePrependText();
 		}
 	}
@@ -168,7 +168,7 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 			}
 		}
 	}
-
+	    
 	@Override
 	public String message(int mnr) {
 

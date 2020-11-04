@@ -38,12 +38,15 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -94,8 +97,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
  * @author Clemens Portele
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class UmlModel implements SingleTarget, MessageSource {
@@ -106,12 +108,16 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static String documentationNoValue = null;
     private static String author = null;
     private static String status = null;
+    private static String outputPackageName = null;
     private static boolean includeAssociationEndOwnership = false;
     private static boolean mergeConstraintCommentsIntoText = false;
     private static Pattern ignoreTaggedValuesPattern = null;
+    private static boolean synchronizeStereotypes = true;
+    private static boolean preservePackageHierarchy = false;
 
     private static Repository rep = null;
     private static Integer pOut_EaPkgId = null;
+    private static String pOut_EaPkgName = null;
     private static Set<AssociationInfo> associations = new HashSet<AssociationInfo>();
     private static Map<ClassInfo, Integer> elementIdByClassInfo = new HashMap<ClassInfo, Integer>();
     /**
@@ -146,6 +152,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    outputFilename = options.parameterAsString(this.getClass().getName(),
 		    UmlModelConstants.PARAM_MODEL_FILENAME, "ShapeChangeExport.eap", false, true);
 
+	    outputPackageName = options.parameterAsString(this.getClass().getName(),
+		    UmlModelConstants.PARAM_OUTPUT_PACKAGE_NAME, "ShapeChangeOutput", false, true);
+
 	    // change the default documentation template?
 	    documentationTemplate = options.parameter(this.getClass().getName(), "documentationTemplate");
 	    documentationNoValue = options.parameter(this.getClass().getName(), "documentationNoValue");
@@ -160,6 +169,12 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    mergeConstraintCommentsIntoText = options.parameterAsBoolean(this.getClass().getName(),
 		    UmlModelConstants.PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, false);
+
+	    synchronizeStereotypes = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_SYNCH_STEREOTYPES, true);
+
+	    preservePackageHierarchy = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_PRESERVE_PACKAGE_HIERARCHY, false);
 
 	    try {
 		String itvpParam = options.parameterAsString(UmlModel.class.getName(),
@@ -267,40 +282,50 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    Collection<Package> c = rep.GetModels();
 	    Package root = c.GetAt((short) 0);
 
-	    String outputPackageName = "ShapeChangeOutput";
+	    boolean omitOutputPackage = options.parameterAsBoolean(this.getClass().getName(),
+		    UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE, false);
 
-	    boolean omitOutputPackageDateTime = options.parameterAsBoolean(this.getClass().getName(),
-		    UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
+	    if (!omitOutputPackage) {
 
-	    if (!omitOutputPackageDateTime) {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-		df.setTimeZone(tz);
-		outputPackageName += "-" + df.format(new Date());
-	    }
+		boolean omitOutputPackageDateTime = options.parameterAsBoolean(this.getClass().getName(),
+			UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME, false);
 
-	    Package pOut = root.GetPackages().AddNew(outputPackageName, "Class View");
-	    if (!pOut.Update()) {
-		result.addError("EA-Fehler: " + pOut.GetLastError());
-	    }
-
-	    if (author != null) {
-		try {
-		    EAElementUtil.setEAAuthor(pOut.GetElement(), author);
-		} catch (EAException e) {
-		    result.addError(this, 10011);
+		if (!omitOutputPackageDateTime) {
+		    TimeZone tz = TimeZone.getTimeZone("UTC");
+		    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+		    df.setTimeZone(tz);
+		    outputPackageName += "-" + df.format(new Date());
 		}
-	    }
 
-	    if (status != null) {
-		try {
-		    EAElementUtil.setEAStatus(pOut.GetElement(), status);
-		} catch (EAException e) {
-		    result.addError(this, 10012);
+		Package pOut = root.GetPackages().AddNew(outputPackageName, "Class View");
+		if (!pOut.Update()) {
+		    result.addError("EA-Fehler: " + pOut.GetLastError());
 		}
-	    }
 
-	    pOut_EaPkgId = pOut.GetPackageID();
+		if (author != null) {
+		    try {
+			EAElementUtil.setEAAuthor(pOut.GetElement(), author);
+		    } catch (EAException e) {
+			result.addError(this, 10011);
+		    }
+		}
+
+		if (status != null) {
+		    try {
+			EAElementUtil.setEAStatus(pOut.GetElement(), status);
+		    } catch (EAException e) {
+			result.addError(this, 10012);
+		    }
+		}
+
+		pOut_EaPkgId = pOut.GetPackageID();
+		pOut_EaPkgName = outputPackageName;
+
+	    } else {
+
+		pOut_EaPkgId = root.GetPackageID();
+		pOut_EaPkgName = root.GetName();
+	    }
 
 	    // load stereotype mappings
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
@@ -323,10 +348,70 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	// export app schema package
 	try {
-	    clonePackage(pi, pOut_EaPkgId);
+	    if (preservePackageHierarchy) {
+		int ownerPkgEaPkgId = createPackageHierarchy(pi);
+		/*
+		 * Take into account that the package may have already been created while
+		 * creating the package hierarchy
+		 */
+		if (!eaPkgIdByPackageInfo.containsKey(pi)) {
+		    clonePackage(pi, ownerPkgEaPkgId);
+		}
+	    } else {
+		clonePackage(pi, pOut_EaPkgId);
+	    }
 	} catch (EAException e) {
 	    result.addError(this, 100007, pi.name(), e.getMessage());
 	}
+    }
+
+    /**
+     * Creates the ancestor packages of the given package (unless they already
+     * exist).
+     * 
+     * @param pi The package whose ancestors shall be created
+     * @return The EA ID of the owner for the given package; if the package has no
+     *         owner, the value of {@link #pOut_EaPkgId} will be returned
+     * @throws EAException If a package could not be created.
+     */
+    private int createPackageHierarchy(PackageInfo pi) throws EAException {
+
+	int result = pOut_EaPkgId;
+
+	// create LIFO queue of owning packages
+	Queue<PackageInfo> hierarchy = Collections.asLifoQueue(new LinkedList<>());
+	PackageInfo currentPackage = pi;
+	while (currentPackage.owner() != null) {
+	    hierarchy.add(currentPackage.owner());
+	    currentPackage = currentPackage.owner();
+	}
+
+	/*
+	 * create the package hierarchy - do not create packages that have already been
+	 * created
+	 */
+	while (!hierarchy.isEmpty()) {
+
+	    PackageInfo pkg = hierarchy.poll();
+
+	    if (eaPkgIdByPackageInfo.containsKey(pkg)) {
+		result = eaPkgIdByPackageInfo.get(pkg);
+	    } else if (pkg.name().equals(pOut_EaPkgName)) {
+		eaPkgIdByPackageInfo.put(pkg, pOut_EaPkgId);
+		result = pOut_EaPkgId;
+	    } else {
+		int newPkgId = EARepositoryUtil.createEAPackage(rep, pkg, result);
+		result = newPkgId;
+
+		Package eaPkg = rep.GetPackageByID(newPkgId);
+
+		cloneStandarddItems(eaPkg.GetElement(), pkg);
+
+		eaPkgIdByPackageInfo.put(pkg, newPkgId);
+	    }
+	}
+
+	return result;
     }
 
     private void clonePackage(PackageInfo pSource, Integer containerEaPkgId) throws EAException {
@@ -561,7 +646,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAElementUtil.setEANotes(e, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAElementUtil.setEAStereotype(e, mapStereotypes(i.stereotypes()).toString());
+	    EAElementUtil.setEAStereotypeEx(e, mapStereotypes(i.stereotypes()).toString());
 
 	    EAElementUtil.setTaggedValues(e, filterTaggedValues(i.taggedValuesAll()));
 
@@ -581,7 +666,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAConnectorUtil.setEANotes(con, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAConnectorUtil.setEAStereotype(con, mapStereotypes(i.stereotypes()).toString());
+	    EAConnectorUtil.setEAStereotypeEx(con, mapStereotypes(i.stereotypes()).toString());
 
 	    EAConnectorUtil.setTaggedValues(con, filterTaggedValues(i.taggedValuesAll()));
 
@@ -620,7 +705,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    EAConnectorEndUtil.setEARoleNote(ce, i.derivedDocumentation(documentationTemplate, documentationNoValue));
 
-	    EAConnectorEndUtil.setEAStereotype(ce, mapStereotypes(i.stereotypes()).toString());
+	    EAConnectorEndUtil.setEAStereotypeEx(ce, mapStereotypes(i.stereotypes()).toString());
 
 	    EAConnectorEndUtil.setEAOrdering(ce, i.isOrdered());
 
@@ -783,6 +868,18 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    }
 	}
 
+	if (synchronizeStereotypes) {
+	    for (String stType : stereotypeMappings.keySet()) {
+		String stTargetType = stereotypeMappings.get(stType);
+
+		if (stTargetType.contains("::")) {
+		    String[] components = stTargetType.split("::");
+		    rep.SynchProfile(components[0], components[1]);
+		}
+	    }
+
+	}
+
 	EARepositoryUtil.closeRepository(rep);
 
 	// release resources from static fields
@@ -795,6 +892,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	outputFilename = null;
 	rep = null;
 	pOut_EaPkgId = null;
+	pOut_EaPkgName = null;
 
 	associations = new HashSet<>();
 	elementIdByClassInfo = new HashMap<>();
@@ -806,9 +904,12 @@ public class UmlModel implements SingleTarget, MessageSource {
 	includeAssociationEndOwnership = false;
 	mergeConstraintCommentsIntoText = false;
 	ignoreTaggedValuesPattern = null;
+	synchronizeStereotypes = true;
+	preservePackageHierarchy = false;
 
 	author = null;
 	status = null;
+	outputPackageName = null;
     }
 
     @Override

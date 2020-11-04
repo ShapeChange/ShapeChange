@@ -49,6 +49,8 @@
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-cls-data-types" />
 					<rule name="rule-sql-cls-data-types-oneToMany-oneTable" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -72,6 +74,8 @@
 					<rule name="rule-sql-cls-data-types-oneToMany-oneTable" />
 					<rule
 						name="rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -93,6 +97,8 @@
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-cls-data-types" />
 					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -102,7 +108,7 @@
 					targetType="cond:textOrCharacterVarying" />
 			</mapEntries>
 		</Target>
-		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
+		<!--<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			inputs="INPUT" mode="enabled">
 			<targetParameter name="defaultEncodingRule" value="severalTables" />
 			<targetParameter name="outputDirectory"
@@ -113,9 +119,11 @@
 				<EncodingRule name="severalTables" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-cls-data-types" />
-					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables" />					
 					<rule
 						name="rule-sql-cls-data-types-oneToMany-severalTables-avoidTableForDatatypeIfUnused" />
+					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+					<rule name="rule-sql-cls-code-lists"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -124,6 +132,6 @@
 				<MapEntry type="ExternalDataType" rule="*"
 					targetType="cond:textOrCharacterVarying" />
 			</mapEntries>
-		</Target>
+		</Target>-->
 	</targets>
 </ShapeChangeConfiguration>

@@ -136,7 +136,7 @@ public abstract class InfoImpl implements Info {
 			return null;
 		else if (values.length > 1)
 			for (int i = 1; i < values.length; i++) {
-				MessageContext mc = model().result().addWarning(null, 701, tag,
+				MessageContext mc = result().addWarning(null, 701, tag,
 						values[0], values[i]);
 				addContextDetails(mc);
 			}
@@ -669,9 +669,10 @@ public abstract class InfoImpl implements Info {
 
 		List<String> result = new ArrayList<String>();
 
-		// first search for strings with matching language identifier
+		// first search for strings with language identifier matching the language
+		// defined for overall processing in the ShapeChange input configuration
 		for (LangString ls : lsList) {
-
+		    
 			if (ls.hasLang()
 					&& ls.getLang().equalsIgnoreCase(options().language())) {
 
@@ -685,6 +686,24 @@ public abstract class InfoImpl implements Info {
 				}
 			}
 		}
+		
+		/* FIXME - If no specific language is configured by input parameter 'language',
+		 * then ShapeChange looks for tags without language, assuming that such a tag
+		 * is given in the 'primary' language. However, currently we do not take into account
+		 * tag 'language' on the application schema. If all tags have a language identifier,
+		 * then that 'language' tag is supposed to identify the primary language. Info.language()
+		 * provides that information. So if we also do not find a tag without language identifier
+		 * then we would need to look up a tag within the primary language!
+		 * 
+		 * It is weird to have an implementation in InfoImpl
+		 * that is overwritten in subtypes such as ClassInfoImpl etc., and that the InfoImpl
+		 * implementation looks up the language from a descriptor source - which is configurable -
+		 * and the overriding implementations only look up the language from the 'language' tagged value).
+		 * If we want to keep the definition of the primary language configurable via a descriptor source,
+		 * we should omit the explicit lookup via tag 'language' in subtypes of InfoImpl and should instead
+		 * use a lookup as currently in InfoImpl.language(), i.e. via descriptor source for language - 
+		 * for each subtype of InfoImpl.
+		 * */
 
 		/*
 		 * if no language specific strings exist, search for ones without

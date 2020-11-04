@@ -469,5 +469,9 @@ public class ConfigConstants {
 	 * </ul>
 	 */
 	public static final String RULE_TGT_LDP_CLS_ONEO_METADATA = "rule-ldp-cls-oneo-metadata";
+	
+	public static final String PARAM_PRETTY_PRINT = "prettyPrint";
 
+	// a "secret" override used to support unit tests
+	public static final String PARAM_UNITTEST_OVERRIDE = "_unitTestOverride";
 }

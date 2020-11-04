@@ -11,6 +11,11 @@
 						<element name="Warning" type="sc:MessageType"/>
 						<element name="Error" type="sc:MessageType"/>
 						<element name="FatalError" type="sc:MessageType"/>
+					 <element name="ProcessFlowDebug" type="sc:MessageType"/>
+					 <element name="ProcessFlowInfo" type="sc:MessageType"/>
+					 <element name="ProcessFlowWarning" type="sc:MessageType"/>
+					 <element name="ProcessFlowError" type="sc:MessageType"/>
+					 <element name="ProcessFlowFatalError" type="sc:MessageType"/>
 					</choice>
 				</complexType>
 			</element>

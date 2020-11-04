@@ -36,8 +36,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -510,19 +512,28 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     @Override
     public SortedSet<PropertyInfo> propertiesAll() {
 
-	SortedSet<PropertyInfo> allProps = new TreeSet<PropertyInfo>();
+	SortedMap<String, PropertyInfo> allPropsByName = new TreeMap<>();
 
-	allProps.addAll(this.properties().values());
+	for (PropertyInfo pi : this.properties().values()) {
+	    allPropsByName.put(pi.name(), pi);
+	}
 
 	for (String supertypeId : this.supertypes()) {
 	    ClassInfo supertype = this.model().classById(supertypeId);
 	    if (supertype != null) {
-		SortedSet<PropertyInfo> allSupertypeProps = supertype.propertiesAll();
-		allProps.addAll(allSupertypeProps);
+		for (PropertyInfo supertypeProp : supertype.propertiesAll()) {
+		    /*
+		     * ensure that direct property of the class is not overridden by supertype
+		     * property
+		     */
+		    if (!allPropsByName.containsKey(supertypeProp.name())) {
+			allPropsByName.put(supertypeProp.name(), supertypeProp);
+		    }
+		}
 	    }
 	}
 
-	return allProps;
+	return new TreeSet<PropertyInfo>(allPropsByName.values());
     }
 
     @Override
@@ -761,7 +772,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			if (ai instanceof PropertyInfoImpl) {
 			    ((PropertyInfoImpl) ai).restriction = true;
 			}
-			result().addInfo(null, 1002, ai.name(), name(), cicurr.name());
+			result().addWarning(null, 1002, ai.name(), name(), cicurr.name());
 		    }
 		}
 	    }
@@ -1140,6 +1151,21 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    ClassInfo supertype = model().classById(supertypeId);
 
 	    result.add(supertype);
+	}
+
+	return result;
+    }
+    
+    @Override
+    public SortedSet<ClassInfo> subtypeClasses() {
+
+	SortedSet<ClassInfo> result = new TreeSet<ClassInfo>();
+
+	for (String subtypeId : this.subtypes()) {
+
+	    ClassInfo subtype = model().classById(subtypeId);
+
+	    result.add(subtype);
 	}
 
 	return result;

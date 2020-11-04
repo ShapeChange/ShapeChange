@@ -133,7 +133,7 @@ public class ProfileConstraintTransformer
 		if (rules.contains(
 				RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
 			applyRuleCreateGeneralOutOfScopeConstraints(genModel, trfConfig,
 					rules);
@@ -143,7 +143,7 @@ public class ProfileConstraintTransformer
 		if (rules.contains(
 				RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES)) {
 
-			result.addInfo(null, 20103,
+			result.addProcessFlowInfo(null, 20103,
 					RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES);
 			applyRuleProhibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes(
 					genModel, trfConfig, rules);
@@ -747,7 +747,7 @@ public class ProfileConstraintTransformer
 			return subtype;
 		}
 	}
-
+	    
 	@Override
 	public String message(int mnr) {
 

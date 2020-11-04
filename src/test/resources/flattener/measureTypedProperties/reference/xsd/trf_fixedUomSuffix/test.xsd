@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/sc/flattener/measureTypedProperties" elementFormDefault="qualified" targetNamespace="http://example.org/sc/flattener/measureTypedProperties" version="1.0">
+  <annotation>
+    <documentation>Alias: applicationSchema</documentation>
+  </annotation>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Feature1" substitutionGroup="gml:AbstractFeature" type="t:Feature1Type">
+    <annotation>
+      <documentation>Alias: FT1</documentation>
+    </annotation>
+  </element>
+  <complexType name="Feature1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="angle_deg" type="double">
+            <annotation>
+              <documentation>Alias: ang_deg</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" name="measure" type="double">
+            <annotation>
+              <documentation>Alias: mea</documentation>
+            </annotation>
+          </element>
+          <element name="scale" type="double">
+            <annotation>
+              <documentation>Alias: sca</documentation>
+            </annotation>
+          </element>
+          <element name="length_cm" type="double">
+            <annotation>
+              <documentation>Alias: len_cm</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Feature1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Feature1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Feature2" substitutionGroup="gml:AbstractFeature" type="t:Feature2Type">
+    <annotation>
+      <documentation>Alias: FT2</documentation>
+    </annotation>
+  </element>
+  <complexType name="Feature2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="length_m" type="double">
+            <annotation>
+              <documentation>Alias: len_m</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Feature2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:Feature2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

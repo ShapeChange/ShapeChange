@@ -84,8 +84,7 @@ import mil.nga.sf.GeometryType;
 /**
  * Creates a GeoPackage template for a set of application schemas.
  *
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class GeoPackageTemplate implements SingleTarget, MessageSource {
@@ -425,10 +424,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 		    // already encoded as data column constraints
 		    continue;
 		}
-		
+
 		if (ci.category() == Options.CODELIST) {
-			result.addWarning(this, 113, ci.name());
-			continue;
+		    result.addWarning(this, 113, ci.name());
+		    continue;
 		}
 
 		// class is a feature type, object type, or data type
@@ -961,7 +960,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	case 112:
 	    return "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
 	case 113:
-		return "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
+	    return "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

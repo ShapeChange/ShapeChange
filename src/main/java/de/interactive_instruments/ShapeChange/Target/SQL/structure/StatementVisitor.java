@@ -61,4 +61,10 @@ public interface StatementVisitor {
 	 * necessary postprocessing can be performed.
 	 */
 	public void postprocess();
+
+	public void visit(CreateSchema createSchema);
+
+	public void visit(DropSchema dropSchema);
+
+	public void visit(PostgreSQLAlterRole postgreSQLAlterRole);
 }

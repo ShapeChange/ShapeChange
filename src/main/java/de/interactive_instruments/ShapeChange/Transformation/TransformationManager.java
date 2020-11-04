@@ -42,6 +42,9 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -67,500 +70,480 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
  * Manages the transformation of a model, executing common pre- and
  * postprocessing tasks (e.g. setting of tagged values).
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class TransformationManager implements MessageSource {
 
-	public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
-	public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
-	public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
+    public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
+    public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
+    public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
 
-	private Options options = null;
-	private ShapeChangeResult result = null;
-	private Set<String> rules = null;
+    private Options options = null;
+    private ShapeChangeResult result = null;
+    private Set<String> rules = null;
 
-	public GenericModel process(GenericModel genModel, Options o,
-			TransformerConfiguration trfConfig, ShapeChangeResult r)
-			throws ShapeChangeAbortException {
+    public GenericModel process(GenericModel genModel, Options o, TransformerConfiguration trfConfig,
+	    ShapeChangeResult r) throws ShapeChangeAbortException {
 
-		this.options = o;
-		this.result = r;
+	this.options = o;
+	this.result = r;
 
-		Class<?> theClass;
-		de.interactive_instruments.ShapeChange.Transformation.Transformer transformer;
-		try {
-			theClass = Class.forName(trfConfig.getClassName());
-			transformer = (de.interactive_instruments.ShapeChange.Transformation.Transformer) theClass
-					.getConstructor().newInstance();
-		} catch (Exception e) {
-			throw new ShapeChangeAbortException(
-					"Could not load transformer class '"
-							+ trfConfig.getClassName() + " for transformer ID '"
-							+ trfConfig.getId() + "'.");
-		}
-
-		/*
-		 * get the set of all rules defined for the transformation
-		 */
-		Map<String, ProcessRuleSet> ruleSets = trfConfig.getRuleSets();
-
-		rules = new HashSet<String>();
-		if (!ruleSets.isEmpty()) {
-			for (ProcessRuleSet ruleSet : ruleSets.values()) {
-				if (ruleSet.getAdditionalRules() != null) {
-					rules.addAll(ruleSet.getAdditionalRules());
-				}
-			}
-		}
-
-		// execute common pre-processing tasks
-
-		this.preprocess(genModel, trfConfig);
-
-		// execute actual processing
-		transformer.process(genModel, o, trfConfig, r);
-
-		// execute common post-processing tasks
-		this.postprocess(genModel, trfConfig);
-
-		return genModel;
+	Class<?> theClass;
+	de.interactive_instruments.ShapeChange.Transformation.Transformer transformer;
+	try {
+	    theClass = Class.forName(trfConfig.getClassName());
+	    transformer = (de.interactive_instruments.ShapeChange.Transformation.Transformer) theClass.getConstructor()
+		    .newInstance();
+	} catch (Exception e) {
+	    throw new ShapeChangeAbortException("Could not load transformer class '" + trfConfig.getClassName()
+		    + " for transformer ID '" + trfConfig.getId() + "'.");
 	}
 
-	/**
-	 * Perform pre-processing tasks common to all transformers.
-	 * 
-	 * @param genModel
-	 * @param trfConfig
+	/*
+	 * get the set of all rules defined for the transformation
 	 */
-	private void preprocess(GenericModel genModel,
-			TransformerConfiguration trfConfig) {
+	Map<String, ProcessRuleSet> ruleSets = trfConfig.getRuleSets();
 
-		/* Check requirements */
-		if (rules.contains(
-				REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS)) {
-
-			result.addInfo(null, 20103,
-					REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS);
-
-			identifyFeatureAndObjectAssociations(genModel, trfConfig);
+	rules = new HashSet<String>();
+	if (!ruleSets.isEmpty()) {
+	    for (ProcessRuleSet ruleSet : ruleSets.values()) {
+		if (ruleSet.getAdditionalRules() != null) {
+		    rules.addAll(ruleSet.getAdditionalRules());
 		}
-
+	    }
 	}
 
-	/**
-	 * Logs occurrences of associations between feature and feature / object
-	 * types where one end belongs to a class in a selected schema. Log level is
-	 * WARN if the association is navigable from an object to a feature type.
-	 * 
-	 * @param genModel
-	 * @param trfConfig
-	 */
-	private void identifyFeatureAndObjectAssociations(GenericModel genModel,
-			TransformerConfiguration trfConfig) {
+	// execute common pre-processing tasks
 
-		SortedSet<PackageInfo> selSchemas = genModel.selectedSchemas();
+	this.preprocess(genModel, trfConfig);
 
-		for (PackageInfo selSchema : selSchemas) {
+	// execute actual processing
+	transformer.process(genModel, o, trfConfig, r);
 
-			/*
-			 * key: names of association end classes, sorted alphabetically
-			 * ascending, with :: as separator. We do not use the Association
-			 * name or id because we want to log occurrences of associations in
-			 * alphabetical order
-			 * 
-			 * value: the association
-			 */
-			Map<String, Set<AssociationInfo>> schemaAssocsByKey = new TreeMap<String, Set<AssociationInfo>>();
+	// execute common post-processing tasks
+	this.postprocess(genModel, trfConfig);
 
-			SortedSet<ClassInfo> cis = genModel.classes(selSchema);
+	return genModel;
+    }
 
-			for (ClassInfo ci : cis) {
+    /**
+     * Perform pre-processing tasks common to all transformers.
+     * 
+     * @param genModel
+     * @param trfConfig
+     */
+    private void preprocess(GenericModel genModel, TransformerConfiguration trfConfig) {
 
-				SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
+	/* Check requirements */
+	if (rules.contains(REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS)) {
 
-				for (PropertyInfo pi : pis.values()) {
+	    result.addProcessFlowInfo(null, 20103, REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS);
 
-					if (pi.association() != null) {
+	    identifyFeatureAndObjectAssociations(genModel, trfConfig);
+	}
 
-						AssociationInfo ai = pi.association();
+    }
 
-						PropertyInfo pi1 = ai.end1();
-						PropertyInfo pi2 = ai.end2();
+    /**
+     * Logs occurrences of associations between feature and feature / object types
+     * where one end belongs to a class in a selected schema. Log level is WARN if
+     * the association is navigable from an object to a feature type.
+     * 
+     * @param genModel
+     * @param trfConfig
+     */
+    private void identifyFeatureAndObjectAssociations(GenericModel genModel, TransformerConfiguration trfConfig) {
 
-						// ensure that this is a relevant association
-						if ((pi1.inClass().category() == Options.FEATURE
-								|| pi1.inClass().category() == Options.OBJECT)
-								&& (pi2.inClass().category() == Options.FEATURE
-										|| pi2.inClass()
-												.category() == Options.OBJECT)) {
+	SortedSet<PackageInfo> selSchemas = genModel.selectedSchemas();
 
-							// relevant association
+	for (PackageInfo selSchema : selSchemas) {
 
-							// identify key value
-							String key;
+	    /*
+	     * key: names of association end classes, sorted alphabetically ascending, with
+	     * :: as separator. We do not use the Association name or id because we want to
+	     * log occurrences of associations in alphabetical order
+	     * 
+	     * value: the association
+	     */
+	    Map<String, Set<AssociationInfo>> schemaAssocsByKey = new TreeMap<String, Set<AssociationInfo>>();
 
-							String pi1CiName = pi1.inClass().name();
-							String pi2CiName = pi2.inClass().name();
+	    SortedSet<ClassInfo> cis = genModel.classes(selSchema);
 
-							if (pi1CiName.compareTo(pi2CiName) <= 0) {
-								key = pi1CiName + "::" + pi2CiName;
-							} else {
-								key = pi2CiName + "::" + pi1CiName;
-							}
+	    for (ClassInfo ci : cis) {
 
-							// log association
-							if (schemaAssocsByKey.containsKey(key)) {
+		SortedMap<StructuredNumber, PropertyInfo> pis = ci.properties();
 
-								schemaAssocsByKey.get(key).add(ai);
+		for (PropertyInfo pi : pis.values()) {
 
-							} else {
+		    if (pi.association() != null) {
 
-								Set<AssociationInfo> aiSet = new HashSet<AssociationInfo>();
-								aiSet.add(ai);
-								schemaAssocsByKey.put(key, aiSet);
-							}
+			AssociationInfo ai = pi.association();
 
-						} else {
+			PropertyInfo pi1 = ai.end1();
+			PropertyInfo pi2 = ai.end2();
 
-							// association is not relevant
-						}
-					}
-				}
-			}
+			// ensure that this is a relevant association
+			if ((pi1.inClass().category() == Options.FEATURE || pi1.inClass().category() == Options.OBJECT)
+				&& (pi2.inClass().category() == Options.FEATURE
+					|| pi2.inClass().category() == Options.OBJECT)) {
 
-			if (schemaAssocsByKey.isEmpty()) {
+			    // relevant association
 
-				// log that no relevant associations were found in this schema
-				result.addInfo(this, 20104, selSchema.name());
+			    // identify key value
+			    String key;
+
+			    String pi1CiName = pi1.inClass().name();
+			    String pi2CiName = pi2.inClass().name();
+
+			    if (pi1CiName.compareTo(pi2CiName) <= 0) {
+				key = pi1CiName + "::" + pi2CiName;
+			    } else {
+				key = pi2CiName + "::" + pi1CiName;
+			    }
+
+			    // log association
+			    if (schemaAssocsByKey.containsKey(key)) {
+
+				schemaAssocsByKey.get(key).add(ai);
+
+			    } else {
+
+				Set<AssociationInfo> aiSet = new HashSet<AssociationInfo>();
+				aiSet.add(ai);
+				schemaAssocsByKey.put(key, aiSet);
+			    }
 
 			} else {
 
-				int countAssocs = 0;
-				for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
-					countAssocs += aiSet.size();
-				}
-
-				result.addInfo(this, 20108, "" + countAssocs, selSchema.name());
-
-				for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
-					for (AssociationInfo ai : aiSet) {
-
-						// determine order in which to print properties
-						PropertyInfo pi1, pi2;
-
-						String end1CiName = ai.end1().inClass().name();
-						String end2CiName = ai.end2().inClass().name();
-
-						if (end1CiName.compareTo(end2CiName) <= 0) {
-							pi1 = ai.end1();
-							pi2 = ai.end2();
-						} else {
-							pi1 = ai.end2();
-							pi2 = ai.end1();
-						}
-
-						String pi1Ci, pi2Ci;
-
-						StringBuilder sb = new StringBuilder();
-
-						if (pi1.inClass().stereotypes().size() == 1) {
-							sb.append("<<");
-							sb.append(pi1.inClass().stereotypes().toString());
-							sb.append(">> ");
-						}
-						sb.append(pi1.inClass().name());
-
-						pi1Ci = sb.toString();
-
-						sb = new StringBuilder();
-
-						if (pi2.inClass().stereotypes().size() == 1) {
-							sb.append("<<");
-							sb.append(pi2.inClass().stereotypes().toString());
-							sb.append(">> ");
-						}
-						sb.append(pi2.inClass().name());
-
-						pi2Ci = sb.toString();
-
-						boolean logLevelWarn = false;
-
-						if ((pi1.isNavigable()
-								&& pi1.inClass().category() == Options.OBJECT
-								&& pi1.categoryOfValue() == Options.FEATURE)
-								|| (pi2.isNavigable()
-										&& pi2.inClass()
-												.category() == Options.OBJECT
-										&& pi2.categoryOfValue() == Options.FEATURE)) {
-
-							logLevelWarn = true;
-						}
-
-						MessageContext mc;
-
-						if (logLevelWarn) {
-							mc = result.addWarning(this, 20105, pi1Ci, pi2Ci);
-						} else {
-							mc = result.addInfo(this, 20105, pi1Ci, pi2Ci);
-						}
-
-						/*
-						 * not printing the name because AssociationInfoEA
-						 * constructs a name for the association if it is not
-						 * set in the model
-						 */
-
-						if (pi1.isNavigable()) {
-							mc.addDetail(this, 20107, pi1.name(),
-									pi1.inClass().name());
-						}
-						if (pi2.isNavigable()) {
-							mc.addDetail(this, 20107, pi2.name(),
-									pi2.inClass().name());
-						}
-					}
-				}
+			    // association is not relevant
 			}
+		    }
 		}
+	    }
+
+	    if (schemaAssocsByKey.isEmpty()) {
+
+		// log that no relevant associations were found in this schema
+		result.addInfo(this, 20104, selSchema.name());
+
+	    } else {
+
+		int countAssocs = 0;
+		for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
+		    countAssocs += aiSet.size();
+		}
+
+		result.addInfo(this, 20108, "" + countAssocs, selSchema.name());
+
+		for (Set<AssociationInfo> aiSet : schemaAssocsByKey.values()) {
+		    for (AssociationInfo ai : aiSet) {
+
+			// determine order in which to print properties
+			PropertyInfo pi1, pi2;
+
+			String end1CiName = ai.end1().inClass().name();
+			String end2CiName = ai.end2().inClass().name();
+
+			if (end1CiName.compareTo(end2CiName) <= 0) {
+			    pi1 = ai.end1();
+			    pi2 = ai.end2();
+			} else {
+			    pi1 = ai.end2();
+			    pi2 = ai.end1();
+			}
+
+			String pi1Ci, pi2Ci;
+
+			StringBuilder sb = new StringBuilder();
+
+			if (pi1.inClass().stereotypes().size() == 1) {
+			    sb.append("<<");
+			    sb.append(pi1.inClass().stereotypes().toString());
+			    sb.append(">> ");
+			}
+			sb.append(pi1.inClass().name());
+
+			pi1Ci = sb.toString();
+
+			sb = new StringBuilder();
+
+			if (pi2.inClass().stereotypes().size() == 1) {
+			    sb.append("<<");
+			    sb.append(pi2.inClass().stereotypes().toString());
+			    sb.append(">> ");
+			}
+			sb.append(pi2.inClass().name());
+
+			pi2Ci = sb.toString();
+
+			boolean logLevelWarn = false;
+
+			if ((pi1.isNavigable() && pi1.inClass().category() == Options.OBJECT
+				&& pi1.categoryOfValue() == Options.FEATURE)
+				|| (pi2.isNavigable() && pi2.inClass().category() == Options.OBJECT
+					&& pi2.categoryOfValue() == Options.FEATURE)) {
+
+			    logLevelWarn = true;
+			}
+
+			MessageContext mc;
+
+			if (logLevelWarn) {
+			    mc = result.addWarning(this, 20105, pi1Ci, pi2Ci);
+			} else {
+			    mc = result.addInfo(this, 20105, pi1Ci, pi2Ci);
+			}
+
+			/*
+			 * not printing the name because AssociationInfoEA constructs a name for the
+			 * association if it is not set in the model
+			 */
+
+			if (pi1.isNavigable()) {
+			    mc.addDetail(this, 20107, pi1.name(), pi1.inClass().name());
+			}
+			if (pi2.isNavigable()) {
+			    mc.addDetail(this, 20107, pi2.name(), pi2.inClass().name());
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+    /**
+     * Perform post-processing tasks common to all transformers.
+     * 
+     * @param genModel
+     * @param trfConfig
+     */
+    private void postprocess(GenericModel genModel, TransformerConfiguration trfConfig) {
+
+	if (trfConfig.hasParameter(TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
+		&& trfConfig.getParameterValue(TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV).trim()
+			.equalsIgnoreCase("true")) {
+	    setGenerationDateTimeTaggedValue(genModel);
 	}
 
-	/**
-	 * Perform post-processing tasks common to all transformers.
-	 * 
-	 * @param genModel
-	 * @param trfConfig
+	if (trfConfig.hasTaggedValues()) {
+	    setTaggedValues(genModel, trfConfig.getTaggedValues());
+	}
+
+	if (!trfConfig.getAllRules().contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
+
+	    result.addProcessFlowInfo(this, 20109);
+
+	    genModel.validateConstraints();
+
+	}
+    }
+
+    /**
+     * Sets tagged values for specific model elements (packages, classes,
+     * properties).
+     * 
+     * @param genModel
+     * @param taggedValues
+     */
+    private void setTaggedValues(GenericModel genModel, List<TaggedValueConfigurationEntry> taggedValues) {
+
+	for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
+
+	    GenericPackageInfo genPackage = (GenericPackageInfo) pi;
+
+	    TaggedValues genPaTVs = genPackage.taggedValuesAll();
+
+	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+
+		if (tvce.getModelElementSelectionInfo().matches(genPackage)) {
+
+		    if (genPaTVs.containsKey(tvce.getName())) {
+			// tagged value already exists on model element
+
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the existing value(s)
+			 */
+			if (tvce.hasValue()) {
+			    genPaTVs.put(tvce.getName(), tvce.getValue());
+			}
+
+		    } else {
+			// tagged value does not exist on model element
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the empty string
+			 */
+			genPaTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+		    }
+		}
+	    }
+
+	    genPackage.setTaggedValues(genPaTVs, true);
+	}
+
+	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+	    TaggedValues genCiTVs = genCi.taggedValuesAll();
+
+	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+
+		if (tvce.getModelElementSelectionInfo().matches(genCi)) {
+
+		    if (genCiTVs.containsKey(tvce.getName())) {
+			// tagged value already exists on model element
+
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise keep the existing value(s)
+			 */
+			if (tvce.hasValue()) {
+			    genCiTVs.put(tvce.getName(), tvce.getValue());
+			}
+
+		    } else {
+			// tagged value does not exist on model element
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the empty string
+			 */
+			genCiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+		    }
+		}
+	    }
+
+	    genCi.setTaggedValues(genCiTVs, true);
+	}
+
+	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+	    TaggedValues genPiTVs = genPi.taggedValuesAll();
+
+	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+
+		if (tvce.getModelElementSelectionInfo().matches(genPi)) {
+
+		    if (genPiTVs.containsKey(tvce.getName())) {
+			// tagged value already exists on model element
+
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the existing value(s)
+			 */
+			if (tvce.hasValue()) {
+			    genPiTVs.put(tvce.getName(), tvce.getValue());
+			}
+
+		    } else {
+			// tagged value does not exist on model element
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the empty string
+			 */
+			genPiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+		    }
+		}
+	    }
+
+	    genPi.setTaggedValues(genPiTVs, true);
+	}
+
+	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+
+	    TaggedValues genAiTVs = genAi.taggedValuesAll();
+
+	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+
+		if (tvce.getModelElementSelectionInfo().matches(genAi)) {
+
+		    if (genAiTVs.containsKey(tvce.getName())) {
+			// tagged value already exists on model element
+
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the existing value(s)
+			 */
+			if (tvce.hasValue()) {
+			    genAiTVs.put(tvce.getName(), tvce.getValue());
+			}
+
+		    } else {
+			// tagged value does not exist on model element
+			/*
+			 * if the tagged value configuration contains an actual value, use it -
+			 * otherwise use the empty string
+			 */
+			genAiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+		    }
+		}
+	    }
+
+	    genAi.setTaggedValues(genAiTVs, true);
+	}
+
+    }
+
+    /**
+     * Sets the tagged value "generationDateTime" on all selected application
+     * schemas in the model, creating the tagged value if necessary.
+     * 
+     * @param genModel
+     */
+    private void setGenerationDateTimeTaggedValue(GenericModel genModel) {
+
+	SortedSet<PackageInfo> appSchema = genModel.selectedSchemas();
+
+	for (PackageInfo pi : appSchema) {
+
+	    GenericPackageInfo genPi = (GenericPackageInfo) pi;
+
+	    TaggedValues genPiTVs = genPi.taggedValuesAll();
+
+	    TimeZone tz = TimeZone.getTimeZone("UTC");
+	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	    df.setTimeZone(tz);
+	    String currentTime = df.format(new Date());
+
+	    String[] val = new String[1];
+	    val[0] = currentTime;
+	    genPiTVs.put(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, val);
+
+	    genPi.setTaggedValues(genPiTVs, false);
+	}
+
+    }
+
+    /**
+     * @return the set of common transformer parameters
+     */
+    public static SortedSet<String> getRecognizedParameters() {
+
+	return new TreeSet<>(Stream.of(TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV,
+		"navigatingNonNavigableAssociationsWhenParsingOcl").collect(Collectors.toSet()));
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	/*
+	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
+	 * message in the output.
 	 */
-	private void postprocess(GenericModel genModel,
-			TransformerConfiguration trfConfig) {
+	switch (mnr) {
 
-		if (trfConfig.hasParameter(
-				TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
-				&& trfConfig.getParameterValue(
-						TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV)
-						.trim().equalsIgnoreCase("true")) {
-			setGenerationDateTimeTaggedValue(genModel);
-		}
+	case 20104:
+	    return "No associations between feature and feature / object types found in schema '$1$'.";
+	case 20105:
+	    return "Association exists between '$1$' and '$2$'.";
+	case 20107:
+	    return "Navigable via property '$1$' of class '$2$'.";
+	case 20108:
+	    return "$1$ associations between feature and feature / object types found in schema '$2$'.";
+	case 20109:
+	    return "---------- TransformationManager postprocessing: validating constraints ----------";
 
-		if (trfConfig.hasTaggedValues()) {
-			setTaggedValues(genModel, trfConfig.getTaggedValues());
-		}
-
-		if (!trfConfig.getAllRules()
-				.contains(RULE_SKIP_CONSTRAINT_VALIDATION)) {
-
-			result.addInfo(this, 20109);
-
-			genModel.validateConstraints();
-
-		}
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
-
-	/**
-	 * Sets tagged values for specific model elements (packages, classes,
-	 * properties).
-	 * 
-	 * @param genModel
-	 * @param taggedValues
-	 */
-	private void setTaggedValues(GenericModel genModel,
-			List<TaggedValueConfigurationEntry> taggedValues) {
-
-		for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
-
-			GenericPackageInfo genPackage = (GenericPackageInfo) pi;
-
-			TaggedValues genPaTVs = genPackage.taggedValuesAll();
-
-			for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-				if (tvce.getModelElementSelectionInfo().matches(genPackage)) {
-
-					if (genPaTVs.containsKey(tvce.getName())) {
-						// tagged value already exists on model element
-
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the existing value(s)
-						 */
-						if (tvce.hasValue()) {
-							genPaTVs.put(tvce.getName(), tvce.getValue());
-						}
-
-					} else {
-						// tagged value does not exist on model element
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the empty string
-						 */
-						genPaTVs.put(tvce.getName(),
-								tvce.hasValue() ? tvce.getValue() : "");
-					}
-				}
-			}
-
-			genPackage.setTaggedValues(genPaTVs, true);
-		}
-
-		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-
-			TaggedValues genCiTVs = genCi.taggedValuesAll();
-
-			for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-				if (tvce.getModelElementSelectionInfo().matches(genCi)) {
-
-					if (genCiTVs.containsKey(tvce.getName())) {
-						// tagged value already exists on model element
-
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise keep the existing value(s)
-						 */
-						if (tvce.hasValue()) {
-							genCiTVs.put(tvce.getName(), tvce.getValue());
-						}
-
-					} else {
-						// tagged value does not exist on model element
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the empty string
-						 */
-						genCiTVs.put(tvce.getName(),
-								tvce.hasValue() ? tvce.getValue() : "");
-					}
-				}
-			}
-
-			genCi.setTaggedValues(genCiTVs, true);
-		}
-
-		for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
-
-			TaggedValues genPiTVs = genPi.taggedValuesAll();
-
-			for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-				if (tvce.getModelElementSelectionInfo().matches(genPi)) {
-
-					if (genPiTVs.containsKey(tvce.getName())) {
-						// tagged value already exists on model element
-
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the existing value(s)
-						 */
-						if (tvce.hasValue()) {
-							genPiTVs.put(tvce.getName(), tvce.getValue());
-						}
-
-					} else {
-						// tagged value does not exist on model element
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the empty string
-						 */
-						genPiTVs.put(tvce.getName(),
-								tvce.hasValue() ? tvce.getValue() : "");
-					}
-				}
-			}
-
-			genPi.setTaggedValues(genPiTVs, true);
-		}
-
-		for (GenericAssociationInfo genAi : genModel
-				.selectedSchemaAssociations()) {
-
-			TaggedValues genAiTVs = genAi.taggedValuesAll();
-
-			for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-				if (tvce.getModelElementSelectionInfo().matches(genAi)) {
-
-					if (genAiTVs.containsKey(tvce.getName())) {
-						// tagged value already exists on model element
-
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the existing value(s)
-						 */
-						if (tvce.hasValue()) {
-							genAiTVs.put(tvce.getName(), tvce.getValue());
-						}
-
-					} else {
-						// tagged value does not exist on model element
-						/*
-						 * if the tagged value configuration contains an actual
-						 * value, use it - otherwise use the empty string
-						 */
-						genAiTVs.put(tvce.getName(),
-								tvce.hasValue() ? tvce.getValue() : "");
-					}
-				}
-			}
-
-			genAi.setTaggedValues(genAiTVs, true);
-		}
-
-	}
-
-	/**
-	 * Sets the tagged value "generationDateTime" on all selected application
-	 * schemas in the model, creating the tagged value if necessary.
-	 * 
-	 * @param genModel
-	 */
-	private void setGenerationDateTimeTaggedValue(GenericModel genModel) {
-
-		SortedSet<PackageInfo> appSchema = genModel.selectedSchemas();
-
-		for (PackageInfo pi : appSchema) {
-
-			GenericPackageInfo genPi = (GenericPackageInfo) pi;
-
-			TaggedValues genPiTVs = genPi.taggedValuesAll();
-
-			TimeZone tz = TimeZone.getTimeZone("UTC");
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-			df.setTimeZone(tz);
-			String currentTime = df.format(new Date());
-
-			String[] val = new String[1];
-			val[0] = currentTime;
-			genPiTVs.put(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME,
-					val);
-
-			genPi.setTaggedValues(genPiTVs, false);
-		}
-
-	}
-
-	@Override
-	public String message(int mnr) {
-
-		/*
-		 * NOTE: A leading ?? in a message text suppresses multiple appearance
-		 * of a message in the output.
-		 */
-		switch (mnr) {
-
-		case 20104:
-			return "No associations between feature and feature / object types found in schema '$1$'.";
-		case 20105:
-			return "Association exists between '$1$' and '$2$'.";
-		case 20107:
-			return "Navigable via property '$1$' of class '$2$'.";
-		case 20108:
-			return "$1$ associations between feature and feature / object types found in schema '$2$'.";
-		case 20109:
-			return "---------- TransformationManager postprocessing: validating constraints ----------";
-
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
+    }
 }

@@ -69,8 +69,8 @@ public class SQLiteDdlFixer {
 
 		List<Statement> result = new ArrayList<>();
 
-		SortedMap<String, List<SqlConstraint>> constraintsFromAlterStatementsByTableName = new TreeMap<>();
-		SortedMap<String, Table> tableByName = new TreeMap<>();
+		SortedMap<String, List<SqlConstraint>> constraintsFromAlterStatementsByFullTableName = new TreeMap<>();
+		SortedMap<String, Table> tableByFullName = new TreeMap<>();
 
 		for (Statement stmt : stmtsIn) {
 
@@ -83,17 +83,17 @@ public class SQLiteDdlFixer {
 				if (ae.getOperation().equals(AlterExpression.AlterOperation.ADD)
 						&& ae instanceof ConstraintAlterExpression) {
 
-					String tableName = alter.getTable().getName();
+					String fullTableName = alter.getTable().getFullName();
 
 					List<SqlConstraint> cons;
-					if (!constraintsFromAlterStatementsByTableName
-							.containsKey(tableName)) {
+					if (!constraintsFromAlterStatementsByFullTableName
+							.containsKey(fullTableName)) {
 						cons = new ArrayList<>();
-						constraintsFromAlterStatementsByTableName.put(tableName,
+						constraintsFromAlterStatementsByFullTableName.put(fullTableName,
 								cons);
 					} else {
-						cons = constraintsFromAlterStatementsByTableName
-								.get(tableName);
+						cons = constraintsFromAlterStatementsByFullTableName
+								.get(fullTableName);
 					}
 
 					cons.add(((ConstraintAlterExpression) ae).getConstraint());
@@ -111,7 +111,7 @@ public class SQLiteDdlFixer {
 
 				Table table = ct.getTable();
 				
-				tableByName.put(table.getName(), table);
+				tableByFullName.put(table.getFullName(), table);
 
 				List<Column> columnsToRemoveFromTable = new ArrayList<>();
 
@@ -155,12 +155,12 @@ public class SQLiteDdlFixer {
 			}
 		}
 		
-		for(Entry<String,List<SqlConstraint>> e : constraintsFromAlterStatementsByTableName.entrySet()) {
+		for(Entry<String,List<SqlConstraint>> e : constraintsFromAlterStatementsByFullTableName.entrySet()) {
 			
-			String tableName = e.getKey();
+			String fullTableName = e.getKey();
 			List<SqlConstraint> cons = e.getValue();
 			
-			Table table = tableByName.get(tableName);
+			Table table = tableByFullName.get(fullTableName);
 			
 			table.addConstraints(cons);
 		}

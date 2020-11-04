@@ -71,4 +71,31 @@ public class TypeConverterTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/typeConversion/targetElementByReference",
 		"src/test/resources/typeConverter/targetElementByReference/reference");
     }
+    
+    @Test
+    public void testRuleTrfPropertyMetadataStereotypeToMetadataProperty() {
+
+	multiTest(
+		"src/test/resources/typeConverter/propertyMetadataStereotype/test_propertyMetadataStereotype.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/propertyMetadataStereotype",
+		"src/test/resources/typeConverter/propertyMetadataStereotype/reference");
+    }
+    
+    @Test
+    public void testRuleTrfNilReasonPropertyForNillableProperty() {
+
+	multiTest(
+		"src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/test_nilReasonPropertyForNillableProperty.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/nilReasonPropertyForNillableProperty",
+		"src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/reference");
+    }
+    
+    @Test
+    public void testRuleTrfSwitchValueTypes() {
+
+	multiTest(
+		"src/test/resources/typeConverter/switchValueTypes/test_switchValueTypes.xml",
+		new String[] { "xsd" }, "testResults/typeConversion/switchValueTypes",
+		"src/test/resources/typeConverter/switchValueTypes/reference");
+    }
 }

@@ -32,8 +32,14 @@
 
 package de.interactive_instruments.ShapeChange.Target;
 
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import de.interactive_instruments.ShapeChange.Converter;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.Process;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -41,7 +47,11 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 
-public interface Target {
+public interface Target extends Process {
+
+    public static final SortedSet<String> COMMON_TARGET_PARAMETERS = new TreeSet<>(Stream.of("appSchemaName",
+	    "appSchemaNameRegex", "appSchemaNamespaceRegex", "defaultEncodingRule", "documentationTemplate",
+	    "documentationNoValue", "outputDirectory", "outputFilename", "sortedOutput").collect(Collectors.toSet()));
 
     /**
      * Call upon the target to register all relevant conversion and standard
@@ -60,9 +70,9 @@ public interface Target {
      * always represents the core, i.e. global, encoding rule.</li>
      * <li>You can also register an encoding rule that extends another encoding rule
      * by calling {@link RuleRegistry#addExtendsEncRule(String, String)} - e.g.
-     * <code>r.addExtendsEncRule("iso19136_2007", "*")</code>; NOTE: the
-     * default encoding rule (returned by {@link #getDefaultEncodingRule()}), if
-     * other than '*', must be added this way</li>
+     * <code>r.addExtendsEncRule("iso19136_2007", "*")</code>; NOTE: the default
+     * encoding rule (returned by {@link #getDefaultEncodingRule()}), if other than
+     * '*', must be added this way</li>
      * </ul>
      * 
      * @param r the registry to which the rules and requirements shall be added

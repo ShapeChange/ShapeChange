@@ -88,6 +88,11 @@ public interface PackageInfo extends Info {
 
     public PackageInfo owner();
 
+    /**
+     * @return the ID of the package that represents a schema (isSchema() returns
+     *         true), search begins with this package and continues with its
+     *         ancestors (owners); the string "null" if no such package exists.
+     */
     public String schemaId();
 
     /**

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://example.org/external" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/shapechange/typeconverter/propertyMetadataStereotype" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/typeconverter/propertyMetadataStereotype" version="1.0">
+  <import namespace="http://example.org/external" schemaLocation="external.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type"/>
+  <complexType name="FT1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="rFT1toFT2" type="t:FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:rFT2toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="rFT1toFT3" type="t:FT3PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:rFT3toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="rFT1toExtFT1" type="ext:ExtFT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ext:rExtFT1toFT1</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT2" substitutionGroup="gml:AbstractFeature" type="t:FT2Type"/>
+  <complexType name="FT2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="rFT2toFT1" type="t:FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:rFT1toFT2</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT3" substitutionGroup="gml:AbstractFeature" type="t:FT3Type"/>
+  <complexType name="FT3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attExtDT1" type="ext:ExtDT1PropertyType"/>
+          <element name="attInteger" type="integer"/>
+          <element name="rFT3toFT1" type="t:FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:rFT1toFT3</reversePropertyName>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

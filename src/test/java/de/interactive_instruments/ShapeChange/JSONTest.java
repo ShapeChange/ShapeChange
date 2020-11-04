@@ -38,34 +38,16 @@ import org.junit.jupiter.api.Test;
 public class JSONTest extends BasicTestSCXML {
 
     @Test
-    public void testJsonWithGeoservicesEncodingRule() {
-	/*
-	 * JSON encoding with geoservices encoding rule
-	 */
-	String[] typenamesGsr = { "FeatureType1", "FeatureType2" };
-	jsonTest("src/test/resources/json/geoservicesEncodingRule/testEA_JsonGsr.xml", typenamesGsr,
-		"testResults/json/geoservicesEncodingRule/INPUT",
-		"src/test/resources/json/geoservicesEncodingRule/reference");
-    }
+    public void testJson_basic() {
 
+	multiTest("src/test/resources/json/basic/test_json_schema_basic.xml", new String[] { "json", "xml" },
+		"testResults/json/basic/json_schemas", "src/test/resources/json/basic/reference/json_schemas");
+    }
+    
     @Test
-    public void testJsonWithExtendedGeoservicesEncodingRule() {
-	/*
-	 * JSON encoding with extended geoservices encoding rule
-	 */
-	String[] typenamesGsrExtended = { "DataType", "DataType2", "FeatureType1", "FeatureType2", "NilUnion",
-		"Union" };
-	jsonTest("src/test/resources/json/extendedGeoservicesEncodingRule/testEA_JsonGsrExtended.xml",
-		typenamesGsrExtended, "testResults/json/extendedGeoservicesEncodingRule/INPUT",
-		"src/test/resources/json/extendedGeoservicesEncodingRule/reference");
+    public void testJson_valueTypeOptions() {
+
+	multiTest("src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.xml", new String[] { "json", "xml" },
+		"testResults/json/valueTypeOptions/json_schemas", "src/test/resources/json/valueTypeOptions/reference/json_schemas");
     }
-
-    @Test
-    public void testJsonWithGlobalIdentifiers() {
-
-	multiTest("src/test/resources/json/globalIdentifiers/testEA_JsonGsrExtended_globalIdentifiers.xml",
-		new String[] { "json" }, "testResults/json/globalIdentifiers",
-		"src/test/resources/json/globalIdentifiers/reference");
-    }
-
 }

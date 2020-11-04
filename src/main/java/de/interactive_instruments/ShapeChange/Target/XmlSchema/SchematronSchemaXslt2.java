@@ -46,22 +46,27 @@ import de.interactive_instruments.ShapeChange.Ocl.OclNode;
  * Creates a Schematron Schema with xslt2 query binding.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SchematronSchemaXslt2 extends AbstractSchematronSchema implements MessageSource {
-    
+
     /**
      * Ctor
      *
-     * @param mdl Model object
-     * @param o   Options object
-     * @param r   Result object
-     * @param p   PackageInfo object
+     * @param mdl               Model object
+     * @param o                 Options object
+     * @param r                 Result object
+     * @param schemaPackage     the package that represents the schema that is being
+     *                          encoded by the XmlSchema target
+     * @param schemaXsdBaseName the name of the XSD document, for which this
+     *                          Schematron schema will contain assertions
+     * @param segmentation      true if schematron segmentation is enabled, else
+     *                          false
      */
-    public SchematronSchemaXslt2(Model mdl, Options o, ShapeChangeResult r, PackageInfo p) {
-	super(mdl, o, r, p);
+    public SchematronSchemaXslt2(Model mdl, Options o, ShapeChangeResult r, PackageInfo schemaPackage,
+	    String schemaXsdBaseName, boolean segmentation) {
+	super(mdl, o, r, schemaPackage, schemaXsdBaseName, segmentation);
 	addAttribute(document, root, "queryBinding", "xslt2");
     }
 
@@ -71,7 +76,7 @@ public class SchematronSchemaXslt2 extends AbstractSchematronSchema implements M
 	    // TODO log error, since this implementation only supports xslt2
 	}
     }
-    
+
     @Override
     public void addAssertion(ClassInfo ci, OclConstraint c) {
 
@@ -161,8 +166,8 @@ public class SchematronSchemaXslt2 extends AbstractSchematronSchema implements M
     /**
      * Add an assertion statement - that will result by translating the given OCL
      * constraint, which is defined for a property, to an XpathFragment object - and
-     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion to
-     * abstract or suppressed classes.
+     * output it as a Schematron &lt;assert&gt; element. Does not add an assertion
+     * to abstract or suppressed classes.
      *
      * <p>
      * The rule context is a class, which is determined by parameter cib. This

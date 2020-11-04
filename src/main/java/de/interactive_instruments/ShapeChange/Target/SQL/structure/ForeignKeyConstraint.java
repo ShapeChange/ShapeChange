@@ -166,7 +166,7 @@ public class ForeignKeyConstraint extends SqlConstraint {
 		return (this.hasName() ? "CONSTRAINT " + getName() + " " : "")
 				+ "FOREIGN KEY "
 				+ SqlUtil.getStringList(this.getColumns(), true, true)
-				+ " REFERENCES " + this.referenceTable.getName()
+				+ " REFERENCES " + this.referenceTable.getFullName()
 				+ ((this.referenceColumns != null
 						&& !this.referenceColumns.isEmpty())
 								? SqlUtil.getStringList(referenceColumns, true,

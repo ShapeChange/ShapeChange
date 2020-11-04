@@ -36,16 +36,19 @@ import java.util.Comparator;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class CreateTableSortAlphabetic implements Comparator<CreateTable> {
 
-	@Override
-	public int compare(CreateTable o1, CreateTable o2) {
+    @Override
+    public int compare(CreateTable o1, CreateTable o2) {
 
-		return o1.getTable().getName().compareTo(o2.getTable().getName());
+	if (SqlConstants.STATEMENT_SORT_USES_SCHEMA_NAME) {
+	    return o1.getTable().getFullName().compareTo(o2.getTable().getFullName());
+	} else {
+	    return o1.getTable().getName().compareTo(o2.getTable().getName());
 	}
+    }
 
 }

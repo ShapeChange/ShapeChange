@@ -35,201 +35,210 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.sparx.Repository;
 
-import de.interactive_instruments.ShapeChange.ConfigurationValidator;
-import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ArcGISWorkspaceConfigurationValidator
-		implements ConfigurationValidator, MessageSource {
+public class ArcGISWorkspaceConfigurationValidator extends AbstractConfigurationValidator {
 
-	@Override
-	public boolean isValid(ProcessConfiguration config, Options options,
-			ShapeChangeResult result) {
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    ArcGISWorkspaceConstants.PARAM_DOCUMENTATION_NOVALUE, ArcGISWorkspaceConstants.PARAM_DOCUMENTATION_TEMPLATE,
+	    ArcGISWorkspaceConstants.PARAM_EA_AUTHOR, ArcGISWorkspaceConstants.PARAM_EA_STATUS,
+	    ArcGISWorkspaceConstants.PARAM_FOREIGN_KEY_SUFFIX, ArcGISWorkspaceConstants.PARAM_KEEP_CASE_OF_ROLENAME,
+	    ArcGISWorkspaceConstants.PARAM_LENGTH_TAGGED_VALUE_DEFAULT, ArcGISWorkspaceConstants.PARAM_MAX_NAME_LENGTH,
+	    ArcGISWorkspaceConstants.PARAM_NAME_OF_TV_TO_DETERMINE_FIELD_LENGTH,
+	    ArcGISWorkspaceConstants.PARAM_OUTPUT_DIR, ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME,
+	    ArcGISWorkspaceConstants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
+	    ArcGISWorkspaceConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE, ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA,
+	    ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE).collect(Collectors.toSet()));
+    protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
-		boolean isValid = true;
+    @Override
+    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
 
-		/*
-		 * ========== Validate the EA environment ==========
-		 * 
-		 * NOTE Requires opening an actual EA repository.
-		 */
+	boolean isValid = true;
 
-		// Check if we can use the output directory; create it if it
-		// does not exist
+	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
+	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
+		config.getParameters().keySet(), result) && isValid;
 
-		// get output location
-		String outputDirectory = config.parameterAsString("outputDirectory",
-				".", false, true);
+	/*
+	 * ========== Validate the EA environment ==========
+	 * 
+	 * NOTE Requires opening an actual EA repository.
+	 */
 
-		String outputFilename = config.parameterAsString(
-				ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME,
-				"ArcGISWorkspaceConfigurationValidator", false, true);
+	// Check if we can use the output directory; create it if it
+	// does not exist
 
-		outputFilename = outputFilename.replace("/", "_").replace(" ", "_")
-				+ ".eap";
+	// get output location
+	String outputDirectory = config.parameterAsString("outputDirectory", ".", false, true);
 
-		File outputDirectoryFile = new File(outputDirectory);
-		boolean exi = outputDirectoryFile.exists();
-		if (!exi) {
-			try {
-				FileUtils.forceMkdir(outputDirectoryFile);
-			} catch (IOException e) {
-				isValid = false;
-				result.addError(this, 5, e.getMessage());
-				e.printStackTrace(System.err);
-			}
-			exi = outputDirectoryFile.exists();
+	String outputFilename = config.parameterAsString(ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME,
+		"ArcGISWorkspaceConfigurationValidator", false, true);
+
+	outputFilename = outputFilename.replace("/", "_").replace(" ", "_") + ".eap";
+
+	File outputDirectoryFile = new File(outputDirectory);
+	boolean exi = outputDirectoryFile.exists();
+	if (!exi) {
+	    try {
+		FileUtils.forceMkdir(outputDirectoryFile);
+	    } catch (IOException e) {
+		isValid = false;
+		result.addError(this, 5, e.getMessage());
+		e.printStackTrace(System.err);
+	    }
+	    exi = outputDirectoryFile.exists();
+	}
+	boolean dir = outputDirectoryFile.isDirectory();
+	boolean wrt = outputDirectoryFile.canWrite();
+	boolean rea = outputDirectoryFile.canRead();
+	if (!exi || !dir || !wrt || !rea) {
+	    isValid = false;
+	    result.addError(this, 1, outputDirectory);
+	}
+
+	File outputFile = new File(outputDirectoryFile, outputFilename);
+
+	/*
+	 * Check if file already exists - if so, attempt to delete it. Note that this
+	 * file will be deleted after the validation.
+	 */
+	exi = outputFile.exists();
+	if (exi) {
+	    try {
+		FileUtils.forceDelete(outputFile);
+	    } catch (IOException e) {
+		// ignore for configuration validation
+	    }
+	}
+
+	if (isValid) {
+	    // read workspace template
+
+	    String workspaceTemplateFilePath = config
+		    .parameterAsString(ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE, null, false, true);
+
+	    // if no path is provided, use the directory of the default template
+	    if (workspaceTemplateFilePath == null) {
+		workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
+	    }
+
+	    // copy template file either from remote or local URI
+	    if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
+
+		try {
+		    URL templateUrl = new URL(workspaceTemplateFilePath);
+		    FileUtils.copyURLToFile(templateUrl, outputFile);
+		} catch (MalformedURLException e1) {
+		    isValid = false;
+		    result.addError(this, 6, workspaceTemplateFilePath, e1.getMessage());
+		} catch (IOException e2) {
+		    isValid = false;
+		    result.addError(this, 8, e2.getMessage());
 		}
-		boolean dir = outputDirectoryFile.isDirectory();
-		boolean wrt = outputDirectoryFile.canWrite();
-		boolean rea = outputDirectoryFile.canRead();
-		if (!exi || !dir || !wrt || !rea) {
+
+	    } else {
+
+		File workspacetemplate = new File(workspaceTemplateFilePath);
+
+		if (workspacetemplate.exists()) {
+		    try {
+			FileUtils.copyFile(workspacetemplate, outputFile);
+		    } catch (IOException e) {
 			isValid = false;
-			result.addError(this, 1, outputDirectory);
+			result.addError(this, 8, e.getMessage());
+		    }
+		} else {
+		    isValid = false;
+		    result.addError(this, 7, workspacetemplate.getAbsolutePath());
 		}
-
-		File outputFile = new File(outputDirectoryFile, outputFilename);
-
-		/*
-		 * Check if file already exists - if so, attempt to delete it. Note that
-		 * this file will be deleted after the validation.
-		 */
-		exi = outputFile.exists();
-		if (exi) {
-			try {
-				FileUtils.forceDelete(outputFile);
-			} catch (IOException e) {
-				// ignore for configuration validation
-			}
-		}
-
-		if (isValid) {
-			// read workspace template
-
-			String workspaceTemplateFilePath = config.parameterAsString(
-					ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE, null,
-					false, true);
-
-			// if no path is provided, use the directory of the default template
-			if (workspaceTemplateFilePath == null) {
-				workspaceTemplateFilePath = ArcGISWorkspaceConstants.WORKSPACE_TEMPLATE_URL;
-			}
-
-			// copy template file either from remote or local URI
-			if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
-
-				try {
-					URL templateUrl = new URL(workspaceTemplateFilePath);
-					FileUtils.copyURLToFile(templateUrl, outputFile);
-				} catch (MalformedURLException e1) {
-					isValid = false;
-					result.addError(this, 6, workspaceTemplateFilePath,
-							e1.getMessage());
-				} catch (IOException e2) {
-					isValid = false;
-					result.addError(this, 8, e2.getMessage());
-				}
-
-			} else {
-
-				File workspacetemplate = new File(workspaceTemplateFilePath);
-
-				if (workspacetemplate.exists()) {
-					try {
-						FileUtils.copyFile(workspacetemplate, outputFile);
-					} catch (IOException e) {
-						isValid = false;
-						result.addError(this, 8, e.getMessage());
-					}
-				} else {
-					isValid = false;
-					result.addError(this, 7,
-							workspacetemplate.getAbsolutePath());
-				}
-			}
-		}
-
-		if (isValid) {
-
-			// connect to EA repository in outputFile
-			String absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
-
-			Repository rep = new Repository();
-
-			if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
-
-				String errormsg = rep.GetLastError();
-				result.addError(null, 30, errormsg, outputFilename);
-				rep = null;
-				isValid = false;
-
-			} else {
-
-				/*
-				 * Use the repository for validation of the EA environment
-				 */
-
-				if (!rep.IsTechnologyEnabled("ArcGIS")) {
-					isValid = false;
-					result.addError(this, 100);
-				}
-
-				// Close the repository
-				EARepositoryUtil.closeRepository(rep);
-				rep = null;
-			}
-		}
-
-		/*
-		 * Delete the repository file that was used for validation of the EA
-		 * environment
-		 */
-		if (outputFile.exists()) {
-			outputFile.delete();
-		}
-
-		return isValid;
+	    }
 	}
 
-	@Override
-	public String message(int mnr) {
+	if (isValid) {
 
-		switch (mnr) {
+	    // connect to EA repository in outputFile
+	    String absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
 
-		case 1:
-			return "Directory named '$1$' does not exist or is not accessible.";
-		case 5:
-			return "Could not create output directory. Exception message: '$1$'.";
-		case 6:
-			return "URL '$1$' provided for configuration parameter "
-					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
-					+ " is malformed. Exception message is: '$2$'.";
-		case 7:
-			return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-					+ ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
-					+ "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-		case 8:
-			return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
+	    Repository rep = new Repository();
 
-		// 100-199 MDG related messages
-		case 100:
-			return "The MDG Technology 'ArcGIS' is not enabled in your EA environment. Writing an ArcGIS workspace requires that this technology is enabled. Enable this technology in your EA environment before executing ShapeChange.";
+	    if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
 
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
+		String errormsg = rep.GetLastError();
+		result.addError(null, 30, errormsg, outputFilename);
+		rep = null;
+		isValid = false;
+
+	    } else {
+
+		/*
+		 * Use the repository for validation of the EA environment
+		 */
+
+		if (!rep.IsTechnologyEnabled("ArcGIS")) {
+		    isValid = false;
+		    result.addError(this, 100);
 		}
+
+		// Close the repository
+		EARepositoryUtil.closeRepository(rep);
+		rep = null;
+	    }
 	}
+
+	/*
+	 * Delete the repository file that was used for validation of the EA environment
+	 */
+	if (outputFile.exists()) {
+	    outputFile.delete();
+	}
+
+	return isValid;
+    }
+
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	case 1:
+	    return "Directory named '$1$' does not exist or is not accessible.";
+	case 5:
+	    return "Could not create output directory. Exception message: '$1$'.";
+	case 6:
+	    return "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
+		    + " is malformed. Exception message is: '$2$'.";
+	case 7:
+	    return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+		    + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
+		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
+	case 8:
+	    return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
+
+	// 100-199 MDG related messages
+	case 100:
+	    return "The MDG Technology 'ArcGIS' is not enabled in your EA environment. Writing an ArcGIS workspace requires that this technology is enabled. Enable this technology in your EA environment before executing ShapeChange.";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

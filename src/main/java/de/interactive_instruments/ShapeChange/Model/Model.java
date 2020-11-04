@@ -157,7 +157,7 @@ public interface Model {
 
     /**
      * 
-     * @return all {@link PropertyInfo} objects contained in the model; can be empty
+     * @return all navigable {@link PropertyInfo} objects contained in the model; can be empty
      *         but not <code>null</code>.
      */
     public SortedSet<PropertyInfo> properties();
@@ -255,4 +255,15 @@ public interface Model {
      */
     public String descriptorSource(Descriptor descriptor);
 
+    /**
+     * Searches for a non-navigable association role within the model. The role must
+     * have the given name and be in one of the given classes.
+     * 
+     * @param classes one of these classes must be located at one end of
+     *                           the association.
+     * @param roleName           the name of the association role to look up.
+     * @return The association role with the given name, and in the given class, if
+     *         it exists - otherwise <code>null</code>
+     */
+    public PropertyInfo lookupNonNavigableAssociationRole(SortedSet<ClassInfo> classes, String roleName);
 }

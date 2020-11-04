@@ -162,7 +162,7 @@ public class SqlUtil {
 	 */
 	public static String determineName(Table table, boolean useShortName) {
 
-		String result = table.getName();
+		String result = table.getFullName();
 
 		if (useShortName) {
 

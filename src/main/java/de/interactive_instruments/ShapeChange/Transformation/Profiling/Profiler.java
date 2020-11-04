@@ -145,19 +145,19 @@ public class Profiler implements Transformer, MessageSource {
 	 * Note: only direct subclasses of classes identified via this parameter are
 	 * included in the profile!
 	 */
-	public static final String PROFILING_CFG_PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR = "residualTypeRemoval_includeSubtypesFor";
+	public static final String PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR = "residualTypeRemoval_includeSubtypesFor";
 
 	/**
 	 * Name of the configuration parameter that contains information about the
 	 * profile(s) to restrict the model to.
 	 */
-	public static final String PROFILES_PARAMETER = "profiles";
+	public static final String PARAM_PROFILES = "profiles";
 
 	/**
 	 * Name of the configuration parameter that contains information on how to
 	 * handle constraints during profiling.
 	 */
-	public static final String CONSTRAINTHANDLING_PARAMETER = "constraintHandling";
+	public static final String PARAM_CONSTRAINTHANDLING = "constraintHandling";
 
 	/**
 	 * Enumeration of the different behaviors for handling constraints during
@@ -280,13 +280,13 @@ public class Profiler implements Transformer, MessageSource {
 
 		// 'profiles'
 		String profilesParameterValue = trfConfig
-				.getParameterValue(PROFILES_PARAMETER);
+				.getParameterValue(PARAM_PROFILES);
 
 		// residual type removal - include subtypes for
 		Pattern residualTypeRemoval_includeSubtypesFor = trfConfig.hasParameter(
-				PROFILING_CFG_PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR)
+				PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR)
 						? Pattern.compile(trfConfig.getParameterValue(
-								PROFILING_CFG_PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR))
+								PARAM_RESIDUALTYPEREMOVAL_INCLUDESUBTYPESFOR))
 						: null;
 
 		try {
@@ -294,12 +294,12 @@ public class Profiler implements Transformer, MessageSource {
 					true);
 		} catch (MalformedProfileIdentifierException e) {
 			this.profilesFromConfig = new Profiles();
-			result.addError(this, 20219, PROFILES_PARAMETER, e.getMessage());
+			result.addError(this, 20219, PARAM_PROFILES, e.getMessage());
 		}
 
 		// 'constraintHandling'
 		String constraintHandlingValue = trfConfig
-				.getParameterValue(CONSTRAINTHANDLING_PARAMETER);
+				.getParameterValue(PARAM_CONSTRAINTHANDLING);
 		if (constraintHandlingValue != null
 				&& constraintHandlingValue.length() > 0) {
 
@@ -316,7 +316,7 @@ public class Profiler implements Transformer, MessageSource {
 			}
 
 			if (!validConstraintHandlingParameter) {
-				result.addError(this, 20220, CONSTRAINTHANDLING_PARAMETER,
+				result.addError(this, 20220, PARAM_CONSTRAINTHANDLING,
 						constraintHandlingValue);
 				this.constraintHandling = ConstraintHandling.keep;
 			}
@@ -1089,7 +1089,7 @@ public class Profiler implements Transformer, MessageSource {
 
 			return classProfiles.contains(pi.inClass().name(),
 					profilesFromConfig,
-					PROFILES_PARAMETER + "_config_parameter",
+					PARAM_PROFILES + "_config_parameter",
 					isExplicitProfileSettingsRuleEnabled, false, messages);
 
 		} else {
@@ -1102,7 +1102,7 @@ public class Profiler implements Transformer, MessageSource {
 			return propertyProfiles.contains(pi.name()
 					+ (" (property in class '" + pi.inClass().name() + "')"),
 					profilesFromConfig,
-					PROFILES_PARAMETER + "_config_parameter",
+					PARAM_PROFILES + "_config_parameter",
 					isExplicitProfileSettingsRuleEnabled, false, messages);
 		}
 
@@ -1281,7 +1281,7 @@ public class Profiler implements Transformer, MessageSource {
 		case 2:
 			return "Context: property $1$";
 		case 100:
-			return "??Configuration parameter '" + PROFILES_PARAMETER
+			return "??Configuration parameter '" + PARAM_PROFILES
 					+ "' specifies more than one profile (found: $1$ profiles). Profile metadata is only processed if the parameter identifies exactly one profile.";
 		case 101:
 			return "";

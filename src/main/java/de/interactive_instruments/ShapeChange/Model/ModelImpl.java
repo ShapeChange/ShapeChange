@@ -109,13 +109,13 @@ public abstract class ModelImpl implements Model {
 
 		List<Constraint> cons = ci.directConstraints();
 
-		// sort the constraints by name
-		Collections.sort(cons, new Comparator<Constraint>() {
-		    @Override
-		    public int compare(Constraint o1, Constraint o2) {
-			return o1.name().compareTo(o2.name());
-		    }
-		});
+		    // sort the constraints by name
+		    Collections.sort(cons, new Comparator<Constraint>() {
+			@Override
+			public int compare(Constraint o1, Constraint o2) {
+			    return o1.name().compareTo(o2.name());
+			}
+		    });
 
 		for (Constraint con : cons) {
 
@@ -150,6 +150,22 @@ public abstract class ModelImpl implements Model {
 		}
 	    }
 	}
+    }
+
+    @Override
+    public SortedSet<AssociationInfo> associations() {
+
+	SortedSet<AssociationInfo> result = new TreeSet<>();
+
+	for (ClassInfo cls : this.classes()) {
+	    for (PropertyInfo pi : cls.properties().values()) {
+		if (pi.association() != null) {
+		    result.add(pi.association());
+		}
+	    }
+	}
+
+	return result;
     }
 
     @Override
@@ -535,5 +551,23 @@ public abstract class ModelImpl implements Model {
 	}
 
 	return source;
+    }
+
+    @Override
+    public PropertyInfo lookupNonNavigableAssociationRole(SortedSet<ClassInfo> classes, String roleName) {
+
+	for (AssociationInfo ai : this.associations()) {
+
+	    for (ClassInfo classAtOneEnd : classes) {
+
+		if (roleName.equals(ai.end1().name()) && classAtOneEnd == ai.end1().inClass()) {
+		    return ai.end1();
+		} else if (roleName.equals(ai.end2().name()) && classAtOneEnd == ai.end2().inClass()) {
+		    return ai.end2();
+		}
+	    }
+	}
+
+	return null;
     }
 }

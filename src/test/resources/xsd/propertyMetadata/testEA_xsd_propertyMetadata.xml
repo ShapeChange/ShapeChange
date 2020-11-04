@@ -41,8 +41,11 @@
 			<rules>
 				<EncodingRule name="myrule" extends="gml33">
 					<rule name="rule-xsd-prop-metadata" />
-					<rule name="rule-xsd-cls-mixin-classes"/>
 					<rule name="rule-xsd-cls-basictype"/>
+					<rule name="rule-xsd-cls-mixin-classes-as-group" />
+            		<rule name="rule-xsd-cls-mixin-classes" />
+            		<rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes" />
+            		<rule name="req-xsd-cls-mixin-supertypes-overrule"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
@@ -59,8 +62,11 @@
 			<rules>
 				<EncodingRule name="myrule" extends="iso19136_2007">
 					<rule name="rule-xsd-prop-metadata" />
-					<rule name="rule-xsd-cls-mixin-classes"/>
 					<rule name="rule-xsd-cls-basictype"/>
+					<rule name="rule-xsd-cls-mixin-classes-as-group" />
+            		<rule name="rule-xsd-cls-mixin-classes" />
+            		<rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes" />
+            		<rule name="req-xsd-cls-mixin-supertypes-overrule"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />

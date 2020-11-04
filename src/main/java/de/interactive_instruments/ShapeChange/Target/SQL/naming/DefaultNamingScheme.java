@@ -40,117 +40,101 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  * constraint name, 2) normalize the name, and 3) ensure that the name is unique
  * within this naming scheme.
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 
-	private NameNormalizer normalizer;
-	private ForeignKeyNamingStrategy fkNaming;
-	private CheckConstraintNamingStrategy ckNaming;
-	private UniqueConstraintNamingStrategy ukNaming;
-	private ShapeChangeResult result;
-	private UniqueNamingStrategy uniqueNaming;
+    private NameNormalizer normalizer;
+    private ForeignKeyNamingStrategy fkNaming;
+    private CheckConstraintNamingStrategy ckNaming;
+    private UniqueConstraintNamingStrategy ukNaming;
+    private ShapeChangeResult result;
+    private UniqueNamingStrategy uniqueNaming;
 
-	public DefaultNamingScheme(ShapeChangeResult result,
-			NameNormalizer normalizer, ForeignKeyNamingStrategy fkNaming,
-			CheckConstraintNamingStrategy ckNaming,
-			UniqueConstraintNamingStrategy ukNaming,
-			UniqueNamingStrategy uniqueNaming) {
+    // if necessary, add naming strategy for schema names
 
-		this.result = result;
-		this.normalizer = normalizer;
-		this.fkNaming = fkNaming;
-		this.ckNaming = ckNaming;
-		this.ukNaming = ukNaming;
-		this.uniqueNaming = uniqueNaming;
+    public DefaultNamingScheme(ShapeChangeResult result, NameNormalizer normalizer, ForeignKeyNamingStrategy fkNaming,
+	    CheckConstraintNamingStrategy ckNaming, UniqueConstraintNamingStrategy ukNaming,
+	    UniqueNamingStrategy uniqueNaming) {
+
+	this.result = result;
+	this.normalizer = normalizer;
+	this.fkNaming = fkNaming;
+	this.ckNaming = ckNaming;
+	this.ukNaming = ukNaming;
+	this.uniqueNaming = uniqueNaming;
+    }
+
+    @Override
+    public String nameForCheckConstraint(String tableName, String propertyName) {
+
+	String nonNormalizedConstraintName = this.ckNaming.nameForCheckConstraint(tableName, propertyName);
+
+	String normalizedConstraintName = this.normalizer.normalize(nonNormalizedConstraintName);
+
+	String constraintName = this.uniqueNaming.makeUnique(normalizedConstraintName);
+
+	if (constraintName.length() != nonNormalizedConstraintName.length()) {
+	    result.addWarning(this, 1, nonNormalizedConstraintName, constraintName);
 	}
 
-	@Override
-	public String nameForCheckConstraint(String tableName,
-			String propertyName) {
+	return constraintName;
+    }
 
-		String nonNormalizedConstraintName = this.ckNaming
-				.nameForCheckConstraint(tableName, propertyName);
+    @Override
+    public String nameForForeignKeyConstraint(String tableName, String fieldName, String targetTableName) {
 
-		String normalizedConstraintName = this.normalizer
-				.normalize(nonNormalizedConstraintName);
+	String nonNormalizedConstraintName = this.fkNaming.nameForForeignKeyConstraint(tableName, fieldName,
+		targetTableName);
 
-		String constraintName = this.uniqueNaming
-				.makeUnique(normalizedConstraintName);
+	String normalizedConstraintName = this.normalizer.normalize(nonNormalizedConstraintName);
 
-		if (constraintName.length() != nonNormalizedConstraintName.length()) {
-			result.addWarning(this, 1, constraintName,
-					nonNormalizedConstraintName);
-		}
+	String constraintName = this.uniqueNaming.makeUnique(normalizedConstraintName);
 
-		return constraintName;
+	if (constraintName.length() != nonNormalizedConstraintName.length()) {
+	    result.addWarning(this, 2, nonNormalizedConstraintName, constraintName);
 	}
 
-	@Override
-	public String nameForForeignKeyConstraint(String tableName,
-			String fieldName, String targetTableName) {
+	return constraintName;
+    }
 
-		String nonNormalizedConstraintName = this.fkNaming
-				.nameForForeignKeyConstraint(tableName, fieldName,
-						targetTableName);
+    @Override
+    public String nameForUniqueConstraint(String tableName, String columnName) {
 
-		String normalizedConstraintName = this.normalizer
-				.normalize(nonNormalizedConstraintName);
+	String nonNormalizedConstraintName = this.ukNaming.nameForUniqueConstraint(tableName, columnName);
 
-		String constraintName = this.uniqueNaming
-				.makeUnique(normalizedConstraintName);
+	String normalizedConstraintName = this.normalizer.normalize(nonNormalizedConstraintName);
 
-		if (constraintName.length() != nonNormalizedConstraintName.length()) {
-			result.addWarning(this, 2, constraintName,
-					nonNormalizedConstraintName);
-		}
+	String constraintName = this.uniqueNaming.makeUnique(normalizedConstraintName);
 
-		return constraintName;
+	if (constraintName.length() != nonNormalizedConstraintName.length()) {
+	    result.addWarning(this, 3, nonNormalizedConstraintName, constraintName);
 	}
 
-	@Override
-	public String nameForUniqueConstraint(String tableName, String columnName) {
+	return constraintName;
+    }
 
-		String nonNormalizedConstraintName = this.ukNaming
-				.nameForUniqueConstraint(tableName, columnName);
+    public NameNormalizer getNameNormalizer() {
+	return this.normalizer;
+    }
 
-		String normalizedConstraintName = this.normalizer
-				.normalize(nonNormalizedConstraintName);
+    @Override
+    public String nameForGeometryIndex(String tableName, String columnName) {
+	return "idx_" + tableName + "_" + columnName;
+    }
 
-		String constraintName = this.uniqueNaming
-				.makeUnique(normalizedConstraintName);
-
-		if (constraintName.length() != nonNormalizedConstraintName.length()) {
-			result.addWarning(this, 3, constraintName,
-					nonNormalizedConstraintName);
-		}
-
-		return constraintName;
+    @Override
+    public String message(int mnr) {
+	switch (mnr) {
+	case 1:
+	    return "Name '$1$' for check constraint is truncated to '$2$'";
+	case 2:
+	    return "Name '$1$' for foreign key constraint is truncated to '$2$'";
+	case 3:
+	    return "Name '$1$' for unique constraint is truncated to '$2$'";
+	default:
+	    return "(" + DefaultNamingScheme.class.getName() + ") Unknown message with number: " + mnr;
 	}
-
-	public NameNormalizer getNameNormalizer() {
-		return this.normalizer;
-	}
-
-	@Override
-	public String nameForGeometryIndex(String tableName, String columnName) {
-		return "idx_" + tableName + "_" + columnName;
-	}
-
-	@Override
-	public String message(int mnr) {
-		switch (mnr) {
-		case 1:
-			return "Name '$1$' for check constraint is truncated to '$2$'";
-		case 2:
-			return "Name '$1$' for foreign key constraint is truncated to '$2$'";
-		case 3:
-			return "Name '$1$' for unique constraint is truncated to '$2$'";
-		default:
-			return "(" + DefaultNamingScheme.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
+    }
 }

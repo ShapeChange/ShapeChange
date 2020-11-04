@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/flattener/reverseInheritance/test_flattener_reverseInheritance.eapx" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation"
+				source="ea:notes" />
+			<DescriptorSource descriptor="alias"
+				source="ea:alias" />
+			<DescriptorSource descriptor="definition"
+				source="sc:extract" token="Definition" />
+			<DescriptorSource descriptor="description"
+				source="sc:extract" token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis"
+				source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language"
+				source="none" />
+		</descriptorSources>
+		<xi:include
+			href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="INPUT" id="trf1" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-dissolve-mixins" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+			input="trf1" id="trf" mode="enabled">
+<!-- 			<parameters> -->
+<!-- 				<ProcessParameter name="typeSuffixSeparator" -->
+<!-- 					value="" /> -->
+<!-- 			</parameters> -->
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-reverse-inheritance" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			inputs="trf" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/flattening/reverseInheritance/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule"
+				value="testEncRule" />
+			<targetParameter name="documentationTemplate"
+				value="Alias: [[alias]]" />
+			<rules>
+				<EncodingRule name="testEncRule"
+					extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

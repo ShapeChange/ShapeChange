@@ -37,7 +37,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
@@ -62,8 +61,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
  * Common class for Schematron Schema creation.
  * 
  * @author Reinhard Erstling
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public abstract class AbstractSchematronSchema implements SchematronSchema, MessageSource {
@@ -84,7 +82,8 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
     Options options;
     TargetXmlSchemaConfiguration config;
     ShapeChangeResult result;
-    PackageInfo pi;
+    PackageInfo schemaPackage;
+    String schemaXsdBaseName;
     Document document;
     Element pattern;
     Element root;
@@ -107,6 +106,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
     boolean trojanSuppressedType = false;
 
     String classname = null;
+    String schematronFilename;
 
     public static class ExtensionFunctionTemplate {
 	public String nsPrefix;
@@ -125,15 +125,22 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
     /**
      * Ctor
      *
-     * @param mdl Model object
-     * @param o   Options object
-     * @param r   Result object
-     * @param p   PackageInfo object
+     * @param mdl               Model object
+     * @param o                 Options object
+     * @param r                 Result object
+     * @param schemaPackage     the package that represents the schema that is being
+     *                          encoded by the XmlSchema target
+     * @param schemaXsdBaseName the name of the XSD document, for which this
+     *                          Schematron schema will contain assertions
+     * @param segmentation      true if schematron segmentation is enabled, else
+     *                          false
      */
-    public AbstractSchematronSchema(Model mdl, Options o, ShapeChangeResult r, PackageInfo p) {
+    public AbstractSchematronSchema(Model mdl, Options o, ShapeChangeResult r, PackageInfo schemaPackage,
+	    String schemaXsdBaseName, boolean segmentation) {
 
 	model = mdl;
-	pi = p;
+	this.schemaPackage = schemaPackage;
+	this.schemaXsdBaseName = schemaXsdBaseName;
 	options = o;
 	result = r;
 	document = null;
@@ -142,15 +149,15 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	config = (TargetXmlSchemaConfiguration) options.getCurrentProcessConfig();
 
 	// Get prefix and postfix of xlink:href references
-	String s = options.parameter(classname, "schematronXlinkHrefPrefix");
+	String s = options.parameter(classname, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX);
 	if (s != null)
 	    alpha = s;
-	s = options.parameter(classname, "schematronXlinkHrefPostfix");
+	s = options.parameter(classname, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_POSTFIX);
 	if (s != null)
 	    beta = s;
 
 	// Get option value for interpretation of "suppressed types"
-	s = options.parameter(classname, "suppressedTypeInterpretation");
+	s = options.parameter(classname, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION);
 	if (s != null) {
 	    if (s.equals("strictUML"))
 		trojanSuppressedType = false;
@@ -159,6 +166,12 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	    else
 		result.addError(null, 140, "suppressedTypeInterpretation", s);
 	}
+
+	// identify file name
+	String schematronFilenameTemplate = options.parameterAsString(XmlSchema.class.getName(),
+		XmlSchemaConstants.PARAM_SCH_FILENAME_TEMPLATE, "[[SCHEMA_XSD_BASENAME]].xsd_SchematronSchema.xml", false, true);
+	schematronFilename = schematronFilenameTemplate.replaceAll("\\[\\[SCHEMA_XSD_BASENAME\\]\\]",
+		schemaXsdBaseName);
 
 	// Read extension function templates
 	String pats = "^schematronExtension\\.(\\w+?)\\.function";
@@ -216,7 +229,9 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	// Add a title element to document the schema the rules belong to
 	Element e1 = document.createElementNS(Options.SCHEMATRON_NS, "title");
 	root.appendChild(e1);
-	schematronTitleHook = document.createTextNode("Schematron constraints for schema '" + pi.name() + "'");
+
+	schematronTitleHook = document.createTextNode("Schematron constraints for " + (segmentation ? "a part of " : "")
+		+ "schema '" + schemaPackage.name() + "'");
 	e1.appendChild(schematronTitleHook);
 
 	// Add a namespace declaration for Schematron
@@ -229,9 +244,9 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	// Add a namespace declaration for the package
 	e1 = document.createElementNS(Options.SCHEMATRON_NS, "ns");
 	root.appendChild(e1);
-	namespaces.add(pi.xmlns());
-	addAttribute(document, e1, "prefix", pi.xmlns());
-	addAttribute(document, e1, "uri", pi.targetNamespace());
+	namespaces.add(schemaPackage.xmlns());
+	addAttribute(document, e1, "prefix", schemaPackage.xmlns());
+	addAttribute(document, e1, "uri", schemaPackage.targetNamespace());
 
 	// Finally add the <pattern> element. It is to hold all the rules
 	// to be generated
@@ -239,20 +254,23 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	root.appendChild(pattern);
     }
 
-    /** Add attribute to an element 
-     * @param document  tbd
-     * @param e  tbd
-     * @param name  tbd
-     * @param value tbd */
+    /**
+     * Add attribute to an element
+     * 
+     * @param document tbd
+     * @param e        tbd
+     * @param name     tbd
+     * @param value    tbd
+     */
     protected void addAttribute(Document document, Element e, String name, String value) {
 	Attr att = document.createAttribute(name);
 	att.setValue(value);
 	e.setAttributeNode(att);
     }
-    
+
     @Override
     public void addAssertion(ClassInfo ci, XpathFragment xpath, String text) {
-	addAssertion(ci,false,xpath,text);
+	addAssertion(ci, false, xpath, text);
     }
 
     @Override
@@ -309,7 +327,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	// Memorize we have output at least one rule
 	assertion = true;
-	
+
 	if (addToSubtypesInSelectedSchemas) {
 
 	    for (String subtypeId : ci.subtypes()) {
@@ -535,7 +553,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	if (StringUtils.isBlank(vp)) {
 
-	    vp = options.parameterAsString(XmlSchema.class.getName(), "defaultCodeListValuePattern", defaultPattern,
+	    vp = options.parameterAsString(XmlSchema.class.getName(), XmlSchemaConstants.PARAM_DEFAULT_CODELIST_VALUE_PATTERN, defaultPattern,
 		    false, true);
 	}
 
@@ -544,6 +562,16 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
     public void addIdKey() {
 	addIdKey = true;
+    }
+
+    @Override
+    public String getFileName() {
+	return this.schematronFilename;
+    }
+
+    @Override
+    public boolean hasRules() {
+	return !this.ruleCreationStatusMap.isEmpty();
     }
 
     /**
@@ -571,13 +599,6 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 	    root.insertBefore(e, pattern);
 	}
 
-	// identify file name
-	String schematronFilename = options.parameterAsString(XmlSchema.class.getName(), "schematronFileNameTemplate",
-		"[[SCHEMA_XSD_BASENAME]].xsd_SchematronSchema.xml", false, true);
-	String schemaXsdDocument = pi.xsdDocument();
-	String schemaXsdBaseName = FilenameUtils.getBaseName(schemaXsdDocument);
-	schematronFilename = schematronFilename.replaceAll("\\[\\[SCHEMA_XSD_BASENAME\\]\\]", schemaXsdBaseName);
-
 	// Choose serialization parameters
 	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
 	outputFormat.setProperty("indent", "yes");
@@ -587,7 +608,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema, Mess
 
 	// Do the actual writing
 	try {
-	    OutputStream fout = new FileOutputStream(outputDirectory + "/" + schematronFilename);
+	    OutputStream fout = new FileOutputStream(outputDirectory + "/" + this.schematronFilename);
 	    OutputStreamWriter outputXML = new OutputStreamWriter(fout, outputFormat.getProperty("encoding"));
 	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 	    serializer.setWriter(outputXML);

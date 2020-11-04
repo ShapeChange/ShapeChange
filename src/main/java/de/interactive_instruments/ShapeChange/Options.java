@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -87,8 +88,7 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class Options {
@@ -104,7 +104,7 @@ public class Options {
     /* Target Java Classes */
     public static final String TargetXmlSchemaClass = "de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema";
     public static final String TargetFOL2SchematronClass = "de.interactive_instruments.ShapeChange.Target.FOL2Schematron.FOL2Schematron";
-    
+
     /** Well known stereotypes */
     public static final Set<String> classStereotypes = Stream.of("codelist", "enumeration", "datatype", "featuretype",
 	    "type", "basictype", "interface", "union", "abstract", "fachid", "schluesseltabelle", "adeelement",
@@ -229,6 +229,14 @@ public class Options {
      */
     public static final String PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY = "loadConstraintsForSelectedSchemasOnly";
 
+    /**
+     * This parameter controls whether non-navigable association roles are allowed
+     * in paths within OCL expressions. The default value is <code>false</code>. The
+     * parameter can be used in the input configuration and the configuration of
+     * transformers.
+     */
+    public static final String PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC = "navigatingNonNavigableAssociationsWhenParsingOcl";
+
     // Application schema defaults (namespace and version)
     public String xmlNamespaceDefault = "FIXME";
     public String xmlNamespaceAbbreviationDefault = "FIXME";
@@ -272,6 +280,8 @@ public class Options {
     public static final String DEFAULT_TMP_DIR_PATH = "temp";
     public static final String TMP_DIR_PATH_PARAM = "tmpDirectory";
     protected File tmpDir = null;
+
+    private boolean reportUnrecognizedParametersAsWarnings = false;
 
     /**
      * Map of targets to generate from the input model. Keys are the names of the
@@ -397,6 +407,7 @@ public class Options {
 
     protected TargetRegistry targetRegistry;
     protected RuleRegistry ruleRegistry;
+    protected InputAndLogParameterRegistry inputAndLogParameterRegistry;
 
     /** documentation separators */
     protected String extractSeparator = null;
@@ -462,6 +473,10 @@ public class Options {
 	return getDescriptorsFromDependency;
     }
 
+    public boolean reportUnrecognizedParametersAsWarnings() {
+	return this.reportUnrecognizedParametersAsWarnings;
+    }
+
     // /**
     // * List of transformer configurations that directly reference the input
     // * element.
@@ -501,7 +516,7 @@ public class Options {
 
     protected InputConfiguration inputConfig = null;
     protected Map<String, String> dialogParameters = null;
-    protected Map<String, String> logParameters = null;
+    protected Map<String, String> logParameters = new HashMap<>();
     protected ProcessConfiguration currentProcessConfig = null;
     protected List<TargetConfiguration> inputTargetConfigs = new ArrayList<TargetConfiguration>();
     protected List<TransformerConfiguration> inputTransformerConfigs = new ArrayList<TransformerConfiguration>();
@@ -543,6 +558,16 @@ public class Options {
 
 	return this.parameter(PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY) != null
 		&& this.parameter(PARAM_LOAD_CONSTRAINT_FOR_SEL_SCHEMAS_ONLY).equalsIgnoreCase("true");
+    }
+
+    public boolean isNavigatingNonNavigableAssociationsWhenParsingOcl() {
+
+	if (this.currentProcessConfig != null) {
+	    return currentProcessConfig.parameterAsBoolean(PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC, false);
+	} else {
+	    // check the input configuration
+	    return "true".equalsIgnoreCase(this.parameter(PARAM_OCLPARSE_NAVIGATE_NON_NAV_ASSOC));
+	}
     }
 
     /**
@@ -600,7 +625,7 @@ public class Options {
 
     public void addTargetTypeMapEntry(ProcessMapEntry pme) {
 
-	targetMapEntryByTypeRuleKey.put(pme.getType() + "#" + pme.getRule(), pme);
+	targetMapEntryByTypeRuleKey.put(pme.getType() + "#" + pme.getRule().toLowerCase(), pme);
     }
 
     public ProcessMapEntry targetMapEntry(String type, String rule) {
@@ -608,7 +633,7 @@ public class Options {
 	ProcessMapEntry pme = null;
 
 	while (pme == null && rule != null) {
-	    pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule);
+	    pme = targetMapEntryByTypeRuleKey.get(type + "#" + rule.toLowerCase());
 	    rule = ruleRegistry.extendsEncRule(rule);
 	}
 
@@ -938,7 +963,7 @@ public class Options {
 
 	return res;
     }
-    
+
     /**
      * @param className     Fully qualified name of the target class for which the
      *                      value of the parameter with given name shall be
@@ -1008,11 +1033,13 @@ public class Options {
 	return res;
     }
 
-    /** This returns the names of all parms whose names match a regex pattern 
-     * @param t  tbd
-     * @param regex  tbd
-     * @return  tbd
-     * */
+    /**
+     * This returns the names of all parms whose names match a regex pattern
+     * 
+     * @param t     tbd
+     * @param regex tbd
+     * @return tbd
+     */
     public String[] parameterNamesByRegex(String t, String regex) {
 	HashSet<String> pnames = new HashSet<String>();
 	int lt2 = t.length() + 2;
@@ -1029,17 +1056,17 @@ public class Options {
     public void setParameter(String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
-	    fParameters.put(k1, s);
+	    fParameters.put(k1.trim(), s);
 	else
-	    fParameters.put(k1, s1);
+	    fParameters.put(k1.trim(), s1);
     }
 
     public void setParameter(String t, String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
-	    fParameters.put(t + "::" + k1, s);
+	    fParameters.put(t + "::" + k1.trim(), s);
 	else
-	    fParameters.put(t + "::" + k1, s1);
+	    fParameters.put(t + "::" + k1.trim(), s1);
     }
 
     public String replaceValue(String k1) {
@@ -1540,6 +1567,11 @@ public class Options {
 		    if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element logElement = (Element) node;
 			this.logParameters = parseParameters(logElement, "parameter");
+			if (this.logParameters.containsKey("reportUnrecognizedParametersAsWarnings")
+				&& this.logParameters.get("reportUnrecognizedParametersAsWarnings")
+					.equalsIgnoreCase("true")) {
+			    this.reportUnrecognizedParametersAsWarnings = true;
+			}
 		    }
 		}
 	    }
@@ -1593,15 +1625,15 @@ public class Options {
 			    }
 			}
 		    }
-		}
 
-		/*
-		 * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
-		 * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
-		 * WONT WORK!!!
-		 */
-		for (String paramName : tgtConfig.getParameters().keySet()) {
-		    setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
+		    /*
+		     * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
+		     * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
+		     * WONT WORK!!!
+		     */
+		    for (String paramName : tgtConfig.getParameters().keySet()) {
+			setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
+		    }
 		}
 
 		// in order for the input model load not to produce warnings,
@@ -1789,7 +1821,7 @@ public class Options {
     }
 
     /**
-     * @param type tbd
+     * @param type            tbd
      * @param xsdEncodingRule tbd
      * @return the boolean value of XsdMapEntry/@xmlElementHasSimpleContent, for the
      *         map entry with the given type and encoding rule (or one of the rules
@@ -1891,10 +1923,8 @@ public class Options {
 	}
 
 	// add all log parameters
-	if (logParameters != null) {
-	    for (String key : logParameters.keySet()) {
-		setParameter(key, logParameters.get(key));
-	    }
+	for (String key : logParameters.keySet()) {
+	    setParameter(key, logParameters.get(key));
 	}
 
 	/*
@@ -2185,12 +2215,12 @@ public class Options {
 
 		    // get the target inputs - can be null, then set it to
 		    // global input element
-		    Set<String> tgtConfigInputs;
+		    SortedSet<String> tgtConfigInputs;
 		    if (tgtE.hasAttribute("inputs")) {
 			String[] inputs = tgtE.getAttribute("inputs").split("\\s");
-			tgtConfigInputs = new HashSet<String>(Arrays.asList(inputs));
+			tgtConfigInputs = new TreeSet<String>(Arrays.asList(inputs));
 		    } else {
-			tgtConfigInputs = new HashSet<String>();
+			tgtConfigInputs = new TreeSet<String>();
 			tgtConfigInputs.add(getInputId());
 		    }
 
@@ -2220,7 +2250,7 @@ public class Options {
 			Map<String, List<PropertyConversionParameter>> propertyConversionParameters = parsePropertyConversionParameters(
 				tgtE);
 			List<DescriptorTarget> descriptorTargets = parseDescriptorTargets(tgtE);
-			Map<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
+			SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings = parseConstraintMappings(
 				tgtE);
 
 			List<RdfGeneralProperty> generalProperties = parseGeneralProperties(tgtE);
@@ -2233,8 +2263,6 @@ public class Options {
 				advancedProcessConfigurations, rdfTypeMapEntries, rdfPropertyMapEntries,
 				stereotypeConversionParameters, typeConversionParameters, propertyConversionParameters,
 				descriptorTargets, constraintMappings, generalProperties);
-
-			owlConfig.validate();
 
 			tgtConfig = owlConfig;
 
@@ -2384,7 +2412,8 @@ public class Options {
 		    String wellknown = scpE.getAttribute("wellknown").toLowerCase();
 
 		    String subClassOf_tmp = scpE.getAttribute("subClassOf").trim();
-		    Set<String> subClassOf = new TreeSet<String>(Arrays.asList(StringUtils.split(subClassOf_tmp)));
+		    SortedSet<String> subClassOf = new TreeSet<String>(
+			    Arrays.asList(StringUtils.split(subClassOf_tmp)));
 
 		    String rule = scpE.hasAttribute("rule") ? scpE.getAttribute("rule").trim() : "*";
 
@@ -2636,13 +2665,14 @@ public class Options {
      * @return map (can be empty but not <code>null</code>), with key: constraint
      *         type, and value: mapping defined for the constraint type
      */
-    private Map<ConstraintMapping.ConstraintType, ConstraintMapping> parseConstraintMappings(Element targetElement) {
+    private SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> parseConstraintMappings(
+	    Element targetElement) {
 
 	NodeList cmNl = targetElement.getElementsByTagName("ConstraintMapping");
 	Node cmN;
 	Element cmE;
 
-	Map<ConstraintMapping.ConstraintType, ConstraintMapping> result = new HashMap<ConstraintMapping.ConstraintType, ConstraintMapping>();
+	SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> result = new TreeMap<ConstraintMapping.ConstraintType, ConstraintMapping>();
 
 	if (cmNl != null && cmNl.getLength() != 0) {
 
@@ -3256,7 +3286,8 @@ public class Options {
 
     /**
      * Normalize a stereotype fetched from the model.
-     * @param stereotype  tbd
+     * 
+     * @param stereotype tbd
      * 
      * @return The well-known stereotype, for which the given stereotype is defined
      *         as an alias (via stereotype alias configuration elements), or the
@@ -3272,7 +3303,8 @@ public class Options {
 
     /**
      * Normalize a tag fetched from the model.
-     * @param tag  tbd
+     * 
+     * @param tag tbd
      * 
      * @return the mapping for the tag, or the given tag itself if no mapping is
      *         configured
@@ -3371,10 +3403,15 @@ public class Options {
 	return this.targetRegistry;
     }
 
+    public InputAndLogParameterRegistry getInputAndLogParameterRegistry() {
+	return inputAndLogParameterRegistry;
+    }
+
     public Options() throws ShapeChangeAbortException {
 	this.targetRegistry = new TargetRegistry();
 	this.ruleRegistry = new RuleRegistry(this.targetRegistry);
 	setStandardParameters();
+	this.inputAndLogParameterRegistry = new InputAndLogParameterRegistry();
     }
 
     /**
@@ -3641,7 +3678,7 @@ public class Options {
 
     /**
      * @param original tbd
-     * @param tagList tbd
+     * @param tagList  tbd
      * @return can be empty but not <code>null</code>
      */
     public TaggedValues taggedValueFactory(TaggedValues original, String tagList) {
