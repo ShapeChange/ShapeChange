@@ -1497,7 +1497,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		genPkgsToRemove.add(genPi);
 	    }
 	}
-	this.remove(genPkgsToRemove);
+	this.exclude(genPkgsToRemove);
 
 	/*
 	 * Postprocessing in ModelImpl.java also fixes class categories!
@@ -2074,6 +2074,163 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	genClassInfosByName.remove(ciToRemove.name());
     }
 
+    private void exclude(GenericClassInfo ci) {
+
+	if (ci == null || !this.genClassInfosById.containsKey(ci.id()))
+	    return;
+
+	// Identify all properties to exclude
+	Set<PropertyInfo> propsToExclude = new HashSet<PropertyInfo>();
+	Set<AssociationInfo> associationsToExclude = new HashSet<AssociationInfo>();
+
+	// First get all properties from the class itself.
+	for (PropertyInfo pi : ci.properties().values()) {
+	    propsToExclude.add(pi);
+	}
+
+	// Then get all properties whose type is the class to exclude.
+	for (PropertyInfo pi : this.genPropertiesById.values()) {
+
+	    if (pi.typeInfo().id.equals(ci.id())) {
+
+		// also check for associations where the class is the type of a
+		// navigable association end
+		AssociationInfo association = pi.association();
+		if (association != null) {
+		    if (association.end1() != null) {
+			if (association.end1().isNavigable() && association.end1().typeInfo().id.equals(ci.id())) {
+			    association.end1().typeInfo().id = "unknown";
+			    GenericPropertyInfo genEnd1 = (GenericPropertyInfo) association.end1();
+			    genEnd1.setAssociation(null);
+			    genEnd1.setComposition(true);
+			    genEnd1.setAggregation(false);
+			    genEnd1.setAttribute(true);
+			} else {
+			    propsToExclude.add(association.end1());
+			}
+		    }
+		    if (association.end2() != null) {
+			if (association.end2().isNavigable() && association.end2().typeInfo().id.equals(ci.id())) {
+			    association.end2().typeInfo().id = "unknown";
+			    GenericPropertyInfo genEnd2 = (GenericPropertyInfo) association.end2();
+			    genEnd2.setAssociation(null);
+			    genEnd2.setComposition(true);
+			    genEnd2.setAggregation(false);
+			    genEnd2.setAttribute(true);
+			} else {
+			    propsToExclude.add(association.end2());
+			}
+		    }
+		    associationsToExclude.add(association);
+		} else {
+		    pi.typeInfo().id = "unknown";
+		}
+	    }
+	}
+
+	/*
+	 * Now get the association that this class may be an association class for
+	 */
+	AssociationInfo association = ci.isAssocClass();
+	if (association != null) {
+	    // delete the association class relationship
+	    GenericAssociationInfo genAi = (GenericAssociationInfo) association;
+	    genAi.setAssocClass(null);
+	    ci.setAssocInfo(null);
+	}
+
+	// Remove identified properties from the model and their classes
+	for (PropertyInfo pi : propsToExclude) {
+
+	    GenericPropertyInfo propToRemove = (GenericPropertyInfo) pi;
+
+	    this.genPropertiesById.remove(propToRemove.id());
+
+	    /*
+	     * This works also in case that the property is non-navigable and belongs to an
+	     * association but is not contained in the property list of its inClass - then
+	     * there simply is nothing to remove.
+	     */
+	    if (propToRemove.inClass() != null) {
+		((GenericClassInfo) propToRemove.inClass()).removePropertyById(propToRemove.id());
+	    }
+	}
+
+	/*
+	 * Remove identified associations in model association map, including any
+	 * association class relationship; the association properties have already been
+	 * removed.
+	 */
+	for (AssociationInfo assoToRemove : associationsToExclude) {
+	    GenericAssociationInfo genAi = (GenericAssociationInfo) assoToRemove;
+	    this.genAssociationInfosById.remove(genAi.id());
+
+	    /*
+	     * Keep a possibly existing association class, but remove the association class
+	     * relationship.
+	     */
+	    GenericClassInfo assocClass = (GenericClassInfo) genAi.assocClass();
+	    if (assocClass != null) {
+		genAi.setAssocClass(null);
+		assocClass.setAssocInfo(null);
+	    }
+	}
+
+	/*
+	 * Get ids of all subtypes from ci and remove the supertype relationship with ci
+	 * there
+	 */
+	SortedSet<String> ciSubtypeIds = ci.subtypes();
+	if (ciSubtypeIds.size() > 0) {
+	    for (String ciSubtypeId : ciSubtypeIds) {
+		ClassInfo ciSubtype = this.classById(ciSubtypeId);
+		if (ciSubtype != null) {
+		    GenericClassInfo genCiSubtype = (GenericClassInfo) ciSubtype;
+		    genCiSubtype.removeSupertype(ci.id());
+		}
+	    }
+	}
+
+	/*
+	 * Get ids of all supertypes from ci and remove the subtype relationship with ci
+	 * there.
+	 */
+	SortedSet<String> ciSupertypeIds = ci.supertypes();
+	if (ciSupertypeIds.size() > 0) {
+	    for (String ciSupertypeId : ciSupertypeIds) {
+		GenericClassInfo ciBase = genClassInfosById.get(ciSupertypeId);
+		if (ciBase != null) {
+		    ciBase.removeSubtype(ci.id());
+		}
+	    }
+	}
+
+	/*
+	 * Constraints from ci are automatically removed because they belong to it.
+	 */
+
+	/*
+	 * baseClass relationship from ci is automatically removed because it belongs to
+	 * it.
+	 */
+
+	/*
+	 * Operation from ci are automatically removed because they belong to it.
+	 */
+
+	// remove ci from its package
+	/*
+	 * NOTE for cast: the cast should be safe, because ciToRemove is a
+	 * GenericClassInfo and its package therefore is a GenericPackageInfo - this is
+	 * true after the GenericModel has been constructed
+	 */
+	((GenericPackageInfo) ci.pkg()).remove(ci);
+
+	// remove references to ci in model maps
+	genClassInfosById.remove(ci.id());
+	genClassInfosByName.remove(ci.name());
+    }
+
     /**
      * Removes the given classes from the model. Internally calls the
      * remove(GenericClassInfo) method.
@@ -2500,6 +2657,52 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	copy.setNilReasonAllowed(pi.nilReasonAllowed());
 
 	return copy;
+    }
+
+    private void exclude(Set<PackageInfo> packagesToExclude) {
+
+	for (PackageInfo pi : packagesToExclude) {
+
+	    if (this.genPackageInfosById.containsKey(pi.id())) {
+
+		GenericPackageInfo genPi = genPackageInfosById.get(pi.id());
+
+		// remove any classes this package may contain
+		Object[] genPiClasses = genPi.getClasses().stream().toArray();
+
+		if (genPiClasses != null && genPiClasses.length > 0) {
+		    for (Object ci : genPiClasses) {
+
+			/*
+			 * NOTE for cast: the cast should be safe, because ci belongs to a
+			 * GenericPackageInfo
+			 */
+			this.exclude((GenericClassInfo) ci);
+		    }
+		}
+
+		// remove any child packages this package may contain
+		SortedSet<PackageInfo> genPiChildren = genPi.containedPackages();
+
+		if (genPiChildren != null && !genPiChildren.isEmpty()) {
+		    this.exclude(genPiChildren);
+		}
+
+		// remove this package from its parent/owner (if it has one)
+		PackageInfo owner = genPi.owner();
+		if (owner != null) {
+		    /*
+		     * NOTE for cast: the cast should be safe, because owner is the package of a
+		     * GenericPropertyInfo, and thus should be a GenericPackageInfo - this is true
+		     * after the GenericModel has been constructed
+		     */
+		    ((GenericPackageInfo) owner).removeChild(genPi);
+		}
+
+		// finally, remove this package from the packages map
+		this.genPackageInfosById.remove(pi.id());
+	    }
+	}
     }
 
     /**

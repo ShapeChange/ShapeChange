@@ -266,7 +266,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    // Check if this package and all its contents shall be excluded from
 	    // the model
 	    String name = pack.GetName();
-	    if (excludedPackageNames != null && excludedPackageNames.contains(name)) {
+	    if (excludedPackageNames.contains(name)) {
 		// stop processing this package and continue with the next
 		continue;
 	    }

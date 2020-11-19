@@ -60,6 +60,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 
 public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
@@ -100,6 +101,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
     /** EA attribute object, if this is an attribute */
     protected Attribute eaAttribute = null;
+    protected boolean isAttribute = true;
 
     protected int eaAttributeId = -1;
 
@@ -167,31 +169,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	// Assign sequence number. */
 	String s = taggedValue("sequenceNumber");
-	if (s != null && s.length() > 0 && s.matches("[0-9\\.]*")) {
-	    sequenceNumber = new StructuredNumber(s);
-	} else {
-	    sequenceNumber = new StructuredNumber(this.getNextNumberForAttributeWithoutExplicitSequenceNumber());
-
-	    /*
-	     * 2015-09-29 JE: tests using EA v12 showed that GetPos returns 0 for all
-	     * attributes in a class, thus we stepped away from using that method and rely
-	     * on the global counter instead.
-	     */
-	    // // Use the "Pos" attribute of the EA model.
-	    // int pos = eaAttribute.GetPos();
-	    // PropertyInfo piTemp = classInfo.properties()
-	    // .get(new StructuredNumber((Integer.MIN_VALUE / 2) + pos));
-	    // if (piTemp != null) {
-	    // while (piTemp != null) {
-	    // sequenceNumber = new StructuredNumber(
-	    // (document.globalSequenceNumber++)
-	    // + (Integer.MIN_VALUE / 4));
-	    // piTemp = classInfo.properties().get(sequenceNumber);
-	    // }
-	    // } else
-	    // sequenceNumber = new StructuredNumber((Integer.MIN_VALUE / 2) +
-	    // pos);
-	}
+	sequenceNumber = createStructuredNumberForAttribute(s);
 
 	// Type info
 	int typeid = eaAttribute.GetClassifierID();
@@ -203,6 +181,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	if (typeClassInfo != null) {
 	    typeInfo.name = typeClassInfo.name();
 	    typeInfo.id = typeClassInfo.id();
+	} else {
+	    typeInfo.id = "unknown";
 	}
 
 	// Multiplicity
@@ -235,6 +215,50 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	document.result.addDebug(null, 10013, "property", id(), name());
     }
 
+    /**
+     * Constructor for property that represents a navigable association role to an
+     * excluded class as an attribute.
+     * 
+     * @param doc         tbd
+     * @param ci          tbd
+     * @param ce          tbd
+     * @param connectorId tbd
+     */
+    PropertyInfoEA(EADocument doc, ClassInfoEA ci, ConnectorEnd ce, String connectorId, String typeName) {
+
+	// Record references ...
+	document = doc;
+	classInfo = ci;
+	eaConnectorEnd = ce;
+
+	// The Id
+	eaPropertyId = ci.id();
+	eaPropertyId += "_";
+	eaPropertyId += "A" + connectorId;
+	
+	// Property name
+	eaName = ce.GetRole();
+	if (eaName != null)
+	    eaName = eaName.trim();
+
+	// Assign sequence number. */
+	String s = taggedValue("sequenceNumber");
+	sequenceNumber = createStructuredNumberForAssociationRole(s);
+
+	// Type info
+	typeInfo.id = "unknown";
+	typeInfo.name = typeName;
+		
+	// Multiplicity
+	setMultiplicity(eaConnectorEnd);
+	
+	// Analyse qualifiers
+	setQualifiers(eaConnectorEnd);
+
+	// Trace
+	document.result.addDebug(null, 10013, "property (navigable role to excluded class as attribute)", id(), name());
+    }
+
     public PropertyInfoEA(EADocument doc, ClassInfoEA ci, AssociationInfoEA ai, boolean reversed, ConnectorEnd eaCE,
 	    ClassInfoEA tci) {
 
@@ -245,16 +269,14 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	reversedAssoc = reversed;
 	eaConnectorEnd = eaCE;
 
+	isAttribute = false;
+
 	// Id of property. Since ConnectorEnds have no Id, we resort to the
 	// Id of the Connector and prefix a letter S or T.
 	eaPropertyId = (reversed ? "S" : "T") + ai.id();
 
 	// Name of role
-	eaName = eaCE.GetRole();
-	if (eaName == null || eaName.length() == 0) {
-	    eaName = "role_" + eaPropertyId;
-	}
-	eaName = eaName.trim();
+	eaName = EAConnectorEndUtil.getRoleName(eaConnectorEnd, eaPropertyId);
 
 	// Type info
 	typeClassInfo = tci;
@@ -263,16 +285,44 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	// Assign sequence number.
 	String s = taggedValue("sequenceNumber");
-	if (s != null && s.length() > 0) {
-	    sequenceNumber = new StructuredNumber(s);
-	} else {
-	    sequenceNumber = new StructuredNumber(getNextNumberForAssociationRoleWithoutExplicitSequenceNumber());
-	}
+	sequenceNumber = createStructuredNumberForAssociationRole(s);
 
 	// Multiplicity
 	// Full UML cardinality syntax can be applied here, especially also
 	// lists of values and ranges. We will aggregate this to a single range.
-	String card = eaConnectorEnd.GetCardinality();
+	setMultiplicity(eaConnectorEnd);
+
+	// Analyse qualifiers
+	setQualifiers(eaConnectorEnd);
+
+	// Trace
+	document.result.addDebug(null, 10013, "property", id(), name());
+    }
+
+    private void setQualifiers(ConnectorEnd ce) {
+	
+	String qualifierString = ce.GetQualifier();
+	if (qualifierString != null && !qualifierString.isEmpty()) {
+	    qualifiers = new Vector<Qualifier>();
+	    for (String st : qualifierString.split(";")) {
+		st = st.trim();
+		int idx = st.indexOf(":");
+		Qualifier q = new Qualifier();
+		qualifiers.addElement(q);
+		if (idx > 0) {
+		    q.name = st.substring(0, idx).trim();
+		    q.type = st.substring(idx + 1).trim();
+		} else {
+		    q.name = st.trim();
+		    // leave type null
+		}
+	    }
+	}
+    }
+
+    private void setMultiplicity(ConnectorEnd ce) {
+
+	String card = ce.GetCardinality();
 	String[] ranges = card.split(",");
 	int minv = Integer.MAX_VALUE;
 	int maxv = Integer.MIN_VALUE;
@@ -323,30 +373,63 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    if (upper > maxv)
 		maxv = upper;
 	}
-	multiplicity.minOccurs = minv;
-	multiplicity.maxOccurs = maxv;
+	this.multiplicity.minOccurs = minv;
+	this.multiplicity.maxOccurs = maxv;
+    }
 
-	// Analyse qualifiers
-	String qualifierString = eaConnectorEnd.GetQualifier();
-	if (qualifierString != null && !qualifierString.isEmpty()) {
-	    qualifiers = new Vector<Qualifier>();
-	    for (String st : qualifierString.split(";")) {
-		st = st.trim();
-		int idx = st.indexOf(":");
-		Qualifier q = new Qualifier();
-		qualifiers.addElement(q);
-		if (idx > 0) {
-		    q.name = st.substring(0, idx).trim();
-		    q.type = st.substring(idx + 1).trim();
-		} else {
-		    q.name = st.trim();
-		    // leave type null
-		}
-	    }
+    private StructuredNumber createStructuredNumberForAttribute(String s) {
+	if (s != null && s.length() > 0 && s.matches("[0-9\\.]*")) {
+	    return new StructuredNumber(s);
+	} else {
+	    return new StructuredNumber(this.getNextNumberForAttributeWithoutExplicitSequenceNumber());
+
+	    /*
+	     * 2015-09-29 JE: tests using EA v12 showed that GetPos returns 0 for all
+	     * attributes in a class, thus we stepped away from using that method and rely
+	     * on the global counter instead.
+	     */
+	    // // Use the "Pos" attribute of the EA model.
+	    // int pos = eaAttribute.GetPos();
+	    // PropertyInfo piTemp = classInfo.properties()
+	    // .get(new StructuredNumber((Integer.MIN_VALUE / 2) + pos));
+	    // if (piTemp != null) {
+	    // while (piTemp != null) {
+	    // sequenceNumber = new StructuredNumber(
+	    // (document.globalSequenceNumber++)
+	    // + (Integer.MIN_VALUE / 4));
+	    // piTemp = classInfo.properties().get(sequenceNumber);
+	    // }
+	    // } else
+	    // sequenceNumber = new StructuredNumber((Integer.MIN_VALUE / 2) +
+	    // pos);
 	}
-
-	// Trace
-	document.result.addDebug(null, 10013, "property", id(), name());
+    }
+    
+    private StructuredNumber createStructuredNumberForAssociationRole(String s) {
+	if (s != null && s.length() > 0) {
+	    return new StructuredNumber(s);
+	} else {
+	    return new StructuredNumber(getNextNumberForAssociationRoleWithoutExplicitSequenceNumber());
+	    /*
+	     * 2015-09-29 JE: tests using EA v12 showed that GetPos returns 0 for all
+	     * attributes in a class, thus we stepped away from using that method and rely
+	     * on the global counter instead.
+	     */
+	    // // Use the "Pos" attribute of the EA model.
+	    // int pos = eaAttribute.GetPos();
+	    // PropertyInfo piTemp = classInfo.properties()
+	    // .get(new StructuredNumber((Integer.MIN_VALUE / 2) + pos));
+	    // if (piTemp != null) {
+	    // while (piTemp != null) {
+	    // sequenceNumber = new StructuredNumber(
+	    // (document.globalSequenceNumber++)
+	    // + (Integer.MIN_VALUE / 4));
+	    // piTemp = classInfo.properties().get(sequenceNumber);
+	    // }
+	    // } else
+	    // sequenceNumber = new StructuredNumber((Integer.MIN_VALUE / 2) +
+	    // pos);
+	}
     }
 
     /** Return EA model object. */
@@ -391,7 +474,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
      */
     public String initialValue() {
 	// Only check if not already known and if this is an attribute
-	if (initialValueCache == null && isAttribute()) {
+	if (initialValueCache == null && eaAttribute != null) {
 
 	    // Fetch from EA model
 	    initialValueCache = eaAttribute.GetDefault();
@@ -426,7 +509,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	if (isReadOnlyCache == null) {
 
-	    if (isAttribute()) {
+	    if (eaAttribute != null) {
 		// Fetch from EA model
 		isReadOnlyCache = Boolean.valueOf(eaAttribute.GetIsConst());
 	    } else {
@@ -453,7 +536,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// If still not set, find out from EA settings
 	if (s.length() == 0) {
 	    String cont = null;
-	    if (isAttribute())
+	    if (eaAttribute != null)
 		cont = eaAttribute.GetContainment();
 	    else
 		cont = eaConnectorEnd.GetContainment();
@@ -506,7 +589,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
      * @see de.interactive_instruments.ShapeChange.Model.PropertyInfo#isAttribute()
      */
     public boolean isAttribute() {
-	return eaAttribute != null;
+	return isAttribute;
     } // isAttribute()
 
     public int getEAAttributeId() {
@@ -527,7 +610,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
      */
     public boolean isDerived() {
 	if (isDerivedCache == null) {
-	    isDerivedCache = Boolean.valueOf(isAttribute() ? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
+	    isDerivedCache = Boolean.valueOf(eaAttribute != null ? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
 	}
 	return isDerivedCache;
     } // isDerived()
@@ -541,34 +624,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    isNavigableCache = Boolean.valueOf(true);
 	    // Attributes always are.
 	    if (!isAttribute()) {
-		// First get navigability from role
-		boolean nav = eaConnectorEnd.GetIsNavigable();
-		// If not explicitly set, also accept unspecified navigability,
-		// if present in both directions.
-		if (!nav)
-		    nav = associationInfo.navigability == 0;
-		
-		// AssociationEnds with Tagged Value "xsdEncodingRule" ==
-		// "notEncoded" are skipped
-
-		// 2017-02-21 JE: if xsdEncodingRule=notEncoded the role may
-		// still be relevant for other encodings; thus, this needs
-		// to be handled in the XmlSchema target.
-		// if (nav) {
-		// for (RoleTag rt : eaConnectorEnd.GetTaggedValues()) {
-		// if (rt.GetTag().equals("xsdEncodingRule"))
-		// if (rt.GetValue().toLowerCase()
-		// .equals(Options.NOT_ENCODED))
-		// nav = false;
-		// }
-		// }
-
-		// navigable only with a name, but not with a default name
-		if (eaName == null
-			|| eaName.substring(0, eaName.length() < 5 ? eaName.length() : 5).compareTo("role_") == 0)
-		    nav = false;
-
-		isNavigableCache = nav;
+		isNavigableCache = EAConnectorEndUtil.isNavigable(eaConnectorEnd, associationInfo.eaConnector);
 	    }
 	}
 	return isNavigableCache;
@@ -581,7 +637,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	if (isOrderedCache == null) {
 	    isOrderedCache = Boolean.FALSE;
 	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
-		if (isAttribute()) {
+		if (eaAttribute != null) {
 		    // Inquire from Attribute
 		    isOrderedCache = eaAttribute.GetIsOrdered();
 		} else {
@@ -602,7 +658,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	if (isUniqueCache == null) {
 	    isUniqueCache = Boolean.TRUE;
 	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
-		if (isAttribute()) {
+		if (eaAttribute != null) {
 		    // Inquire from Attribute
 		    isUniqueCache = !eaAttribute.GetAllowDuplicates();
 		} else {
@@ -645,7 +701,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	if (stereotypesCache == null) {
 	    // Fetch stereotypes 'collection' ...
 	    String sts;
-	    if (isAttribute())
+	    if (eaAttribute != null)
 		sts = eaAttribute.GetStereotypeEx();
 	    else
 		sts = eaConnectorEnd.GetStereotypeEx();
@@ -662,7 +718,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	    taggedValuesCache = options().taggedValueFactory(0);
 
-	    if (isAttribute()) {
+	    if (eaAttribute != null) {
 		// Attribute case:
 		// Fetch tagged values collection
 		Collection<AttributeTag> tvs = eaAttribute.GetTaggedValues();
@@ -756,7 +812,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     } // validateTaggedValuesCache()
 
     public void taggedValue(String tag, String value) {
-	if (isAttribute()) {
+	
+	if (eaAttribute != null) {
 	    boolean upd = false;
 	    for (AttributeTag tv : eaAttribute.GetTaggedValues()) {
 		if (tv.GetName().equals(tag)) {
@@ -804,119 +861,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	return typeInfo;
     } // typeInfo
 
-    // /**
-    // * Return the documentation attached to the property object. This is
-    // fetched
-    // * from tagged values and - if this is absent - from the 'notes' specific
-    // to
-    // * the EA objects model.
-    // */
-    // @Override
-    // public Descriptors documentationAll() {
-    //
-    // // Retrieve/compute the documentation only once
-    // // Cache the result for subsequent use
-    // if (!documentationAccessed) {
-    //
-    // documentationAccessed = true;
-    //
-    // // Fetch from tagged values
-    // Descriptors ls = super.documentationAll();
-    //
-    // // Try EA notes, if both tagged values fail
-    // if (ls.isEmpty()) {
-
-    // String s = null;
-    //
-    // if (descriptorSource(Descriptor.DOCUMENTATION)
-    // .equals("ea:notes")) {
-    //
-    // if (isAttribute())
-    // s = eaAttribute.GetNotes();
-    // else
-    // s = eaConnectorEnd.GetRoleNote();
-    // // Handle EA formatting
-    // if (s != null) {
-    // s = document.applyEAFormatting(s);
-    // }
-    // }
-    //
-    // /*
-    // * If result is empty, check if we can get the documentation
-    // * from a dependency
-    // */
-    // if (s == null || s.isEmpty()) {
-    //
-    // /*
-    // * NOTE: the string comparison approach chosen here (with
-    // * comparison of strings that were converted to lower case)
-    // * may not work in every case. See
-    // * http://stackoverflow.com/a/6996550 for further details.
-    // */
-    // String thisNameLowerCase = this.name().trim()
-    // .toLowerCase(Locale.ENGLISH);
-    // String thisNameLowerCaseForValueConcept = "_"
-    // + thisNameLowerCase;
-    //
-    // for (String cid : classInfo.supplierIds()) {
-    //
-    // ClassInfoEA cix = document.fClassById.get(cid);
-    //
-    // if (cix != null) {
-    //
-    // String cixNameLowerCase = cix.name().trim()
-    // .toLowerCase(Locale.ENGLISH);
-    //
-    // if (classInfo.category() == Options.ENUMERATION
-    // && cix.stereotype("valueconcept")
-    // && (cixNameLowerCase
-    // .equals(thisNameLowerCase)
-    // || cixNameLowerCase.endsWith(
-    // thisNameLowerCaseForValueConcept))) {
-    // s = cix.documentation();
-    // break;
-    //
-    // } else if (classInfo
-    // .category() != Options.ENUMERATION
-    // && (cix.stereotype("attributeconcept")
-    // || cix.stereotype("roleconcept"))
-    // && cixNameLowerCase
-    // .equals(thisNameLowerCase)) {
-    // s = cix.documentation();
-    // break;
-    // }
-    //
-    // // if (cixNameLowerCase.equals(thisNameLowerCase)) {
-    // // if (classInfo.category() != Options.ENUMERATION
-    // // && cix.stereotype("attributeconcept")) {
-    // // s = cix.documentation();
-    // // break;
-    // // }
-    // // } else if (cixNameLowerCase.endsWith(
-    // // thisNameLowerCaseForValueConcept)) {
-    // // if (classInfo.category() == Options.ENUMERATION
-    // // && cix.stereotype("valueconcept")) {
-    // // s = cix.documentation();
-    // // break;
-    // // }
-    // // }
-    // }
-    // }
-    // }
-    //
-    // if (s == null) {
-    // super.documentation = new Descriptors();
-    // } else {
-    // super.documentation = new Descriptors(
-    // new LangString(options().internalize(s)));
-    // }
-    // }
-    // }
-    //
-    // return super.documentation;
-    //
-    // }
-
     /** Return model-unique id of property. */
     public String id() {
 	return eaPropertyId;
@@ -940,41 +884,6 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	}
 	return eaName;
     } // name()
-
-    // @Override
-    // public Descriptors aliasNameAll() {
-    //
-    // // Retrieve/compute the alias only once
-    // // Cache the result for subsequent use
-    // if (!aliasAccessed) {
-    //
-    // aliasAccessed = true;
-    //
-    // // Obtain alias name from default implementation
-    // Descriptors ls = super.aliasNameAll();
-    //
-    // // If not present, obtain from EA model directly
-    // if (ls.isEmpty()
-    // && descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
-    //
-    // String alias;
-    // if (isAttribute())
-    // alias = eaAttribute.GetStyle();
-    // else
-    // alias = eaConnectorEnd.GetAlias();
-    //
-    // if (alias != null && !alias.isEmpty()) {
-    //
-    // super.aliasName = new Descriptors(
-    // new LangString(options().internalize(alias)));
-    // } else {
-    // super.aliasName = new Descriptors();
-    // }
-    // }
-    // }
-    //
-    // return super.aliasName;
-    // }
 
     /**
      * Validate constraints cache. This makes sure the constraints cache contains
@@ -1001,7 +910,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		return;
 	    }
 
-	    if (isAttribute()) {
+	    if (eaAttribute != null) {
 		// Access EA constraints data
 		Collection<AttributeConstraint> constrs = eaAttribute.GetConstraints();
 		// Ensure that there are constraints before continuing
@@ -1063,7 +972,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 		if (model().descriptorSource(Descriptor.DOCUMENTATION).equals("ea:notes")) {
 
-		    if (isAttribute())
+		    if (eaAttribute != null)
 			s = eaAttribute.GetNotes();
 		    else
 			s = eaConnectorEnd.GetRoleNote();
@@ -1106,73 +1015,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 				s = cix.documentation();
 				break;
 			    }
-
-			    // if (cixNameLowerCase.equals(thisNameLowerCase)) {
-			    // if (classInfo.category() != Options.ENUMERATION
-			    // && cix.stereotype("attributeconcept")) {
-			    // s = cix.documentation();
-			    // break;
-			    // }
-			    // } else if (cixNameLowerCase.endsWith(
-			    // thisNameLowerCaseForValueConcept)) {
-			    // if (classInfo.category() == Options.ENUMERATION
-			    // && cix.stereotype("valueconcept")) {
-			    // s = cix.documentation();
-			    // break;
-			    // }
-			    // }
 			}
 		    }
 		}
-		// String s = null;
-		//
-		// // Try EA notes if ea:notes is the source
-		// if (descriptorSource(Descriptor.DOCUMENTATION)
-		// .equals("ea:notes")) {
-		// s = eaClassElement.GetNotes();
-		// // Handle EA formatting
-		// if (s != null) {
-		// s = document.applyEAFormatting(s);
-		// }
-		// }
-		//
-		// /*
-		// * If result is empty, check if we can get the documentation
-		// * from a dependency
-		// */
-		// if (s == null || s.isEmpty()) {
-		//
-		// for (String cid : this.supplierIds()) {
-		//
-		// ClassInfoEA cix = document.fClassById.get(cid);
-		//
-		// if (cix != null) {
-		// if (cix.name().equalsIgnoreCase(this.name())
-		// && cix.stereotype("featureconcept")) {
-		// s = cix.documentation();
-		// break;
-		// }
-		// }
-		// }
-		// }
-		//
-		// // If result is empty, check if we can get the documentation
-		// // from a
-		// // supertype with the same name (added for ELF/INSPIRE)
-		// if (s == null || s.isEmpty()) {
-		//
-		// HashSet<ClassInfoEA> sts = supertypesAsClassInfoEA();
-		//
-		// if (sts != null) {
-		// for (ClassInfoEA stci : sts) {
-		// if (stci.name().equals(this.name())) {
-		// s = stci.documentation();
-		// break;
-		// }
-		// }
-		// }
-		// }
-		//
+
 		if (s != null) {
 		    ls.add(new LangString(options().internalize(s)));
 		    this.descriptors().put(descriptor, ls);
@@ -1187,7 +1033,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 		    String gi;
 
-		    if (this.isAttribute()) {
+		    if (eaAttribute != null) {
 
 			gi = document.repository.GetProjectInterface().GUIDtoXML(eaAttribute.GetAttributeGUID());
 
@@ -1218,7 +1064,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		if (model().descriptorSource(Descriptor.ALIAS).equals("ea:alias")) {
 
 		    String a;
-		    if (isAttribute())
+		    if (eaAttribute != null)
 			a = eaAttribute.GetStyle();
 		    else
 			a = eaConnectorEnd.GetAlias();
@@ -1234,38 +1080,4 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 	return ls;
     }
-
-    // @Override
-    // public Descriptors globalIdentifierAll() {
-    //
-    // // Obtain global identifier from default implementation
-    // Descriptors ls = super.globalIdentifierAll();
-    //
-    // // If not present, obtain from EA model directly
-    // if (ls.isEmpty() && descriptorSource(Descriptor.GLOBALIDENTIFIER)
-    // .equals("ea:guidtoxml")) {
-    //
-    // String gi;
-    //
-    // if (this.isAttribute()) {
-    //
-    // gi = document.repository.GetProjectInterface()
-    // .GUIDtoXML(eaAttribute.GetAttributeGUID());
-    //
-    // } else {
-    //
-    // String connectorGUID = associationInfo.eaConnector
-    // .GetConnectorGUID();
-    // String xmlGuid = document.repository.GetProjectInterface()
-    // .GUIDtoXML(connectorGUID);
-    // String assocRoleGUID = "EAID_" + (reversedAssoc ? "src" : "dst")
-    // + xmlGuid.substring(7);
-    // gi = assocRoleGUID;
-    // }
-    //
-    // super.globalIdentifier = new Descriptors(
-    // new LangString(options().internalize(gi)));
-    // }
-    // return super.globalIdentifier;
-    // }
 }
