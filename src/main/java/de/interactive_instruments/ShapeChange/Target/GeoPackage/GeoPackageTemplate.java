@@ -361,7 +361,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     public static boolean isEncoded(Info i) {
 
-	if (i.matches(GeoPackageConstants.RULE_TGT_GPKG_ALL_NOTENCODED)) {
+	if (i.matches(GeoPackageConstants.RULE_TGT_GPKG_ALL_NOTENCODED) && i.encodingRule("gpkg").equalsIgnoreCase("notencoded")) {
 	    return false;
 	} else {
 	    return true;
