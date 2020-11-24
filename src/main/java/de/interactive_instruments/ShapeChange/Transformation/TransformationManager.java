@@ -519,7 +519,8 @@ public class TransformationManager implements MessageSource {
     public static SortedSet<String> getRecognizedParameters() {
 
 	return new TreeSet<>(Stream.of(TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV,
-		"navigatingNonNavigableAssociationsWhenParsingOcl").collect(Collectors.toSet()));
+		"navigatingNonNavigableAssociationsWhenParsingOcl", "appSchemaName", "appSchemaNameRegex",
+		"appSchemaNamespaceRegex").collect(Collectors.toSet()));
     }
 
     @Override
