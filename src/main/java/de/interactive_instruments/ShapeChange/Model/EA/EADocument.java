@@ -737,6 +737,16 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	return fClassByName.get(nam);
     }
 
+    @Override
+    public SortedSet<ClassInfo> classes() {
+
+	SortedSet<ClassInfo> result = new TreeSet<>();
+
+	result.addAll(this.fClassById.values());
+
+	return result;
+    }
+    
     /**
      * @see de.interactive_instruments.ShapeChange.Model.Model#classes(de.interactive_instruments.ShapeChange.Model.PackageInfo)
      */

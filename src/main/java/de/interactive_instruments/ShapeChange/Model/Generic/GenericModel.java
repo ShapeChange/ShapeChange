@@ -225,55 +225,94 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    }
 	}
 
-	// create and set classes for each package
-	for (GenericPackageInfo gpi : genPackageInfosById.values()) {
+//	// create and set classes for each package
+//	for (GenericPackageInfo gpi : genPackageInfosById.values()) {
+//
+//	    // look up package in original model
+//	    PackageInfo pi = model.packageById(gpi.id());
+//
+//	    // create set with all classes in the package and its child packages
+//	    SortedSet<ClassInfo> packageClassInfos = model.classes(pi);
+//
+//	    // remove all classes from the set that belong to one of its child
+//	    // packages
+//	    for (PackageInfo childPackage : pi.containedPackages()) {
+//		packageClassInfos.removeAll(model.classes(childPackage));
+//	    }
+//
+//	    // now create GenericClassInfos for all selected schema
+//	    // packages (and sub packages)
+//	    SortedSet<GenericClassInfo> genericClassInfos = new TreeSet<GenericClassInfo>();
+//	    for (ClassInfo ci : packageClassInfos) {
+//
+//		GenericClassInfo genCi = new GenericClassInfo(this, ci.id(), ci.name(), ci.category());
+//
+//		// set properties required by Info interface
+//
+//		genCi.setTaggedValues(ci.taggedValuesAll(), false);
+//		genCi.setStereotypes(ci.stereotypes());
+//
+//		genCi.setDescriptors(ci.descriptors().createCopy());
+//		genCi.setProfiles(ci.profiles().createCopy());
+//
+//		// set properties required by ClassInfo interface
+//		genCi.setPkg(ci.pkg());
+//		genCi.setIsAbstract(ci.isAbstract());
+//		genCi.setIsLeaf(ci.isLeaf());
+//		genCi.setAssocInfo(ci.isAssocClass());
+//		genCi.setSupertypes(copy(ci.supertypes()));
+//		genCi.setSubtypes(copy(ci.subtypes()));
+//		genCi.setProperties(ci.properties());
+//		genCi.setDirectConstraints(copy(ci.directConstraints()));
+//
+//		genCi.setDiagrams(ci.getDiagrams());
+//		genCi.setLinkedDocument(ci.getLinkedDocument());
+//
+//		genericClassInfos.add(genCi);
+//
+//		this.register(genCi);
+//	    }
+//
+//	    gpi.setClasses(genericClassInfos);
+//	}
 
-	    // look up package in original model
-	    PackageInfo pi = model.packageById(gpi.id());
+	// create GenericClassInfos for all classes from the given model
+	for (ClassInfo ci : model.classes()) {
 
-	    // create set with all classes in the package and its child packages
-	    SortedSet<ClassInfo> packageClassInfos = model.classes(pi);
-
-	    // remove all classes from the set that belong to one of its child
-	    // packages
-	    for (PackageInfo childPackage : pi.containedPackages()) {
-		packageClassInfos.removeAll(model.classes(childPackage));
+	    PackageInfo pi = ci.pkg();
+	    GenericPackageInfo genPi = null;
+	    if (pi != null) {
+		genPi = this.genPackageInfosById.get(pi.id());
 	    }
 
-	    // now create GenericClassInfos for all selected schema
-	    // packages (and sub packages)
-	    SortedSet<GenericClassInfo> genericClassInfos = new TreeSet<GenericClassInfo>();
-	    for (ClassInfo ci : packageClassInfos) {
+	    GenericClassInfo genCi = new GenericClassInfo(this, ci.id(), ci.name(), ci.category());
 
-		GenericClassInfo genCi = new GenericClassInfo(this, ci.id(), ci.name(), ci.category());
+	    // set properties required by Info interface
 
-		// set properties required by Info interface
+	    genCi.setTaggedValues(ci.taggedValuesAll(), false);
+	    genCi.setStereotypes(ci.stereotypes());
 
-		genCi.setTaggedValues(ci.taggedValuesAll(), false);
-		genCi.setStereotypes(ci.stereotypes());
+	    genCi.setDescriptors(ci.descriptors().createCopy());
+	    genCi.setProfiles(ci.profiles().createCopy());
 
-		genCi.setDescriptors(ci.descriptors().createCopy());
-		genCi.setProfiles(ci.profiles().createCopy());
+	    // set properties required by ClassInfo interface
+	    genCi.setPkg(ci.pkg());
+	    genCi.setIsAbstract(ci.isAbstract());
+	    genCi.setIsLeaf(ci.isLeaf());
+	    genCi.setAssocInfo(ci.isAssocClass());
+	    genCi.setSupertypes(copy(ci.supertypes()));
+	    genCi.setSubtypes(copy(ci.subtypes()));
+	    genCi.setProperties(ci.properties());
+	    genCi.setDirectConstraints(copy(ci.directConstraints()));
 
-		// set properties required by ClassInfo interface
-		genCi.setPkg(ci.pkg());
-		genCi.setIsAbstract(ci.isAbstract());
-		genCi.setIsLeaf(ci.isLeaf());
-		genCi.setAssocInfo(ci.isAssocClass());
-		genCi.setSupertypes(copy(ci.supertypes()));
-		genCi.setSubtypes(copy(ci.subtypes()));
-		genCi.setProperties(ci.properties());
-		genCi.setDirectConstraints(copy(ci.directConstraints()));
+	    genCi.setDiagrams(ci.getDiagrams());
+	    genCi.setLinkedDocument(ci.getLinkedDocument());
 
-		genCi.setDiagrams(ci.getDiagrams());
-		genCi.setLinkedDocument(ci.getLinkedDocument());
+	    this.register(genCi);
 
-		genericClassInfos.add(genCi);
-
-		this.register(genCi);
+	    if(genPi != null) {
+		genPi.addClass(genCi);
 	    }
-
-	    gpi.setClasses(genericClassInfos);
 	}
 
 	// create properties for all GenericClassInfos identified before
@@ -1418,6 +1457,16 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	}
     }
 
+    @Override
+    public SortedSet<ClassInfo> classes() {
+
+	SortedSet<ClassInfo> result = new TreeSet<>();
+
+	result.addAll(this.genClassInfosById.values());
+
+	return result;
+    }
+    
     /**
      * Return all ClassInfo objects contained in the given package and in sub-
      * packages, which do not belong to an app schema different to the one of the

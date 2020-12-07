@@ -697,9 +697,9 @@ public class Xmi10Document extends ModelImpl implements Model {
 					tvs = options().taggedValueFactory();
 					fTaggedValues.put(id, tvs);
 				}
-				tvs.add(tag, value);
+				tvs.add(t, value);
 
-				result.addDebug(null, 10000, tag, id, value);
+				result.addDebug(null, 10000, t, id, value);
 			}
 		}
 	} // initTaggedValuesMap
@@ -1005,7 +1005,7 @@ public class Xmi10Document extends ModelImpl implements Model {
 										ci.name() + " (" + ci.id() + ")");
 							}
 						} else {
-							fClassnames.put(ci.name(), ci);
+						    fClassnames.put(ci.name(), ci);
 						}
 					}
 				} catch (ShapeChangeIgnoreClassException ice) {
@@ -1043,6 +1043,16 @@ public class Xmi10Document extends ModelImpl implements Model {
 	public ClassInfo classByName(String nam) {
 		return fClassnames.get(nam);
 	}
+	
+	    @Override
+	    public SortedSet<ClassInfo> classes() {
+
+		SortedSet<ClassInfo> result = new TreeSet<>();
+
+		result.addAll(this.fClasses.values());
+
+		return result;
+	    }
 
 	public SortedSet<ClassInfo> classes(PackageInfo pi) {
 
@@ -1050,12 +1060,12 @@ public class Xmi10Document extends ModelImpl implements Model {
 		for (Iterator<Map.Entry<String, ClassInfo>> i = fClasses.entrySet()
 				.iterator(); i.hasNext();) {
 			Map.Entry<String, ClassInfo> entry = i.next();
-			if (options.roseBugFixDuplicateGlobalDataTypes) {
-				String ky = entry.getKey();
-				if (ky.startsWith("G.")) {
-					continue;
-				}
-			}
+//			if (options.roseBugFixDuplicateGlobalDataTypes) {
+//				String ky = entry.getKey();
+//				if (ky.startsWith("G.")) {
+//					continue;
+//				}
+//			}
 			ClassInfo ci = entry.getValue();
 			if (ci != null) {
 				if (pi == null) {

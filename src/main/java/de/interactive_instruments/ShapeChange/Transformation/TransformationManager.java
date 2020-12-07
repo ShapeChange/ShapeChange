@@ -46,6 +46,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
@@ -96,7 +98,7 @@ public class TransformationManager implements MessageSource {
 		    .newInstance();
 	} catch (Exception e) {
 	    throw new ShapeChangeAbortException("Could not load transformer class '" + trfConfig.getClassName()
-		    + " for transformer ID '" + trfConfig.getId() + "'.");
+		    + " for transformer ID '" + trfConfig.getId() + "'. Exception message is: " + StringUtils.defaultString(e.getMessage(),"<null>"));
 	}
 
 	/*

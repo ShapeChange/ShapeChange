@@ -419,6 +419,8 @@ public class ModelExport implements SingleTarget, MessageSource {
     }
 
     private void printAssociation(AssociationInfo ai) throws Exception {
+	
+	if(ai != null && ai.end1() != null && ai.end2() != null) {
 
 	writer.startElement(NS, "Association");
 
@@ -432,6 +434,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	printAssociationRole(ai.end2(), "end2");
 
 	writer.endElement(NS, "Association");
+	}
     }
 
     private void printAssociationRole(PropertyInfo pi, String tag) throws SAXException {
