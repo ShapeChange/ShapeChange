@@ -44,6 +44,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
@@ -53,7 +54,7 @@ import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
  *         de)
  *
  */
-public class DiagramsContentHandler extends AbstractContentHandler {
+public class DiagramsContentHandler extends AbstractContentHandler implements MessageSource {
 
 	private static final Set<String> IMAGE_METADATA_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "id", "name", "relPathToFile", "width",
@@ -148,7 +149,7 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 				this.diagrams.add(im);
 
 			} catch (NumberFormatException e) {
-				result.addError(null, 30802, id, name, e.getMessage());
+				result.addError(this, 30802, id, name, e.getMessage());
 			}
 
 		} else if (localName.equals("diagrams")) {
@@ -183,4 +184,16 @@ public class DiagramsContentHandler extends AbstractContentHandler {
 		}
 	}
 
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 30802: //x
+		    return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
+		
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
+	}
 }

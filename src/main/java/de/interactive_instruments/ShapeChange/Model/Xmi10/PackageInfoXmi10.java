@@ -43,6 +43,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -51,7 +52,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfoImpl;
 import de.interactive_instruments.ShapeChange.Target.XmlSchema.XsdDocument;
 
-public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo {
+public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, MessageSource {
 
 	protected Element pkg;
 	protected Xmi10Document doc;
@@ -151,7 +152,7 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo {
 		uuid = UUID.randomUUID();
 		doc.fUUIDs.put(id, uuid);
 
-		doc.result.addDebug(null, 10001, id, name(), targetNamespace());
+		doc.result.addDebug(this, 10001, id, name(), targetNamespace());
 	}
 
 	public SortedSet<PackageInfo> containedPackages() {
@@ -175,5 +176,18 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo {
 			}
 		}
 		return res;
+	}
+	
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 10001:
+		    return "The package with ID '$1$' and name '$2$' was created. Namespace: '$3$'.";
+		
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
 	}
 }

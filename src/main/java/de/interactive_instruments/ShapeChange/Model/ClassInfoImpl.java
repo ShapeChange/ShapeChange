@@ -36,8 +36,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -1234,5 +1234,5 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	return null;
-    }
+    }    
 }

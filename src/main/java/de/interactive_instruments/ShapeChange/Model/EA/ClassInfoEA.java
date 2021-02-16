@@ -49,6 +49,7 @@ import org.sparx.Element;
 import org.sparx.Method;
 import org.sparx.TaggedValue;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -69,7 +70,7 @@ import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
-public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
+public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSource {
 
     /**
      * Flag used to prevent duplicate retrieval/computation of the alias of this
@@ -548,7 +549,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		stereotypesCache.add("datatype");
 		document.result.addDebug(null, 52, this.name(), "datatype");
 	    }
-	    document.result.addDebug(null, 55, this.name(), Integer.toString(stereotypesCache.size()),
+	    document.result.addDebug(this, 55, this.name(), Integer.toString(stereotypesCache.size()),
 		    stereotypesCache.toString());
 	}
     } // validateStereotypesCache()
@@ -1172,4 +1173,18 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
       // }
       // return super.globalIdentifier;
       // }
+    
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	case 55:
+	    return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }    
+
 }

@@ -126,7 +126,7 @@ public class SbvrRuleLoader implements MessageSource {
 	    }
 	    if (!ex) {
 
-		result.addError(null, 36, sbvrFileLocation);
+		result.addError(this, 36, sbvrFileLocation);
 
 	    } else {
 
@@ -539,7 +539,9 @@ public class SbvrRuleLoader implements MessageSource {
 	    return "";
 	case 10:
 	    return "No main class name provided for rule '$1$'. Parsing the name from the rule text.";
-
+	case 36:
+	    return "??The excel spreadsheet with SBVR rules was not found at file location '$1$'.";
+	
 	default:
 	    return "(" + SbvrRuleLoader.class.getName() + ") Unknown message with number: " + mnr;
 	}

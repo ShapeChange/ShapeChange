@@ -1909,7 +1909,7 @@ public class Flattener implements Transformer, MessageSource {
 					typeOfPi.id = targetTypeCi.id();
 					typeOfPi.name = targetTypeCi.name();
 				    } else {
-					MessageContext mc = result.addWarning(null, 20302, mapEntry.getTargetType(),
+					MessageContext mc = result.addWarning(this, 20302, mapEntry.getTargetType(),
 						typeOfPi.name);
 					if (mc != null)
 					    mc.addDetail(this, 20308, "Property", piFromFeatureCopy.fullName());

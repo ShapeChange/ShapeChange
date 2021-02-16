@@ -139,14 +139,14 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 	/* Connect to EA repository */
 	repository = new Repository();
-	r.addInfo(null, 43, connectionString);
+	r.addInfo(this, 43, connectionString);
 
 	if (!repository.OpenFile2(connectionString, username, password)) {
 	    String errormsg = repository.GetLastError();
-	    r.addFatalError(null, 35, errormsg, repositoryFileNameOrConnectionString, username, password);
+	    r.addFatalError(this, 35, errormsg, repositoryFileNameOrConnectionString, username, password);
 	    throw new ShapeChangeAbortException();
 	}
-	r.addInfo(null, 44, connectionString);
+	r.addInfo(this, 44, connectionString);
 
 	executeCommonInitializationProcedure(r);
     }
@@ -167,14 +167,14 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 	/** Connect to EA Repository */
 	repository = new Repository();
-	r.addInfo(null, 43, connectionString);
+	r.addInfo(this, 43, connectionString);
 
 	if (!repository.OpenFile(connectionString)) {
 	    String errormsg = repository.GetLastError();
 	    r.addFatalError(null, 30, errormsg, connectionString);
 	    throw new ShapeChangeAbortException();
 	}
-	r.addInfo(null, 44, connectionString);
+	r.addInfo(this, 44, connectionString);
 
 	executeCommonInitializationProcedure(r);
     }
@@ -222,7 +222,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
     }
 
     private void executeCommonInitializationProcedure(ShapeChangeResult r) throws ShapeChangeAbortException {
-	r.addInfo(null, 45, repository.GetConnectionString());
+	r.addInfo(this, 45, repository.GetConnectionString());
 	// determine if specific packages should not be loaded
 	this.excludedPackageNames = options.getExcludedPackages();
 
@@ -368,7 +368,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		try {
 		    FileUtils.deleteDirectory(tmpDir);
 		} catch (IOException e) {
-		    result.addWarning(null, 34, tmpDir.getAbsolutePath());
+		    result.addWarning(this, 34, tmpDir.getAbsolutePath());
 		}
 
 		if (!tmpDir.exists()) {
@@ -414,7 +414,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		try {
 		    FileUtils.deleteDirectory(tmpDir);
 		} catch (IOException e) {
-		    result.addWarning(null, 34, tmpDir.getAbsolutePath());
+		    result.addWarning(this, 34, tmpDir.getAbsolutePath());
 		}
 
 		if (!tmpDir.exists()) {
@@ -429,7 +429,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    saveLinkedDocuments(tmpDir);
 	}
 
-	r.addInfo(null, 46, repository.GetConnectionString());
+	r.addInfo(this, 46, repository.GetConnectionString());
     } // EA Document Ctor
 
     /**
@@ -582,7 +582,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		height = bimg.getHeight();
 
 	    } catch (IOException e) {
-		result.addError(null, 33, imgName, pi.name());
+		result.addError(this, 33, imgName, pi.name());
 		e.printStackTrace(System.err);
 		continue;
 	    }
@@ -879,6 +879,20 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    return "Context: supertype '$1$'";
 	case 5:
 	    return "Context: subtype '$1$'";
+	case 33:
+	    return "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
+	case 34:
+	    return "Could not delete directory $1$";
+	case 35:
+	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
+	case 43:
+	    return "Connecting to $1$";
+	case 44:
+	    return "Connected to $1$";
+	case 45:
+	    return "Starting reading $1$";
+	case 46:
+	    return "Finished reading $1$";
 
 	default:
 	    return "(" + EADocument.class.getName() + ") Unknown message with number: " + mnr;

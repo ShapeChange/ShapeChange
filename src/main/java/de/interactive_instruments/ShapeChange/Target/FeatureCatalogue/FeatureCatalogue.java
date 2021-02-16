@@ -589,7 +589,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		    }
 
 		} else {
-		    result.addWarning(null, 308, p.name());
+		    result.addWarning(this, 308, p.name());
 		    refModel = null;
 		}
 	    }
@@ -3160,6 +3160,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * @return Message text or null
      */
     protected String messageText(int mnr) {
+	
 	switch (mnr) {
 	case 12:
 	    return "Directory named '$1$' does not exist or is not accessible.";
@@ -3201,7 +3202,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    return "Directory '$1$' could not be created.";
 	case 32:
 	    return "Removed empty XSLT transformation target file at $1$.";
+	    
+	case 308:
+	    return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
-	return null;
     }
 }

@@ -541,7 +541,7 @@ public class XsdDocument implements MessageSource {
      * Verify QName and add import of namespace
      */
     private String addImport(String qname) {
-	result.addDebug(null, 10022, qname);
+	result.addDebug(this, 10022, qname);
 	String s = qname.trim();
 	if (s.isEmpty())
 	    return null;
@@ -593,7 +593,7 @@ public class XsdDocument implements MessageSource {
 	    if (classHasObjectElement(ci)) {
 		s = elementName(ci, true);
 	    } else {
-		MessageContext mc = result.addError(null, 119, ci.name());
+		MessageContext mc = result.addError(this, 119, ci.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 	    }
@@ -618,7 +618,7 @@ public class XsdDocument implements MessageSource {
 	} else if (ci.matches("rule-xsd-all-naming-gml") || ci.matches("rule-xsd-all-naming-swe")) {
 	    return (qualified ? ci.qname() : ci.name());
 	} else {
-	    MessageContext mc = result.addError(null, 154, "object element", ci.name());
+	    MessageContext mc = result.addError(this, 154, "object element", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -645,7 +645,7 @@ public class XsdDocument implements MessageSource {
 	    return options.internalize(
 		    (qualified ? ci.qname() : ci.name()) + (ci.name().endsWith("Property") ? "_" : "") + "Type");
 	} else {
-	    MessageContext mc = result.addError(null, 154, "type", ci.name());
+	    MessageContext mc = result.addError(this, 154, "type", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -671,7 +671,7 @@ public class XsdDocument implements MessageSource {
 	    propertyTypeName = options.internalize(propertyTypeName);
 	    return propertyTypeName;
 	} else {
-	    MessageContext mc = result.addError(null, 154, "property type", ci.name());
+	    MessageContext mc = result.addError(this, 154, "property type", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -901,7 +901,7 @@ public class XsdDocument implements MessageSource {
 		    addMixinProperties(ci, ret, schDoc);
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 155, ci.name());
+	    MessageContext mc = result.addError(this, 155, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
@@ -1000,12 +1000,12 @@ public class XsdDocument implements MessageSource {
 			addAttribute(e3, "ref", s);
 			addImport(vci.pkg().xmlns(), vci.pkg().targetNamespace());
 		    } else {
-			MessageContext mc = result.addError(null, 166, vci.name(), ci.name());
+			MessageContext mc = result.addError(this, 166, vci.name(), ci.name());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 		    }
 		} else {
-		    MessageContext mc = result.addError(null, 166, vci.name(), ci.name());
+		    MessageContext mc = result.addError(this, 166, vci.name(), ci.name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -1041,7 +1041,7 @@ public class XsdDocument implements MessageSource {
 		addGroupReferences(ci, ret, true);
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 155, ci.name());
+	    MessageContext mc = result.addError(this, 155, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
@@ -1451,12 +1451,12 @@ public class XsdDocument implements MessageSource {
 		    addAttribute(e5, "value", max);
 		}
 	    } else {
-		MessageContext mc = result.addError(null, 122, ci.name());
+		MessageContext mc = result.addError(this, 122, ci.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 123, ci.name());
+	    MessageContext mc = result.addError(this, 123, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -1641,7 +1641,7 @@ public class XsdDocument implements MessageSource {
 	    document.getDocumentElement().appendChild(e1);
 	    addAttribute(e1, "name", typeName(ci, false));
 	} else {
-	    MessageContext mc = result.addError(null, 124, typeName(ci, false));
+	    MessageContext mc = result.addError(this, 124, typeName(ci, false));
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -1754,7 +1754,7 @@ public class XsdDocument implements MessageSource {
 	    document.getDocumentElement().appendChild(e1);
 	    addAttribute(e1, "name", ci.name() + "EnumerationType");
 	} else {
-	    MessageContext mc = result.addError(null, 156, ci.name());
+	    MessageContext mc = result.addError(this, 156, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -2000,7 +2000,7 @@ public class XsdDocument implements MessageSource {
 		    addImport(cis.pkg().xmlns(), cis.pkg().targetNamespace());
 		}
 	    } else {
-		MessageContext mc = result.addError(null, 145, cibase.name());
+		MessageContext mc = result.addError(this, 145, cibase.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", cibase.fullName());
 	    }
@@ -2231,7 +2231,7 @@ public class XsdDocument implements MessageSource {
 
 		    } else {
 
-			MessageContext mc = result.addError(null, 180, ci.name(), pi.name());
+			MessageContext mc = result.addError(this, 180, ci.name(), pi.name());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", pi.fullName());
 		    }
@@ -2251,7 +2251,7 @@ public class XsdDocument implements MessageSource {
 	if (asArray) {
 	    if (!propi.matches("rule-xsd-prop-inlineOrByReference") || !propi.inlineOrByReference().equals("inline")) {
 		asArray = false;
-		MessageContext mc = result.addError(null, 170, propi.inClass().name() + "." + propi.name());
+		MessageContext mc = result.addError(this, 170, propi.inClass().name() + "." + propi.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Property", propi.fullName());
 	    }
@@ -2310,7 +2310,7 @@ public class XsdDocument implements MessageSource {
 		if (me.p2.equalsIgnoreCase("simple/simple")) {
 		    String propertyTypeName = addImport(me.p1);
 		    if (propertyTypeName == null) {
-			MessageContext mc = result.addError(null, 174, me.p1);
+			MessageContext mc = result.addError(this, 174, me.p1);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			propertyTypeName = "fixme:fixme";
@@ -2320,7 +2320,7 @@ public class XsdDocument implements MessageSource {
 		    // complex value, use URI to reference it
 		    addAttribute(e1, "type", "anyURI");
 		} else {
-		    MessageContext mc = result.addError(null, 175, me.p1);
+		    MessageContext mc = result.addError(this, 175, me.p1);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		    addAttribute(e1, "type", "string");
@@ -2337,18 +2337,18 @@ public class XsdDocument implements MessageSource {
 			// use URI to reference it
 			addAttribute(e1, "type", "anyURI");
 		    } else if (ci.category() == Options.DATATYPE || ci.category() == Options.UNION) {
-			MessageContext mc = result.addError(null, 178, ci.qname());
+			MessageContext mc = result.addError(this, 178, ci.qname());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			addAttribute(e1, "type", "string");
 		    } else {
-			MessageContext mc = result.addError(null, 179, ci.qname());
+			MessageContext mc = result.addError(this, 179, ci.qname());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			addAttribute(e1, "type", "string");
 		    }
 		} else {
-		    MessageContext mc = result.addError(null, 177, q.type);
+		    MessageContext mc = result.addError(this, 177, q.type);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		    addAttribute(e1, "type", "string");
@@ -2487,7 +2487,7 @@ public class XsdDocument implements MessageSource {
 
 		String propertyTypeName = addImport(me.p1);
 		if (propertyTypeName == null) {
-		    result.addError(null, 174, me.p1);
+		    result.addError(this, 174, me.p1);
 		    propertyTypeName = "fixme:fixme";
 		}
 
@@ -2498,7 +2498,7 @@ public class XsdDocument implements MessageSource {
 		if (isAttribute) {
 		    boolean simpleType = me.p2 != null && me.p2.equals("simple/simple");
 		    if (!simpleType || addNilReason || addMetadata || softtyped) {
-			MessageContext mc = result.addError(null, 128, pName);
+			MessageContext mc = result.addError(this, 128, pName);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			/*
@@ -2515,7 +2515,7 @@ public class XsdDocument implements MessageSource {
 		if (asList) {
 		    boolean simpleType = me.p2 != null && me.p2.equals("simple/simple");
 		    if (!simpleType) {
-			MessageContext mc = result.addError(null, 169, pName, me.p1);
+			MessageContext mc = result.addError(this, 169, pName, me.p1);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			return false;
@@ -2528,7 +2528,7 @@ public class XsdDocument implements MessageSource {
 		    MapEntry me2 = options.elementMapEntry(ti.name, cibase.encodingRule("xsd"));
 		    if (me2 == null) {
 			asArray = false;
-			MessageContext mc = result.addError(null, 172, pName, ti.name);
+			MessageContext mc = result.addError(this, 172, pName, ti.name);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 		    } else
@@ -2728,7 +2728,7 @@ public class XsdDocument implements MessageSource {
 		    return true;
 		}
 	    }
-	    MessageContext mc = result.addError(null, 129, ci.name(), pName);
+	    MessageContext mc = result.addError(this, 129, ci.name(), pName);
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -2736,7 +2736,7 @@ public class XsdDocument implements MessageSource {
 	boolean asArray = asArray(propi);
 	if (asArray && !classHasObjectElement(ci)) {
 	    asArray = false;
-	    MessageContext mc = result.addError(null, 173, pName, ci.name());
+	    MessageContext mc = result.addError(this, 173, pName, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	}
@@ -2810,7 +2810,7 @@ public class XsdDocument implements MessageSource {
 	} else if (classHasObjectElement(ci)) {
 
 	    if (ci.pkg() == null || ci.pkg().xmlns() == null) {
-		MessageContext mc = result.addError(null, 141, ci.name(), propi.inClass().name());
+		MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 
@@ -3077,7 +3077,7 @@ public class XsdDocument implements MessageSource {
 		}
 
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3093,7 +3093,7 @@ public class XsdDocument implements MessageSource {
 			    && !ci.matches("rule-xsd-cls-local-basictype"))) {
 
 		if (ci.pkg() == null || ci.pkg().xmlns() == null) {
-		    MessageContext mc = result.addError(null, 141, ci.name(), propi.inClass().name());
+		    MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Class", ci.fullName());
 		} else {
@@ -3126,7 +3126,7 @@ public class XsdDocument implements MessageSource {
 		}
 
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3134,12 +3134,12 @@ public class XsdDocument implements MessageSource {
 		e1 = pAnonymousEnumeration(ci);
 		e.appendChild(e1);
 		if (propi.nilReasonAllowed() || (propi.voidable() && propi.matches("rule-xsd-prop-nillable"))) {
-		    MessageContext mc = result.addWarning(null, 1010, pName, "enumeration");
+		    MessageContext mc = result.addWarning(this, 1010, pName, "enumeration");
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3148,22 +3148,22 @@ public class XsdDocument implements MessageSource {
 		e1 = pAnonymousBasicType(ci);
 		e.appendChild(e1);
 		if (propi.nilReasonAllowed() || (propi.voidable() && propi.matches("rule-xsd-prop-nillable"))) {
-		    MessageContext mc = result.addWarning(null, 1010, pName, "basic type");
+		    MessageContext mc = result.addWarning(this, 1010, pName, "basic type");
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 	    } else {
-		MessageContext mc = result.addError(null, 130, pName);
+		MessageContext mc = result.addError(this, 130, pName);
 		if (mc != null)
 		    mc.addDetail(null, 400, "Property", propi.fullName());
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 130, pName);
+	    MessageContext mc = result.addError(this, 130, pName);
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	}
@@ -3780,7 +3780,7 @@ public class XsdDocument implements MessageSource {
 
 	ClassInfo cibase = propi.inClass();
 	if (cibase == null) {
-	    MessageContext mc = result.addError(null, 157, propi.name());
+	    MessageContext mc = result.addError(this, 157, propi.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	    return false;
@@ -3984,7 +3984,7 @@ public class XsdDocument implements MessageSource {
 	    }
 
 	} else {
-	    MessageContext mc = result.addError(null, 116, propi.name());
+	    MessageContext mc = result.addError(this, 116, propi.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	    return false;
@@ -4123,7 +4123,7 @@ public class XsdDocument implements MessageSource {
 	}
 	if (!found) {
 	    imports.add(ns);
-	    result.addDebug(null, 10021, ns);
+	    result.addDebug(this, 10021, ns);
 	    if (nsabr != null) {
 		addAttribute(root, "xmlns:" + nsabr, ns);
 	    }
@@ -4255,6 +4255,61 @@ public class XsdDocument implements MessageSource {
 	case 12:
 	    return "Directory named '$1$' does not exist or is not accessible.";
 
+	case 116:
+	    return "Target object element(s) missing in property type for property '$1$'.";
+	case 119:
+	    return "No element for type '$1$' is defined. Only object and data types are represented by elements.";
+	case 122:
+	    return "The type with the name '$1$' has no tagged value 'base' or valid supertype and cannot be mapped to a basic type.";
+	case 123:
+	    return "The type with the name '$1$' has no ID and cannot be mapped to a basic type.";
+	case 124:
+	    return "Failed to create basic type '$1$'.";
+	case 128:
+	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML attribute, but the type is not a simple type.";
+	case 129:
+	    return "Union '$1$' as the value type of '$2$' could not be mapped as it does not contain the expected number of exactly one property to be encoded in the application schema.";
+	case 130:
+	    return "No type can be provided for the property '$1$'.";
+	case 141:
+	    return "The class '$1$' referenced from class '$2$' is not part of any package nor is it mapped to a well-known XML Schema type. The class is ignored.";
+	case 145:
+	    return "ADE class '$1$' cannot be suppressed, as it has no supertype.";
+	case 154:
+	    return "??No rule to name the '$1$' of class '$2$' is configured. Please check the current configuration.";
+	case 155:
+	    return "??No rule for a choice/sequence/all container for class '$1$' is configured, sequence is used. Please check the current configuration.";
+	case 156:
+	    return "??Failed to create enumeration type '$1$EnumerationType'.";
+	case 157:
+	    return "??Class of property '$1$' cannot be determined. The property is ignored.";
+	case 166:
+	    return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
+	case 169:
+	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML Schema list attribute, but the type '$2$' is not a simple type.";
+	case 170:
+	    return "??The property '$1$' cannot be made an array propery as it is not restricted to inline content. Set 'inlineOrByReference' to 'inline' on the property.";
+	case 172:
+	    return "??The property '$1$' cannot be made an array propery as the type map does not specify an XML element for type '$2$'.";
+	case 173:
+	    return "??The property '$1$' cannot be made an array propery as the type '$2$' is not represented by an object element in XML.";
+	case 174:
+	    return "??MapEntry contains mapping target '$1$' from unknown schema. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
+	case 175:
+	    return "??'$1$' is a complex type with simple content which cannot be used in a qualifier. 'string' is used instead.";
+	case 177:
+	    return "??A qualifier has type '$1$' which could not be identified unambiguously in model. 'string' is used instead.";
+	case 178:
+	    return "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
+	case 179:
+	    return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
+	case 180:
+	    return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+	case 1009:
+	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
+	case 1010:
+	    return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
+	
 	/*
 	 * 1000 - 1999: Schematron assertions (for code lists, etc.)
 	 */
@@ -4269,7 +4324,14 @@ public class XsdDocument implements MessageSource {
 	 */
 	case 2000:
 	    return "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
+	
+	case 10021:
+	    return "Import to namespace '$1$' added.";
+	case 10022:
+	    return "Found: '$1$'";
+	
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
-	return null;
     }
 };

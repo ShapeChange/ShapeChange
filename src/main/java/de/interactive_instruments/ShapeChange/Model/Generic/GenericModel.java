@@ -1399,20 +1399,8 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		    genCi.establishCategory();
 		}
 	    }
-	} catch (SAXException e) {
-	    result.addFatalError(null, 30803, e.getMessage());
-	    throw new ShapeChangeAbortException();
-	} catch (FileNotFoundException e) {
-	    result.addFatalError(null, 30803, e.getMessage());
-	    throw new ShapeChangeAbortException();
-	} catch (UnsupportedEncodingException e) {
-	    result.addFatalError(null, 30803, e.getMessage());
-	    throw new ShapeChangeAbortException();
-	} catch (ParserConfigurationException e) {
-	    result.addFatalError(null, 30803, e.getMessage());
-	    throw new ShapeChangeAbortException();
-	} catch (IOException e) {
-	    result.addFatalError(null, 30803, e.getMessage());
+	} catch (SAXException | ParserConfigurationException | IOException e) {
+	    result.addFatalError(this, 30803, e.getMessage());
 	    throw new ShapeChangeAbortException();
 	}
 	// catch (ClassNotFoundException e1) {
@@ -1424,7 +1412,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		try {
 		    zip.close();
 		} catch (IOException e) {
-		    result.addFatalError(null, 30803, e.getMessage());
+		    result.addFatalError(this, 30803, e.getMessage());
 		    throw new ShapeChangeAbortException();
 		}
 	    }
@@ -3470,7 +3458,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    return "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
 	case 30507:
 	    return "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
-
+	
+	case 30803: //x
+	    return "Exception occurred while reading the model XML. Message is: $1$.";
+	
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

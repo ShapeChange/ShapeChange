@@ -95,7 +95,7 @@ public class XmlSchema implements Target, MessageSource {
 	if (pi.matches("rule-xsd-all-notEncoded") && pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 	    return;
 
-	result.addDebug(null, 10012, pi.name());
+	result.addDebug(this, 10012, pi.name());
 
 	config = (TargetXmlSchemaConfiguration) o.getCurrentProcessConfig();
 
@@ -170,7 +170,7 @@ public class XmlSchema implements Target, MessageSource {
 	    return;
 
 	int cat = ci.category();
-	result.addDebug(null, 10016, ci.name(), ci.encodingRule("xsd"));
+	result.addDebug(this, 10016, ci.name(), ci.encodingRule("xsd"));
 
 	if (ci.matches("rule-xsd-all-notEncoded") && ci.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 	    return;
@@ -180,7 +180,7 @@ public class XmlSchema implements Target, MessageSource {
 	while (xsd == null) {
 	    pi = pi.owner();
 	    if (pi == null) {
-		MessageContext mc = result.addError(null, 10, ci.name(), ci.pkg().name());
+		MessageContext mc = result.addError(this, 10, ci.name(), ci.pkg().name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 		return;
@@ -833,7 +833,7 @@ public class XmlSchema implements Target, MessageSource {
 
 	if (xsdDocument != null && xsdDocument.length() > 0) {
 	    try {
-		result.addDebug(null, 10017, xsdDocument, pi.name());
+		result.addDebug(this, 10017, xsdDocument, pi.name());
 
 		xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
 			determineSchematronSchemaForXsdDocument(xsdDocument));
@@ -846,9 +846,9 @@ public class XmlSchema implements Target, MessageSource {
 	    xsd = xsdcurr;
 	    if (xsd == null) {
 		xsdDocument = pi.name() + ".xsd";
-		result.addWarning(null, 15, pi.name(), xsdDocument);
+		result.addWarning(this, 15, pi.name(), xsdDocument);
 		try {
-		    result.addDebug(null, 10017, xsdDocument, pi.name());
+		    result.addDebug(this, 10017, xsdDocument, pi.name());
 		    xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
 			    determineSchematronSchemaForXsdDocument(xsdDocument));
 		    res = true;
@@ -1395,6 +1395,10 @@ public class XmlSchema implements Target, MessageSource {
 	    return "Context: association class '$1$'.";
 	case 3:
 	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 10:
+	    return "Class '$1$' in package '$2$' is not associated with an XSD document.";
+	case 15:
+	    return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 
 	case 1000:
 	    return "Skipping XML Schema output, as configured.";
@@ -1428,6 +1432,14 @@ public class XmlSchema implements Target, MessageSource {
 	    return "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
 	case 2013:
 	    return "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
+	
+	case 10012:
+	    return "Generating XML Schema for application schema '$1$'.";
+	case 10016:
+	    return "Processing class '$1$', rule '$2$'.";
+	case 10017:
+	    return "Creating XSD document '$1$' for package '$2$'.";
+	
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

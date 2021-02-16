@@ -32,6 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Fop;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Target.Target;
 
@@ -39,7 +40,7 @@ import de.interactive_instruments.ShapeChange.Target.Target;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
-public class FopErrorListener implements ErrorListener {
+public class FopErrorListener implements ErrorListener, MessageSource {
  
 	@SuppressWarnings("unused")
 	private Target baseClass = null;
@@ -54,7 +55,7 @@ public class FopErrorListener implements ErrorListener {
 
         public void warning(TransformerException arg0) throws TransformerException { 
                 String warn = arg0.getMessage();
-                result.addWarning(null, 303, filename, warn);
+                result.addWarning(this, 303, filename, warn);
         }
 
         public void error(TransformerException arg0) throws TransformerException {
@@ -65,6 +66,21 @@ public class FopErrorListener implements ErrorListener {
         public void fatalError(TransformerException arg0)
                         throws TransformerException { 
                 String fatal = arg0.getMessage();
-                result.addError(null, 305, filename, fatal);
+                result.addError(this, 305, filename, fatal);
+        }
+        
+        @Override
+        public String message(int mnr) {
+
+        	switch (mnr) {
+
+        	case 303:
+        	    return "Warning while transforming '$1$'. Message: $2$";
+        	case 305:
+        	    return "Fatal error while transforming '$1$'. Message: $2$";
+        	
+        	default:
+        	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+        	}
         }
 }
