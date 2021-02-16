@@ -2275,6 +2275,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		     * create foreign key fields in assocClass to reference source and target
 		     */
 
+		    String srcAlias = "";
+		    if(sourceRole != null && StringUtils.isNotBlank(sourceRole.aliasName())) {
+			srcAlias = sourceRole.aliasName();
+		    }
 		    String fkSrcName = roleNameSource + foreignKeySuffix;
 		    fkSrcName = normalizeName(fkSrcName);
 
@@ -2288,7 +2292,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			/*
 			 * in an association class, this field references a source object
 			 */
-			foreignKeyFieldSrc = createForeignKeyField(assocClass, fkSrcName, "", "", source_);
+			foreignKeyFieldSrc = createForeignKeyField(assocClass, fkSrcName, srcAlias, "", source_);
 
 			if (sourceRole != null) {
 			    addTaggedValuesToRepresent(foreignKeyFieldSrc, sourceRole);
@@ -2299,6 +2303,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return;
 		    }
 
+		    String tgtAlias = "";
+		    if(targetRole != null && StringUtils.isNotBlank(targetRole.aliasName())) {
+			tgtAlias = targetRole.aliasName();
+		    }
 		    String fkTgtName = roleNameTarget + foreignKeySuffix;
 		    fkTgtName = normalizeName(fkTgtName);
 
@@ -2312,7 +2320,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			/*
 			 * in an association class, this field references a target object
 			 */
-			foreignKeyFieldTgt = createForeignKeyField(assocClass, fkTgtName, "", "", target_);
+			foreignKeyFieldTgt = createForeignKeyField(assocClass, fkTgtName, tgtAlias, "", target_);
 
 			if (targetRole != null) {
 			    addTaggedValuesToRepresent(foreignKeyFieldTgt, targetRole);
@@ -2585,7 +2593,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	String name = normalizeName(roleNameSource + foreignKeySuffix);
-
+	String alias = "";
+	if(roleSource != null && StringUtils.isNotBlank(roleSource.aliasName())) {
+	    alias = roleSource.aliasName();
+	}
+	
 	if (exceedsMaxLength(name)) {
 	    this.result.addWarning(this, 205, name, roleNameSource, target.name(), "" + maxNameLength);
 	    name = clipToMaxLength(name);
@@ -2595,7 +2607,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	Attribute foreignKeyField;
 	try {
 	    // the foreign key field is used to reference a source object
-	    foreignKeyField = createForeignKeyField(eaClassTarget, name, "", "", source);
+	    foreignKeyField = createForeignKeyField(eaClassTarget, name, alias, "", source);
 	    if (roleSource != null) {
 		addTaggedValuesToRepresent(foreignKeyField, roleSource);
 	    }
