@@ -416,7 +416,6 @@ public class Flattener implements Transformer, MessageSource {
      */
     public static final String REQ_FLATTEN_TYPES_IDENTIFY_CIRCULAR_DEPENDENCIES = "req-flattener-flattenTypes-identify-circular-dependencies";
 
-    public static final String CHARACTER_STRING_CLASS_ID = "CharacterString_Class";
     /**
      * Name of the tagged value that provides further information on type flattening
      * direction for an association between feature/object and object types.
@@ -967,16 +966,10 @@ public class Flattener implements Transformer, MessageSource {
 	SortedSet<String> measureTypes = new TreeSet<>(
 		trfConfig.parameterAsStringList(PARAM_MEASURE_TYPES, DEFAULT_MEASURE_TYPES, true, true));
 
-	ClassInfo realCi = genModel.classByName("Real");
-	Type realType = new Type();
-	realType.id = (realCi != null) ? realCi.id() : "unknown";
-	realType.name = "Real";
+	Type realType = Type.from("Real", genModel);
 
 	// used by RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY
-	ClassInfo characterStringCi = genModel.classByName("CharacterString");
-	Type characterStringType = new Type();
-	characterStringType.id = (characterStringCi != null) ? characterStringCi.id() : "unknown";
-	characterStringType.name = "CharacterString";
+	Type characterStringType = Type.from("CharacterString", genModel);
 
 	// used by RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX
 	/*
@@ -1059,7 +1052,7 @@ public class Flattener implements Transformer, MessageSource {
 
     }
 
-    private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel, TransformerConfiguration trfConfig) {
+	private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel, TransformerConfiguration trfConfig) {
 
 	SortedSet<String> simpleBaseTypes = new TreeSet<String>(
 		trfConfig.parameterAsStringList(PARAM_SIMPLE_BASE_TYPES, DEFAULT_SIMPLE_BASE_TYPES, true, true));
@@ -1312,13 +1305,7 @@ public class Flattener implements Transformer, MessageSource {
 
 	Map<String, GenericClassInfo> genCisById = genModel.getGenClasses();
 
-	ClassInfo characterStringCi = genModel.classByName("CharacterString");
-	String characterStringCiId;
-	if (characterStringCi == null) {
-	    characterStringCiId = CHARACTER_STRING_CLASS_ID;
-	} else {
-	    characterStringCiId = characterStringCi.id();
-	}
+	Type characterStringType = Type.from("CharacterString", genModel);
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -1327,8 +1314,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	    if (typeCi != null && typeCi.category() == Options.CODELIST) {
 
-		genPiType.id = characterStringCiId;
-		genPiType.name = "CharacterString";
+		genPiType.id = characterStringType.id;
+		genPiType.name = characterStringType.name;
 
 		if (genCisById.containsKey(typeCi.id())) {
 		    codeListCisToRemove.add(genCisById.get(typeCi.id()));
@@ -7009,15 +6996,9 @@ public class Flattener implements Transformer, MessageSource {
 	enumPi.setReadOnly(false);
 	enumPi.setAttribute(true);
 	Type enumPiType = new Type();
-	ClassInfo characterStringCi = model.classByName("CharacterString");
-	String characterStringCiId;
-	if (characterStringCi == null) {
-	    characterStringCiId = CHARACTER_STRING_CLASS_ID;
-	} else {
-	    characterStringCiId = characterStringCi.id();
-	}
-	enumPiType.id = characterStringCiId;
-	enumPiType.name = "CharacterString";
+	Type characterStringType = Type.from("CharacterString", model);
+	enumPiType.id = characterStringType.id;
+	enumPiType.name = characterStringType.name;
 	enumPi.setTypeInfo(enumPiType);
 	enumPi.setNavigable(true);
 	enumPi.setOrdered(false);
