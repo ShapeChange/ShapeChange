@@ -1029,7 +1029,22 @@ public class Flattener implements Transformer, MessageSource {
 		if (trfConfig.hasRule(RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY)) {
 		    GenericPropertyInfo uomPi = new GenericPropertyInfo(genModel, genPi.id() + "_uom",
 			    genPi.name() + "_uom");
-		    uomPi.setCardinality(new Multiplicity(0, 1));
+		    if (genPi.cardinality().minOccurs == 0) {
+		    	uomPi.setCardinality(new Multiplicity(0, 1));
+			} else if (genPi.cardinality().minOccurs == 1) {
+				uomPi.setCardinality(new Multiplicity(1, 1));
+			} else {
+				uomPi.setCardinality(new Multiplicity(1, 1));
+				result.addWarning(this, 20350, genPi.fullName(),
+						Integer.toString(genPi.cardinality().minOccurs),
+						RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY);
+			}
+		    if (genPi.cardinality().maxOccurs != 1) {
+				result.addWarning(this, 20351, genPi.fullName(),
+						Integer.toString(genPi.cardinality().maxOccurs),
+						RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY);
+			}
+		    
 		    uomPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1), false);
 		    uomPi.setInlineOrByReference("inline");
 		    uomPi.setTypeInfo(characterStringType);
@@ -7178,6 +7193,10 @@ public class Flattener implements Transformer, MessageSource {
 	    return "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
 	case 20349:
 	    return "??Dissolving mixins will not take into account associations that reference mixin '$1$'.";
+	case 20350:
+		return "The lower bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
+	case 20351:
+		return "The upper bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
 
 	case 20400:
 	    return "Exception occurred while loading linked document of type '$1$'. Exception message is: $2$";
