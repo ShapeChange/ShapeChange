@@ -83,7 +83,7 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	    Flattener.PARAM_SEPARATOR_FOR_PROPERTY_INDEX_NUMBER,
 	    Flattener.PARAM_SET_MIN_CARDINALITY_TO_ZERO_WHEN_MERGING_UNION, Flattener.PARAM_SIMPLE_BASE_TYPES,
 	    Flattener.PARAM_TYPE_ENUMERATION_PROPERTY_NAME, Flattener.PARAM_TYPE_SUFFIX_SEPARATOR,
-	    Flattener.PARAM_UOM_SUFFIX_SEPARATOR).collect(Collectors.toSet()));
+	    Flattener.PARAM_UOM_SUFFIX_SEPARATOR, Flattener.PARAM_DIRECT_POSITION_RSID_SUFFIX).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override

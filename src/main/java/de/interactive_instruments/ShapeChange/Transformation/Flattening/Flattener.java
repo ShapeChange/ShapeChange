@@ -252,6 +252,8 @@ public class Flattener implements Transformer, MessageSource {
     public static final String PARAM_FIXED_UOM_PROPERTY_DEFINITIONS = "fixedUomPropertyDefinitions";
     public static final String PARAM_MEASURE_UOM_TV = "measureUomTaggedValue";
     public static final String PARAM_UOM_SUFFIX_SEPARATOR = "uomSuffixSeparator";
+    /** Suffix of the property that represents the reference system id (e.g. coordinate reference system id) of a direct position. */
+    public static final String PARAM_DIRECT_POSITION_RSID_SUFFIX = "directPositionRsidSuffix";
 
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES = "applyHomogeneousGeometriesOnSubtypes";
     public static final String PARAM_HOMOGENEOUSGEOMETRIES_OMIT_RULE_FOR_CASE_OF_SINGLE_GEOMETRY_PROP = "omitHomogeneousGeometriesForTypesWithSingleGeometryProperty";
@@ -295,6 +297,9 @@ public class Flattener implements Transformer, MessageSource {
     public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES = "rule-trf-prop-flatten-measure-typed-properties";
     public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY = "rule-trf-prop-flatten-measure-typed-properties-add-uom-property";
     public static final String RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_FIXED_UOM_SUFFIX = "rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix";
+    public static final String RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES = "rule-trf-prop-flatten-directposition-typed-properties";
+    public static final String RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES_ADD_RSID_PROPERTY = "rule-trf-prop-flatten-directposition-typed-properties-add-rsid-property";
+    public static final String RULE_TRF_PROP_FLATTEN_MEDIATYPE_TYPED_PROPERTIES = "rule-trf-prop-flatten-mediatype-typed-properties";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY = "rule-trf-prop-flatten-multiplicity";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_WITHMAXMULTTHRESHOLD = "rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold";
     public static final String RULE_TRF_PROP_FLATTEN_MULTIPLICITY_KEEPBIDIRECTIONALASSOCIATIONS = "rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations";
@@ -766,6 +771,16 @@ public class Flattener implements Transformer, MessageSource {
 	    result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES);
 	    applyRuleFlattenMeasureTypedProperties(genModel, trfConfig);
 	}
+	
+	if (rules.contains(RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES)) {
+		result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES);
+		applyRuleFlattenDirectPositionTypedProperties(genModel, trfConfig);
+	}
+	
+	if (rules.contains(RULE_TRF_PROP_FLATTEN_MEDIATYPE_TYPED_PROPERTIES)) {
+		result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_MEDIATYPE_TYPED_PROPERTIES);
+		applyRuleFlattenMediaTypeTypedProperties(genModel, trfConfig);
+	}
 
 	if (rules.contains(RULE_TRF_PROP_FLATTEN_EXPLICIT_TIME_INTERVAL)) {
 	    result.addProcessFlowInfo(null, 20103, RULE_TRF_PROP_FLATTEN_EXPLICIT_TIME_INTERVAL);
@@ -1027,35 +1042,8 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		if (trfConfig.hasRule(RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY)) {
-		    GenericPropertyInfo uomPi = new GenericPropertyInfo(genModel, genPi.id() + "_uom",
-			    genPi.name() + "_uom");
-		    if (genPi.cardinality().minOccurs == 0) {
-		    	uomPi.setCardinality(new Multiplicity(0, 1));
-			} else if (genPi.cardinality().minOccurs == 1) {
-				uomPi.setCardinality(new Multiplicity(1, 1));
-			} else {
-				uomPi.setCardinality(new Multiplicity(1, 1));
-				result.addWarning(this, 20350, genPi.fullName(),
-						Integer.toString(genPi.cardinality().minOccurs),
-						RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY);
-			}
-		    if (genPi.cardinality().maxOccurs != 1) {
-				result.addWarning(this, 20351, genPi.fullName(),
-						Integer.toString(genPi.cardinality().maxOccurs),
-						RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY);
-			}
-		    
-		    uomPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1), false);
-		    uomPi.setInlineOrByReference("inline");
-		    uomPi.setTypeInfo(characterStringType);
-		    uomPi.setInClass(genCi);
-
-		    // also handle the code, if defined for the property
-		    if (hasCode(genPi)) {
-			String code = getCode(genPi);
-			setCode(uomPi, code + "_uom");
-		    }
-
+		    GenericPropertyInfo uomPi = createExtraProperty(genPi, "_uom",
+					characterStringType, genCi, genModel, RULE_TRF_PROP_FLATTEN_MEASURE_TYPED_PROPERTIES_ADD_UOM_PROPERTY);
 		    newPis.add(uomPi);
 		}
 	    }
@@ -1066,6 +1054,108 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
     }
+
+    /**
+     * Creates an extra property based on a given property that has a non-simple type; the extra
+     * property helps to flatten that non-simple type. The returned property has the
+     * name of the given property plus a specified suffix.
+     * 
+     * The multiplicity is set to 0..1 or 1..1, depending on the given property. The sequence
+     * number is set so that the new property is placed right after the given property.
+     */
+	private GenericPropertyInfo createExtraProperty(GenericPropertyInfo genPi,
+			String suffix, Type type,
+			GenericClassInfo genCi, GenericModel genModel, String rule) {
+		GenericPropertyInfo newPi = new GenericPropertyInfo(genModel,
+				genPi.id() + suffix, genPi.name() + suffix);
+		if (genPi.cardinality().minOccurs == 0) {
+			newPi.setCardinality(new Multiplicity(0, 1));
+		} else if (genPi.cardinality().minOccurs == 1) {
+			newPi.setCardinality(new Multiplicity(1, 1));
+		} else {
+			newPi.setCardinality(new Multiplicity(1, 1));
+			result.addWarning(this, 20350, genPi.fullName(),
+					Integer.toString(genPi.cardinality().minOccurs), rule);
+		}
+		if (genPi.cardinality().maxOccurs != 1) {
+			result.addWarning(this, 20351, genPi.fullName(),
+					Integer.toString(genPi.cardinality().maxOccurs), rule);
+		}
+		
+		newPi.setSequenceNumber(genPi.sequenceNumber().createCopyWithSuffix(1),
+				false);
+		newPi.setInlineOrByReference("inline");
+		newPi.setTypeInfo(type);
+		newPi.setInClass(genCi);
+
+		// also handle the code, if defined for the property
+		if (hasCode(genPi)) {
+			String code = getCode(genPi);
+			setCode(newPi, code + suffix);
+		}
+		return newPi;
+	}
+    
+	/**
+	 * Data type DirectPosition can be used for registering gravity-related heights. In that case, the coordinate
+	 * reference system will be given together with the height itself, and will not be included in e.g. a geometry
+	 * that itself has a reference to a coordinate reference system.
+	 */
+	private void applyRuleFlattenDirectPositionTypedProperties(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+		Type realType = Type.from("Real", genModel);
+		Type characterStringType = Type.from("CharacterString", genModel);
+		// srsName is the name used in GML
+		String referenceSystemSuffix = trfConfig.parameterAsString(PARAM_DIRECT_POSITION_RSID_SUFFIX, "_srsName", false, true);
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+			List<GenericPropertyInfo> newPis = new ArrayList<>();
+			for (PropertyInfo pi : genCi.properties().values()) {
+				if (!"DirectPosition".equals(pi.typeInfo().name)) {
+					continue;
+				}
+				GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+				genPi.setTypeInfo(realType);
+				if (trfConfig.hasRule(
+						RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES_ADD_RSID_PROPERTY)) {
+					GenericPropertyInfo crsPi = createExtraProperty(genPi, referenceSystemSuffix,
+							characterStringType, genCi, genModel, RULE_TRF_PROP_FLATTEN_DIRECTPOSITION_TYPED_PROPERTIES_ADD_RSID_PROPERTY);
+					newPis.add(crsPi);
+				}
+			}
+			if (!newPis.isEmpty()) {
+				genCi.addPropertiesInSequence(newPis,
+						PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+			}
+		}
+	}
+	
+	/**
+	 * MediaType inherits from CharacterString and has an extra property "type" that provides the media type name
+	 * (see also https://www.iana.org/assignments/media-types/media-types.xhtml). An extra property with suffix
+	 * "_type" and type CharacterString is created.
+	 */
+	private void applyRuleFlattenMediaTypeTypedProperties(GenericModel genModel,
+			TransformerConfiguration trfConfig) {
+		Type characterStringType = Type.from("CharacterString", genModel);
+		for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+			List<GenericPropertyInfo> newPis = new ArrayList<>();
+			for (PropertyInfo pi : genCi.properties().values()) {
+				if (!"MediaType".equals(pi.typeInfo().name)) {
+					continue;
+				}
+				GenericPropertyInfo genPi = (GenericPropertyInfo) pi;
+				genPi.setTypeInfo(characterStringType);
+				GenericPropertyInfo typePi = createExtraProperty(genPi, "_type",
+						characterStringType, genCi, genModel,
+						RULE_TRF_PROP_FLATTEN_MEDIATYPE_TYPED_PROPERTIES);
+				newPis.add(typePi);
+			}
+			if (!newPis.isEmpty()) {
+				genCi.addPropertiesInSequence(newPis,
+						PropertyCopyDuplicatBehaviorIndicator.IGNORE);
+			}
+		}
+	}
 
 	private void applyRuleBasicTypeToSimpleBaseType(GenericModel genModel, TransformerConfiguration trfConfig) {
 

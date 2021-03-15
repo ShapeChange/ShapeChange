@@ -144,6 +144,22 @@ public class FlattenerTest extends BasicTestSCXML {
     }
     
     @Test
+    public void test_directPositionTypedProperties() {
+    	multiTest(
+    			"src/test/resources/flattener/directPositionTypedProperties/testEA_flatten_directPositionTypedProperties.xml",
+    			new String[] { "xsd" }, "testResults/flattening/directPositionTypedProperties",
+    			"src/test/resources/flattener/directPositionTypedProperties/reference");
+    }
+    
+    @Test
+    public void test_mediaTypeTypedProperties() {
+    	multiTest(
+    			"src/test/resources/flattener/mediaTypeTypedProperties/testEA_flatten_mediaTypeTypedProperties.xml",
+    			new String[] { "xsd" }, "testResults/flattening/mediaTypeTypedProperties",
+    			"src/test/resources/flattener/mediaTypeTypedProperties/reference");
+    }
+    
+    @Test
     public void test_explicitTimeInterval() {
 	multiTest(
 		"src/test/resources/flattener/explicitTimeInterval/testEA_flatten_explicitTimeInterval.xml",

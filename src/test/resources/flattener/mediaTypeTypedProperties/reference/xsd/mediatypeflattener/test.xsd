@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/sc/flattener/mediaTypeTypedProperties" elementFormDefault="qualified" targetNamespace="http://example.org/sc/flattener/mediaTypeTypedProperties" version="1.0">
+  <annotation>
+    <documentation>Alias: applicationSchema</documentation>
+  </annotation>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MyFeatureType1" substitutionGroup="gml:AbstractFeature" type="t:MyFeatureType1Type">
+    <annotation>
+      <documentation>Alias: </documentation>
+    </annotation>
+  </element>
+  <complexType name="MyFeatureType1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="mediaType" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+          <element name="mediaType_type" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+          <element name="string" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MyFeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MyFeatureType2" substitutionGroup="gml:AbstractFeature" type="t:MyFeatureType2Type">
+    <annotation>
+      <documentation>Alias: </documentation>
+    </annotation>
+  </element>
+  <complexType name="MyFeatureType2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="mediaType" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="mediaType_type" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MyFeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MyFeatureType3" substitutionGroup="gml:AbstractFeature" type="t:MyFeatureType3Type">
+    <annotation>
+      <documentation>Alias: </documentation>
+    </annotation>
+  </element>
+  <complexType name="MyFeatureType3Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element maxOccurs="unbounded" minOccurs="2" name="mediaType" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+          <element name="mediaType_type" type="string">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureType3PropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MyFeatureType3"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>
