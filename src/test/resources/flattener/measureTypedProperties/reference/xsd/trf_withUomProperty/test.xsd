@@ -28,7 +28,7 @@
               <documentation>Alias: mea</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="measure_uom" type="string">
+          <element name="measure_uom" type="string">
             <annotation>
               <documentation>Alias: mea_uom</documentation>
             </annotation>
@@ -38,7 +38,7 @@
               <documentation>Alias: sca</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="scale_uom" type="string">
+          <element name="scale_uom" type="string">
             <annotation>
               <documentation>Alias: sca_uom</documentation>
             </annotation>
@@ -48,7 +48,7 @@
               <documentation>Alias: len</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="length_uom" type="string">
+          <element name="length_uom" type="string">
             <annotation>
               <documentation>Alias: len_uom</documentation>
             </annotation>
@@ -78,7 +78,7 @@
               <documentation>Alias: len</documentation>
             </annotation>
           </element>
-          <element minOccurs="0" name="length_uom" type="string">
+          <element name="length_uom" type="string">
             <annotation>
               <documentation>Alias: len_uom</documentation>
             </annotation>
