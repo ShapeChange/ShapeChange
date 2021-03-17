@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/sc/flattener/directPositionTypedProperties" elementFormDefault="qualified" targetNamespace="http://example.org/sc/flattener/directPositionTypedProperties" version="1.0">
+  <annotation>
+    <documentation>Alias: applicationSchema</documentation>
+  </annotation>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="MyFeatureType" substitutionGroup="gml:AbstractFeature" type="t:MyFeatureTypeType">
+    <annotation>
+      <documentation>Alias: my feature type</documentation>
+    </annotation>
+  </element>
+  <complexType name="MyFeatureTypeType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="directPosition1" type="double">
+            <annotation>
+              <documentation>Alias: direct position 1</documentation>
+            </annotation>
+          </element>
+          <element name="directPosition1_crs" type="string">
+            <annotation>
+              <documentation>Alias: direct position 1_crs</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="directPosition2" type="double">
+            <annotation>
+              <documentation>Alias: direct position 2</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="directPosition2_crs" type="string">
+            <annotation>
+              <documentation>Alias: direct position 2_crs</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MyFeatureTypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:MyFeatureType"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

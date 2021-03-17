@@ -474,11 +474,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 		pi.setInlineOrByReference("inline");
 		pi.setTaggedValues(options.taggedValueFactory(), false);
 		pi.setSequenceNumber(new StructuredNumber("1"), true);
-		Type t = new Type();
-		ClassInfo ci = model.classByName("CharacterString");
-		t.id = ci != null ? ci.id() : "unknown";
-		t.name = "CharacterString";
-		pi.setTypeInfo(t);
+		pi.setTypeInfo(Type.from("CharacterString", model));
 
 		return pi;
 	}

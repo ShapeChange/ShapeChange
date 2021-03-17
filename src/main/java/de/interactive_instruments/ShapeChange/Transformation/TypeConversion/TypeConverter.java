@@ -372,11 +372,7 @@ public class TypeConverter implements Transformer, MessageSource {
 	    }
 	}
 
-	// identify type info for CharacterString
-	Type characterStringType = new Type();
-	characterStringType.name = "CharacterString";
-	ClassInfo characterString = genModel.classByName("CharacterString");
-	characterStringType.id = characterString != null ? characterString.id() : "UNKNOWN";
+	Type characterStringType = Type.from("CharacterString", genModel);
 
 	String nameSuffix = trfConfig.parameterAsString(PARAM_NILREASON_PROPERTY_NAME_SUFFIX, "_nilReason", false,
 		true);
