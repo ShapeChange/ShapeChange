@@ -21,3 +21,6 @@ scxmlTmpDir/
 /test.xsd
 /log.html
 /log.xml
+
+# VS Code
+*.code-workspace
