@@ -181,7 +181,7 @@
 		<dependency>
 			<groupId>mil.nga.geopackage</groupId>
 			<artifactId>geopackage</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.0</version>
 		</dependency>
 	</dependencies>
 	<url>http://shapechange.net/</url>
