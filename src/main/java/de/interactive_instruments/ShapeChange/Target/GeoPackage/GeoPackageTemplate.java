@@ -69,6 +69,7 @@ import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
 import mil.nga.geopackage.core.srs.SpatialReferenceSystemDao;
 import mil.nga.geopackage.db.GeoPackageDataType;
 import mil.nga.geopackage.extension.CrsWktExtension;
+import mil.nga.geopackage.extension.RTreeIndexExtension;
 import mil.nga.geopackage.features.columns.GeometryColumns;
 import mil.nga.geopackage.features.columns.GeometryColumnsDao;
 import mil.nga.geopackage.features.user.FeatureColumn;
@@ -399,6 +400,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    SpatialReferenceSystem srs = srsDao.getOrCreateCode(srsOrganization, organizationCoordSysId);
 
 	    ContentsDao contentsDao = geoPackage.getContentsDao();
+	    
+	    RTreeIndexExtension rTreeIndexExtension =  new RTreeIndexExtension(geoPackage);
+	    boolean createSpatialIndexes = options.parameterAsBoolean(this.getClass().getName(),
+			    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, false);
 
 	    /*
 	     * Create data column constraints for enumerations.
@@ -594,6 +599,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 		    FeatureTable table = new FeatureTable(tableName, columns);
 		    geoPackage.createFeatureTable(table);
+		    if (createSpatialIndexes) {
+		    	rTreeIndexExtension.create(table);
+		    }
 
 		} else {
 

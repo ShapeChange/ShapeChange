@@ -60,7 +60,7 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	    Stream.of(GeoPackageConstants.PARAM_DOCUMENTATION_NOVALUE, GeoPackageConstants.PARAM_DOCUMENTATION_TEMPLATE,
 		    GeoPackageConstants.PARAM_GPKGM, GeoPackageConstants.PARAM_GPKGZ,
 		    GeoPackageConstants.PARAM_ID_COLUMN_NAME, GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID,
-		    GeoPackageConstants.PARAM_SRS_ORGANIZATION).collect(Collectors.toSet()));
+		    GeoPackageConstants.PARAM_SRS_ORGANIZATION, GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
