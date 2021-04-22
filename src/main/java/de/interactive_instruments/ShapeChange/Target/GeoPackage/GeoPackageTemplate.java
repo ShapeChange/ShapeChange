@@ -646,7 +646,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     			}
 
     			contentsDao.create(contents);
+    			
     		}
+    		
+    		result.addResult(getTargetName(), outputDirectory, outputFilename, null);
 
     	} catch (SQLException e) {
     		result.addError(this, 108, e.getMessage());
