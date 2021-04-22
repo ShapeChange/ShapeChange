@@ -372,290 +372,285 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     @Override
     public void writeAll(ShapeChangeResult r) {
 
-	this.result = r;
-	this.options = r.options();
-
-	if (diagnosticsOnly || numberOfEncodedSchemas == 0) {
-	    return;
-	}
-
-	// create output file
-	File geopackageFile = new File(outputDirectory, outputFilename);
-	GeoPackageManager.create(geopackageFile);
-
-	try (GeoPackage geoPackage = GeoPackageManager.open(geopackageFile, true);) {
-
-	    // initialise SRS definitions
-	    SpatialReferenceSystemDao srsDao = geoPackage.getSpatialReferenceSystemDao();
-
-	    if (srsDefs.stream().anyMatch(srs -> StringUtils.isNotBlank(srs.getDefinition_12_063()))) {
-		CrsWktExtension wktExt = new CrsWktExtension(geoPackage);
-		wktExt.getOrCreate();
-	    }
-
-	    for (SpatialReferenceSystem srs : srsDefs) {
-		srsDao.create(srs);
-	    }
-
-	    SpatialReferenceSystem srs = srsDao.getOrCreateCode(srsOrganization, organizationCoordSysId);
-
-	    ContentsDao contentsDao = geoPackage.getContentsDao();
-	    
-	    RTreeIndexExtension rTreeIndexExtension =  new RTreeIndexExtension(geoPackage);
-	    boolean createSpatialIndexes = options.parameterAsBoolean(this.getClass().getName(),
-			    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, false);
-
-	    /*
-	     * Create data column constraints for enumerations.
-	     */
-	    for (ClassInfo ci : cisToProcess) {
-
-		if (ci.category() == Options.ENUMERATION) {
-
-		    /*
-		     * NOTE: Schema extension is automatically registered by GeoPackage API
-		     */
-		    createEnumColumnConstraints(geoPackage, ci);
-		}
-	    }
-
-	    boolean geometryColumnsTableCreated = false;
-	    boolean dataColumnsTableCreated = false;
-
-	    // create tables
-	    for (ClassInfo ci : cisToProcess) {
-
-		if (ci.category() == Options.ENUMERATION) {
-		    // already encoded as data column constraints
-		    continue;
-		}
-
-		if (ci.category() == Options.CODELIST) {
-		    result.addWarning(this, 113, ci.name());
-		    continue;
-		}
+    	this.result = r;
+    	this.options = r.options();
+
+    	if (diagnosticsOnly || numberOfEncodedSchemas == 0) {
+    		return;
+    	}
+
+    	// create output file
+    	File geopackageFile = new File(outputDirectory, outputFilename);
+    	GeoPackageManager.create(geopackageFile);
+
+    	try (GeoPackage geoPackage = GeoPackageManager.open(geopackageFile, true);) {
+
+    		// initialise SRS definitions
+    		SpatialReferenceSystemDao srsDao = geoPackage.getSpatialReferenceSystemDao();
+
+    		if (srsDefs.stream().anyMatch(srs -> StringUtils.isNotBlank(srs.getDefinition_12_063()))) {
+    			CrsWktExtension wktExt = new CrsWktExtension(geoPackage);
+    			wktExt.getOrCreate();
+    		}
+
+    		for (SpatialReferenceSystem srs : srsDefs) {
+    			srsDao.create(srs);
+    		}
+
+    		SpatialReferenceSystem srs = srsDao.getOrCreateCode(srsOrganization, organizationCoordSysId);
+
+    		ContentsDao contentsDao = geoPackage.getContentsDao();
+
+    		RTreeIndexExtension rTreeIndexExtension =  new RTreeIndexExtension(geoPackage);
+    		boolean createSpatialIndexes = options.parameterAsBoolean(this.getClass().getName(),
+    				GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, false);
+
+    		/*
+    		 * Create data column constraints for enumerations.
+    		 */
+    		for (ClassInfo ci : cisToProcess) {
+
+    			if (ci.category() == Options.ENUMERATION) {
+
+    				/*
+    				 * NOTE: Schema extension is automatically registered by GeoPackage API
+    				 */
+    				createEnumColumnConstraints(geoPackage, ci);
+    			}
+    		}
 
-		// class is a feature type, object type, or data type
+    		boolean geometryColumnsTableCreated = false;
 
-		/*
-		 * Check class properties for geometric properties and properties with max
-		 * multiplicity greater than 1. Create data columns table if necessary.
-		 */
-		int numberOfGeometryProperties = 0;
-		PropertyInfo geometryPi = null;
-		byte m = 0;
-		byte z = 0;
-		PropertyInfo identifierPi = null;
+    		// create gpkg_data_columns table
+    		geoPackage.createDataColumnsTable();
 
-		for (PropertyInfo pi : ci.propertiesAll()) {
+    		// create tables
+    		for (ClassInfo ci : cisToProcess) {
 
-		    if (!isEncoded(pi)) {
-			continue;
-		    }
+    			if (ci.category() == Options.ENUMERATION) {
+    				// already encoded as data column constraints
+    				continue;
+    			}
 
-		    if (isGeometryTypedProperty(pi)) {
-			numberOfGeometryProperties++;
-			geometryPi = pi;
+    			if (ci.category() == Options.CODELIST) {
+    				result.addWarning(this, 113, ci.name());
+    				continue;
+    			}
 
-			m = getMValue(pi);
-			z = getZValue(pi);
-
-			if (!geometryColumnsTableCreated) {
-			    geoPackage.createGeometryColumnsTable();
-			    geometryColumnsTableCreated = true;
-			}
-		    }
-
-		    if (pi.cardinality().maxOccurs > 1) {
-			MessageContext mc = result.addWarning(this, 103, pi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-		    }
+    			// class is a feature type, object type, or data type
 
-		    if (pi.categoryOfValue() == Options.ENUMERATION && valueTypeHasEnums(pi)
-			    && !dataColumnsTableCreated) {
+    			/*
+    			 * Check class properties for geometric properties and properties with max
+    			 * multiplicity greater than 1. Create data columns table if necessary.
+    			 */
+    			int numberOfGeometryProperties = 0;
+    			PropertyInfo geometryPi = null;
+    			byte m = 0;
+    			byte z = 0;
+    			PropertyInfo identifierPi = null;
 
-			// create/update data columns table
-			geoPackage.createDataColumnsTable();
-			dataColumnsTableCreated = true;
-		    }
+    			for (PropertyInfo pi : ci.propertiesAll()) {
 
-		    if (pi.isAttribute() && pi.stereotype("identifier")
-			    && ci.matches(GeoPackageConstants.RULE_TGT_GPKG_CLS_IDENTIFIER_STEREOTYPE)) {
-			identifierPi = pi;
-			GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
-			if (gpkgType != GeoPackageDataType.INTEGER) {
-			    MessageContext mc = result.addInfo(this, 110, pi.name(), ci.name(), pi.typeInfo().name);
-			    if (mc != null) {
-				mc.addDetail(this, 1, pi.fullNameInSchema());
-			    }
-			}
-		    }
-		}
+    				if (!isEncoded(pi)) {
+    					continue;
+    				}
 
-		String identifierColumnName = identifierPi == null ? normalize(idColumnName)
-			: normalize(identifierPi.name());
+    				if (isGeometryTypedProperty(pi)) {
+    					numberOfGeometryProperties++;
+    					geometryPi = pi;
 
-		if (numberOfGeometryProperties > 1) {
-		    MessageContext mc = result.addWarning(this, 100, ci.name(), geometryPi.name());
-		    if (mc != null) {
-			mc.addDetail(this, 2, ci.fullNameInSchema());
-		    }
-		}
+    					m = getMValue(pi);
+    					z = getZValue(pi);
 
-		String tableName = normalize(ci.name());
+    					if (!geometryColumnsTableCreated) {
+    						geoPackage.createGeometryColumnsTable();
+    						geometryColumnsTableCreated = true;
+    					}
+    				}
 
-		Contents contents = new Contents();
-		contents.setTableName(tableName);
-		contents.setDescription(ci.derivedDocumentation(GeoPackageTemplate.documentationTemplate,
-			GeoPackageTemplate.documentationNoValue));
+    				if (pi.cardinality().maxOccurs > 1) {
+    					MessageContext mc = result.addWarning(this, 103, pi.name());
+    					if (mc != null) {
+    						mc.addDetail(this, 1, pi.fullNameInSchema());
+    					}
+    				}
 
-		if (geometryPi != null) {
+    				if (pi.isAttribute() && pi.stereotype("identifier")
+    						&& ci.matches(GeoPackageConstants.RULE_TGT_GPKG_CLS_IDENTIFIER_STEREOTYPE)) {
+    					identifierPi = pi;
+    					GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
+    					if (gpkgType != GeoPackageDataType.INTEGER) {
+    						MessageContext mc = result.addInfo(this, 110, pi.name(), ci.name(), pi.typeInfo().name);
+    						if (mc != null) {
+    							mc.addDetail(this, 1, pi.fullNameInSchema());
+    						}
+    					}
+    				}
+    			}
 
-		    // create feature table
+    			String identifierColumnName = identifierPi == null ? normalize(idColumnName)
+    					: normalize(identifierPi.name());
 
-		    contents.setSrs(srs);
-		    contents.setDataType(ContentsDataType.FEATURES);
+    			if (numberOfGeometryProperties > 1) {
+    				MessageContext mc = result.addWarning(this, 100, ci.name(), geometryPi.name());
+    				if (mc != null) {
+    					mc.addDetail(this, 2, ci.fullNameInSchema());
+    				}
+    			}
 
-		    List<FeatureColumn> columns = new ArrayList<>();
+    			String tableName = normalize(ci.name());
 
-		    columns.add(FeatureColumn.createPrimaryKeyColumn(identifierColumnName));
+    			Contents contents = new Contents();
+    			contents.setTableName(tableName);
+    			contents.setDescription(ci.derivedDocumentation(GeoPackageTemplate.documentationTemplate,
+    					GeoPackageTemplate.documentationNoValue));
 
-		    for (PropertyInfo pi : ci.propertiesAll()) {
+    			if (geometryPi != null) {
 
-			if (!isEncoded(pi) || identifierPi == pi) {
-			    continue;
-			}
+    				// create feature table
 
-			String columnName = normalize(pi.name());
+    				contents.setSrs(srs);
+    				contents.setDataType(ContentsDataType.FEATURES);
 
-			if (isGeometryTypedProperty(pi)) {
+    				List<FeatureColumn> columns = new ArrayList<>();
 
-			    if (pi != geometryPi) {
+    				columns.add(FeatureColumn.createPrimaryKeyColumn(identifierColumnName));
 
-				MessageContext mc = result.addWarning(this, 109, ci.name(), geometryPi.name(),
-					pi.name());
-				if (mc != null) {
-				    mc.addDetail(this, 1, pi.fullNameInSchema());
-				}
+    				for (PropertyInfo pi : ci.propertiesAll()) {
 
-			    } else {
+    					if (!isEncoded(pi) || identifierPi == pi) {
+    						continue;
+    					}
 
-				GeometryType gpkgType = mapGeometryTypedProperty(pi);
+    					String columnName = normalize(pi.name());
 
-				if (gpkgType == null) {
-				    MessageContext mc = result.addWarning(this, 101, pi.name(), pi.typeInfo().name);
-				    if (mc != null) {
-					mc.addDetail(this, 1, pi.fullNameInSchema());
-				    }
-				    gpkgType = GeometryType.GEOMETRY;
-				}
+    					if (isGeometryTypedProperty(pi)) {
 
-				columns.add(FeatureColumn.createGeometryColumn(columnName, gpkgType,
-					pi.cardinality().minOccurs != 0, null));
+    						if (pi != geometryPi) {
 
-				GeometryColumns gc = new GeometryColumns();
-				gc.setColumnName(columnName);
-				gc.setSrs(srs);
-				gc.setGeometryType(gpkgType);
-				gc.setContents(contents);
-				gc.setM(m);
-				gc.setZ(z);
+    							MessageContext mc = result.addWarning(this, 109, ci.name(), geometryPi.name(),
+    									pi.name());
+    							if (mc != null) {
+    								mc.addDetail(this, 1, pi.fullNameInSchema());
+    							}
 
-				GeometryColumnsDao geometryColumnsDao = geoPackage.getGeometryColumnsDao();
-				geometryColumnsDao.create(gc);
-			    }
+    						} else {
 
-			} else {
+    							GeometryType gpkgType = mapGeometryTypedProperty(pi);
 
-			    if (pi.categoryOfValue() == Options.CODELIST
-				    || pi.categoryOfValue() == Options.ENUMERATION) {
+    							if (gpkgType == null) {
+    								MessageContext mc = result.addWarning(this, 101, pi.name(), pi.typeInfo().name);
+    								if (mc != null) {
+    									mc.addDetail(this, 1, pi.fullNameInSchema());
+    								}
+    								gpkgType = GeometryType.GEOMETRY;
+    							}
 
-				columns.add(FeatureColumn.createColumn(columnName, GeoPackageDataType.TEXT,
-					pi.cardinality().minOccurs != 0, pi.initialValue()));
+    							columns.add(FeatureColumn.createGeometryColumn(columnName, gpkgType,
+    									pi.cardinality().minOccurs != 0, null));
 
-				if (valueTypeHasEnums(pi)) {
-				    createDataColumnsEntry(pi, contents, geoPackage);
-				}
+    							GeometryColumns gc = new GeometryColumns();
+    							gc.setColumnName(columnName);
+    							gc.setSrs(srs);
+    							gc.setGeometryType(gpkgType);
+    							gc.setContents(contents);
+    							gc.setM(m);
+    							gc.setZ(z);
 
-			    } else {
+    							GeometryColumnsDao geometryColumnsDao = geoPackage.getGeometryColumnsDao();
+    							geometryColumnsDao.create(gc);
+    						}
 
-				GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
+    					} else {
 
-				if (gpkgType == null) {
-				    MessageContext mc = result.addWarning(this, 102, pi.name(), pi.typeInfo().name);
-				    if (mc != null) {
-					mc.addDetail(this, 1, pi.fullNameInSchema());
-				    }
-				    gpkgType = GeoPackageDataType.TEXT;
-				}
+    						if (pi.categoryOfValue() == Options.CODELIST
+    								|| pi.categoryOfValue() == Options.ENUMERATION) {
 
-				columns.add(FeatureColumn.createColumn(columnName, gpkgType,
-					pi.cardinality().minOccurs != 0, pi.initialValue()));
-			    }
-			}
-		    }
+    							columns.add(FeatureColumn.createColumn(columnName, GeoPackageDataType.TEXT,
+    									pi.cardinality().minOccurs != 0, pi.initialValue()));
 
-		    FeatureTable table = new FeatureTable(tableName, columns);
-		    geoPackage.createFeatureTable(table);
-		    if (createSpatialIndexes) {
-		    	rTreeIndexExtension.create(table);
-		    }
+    						} else {
 
-		} else {
+    							GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
 
-		    // create attribute table
-		    contents.setDataType(ContentsDataType.ATTRIBUTES);
+    							if (gpkgType == null) {
+    								MessageContext mc = result.addWarning(this, 102, pi.name(), pi.typeInfo().name);
+    								if (mc != null) {
+    									mc.addDetail(this, 1, pi.fullNameInSchema());
+    								}
+    								gpkgType = GeoPackageDataType.TEXT;
+    							}
 
-		    List<AttributesColumn> columns = new ArrayList<>();
+    							columns.add(FeatureColumn.createColumn(columnName, gpkgType,
+    									pi.cardinality().minOccurs != 0, pi.initialValue()));
+    						}
+    					}
 
-		    columns.add(AttributesColumn.createPrimaryKeyColumn(identifierColumnName));
+    					// create entry in gpkg_data_columns for any property, so we can record its
+    					// human-readable name and description (GeoPackage Schema extension)
+    					createDataColumnsEntry(pi, contents, geoPackage);
 
-		    for (PropertyInfo pi : ci.propertiesAll()) {
+    				}
 
-			if (!isEncoded(pi) || identifierPi == pi) {
-			    continue;
-			}
+    				FeatureTable table = new FeatureTable(tableName, columns);
+    				geoPackage.createFeatureTable(table);
+    				if (createSpatialIndexes) {
+    					rTreeIndexExtension.create(table);
+    				}
 
-			String columnName = normalize(pi.name());
+    			} else {
 
-			if (pi.categoryOfValue() == Options.CODELIST || pi.categoryOfValue() == Options.ENUMERATION) {
+    				// create attribute table
+    				contents.setDataType(ContentsDataType.ATTRIBUTES);
 
-			    columns.add(AttributesColumn.createColumn(columnName, GeoPackageDataType.TEXT,
-				    pi.cardinality().minOccurs != 0, pi.initialValue()));
+    				List<AttributesColumn> columns = new ArrayList<>();
 
-			    if (valueTypeHasEnums(pi)) {
-				createDataColumnsEntry(pi, contents, geoPackage);
-			    }
+    				columns.add(AttributesColumn.createPrimaryKeyColumn(identifierColumnName));
 
-			} else {
+    				for (PropertyInfo pi : ci.propertiesAll()) {
 
-			    GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
+    					if (!isEncoded(pi) || identifierPi == pi) {
+    						continue;
+    					}
 
-			    if (gpkgType == null) {
-				MessageContext mc = result.addWarning(this, 102, pi.name(), pi.typeInfo().name);
-				if (mc != null) {
-				    mc.addDetail(this, 1, pi.fullNameInSchema());
-				}
-				gpkgType = GeoPackageDataType.TEXT;
-			    }
+    					String columnName = normalize(pi.name());
 
-			    columns.add(AttributesColumn.createColumn(columnName, gpkgType,
-				    pi.cardinality().minOccurs != 0, pi.initialValue()));
-			}
-		    }
+    					if (pi.categoryOfValue() == Options.CODELIST || pi.categoryOfValue() == Options.ENUMERATION) {
 
-		    AttributesTable table = new AttributesTable(tableName, columns);
-		    geoPackage.createAttributesTable(table);
-		}
+    						columns.add(AttributesColumn.createColumn(columnName, GeoPackageDataType.TEXT,
+    								pi.cardinality().minOccurs != 0, pi.initialValue()));
 
-		contentsDao.create(contents);
-	    }
+    					} else {
 
-	} catch (SQLException e) {
-	    result.addError(this, 108, e.getMessage());
-	}
+    						GeoPackageDataType gpkgType = mapGeoPackageDataType(pi);
+
+    						if (gpkgType == null) {
+    							MessageContext mc = result.addWarning(this, 102, pi.name(), pi.typeInfo().name);
+    							if (mc != null) {
+    								mc.addDetail(this, 1, pi.fullNameInSchema());
+    							}
+    							gpkgType = GeoPackageDataType.TEXT;
+    						}
+
+    						columns.add(AttributesColumn.createColumn(columnName, gpkgType,
+    								pi.cardinality().minOccurs != 0, pi.initialValue()));
+    					}
+    					
+    					// create entry in gpkg_data_columns for any property, so we can record its
+    					// human-readable name and description (GeoPackage Schema extension)
+    					createDataColumnsEntry(pi, contents, geoPackage);
+    				}
+
+    				AttributesTable table = new AttributesTable(tableName, columns);
+    				geoPackage.createAttributesTable(table);
+    			}
+
+    			contentsDao.create(contents);
+    		}
+
+    	} catch (SQLException e) {
+    		result.addError(this, 108, e.getMessage());
+    	}
 
     }
 
@@ -711,6 +706,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	}
     }
 
+    /**
+     * Create entry in table gpkg_data_columns. Column constraint_name is only filled out
+     * if the property has an enumeration as data type.
+     */
     private void createDataColumnsEntry(PropertyInfo pi, Contents contents, GeoPackage geoPackage) {
 
 	// add entry in data columns table
@@ -725,8 +724,10 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	if (pi.aliasName() != null) {
 	    dc.setTitle(pi.aliasName().trim());
 	}
-	dc.setConstraintName(normalize(pi.typeInfo().name));
-
+	// Encoding of code list values is currently not supported by the target, so only check for enumerations
+	if (pi.categoryOfValue() == Options.ENUMERATION) {
+		dc.setConstraintName(normalize(pi.typeInfo().name));
+	}
 	DataColumnsDao dataColumnsDao = geoPackage.getDataColumnsDao();
 	try {
 	    dataColumnsDao.create(dc);
