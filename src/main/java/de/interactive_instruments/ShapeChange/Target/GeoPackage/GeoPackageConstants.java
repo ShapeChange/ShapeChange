@@ -71,10 +71,15 @@ public class GeoPackageConstants {
     public static final String PARAM_GPKGM = "gpkgM";
     public static final String PARAM_GPKGZ = "gpkgZ";
 
+    /**
+     * Whether or not spatial indexes should be created; default is 'false'.
+     */
+    public static final String PARAM_CREATE_SPATIAL_INDEXES = "createSpatialIndexes";
+    
     /* ------------------------ */
     /* --- Conversion rules --- */
     /* ------------------------ */
-
+    
     public static final String RULE_TGT_GPKG_CLS_OBJECTTYPE = "rule-gpkg-cls-objecttype";
 
     public static final String RULE_TGT_GPKG_ALL_NOTENCODED = "rule-gpkg-all-notEncoded";
@@ -86,5 +91,6 @@ public class GeoPackageConstants {
      * generated).
      */
     public static final String RULE_TGT_GPKG_CLS_IDENTIFIER_STEREOTYPE = "rule-gpkg-cls-identifierStereotype";
+    
 
 }
