@@ -155,7 +155,8 @@ public class XsdDocument implements MessageSource {
 	    descriptorsToRepresent.add(desc);
 	}
 
-	String s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE);
+	String s = options.parameter(Options.TargetXmlSchemaClass,
+		XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE);
 	if (s != null)
 	    okstraKeyValuePropertyType = s;
 	else
@@ -1344,116 +1345,196 @@ public class XsdDocument implements MessageSource {
 
     /** create anonymous basic type */
     private Element pAnonymousBasicType(ClassInfo ci) {
+
 	Element e1 = null;
 	String id = ci.id();
 	if (id != null) {
-	    String base = ci.taggedValue("base");
-	    String length = ci.taggedValue("length");
-	    if (length == null)
-		length = ci.taggedValue("maxLength");
-	    String pattern = ci.taggedValue("pattern");
-	    String min = ci.taggedValue("rangeMinimum");
-	    String max = ci.taggedValue("rangeMaximum");
-	    String typecontent = "simple/simple";
 
-	    /*
-	     * baseType is the simple type that is the foundation of the basic type
-	     * implementation; it is either defined directly, via the tagged value "base" of
-	     * the type, or indirectly, by a map entry in the supertypes (direct and
-	     * indirect) that maps to a simple type with simple content.
-	     */
-	    String baseType = null;
+	    if (ci.matches("rule-xsd-cls-basictype-list") && ci.properties().size() == 1
+		    && ci.properties().values().iterator().next().cardinality().maxOccurs > 1) {
 
-	    if (base == null) {
+		// encode as a list-based simple type
+		e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+		addStandardAnnotation(e1, ci);
 
-		/*
-		 * Identify base and type content from the direct supertypes; this is important
-		 * for correct declaration of the basic type
-		 */
-		if (ci.supertypes() != null) {
-		    for (String supertypeId : ci.supertypes()) {
-			ClassInfo cix = model.classById(supertypeId);
-			if (cix != null) {
-			    MapEntry me = options.baseMapEntry(cix.name(), ci.encodingRule("xsd"));
-			    if (me != null) {
-				base = me.p1;
-				typecontent = me.p2;
-			    }
-			    if (base == null) {
-				base = cix.qname() + "Type";
-			    }
+		PropertyInfo pi = ci.properties().values().iterator().next();
+		ClassInfo typeCi = model.classByIdOrName(pi.typeInfo());
+
+		String itemType = null;
+		if (typeCi != null) {
+		    MapEntry me = options.baseMapEntry(typeCi.name(), ci.encodingRule("xsd"));
+		    if (me != null) {
+			itemType = me.p1;
+			addImport(me.p1);
+		    }
+		    if (itemType == null) {
+			itemType = typeCi.qname() + "Type";
+			addImport(typeCi.pkg().xmlns(), typeCi.pkg().targetNamespace());
+		    }
+		} else {
+		    MapEntry me = options.baseMapEntry(pi.typeInfo().name, ci.encodingRule("xsd"));
+		    if (me != null) {
+			itemType = me.p1;
+			addImport(me.p1);
+		    } else {
+			itemType = "FIXME";
+			MessageContext mc = result.addError(this, 2001, pi.typeInfo().name, pi.name(), ci.name());
+			if (mc != null)
+			    mc.addDetail(null, 400, "Class", ci.fullName());
+		    }
+		}
+
+		Element eList = document.createElementNS(Options.W3C_XML_SCHEMA, "list");
+		addAttribute(eList, "itemType", itemType);
+
+		if (pi.cardinality().minOccurs == 0 && pi.cardinality().maxOccurs == Integer.MAX_VALUE) {
+
+		    // no length restriction
+		    e1.appendChild(eList);
+
+		} else {
+
+		    // some length restriction
+		    Element eRestrict = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+		    e1.appendChild(eRestrict);
+
+		    Element eSimpleTypeChild = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+		    eSimpleTypeChild.appendChild(eList);
+		    eRestrict.appendChild(eSimpleTypeChild);
+
+		    if (pi.cardinality().minOccurs == pi.cardinality().maxOccurs) {
+
+			int length = pi.cardinality().minOccurs;
+			Element eLength = document.createElementNS(Options.W3C_XML_SCHEMA, "length");
+			addAttribute(eLength, "value", "" + length);
+			eRestrict.appendChild(eLength);
+
+		    } else {
+
+			if (pi.cardinality().minOccurs > 0) {
+			    Element eMinLength = document.createElementNS(Options.W3C_XML_SCHEMA, "minLength");
+			    addAttribute(eMinLength, "value", "" + pi.cardinality().minOccurs);
+			    eRestrict.appendChild(eMinLength);
+			}
+
+			if (pi.cardinality().maxOccurs != Integer.MAX_VALUE) {
+			    Element eMaxLength = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
+			    addAttribute(eMaxLength, "value", "" + pi.cardinality().maxOccurs);
+			    eRestrict.appendChild(eMaxLength);
 			}
 		    }
 		}
 
-		/*
-		 * Identify base type that has xmlTypeType="simple" and xmlTypeContent="simple"
-		 */
-		MapEntry me = findBaseMapEntryInSupertypes(ci, ci.encodingRule("xsd"), "simple", "simple");
-
-		if (me != null) {
-		    baseType = me.p1;
-		}
-	    }
-
-	    if (baseType == null) {
-		baseType = base;
-	    }
-
-	    if (base != null) {
-
-		Element e3;
-		Element e4;
-		if (typecontent.equals("complex/simple")) {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
-		    addStandardAnnotation(e1, ci);
-		    e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
-		    e1.appendChild(e4);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
-		    e4.appendChild(e3);
-		} else if (typecontent.equals("simple/simple")) {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
-		    addStandardAnnotation(e1, ci);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
-		    e1.appendChild(e3);
-		} else {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
-		    addStandardAnnotation(e1, ci);
-		    e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
-		    e1.appendChild(e4);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
-		    e4.appendChild(e3);
-		}
-		addAttribute(e3, "base", base);
-		if (facetSupported("totalDigits", baseType) && length != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", length);
-		}
-		if (facetSupported("maxLength", baseType) && length != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", length);
-		}
-		if (facetSupported("pattern", baseType) && pattern != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", pattern);
-		}
-		if (facetSupported("minInclusive", baseType) && min != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", min);
-		}
-		if (facetSupported("maxInclusive", baseType) && max != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", max);
-		}
 	    } else {
-		MessageContext mc = result.addError(this, 122, ci.name());
-		if (mc != null)
-		    mc.addDetail(null, 400, "Class", ci.fullName());
+
+		String base = ci.taggedValue("base");
+		String length = ci.taggedValue("length");
+		if (length == null)
+		    length = ci.taggedValue("maxLength");
+		String pattern = ci.taggedValue("pattern");
+		String min = ci.taggedValue("rangeMinimum");
+		String max = ci.taggedValue("rangeMaximum");
+		String typecontent = "simple/simple";
+
+		/*
+		 * baseType is the simple type that is the foundation of the basic type
+		 * implementation; it is either defined directly, via the tagged value "base" of
+		 * the type, or indirectly, by a map entry in the supertypes (direct and
+		 * indirect) that maps to a simple type with simple content.
+		 */
+		String baseType = null;
+
+		if (base == null) {
+
+		    /*
+		     * Identify base and type content from the direct supertypes; this is important
+		     * for correct declaration of the basic type
+		     */
+		    if (ci.supertypes() != null) {
+			for (String supertypeId : ci.supertypes()) {
+			    ClassInfo cix = model.classById(supertypeId);
+			    if (cix != null) {
+				MapEntry me = options.baseMapEntry(cix.name(), ci.encodingRule("xsd"));
+				if (me != null) {
+				    base = me.p1;
+				    typecontent = me.p2;
+				}
+				if (base == null) {
+				    base = cix.qname() + "Type";
+				}
+			    }
+			}
+		    }
+
+		    /*
+		     * Identify base type that has xmlTypeType="simple" and xmlTypeContent="simple"
+		     */
+		    MapEntry me = findBaseMapEntryInSupertypes(ci, ci.encodingRule("xsd"), "simple", "simple");
+
+		    if (me != null) {
+			baseType = me.p1;
+		    }
+		}
+
+		if (baseType == null) {
+		    baseType = base;
+		}
+
+		if (base != null) {
+
+		    Element e3;
+		    Element e4;
+		    if (typecontent.equals("complex/simple")) {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
+			addStandardAnnotation(e1, ci);
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
+			e1.appendChild(e4);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			e4.appendChild(e3);
+		    } else if (typecontent.equals("simple/simple")) {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+			addStandardAnnotation(e1, ci);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			e1.appendChild(e3);
+		    } else {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
+			addStandardAnnotation(e1, ci);
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
+			e1.appendChild(e4);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
+			e4.appendChild(e3);
+		    }
+		    addAttribute(e3, "base", base);
+		    if (facetSupported("totalDigits", baseType) && length != null) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", length);
+		    }
+		    if (facetSupported("maxLength", baseType) && length != null) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", length);
+		    }
+		    if (facetSupported("pattern", baseType) && pattern != null) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", pattern);
+		    }
+		    if (facetSupported("minInclusive", baseType) && min != null) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", min);
+		    }
+		    if (facetSupported("maxInclusive", baseType) && max != null) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", max);
+		    }
+		} else {
+		    MessageContext mc = result.addError(this, 122, ci.name());
+		    if (mc != null)
+			mc.addDetail(null, 400, "Class", ci.fullName());
+		}
 	    }
 	} else {
 	    MessageContext mc = result.addError(this, 123, ci.name());
@@ -4309,7 +4390,7 @@ public class XsdDocument implements MessageSource {
 	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
 	case 1010:
 	    return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
-	
+
 	/*
 	 * 1000 - 1999: Schematron assertions (for code lists, etc.)
 	 */
@@ -4324,12 +4405,14 @@ public class XsdDocument implements MessageSource {
 	 */
 	case 2000:
 	    return "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
-	
+	case 2001:
+	    return "Could not find QName for value type '$1$' of property '$2$' in basic type '$3$'. Using 'FIXME' instead.";
+
 	case 10021:
 	    return "Import to namespace '$1$' added.";
 	case 10022:
 	    return "Found: '$1$'";
-	
+
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

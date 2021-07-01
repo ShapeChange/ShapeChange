@@ -1327,6 +1327,7 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
 	r.addRule("rule-xsd-cls-adeelement");
 	r.addRule("rule-xsd-cls-basictype");
+	r.addRule("rule-xsd-cls-basictype-list");	
 	r.addRule("rule-xsd-cls-codelist-constraints");
 	r.addRule("rule-xsd-cls-codelist-constraints2");
 	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");

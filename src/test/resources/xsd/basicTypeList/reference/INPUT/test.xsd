@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://example.org/shapechange/schema/external" xmlns:t="http://example.org/shapechange/schema/test" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema/test" version="1.0">
+  <import namespace="http://example.org/shapechange/schema/external" schemaLocation="http://example.org/schemas/external.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="ColorPlusOpacityType">
+    <restriction>
+      <simpleType>
+        <list itemType="t:DoubleBetween0and1Type"/>
+      </simpleType>
+      <minLength value="3"/>
+      <maxLength value="4"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="DoubleBetween0and1Type">
+    <restriction base="double">
+      <minInclusive value="0"/>
+      <maxInclusive value="1"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="DoubleBetween0and1ListType">
+    <list itemType="t:DoubleBetween0and1Type"/>
+  </simpleType>
+  <simpleType name="DoubleBetween0and360Type">
+    <restriction base="double">
+      <minInclusive value="0"/>
+      <maxInclusive value="360"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="DoubleBetween0and360ListType">
+    <restriction>
+      <simpleType>
+        <list itemType="t:DoubleBetween0and360Type"/>
+      </simpleType>
+      <maxLength value="10"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="ExtBasicTypeListType">
+    <restriction>
+      <simpleType>
+        <list itemType="ext:extBasicType"/>
+      </simpleType>
+      <minLength value="1"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="TransformationMatrix2x2Type">
+    <restriction>
+      <simpleType>
+        <list itemType="double"/>
+      </simpleType>
+      <length value="4"/>
+    </restriction>
+  </simpleType>
+</schema>
