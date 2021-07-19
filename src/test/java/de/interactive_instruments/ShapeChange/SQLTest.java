@@ -230,4 +230,12 @@ public class SQLTest extends BasicTestSCXML {
 		new String[] { "sql" }, "testResults/sql/applyForeignKeyColumnSuffixesInAssociativeTables",
 		"src/test/resources/sql/applyForeignKeyColumnSuffixesInAssociativeTables/reference");
     }
+    
+    @Test
+    public void testOrderAndUniqueness() {
+
+	multiTest("src/test/resources/sql/orderAndUniqueness/testEA_sql_orderAndUniqueness.xml",
+		new String[] { "sql" }, "testResults/sql/orderAndUniqueness",
+		"src/test/resources/sql/orderAndUniqueness/reference");
+    }
 }

@@ -1226,6 +1226,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-check-constraints-for-enumerations");
 	r.addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 	r.addRule("rule-sql-prop-exclude-derived");
+	r.addRule("rule-sql-prop-multiplicity-orderAndUniqueness");
 	r.addRule("rule-sql-prop-uniqueConstraints");
 
 	r.addRule("rule-sql-all-replicationSchema");

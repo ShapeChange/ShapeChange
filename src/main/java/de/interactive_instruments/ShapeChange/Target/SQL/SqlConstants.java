@@ -424,12 +424,20 @@ public class SqlConstants {
     public static final String RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE = "rule-sql-cls-data-types-oneToMany-oneTable-ignoreSingleValuedCase";
 
     /**
-     * Specific implementation of a one to many relationship between a type A and a
-     * data type B: for each such relationship, a new table is created for the data
-     * type (as defined by {@value #RULE_TGT_SQL_CLS_DATATYPES}. The name of such a
-     * table is constructed as follows: name of type A (that references the data
-     * type) + "_" + name of the property with the data type as value type. A column
-     * is added to the table to reference the table that represents type A.
+     * Specific implementation of a relationship (one to many AND one to one)
+     * between a type A and a data type B (that is not mapped to a database specific
+     * type via map entries): for each such relationship, a new table is created for
+     * the data type (as defined by {@value #RULE_TGT_SQL_CLS_DATATYPES}). The name
+     * of such a table is constructed as follows: name of type A (that references
+     * the data type) + "_" + name of the property with the data type as value type.
+     * A column is added to the table to reference the table that represents type A.
+     * The column is defined as "NOT NULL".
+     * <p>
+     * NOTE: The resulting database schema implements a 1:n relationship for these
+     * properties – which is not entirely correct for properties with a maximum
+     * multiplicity of 1, but a) keeps the datatype semantics, and b) is a tradeoff
+     * similar to the one in
+     * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE_IGNORE_SINGLE_VALUED_CASE}.
      * <p>
      * NOTE: This rule has higher priority than
      * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE}.
@@ -616,6 +624,42 @@ public class SqlConstants {
      * application schema elements.
      */
     public static final String RULE_TGT_SQL_ALL_DOCUMENTATION_EXPLICIT_COMMENTS = "rule-sql-all-documentationViaExplicitCommentStatements";
+
+    /**
+     * If this conversion rule applies to an attribute with multiplicity greater
+     * than 1, and an associative target is created for that attribute, then the
+     * multiplicity aspects order and uniqueness are taken into account and encoded
+     * in the associative table as follows:
+     * <ul>
+     * <li>unique values, unordered (set semantics, default in UML): default SQL
+     * encoding as documented on this page</li>
+     * <li>unique values, ordered (in UML, this is typically depicted visually by
+     * adding the following suffix to the multiplicity: "{ordered}"): new column
+     * seqno, integer typed, primary key will include seqno column (to ensure unique
+     * sequence numbers per object/value combination), unique constraint on columns
+     * except seqno (to ensure unique value per object)</li>
+     * <li>duplicate values allowed, unordered (in UML, this is typically depicted
+     * visually by adding the following suffix to the multiplicity: "{bag}"): no
+     * primary key for the associative table; index based on object/value
+     * columns</li>
+     * <li>duplicate values allowed, ordered (in UML, this is typically depicted
+     * visually by adding the following suffix to the multiplicity: "{sequence}"):
+     * new column seqno, integer typed, primary key will include seqno column (to
+     * ensure unique sequence numbers per object/value combination)</li>
+     * </ul>
+     * <p>
+     * NOTE: This rule does not apply to tables created by
+     * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE} and
+     * {@value #RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_SEVERALTABLES}. The rule also
+     * does not change the encoding of an associative table that represents an
+     * association (the encoding of a relationship in which two properties can
+     * define whether their values are unique and ordered has not been defined).
+     * When suitable conversion rules for these cases have been defined, the
+     * behavior of this rule can be extended accordingly. If you have defined such
+     * conversion rules, open an issue in our GitHub repository to suggest the
+     * correct behavior.
+     */
+    public static final String RULE_TGT_SQL_PROP_MULT_ORDER_AND_UNIQUENESS = "rule-sql-prop-multiplicity-orderAndUniqueness";
 
     /* --------------------- */
     /* --- Tagged Values --- */
