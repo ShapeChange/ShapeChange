@@ -1043,7 +1043,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	case 5:
 	    return "Directory named '$1$' does not exist or is not accessible.";
 	case 6:
-	    return "System error: Exception raised '$1$'. '$2$'";
+	    return "System error: Exception encountered. Message is: '$1$'";
 	case 7:
 	    return "Schema '$1$' is not encoded.";
 	case 8:
