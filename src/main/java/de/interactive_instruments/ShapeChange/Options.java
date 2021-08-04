@@ -2156,11 +2156,11 @@ public class Options {
 
 	    Element e = (Element) nl.item(j);
 
-	    String name = e.getAttribute("packageName");
-	    String nsabr = e.getAttribute("nsabr");
-	    String ns = e.getAttribute("ns");
-	    String xsdDocument = e.getAttribute("xsdDocument");
-	    String version = e.getAttribute("version");
+	    String name = StringUtils.stripToNull(e.getAttribute("packageName"));
+	    String nsabr = StringUtils.stripToNull(e.getAttribute("nsabr"));
+	    String ns = StringUtils.stripToNull(e.getAttribute("ns"));
+	    String xsdDocument = StringUtils.stripToNull(e.getAttribute("xsdDocument"));
+	    String version = StringUtils.stripToNull(e.getAttribute("version"));
 
 	    PackageInfoConfiguration pic = new PackageInfoConfiguration(name, nsabr, ns, xsdDocument, version);
 

@@ -72,18 +72,30 @@ public class PackageInfoConfiguration {
 		return packageName;
 	}
 
+	/**
+	 * @return can be <code>null</code> if not set or blank in the PackageInfo element
+	 */
 	public String getNsabr() {
 		return nsabr;
 	}
 
+	/**
+	 * @return can be <code>null</code> if not set or blank in the PackageInfo element
+	 */
 	public String getNs() {
 		return ns;
 	}
 
+	/**
+	 * @return can be <code>null</code> if not set or blank in the PackageInfo element
+	 */
 	public String getXsdDocument() {
 		return xsdDocument;
 	}
 
+	/**
+	 * @return can be <code>null</code> if not set or blank in the PackageInfo element
+	 */
 	public String getVersion() {
 		return version;
 	}
