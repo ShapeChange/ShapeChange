@@ -1171,7 +1171,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	String filename = filenameWithoutExtension + fileNameExtension;
 
-	String fname = outDirForOntology + "/" + filename + fileNameExtension;
+	String fname = outDirForOntology + "/" + filename;
 
 	File outFile = new File(outputDirectoryFile, filename);
 
