@@ -142,9 +142,9 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 				doc.result.addDebug(this,10002,end1.name(), end2.name());
 			}
 		} else if (!ass.hasAttribute("xmi.idref")) {
-			doc.result.addError(null,103,name(),id, ""+nl.getLength());
+			doc.result.addError(this,103,name(),id, ""+nl.getLength());
 		}		
-		doc.result.addDebug(null,10013,"association",id, name());
+		doc.result.addDebug(this,10013,"association",id, name());
 	}
 
 	public ClassInfo assocClass() {

@@ -153,12 +153,10 @@ public abstract class InfoImpl implements Info {
 			 */
 			if (this instanceof PropertyInfo) {
 
-				PropertyInfo pi = (PropertyInfo) this;
-
-				mc.addDetail(null, 791, pi.name(), pi.inClass().name());
+				mc.addDetail(null, 791, this.fullName());
 
 			} else {
-				mc.addDetail(null, 790, this.toString(), this.name());
+				mc.addDetail(null, 790, this.fullName());
 			}
 		}
 	}

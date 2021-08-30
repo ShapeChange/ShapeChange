@@ -1008,9 +1008,9 @@ public class ShapeChangeResult {
 	case 704: // used by supertype class
 	    return "??Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
 	case 790: // used by supertype class
-	    return "Context: class InfoImpl. Element: $1$. Name: $2$";
+	    return "Context: class InfoImpl. Model element: $1$";
 	case 791: // used by supertype class
-	    return "Context: class InfoImpl (subtype: PropertyInfo). Name: $1$. In class: $2$";
+	    return "Context: class InfoImpl (subtype: PropertyInfo). Model element: $1$";
 
 	case 1002: // used by supertype class
 	    return "Restriction of property '$1$' in class '$2$' from supertype '$3$'.";
