@@ -858,7 +858,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	List<Statement> stmts;
 	try {
 	    stmts = builder.process(cisToProcess);
-	} catch (Exception e) {
+	} catch (SqlDdlException e) {
 	    result.addError(this, 32);
 	    return;
 	}

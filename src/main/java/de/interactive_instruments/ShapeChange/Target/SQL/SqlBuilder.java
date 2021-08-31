@@ -2096,7 +2096,7 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
-    public List<Statement> process(List<ClassInfo> cisToProcess) throws Exception {
+    public List<Statement> process(List<ClassInfo> cisToProcess) throws SqlDdlException  {
 
 	checkRequirements(cisToProcess);
 
@@ -2793,7 +2793,7 @@ public class SqlBuilder implements MessageSource {
 	return alter;
     }
 
-    private void checkRequirements(List<ClassInfo> cisToProcess) throws Exception {
+    private void checkRequirements(List<ClassInfo> cisToProcess) throws SqlDdlException {
 
 	/*
 	 * TBD Checking requirements on an input model should be a common pre-processing
@@ -2845,7 +2845,7 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 	if (hasCircularDependencies(dataTypesToProcessById)) {
-	    throw new Exception("Circular dependencies in datatypes detected.");
+	    throw new SqlDdlException("Circular dependencies in datatypes detected.");
 	}
     }
 
