@@ -299,7 +299,8 @@ public class TypeConverter implements Transformer, MessageSource {
 
 	    for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-		if (!genPi.typeInfo().name.equals(type)) {
+		if (genPi.inClass().category() == Options.CODELIST || genPi.inClass().category() == Options.ENUMERATION ||
+			!genPi.typeInfo().name.equals(type)) {
 		    continue;
 		}
 
