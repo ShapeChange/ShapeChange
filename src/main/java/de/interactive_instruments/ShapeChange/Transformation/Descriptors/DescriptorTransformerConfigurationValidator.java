@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
@@ -59,6 +60,17 @@ public class DescriptorTransformerConfigurationValidator extends AbstractConfigu
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;
 
+	if (config.getAllRules().contains(DescriptorTransformer.RULE_UPDATE_DESCRIPTORS)) {
+
+	    try {
+		List<DescriptorValueConfigurationEntry> dvcEntries = DescriptorTransformer
+			.parseAndValidateDescriptorValueConfigurationEntries(config.getAdvancedProcessConfigurations());
+	    } catch (ShapeChangeParseException e) {
+		isValid = false;
+		result.addError(this, 100, e.getMessage());
+	    }
+	}
+
 	return isValid;
     }
 
@@ -66,6 +78,12 @@ public class DescriptorTransformerConfigurationValidator extends AbstractConfigu
     public String message(int mnr) {
 	switch (mnr) {
 
+	/*
+	 * Validation messages for RULE_UPDATE_DESCRIPTORS
+	 */
+	case 100:
+	    return "Invalid DescriptorValue element(s) encountered. Details: $1$";
+	    
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

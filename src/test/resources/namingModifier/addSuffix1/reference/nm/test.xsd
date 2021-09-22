@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/shapechange/schema/test" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema/test" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DT_A" substitutionGroup="gml:AbstractObject" type="t:DT_AType"/>
+  <complexType name="DT_AType">
+    <sequence>
+      <element name="c" type="gml:CodeType"/>
+      <element name="e" type="t:EnumerationType"/>
+    </sequence>
+  </complexType>
+  <complexType name="DT_APropertyType">
+    <sequence>
+      <element ref="t:DT_A"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="asfx"/>
+      <enumeration value="b"/>
+      <enumeration value="xsfx"/>
+    </restriction>
+  </simpleType>
+  <element name="FT_Asfx" substitutionGroup="gml:AbstractFeature" type="t:FT_AsfxType"/>
+  <complexType name="FT_AsfxType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="asfx" type="integer"/>
+          <element name="b" type="string"/>
+          <element name="xsfx" type="t:FT_BPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_AsfxPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT_Asfx"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT_B" substitutionGroup="gml:AbstractFeature" type="t:FT_BType"/>
+  <complexType name="FT_BType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="xsfx" type="boolean"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_BPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT_B"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

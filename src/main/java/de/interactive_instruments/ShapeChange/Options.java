@@ -3108,7 +3108,7 @@ public class Options {
 
 		    // parse tagged values, if any are defined
 		    List<TaggedValueConfigurationEntry> taggedValues = parseTaggedValues(trfE);
-
+		    
 		    // get the transformer input - can be null, then set it to
 		    // global input element
 		    String trfConfigInput;

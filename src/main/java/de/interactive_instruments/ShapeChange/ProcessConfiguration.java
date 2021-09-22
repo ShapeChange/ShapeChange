@@ -425,6 +425,10 @@ public class ProcessConfiguration {
 	public Element getAdvancedProcessConfigurations() {
 		return this.advancedProcessConfigurations;
 	}
+	
+	public boolean hasAdvancedProcessConfigurations() {
+	    return this.advancedProcessConfigurations != null;
+	}
 
 	public String getGmlVersion() {
 		return this.gmlVersion;

@@ -35,32 +35,15 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("SCXML")
-public class NamingModifierTest extends BasicTestSCXML {
+public class CommonTransformerTest extends BasicTestSCXML {
 
     @Test
-    public void testRuleTrfCamelcaseToUppercase() {
+    public void testSetTaggedValues() {
 
 	multiTest(
-		"src/test/resources/namingModifier/camelCaseToUpperCase/testEA_namingmodifier_camelcasetouppercase.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/camelcaseToUppercase",
-		"src/test/resources/namingModifier/camelCaseToUpperCase/reference");
+		"src/test/resources/commonTransformer/setTaggedValues/testEA_common_settaggedvalues.xml",
+		new String[] { "xsd" }, "testResults/commonTransformer/setTaggedValues",
+		"src/test/resources/commonTransformer/setTaggedValues/reference");
     }
     
-    @Test
-    public void testRuleTrfAddSuffix1() {
-
-	multiTest(
-		"src/test/resources/namingModifier/addSuffix1/testEA_namingmodifier_addSuffix1.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/addSuffix1",
-		"src/test/resources/namingModifier/addSuffix1/reference");
-    }
-    
-    @Test
-    public void testRuleTrfAddSuffix2() {
-
-	multiTest(
-		"src/test/resources/namingModifier/addSuffix2/testEA_namingmodifier_addSuffix2.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/addSuffix2",
-		"src/test/resources/namingModifier/addSuffix2/reference");
-    }
 }

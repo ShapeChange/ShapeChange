@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2021 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,36 +31,19 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
+public class ModelElementSelectionParseException extends Exception {
 
-@Tag("SCXML")
-public class NamingModifierTest extends BasicTestSCXML {
+    private static final long serialVersionUID = 1308913713943343225L;
 
-    @Test
-    public void testRuleTrfCamelcaseToUppercase() {
-
-	multiTest(
-		"src/test/resources/namingModifier/camelCaseToUpperCase/testEA_namingmodifier_camelcasetouppercase.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/camelcaseToUppercase",
-		"src/test/resources/namingModifier/camelCaseToUpperCase/reference");
+    public ModelElementSelectionParseException(String msg) {
+	super(msg);
     }
     
-    @Test
-    public void testRuleTrfAddSuffix1() {
-
-	multiTest(
-		"src/test/resources/namingModifier/addSuffix1/testEA_namingmodifier_addSuffix1.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/addSuffix1",
-		"src/test/resources/namingModifier/addSuffix1/reference");
-    }
-    
-    @Test
-    public void testRuleTrfAddSuffix2() {
-
-	multiTest(
-		"src/test/resources/namingModifier/addSuffix2/testEA_namingmodifier_addSuffix2.xml",
-		new String[] { "xsd" }, "testResults/namingModifier/addSuffix2",
-		"src/test/resources/namingModifier/addSuffix2/reference");
+    public ModelElementSelectionParseException(String msg, Throwable cause) {
+	super(msg, cause);
     }
 }
