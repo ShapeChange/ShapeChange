@@ -473,7 +473,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
      * directions, +1 = source -&gt; target, -1 = target -&gt; source
      * 
      * @param con tbd
-     * @return Navigability (0=both, +1=source->target, -1=target->source)
+     * @return Navigability (0=both, +1=source-&gt;target, -1=target-&gt;source)
      * 
      */
     public static int navigability(Connector con) {

@@ -1,0 +1,144 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Descriptor_Transformer]]
+= Descriptor Transformer
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation processes the descriptors of model elements. A
+descriptor represents a specific piece of descriptive information of a
+model element, for example its definition, description, alias, or
+primary code. A list of well-known descriptors, together with
+instructions to identify their sources in the model, is available
+xref:../get started/The_element_input.adoc#Descriptor_sources[here].
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.Descriptors.DescriptorTransformer_
+
+[[Rules]]
+=== Rules
+
+[[rule-trf-all-updateDescriptors]]
+==== rule-trf-all-updateDescriptors
+
+(available since v2.4.0)
+
+Updates descriptors of specific model elements. The <DescriptorValue>
+elements contained in the advanced process configuration of the
+transformation define which descriptors of which model elements are
+updated.
+
+Each <DescriptorValue> element contains the name of a specific
+descriptor. The element also contains attributes to select the model
+elements for which the descriptor shall be updated. If the element has
+values, they will be set for the descriptor of the selected model
+elements (replacing any previously stored values). If no values are
+defined, the descriptor will be removed on selected model elements.
+
+[[Parameters]]
+=== Parameters
+
+At the moment no parameters are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+The <advancedProcessConfigurations> element inside of the <Transformer>
+element is used to define descriptor values for specific model elements.
+The information items defined by a <DescriptorValue> element are
+documented in the following sections.
+
+[[Descriptor_Name]]
+==== Descriptor Name
+
+Explanation: Name of a desciptor. The list of well-known descriptors is
+available
+xref:../get started/The_element_input.adoc#Descriptor_sources[here].
+
+Type: string
+
+Multiplicity: 1 (required)
+
+Default value: _none_
+
+[[Values]]
+==== Value(s)
+
+Explanation: A <DescriptorValue> element can contain zero or more string
+values. For each string, a language tag can be set.
+
+Type: structured type (for further details, see the
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange
+configuration XML Schema] and the
+xref:./Descriptor_Transformer.adoc#Sample_Configuration[sample
+configuration])
+
+Multiplicity: 0..* (optional)
+
+Default value: _none_
+
+[[Model_Element_Selection]]
+==== Model Element Selection
+
+A number of attributes are used to select relevant model elements. They
+are the same as described
+xref:./Common_Transformer_Functionality.adoc#Model_element_filter_criteria[here].
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer id="TRF_REMOVE_VALUE_OR_REASON_DESCRIPTORS" input="TRF_REMOVE_MD_INHERITANCE"
+  class="de.interactive_instruments.ShapeChange.Transformation.Descriptors.DescriptorTransformer">
+  <advancedProcessConfigurations>
+   <DescriptorValue descriptorName="alias" modelElementType="Property"
+    modelElementName="value(s)?OrReason"/>
+   <DescriptorValue descriptorName="definition" modelElementType="Property"
+    modelElementName="value(s)?OrReason"/>
+   <DescriptorValue descriptorName="description" modelElementType="Property"
+    modelElementName="value(s)?OrReason"/>
+   <DescriptorValue descriptorName="description" modelElementType="Class" modelElementName="Building">
+    <values>
+     <LangString>This building ...</LangString>
+     <LangString lang="de">Dieses Gebäude ...</LangString>
+    </values>
+   </DescriptorValue>
+  </advancedProcessConfigurations>
+  <rules>
+   <ProcessRuleSet name="trf">
+    <rule name="rule-trf-all-updateDescriptors"/>
+   </ProcessRuleSet>
+  </rules>
+ </Transformer>
+----------

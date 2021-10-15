@@ -1,0 +1,309 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Profile_Loader]]
+= Profile Loader
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+The _ProfileLoader_ transformation loads profiles (typically defined
+using the
+https://github.com/ShapeChange/ProfileManagementTool[_ShapeChange
+Profile Management Tool_] (PMT)) into the model that is processed by
+ShapeChange.
+
+[[Description]]
+== Description
+
+The ProfileLoader can load a set of profiles – contained in model files
+that have the ShapeChange specific XML format (SCXML - which can be
+produced using the xref:../../targets/Model_Export.adoc[_Model
+Export_ target]) – into the model that is being processed by the
+transformation. The model files must be contained in a specific
+directory (specified via parameter
+xref:./Profile_Loader.adoc#directoryWithProfilesToLoad[_directoryWithProfilesToLoad_])
+and can be selected via a regular expression that matches the file name,
+including the file extension (the regular expression is given via
+parameter
+xref:./Profile_Loader.adoc#regexToFilterProfilesToLoad[_regexToFilterProfilesToLoad_]).
+
+As a pre-processing step, the ProfileLoader can delete the profiles in
+the input model, thus creating a clean slate for loading the external
+profiles (see
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-preProcessing-deleteInputModelProfiles[_rule-trf-profileLoader-preProcessing-deleteInputModelProfiles_]).
+The ProfileLoader can also validate the profile definitions in the input
+model (see
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-preProcessing-validateInputModelProfiles[_rule-trf-profileLoader-preProcessing-validateInputModelProfiles_]).
+
+The ProfileLoader must consider the way that profiles are defined in the
+input model. ShapeChange supports two profile definition behaviors:
+explicit and non-explicit. Since profile definitions in the external
+model files that are loaded by the ProfileLoader are explicit (the SCXML
+format requires explicit profiles), an input model with non-explicit
+profile definitions must be converted – unless profiles of the input
+model are deleted during pre-processing. By default, the _ProfileLoader_
+transformation assumes that the profile definitions in the model are
+explicit. By setting parameter
+xref:./Profile_Loader.adoc#profilesInModelSetExplicitly[_profilesInModelSetExplicitly_]
+to false, the transformation can be configured to convert profile
+definitions. In that case, the transformation will then gather the names
+of all profiles defined in the input model, and assign this set of
+profiles to each class without a profile assignment. Alternatively, the
+profile names can explicitly be configured via the configuration
+parameter
+xref:./Profile_Loader.adoc#profilesForClassesWithoutExplicitProfileAssignments[_profilesForClassesWithoutExplicitProfileAssignments_].
+Properties without profile assignment receive the profiles of their
+class.
+
+For each external model file with profiles, the ProfileLoader:
+
+* Can validate the profile definitions in the model file (see
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-validateLoadedModelProfiles[_rule-trf-profileLoader-validateLoadedModelProfiles_]).
+Inconsistencies will be reported in the log.
+* Can compute differences between the input model and the model
+contained in the model file (see
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-diffModels[_rule-trf-profileLoader-diffModels_]).
+Which differences shall be checked can be configured via parameter
+xref:./Profile_Loader.adoc#diffElementTypes[_diffElementTypes_].
+Detected differences will be reported in the log. This can help identify
+potential inconsistencies that may be introduced while loading profile
+definitions, due to different model and schema versions.
+* Loads the profiles from the model file into the input model. Profiles
+that already exist in the input model are overwritten, for model
+elements that can be found in the input model and in the model file. The
+parameter
+xref:./Profile_Loader.adoc#profilesToLoad[_profilesToLoad_]
+can be used to restrict the set of profiles that are loaded.
+
+Finally, the ProfileLoader can validate the profiles in the resulting
+model (see
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-postProcessing-validateResultingModelProfiles[_rule-trf-profileLoader-postProcessing-validateResultingModelProfiles_]).
+
+NOTE: By default, the ProfileLoader only processes the profiles of
+classes (and their properties) from schemas that are selected for
+processing. If the parameter
+xref:./Profile_Loader.adoc#processAllSchemas[_processAllSchemas_]
+is set to true, classes (and their properties) from all schemas are
+processed.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader_
+
+[[Transformation_Rules]]
+=== Transformation Rules
+
+[[rule-trf-profileLoader-preProcessing-deleteInputModelProfiles]]
+==== rule-trf-profileLoader-preProcessing-deleteInputModelProfiles
+
+If this rule is enabled, the tagged value 'profiles' as well as the
+profile information parsed from that tagged value are removed from all
+classes and properties of the input model.
+
+NOTE: This can be useful to create a 'clean slate' before loading
+profiles into the model.
+
+[[rule-trf-profileLoader-preProcessing-validateInputModelProfiles]]
+==== rule-trf-profileLoader-preProcessing-validateInputModelProfiles
+
+If this rule is enabled, the profiles defined in the input model are
+validated during the pre-processing phase. This validation will not
+occur if all profile information is removed in the input model via
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-preProcessing-deleteInputModelProfiles[_rule-trf-profileLoader-preProcessing-deleteInputModelProfiles_].
+
+[[rule-trf-profileLoader-diffModels]]
+==== rule-trf-profileLoader-diffModels
+
+If this rule is enabled, differences between a loaded model and the
+input model are logged. Differences are computed for either all or only
+selected schemas (for further details, see parameter
+xref:./Profile_Loader.adoc#processAllSchemas[_processAllSchemas_]).
+The schema version, if defined, is always checked. Additional checks,
+more specifically the types of differences, can be configured via
+parameter
+xref:./Profile_Loader.adoc#diffElementTypes[_diffElementTypes_].
+This rule supports the identification of potential consistency issues of
+resulting profiles, due to differences between loaded models and the
+input model.
+
+[[rule-trf-profileLoader-validateLoadedModelProfiles]]
+==== rule-trf-profileLoader-validateLoadedModelProfiles
+
+If this rule is enabled, the profiles in each external model are
+validated after that model has been loaded. The validation takes place
+before the profiles are loaded into the input model. This rule supports
+the identification of potential consistency issues with the profiles of
+loaded models.
+
+[[rule-trf-profileLoader-postProcessing-validateResultingModelProfiles]]
+==== rule-trf-profileLoader-postProcessing-validateResultingModelProfiles
+
+If this rule is enabled, the profiles in the resulting model are
+validated during the post-processing phase (i.e., after profiles have
+been loaded).
+
+[[Parameters]]
+=== Parameters
+
+[[diffElementTypes]]
+==== diffElementTypes
+
+Required / Optional: optional
+
+Type: String (with comma separated values)
+
+Default Value: CLASS, ENUM, MULTIPLICITY, PROPERTY, NAME, STEREOTYPE,
+SUPERTYPE, SUBPACKAGE, VALUETYPE
+
+Explanation: Comma-separated list of names of diff element types. The
+diff result will only provide information on these types of differences
+(in addition to a possibly existing schema version difference).
+
+The following diff element types are currently supported: NAME,
+DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE,
+PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION,
+PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, AAAMODELLART,
+AAAGRUNDDATENBESTAND
+
+Applies to Rule(s):
+xref:./Profile_Loader.adoc#rule-trf-profileLoader-diffModels[_rule-trf-profileLoader-diffModels_]
+
+[[directoryWithProfilesToLoad]]
+==== directoryWithProfilesToLoad
+
+Required / Optional: required
+
+Type: String
+
+Default Value: none
+
+Explanation: The path to the folder that contains the profiles.
+
+Applies to Rule(s): none – default behavior
+
+[[processAllSchemas]]
+==== processAllSchemas
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: By default, only the profiles of classes (and their
+properties) from schemas that are selected for processing are processed.
+If this parameter is set to true, classes (and their properties) from
+all schemas are processed.
+
+Applies to Rule(s): none – default behavior
+
+[[profilesForClassesWithoutExplicitProfileAssignments]]
+==== profilesForClassesWithoutExplicitProfileAssignments
+
+Required / Optional: optional
+
+Type: String (with comma separated values)
+
+Default Value: all profiles defined in the input model
+
+Explanation: Comma-separated list of names of profiles that will be set
+for input model classes that do not belong to a specific profile. This
+is relevant while pre-processing the input model in case that the
+profiles are not set explicitly in the input model (parameter
+xref:./Profile_Loader.adoc#profilesInModelSetExplicitly[_profilesInModelSetExplicitly_]
+is false).
+
+Applies to Rule(s): none – default behavior
+
+[[profilesInModelSetExplicitly]]
+==== profilesInModelSetExplicitly
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: true
+
+Explanation: Indicates if profile definitions in the input model are
+explicitly set (true) or not (false). If they are not, then profile
+inheritance would apply, which must be converted before loading (also
+see parameter
+xref:./Profile_Loader.adoc#profilesForClassesWithoutExplicitProfileAssignments[_profilesForClassesWithoutExplicitProfileAssignments_]).
+
+Applies to Rule(s): none – default behavior
+
+[[profilesToLoad]]
+==== profilesToLoad
+
+Required / Optional: optional
+
+Type: String (comma separated list of values)
+
+Default Value: all profiles
+
+Explanation: Names of profiles to be loaded into the input model.
+
+Applies to Rule(s): none – default behavior
+
+[[regexToFilterProfilesToLoad]]
+==== regexToFilterProfilesToLoad
+
+Required / Optional: optional
+
+Type: String (with regular expression)
+
+Default Value: .*(\.xml|\.zip)$
+
+Explanation: By default, the ProfileLoader loads all XML and ZIP files
+in the directory that is stated by the transformation parameter
+xref:./Profile_Loader.adoc#directoryWithProfilesToLoad[_directoryWithProfilesToLoad_]
+(excluding subdirectories). That behavior can be changed to only use the
+files from that directory whose name matches the regular expression
+given by the parameter _regexToFilterProfilesToLoad_.
+
+Applies to Rule(s): none – default behavior
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Profiling.ProfileLoader"
+  id="INPUT" mode="enabled">
+  <parameters>
+   <ProcessParameter name="directoryWithProfilesToLoad" value="model/v1/profiles"/>
+   <ProcessParameter name="regexToFilterProfilesToLoad" value="profileA.xml"/>
+   <ProcessParameter name="profilesInModelSetExplicitly" value="false"/>
+   <ProcessParameter name="profilesForClassesWithoutExplicitProfileAssignments" value="A"/>
+   <ProcessParameter name="processAllSchemas" value="true"/>
+  </parameters>
+  <rules>
+   <ProcessRuleSet name="profileLoading">
+    <rule name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles"/>
+    <rule name="rule-trf-profileLoader-validateLoadedModelProfiles"/>
+    <rule name="rule-trf-profileLoader-diffModels"/>
+    <rule name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles"/>
+   </ProcessRuleSet>
+  </rules>
+ </Transformer>
+----------

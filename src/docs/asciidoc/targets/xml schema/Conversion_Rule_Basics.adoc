@@ -1,0 +1,155 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Conversion_Rule_Basics]]
+= Conversion Rule Basics
+
+[[Definitions]]
+== Definitions
+
+In the schema conversion rules we use the following definitions:
+
+* *application schema*:  package with stereotype \<<applicationSchema>>
+* *schema*: package with tagged value targetNamespace
+* *feature type*: classifier with the stereotype \<<featureType>>
+* *class*: classifier with no stereotype or the stereotype \<<type>>;
+while classifiers with a stereotype \<<type>> are on a different
+conceptual level than application schemas and it is assumed that these
+are implicitly realized one-to-one as plain classes
+* *data type*: classifier with stereotype \<<dataType>>
+* *union type*: classifier with stereotype \<<union>>
+* *code list*: classifier with stereotype \<<codeList>>
+* *enumeration*: classifier with stereotype \<<enumeration>>
+
+More information about the stereotypes and the associated tagged values
+is available in the description of
+the xref:../../application schemas/UML_profile.adoc[UML profile
+supported by ShapeChange].
+
+[[Description_of_Conversion_Rules]]
+== Description of Conversion Rules
+
+Each rule has an identifier that follows the pattern
+"rule-<target>-<element>-<descriptor>" with the following parts:
+
+* <target>: the target to which the rule applies, the rules listed for
+the XML Schema target all use "xsd"
+* <element>: the type of model element to which the rule applies;
+possible values are "all" (all model elements), "pkg" (packages), "cls"
+(classifiers), "prop" (attributes and association roles) and "rel"
+(associations)
+* <descriptor>: a mnemonic descriptor of the rule
+
+In each section we first provide an overview table and then describe
+each conversion rule with an example and, if necessary, additional
+remarks.
+
+[[Common_Conversion_Rules]]
+== Common Conversion Rules
+
+[[Overview]]
+=== Overview
+
+The following is a list of schema conversion rules that apply to all XML
+Schema encodings. These are built-in and do not have to be included in a
+configuration.
+
+[cols="1,3",options="header"]
+|===
+|Rule |Description
+
+|rule-xsd-cls-local-properties |Create local property elements for
+properties in feature types, classes, data types and union types
+
+|rule-xsd-cls-object-element |Create global object elements for feature
+types, classes, data types and union types
+
+|rule-xsd-cls-type |Create global types for the content model of feature
+types, classes, data types and union types
+
+|rule-xsd-cls-property-type |Create global property types for feature
+types, classes, data types and union types
+
+|rule-xsd-cls-sequence |Properties of feature types, classes and data
+types are converted to local property elements in a sequence block
+
+|rule-xsd-cls-union-as-choice |Properties of union types are converted
+to local property elements in a choice block
+
+|rule-xsd-cls-unknown-as-object |Treat classes of unknown
+characteristics as object classes
+
+|rule-xsd-pkg-contained-packages |For packages contained directly or
+indirectly in an application schema and which are converted to a
+separate XML Schema Document, add imports and includes
+
+|rule-xsd-pkg-dependencies |For dependencies from an application schema
+to another schema, add imports
+|===
+
+
+[[rule-xsd-cls-local-properties]]
+=== rule-xsd-cls-local-properties
+
+Create local property elements for properties in feature types, classes,
+data types and union types.
+
+[[rule-xsd-cls-object-element]]
+=== rule-xsd-cls-object-element
+
+Create global object elements for feature types, classes, data types and
+union types.
+
+[[rule-xsd-cls-type]]
+=== rule-xsd-cls-type
+
+Create global types for the content model of feature types, classes,
+data types and union types.
+
+[[rule-xsd-cls-property-type]]
+=== rule-xsd-cls-property-type
+
+Create global property types for feature types, classes, data types and
+union types.
+
+[[rule-xsd-cls-sequence]]
+=== rule-xsd-cls-sequence
+
+Properties of feature types, classes and data types are converted to
+local property elements in a sequence block.
+
+[[rule-xsd-cls-union-as-choice]]
+=== rule-xsd-cls-union-as-choice
+
+Properties of union types are converted to local property elements in a
+choice block.
+
+[[rule-xsd-cls-unknown-as-object]]
+=== rule-xsd-cls-unknown-as-object
+
+Treat classes of unknown characteristics as object classes.
+
+[[rule-xsd-pkg-contained-packages]]
+=== rule-xsd-pkg-contained-packages
+
+For packages contained directly or indirectly in an application schema
+and which are converted to a separate XML Schema Document, add imports
+and includes.
+
+[[rule-xsd-pkg-dependencies]]
+=== rule-xsd-pkg-dependencies
+
+For dependencies from an application schema to another schema, add
+imports.

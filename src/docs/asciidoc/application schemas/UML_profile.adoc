@@ -1,0 +1,755 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[UML_profile]]
+= UML profile
+
+[[Overview]]
+== Overview
+
+To be a valid input into the mapping the application schema should
+conform to ISO 19109:2005, and GML 3.2 (ISO 19136) Annex E, GML 3.3
+and/or ISO/TS 19139.
+
+In addition, extensions to these latter specifications are supported,
+too, but must be activated in extended encoding rules; see
+xref:../targets/xml schema/XML_Schema.adoc[here] for details.
+
+[[Stereotypes]]
+=== Stereotypes
+
+Well-known stereotypes for the purposes of ShapeChange are those defined
+in the UML specification, and in the ISO 19100-series of specifications,
+specifically ISO/TS 19103:2005, ISO 19109:2005 and GML 3.2/ISO
+19136:2007.
+
+Stereotypes are not case-sensitive. The stereotypes used in the ISO
+19100 standards usually start with a upper case letter, but today the
+common practice is to start with a lower case letter and avoid
+whitespace.
+
+Standard aliases listed for a stereotype can be used, too. Aliases can
+be xref:../get started/The_element_input.adoc[configured].
+
+All stereotypes not listed below are ignored.
+
+There is one additional stereotype, that can be applied to all model
+elements, \<<retired>>. It can be used in UML models to indicate that a
+model element has been retired and is only left in the model for
+compatibility with previous versions of the model. The stereotype
+currently does not have any impact on the standard ShapeChange output
+targets.
+
+In UML 1, only one stereotype per model element are supported. UML 2
+introduced the capability of model elements to carry more than one
+stereotype.
+
+[[Stereotypes_of_packages]]
+==== Stereotypes of packages
+
+The standard case for packages outside of an application schema, and for
+subpackages of an application schema, is that no stereotype is applied.
+
+[cols="20%,20%,60%",options="header",]
+|===
+|Stereotype |Aliases |Description
+
+|\<<Application Schema>> |\<<applicationSchema>>, \<<requirementsClass>> |An application schema according to ISO 19109 [ISO 19109].
+
+|\<<bundle>> | |A package that is not an application schema and contains other packages [GSIP]. Usually mapped to no stereotype.
+
+|\<<leaf>> | |A package that is not an application schema and contains no packages. [ISO/TS 19103]. Usually mapped to no stereotype.
+
+|\<<schema>> | |A package that should be treated like \<<Application Schema>> but does not contain feature types.
+
+|===
+
+[[Stereotypes_of_classes]]
+==== Stereotypes of classes
+
+The standard case for classes is that no stereotype is applied; class
+instances are plain objects with identity.
+
+The stereotype \<<abstract>> is used by some models, but should be
+avoided. If a class is abstract, this must be indicated using the UML
+flag for abstractness, not the stereotype. If the stereotype is
+provided, it is ignored by ShapeChange.
+
+[cols="20%,20%,60%",options="header",]
+|===
+|Stereotype |Aliases |Description
+
+|\<<ADEElement>> |  |Feature type in an CityGML Application Domain Extension (ADE) that contains only properties that are generic application extensions.
+
+|\<<AIXMExtension>> |  |Type defined in an AIXM extension schema. It extends a specific feature or object type or all feature types usually from the core AIXM schema.
+
+|\<<attributeConcept>> |  |An attribute concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a dependency to an attribute concept classifier and a property of the same name ShapeChange will use the documentation of the concept as the documentation of the property if the documentation of the property is empty.
+
+|\<<BasicType>> |  |A basic type with a simple representation on most platforms. Usually it is a restriction of CharacterString or Number.
+
+|\<<CodeList>> |\<<conceptScheme>> \<<vocabulary>> |A code list. \<<conceptScheme>> and \<<vocabulary>> have been used to identify collections of enumerated values that may also have relationships like 'narrower'; for encoding purposes these are treated like code lists.
+
+|\<<DataType>> |\<<request>> \<<response>> | A structured data type without identity [ISO/TS 19103]. The \<<request>> and \<<response>> stereotype were originally used in AFIS-ALKIS-ATKIS to distinguish data types for use in messages of services. For all encoding purposes these are treated as data types and are configured as aliases.
+
+|\<<Enumeration>> |  |An enumeration.
+
+|\<<FachId>> |  |OKSTRA feature types where instances may be referenced through symbolic links. See the http://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
+
+|\<<featureConcept>> |  |A feature concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a
+dependency to a feature concept classifier of the same name ShapeChange will use the documentation of the concept as the documentation of the feature type if the documentation of the feature type classifier is empty.
+
+|\<<FeatureType>> |\<<feature>> |A feature type [ISO 19136]. Some schemas have used \<<Feature>> so this has been added as an alias.
+
+|\<<Interface>> |  |A type that is not directly instantiable but is used as an abstract collection of operation attribute and relation signatures. This stereotype should usually not be used in application schemas as \<<interface>> classes are on a different conceptual level. In the encoding these will usually be treated as if no stereotype has been set.
+
+|\<<Schluesseltabelle>> |  |OKSTRA Schlüsseltabellen. See the http://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
+
+|\<<Type>> | |A standard class instances are plain objects with identity. In the encoding these will usually be treated as if no
+stereotype has been set but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when classes are augmented by profile-specific tagged values. For the purposes of meta-modeling \<<Type>> has been deprecated in UML 2 and \<<Interface>> should be used instead.
+
+|\<<Union>> |  |A structured data type without identity where exactly one of the properties of the type is present in any instance [ISO/TS 19103].
+
+|\<<valueConcept>> |  |A nominal value concept in a feature concept dictionary (see ISO 19126). If an enumeration has a dependency to an value concept classifier and an enumerant of the same name ShapeChange will use the documentation of the concept as the documentation of the enumerant if the documentation of the enumerant is empty.
+
+|===
+
+[[Stereotypes_of_properties]]
+==== Stereotypes of properties
+
+The standard case for properties is that no stereotype is applied.
+
+[cols="20%,20%,60%",options="header",]
+|===
+|Stereotype |Aliases |Description
+
+|\<<enum>> |\<<enumerationLiteral>> |Typical stereotype for attribute of a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]).
+
+|\<<identifier>> |  |An attribute with this stereotype is used to uniquely identify class objects. For database models the attribute represents a primary key field.
+
+|\<<property>> |  |Typical stereotype for attribute or association role of a class that is not a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when properties are augmented by profile-specific tagged values.
+
+|\<<version>> |  |If in an application schema an association role ends at a spatial object type this stereotype denotes that the value of the property is meant to be a specific version of the spatial object not the spatial object in general. [INSPIRE]
+
+|\<<voidable>> |  |If a characteristic of an object is not present |but may be present or applicable in the real world this can be reflected using this stereotype. This is a shorthand notation for a union type of the normal value range with a void/nil value plus an optional reason for the void/nil value. [INSPIRE]
+
+|===
+
+[[Stereotypes_of_dependencies]]
+==== Stereotypes of dependencies
+
+The standard case for dependencies is that no stereotype is applied. For
+package dependencies without a stereotype,\<<import>> is implied (source:
+ISO 19136:2007, section E.2.1.1.1).
+
+[cols="20%,20%,60%",options="header",]
+|===
+|Stereotype |Aliases |Description
+|\<<import>> | |The model elements of the supplier package are imported.
+|===
+
+NOTE: ShapeChange stores package dependencies without stereotypes. In
+other words, stereotypes on package dependencies are ignored (thus, it
+does not matter if such a dependency has the stereotype \<<import>>,
+\<<include>>, or any other stereotype). ShapeChange determines if an
+application schema has a dependency on a different application schema by
+examining the target namespaces of both packages; if they are different,
+the two packages belong to different application schema - otherwise,
+they belong to the same schema.
+
+[[Stereotypes_of_generalizations]]
+==== Stereotypes of generalizations
+
+The standard case for generalizations is that no stereotype is applied.
+ShapeChange ignores stereotypes on generalizations.
+
+[cols="20%,20%,60%",options="header",]
+|===
+|Stereotype |Aliases |Description
+|\<<disjoint>> |  |The constraint added to a set of generalization relationships indicates that an instance of the parent may be an instance of one and only one of the children within the set. This is implicitly assumed to be the case.
+|===
+
+[[Tagged_Values]]
+=== Tagged Values
+
+Tagged values are used to represent additional information in the UML
+model that are either specific to an encoding or which require a
+name-value-pair.
+
+The following table documents the tagged values that ShapeChange directly supports, i.e. loads from a model without having to be added via the input parameters xref:../get started/The_element_input.adoc#addTaggedValues[addTaggedValues] or xref:../get started/The_element_input.adoc#representTaggedValues[representTaggedValues].
+
+[width="100%",cols="3,1,1,1,5,2,2",options="header"]
+|===
+
+|Tagged Value |Scope (to which model element(s) does the tag typically apply) |Stereotype (if specific) |Source |Description |ShapeChange Process (if specific) |Links
+
+|AAA:AAAVersion |package |applicationSchema, no stereotype |GeoInfoDok, German Surveying Agencies |Version des AAA Schemas von
+dem das Fachschema abhängt; ggfs. nicht mehr in Verwendung. | |
+
+|AAA:Datum |package |applicationSchema, no stereotype |GeoInfoDok, German Surveying Agencies |Datum der Version (siehe AAA:Version);
+für Ableitung von Objektartenkatalogen | |
+
+|AAA:Grunddatenbestand |class, property |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying
+Agencies |Kommagetrennte Liste der Modellarten bei denen die Objektart Teil des Grunddatenbestands ist. | |
+
+|AAA:Kennung |all | |GeoInfoDok, German Surveying Agencies |Übergreifende Funktion für verschiedene Ableitungen (z.B. DB
+Schema und Objektartenkataloge). 5-stellig für Klassen, 3-stellig für Eigenschaften (Ausnahmen sind möglich). | |
+
+|AAA:LetzteAenderung |class, property |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying Agencies |Datum und Kommentar der letzten Änderung am Element | |
+
+|AAA:Modellart |all | |GeoInfoDok, German Surveying Agencies |Dient der Zuordnung eines Modellelements zu einem oder mehreren
+Modellen. Der Wert entspricht einem Code aus AA_AdVStandardModell oder AA_WeitereModellart. | |
+
+|AAA:Nutzungsart |class |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying Agencies 
+|Angaben für den Nutzungsartenkatalog (AdV intern); für Fachschema nicht relevant | |
+
+|AAA:Nutzungsartkennung |class, property |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying Agencies |Angaben für den Nutzungsartenkatalog (AdV intern); für Fachschema nicht relevant | |
+
+|AAA:objektbildend |property |no stereotype |GeoInfoDok, German Surveying Agencies |Kommagetrennte Liste der Modellarten bei denen die Eigenschaft objektbildend ist relevant falls Versionierung bei Datenhaltung angewandt werden soll. | |
+
+|AAA:Organisation |package, applicationSchema |no stereotype |GeoInfoDok, German Surveying Agencies |Name der für das Anwendungsschema verantwortlichen Organisation; für Ableitung von Objektartenkatalogen | |
+
+|AAA:Profile |class, property |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying Agencies |Kommagetrennte Liste der Profile zu denen die Objektart gehört | |
+
+|AAA:Revisionsnummer |all | |GeoInfoDok, German Surveying Agencies |Die genaue Regelung ist bislang nicht dokumentiert. | |
+
+|AAA:Themen |class |featureType, type, dataType, union, enumeration, codeList |GeoInfoDok, German Surveying Agencies |Themen zu denen die Objektart gehört (siehe Dokumentation AX_Themendefinition im AAA Anwendungsschema). Anwendbar falls Topologie wichtig ist (die Klasse ist dementsprechend aus AG_ObjektMitGemeinsamerGeometrie abzuleiten). | |
+
+|AAA:Version |package, applicationSchema |no stereotype |GeoInfoDok, German Surveying Agencies |Version des Schemas | |
+
+|alias |all | | |An alias of the name of the model element usually for presentation to a human. | |
+
+|allowedTypesNAS |property |no stereotype |GeoInfoDok, German Surveying Agencies | | |
+
+|alwaysVoid |class | | |Identifies properties that are always void for documentation in a feature catalogue (as textual constraint) |FeatureCatalogue target | 
+
+|appliesTo |class | | |Identifies network elements to which the class applies for documentation in a feature catalogue (as textual constraint). |FeatureCatalogue target | 
+
+|arcgisDefaultSubtype |property | | |Integer code of the ArcGIS subtype that shall be used as default. |ArcGISWorkspace target |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating the ArcGIS workspace UML model]
+
+|arcgisSubtypeCode |class, property | | |Relevant for defining subtype codes if ArcGIS subtypes are defined by a code list of enumeration and if ArcGIS subtypes are explicitly modelled |ArcGISWorkspace target |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating the ArcGIS workspace UML model]
+
+|arcgisSubtypeInitialValues |property | | |Used to define default values for ArcGIS subtypes defined by a code list of enumeration. |ArcGISWorkspace target |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating the ArcGIS workspace UML model]
+
+|arcgisUsedBySubtypes |property | | |Used to identify the subtypes to which an enum or code applies. Relevant for ArcGIS subtype defined by a code list or enumeration. |ArcGISWorkspace target |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating the ArcGIS workspace UML model]
+
+|asDictionary |class |codeList |ISO 19136, GML 3.3 |If the value is 'false' the code list will be encoded with the pre-defined enumerants as values in the schema if 'true' all enumerants will only be maintained in external dictionaries. The default depends on the encoding rule used. | | 
+
+|associativeTable |association, attribute | | |Provides the name of the associative table created for an n:m relationship between types. |SQL target |xref:../targets/SQL_DDL.adoc#rule-sql-all-associativetables[rule-sql-all-associativetables]
+
+|asXMLAttribute |property | | |Alias to 'xsdAsAttribute' |XML Schema target | 
+
+|base |class | | |Defines the value of \base\ when creating an anonymous basic type for the class. |XML Schema target | 
+
+|broaderListedValue |property | | |Used to establish skos:broader relationships between codes. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-code-broader-byBroaderListedValue[rule-owl-prop-code-broader-byBroaderListedValue]
+
+|byValuePropertyType |class |no stereotype, featureType, type |ISO 19136 |Create a property type that requires that the instance is encoded inline. Should usually be set to false. | | 
+
+|codeList |class |codeList |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |The URI of a resource representing the code list for example a code list dictionary. |FeatureCatalogue target, GML codelist dictionary target, XML Schema target, ldproxy target |feature catalogue parameter 
+xref:../targets/feature catalogue/Feature_Catalogue.adoc#includeCodeListURI[includeCodeListURI] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-targetCodeListURI[rule-xsd-prop-targetCodeListURI] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints[rule-xsd-cls-codelist-constraints] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[rule-xsd-cls-codelist-constraints2] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-gmlsf[rule-xsd-cls-codelist-gmlsf] +
+xref:../targets/ldproxy_Configuration.adoc#rule-ldp-cls-generate-codelist[rule-ldp-cls-generate-codelist]
+
+|codeListRepresentation |class |codeList |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Define the representation of a code list. Relevant for deriving Schematron constraints. Allowed values are defined by the relevant conversion rules. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints[rule-xsd-cls-codelist-constraints] xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[rule-xsd-cls-codelist-constraints2]
+
+|codeListRestriction |property |codeList | |Primarily used in metadata profiles to restrict the type of a property (in metadata profiles typically typed CharacterString) to a specific code list (identified by name via the tagged value). The XML Schema target can then generate Schematron assertions that check the restriction. NOTE The tagged value can also be derived from OCL constraints via the ConstraintConverter transformation (rule-trf-cls-constraints-codeListRestrictionToTV).
+|ConstraintConverter, XML Schema target |xref:../transformations/Constraint_Converter.adoc#rule-trf-cls-constraints-codeListRestrictionToTV[rule-trf-cls-constraints-codeListRestrictionToTV] xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[rule-xsd-cls-codelist-constraints2]
+
+|codeListSource |class |codeList | |Provides a link to a remote or local resource (in a specific representation defined by tagged value codeListSourceRepresentation) which contains the currently defined code for a code list. Can be used to load the codes from that source into the model for example to derive Schematron constraints. |Code List Loader transformation |xref:../transformations/Code_List_Loader.adoc#rule-trf-cls-loadCodes[rule-trf-cls-loadCodes]
+
+|codeListSourceCharset |class |codeList | |Defines the character set of the resource referenced by tagged value codeListSource. |Code List Loader transformation |xref:../transformations/Code_List_Loader.adoc#rule-trf-cls-loadCodes[rule-trf-cls-loadCodes]
+
+|codeListSourceRepresentation |class |codeList | |Identifies the type of resource referenced by tagged value codeListSource. For example application/x.iso639_2. |Code List Loader transformation |xref:../transformations/Code_List_Loader.adoc#rule-trf-cls-loadCodes[rule-trf-cls-loadCodes]
+
+|codelistType |class |codeList | |Defines application-specific category for a code list. This information can be used by the SQL target to separate code insert statements produced by the target by code list type. |SQL target |SqlDdl parameter xref:../targets/SQL_DDL.adoc#separateCodeInsertStatementsByCodelistType[separateCodeInsertStatementsByCodelistType]
+
+|codeListValuePattern |class |codeList |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Value access pattern for the code list containing the substitution points \{codeList} and \{value}, where \{codeList} is the base URI of the code list (replaced by the tagged value codeList and \{value} the local identifier of the code list value. Default \\{codeList}/\{value}\  |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints[rule-xsd-cls-codelist-constraints]
+
+|dataCaptureStatement |all | | |A statement describing how to capture instances of the model element from the real-world. +
+NOTE: This tagged value is the default source for descriptor 'dataCaptureStatement'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|defaultCodeSpace |class |codeList |ISO 19136 |The URI of the default dictionary that contains code list. | |
+
+|defaultGeometry |property | |OGC UGAS-2020 Engineering Report |When set to true, it identifies the geometry property that serves as default geometry. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-defaultGeometry-multipleGeometryProperties[rule-json-cls-defaultGeometry-multipleGeometryProperties]
+
+|definition |all | | |The normative specification of the model element. Using this tag is one approach to defining the source of descriptor 'definition'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|description |all | | |Additional informative information about the model element. Using this tag is one approach to defining the source of descriptor 'description'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|dissolveAssociation |association | | |If set to 'false' the association will be excluded from the TypeConverter transformation rule-trf-dissolveAssociations. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-dissolveAssociations[rule-trf-dissolveAssociations]
+
+|dissolveAssociationAttributeType |association role | | |Can be used to define the type of the attribute which results from transforming the association role using the TypeConverter transformation rule-trf-dissolveAssociations. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-dissolveAssociations[rule-trf-dissolveAssociations]
+
+|documentation |all | |UML |The documentation for the model element. Using this tag is one approach to defining the source of descriptor 'documentation'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|example |all | | |An example illustrating the model element. +
+NOTE: This tagged value is the default source for descriptor 'example'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|extensibility |class |codeList |INSPRIE |This refers to extensions by a third party not to extensions by the owner of the vocabulary; the owner will always be able to revise the vocabulary. I.e. if the value is 'none' the referenced vocabulary may not be extended by third parties; if the value is 'narrower' the vocabulary may be extended by narrower terms that have an existing term as a parent; if the value is 'any' the vocabulary may be extended by additional terms on any level. This value must be 'any' empty or missing if the value 'vocabulary' is empty or missing; in this case any vocabulary may be used. | |xref:./UML_profile.adoc#Requirements_for_classes2[Requirements for classes] (see req-xsd-cls-codelist-extensibility-values and req-xsd-cls-codelist-extensibility-vocabulary)
+
+|fieldType |class |codeList, enumeration | |Define the ESRI field type for properties that have the code list or enumeration as type. Overrides tagged value 'numericType'. |ArcGISWorkspace target |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc#Class[Creating the ArcGIS Workspace UML Model - Conversion of model elements - Class]
+
+|formcols |property | | |Used in creating an application configuration file (via the as yet undocumented AppConfiguration target). |AppConfiguration target (undocumented) |
+
+|formrows |property | | |Used in creating an application configuration file (via the as yet undocumented AppConfiguration target). |AppConfiguration target (undocumented) |
+
+|generationDateTime |package | | |Date and time that the application schema was generated for documentation in feature catalogues (currently only frame-based HTML feature catalogues). +
+NOTE The tagged value can also be set by transformations, see xref:../transformations/Common_Transformer_Functionality.adoc#Setting_Model_Generation_Date_and_Time[Common transformer functionality - Setting model generation date and time]. |FeatureCatalogue target |
+
+|geometry |class | | |Identifies the geometry types allowed for this class if it is flattened to classes with homogeneous geometry. For further details, see Flattener transformation rule-trf-prop-flatten-homogeneousgeometries. (Comma-separated) Value(so must match @param value(s) of map entries with @rule=rule-trf-prop-flatten-homogeneousgeometries from the Flattener configuration. Example: P, C. +
+NOTE: This tagged value can be updated while creating a profile through definition of the profile parameter \geometry\. +
+NOTE: The tagged value can also be populated through evaluation of geometry restrictions from OCL constraints (which can be performed by the Constraint Converter transformation). |Flattener transformation +
+Profile transformation +
+Constraint Converter transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-homogeneousgeometries[rule-trf-prop-flatten-homogeneousgeometries] +
+xref:../transformations/profiling/Profiler.adoc#Profile_Parameter[Profile parameter] +
+xref:../transformations/Constraint_Converter.adoc#Evaluating_geometry_restrictions_from_OCL_constraints[Evaluating geometry restrictions from OCL constraints]
+
+|gmlArrayProperty |property | | |For properties with a tagged value gmlArrayProperty set to true and with complex content that is always inline i.e. the property has the tagged value inlineOrByReference set to inline an array property is created instead of using the standard GML property types. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-gmlArrayProperty[rule-xsd-prop-gmlArrayProperty]
+
+|gmlAsCharacterString |class |union | |A union with a tagged value gmlAsCharacterString set to true is not converted in the usual way but converted as if it would be a CharacterString. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-union-asCharacterString[rule-xsd-cls-union-asCharacterString]
+
+|gmlAsGroup |class |union | |A union class with tagged value gmlAsGroup = true is encoded as a global group which is referenced wherever a property is defined that has the union class as its value. (Note that this is only valid if it is clear from the context how to map the individual values to the conceptual model.) +
+NOTE: Deprecated tagged value 'asGroup' is automatically mapped to 'gmlAsGroup'. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-union-asGroup[rule-xsd-cls-union-asGroup]
+
+|gmlImplementedByNilReason |property | | |Primarily used by the XML Schema target, see descriptions of rule-xsd-prop-nilReasonAllowed and rule-xsd-cls-union-direct. Also used by the SQL target to determine if a column can be NULL. +
+NOTE: Deprecated tagged value 'implementedByNilReason' is automatically mapped to 'gmlImplementedByNilReason'. |XML Schema target +
+SQL target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-union-direct[rule-xsd-cls-union-direct] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nilReasonAllowed[rule-xsd-prop-nilReasonAllowed] +
+xref:../targets/xml schema/Support_for_nillable_and_nilReason.adoc[Support for nillable and nilReason]
+
+|gmlListProperty |property | | |For properties with a tagged value gmlListProperty set to true and with a simple type as value, maxOccurs is suppressed and a list type is created. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-gmlListProperty[rule-xsd-prop-gmlListProperty]
+
+|gmlMixin |class |no stereotype, type, featureType | |Identifies the type as a mixin type that will not be encoded as a separate element/type in the XML encoding but properties will be copied to subtypes. This is a ShapeChange extension which supports multiple inheritance for application schema types in specific cases. | |xref:../targets/xml schema/Support_for_Mixin_Classes.adoc[Support for Mixin Classes]
+
+|gmlProfileSchema |package |applicationSchema |ISO 19136 |URL of the schema location of a GML profile (where applicable). |XML Schema target |xref:../targets/xml schema/GML_3.2_Encoding_Rule.adoc#rule-xsd-pkg-gmlProfileSchema[rule-xsd-pkg-gmlProfileSchema]
+
+|gpkgM |property (with geometry type) | | |Define whether m values are prohibited (value: 0), mandatory (value: 1), or optional (value: 2) on the geometric column that represents the UML property. |GeoPackage Template target | 
+
+|gpkgZ |property (with geometry type) | | |Define whether z values are prohibited (value: 0), mandatory (value: 1), or optional (value: 2) on the geometric column that represents the UML property. |GeoPackage Template target | 
+
+|HasM |class |featureType | |Controls setting of HasM for ArcGIS feature classes. |ArcGIS Workspace target |xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-hasM[rule-arcgis-cls-hasM] 
+
+|HasZ |class |featureType | |Controls setting of HasZ for ArcGIS feature classes. |ArcGIS Workspace target |xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-hasZ[rule-arcgis-cls-hasZ] 
+
+|infoURL |class |codeList, enumeration | |Can be used to define the @codeSpace of gml:identifiers of dictionary content. |Codelist Dictionary targets |xref:../targets/dictionaries/Dictionaries.adoc[Dictionaries target] 
+
+|inlineOrByReference |property | |ISO 19136 |Controls whether property values may be encoded inline or by reference. Valid values are 'inline', 'byReference' and 'inlineOrByReference'. Default is 'inlineOrByReference'. | | 
+
+|isCollection |class |no stereotype, featureType, type |ISO 19136 |Identifies the type as a collection. | | 
+
+|isFlatTarget |association role | | |Can be used to control how complex type flattening is applied in case of a bi-directional association which is made uni-directional through application of rule-trf-prop-removeNavigabilityBasedOnIsFlatTarget based upon the isFlatTarget setting. |Flattener transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-removeNavigabilityBasedOnIsFlatTarget[rule-trf-prop-removeNavigabilityBasedOnIsFlatTarget] 
+
+|isMetadata |property | |ISO 19136 |Indicates whether the property is considered metadata about the instance and not information about the phenomenon in the real world. 'true' or 'false', the default is 'false'. | |
+
+|jsonBaseURI |schema package | |OWS-9 System Security Interoperability (SSI) UML-to-GML-Application-Schema (UGAS) Conversion Engineering Report |Can be used to define the base of the URI that is used as value of the 'id' field of a JSON Schema file generated by ShapeChange. Takes precedence over the JSON Schema target parameter jsonBaseURI. |JSON Schema target |JSON Schema target parameter xref:../targets/JSON_Schema_deprecated.adoc#jsonBaseURI[jsonBaseURI]
+
+|jsonDirectory |schema package | |OWS-9 System Security Interoperability (SSI) UML-to-GML-Application-Schema (UGAS) Conversion Engineering Report |Used to define a subdirectory within the URI that is used as value of the 'id' field of a JSON Schema file generated by ShapeChange. |JSON Schema target |JSON Schema target parameter xref:../targets/JSON_Schema_deprecated.adoc#jsonBaseURI[jsonBaseURI]
+
+|jsonDocument |package | |OGC UGAS-2020 Engineering Report |The name of the file (xyz.json) in which the JSON Schema definitions for the classes contained in the package will be encoded. |JSON Schema target | 
+
+|jsonEncodingRule |all | |OWS-9 System Security Interoperability (SSI) UML-to-GML-Application-Schema (UGAS) Conversion Engineering Report |Controls the applicable conversion rule on a model element. Typically this will be set only on the application schema level or provided as external input to the conversion process |JSON Schema target | 
+
+|jsonFormat |class | | |To define the JSON Schema keyword 'format' for a basic type modelled in the application schema |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
+
+|jsonLayerTableURI |class |featureType |OWS-9 System Security Interoperability (SSI) UML-to-GML-Application-Schema (UGAS) Conversion Engineering Report |The URI of the associated Layer/Table resource in a GeoServices REST API Feature Service. This can usually not be set as there will be more then one service that provides information on a feature type. However, if it is provided, explicit \links\ properties as specified by JSON Schema can be provided in the schema of the feature type. |JSON Schema target | 
+
+|jsonPattern |class | | |To define the JSON Schema keyword 'pattern' for a basic type modelled in the application schema |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
+
+|language |all | | |The default language, if no language information is provided in definitions, descriptions, examples, etc. +
+NOTE: This tagged value is the default source for descriptor 'language'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|legalBasis |all | | |The legal basis for the model element: +
+NOTE: This tagged value is the default source for descriptor 'legalBasis'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
+
+|length |class, property | | |Used to define the maximum length of a string valued attribute. Sometimes also used on classes. |CDB, XML Schema, and JSON Schema targets |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-length-size-pattern[rule-xsd-prop-length-size-pattern] +
+xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|literalEncodingType |class |enumeration, codeList |OGC UGAS-2020 Engineering Report |Identifies the conceptual type that applies to the enumeration values. |JSON Schema target | 
+
+|maxLength |class, property | | |Used to define the maximum length of a string valued attribute. Sometimes also used on classes. |XML Schema and JSON Schema targets |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
+
+|maxOccurs |property | | |Used to control how many copies of a property are created while flattening multiplicity. |Flattener transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-multiplicity[rule-trf-prop-flatten-multiplicity]
+
+|metadataType |property |propertyMetadata |UGAS-2019 report |Identifies the type of the metadata that can be associated with the property (more specifically, its value(s)). |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-propertyMetadata-stereotype-to-metadata-property[rule-trf-propertyMetadata-stereotype-to-metadata-property] 
+
+|name |package, class, property | | |Typically used to define an additional name for a model element. Can be used by the (old) OWS-8 ontology target to define the skos:prefLabel of a skos:ConceptScheme. |Flattener transformation, (old) OWS-8 ontology target |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[rule-trf-prop-flatten-types] +
+xref:../targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF/OWL target (based on OWS-8 encoding rule)]
+
+|neverVoid |class | | |Identifies properties that are never void, for documentation in a feature catalogue (as textual constraint). |FeatureCatalogue target | 
+
+|nillable |property | | |If set to 'true' on a property, this states that the property is voidable (also called nillable). | |xref:../targets/xml schema/Support_for_nillable_and_nilReason.adoc[Support for nillable and nilReason] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nillable[rule-xsd-prop-nillable] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nilReasonAllowed[rule-xsd-prop-nilReasonAllowed] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-prop-isNullable[rule-arcgis-prop-isNullable] +
+xref:../targets/SQL_DDL.adoc#Property_Conversion[Property conversion in the SqlDdl target] 
+
+|nilReasonAllowed |property | | |'true', if the nilReason attribute is allowed in the XML encoding of the property. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nilReasonAllowed[rule-xsd-prop-nilReasonAllowed] 
+
+|noncomparableMeasure |attribute | |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Valid non-comparable unit. Example: \flightLevel\  | | 
+
+|noPropertyType |class |no stereotype, featureType, type, dataType, union |ISO 19136 |Set to 'true' to suppress creation of a standard property type that supports inline or by-reference encoding. For data types only inline encoding is supported. Should usually be set to 'false'. |XML Schema target | 
+
+|numericType |class |codeList, enumeration | |Setting this tagged value on a code list or enumeration indicates that the codes are numeric. The tagged value contains the name of the conceptual type that represents the code values best, for example 'Number' or 'Integer'. +
+This tagged value is used by the SQL and ArcGIS workspace targets: +
+- ArcGIS Workspace target: The ArcGIS data type will be determined by mapping that type using the map entries defined in the configuration. NOTE: The field type determined by processing this tagged value will be overridden if tagged value \fieldType\ is also set on the code list / enumeration. +
+- SQL target: The SQL data type will be determined by mapping that type using the map entries defined in the configuration, resulting in a DBMS specific implementation of the SQL data type. |ArcGISWorkspace and SQL targets |xref:../targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc#Class[Creating the ArcGIS Workspace UML Model - conversion of model elements - classes] +
+xref:../targets/SQL_DDL.adoc#rule-sql-cls-code-lists[rule-sql-cls-code-lists]
+
+|obligation |property | |INSPIRE |The value type of the property must be a code list. The use of the referenced code list may be made legally required in the implementing rule ('implementingRule') or only in the technical guidance ('technicalGuidance'). This value must be empty or missing, if the value 'vocabulary' in the value type is empty or missing. | | 
+
+|oclExpressions |class | | |Used on XMI encoded models, to define OCL expressions of a class. Note that due to a lack of use, the logic for loading of XMI models has not been maintained in ShapeChange for quite some time. | | 
+
+|omitWhenFlattened |class | | |Can be used to control naming of properties while flattening complex types. Primarily set to 'true' on helper classes that aggregate a number of properties which are used by multiple classes (e.g. WaterResourceInfo). Helps reducing the length of names of flattened model elements. This mechanism only works if the maximum multiplicity of properties with the class (C) that has omitWhenFlattened=true as value type is exactly 1. In addition, classes that own such properties must not contain a property with a name that equals the name of one of the properties from (C). Otherwise the result would be ambiguous. |Flattener transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[rule-trf-prop-flatten-types] 
+
+|oneToManyReferenceColumnName |class |datatype | |Can be used to define the name of the additional reference column which is added to the table that represents the data type. |SQL target |xref:../targets/SQL_DDL.adoc#rule-sql-cls-data-types-oneToMany-oneTable[rule-sql-cls-data-types-oneToMany-oneTable]
+
+|ontologyName |package | | |Can be used to define the name of the ontology that is derived from a package. NOTE: Defining the ontology name by tagged value is useful if ontologies shall be derived from multiple schemas, and each shall have a specific ontology name that is defined in the UML model. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-byTaggedValue[rule-owl-pkg-ontologyName-byTaggedValue]
+
+|owlDisjointProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'disjoint' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+
+|owlEquivalentProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'equivalent' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+
+|owlInverseProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'inverse' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+
+|owlLogicalCharacteristics |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axioms 'functional', 'inverse-functional', 'reflexive', 'irreflexive', 'symmetric', 'asymmetric', and 'transitive' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+
+|owlSubPropertyOf |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'subPropertyOf' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+
+|parent |property, class |class (itself, or that owns the property): codeList, enumeration |OGC Engineering Report OWS-8 Cross Community Interoperability (CCI) Semantic Mediation, OGC document number 11-063r6. See sub-clause 8.1 |Can be used to define hierarchical code lists (as specified in the IMGeo specification in the Netherlands). |(old) OWS-8 ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF/OWL target (based on OWS-8 encoding rule) - rule-rdf-prop-parent]
+
+|pattern |property | | |Regular expression that constrains the textual value of the property. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-length-size-pattern[rule-xsd-prop-length-size-pattern]
+
+|physicalQuantity |attribute | |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Physical quantity of the referenced unit. Example: \length\  | | 
+
+|precision |property, also class (representing a numeric code list [SQL target]) | | |Can be used to define the precision for the target representation of the property (or properties with numeric code list). |ArcGIS Workspace and SQL targets |xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-all-precision[rule-arcgis-all-precision] +
+xref:../targets/SQL_DDL.adoc#rule-sql-all-precisionAndScale[rule-sql-all-precisionAndScale] 
+
+|primaryCode |all | | |The primary code for the model element. +
+NOTE: This tagged value is the default source for descriptor 'primaryCode'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources] 
+
+|profiles |property, class | | |Identifies the profiles to which the model element belongs. +
+ +
+NOTE:  +
+- The Model Export target can be used to export a model, including defined profiles, in SCXML format, for subsequent profile definition via the Profile Management Tool. +
+- The Profile Transfer EA target can be used to write profile definitions into schemas contained in an EA repository. +
+- The Application Schema Metadata target can be used to identify the profiles defined in a schema. |Profiler transformation, Model Export, Profile Transfer EA, and Application Schema Metadata targets |xref:../transformations/profiling/Profiler.adoc xref:../transformations/profiling/Profiling.adoc xref:../targets/Model_Export.adoc[Model export target] +
+xref:../targets/Profile_Transfer_to_EA_Repository.adoc[Profile transfer to EA target] +
+xref:../targets/Application_Schema_Metadata.adoc#rule-asm-all-identify-profiles[rule-asm-all-identify-profiles]
+
+|prohibitedInProfile |property, class | | |Set to 'true' to indicate that the property or the class is prohibited. This can be used to prevent creation of (Schematron) property assertions in rule-xsd-cls-codelist-constraints2. +
+NOTE: The tagged value can be set by rule-trf-cls-createGeneralOutOfScopeConstraints of the Profile Constraint Transformer transformation (which is used in the creation of metadata profiles as defined by ISO 19115/19139). |XML Schema target, Profile Constraint transformer |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-all-propertyAssertion-ignoreProhibited[rule-xsd-all-propertyAssertion-ignoreProhibited] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[rule-xsd-cls-codelist-constraints2] +
+xref:../transformations/profiling/Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints] 
+
+|rangeMaximum |property, also class (XML Schema and JSON Schema targets) | | |Define the maximum range of the property, or of a basic XML Schema type. |ArcGIS Workspace, SQL, CDB, XML Schema, and JSON Schema targets |xref:../targets/SQL_DDL.adoc#rule-sql-cls-check-constraint-for-range xref:../targets/SQL_DDL.adoc#rule-sql-prop-check-constraint-for-range xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-rangeDomainFromTaggedValues[rule-arcgis-cls-rangeDomainFromTaggedValues] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
+http://docs.opengeospatial.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
+xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|rangeMinimum |property, also class (XML Schema and JSON Schema targets) | | |Define the minimum range of the property, or of a basic XML Schema type. |ArcGIS Workspace, SQL, CDB, XML Schema, and JSON Schema targets |xref:../targets/SQL_DDL.adoc#rule-sql-cls-check-constraint-for-range[rule-sql-cls-check-constraint-for-range] +
+xref:../targets/SQL_DDL.adoc#rule-sql-prop-check-constraint-for-range[rule-sql-prop-check-constraint-for-range] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-rangeDomainFromTaggedValues[rule-arcgis-cls-rangeDomainFromTaggedValues] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
+http://docs.opengeospatial.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
+xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|recommendedMeasure |attribute | |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Unit recommended for use with this property. The unit must be consistent with the physicalQuantity value. Example: \metre\  | | 
+
+|Reiter |property | | |Used in creating an application configuration file (via the as yet undocumented, AppConfiguration target). |AppConfiguration target (undocumented) | 
+
+|reportable |property | | |Used to define the subsets under which the property is published. |LD Proxy target |Ldproxy target parameter xref:../targets/ldproxy_Configuration.adoc#enablePropertiesReportable[enablePropertiesReportable] 
+
+|resourceURI |property (of an enumeration or code list) | | |Used to produce XPath expressions when generating Schematron. If an enum or code (modelled as attribute of an enumeration or code list) has tagged value resourceURI, it is used as literal value during the translation of the enum/code to a literal value within an XPath expression, instead of the enum/code name. |Targets that generate Schematron | 
+
+|reverseRoleNAS |property |no stereotype |GeoInfoDok, German Surveying Agencies |Wert des UML Tagged Value reverseRoleNAS wird im XML Schema in appinfo-Annotationen an dem Element ausgegeben, das der Assoziationsrolle entspricht. Kann bei Modellierung ignoriert werden wenn Historisierung keine Rolle spielt. Wird bei Bedarf automatisch durch NAS-Transformation zu Implementierungsschema gesetzt. | | 
+
+|scale |property, also class (representing a numeric code list [SQL target]) | | |Can be used to define the scale for the target representation of the property (or properties with numeric code list). |ArcGIS Workspace and SQL targets |xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-all-scale[rule-arcgis-all-scale] +
+xref:../targets/SQL_DDL.adoc#rule-sql-all-precisionAndScale[rule-sql-all-precisionAndScale] 
+
+|sequenceNumber |property | |ISO 19136 |Used to sort/order the properties of the class to which the property belongs. The value shall be an integer value that is unique for the properties of that class. +
+NOTE: ShapeChange also supports sequence numbers with integer components separated by dots (e.g. '10.4.3'). | | 
+
+|shortName |property, class | | |Define a short name for a model element, for shortening the names of representations in a given encoding. |ArcGIS Workspace and SQL targets |xref:../targets/SQL_DDL.adoc#rule-sql-all-constraintNameUsingShortName[rule-sql-all-constraintNameUsingShortName] +
+xref:../targets/SQL_DDL.adoc#rule-sql-all-indexNameUsingShortName[rule-sql-all-indexNameUsingShortName] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses[rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses] 
+
+|size |property, also class (JSON Schema target) | | |Used to define the maximum length of a string valued attribute. Sometimes also used on classes. |ArcGIS Workspace, SQL, XML Schema and JSON Schema targets |xref:../targets/SQL_DDL.adoc#Textual_Data_Type_with_Limited_or_Unlimited_Length[SqlDdl target - Textual Data Type with Limited or Unlimited Length] +
+xref:../targets/SQL_DDL.adoc#rule-sql-prop-replicationSchema-maxLength-from-size[rule-sql-prop-replicationSchema-maxLength-from-size] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromTaggedValue[rule-arcgis-prop-lengthFromTaggedValue] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType[rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-length-size-pattern[rule-xsd-prop-length-size-pattern] +
+xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
+
+|skosConceptSchemeSubclassName |class |codeList | |Can be used to define the name of the skos:ConceptScheme subclass created for a code list. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-conceptSchemeSubclass[rule-owl-cls-codelist-19150-2-conceptSchemeSubclass]
+
+|soft-typed |property | | |Set to 'true' in order for the property to be encoded in XML with an additional 'name' attribute. Used in the SWE Common Data Model 2.0 encoding rule. |XML Schema target |xref:../targets/xml schema/SWE_Common_Data_Model_2.0_Encoding_Rule.adoc#rule-xsd-prop-soft-typed[rule-xsd-prop-soft-typed]
+
+|sqlEncodingRule |all | | |SQL encoding rule to apply. Default is '*'. |SQL target | 
+
+|sqlOnDelete |property, association | | |Define the foreign key option for the case of a deletion (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Foreign_Key_Constraint_Options[Foreign key constraint options] 
+
+|sqlOnUpdate |property, association | | |Define the foreign key option for the case of an update (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Foreign_Key_Constraint_Options[Foreign key constraint options] 
+
+|sqlSchema |package, association | | |Provides the name of the database schema to be used when encoding the model elements contained in the package, or the association, to database objects (especially tables). |SqlDdl target |xref:../targets/SQL_DDL.adoc#rule-sql-all-schemas[rule-sql-all-schemas] 
+
+|sqlUnique |property | | |If set to 'true', then:  +
+- in the SQL target: a unique constraint can be created for the column that represents the property +
+- in the ArcGIS Workspace target: an attribute index can be created for the field that represents the property |SQL and ArcGIS Workspace targets |xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-prop-attIndex[rule-arcgis-prop-attIndex] 
+
+|status |class | | |Can be used to prevent loading of classes if input parameter 'prohibitLoadingClassesWithStatusTaggedValue' is set. If the tagged value matches one of the values of this parameter, the class will not be loaded. +
+NOTE: Also relevant for the Profile Transfer EA target, since it only transfers profiles to non-prohibited classes. | |Input parameter xref:../get started/The_element_input.adoc#prohibitLoadingClassesWithStatusTaggedValue[prohibitLoadingClassesWithStatusTaggedValue] +
+xref:../targets/Profile_Transfer_to_EA_Repository.adoc[Profile transfer to EA target] 
+
+|suppress |class | | |Used to suppress the creation of object elements, local properties and property types for the class in the XML Schema. +
+Also used by the Profile Constraint Transformer for creating constraints to prohibit use of certain schema classes in a metadata profile. Note that these constraints would be translated into Schematron rules by a subsequent processing step (involving the Xml Schema target) in the ShapeChange workflow. | |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-suppress[rule-xsd-cls-suppress] +
+xref:../transformations/profiling/Profile_Constraint_Transformer.adoc[Profile constraint transformer] 
+
+|targetNamespace |package |applicationSchema |ISO 19136 |The target XML namespace of the application schema. +
+NOTE: Deprecated tagged value 'xmlNamespace' is automatically mapped to 'targetNamespace'. | | 
+
+|timeIntervalBoundaryType |property | | |Identifies the type with which the start and end of a temporal property shall be encoded. |Flattener transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-explicit-time-interval[rule-trf-prop-flatten-explicit-time-interval] 
+
+|Title |class |codeList, enumeration | |Used (as alias for tagged value 'name') in the (old) OWS-8 ontology target to define the skos:prefLabel of skos:ConceptSchemes created for the codelist/enumeration. |(old) OWS-8 ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF/OWL target (based on OWS-8 encoding rule)] 
+
+|toCodelist |class |enumeration | |If set to 'false', the enumeration is not converted to a code list by the TypeConverter transformation rule-trf-enumeration-to-codelist. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-enumeration-to-codelist[rule-trf-enumeration-to-codelist] 
+
+|toFeatureType |class | | |Set to 'true', in order for a class being transformed to a feature type by the Type Converter rule-trf-toFeatureType. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-toFeatureType[rule-trf-toFeatureType] 
+
+|uomResourceRepresentation |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |MIME type indicating the units dictionary representation. Currently, only one value is specified: \application/gml+xml;version=3.2\ for a GML dictionary (as currently used in the MDR). +
+Default: \application/gml+xml;version=3.2\  | | 
+
+|uomResourceURI |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Base URI of the units dictionary Example: \http://metadata.ces.mil/mdr/ns/GSIP/uom/\  | | 
+
+|uomResourceValuePattern |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Access pattern for the unit, containing the following substitution points:  +
+- \{resource}: The base URI of the units dictionary, to be replaced by the tagged value uomResourceURI from the schema.  +
+- \{quantity}: The quantity type of the unit, to be replaced with the value of the tagged value physicalQuantity (or the value noncomparable) from the property.  +
+- \{uom}: The local identifier of the unit in the units dictionary, to be replaced with the value of the tagged value recommendedMeasure or noncomparableMeasure from the property, or a valid value from the resource that represents the physicalQuantity.  +
+Default: \\{resource}/\{quantity}/\{uom}\.  | |
+
+|validate |property | | |Used in creating an application configuration file (via the as yet undocumented, AppConfiguration target). |AppConfiguration target (undocumented) | 
+
+|valueTypeOptions |class | |OGC UGAS-2020 Engineering Report |Defines which types are allowed as value type for a given UML property. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-valueTypeOptions[rule-json-cls-valueTypeOptions] 
+
+|version |package |applicationSchema |ISO 19136 |Current version of the application schema. | | 
+
+|vocabulary |class |codeList |INSPIRE |URI of the vocabulary/code list in a registry. Alias to 'codeList'. | | 
+
+|voidReasonType |property | | |Used to indicate which absence reasons apply for a given (typically: voidable) property. The tag value identifies an enumeration that defines the absence reasons. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-nilReason-property-for-nillable-property[rule-trf-nilReason-property-for-nillable-property] 
+
+|xmlns |package |applicationSchema |ISO 19136 |Namespace prefix to be used as short form of the target namespace. +
+NOTE: Deprecated tagged value 'xmlNamespaceAbbreviation' is automatically mapped to 'xmlns'. | | 
+
+|xmlSchemaType |class |type |ISO 19136 |If the type has a canonical XML Schema encoding the XML Schema typename corresponding to the data type shall be given as the value. | | 
+
+|xsdAsAttribute |property | | |If the tagged value asXMLAttribute (or xsdAsAttribute) is set to true on a property, the property has a maximum multiplicity of 1 and the value of the property is simple, the property is converted to an XML attribute instead of an XML element. |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-xsdAsAttribute[rule-xsd-prop-xsdAsAttribute] 
+
+|xsdDocument |package |applicationSchema, no stereotype |ISO 19136 |Name of an XML Schema document to create representing the content of the package. +
+NOTE: Deprecated tagged value 'xsdName' is automatically mapped to 'xsdDocument'. | | 
+
+|xsdEncodingRule |all | | |XML Schema encoding rule to apply. Default is iso19136_2007. | |xref:../targets/xml schema/XML_Schema.adoc[XML Schema target] 
+
+|===
+
+
+
+[[OCL_Constraints]]
+=== OCL Constraints
+
+In an extension to the standard encoding rules, ShapeChange supports
+also parsing of OCL constraints in the application schema (not for XMI
+1.0 models, as these have no standard mechanism for representing
+constraints). The supported set of expressions is documented
+xref:../targets/xml schema/OCL_Conversion_to_Schematron.adoc[here].
+
+If the UML tool does not support OCL constraints directly, constraints
+may also be represented in a tagged value "oclExpressions".
+
+[[Requirements_of_the_XML_Schema_output_target]]
+=== Requirements of the XML Schema output target
+
+All model elements in application schema packages must meet the
+requirements in this section, if the XML Schema target is used.
+
+[[Requirements_for_all_model_elements1]]
+==== Requirements for all model elements
+
+None at the moment
+
+[[Requirements_for_packages1]]
+==== Requirements for packages
+
+[cols=",",options="header",]
+|===
+|Identifier |Descriptions
+|req-xsd-pkg-xsdDocument-unique |All tagged values xsdDocument in a UML model must be unique.
+|===
+
+[[Requirements_for_classes1]]
+==== Requirements for classes
+
+[cols=",",options="header",]
+|===
+|Identifier |Descriptions
+
+|req-xsd-cls-mixin-supertypes |Mixin classes must have no instantiable supertypes.
+
+|req-xsd-cls-mixin-supertypes-overrule |Overrules req-xsd-cls-mixin-supertypes and allows that mixin classes may have supertypes that are not mixin.
+
+|req-xsd-cls-name-unique |All class names within the same application schema must be unique.
+
+|req-xsd-cls-ncname |Each class name must be a NCName.
+
+|===
+
+[[Requirements_for_properties1]]
+==== Requirements for properties
+
+[cols=",",options="header",]
+|===
+
+|Identifier |Descriptions
+
+|req-xsd-prop-data-type |If the value type is data type the property must be an attribute or a composition.
+
+|req-xsd-prop-ncname |The property name must be a NCName.
+
+|req-xsd-prop-value-type-exists |The value type shall either be a predefined type or a class defined in the UML model.
+
+|===
+
+GML requires that a tagged value "sequenceNumber" shall be specified for
+every attribute. The value shall be an integer and be unique for all
+attributes and association ends of a class. As the sequenceNumber values
+are used to organize the properties of a class, this cannot be tested in
+the validation step, but errors are reported during the initial
+processing of the model.
+
+ShapeChange supports a more flexible approach for sequenceNumber values
+than the GML standard:
+
+* the value may omitted in which case ShapeChange determines its own
+order;
+* the value may be a structured integer, e.g. values like "4.2.3".
+
+Multiplicities and visibility are also evaluated during the initial
+model read process and cannot be validated at a later stage. Any errors
+and warnings are reported while reading the model.
+
+[[Requirements_for_associations1]]
+==== Requirements for associations
+
+Navigability is evaluated during the initial model read process and
+cannot be validated at a later stage. Any errors and warnings are
+reported while reading the model.
+
+[[Additional_Requirements]]
+=== Additional Requirements
+
+These requirements may be added in encoding rules.
+
+[[Requirements_for_all_model_elements2]]
+==== Requirements for all model elements
+
+[cols=",",options="header",]
+|===
+
+|Identifier |Descriptions
+
+|req-all-all-documentation |Name and definition separators ('-- Name --' and '-- Definition --') must be included in the documentation (Source: INSPIRE).
+
+|===
+
+[[Requirements_for_packages2]]
+==== Requirements for packages
+
+[width="100%",cols=",",options="header",]
+|===
+
+|Identifier |Descriptions
+
+|req-xsd-pkg-namespace-schema-only |The tagged values targetNamespace and xmlns may only be set if the package is an application schema.
+
+|rec-xsd-pkg-version |The tagged value version should be set if if the package is an application schema. If the tagged value is missing a default value will be used.
+
+|req-xsd-pkg-dependencies |All dependencies must be between schema packages (i.e. packages with a targetNamespace).
+
+|req-xsd-pkg-targetNamespace |The tagged value targetNamespace must be set if the package is an application schema. If the tagged value is missing a default value will be used.
+
+|req-xsd-pkg-xmlns |The tagged value xmlns must be set if the package is an application schema.
+
+|req-xsd-pkg-xsdDocument |The tagged value xsdDocument must be set if the package is an application schema. If the tagged value is missing a name will still be constructed from the package name.
+
+|===
+
+[[Requirements_for_classes2]]
+==== Requirements for classes
+
+[cols=",",options="header",]
+|===
+
+|Identifier |Descriptions
+
+|req-xsd-cls-codelist-asDictionary-true |For code lists the tagged value asDictionary must be 'true' (Source: INSPIRE).
+
+|req-xsd-cls-codelist-extensibility-values |For code lists the tagged value extensibility must be empty narrower any (Source: INSPIRE).
+
+|req-xsd-cls-codelist-extensibility-vocabulary |For code lists the tagged value extensibility!=any implies that a vocabulary is provided (Source: INSPIRE).
+
+|req-xsd-cls-codelist-no-supertypes |Code lists must have no supertypes (Source: INSPIRE?).
+
+|req-xsd-cls-datatype-noPropertyType |For data types the tagged value noPropertyType must be 'false' (Source: INSPIRE).
+
+|req-xsd-cls-enum-no-supertypes |Enumerations must have no supertypes (Source: INSPIRE).
+
+|req-xsd-cls-generalization-consistent |A generalization relationship may be specified only between two classes that are either: both feature types both object types or both data types.
+
+|req-xsd-cls-objecttype-byValuePropertyType |For types with identity the tagged value byValuePropertyType must be 'false' (Source: INSPIRE).
+
+|req-xsd-cls-objecttype-noPropertyType |For types with identity the tagged value noPropertyType must be 'false' (Source: INSPIRE).
+
+|req-xsd-cls-suppress-no-properties |If the tagged value suppress is 'true' the class must have no properties (Source: Metadata profiling).
+
+|req-xsd-cls-suppress-subtype |If the tagged value suppress is 'true' the class must have no unsuppressed subtype (Source: Metadata profiling).
+
+|req-xsd-cls-suppress-supertype |If the tagged value suppress is 'true' the class must have an instantiable supertype (Source: Metadata profiling).
+
+|===
+
+[[Requirements_for_properties2]]
+==== Requirements for properties
+
+[cols=",",options="header",]
+|===
+
+|Identifier |Descriptions
+
+|req-xsd-prop-codelist-obligation |For code lists a tagged value obligation must exist (Source: INSPIRE).
+
+|===
+
+[[Requirements_for_associations2]]
+==== Requirements for associations
+
+None at the moment

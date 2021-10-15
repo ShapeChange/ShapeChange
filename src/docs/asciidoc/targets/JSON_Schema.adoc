@@ -1,0 +1,944 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[JSON_Schema]]
+= JSON Schema
+
+(since v2.10.0)
+
+[[Overview]]
+== Overview
+
+This target derives a JSON Schema representation from an application
+schema in UML.
+
+NOTE: A number of configuration options and extensions have been
+implemented. They are documented in detail in the
+_https://docs.ogc.org/per/20-012.html[OGC UGAS-2020 Engineering
+Report]_. The report also documents which model transformations may need
+to be applied before executing this target, for example to transform
+association classes. Therefore, if you are looking for a complete
+introduction of the conversion from UML to JSON Schema, read the
+according chapter in the OGC Engineering Report first. This page
+provides a quick reference of the available conversion rules,
+parameters, and configuration elements.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget._
+
+[[Conversion_Rules]]
+=== Conversion Rules
+
+The behavior for processing a model is primarily controlled through
+conversion rules. In addition, parameters and other configuration
+elements (like map entries) influence the way a schema is processed. An
+encoding rule represents a specific set of conversion rules.
+
+An encoding rule is defined by an <EncodingRule> element.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule name="myGeoJson" extends="defaultGeoJson">
+ <rule name="rule-json-cls-basictype"/>
+ <rule name="rule-json-cls-codelist-uri-format"/>
+ <rule name="rule-json-cls-name-as-entityType"/>
+ <rule name="rule-json-cls-union-propertyCount"/>
+ <rule name="rule-json-cls-valueTypeOptions"/>
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used in the
+xref:./JSON_Schema.adoc#defaultEncodingRule[defaultEncodingRule]
+parameter.
+
+NOTE: The encoding rules 'defaultGeoJson' and 'defaultPlainJson' are
+pre-configured in ShapeChange. They can thus be used as-is, without the
+need to explicitly define them in the configuration. They can also be
+extended as required (see the example).
+
+The optional *extends* attribute of the <EncodingRule> element includes
+all rules from the referenced encoding rule in this encoding rule, too.
+
+Each *<rule>* references either a conversion rule or - possibly in the
+future - a xref:../application schemas/UML_profile.adoc[requirement
+or recommendation] to be tested before the conversion process.
+
+This target supports the rules defined in the following subsections.
+
+[[rule-json-all-notEncoded]]
+==== rule-json-all-notEncoded
+
+This conversion rule suppresses the conversion to JSON Schema of any
+model elements (more specifically: application schemas, classes, and
+properties) for which the "jsonEncodingRule" tag is set to "notEncoded".
+
+NOTE: The encoding rule "notEncoded" is defined in the standard rules,
+which can be included in the target configuration via:
+
+<xi:include
+href="https://shapechange.net/resources/config/StandardRules.xml" />
+
+[[rule-json-cls-basictype]]
+==== rule-json-cls-basictype
+
+If a direct or indirect supertype of an application schema class is
+mapped to one of the simple JSON Schema types _string_, _number_,
+_integer_, or _boolean_, then under _rule-json-cls-basictype_ that class
+represents a so called _basic type_.
+
+A basic type does not define a JSON object. It represents a simple data
+value, e.g. a string. The JSON Schema definition of a basic type thus
+defines a simple JSON Schema type. A basic type can be restricted using
+a number of JSON Schema keywords. The following table defines which
+tagged values can be used to define these restrictions for a basic type,
+and which restrictions are available for which simple JSON Schema type.
+
+[width="100%",cols="2,3,2",options="header",]
+|===
+|JSON Schema keyword |tagged value to define the restriction |applicable
+JSON Schema type(s)
+|format |_jsonFormat_ |string, number, integer
+
+|maxLength |_length_, _maxLength_, or _size_ |string
+
+|pattern |_jsonPattern_ |string
+
+|minimum +
+(inclusive) |_rangeMinimum_ |number, integer
+
+|maximum +
+(inclusive) |_rangeMaximum_ |number, integer
+|===
+
+[[rule-json-cls-codelist-link]]
+==== rule-json-cls-codelist-link
+
+This rule results in the conversion of a code list as a reference to the
+JSON Schema defining a link object. That reference must explicitly be
+configured using the target parameter
+xref:./JSON_Schema.adoc#linkObjectUri[linkObjectUri].
+
+[[rule-json-cls-codelist-uri-format]]
+==== rule-json-cls-codelist-uri-format
+
+With this rule, all code lists are represented by a JSON Schema that
+restricts the type to "string", and states that the "format" is "uri"
+(as defined by
+https://tools.ietf.org/html/draft-handrews-json-schema-validation-02#section-7.3.5[JSON
+Schema validation, section 7.3.5]).
+
+[[rule-json-cls-defaultGeometry-multipleGeometryProperties]]
+==== rule-json-cls-defaultGeometry-multipleGeometryProperties
+
+This conversion rule is typically used in case that a) a GeoJSON
+compliant encoding shall be created, and b) for application schemas with
+classes that have multiple geometry properties.
+
+With this rule, a geometry property is identified as default geometry by
+setting tagged value _defaultGeometry_ on the property to the value
+`true`. That property will then be encoded as a top-level "geometry"
+member. If multiple such properties exist (potentially inherited), none
+of them is selected as default geometry (because no informed choice can
+be made) and an error will be logged.
+
+[[rule-json-cls-defaultGeometry-singleGeometryProperty]]
+==== rule-json-cls-defaultGeometry-singleGeometryProperty
+
+This conversion rule is typically used in case that a) a GeoJSON
+compliant encoding shall be created, and b) for application schemas with
+classes that have at most one geometry property.
+
+With this rule, the geometry property of a class represents the default
+geometry, and is encoded as the top-level "geometry" member. If a class
+has multiple - potentially inherited - geometry properties with
+different names, none of them is selected as default geometry (because
+no informed choice can be made) and ShapeChange will log an error.
+
+[[rule-json-cls-identifierForTypeWithIdentity]]
+==== rule-json-cls-identifierForTypeWithIdentity
+
+With _rule-json-cls-identifierForTypeWithIdentity_, an identifier JSON
+member will be added to the JSON object that represents a type with
+identity (feature type or object type). The key and value type of that
+member can be configured using ShapeChange JSON Schema target
+parameters:
+
+* _xref:./JSON_Schema.adoc#objectIdentifierName[objectIdentifierName]_:
+"id" (the default) or any other suitable string that does not conflict
+with other member names);
+* _xref:./JSON_Schema.adoc#objectIdentifierType[objectIdentifierType]_:
+"string" (the default), "number", or "string, number";
+* _xref:./JSON_Schema.adoc#objectIdentifierRequired[objectIdentifierRequired]_:
+"false" (the default) or "true" is used to define if the property is
+optional or required.
+
+[[rule-json-cls-identifierStereotype]]
+==== rule-json-cls-identifierStereotype
+
+This conversion rule assumes that all types with identity (feature type
+or object type) have an attribute with stereotype \<<identifier>>
+(directly, or inherited from a supertype). That attribute is used to
+encode the identifier. The rule is typically used in conjunction with
+xref:./JSON_Schema.adoc#rule-json-cls-ignoreIdentifier[rule-json-cls-ignoreIdentifier],
+in order to detect identifier properties and not encode them (e.g.
+because a JSON Schema that applies to all types with identity already
+defines an identifier member).
+
+NOTE: If the maximum multiplicity of an \<<identifier>> attribute is
+greater than 1, ShapeChange will log an error.
+
+[[rule-json-cls-ignoreIdentifier]]
+==== rule-json-cls-ignoreIdentifier
+
+With this rule, the identifier of a type with identity (feature type or
+object type) will be encoded using an identifier member that is provided
+by a common base type (e.g. the "id" member of a GeoJSON Feature, to
+which a generalization relationship exists for a given feature type -
+see
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_).
+That means that no additional identifier property is created.
+_xref:./JSON_Schema.adoc#rule-json-cls-identifierForTypeWithIdentity[rule-json-cls-identifierForTypeWithIdentity]_
+is therefore overridden by
+_xref:./JSON_Schema.adoc#rule-json-cls-ignoreIdentifier[rule-json-cls-ignoreIdentifier]_.
+Also, all identifier properties that are identified by
+_xref:./JSON_Schema.adoc#rule-json-cls-identifierStereotype[rule-json-cls-identifierStereotype]_
+- if also included in the encoding rule - will simply be ignored when
+encoding the type with identity.
+
+[[rule-json-cls-name-as-anchor]]
+==== rule-json-cls-name-as-anchor
+
+With _rule-json-cls-name-as-anchor_, the name of a class is encoded as
+an "$anchor", which is added at the start of the schema definition of
+the class (within the definitions schema). Schema definitions that have
+an "$anchor" can be referenced using the plain text value of the anchor
+as fragment identifier, instead of using a more complex JSON Pointer.
+
+NOTE: The "$anchor" keyword was added in JSON Schema draft 2019-09. It
+replaces the somewhat ambiguous use of the "$id" keyword in JSON Schema
+draft 07 to define plain name fragment identifiers for subschemas.
+
+[[rule-json-cls-name-as-entityType]]
+==== rule-json-cls-name-as-entityType
+
+The rule adds another JSON member to the JSON object which represents
+the class (a feature, object, or data type) that is being converted. The
+name of the JSON member can be configured using the target parameter
+_xref:./JSON_Schema.adoc#entityTypeName[entityTypeName]_.
+The JSON member is required and string-valued. It should be used to
+encode the name of the type that is represented by the JSON object.
+
+An example for the benefit of encoding the type name in JSON objects is
+given in
+http://docs.opengeospatial.org/per/18-091r2.html#JSON_LD[chapter 6 of
+the OGC Testbed-14: Application Schemas and JSON Technologies
+Engineering Report]: Having a key within a JSON object with a string
+value that identifies the type of the object allows that object to be
+mapped to RDF. More specifically, the string value can be mapped to an
+IRI that identifies the type of an RDFS resource.
+
+There are also some cases in which
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
+is ignored or conditional:
+
+* To prevent the addition of unnecessary JSON members (here: because the
+JSON member would already be inherited), the rule is ignored for a type
+T if T is a subtype and
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
+already applies to one of its supertypes.
+* By default, the rule does not apply to unions, enumerations, and code
+lists. +
+However, if
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType-union[rule-json-cls-name-as-entityType-union]_
+is enabled together with
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_,
+then the latter also applies to unions.
+
+[[rule-json-cls-name-as-entityType-union]]
+==== rule-json-cls-name-as-entityType-union
+
+If this rule is enabled together with
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_,
+then the latter also applies to unions.
+
+NOTE: _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType-union[rule-json-cls-name-as-entityType-union]_
+has been implemented because with
+_xref:./JSON_Schema.adoc#rule-json-cls-union-propertyCount[rule-json-cls-union-propertyCount]_
+unions are converted to JSON objects. The
+xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[ontology
+target of ShapeChange] encodes a union as a class, with cardinality
+restrictions to ensure that only one option (defined by the union) is
+used. For further details, also see the
+http://docs.opengeospatial.org/per/16-020.html#rdf_cr_class_union[OGC
+Testbed-12 ShapeChange Engineering Report]. This is an argument for
+applying
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
+to unions, because it would support a JSON-LD based mapping to the union
+class in RDF/OWL.
+
+[[rule-json-cls-nestedProperties]]
+==== rule-json-cls-nestedProperties
+
+By default, the properties of a type with identity (feature type or
+object type) are converted to first-level properties of the resulting
+JSON object. In GeoJSON, feature properties are encoded within the
+GeoJSON "properties" member. Notable exceptions from that rule are the
+GeoJSON members "id", "geometry", and "bbox". In order to produce a JSON
+Schema that converts the properties of a type with identity to be
+encoded within a nested "properties" member - minus any properties that
+are mapped to the other aforementioned GeoJSON keys - the conversion
+rule _rule-json-cls-nestedProperties_ needs to be included in the
+encoding rule.
+
+[[rule-json-cls-union-propertyCount]]
+==== rule-json-cls-union-propertyCount
+
+With this rule, a \<<union>> is converted to the JSON Schema definition
+of a JSON object. Each union option is represented as an optional member
+of the JSON object. The choice between the options defined by the union
+is encoded using "maxProperties" = "minProperties" = 1. That is, the
+number of members that are allowed for the JSON object is restricted to
+exactly one.
+
+An `"additionalProperties": false` is used to prevent any undefined
+properties.
+
+[[rule-json-cls-union-typeDiscriminator]]
+==== rule-json-cls-union-typeDiscriminator
+
+With this rule, a \<<union>> is converted to a JSON Schema definition
+that represents a choice between the value types of the union
+properties.
+
+* If the value types are only simple, without a specific format
+definition, then the JSON Schema will only contain a "type" member, with
+an array of the simple types.
+* Otherwise, a "oneOf" member is added to the JSON Schema definition,
+with:
+** one "$ref" per non-simple type,
+** one "type" for all simple types without specific format, and
+** one "type" per simple type with specific format.
+
+[[rule-json-cls-valueTypeOptions]]
+==== rule-json-cls-valueTypeOptions
+
+This rule looks for tagged value _valueTypeOptions_ on a class (that is
+not a basic type, enumeration, or code list). If the tag exists and has
+a value, it defines which types are allowed as value type for a given
+UML property of the class. Note that this UML property can be directly
+defined on the class but also be inherited from a supertype. The
+property can also originally have been an association role that belonged
+to an association class. The conversion rule ensures that instead of the
+actual value type of the property, only one of the allowed types is
+encoded as type definition in the JSON Schema. The conversion also takes
+into account that the property may have been a role of an association
+class. The restriction to a set of allowed types uses an if-then-else
+construct, which depends on the presence of a type identifying member in
+property values, and thus _rule-json-cls-valueTypeOptions_ should always
+be used in combination
+with _rule-xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[json-cls-name-as-entityType]_.
+Note that value type restrictions (defined on a subtype) of inherited
+UML properties will result in these properties being explicitly defined
+in the JSON Schema definition of the subtype.
+
+NOTE: Value type options can be parsed from OCL constraints using
+transformation
+xref:../transformations/Constraint_Converter.adoc#rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion[rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion]
+of the Constraint Converter.
+
+[[rule-json-cls-virtualGeneralization]]
+==== rule-json-cls-virtualGeneralization
+
+It is often useful to encode all classes with a certain stereotype with
+a common base type. The generalization relationship to such a base type
+is often implied with the stereotype, for a given encoding. In GML, for
+example, the common base type for classes with stereotype
+\<<featureType>> is gml:AbstractFeature. Rather than explicitly modeling
+such a base type (e.g. _AnyFeature_ defined by ISO 19109), as well as
+explicitly modeling generalization relationships to the base type, the
+encoding rule typically takes care of adding that relationship to
+relevant schema types.
+
+This kind of virtual generalization is supported via
+_rule-json-cls-virtualGeneralization_. The rule adds generalization
+relationships to specific kinds of classes - if a) according ShapeChange
+JSON Schema target parameters have been set, and b) the class does not
+already have that generalization relationship via one of its supertypes:
+
+* feature type - configuration parameter
+xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForFeatureTypes[_baseJsonSchemaDefinitionForFeatureTypes_]
+* object type - configuration parameter
+xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForObjectTypes[_baseJsonSchemaDefinitionForObjectTypes_]
+* data type - configuration parameter
+xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForDataTypes[_baseJsonSchemaDefinitionForDataTypes_]
+
+The parameter value shall be a URI to reference the JSON Schema that
+defines the common base type. For example, in order for all feature
+types to use the GeoJSON Feature definition as common base, set
+`baseJsonSchemaDefinitionForFeatureTypes = https://geojson.org/schema/Feature.json`.
+
+NOTE: The parameters do not have a default value. If a parameter is not
+set or does not have a value, then _rule-json-cls-virtualGeneralization_
+will not have an effect for the kind of class (feature, object, or data
+type) for which the parameter applies.
+
+The virtual generalization relationship is implemented by converting the
+class to a JSON Schema that consists of an "allOf" with two subschemas:
+the first being a "$ref" with the URI defined by the target parameter,
+the second being the schema produced by applying the other conversion
+rules to the class (the only exception being
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-anchor[rule-json-cls-name-as-anchor]_,
+because the "$anchor" created by that rule is not encoded in the second
+subschema, but in the schema that contains the "allOf").
+
+[[rule-json-prop-derivedAsReadOnly]]
+==== rule-json-prop-derivedAsReadOnly
+
+With this rule, a UML property marked as derived will be encoded with
+`"readOnly": true`.
+
+[[rule-json-prop-initialValueAsDefault]]
+==== rule-json-prop-initialValueAsDefault
+
+With this rule, the JSON Schema definition of a UML attribute that has
+an initial value, is not owned by an enumeration or code list, and whose
+value type is mapped to "string", "number", or "boolean", will include
+the "default" annotation with that value.
+
+NOTE: The value of the annotation can have any JSON value type. The
+initial value is encoded accordingly: quoted, if the property type is
+"string", unquoted if the property type is "number", and true if the
+property type is "boolean" and the initial value is equal to, ignoring
+case, "true"; otherwise the value will be false. Theoretically, the
+default value can also be a JSON array or object, but that cannot be
+represented in UML and thus is not a relevant use case.
+
+[[rule-json-prop-readOnly]]
+==== rule-json-prop-readOnly
+
+With this rule, the JSON Schema definition of a UML property that is
+read only or fixed will include the "readOnly" annotation with JSON
+value true.
+
+[[rule-json-prop-voidable]]
+==== rule-json-prop-voidable
+
+With this rule, the JSON Schema of a UML property with stereotype
+\<<voidable>>, or with tagged value _nillable_ = true, is defined in a
+way that only allows either a null value or a(n array of) actual
+value(s).
+
+* If the UML property has maximum multiplicity 1, then a simple "type"
+restriction with value "null" is added to the type definition that is
+produced for the property.
+* Otherwise - the maximum multiplicity is greater than 1 - a choice
+(encoded using the "oneOf" keyword) between a "null" value and an array
+of actual values will be created.
+
+[[Rule_execution_priority_and_dependencies]]
+=== Rule execution priority and dependencies
+
+Some of the conversion rules supported by this target address the same
+conversion aspects. When conflicting conversion rules are included in
+the encoding rule, ShapeChange usually only executes one of them. This
+section documents the execution priorities and dependencies of rules
+that address the same conversion aspects.
+
+[[Code_lists]]
+==== Code lists
+
+The default behavior for encoding code lists is overridden whenever
+either
+xref:./JSON_Schema.adoc#rule-json-cls-codelist-link[rule-json-cls-codelist-link]
+or
+xref:./JSON_Schema.adoc#rule-json-cls-codelist-uri-format[rule-json-cls-codelist-uri-format]
+is in the encoding rule.
+
+These conversion rules are executed with the following priority:
+
+. xref:./JSON_Schema.adoc#rule-json-cls-codelist-uri-format[rule-json-cls-codelist-uri-format]
+. xref:./JSON_Schema.adoc#rule-json-cls-codelist-link[rule-json-cls-codelist-link]
+
+[[Identifier]]
+==== Identifier
+
+With
+xref:./JSON_Schema.adoc#rule-json-cls-identifierForTypeWithIdentity[rule-json-cls-identifierForTypeWithIdentity],
+an identifier member can be added to the JSON Schema representation of a
+type with identity (feature type or object type). That rule will be
+ignored if
+xref:./JSON_Schema.adoc#rule-json-cls-ignoreIdentifier[rule-json-cls-ignoreIdentifier]
+also applies to the type with identity.
+
+[[Union]]
+==== Union
+
+The rules for converting unions are executed with the following
+priority:
+
+* xref:./JSON_Schema.adoc#rule-json-cls-union-typeDiscriminator[rule-json-cls-union-typeDiscriminator]
+* xref:./JSON_Schema.adoc#rule-json-cls-union-propertyCount[rule-json-cls-union-propertyCount]
+
+[[Parameters]]
+=== Parameters
+
+This target supports the parameters defined in the following
+subsections.
+
+[[baseJsonSchemaDefinitionForDataTypes]]
+==== baseJsonSchemaDefinitionForDataTypes
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _none_
+
+Explanation: Reference to the JSON Schema definition which shall be
+added to a data type in order to represent an additional generalization
+relationship under
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_
+
+[[baseJsonSchemaDefinitionForFeatureTypes]]
+==== baseJsonSchemaDefinitionForFeatureTypes
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _none_
+
+Explanation: Reference to the JSON Schema definition which shall be
+added to a feature type in order to represent an additional
+generalization relationship under
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_
+
+[[baseJsonSchemaDefinitionForObjectTypes]]
+==== baseJsonSchemaDefinitionForObjectTypes
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _none_
+
+Explanation: Reference to the JSON Schema definition which shall be
+added to an object type in order to represent an additional
+generalization relationship under
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_
+
+[[byReferenceJsonSchemaDefinition]]
+==== byReferenceJsonSchemaDefinition
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _none_
+
+Explanation: References a JSON Schema definition which shall be used to
+encode the value of a UML property "by reference", i.e. somehow link to
+the actual value. That is relevant for cases in which tag
+_inlineOrByReference_ of the UML property (taking into account target
+parameter
+xref:./JSON_Schema.adoc#inlineOrByReferenceDefault[inlineOrByReferenceDefault])
+has value _byReference_ or _inlineOrByReference_. By setting this
+parameter, the default encoding for the "by reference" case - which is
+"type": "string", "format": "uri" - can be overridden.
+
+Applies to Rule(s): _none - default behavior_
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: *
+
+Explanation: The identifier of the default encoding rule governing the
+conversion to JSON Schema. To use a custom encoding rule defined in the
+configuration, simply provide the name of the custom encoding rule via
+this parameter.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[entityTypeName]]
+==== entityTypeName
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: "entityType"
+
+Explanation: The name of the JSON member to be added to a JSON object in
+order to encode the type represented by that object.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
+
+[[inlineOrByReferenceDefault]]
+==== inlineOrByReferenceDefault
+
+Required / Optional: optional
+
+Type: Enumeration, one of "inline", "byReference", "inlineOrByReference"
+
+Default Value: "byReference"
+
+Explanation: Defines the default value for tag _inlineOrByReference_ of
+a UML property, in case that tag is undefined or has an empty value for
+the property.
+
+Applies to Rule(s): _none - default behavior_
+
+[[jsonBaseUri]]
+==== jsonBaseUri
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: http://example.org/FIXME
+
+Explanation: The base URI, used to construct the value of the "$id"
+members of resulting JSON Schemas.
+
+NOTE: If the tagged value _jsonBaseUri_ of an application schema has a
+non empty value, then that value will be used as base URI for all JSON
+Schemas produced for the content of that application schema.
+
+Applies to Rule(s): _none - default behavior_
+
+[[jsonSchemaVersion]]
+==== jsonSchemaVersion
+
+Required / Optional: optional
+
+Type: Enumeration, one of "2019-09", "draft-07", "OpenApi30"
+
+Default Value: "2019-09"
+
+Explanation: Specifies the version of the resulting JSON Schemas.
+
+Applies to Rule(s): _none - default behavior_
+
+[[linkObjectUri]]
+==== linkObjectUri
+
+Required / Optional: optional
+
+Type: URL
+
+Default Value: _none_
+
+Explanation: Reference to the JSON Schema of the "Link" object.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-codelist-link[rule-json-cls-codelist-link]_
+
+[[objectIdentifierName]]
+==== objectIdentifierName
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: "id"
+
+Explanation: Name of the JSON member to be added to a JSON object that
+represents the type with identity.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-identifierForTypeWithIdentity[rule-json-cls-identifierForTypeWithIdentity]_
+
+[[objectIdentifierRequired]]
+==== objectIdentifierRequired
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: "false", if the new object identifier member shall not be
+required, else "true"
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-identifierForTypeWithIdentity[rule-json-cls-identifierForTypeWithIdentity]_
+
+[[objectIdentifierType]]
+==== objectIdentifierType
+
+Required / Optional: optional
+
+Type: String - one of "string", "number", or a (comma-separated)
+combination thereof
+
+Default Value: "string"
+
+Explanation: Value type of the JSON member to be added to a JSON object
+that represents the type with identity.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-identifierForTypeWithIdentity[rule-json-cls-identifierForTypeWithIdentity]_
+
+[[outputDirectory]]
+==== outputDirectory
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: <the current run directory>
+
+Explanation: The path to which the JSON Schema file(s) will be written.
+
+Applies to Rule(s): _none_ - this is a common target parameter
+
+[[prettyPrint]]
+==== prettyPrint
+
+Type: Boolean
+
+Default Value: true
+
+Explanation: True if the resulting json schemas shall be pretty printed,
+else false.
+
+Applies to Rule(s): _none_ – default behavior
+
+[[sortedOutput]]
+==== sortedOutput
+
+Type: String
+
+Default Value: "false"
+
+Explanation:
+
+* If "false", the types in a schema will be processed in random order.
+* If "true", the types will be processed alphabetically.
+* If "taggedValue=<tag>", the types will be processed in the order of
+the values of the tagged value with name "<tag>".
+
+Applies to Rule(s): _none_ - this is a common target parameter
+
+[[writeMapEntries]]
+==== writeMapEntries
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If set to "true", a map entry file will be written for each
+processed schema, containing a map entry for each encoded type from that
+schema.
+
+Applies to Rule(s): _none_ - this is a common target parameter
+
+[[Map_Entries]]
+== Map Entries
+
+<mapEntries> contain individual <MapEntry> elements, which for this
+target contain information for mapping specific types (classes) from the
+UML model to either JSON Schema simple types, or using references to
+specific JSON Schema definitions.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<mapEntries>
+ <MapEntry type="CharacterString" rule="*" targetType="string" param=""/>
+ <MapEntry type="URI" rule="*" targetType="string" param="keywords{format=uri}"/>
+ <MapEntry type="Boolean" rule="*" targetType="boolean" param=""/>
+ <MapEntry type="Integer" rule="*" targetType="integer" param=""/>
+ <MapEntry type="Real" rule="*" targetType="number" param=""/>
+ <MapEntry type="Measure" rule="*" targetType="number" param=""/>
+ <MapEntry type="DateTime" rule="*" targetType="string" param="keywords{format=date-time}"/>
+ <MapEntry type="GM_Point" rule="*" targetType="https://geojson.org/schema/Point.json" param="geometry"/>
+</mapEntries>
+----------
+
+A <MapEntry> element contains the attributes described in the following
+sections.
+
+NOTE: StandardMapEntries_JSON.xml defines standard mappings for a number
+of types of the ISO Harmonized Model. This file can be included in
+ShapeChange configuration files (via XInclude - see the configuration
+example). Additional XInclude files, or individual <MapEntry> elements
+added to the <mapEntries> section of the configuration file, may be used
+to customize the map entries to support additional pre-defined
+conceptual UML classes.
+
+[[type]]
+=== type
+
+Required / Optional: Required
+
+Explanation: The unqualified UML type/class name to be mapped. Should be
+unique within the model (if it is not unique, this can lead to
+unexpected results).
+
+[[rule]]
+=== rule
+
+Required / Optional: Required
+
+Explanation: The encoding rule to which this mapping applies. May be "*"
+to indicate that the mapping applies to all encoding rules.
+
+[[targetType]]
+=== targetType
+
+Required / Optional: Required
+
+Explanation: Name of a simple JSON Schema type (boolean, number,
+integer, or string), or a reference to a particular JSON Schema,
+typically expressed as a URL.
+
+[[param]]
+=== param
+
+Required / Optional: Optional
+
+Explanation: Defines one or more parameters for the mapping. If no
+parameter is provided (leaving the 'param' attribute empty) then the map
+entry contains a straightforward mapping.
+
+Each parameter has a name. A list of parameters is separated by commas.
+Each parameter can also have characteristics defined for it, providing
+even further information for the conversion. Characteristics for a
+parameter are provided within curly braces. A characteristic usually is
+provided by a key-value pair, with the key being the identification of
+the characteristic.
+
+Examples:
+
+* geometry
+* keywords{format=date}
+
+Supported parameters, their interpretation as well as characteristics
+are described in the following sections.
+
+[[Parameter_keywords]]
+==== Parameter: keywords
+
+Explanation: Indicates that the simple JSON type (boolean, number,
+integer, string) that is the target of the map entry has one or more
+restrictions defined by JSON Schema keywords. The following keywords are
+supported - they also represent the characteristics of the parameter:
+
+* for any simple JSON type: keyword _format_
+* for JSON type _string_: keywords _enum_, _const_, _pattern_,
+_maxLength_, _minLength_
+** NOTE: Complex regular expressions intended to be used as _pattern_
+may need to be base64 encoded, in order to avoid problems with syntax
+rules of the map entry parameter. For base64 encoded regular
+expressions, use the _patternBase64_ characteristic (instead of
+_pattern_).
+* for JSON types _integer_ and _number_: keywords _enum_, _const_,
+_multipleOf_, _maximum_, _minimum_, _exclusiveMaximum_,
+_exclusiveMinimum_
+
+[[Parameter_encodingInfos]]
+==== Parameter: encodingInfos
+
+Explanation: Provides additional information about the JSON encoding of
+the type, which is relevant for creating a JSON encoding that uses that
+type.
+
+Characteristics:
+
+* entityTypeMemberPath: The path to the JSON member that is used to
+encode the type name. Only used if the JSON encoding actually has such a
+member. Examples:
+** plain JSON encoding: "@type"
+** nested JSON encoding, e.g. GeoJSON encoding: "properties/@type"
+
+[[Parameter_geometry]]
+==== Parameter: geometry
+
+Explanation: Indicates that the map entry contains a mapping for a
+geometry type (specifically from ISO 19107). IMPORTANT: If geometry
+types are not identified via map entries containing this parameter then
+ShapeChange cannot determine geometry typed properties, which is
+relevant for default geometry encoding!
+
+Characteristics: _no specific characteristics are defined for this
+parameter_
+
+[[Parameter_ignoreForTypeFromSchemaSelectedForProcessing]]
+==== Parameter: ignoreForTypeFromSchemaSelectedForProcessing
+
+Explanation: Set this parameter on map entries for types from external
+schemas, whose type name is the same as one of the types from the
+schemas selected for processing. For example, the SWE Common 2.0 schema
+defines a type called 'Boolean' - which is the same name as a type from
+ISO 19103 ('Boolean'). If the parameter is set on a map entry for
+'Boolean', then the type from the schema selected for processing is
+still encoded and used - otherwise it would not be encoded and instead
+mapped as defined by the map entry.
+
+Characteristics: _no specific characteristics are defined for this
+parameter_
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled">
+ <targetParameter name="outputDirectory" value="results/json_schema/2019-09"/>
+ <targetParameter name="sortedOutput" value="true"/>
+ <targetParameter name="jsonBaseUri" value="https://example.org/baseuri"/>
+ <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+ <targetParameter name="entityTypeName" value="@type"/>
+ <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
+ <rules>
+  <EncodingRule name="myGeoJson" extends="defaultGeoJson">
+   <rule name="rule-json-cls-basictype"/>
+   <rule name="rule-json-cls-codelist-uri-format"/>
+   <rule name="rule-json-cls-name-as-entityType"/>
+   <rule name="rule-json-cls-union-propertyCount"/>
+   <rule name="rule-json-cls-valueTypeOptions"/>
+  </EncodingRule>
+ </rules>
+ <xi:include href="https://shapechange.net/resources/config/StandardMapEntries_JSON.xml"/>
+</Target>
+----------

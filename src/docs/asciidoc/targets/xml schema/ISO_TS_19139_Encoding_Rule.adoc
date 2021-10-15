@@ -1,0 +1,79 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[ISOTS_19139_Encoding_Rule]]
+= ISO/TS 19139 Encoding Rule
+
+[[Encoding_Rule_Identifier]]
+== Encoding Rule Identifier
+
+The ISO/TS 19139 encoding rule has the identifier "iso19139_2007".
+
+[[Conversion_Rules]]
+== Conversion Rules
+
+[[Overview]]
+=== Overview
+
+The following is a list of schema conversion rules that apply to the
+ISO/TS 19139 encoding rule. These are in addition to
+xref:./Conversion_Rule_Basics.adoc[the common conversion
+rules].
+
+[cols="1,3",options="header"]
+|===
+|Rule |Description
+
+|rule-xsd-all-naming-19139 |Use the naming strategy for schema
+components as specified by ISO/TS 19139
+
+|rule-xsd-cls-enum-object-element |Create object element for
+enumerations and code lists
+
+|rule-xsd-cls-enum-property-type |Create property type for enumerations
+and code lists
+
+|rule-xsd-cls-standard-19139-property-types |Reuse property types or
+create anonymous property types according to ISO/TS 19139
+
+|rule-xsd-cls-global-enumeration |Convert enumerations to global types
+|===
+
+[[rule-xsd-all-naming-19139]]
+=== rule-xsd-all-naming-19139
+
+Use the naming strategy for schema components as specified by ISO/TS
+19139
+
+[[rule-xsd-cls-enum-object-element]]
+=== rule-xsd-cls-enum-object-element
+
+Create object element for enumerations and code lists
+
+[[rule-xsd-cls-enum-property-type]]
+=== rule-xsd-cls-enum-property-type
+
+Create property type for enumerations and code lists
+
+[[rule-xsd-cls-standard-19139-property-types]]
+=== rule-xsd-cls-standard-19139-property-types
+
+Reuse property types or create anonymous property types according to
+ISO/TS 19139
+
+[[rule-xsd-cls-global-enumeration]]
+=== rule-xsd-cls-global-enumeration
+
+Convert enumerations to global types

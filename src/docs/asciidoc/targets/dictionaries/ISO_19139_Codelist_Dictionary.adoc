@@ -1,0 +1,314 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[ISO_19139_Codelist_Dictionary]]
+= ISO 19139 Codelist Dictionary
+
+[[Overview]]
+== Overview
+
+This target creates ISO 19139 codelist dictionaries for the code lists
+contained in an application schema. Depending upon the configuration
+options, either a gmx:CodeListDictionary or a gmx:ML_CodeListDictionary
+is created. The latter provides multi-lingual support.
+
+[[Description]]
+== Description
+
+This section explains how a codelist dictionary is constructed:
+
+* If parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#languages[_languages_]
+only has a single value, and that value is equal to the value of
+parameter
+_xref:./ISO_19139_Codelist_Dictionary.adoc#defaultLang[defaultLang],_
+then a gmx:CodeListDictionary is created – otherwise a
+gmx:ML_CodeListDictionary.
+** NOTE: If the intent is to create a non-multilingual dictionary, the
+two parameters can simply be omitted.
+* The parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#defaultLang[_defaultLang_]
+identifies the language in which the description of a dictionary or
+definition element is given. In a gmx:ML_CodeListDictionary,
+gmx:alternativeExpression elements are created for the additional
+language identifiers defined by the
+xref:./ISO_19139_Codelist_Dictionary.adoc#languages[_languages_]
+parameter__.__
+** Documentation in multiple languages can be provided by using tagged
+values as source of the _documentation_
+xref:../../get started/The_element_input.adoc#Descriptor_sources[descriptor].
+A code, for example, would then have multiple tagged values, one for
+each language in which documentation is available – like:
+*** documentation="Code XYZ defines …"@en
+*** documentation="Code XYZ definiert …"@de
+** If no documentation for the default language is available for a given
+model element, ShapeChange will instead use the documentation that is
+given (in the model) without language identifier, for example in the EA
+notes field, or as a tagged value like: documentation=Code XYZ defines …
+** For each additional language identifier, a corresponding
+xref:./ISO_19139_Codelist_Dictionary.adoc#localeRef_lang[locale
+ref parameter] (e.g. localeRef_en) must be added to the configuration,
+providing a reference to a gmd:PT_Locale element that describes the
+language.
+* A dictionary element has the following child elements:
+** gml:description - with value being the documentation of the code list
+** gml:identifier – with the code list name as value, and a @codeSpace
+attribute (whose value is created based upon an info URL – details
+explained further below)
+** gml:name – with value being the code list name
+** one or more code definition entries, one for each code defined by the
+code list as well as any of its direct and indirect supertypes
+* The gml:id of a dictionary element is the name of the code list.
+* A code definition has the following child elements:
+** gml:description - with value being the documentation of the code
+** gml:identifier – with the initial value of the code, if specified in
+the model, otherwise the name of the code, and a @codeSpace attribute
+(whose value is created based upon an info URL – details explained
+further below)
+** gml:name – with value being the code name
+* By default (and for backwards-compatibility), the gml:id of a code
+definition element is the model id of the code. However, if
+xref:./ISO_19139_Codelist_Dictionary.adoc#rule-cldml-prop-codeListAndCodeNameAsGmlId[_rule-cldml-prop-codeListAndCodeNameAsGmlId_]
+is enabled, then the gml:id is based on the name of the code list and
+the name of the code, leading to more meaningful references to code
+definitions (that contain the gml:id as fragment identifier). Note that
+all characters of the code name that match the regular expression
+[^a-zA-Z0-9_] are removed, to avoid issues if a code value contained
+special characters that are not allowed for a gml:id (which has type
+xs:ID).
+* The @codeSpace of dictionary and definition elements is determined as
+follows:
+** If the code list represented by the dictionary has tagged value
+_infoURL_, its value is used as the code space.
+** Otherwise, the value of configuration parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#infoURL[_infoURL_]
+is used. If that parameter is not set, the target namespace defined for
+the schema that owns the code list is used as info URL. Either way, the
+code space is then constructed by appending "/" + \{code list name} to
+the info URL.
+
+NOTE: Code lists that do not belong to the schemas selected for
+processing (which can be controlled by parameters _appSchemaName_,
+_appSchemaNameRegex_, and _appSchemaNamespaceRegex_ both in the input
+and the target configuration), have tagged value __asDictionary__=false,
+or define no codes are ignored, i.e. not encoded. Furthermore, if the
+configuration parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#clPackageName[_clPackageName_]
+is set, then code lists that are not direct children of a package with
+that name are ignored.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.ShapeChange.Target.Codelists.CodeListDictionariesML_
+
+[[Rules]]
+=== Rules
+
+An <EncodingRule> element defines an encoding rule.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule name="cldml_rule">
+ <rule name="rule-cldml-prop-codeNameAsGmlId"/> 
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used. The value of the target
+parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#defaultEncodingRule[_defaultEncodingRule_]
+must contain this name.
+
+Each <rule> references either a conversion rule or – possibly in the
+future – a xref:../../application schemas/UML_profile.adoc[requirement
+or recommendation] to be tested during the validation before the
+conversion process.
+
+The following sections list the rules that are supported by this target.
+
+[[rule-cldml-prop-codeListAndCodeNameAsGmlId]]
+==== rule-cldml-prop-codeListAndCodeNameAsGmlId
+
+(since v2.6.0)
+
+This rule results in @gml:id of a code definition entry being
+constructed using the name of the code list as well as the name of the
+code, rather than the model specific ID. Note that all characters of the
+code name that match the regular expression [^a-zA-Z0-9_] are removed,
+to avoid issues if a code value contained special characters that are
+not allowed for a gml:id (which has type xs:ID).
+
+This can be useful in cases where a URL is used to directly reference
+the code definition, since the URL is then more meaningful to a human.
+For example, one would get gml:id=YourCodeList_codeX instead of
+gml:id=_13_152.
+
+[[Target_Parameters]]
+=== Target Parameters
+
+[[clPackageName]]
+==== clPackageName
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: If this parameter is set, only code lists that are
+owned by a package with this name will be processed. The parameter
+supports use cases in which only a specific subset of the code lists
+within an application schema shall be encoded.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: The identifier of the default encoding rule governing
+the conversion to a code list dictionary. To use a custom encoding rule
+defined in the configuration, simply provide the name of the custom
+encoding rule via this parameter.
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[defaultLang]]
+==== defaultLang
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: "de"
+
++++Explanation+++: Specify the language that is considered as default.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[infoURL]]
+==== infoURL
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Default value for the @codeSpace attribute, to be
+used in case that the model element – a code attribute or code list
+class - does not specify the code space via a tagged value _infoURL_.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[languages]]
+==== languages
+
++++Required / Optional:+++ optional
+
++++Type+++: List of strings (separated by spaces)
+
++++Default Value+++: the value of parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#defaultLang[defaultLang]
+
++++Explanation+++: Provide the list of languages that shall be taken
+into account for creating the codelist dictionaries.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[localeRef_lang]]
+==== localeRef_\{lang}
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: none
+
++++Explanation+++: Path to the locale file for the language identified
+by the parameter suffix (e.g. English in case of localeRef_en). Specify
+one parameter for each language defined by parameter
+xref:./ISO_19139_Codelist_Dictionary.adoc#languages[_languages_],
+except for the default language (defined by parameter 'defaultLang').
+For example, if a multilingual dictionary shall be created, with German
+as the default language, and English as an additional language, you need
+to specify the configuration parameter 'localeRef_en'.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[noNewlineOmit]]
+==== noNewlineOmit
+
++++Required / Optional:+++ optional
+
++++Type+++: Boolean (true or false)
+
++++Default Value+++: false
+
++++Explanation+++: If set to true, new line characters in the
+documentation of a code list or code are not replaced by spaces.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[outputDirectory]]
+==== outputDirectory
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: <the current run directory>
+
++++Explanation+++: The path to which the XML files representing the
+dictionaries will be written. Because there may be a large number of
+such files, it is suggested that a unique directory be designated for
+this purpose.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<TargetXmlSchema
+ class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionariesML"
+ mode="enabled" inputs="INPUT">
+ <targetParameter name="outputDirectory" value="results/codeLists/CodeListDictionariesML"/>
+ <targetParameter name="sortedOutput" value="true"/>
+ <targetParameter name="infoURL" value="http://example.org/info"/>
+ <targetParameter name="defaultEncodingRule" value="myrule"/>
+ <rules>
+  <EncodingRule name="myrule">
+   <rule name="rule-cldml-prop-codeListAndCodeNameAsGmlId"/>
+  </EncodingRule>
+ </rules>
+ <xi:include href="https://shapechange.net/resources/config/StandardNamespaces.xml"/>
+</TargetXmlSchema>
+----------

@@ -1,0 +1,36 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+
+[[Contact]]
+= Contact
+
+If you have any feedback, send an e-mail to ShapeChange@interactive-instruments.de.
+
+In case you need support, interactive instruments also offers professional services related to ShapeChange on a time and materials basis.
+
+This website is maintained by:
+
+*interactive instruments Gesellschaft für Software-Entwicklung mbH*, Trierer Straße 70-72, 53115 Bonn, Germany 
+
+*Phone:* +49 228 91410 70
+
+*Managing Directors:* Remigius Koblenzer, Clemens Portele
+
+*Handelsregister:* Bonn HRB-Nr. 3872 
+
+*Umsatzsteuer-Identifikationsnummer (Vat ID) according to § 27a Umsatzsteuergesetz:* DE 122121189
+
+*Steuernummer:* 205/5725/0380

@@ -1,0 +1,732 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[ArcGIS_Workspace]]
+= ArcGIS Workspace
+
+This target converts an ISO 19109 application schema to an ArcGIS
+workspace document, which can be imported as schema to the various Esri
+Geodatabases using ArcGIS. This enables the use of ArcGIS in conjunction
+with ISO 19109 based application schema.
+
+The conversion supports flattened application schemas as well as – to
+the extent non-flattened modeling constructs are supported by the ArcGIS
+10.x geodatabase model – also more complex application schemas.
+
+NOTE: Application schemas do not contain information related to data
+capturing or portrayal of features. As a result, such aspects are out of
+scope and are not part of the conversion result. This information has to
+be added in ArcGIS.
+
+[[Workflow]]
+== Workflow
+
+This section documents the conversion workflow. The application schema
+is read and pre-processed by ShapeChange, and then converted to an
+ArcGIS workspace model. That model can then be opened in Enterprise
+Architect and from there exported to an ArcGIS workspace document (in
+XML format). Details on each of these steps are provided in the
+following subsections.
+
+NOTE: The ArcGIS workspace model is created within an EA repository.
+This requires execution of ShapeChange with 32bit Java. Furthermore,
+when creating the ArcGIS workspace, ShapeChange adds elements with
+stereotypes from the ArcGIS MDG technology. The MDG must be activated on
+the system where ShapeChange is executed, otherwise creating such
+elements may result in an exception (informing about an invalid type).
+
+For further information on the ArcGIS workspace model and the ArcGIS
+extension for Enterprise Architect, see
+http://www.sparxsystems.com/arcgis/
+
+NOTE: In order to successfully derive an ArcGIS workspace document from
+an application schema, it is important to understand the complete
+workflow, i.e. the necessary pre-processing as well as subsequent
+conversion process.
+
+[[Pre-Processing_through_Flattening]]
+=== Pre-Processing through Flattening
+
+Complex modeling constructs that are not supported by the ArcGIS 10.x
+geodatabase model can be removed using the
+xref:../../transformations/Flattener.adoc[Flattener]
+transformation. The sequence of applicable transformation procedures is
+documented on a separate page, which also includes an example
+configuration for the Flattener:
+xref:./Pre_Processing_through_Flattening.adoc[more
+information].
+
+[[Creating_the_ArcGIS_Workspace_UML_Model]]
+=== Creating the ArcGIS Workspace UML Model
+
+Once the application schema has been pre-processed, it can be converted
+to an ArcGIS workspace model using the ShapeChange ArcGISWorkspace
+target.
+
+The conversion of the various application schema elements into a model
+that complies with the ArcGIS workspace metamodel (which is used by the
+ArcGIS extension of Enterprise Architect) is described on a separate
+page:
+xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc[more
+information].
+
+[[Export_to_ArcGIS_Workspace_Document]]
+=== Export to ArcGIS Workspace Document
+
+Once the ArcGIS UML model has been created by ShapeChange, open it in
+Enterprise Architect.
+
+The ArcGIS extension in Enterprise Architect offers the following
+functions:
+
+* validate the model
+* set the coordinate system
+* export the model to an ArcGIS workspace (XML) document; this document
+can then be imported as schema to an Esri geodatabase
+** NOTE: With EA build 13.0.1308 the order in which the elements of a
+CodedValueDomain are exported is not valid according to the ESRI
+geodatabase XML Schema. This issue has been confirmed and will be
+corrected in a future build. A workaround is to correct the order using
+an XSL transformation.
+
+For further information on the Enterprise Architect ArcGIS extension,
+consult the help contents of Enterprise Architect.
+
+[[Configuration]]
+== Configuration
+
+[[Template_File]]
+=== Template File
+
+This target requires a template .eap file. Per default, the target
+retrieves the template from https://shapechange.net/resources/templates/
+However, if desired, another location (online or local file) can also be
+specified via a target configuration parameter. During execution, the
+target copies the template to the output location, and uses it to store
+the ArcGIS UML model contents that result from the conversion.
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace._
+
+[[Rules]]
+=== Rules
+
+An <EncodingRule> element defines an encoding rule.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule name="ArcGIS">
+  <rule name="rule-arcgis-prop-initialValueByAlias"/>
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used. The value of the target
+parameter
+xref:./ArcGIS_Workspace.adoc#defaultEncodingRule[defaultEncodingRule]
+must contain this name.
+
+The optional *extends* attribute (not shown in the example) of the
+<EncodingRule> element includes all rules from the referenced encoding
+rule in this encoding rule, too.
+
+NOTE: Currently, a pre-configured encoding rule does not exist for this
+target.
+
+Each *<rule>* references either a conversion rule or - possibly in the
+future - a xref:../../application schemas/UML_profile.adoc[requirement
+or recommendation] to be tested during the validation before the
+conversion process.
+
+The default behavior of this target is described in the workflow
+section, more specifically the section
+xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating
+the ArcGIS Workspace UML Model].
+
+The following rules are supported by this target.
+
+[[rule-arcgis-all-precision]]
+==== rule-arcgis-all-precision
+
+(since v2.4.0)
+
+NOTE: Until v2.3.0 this rule had the identifier
+rule-arcgis-prop-precision
+
+If this rule is enabled, then the precision of a \<<field>> with a range
+domain as type, or with a simple esri type can be set via the tagged
+value 'precision' (on the property from the conceptual schema that is
+converted to the \<<field>>; the tagged value must contain an integer
+value).
+
+If the rule is not enabled, or the tagged value 'precision' is not set,
+the default behavior applies, which is to set precision to:
+
+* 9 - for a \<<field>> with type esriFieldTypeInteger
+* 10 - for a \<<field>> with type esriFieldTypeDouble
+* 0 - for all other cases
+
+[[rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses]]
+==== rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses
+
+(since v2.4.0)
+
+Construct the base name of a relationship class from the short names of
+the source and target class, combined by an underscore. The short name
+of a class is given via the tagged value specified by parameter
+xref:./ArcGIS_Workspace.adoc#shortNameByTaggedValue[shortNameByTaggedValue].
+If no short name is specified, the original class name will be used as
+fallback. Note that the base name can be subject to additional
+modifications (such as normalization, addition of suffix to make the
+name unique, and clipping in case that the name exceeds the allowed
+length).
+
+[[rule-arcgis-all-removeUnusedCodedValueDomains]]
+==== rule-arcgis-all-removeUnusedCodedValueDomains
+
+(since v2.6.0)
+
+Removes any \<<CodedValueDomain>> from the ArcGIS workspace model that is
+not used as value type in any field of one of the feature or table types
+contained in the model.
+
+[[rule-arcgis-all-representTaggedValues]]
+==== rule-arcgis-all-representTaggedValues
+
+(since v2.6.0)
+
+Adds tagged values that are identified by the input parameter
+xref:../../get started/The_element_input.adoc#representTaggedValues[_representTaggedValues_]
+and which are present on application schema elements to the
+corresponding elements of the ArcGIS Workspace UML model (object
+classes, feature classes, relationship classes, attributes, association
+roles). This rule can be useful if additional tagged values that are not
+automatically written by ShapeChange are needed in an ArcGIS Workspace
+UML model.
+
+[[rule-arcgis-all-scale]]
+==== rule-arcgis-all-scale
+
+(since v2.4.0)
+
+NOTE: Until v2.3.0 this rule had the identifier rule-arcgis-prop-scale
+
+If this rule is enabled, then the scale of a \<<field>> with a range
+domain as type, or with a simple esri type can be set via the tagged
+value 'scale' (on the property from the conceptual schema that is
+converted to the \<<field>>; the tagged value must contain an integer
+value).
+
+If the rule is not enabled, or the tagged value 'scale' is not set, the
+default behavior applies, which is to set precision to:
+
+* 6 - for a \<<field>> with type esriFieldTypeDouble
+* 0 - for all other cases
+
+[[rule-arcgis-all-subtypes]]
+==== rule-arcgis-all-subtypes
+
+(since v2.6.0)
+
+Creates ArcGIS subtypes as documented
+xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc#ArcGIS_Subtypes[here].
+
+[[rule-arcgis-cls-identifierStereotype]]
+==== rule-arcgis-cls-identifierStereotype
+
+(since v2.4.0)
+
+Enables use of stereotype \<<identifier>> on class attributes. If an
+attribute with that stereotype belongs to a class, then it will be used
+as primary key (the OBJECTID field will still be generated).
+
+NOTE: Multiple \<<identifier>> attributes per class are not supported. In
+such a case, ShapeChange will log a warning and use only one of them as
+primary key. If the maximum multiplicity of an \<<identifier>> attribute
+is greater than 1, ShapeChange will log an error.
+
+WARNING: If the application schema contains an n:1 relationship between
+a type A and an abstract type B, ShapeChange will create relationship
+classes between A and all non-abstract subtypes of B (on any sublevel of
+the inheritance tree). However, even though multiple connector would be
+created to represent the relationship classes, they would all rely upon
+the same foreign key field that is added to A. The type of this field is
+defined by the type of the primary key field of B. Therefore, you must
+ensure that the primary key fields of the subtypes of B have the same
+type as the primary key field of B. Otherwise, the type of the foreign
+key field would not support referencing an object of type B or any of
+its subtypes!
+
+[[rule-arcgis-cls-hasM]]
+==== rule-arcgis-cls-hasM
+
+(since v2.3.0)
+
+If a feature type has the tagged value 'HasM' set to 'true', and the
+feature type is converted to an ArcGIS feature class (Point, Polyline,
+etc.), then with this rule enabled the ArcGIS feature class will have
+the tagged value 'HasM' set to 'true' (default is 'false').
+
+[[rule-arcgis-cls-hasZ]]
+==== rule-arcgis-cls-hasZ
+
+(since v2.3.0)
+
+If a feature type has the tagged value 'HasZ' set to 'true', and the
+feature type is converted to an ArcGIS feature class (Point, Polyline,
+etc.), then with this rule enabled the ArcGIS feature class will have
+the tagged value 'HasZ' set to 'true' (default is 'false').
+
+[[rule-arcgis-cls-rangeDomainFromTaggedValues]]
+==== rule-arcgis-cls-rangeDomainFromTaggedValues
+
+(since v2.3.0)
+
+Identifies range domains for class properties based upon the tagged
+values 'rangeMinimum' and 'rangeMaximum'. Each boundary is inclusive. If
+one of the tagged values is not provided, the default value for that
+boundary is used (default min: -1000000000, default max: 1000000000). If
+both tagged values are empty, a range domain is not created. This rule
+overrides the range domain parsed from an OCL constraint, if the tagged
+values also specify a range domain for that property.
+
+[[rule-arcgis-prop-attIndex]]
+==== rule-arcgis-prop-attIndex
+
+(since v2.5.0)
+
+If this rule is included, then for each \<<Field>> that represents a
+property from the conceptual model with tagged value _sqlUnique_ equal
+to (ignoring case) 'true' – but not for fields that participate in a
+relationship class, an \<<AttributeIndex>> is created in the element that
+owns the \<<Field>>. The name of the index is the name of the field with
+suffix "\_IDX". The index references the field via the tagged value
+"Fields". The tagged values _IsAscending_ and _IsUnique_ are set to
+true.
+
+NOTE: Whether or not an attribute index, or its specific property (like
+IsUnique), is actually supported depends on the geodatabase setup. For
+further details, see the ArcGIS help.
+
+[[rule-arcgis-prop-initialValue]]
+==== rule-arcgis-prop-initialValue
+
+(since v2.3.0)
+
+If this rule is enabled, then an initial value of an attribute from the
+conceptual schema will also be set as initial value of the \<<field>>
+that represents that attribute in the resulting ArcGIS workspace model.
+
+[[rule-arcgis-prop-initialValueByAlias]]
+==== rule-arcgis-prop-initialValueByAlias
+
+If this rule is enabled, the initial value for a \<<DomainCodedValue>>,
+which is an attribute of a \<<CodedValueDomain>> (that results from
+conversion of enumerations and code lists from the application schema,
+is taken from the alias of the respective enums and codes, rather than
+from the initial value defined in the application schema.
+
+[[rule-arcgis-prop-isNullable]]
+==== rule-arcgis-prop-isNullable
+
+(since v2.3.0)
+
+If this rule is enabled, then the tagged value IsNullable of non-system
+\<<field>>s in the ArcGIS workspace model are set as follows:
+
+* if the property from the conceptual schema is optional (minimum
+multiplicity < 1), voidable (stereotype \<<voidable>>), or nillable
+(tagged value 'nillable'='true') then it will be converted to a
+\<<field>> with 'IsNullable'='true'
+* otherwise 'IsNullable'='false'
+
+If this rule is not enabled, then the default behavior applies, which is
+to have 'IsNullable'='true' for all non-system \<<field>>s.
+
+[[rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType]]
+==== rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType
+
+(since v2.3.0)
+
+If this rule is enabled then the length of a property that has a code
+list or enumeration as value type is computed as the maximum name length
+from the codes/enums of the value type (if codes/enums are defined by
+that type). This rule has lower priority than
+xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType[rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType].
+If none of these rules apply, the length will be set to 0.
+
+[[rule-arcgis-prop-lengthFromTaggedValue]]
+==== rule-arcgis-prop-lengthFromTaggedValue
+
+(since v2.3.0)
+
+If this rule is enabled, ShapeChange will use the value of the tagged
+value 'size' (must be an integer) to populate the 'length' tagged value
+of the \<<field>> that will represent the property in the ArcGIS model.
+
+NOTE: Only applies to properties that are implemented as fields with
+type esriFieldTypeString. If the value is 0 or empty, unlimited length
+is assumed - unless an OCL constraint exists that restricts the length
+for the property. That also means that this rule has precedence over an
+OCL constraint: if the tagged value 'size' has an integer value > 1,
+then this value will be used as the length in the \<<field>>.
+
+Parameter(s):
+
+* xref:./ArcGIS_Workspace.adoc#nameOfTaggedValueToDetermineFieldLength[nameOfTaggedValueToDetermineFieldLength]
+
+[[rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType]]
+==== rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType
+
+(since v2.3.0)
+
+If this rule is enabled, then - for properties with a code list or
+enumeration as value type - ShapeChange will use the value of the tagged
+value 'size' (must be an integer) to populate the 'length' tagged value
+of the \<<field>> that will represent the property in the ArcGIS model.
+This rule has higher priority than
+xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType[rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType].
+If none of these rules apply, the length will be set to 0.
+
+Parameter(s):
+
+* xref:./ArcGIS_Workspace.adoc#nameOfTaggedValueToDetermineFieldLength[nameOfTaggedValueToDetermineFieldLength]
+
+[[rule-arcgis-prop-reflexiveRelationshipAsField]]
+==== rule-arcgis-prop-reflexiveRelationshipAsField
+
+(since v2.5.0)
+
+If this rule is included, then a reflexive relationship (a property
+whose type is the class that owns the property) is converted to a
+\<<Field>> with a field type suited for storing the ID of the referenced
+class (e.g. _esriFieldTypeInteger_ or _esriFieldTypeGUID_). The target
+parameter
+xref:./ArcGIS_Workspace.adoc#reflexiveRelationshipFieldSuffix[_reflexiveRelationshipFieldSuffix_]
+can be used to define a suffix that is added to the name of such a
+\<<Field>>. This field can be used to store the ID of the object that is
+the target of the reflexive relationship.
+
+NOTE: If the reflexive relationship property has max cardinality > 1,
+then this is not represented. ShapeChange will log a warning and convert
+the property to a single \<<Field>>.
+
+[[Parameters]]
+=== Parameters
+
+The <targetParameters> recognized for this target are described in the
+following sections.
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: The identifier of the default encoding rule governing the
+conversion to an ArcGIS Workspace UML model. To use a custom encoding
+rule defined in the configuration, simply provide the name of the custom
+encoding rule via this parameter.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[defaultLength]]
+==== defaultLength
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: Integer
+
+Default Value: 255
+
+Explanation: Default length to set in the 'length' tagged value of
+\<<field>>s that have a textual value, in case that the length is not
+specified otherwise.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[documentationNoValue]]
+==== documentationNoValue
+
+[#applyHomogeneousGeometriesOnSubtypes]#(since 2.0.2)#
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _the empty string_
+
+Explanation: If a descriptor is used in the documentation template, but
+has no value, this parameter will be used. See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[documentationTemplate]]
+==== documentationTemplate
+
+since (2.0.2)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: \[[definition]]
+
+Explanation: The template for the documentation that is placed in the
+notes field in the EA model. The patterns "[[_descriptor_]]" will be
+replaced by the value of the descriptor, or the value of
+xref:./ArcGIS_Workspace.adoc#documentationNoValue[documentationNoValue],
+if the descriptor has no value for the model element. See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[eaAuthor]]
+==== eaAuthor
+
+since (2.9.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Value for the field 'Author' of an EA element created while
+encoding the ArcGIS workspace model.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[eaStatus]]
+==== eaStatus
+
+since (2.9.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Value for the field 'Status' of an EA element created while
+encoding the ArcGIS workspace model.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[foreignKeySuffix]]
+==== foreignKeySuffix
+
+since (2.4.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: 'ID'
+
+Explanation:
+
+Suffix to append to the name of foreign keys.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[keepCaseOfRoleName]]
+==== keepCaseOfRoleName
+
+since (2.4.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation:
+
+If set to 'true', do not switch the first character of a target or
+source role name in a relationship class to lower case.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[maxNameLength]]
+==== maxNameLength
+
+Available for ShapeChange version: 2.3.0+
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: Integer
+
+Default Value: 30
+
+Explanation: Can be used to configure a different limit for the length
+of field, feature class, and table names. This can be useful if the
+deployment environment is known.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[nameOfTaggedValueToDetermineFieldLength]]
+==== nameOfTaggedValueToDetermineFieldLength
+
+Available for ShapeChange version: 2.3.0+
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: size
+
+Explanation: Can be used to configure a different name for the tagged
+value that provides the length of a \<<field>>.
+
+Applies to Rule(s):
+
+* xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromTaggedValue[rule-arcgis-prop-lengthFromTaggedValue]
+* xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType[rule-arcgis-prop-lengthFromTaggedValueForCodelistOrEnumerationValueType]
+
+[[outputDirectory]]
+==== outputDirectory
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: <the current run directory>
+
+Explanation: The path to the folder in which the resulting ArcGIS
+workspace (UML) model will be created.
+
+Applies to Rule(s): _none_ - default behavior
+
+[[reflexiveRelationshipFieldSuffix]]
+==== reflexiveRelationshipFieldSuffix
+
+(since v2.5.0)
+
++++Required / Optional:+++ optional
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ Define the suffix to add when encoding a reflexive
+relationship property as a \<<Field>>.
+
++++Applies to Rule(s):+++
+xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-reflexiveRelationshipAsField[rule-arcgis-prop-reflexiveRelationshipAsField]
+
+[[shortNameByTaggedValue]]
+==== shortNameByTaggedValue
+
+(since v2.4.0)
+
++++Type+++: String
+
++++Default Value+++: shortName
+
++++Explanation+++: Name of the tagged value that provides the short name
+for a model element, when used in constructing specific names of the
+ArcGIS workspace.
+
++++Applies to Rule(s)+++:
+xref:./ArcGIS_Workspace.adoc#rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses[rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses]
+
+[[valueRangeExcludedBoundaryDelta]]
+==== valueRangeExcludedBoundaryDelta
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: Double
+
+Default Value: 0.01
+
+Explanation: Delta to add to / subtract from a range limit in case that
+the lower and/or upper boundary comparison operator is not inclusive
+(more details can be found
+xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc#RangeDomain_from_OCL[here]).
+
+Applies to Rule(s): _none_ - default behavior
+
+[[workspaceTemplate]]
+==== workspaceTemplate
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value:
+https://shapechange.net/resources/templates/ArcGISWorkspace_template.eap
+
+Explanation: Path to the ArcGIS workspace UML model template file (can
+be local or an online resource).
+
+Applies to Rule(s): _none_ - default behavior
+
+[[Configuration_Example]]
+=== Configuration Example
+
+[source,xml,linenumbers]
+----------
+ <Target class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
+  inputs="flattenedModel" mode="enabled" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <targetParameter name="defaultLength" value="1024"/>
+  <targetParameter name="outputDirectory" value="output/ArcGISWorkspace/eap"/>
+  <targetParameter name="valueRangeExcludedBoundaryDelta" value="0.001"/>
+  <rules>
+    <EncodingRule name="ArcGIS">
+      <rule name="rule-arcgis-prop-initialValueByAlias"/>
+    </EncodingRule>
+  </rules>
+  <xi:include
+    href="https://shapechange.net/resources/config/StandardMapEntries_iso19103_ArcGISWorkspace.xml"/>
+</Target>
+----------

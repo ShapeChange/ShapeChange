@@ -1,0 +1,139 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Constraint_Loader]]
+= Constraint Loader
+
+[[Introduction]]
+== Introduction
+
+[red]#(Beta)#
+
+This transformation loads constraints from an external source and adds
+them to the model. More specifically: it adds constraints only to the
+schemas that have been selected for processing.
+
+NOTE: At the moment only Excel files are supported as source, and only
+SBVR constraints can be loaded. Support for OCL constraints is a future
+work item.
+
+[underline]#Background#
+
+Constraints on schema elements (e.g. on classes) are usually defined
+directly in the conceptual schema. However, in some situations
+constraints may need to be defined and maintained separate from the
+schema. One possible reason for this is that the constraints are not
+generally applicable, in other words they only apply to specific use
+cases. Examples of such constraints are AIXM business rules. In such a
+situation, constraints must be loaded into the schema on demand,
+depending upon the use case.
+
+[[Format_of_External_Sources_with_Constraint_Information]]
+== Format of External Sources with Constraint Information
+
+[[Excel_Workbook]]
+=== Excel Workbook
+
+Constraint information can be stored in an Excel workbook. The file type
+is expected to be .xlsx
+
+The format of the workbook must be as follows:
+
+* the constraints must be defined on a single sheet named "Constraints"
+(case is ignored)
+* row numbering must be continuous, and start with 1
+* row 1 contains the header information for the following rows
+* the following columns are of interest (case of column names is
+ignored):
+** "Name" (required) - contains the name of a constraint
+** "Text" (required) - contains the text of a constraint
+** "Comments" (optional) – describes the constraint
+** "Schema Package" (optional) – name of the package that contains the
+class the constraint is specified for (for cases in which classes with
+the same name can be found in multiple packages)
+** "Class" (optional) – name of the class the constraint is specified
+for; the name must be exactly as defined in the conceptual schema
+*** NOTE: It may appear strange that the class name is optional. The
+reason for this is that the constraint loader attempts to parse the name
+of the relevant class directly from the text. Class names stated in the
+sheet are given preference. If the name of the class that provides the
+context for a constraint cannot be found, or if the conceptual schema
+does not contain a class with that name, then a message is logged and
+the constraint is ignored. In general, it is recommended to explicitly
+state the name of the class to which a constraint applies in the Excel
+sheet.
+
+NOTE: In the future the transformation could be extended to be more
+lenient with respect to formatting of the Excel file. Aspects like
+column names could be made configurable, to support the preferences of a
+given community.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintLoader_.
+
+[[Parameters]]
+=== Parameters
+
+The following parameters are supported by this transformation.
+
+[cols="2,1,1,1,1,3"]
+|===
+|*_Parameter Name_* |*_Applies to rule_* |*_Required / Optional_*
+|*_Type_* |*_Default Value_* |*_Explanation_*
+
+|* constraintExcelFile* |(none – default behavior) |Optional |String |-
+|The file location of an Excel file with constraint information. The
+path is either absolute or relative to the execution folder of
+ShapeChange.The file name should include the file type ".xlsx". If it
+does not then ".xlsx" is automatically appended to the name before
+loading the file.If the parameter was not provided then the
+transformation would simply not load any constraints.
+
+| | | | | |
+
+|===
+
+[[Rules]]
+=== Rules
+
+At the moment no specific rules are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer
+  class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintLoader"
+  id="step2" input="step1" mode="enabled">
+  <parameters>
+    <ProcessParameter name="constraintExcelFile" value="some/path/constraints.xlsx"/>
+  </parameters>
+</Transformer>
+----------

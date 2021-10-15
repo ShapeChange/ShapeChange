@@ -1,0 +1,564 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[UML_to_RDFOWL_based_on_ISODIS_19150-2]]
+= UML to RDF/OWL (based on ISO/DIS 19150-2)
+
+[[Overview]]
+== Overview
+
+[red]#(NOTE: The target behavior documented on this page has been available up until
+and including to ShapeChange version 2.1.0)#
+
+http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/DIS
+19150-2] defines rules for mapping ISO geographic information UML models
+to OWL ontologies. This target derives an ontology representation from
+an application schema in UML based upon these rules, with a number of
+changes.
+
+When this target was implemented, the ISO standard was a Draft
+International Standard (DIS). A number of comments still had to be
+resolved. The final standard differs from the DIS version (for details,
+see Annex A of the _OGC Testbed 12
+http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+Report]_, OGC 16-020). As a result, this target is considered a draft.
+An updated version is available since ShapeChange v2.2.0. Its
+implementation is different to what is described on this page and not
+backwards compatible. It is documented
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[here].
+
+[[Summary_of_the_changes_and_extensions_to_ISODIS_19150-2_supported_by_this_target]]
+=== Summary of the changes and extensions to ISO/DIS 19150-2 supported by this target
+
+The table below provides a summary how additional conversion rules
+differ from the standard rules specified in ISO/DIS 19150-2.
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+|Sub-clause of ISO/DIS 19150-2 |Changes, extensions, limitations
+|Remarks
+
+|*6.2.2 Ontology Name* |change and extensions a|
+* Extension: If the conversion rule "rule-owl-pkg-app-schema-code" is
+active, the code for the application schema is used (tagged value
+"xmlns" specified by GML 3.2 / ISO 19136) instead of umlPackageName
+* Extension: sub-packages of an application schema package do not become
+separate ontologies, but are part of the application schema ontology, if
+conversion rule "rule-owl-pkg-singleOntologyPerSchema" is active
+* NOTE: The URIbase is set using the parameter of the same name
+
+|*6.2.3 RDF namespace* |- |
+
+|*6.2.4 Class name* |- |
+
+|*6.2.5 Datatype name* |- |
+
+|*6.2.6 Property name* |change a|
+* Change: The properties that become global properties are not
+automatically determined by the uniqueness of the property name, but
+explicitly controlled using the parameter "globalProperties". If "*" is
+used, all properties will be global. In case of multiple properties with
+the same name and conflicting annotations or ranges, the conflicts need
+to be resolved manually.
+
+|*6.2.7 Names for codelists* |extension a|
+* Extension: if the conversion rule "rule-owl-cls-codelist-external" is
+active, code lists are not converted. See also the comments on
+sub-clause 6.8.2.
+
+|*6.3 Package* |changes a|
+* Change: dc:source is a text (specified by parameter "source") as the
+rule in ISO/DIS 19150-2 is based on the assumption that the package is
+from the harmonized model, i.e. defined in a standard of ISO/TC 211.
+* Change: owl:versionInfo uses the version information in tagged value
+"version" instead of a date.
+
+|*6.4 Class* |changes and extension a|
+* Extension: if conversion rule "rule-owl-all-suppress-dc-source" is
+active, dc:source is omitted (as the source statement in the ontology
+applies, too)
+* Change: skos:notation is used for the class name, skos:prefLabel is
+used for an (human-readable) alias, if provided
+* Change: skos:scopeNote is provided for a description, if provided
+
+|*6.5 Abstract class* |- |
+
+|*6.6 Class stereotype* |change a|
+* Change: ISO/DIS 19150-2 includes stereotypes and tagged values in the
+ontology. In general, stereotypes and tagged values are UML-specific
+extension mechanisms. They should only be supported in schema conversion
+rules that map the values to naive RDFS/OWL constructs and carry
+relevant information. For most tags there is little or no apparent
+value. For example, there is no value in representing tagged values
+supporting the GML schema conversion rules in the ontology. Therefore,
+stereotypes and tagged values are in general suppressed.
+
+|*6.7 Attribute +
+7.6 GF_PropertyType* |changes, extensions and a
+limitations a|
+* The changes and extensions listed for sub-clause 6.4 apply, too.
+* Limitation: gcoDatatypes are not supported
+* Change: rdfs:domain is not provided for global properties
+* Extension: rdfs:range supports owl:unionOf for cases where multiple
+UML attributes are "merged" to a single, global RDF property, see
+comments on sub-clause 6.2.6.
+* Extension: Attributes may be implemented using other RDF vocabularies
+or suppressed (using MapEntry elements in the configuration with a
+param="property" or "propertyByValueType").
+* Extension: For ranges specified by types from the ISO Harmonized Model
+or other imported schemas, implementations may be specified in MapEntry
+elements in the configuration (param="datatype").
+
+|*6.8.1 Enumeration* |changes, extensions a|
+* The changes and extensions listed for sub-clause 6.4 apply, too.
+
+|*6.8.2 Codelist* |changes, extensions a|
+* The changes and extensions listed for sub-clause 6.4 apply, too.
+* Extension: If the conversion rule "rule-owl-cls-codelist-external" is
+active, code lists are not converted. This should be the normal case as
+usually code lists are managed outside of the application schemas. If no
+tagged value "codelist" or "vocabulary" is present, rdfs:Resource is
+used as the range, otherwise the resource identified by the URI.
+
+|*6.9 Union* |limitation a|
+* Limitation: Unions are represented by stub classes as the schema
+conversion rule for union data types in ISO/DIS 19150-2 is insufficient.
+It does not handle common cases where values are a mix of object or data
+types or the same value type is used by more than one option.
+
+|*6.10 Multiplicity* |extensions a|
+* Extension: If the conversion rule
+"rule-owl-prop-suppress-cardinality-restrictions" is active, cardinality
+restrictions are not included.
+* Extension: If the conversion rule
+"rule-owl-prop-suppress-allValuesFrom-restrictions" is active,
+range restrictions are not included in all cases when the value would be
+identical with the range information of the property.
+* Extension: If the conversion rule
+"rule-owl-prop-voidable-as-minCardinality0" is active and a property is
+voidable, there will be no minimum cardinality restriction.
+
+|*6.11.1 Generalization +
+7.9 GF_InheritanceRelation* |- |
+
+|*6.11.2 Association +
+7.7 GF_AssociationType* |changes, extensions and a
+limitations a|
+* The changes and extensions listed for sub-clause 6.7 apply, too.
+* Extension: If conversion rule
+"rule-owl-prop-suppress-asociation-names" is
+active, iso19150-2:associationName is not included.
+* Limitation: ISO/DIS 19150-2 does not provide rules for association
+classes.
+
+|*6.11.3 Aggregation +
+7.8 GF_AggregationType* |- |
+
+|*6.12 Constraint +
+7.10 GF_Constraint* |extension a|
+* Extension: Constraints are only added, if conversion rule
+"rule-owl-all-constraints" is active. Including OCL in an ontology is
+questionable. Probably the most reasonable way would be to include only
+the documentation of a constraint.
+
+|*6.13 Tagged value* |change a|
+* The change listed for sub-clause 6.6 applies, too.
+
+|*7.2 Rules for identification* |- |
+
+|*7.3 Rules for documentation* |changes, extensions a|
+* The changes and extensions listed for sub-clause 6.11.2 apply, too.
+
+|*7.4 Rules for integration* |- |
+
+|*7.5 GF_FeatureType* |changes, extensions a|
+* The changes and extensions listed for sub-clause 6.4 apply, too.
+* Extension: A sub-class predicate to gfm:AnyFeature is only added, if
+conversion rule "rule-owl-cls-19150-2-features" is active.
+* Extension: If conversion rule "rule-owl-cls-geosparql-features" is
+active, a sub-class predicate to geo:Feature from GeoSPARQL is added.
+
+| | |
+|===
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150._
+
+[[Parameters]]
+=== Parameters
+
+The <targetParameters> recognized for this target include the following:
+
+[width="100%",cols="2,1,1,1,4",options="header"]
+|===
+|_Parameter Name_ |_Required / Optional_ |_Type_ |_Default
+Value_ |_Explanation_
+
+|*outputDirectory* |Optional |String | <the current run directory> |The
+path to which the ontology file(s) will be written.
+
+|*defaultEncodingRule* |Optional |String |iso19150_2014 |The identifier
+of the default encoding rule governing the conversion into the ontology
+representation. This default value may be overridden by tagged values
+set on individual modeling elements.
+
+|*globalProperties* |Optional |Comma separated list of strings | - |List
+of property names. If the name of a model property equals one of the
+names in this list, the according property is represented in the
+ontology as a global one. No domain information is declared for a global
+property. If the list contains the value '*', then all properties will
+be represented as global properties.
+
+|*language* |Optional |String |en |The language code to be used for
+generating the ontology representation.
+
+|*ontologyName_TaggedValue_Name* |Optional |String |- (see explanation)
+a|
+Name of the tagged value which, if present on a package, defines the
+ontologyName (see 19150-2owl:ontologyName) of the package.The
+ontologyName is defined via the following rules, in descending priority:
+
+* If this target parameter (ontologyName_TaggedValue_Name) is set and an
+according tagged value is set for the package its value is used.
+* If the target parameter URIbase is set its value is used for
+constructing the ontologyName as per 19150-2owl:ontologyName.
+* Otherwise the targetNamespace of the package is used as URIbase.
+
+|*source* |Optional |String |FIXME a|
+Parameter relevant to identify the value for the dc:source that
+qualifies an ontology element. That value is computed according to the
+following instructions, in descending order:
+
+* if this target parameter sourceTaggedValueName is set and the model
+element has the according tagged value, its value is used
+* if this target parameter (source) is set then its value is used
+* otherwise "FIXME" is used
+
+|*sourceTaggedValueName* |Optional |String |- a|
+Name of the tagged value relevant to identify the value for the
+dc:source that qualifies an ontology element. That value is computed
+according to the following instructions, in descending order:
+
+* if this target parameter (sourceTaggedValueName) is set and the model
+element has the according tagged value, its value is used
+* if the target parameter source is set then its value is used
+* otherwise "FIXME" is used
+
+|*URIbase* |Optional |URI |- a|
+Defines the global URIbase for construction of the ontologyName (see
+19150-2owl:ontologyName).The ontologyName is defined via the following
+rules, in descending priority:
+
+* If the target parameter ontologyName_TaggedValue_Name is set and an
+according tagged value is set for the package its value is used.
+* If this target parameter (URIbase) is set its value is used for
+constructing the ontologyName as per 19150-2owl:ontologyName.
+* Otherwise the targetNamespace of the package is used as URIbase.
+
+| | | | |
+|===
+
+[[Encoding_Rules]]
+=== Encoding Rules
+
+An <EncodingRule> element defines an encoding rule.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule extends="iso19150_2014" name="myencodingrule">
+  <rule name="rule-owl-all-constraints"/>
+  <rule name="rule-owl-cls-geosparql-features"/>
+  <rule name="rule-owl-cls-19150-2-features"/>
+  <rule name="rule-owl-prop-voidable-as-minCardinality0"/>
+  <rule name="rule-owl-prop-suppress-cardinality-restrictions"/>
+  <rule name="rule-owl-prop-suppress-allValuesFrom-restrictions"/>
+  <rule name="rule-owl-all-suppress-dc-source"/>
+  <rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+  <rule name="rule-owl-cls-codelist-external"/>
+  <rule name="rule-owl-pkg-app-schema-code"/>
+  <rule name="rule-owl-prop-suppress-asociation-names"/>
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used in the defaultEncodingRule
+parameter or owlEncodingRule tagged values on specific model elements.
+
+The optional *extends* attribute of the <EncodingRule> element includes
+all rules from the referenced encoding rule in this encoding rule, too.
+
+Each *<rule>* references either a conversion rule or - possibly in the
+future - a xref:../../application schemas/UML_profile.adoc[requirement
+or recommendation] to be tested during the validation before the
+conversion process. The following rules are supported by this target:
+
+[cols="1,1,3",options="header"]
+|===
+|_Rule Name_ |_Required /Optional_ |_Explanation_
+
+|*rule-owl-pkg-singleOntologyPerSchema* |Optional |If this rule is
+enabled, ontologies will be created for selected schema, but not for all
+of their child packages.
+
+|*rule-owl-pkg-pathInOntologyName* |Optional | If this rule is enabled,
+ontology names will be constructed using the path of packages (usually
+from a leaf package to its main schema package). This rule changes
+ontology names only if the rule "rule-owl-pkg-singleOntologyPerSchema"
+is not in effect (because otherwise child packages will not be
+considered).
+
+|*rule-owl-all-constraints* |Optional | If this rule is included, the
+target will create constraint definitions. Constraints on properties
+(not for union properties) and classes are supported.
+
+|*rule-owl-cls-geosparql-features* |Optional | If this rule is included,
+each feature type definition gets a subClassOf declaration to the
+GeoSPARQL defined FeatureType class.
+
+|*rule-owl-cls-19150-2-features* |Optional | If this rule is included,
+each feature type definition gets a subClassOf declaration to the ISO
+19150-2 defined FeatureType class (which defines the according
+stereotype) as well as AnyFeature.
+
+|*rule-owl-cls-codelist-external* |Optional |If this rule is included,
+code lists are not represented as part of the RDF vocabulary and where
+available the vocabulary or codelist tagged value is used for the
+rdfs:range. If not set, owl:Class is used.
+
+|*rule-owl-prop-suppress-cardinality-restrictions* |Optional |If this
+rule is included, cardinality restrictions are not included in the
+ontology.
+
+|*rule-owl-prop-suppress-allValuesFrom-restrictions* |Optional |If this
+rule is included, allValuesFrom restrictions are not included in the
+ontology.
+
+|*rule-owl-prop-voidable-as-minCardinality0* |Optional |If this rule is
+included, minCardinality is set to 0 for voidable properties
+
+|*rule-owl-all-suppress-dc-source* |Optional | If this rule is included,
+dc:source in not included except on the ontology subject.
+
+|*rule-owl-prop-suppress-asociation-names* |Optional |If this rule is
+included, association names are not included in the ontology.
+
+|*rule-owl-pkg-app-schema-code* |Optional |__NOTE: This rule only
+applies if rule-owl-pkg-singleOntologyPerSchema is in effect.__ If this
+rule is included, the namespace abbreviation defined for an application
+schema package is used for constructing the ontology name of this
+package as well as the filename for that ontology - instead of the
+package name (normalized according to 19150-2owl:ontologyName).
+|===
+
+[[Map_Entries]]
+=== Map Entries
+
+<mapEntries> contain individual <MapEntry> elements, which represent
+mappings from UML types (classes) to corresponding ontology resources.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<mapEntries>
+  <MapEntry type="CharacterString" rule="myencodingrule" targetType="xsd:string" param="datatype"/>
+  <MapEntry type="GeographicalName" rule="myencodingrule" targetType="rdfs:label" param="propertyByValueType"/> 
+  <MapEntry type="geometry" rule="myencodingrule" targetType="geo:hasGeometry" param="property"/>
+  <MapEntry type="Any" rule="iso19150_2014" targetType="owl:Class" param="class"/>
+</mapEntries>
+----------
+
+A <MapEntry> element contains the following attributes:
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+|_Attribute Name_ |_Required / Optional_ |_Explanation_
+
+|*type* |Required |In general, the UML type/class name to be mapped. For
+map entries with param="property", however, the value is an attribute
+name or a role name.
+
+|*rule* |Required |The encoding rule to which this mapping applies. May
+be "*" to indicate that the mapping applies to all encoding rules.
+
+|*targetType* |Optional |The identifier of an RDF class or property to
+which the *type* will be mapped. NOTE: The value is expected to be given
+as a QName, with the namespace prefix matching the namespace
+abbreviation of a namespace declared in the configuration (see next
+section).
+
+|*param* |Optional a|
+A parameter for the mapping. Allowed values and their interpretation are
+as follows:
+
+* class - the target type represents an OWL class
+* datatype - the target type represents an RDFS data type
+* property - the target type represents an OWL property; it may be left
+empty to indicate that the property should be suppressed in the ontology
+* propertyByValueType - the target type represents an OWL property (all
+properties of a certain value type are mapped to a fixed RDF property)
+
+|===
+
+The file
+https://shapechange.net/resources/config/StandardMapEntries-owl.xml[StandardMapEntries-owl.xml]
+defines mappings for a number of types and properties of the ISO
+Harmonized Model and OGC standards. It can be included in ShapeChange
+configuration files (via XInclude). Additional XInclude files, or
+individual <MapEntry> elements added to the <mapEntries> section of the
+configuration file, may be used to customize the map entries to support
+additional pre-defined conceptual UML classes, encoding rules, and
+existing ontologies.
+
+[[Namespaces]]
+=== Namespaces
+
+A <Namespace> element defines a namespace and its properties.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<namespaces>
+ <Namespace nsabr="geo" ns="http://www.opengis.net/ont/geosparql#" location="http://www.opengis.net/ont/geosparql"/>
+</namespaces>
+----------
+
+The attributes for <Namespace> are as follows:
+
+[cols=",,,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|*ns* |Required |- |The full namespace of an ontology.
+
+|*nsabr* |Required |- |The namespace abbreviation.
+
+|*location* |Optional |- |The location of the ontology document.
+|===
+
+The file
+https://shapechange.net/resources/config/StandardNamespaces-owl.xml[StandardNamespaces-owl.xml]
+contains a series of standard namespace definitions for the derivation
+of an ontology representation. This file can be included (via XInclude)
+in configuration files.
+
+[[Stereotype_Mappings]]
+=== Stereotype Mappings
+
+According to ISO 19150-2, the ontology representation of a class (from
+the application schema) with a specific stereotype shall include an
+rdfs:subClassOf declaration, referencing the identifier of the
+ontological definition of that stereotype. Therefore, the mapping
+between a stereotype used in the model and this identifier must be
+declared in the configuration.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<stereotypeMappings>
+ <StereotypeMapping wellknown="FeatureType" mapsTo="http://def.isotc211.org/iso19150-2/2012/base#FeatureType"/>
+</stereotypeMappings>
+----------
+
+The attributes for <StereotypeMapping> are as follows:
+
+[cols=",,,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|*wellknown* |Required |- |Well-known stereotype (see
+xref:../../application schemas/UML_profile.adoc#Stereotypes[here] for
+further information).
+
+|*mapsTo* |Required |- |Identifier of the ontological defintion of the
+stereotype.
+|===
+
+The file
+https://shapechange.net/resources/config/StandardStereotypeMappings-owl.xml[StandardStereotypeMappings-owl.xml]
+contains a series of standard stereotype mappings. This file can be
+included (via XInclude) in configuration files.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<TargetOwl class="de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150" mode="enabled">
+  <targetParameter name="outputDirectory" value="examples/rdf/inspire"/>
+  <targetParameter name="defaultEncodingRule" value="owltest"/>
+  <targetParameter name="URIbase" value="http://example.com/ont/inspire"/>
+  <targetParameter name="source"
+    value="INSPIRE application schemas, Revision 4618, derived according to ISO/DIS 19150-2 with several modification using ShapeChange."/>
+  <targetParameter name="globalProperties" value="*"/>
+  <rules>
+    <EncodingRule extends="iso19150_2014" name="owltest">
+      <rule name="rule-owl-all-constraints"/>
+      <rule name="rule-owl-cls-geosparql-features"/>
+      <rule name="rule-owl-cls-19150-2-features"/>
+      <rule name="rule-owl-prop-voidable-as-minCardinality0"/>
+      <rule name="rule-owl-prop-suppress-cardinality-restrictions"/>
+      <rule name="rule-owl-prop-suppress-allValuesFrom-restrictions"/>
+      <rule name="rule-owl-all-suppress-dc-source"/>
+      <rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+      <rule name="rule-owl-cls-codelist-external"/>
+      <rule name="rule-owl-pkg-app-schema-code"/>
+      <rule name="rule-owl-prop-suppress-asociation-names"/>
+    </EncodingRule>
+  </rules>
+  <xi:include href="https://shapechange.net/resources/config/StandardStereotypeMappings-owl.xml"/>
+  <xi:include href="https://shapechange.net/resources/config/StandardNamespaces-owl.xml"/>
+  <xi:include href="https://shapechange.net/resources/config/StandardMapEntries-owl.xml"/>
+  <namespaces>
+    <Namespace location="http://example.com/ont/inspire/common"
+      ns="http://example.com/ont/inspire/common#" nsabr="common"/>
+  </namespaces>
+  <mapEntries>
+    <MapEntry param="datatype" rule="owltest" targetType="xsd:string"
+      type="LocalisedCharacterString"/>
+    <MapEntry param="datatype" rule="owltest" targetType="xsd:string" type="PT_FreeText"/>
+    <MapEntry param="datatype" rule="owltest" targetType="xsd:anyURI" type="URL"/>
+  </mapEntries>
+  <mapEntries>
+    <MapEntry param="propertyByValueType" rule="owltest" targetType="rdfs:label"
+      type="GeographicalName"/>
+  </mapEntries>
+  <mapEntries>
+    <MapEntry param="property" rule="owltest" targetType="" type="inspireId"/>
+    <MapEntry param="property" rule="owltest" targetType="prov:generatedAtTime"
+      type="beginLifespanVersion"/>
+    <MapEntry param="property" rule="owltest" targetType="prov:invalidatedAtTime"
+      type="endLifespanVersion"/>
+    <MapEntry param="property" rule="owltest" targetType="common:validFrom" type="validFrom"/>
+    <MapEntry param="property" rule="owltest" targetType="common:validTo" type="validTo"/>
+    <MapEntry param="property" rule="owltest" targetType="geo:hasGeometry" type="geometry"/>
+    <MapEntry param="property" rule="owltest" targetType="rdfs:label" type="label"/>
+    <MapEntry param="property" rule="owltest" targetType="rdfs:label" type="name"/>
+    <MapEntry param="property" rule="owltest" targetType="rdf:value" type="value"/>
+  </mapEntries>
+</TargetOwl>
+----------

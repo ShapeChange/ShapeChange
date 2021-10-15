@@ -1,0 +1,195 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Release_Notes]]
+= Release Notes
+
+This page provides information on the ShapeChange releases. An overview
+is provided first, followed by a list of detailed notes for each
+release. The list of currently known issues is available on
+https://github.com/ShapeChange/ShapeChange/issues[GitHub].
+
+[[Overview]]
+== Overview
+
+The following table lists the official releases of ShapeChange together
+with additional information including dependencies.
+
+[cols=",,,,,",]
+|===
+|ShapeChange Release Version |Java Version(s) |Tested EA Version(s) NOTE
+A) |EA API included in distribution NOTE B) |Saxon JAR used C) |Comments
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.10.0/ShapeChange-2.10.0.zip[2.10.0]
+|Java 11 |EA 15.2 |EA 15.2.1554 |Saxon-HE-10.2.jar |
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.9.1/ShapeChange-2.9.1.zip[2.9.1]
+|Java 11 |EA 14.1 |EA 14.1.1428 |Saxon-HE-9.9.1-6.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.9.0/ShapeChange-2.9.0.zip[2.9.0]
+|Java 11 |EA 14.1 |EA 14.1.1428 |Saxon-HE-9.9.1-6.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.8.0/ShapeChange-2.8.0.zip[2.8.0]
+|Java 1.8 |EA 14.1 |EA 14.1.1428 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.7.0/ShapeChange-2.7.0.zip[2.7.0]
+|Java 1.8 |EA 13.5 |EA 13.5.1351 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.6.0/ShapeChange-2.6.0.zip[2.6.0]
+|Java 1.8 |EA 13.5 |EA 13.5.1351 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.5.1/ShapeChange-2.5.1.zip[2.5.1]
+|Java 1.8 |EA 13.5 |EA 13.5.1351 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.5.0/ShapeChange-2.5.0.zip[2.5.0]
+|Java 1.8 |EA 13.5 |EA 13.5.1351 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.4.0/ShapeChange-2.4.0.zip[2.4.0]
+|Java 1.8 |EA 13.5 |EA 13.5.1351 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.3.0/ShapeChange-2.3.0.zip[2.3.0]
+|Java 1.6-1.8 |EA 13.0 |EA 12.0.1214 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.2.0/ShapeChange-2.2.0.zip[2.2.0]
+|Java 1.6-1.8 |EA 12.1 |EA 12.0.1214 |Saxon-HE-9.5.1-1.jar | Execution
+of the
+xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[UML
+to RDF/OWL target (based on ISO/IS 19150-2)] requires Java 8 or higher
+(tested with Java 8).
+
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.1.0/ShapeChange-2.1.0.zip[2.1.0]
+|Java 1.6-1.8 |EA 12.0 |EA 12.0.1214 |Saxon-HE-9.5.1-1.jar | 
+
+|https://shapechange.net/resources/dist/de/interactive_instruments/ShapeChange/ShapeChange/2.0.1/ShapeChange-2.0.1.zip[2.0.1]
+|Java 1.6-1.8 |EA 11.0 |EA 8.0 (?) |Saxon-HE-9.5.1-1.jar |In this
+version of ShapeChange, execution of the ArcGIS target requires Java 1.6
+or 1.7.
+
+|https://shapechange.net/resources/de/interactive_instruments/ShapeChange/ShapeChange/2.0.0/ShapeChange-2.0.0.zip[2.0.0]
+|Java 1.6-1.7 |EA 11.0 |EA 8.0 (?) |Saxon-HE-9.5.1-1.jar | 
+|===
+
+* NOTE A) This field specifies the versions of EA with which the given
+ShapeChange release has been developed and tested. The release will in
+most cases also work with other versions of EA (especially: versions
+prior to the specified version), because the EA API as well as the
+interfaces used by ShapeChange are often - but not always - backwards
+compatible. Versions of EA prior to 7.5 should not be used.
+* NOTE B) If you are using a different version of EA and experience
+issues when executing ShapeChange, you can try exchanging the eaapi.jar
+in the "lib" folder with the one provided by your version of EA (the
+.jar file can be found in "\{EA installation directory}/Java API"). Make
+sure to rename your eaapi.jar to the one you wish to replace, otherwise
+ShapeChange-internal links to the jar (especially in the manifest of the
+ShapeChange JAR file) may be broken.
+* NOTE C) Identifies the version of the Saxon HE jar that is used by the
+ShapeChange release. If you plan to create
+xref:../targets/feature catalogue/Feature_Catalogue.adoc[feature catalogues]
+or to apply
+xref:../targets/Output_Targets.adoc#Apply_XSL_Transformation[XSL
+transformations] to output files and would like to use Saxon as XSLT
+processor, then download that version of the Saxon HE jar from the
+https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE[official maven
+repository] and copy it to the lib folder of your ShapeChange
+distribution.
+
+[[Changelog]]
+== Changelog
+
+**Since v2.5.0, a log with all changes is available in our
+https://github.com/ShapeChange/ShapeChange/blob/master/CHANGELOG.md[GitHub
+repository].**
+
+Up until ShapeChange v2.4.0, the changelog was manually created and published:
+
+* ShapeChange 2.4.0 (22.11.2017)
+** Overview
+*** The list of changes in this milestone (enhancements, fixed bugs, etc.)
+is available at https://github.com/ShapeChange/ShapeChange/issues?utf8=%E2%9C%93&q=is%3Aissue%20milestone%3A%222.4.0%22%20[this link].
+*** You may also want to review the https://shapechange.net/?s=2.4.0&submit=Go[search results] for "2.4.0" on shapechange.net.
+**  Future work
+*** Enhance the SQL DDL target to create a database model in an EA repository, using the UML Data Modeling Profile.
+* ShapeChange 2.3.0 (17.01.2017)
+**  Overview
+*** The list of changes in this milestone (enhancements, fixed bugs, etc.) is available at https://github.com/ShapeChange/ShapeChange/issues?utf8=%E2%9C%93&q=is%3Aissue%20milestone%3A%222.3.0%22%20[this link].
+**  Future work
+*** Updates to SQL DDL target
+* ShapeChange 2.2.0 (09.11.2016)
+**  Overview
+*** Compute differences between two versions of an application schema and document them using HTML (xref:../targets/feature catalogue/Application_Schema_Differences.adoc[link]).
+*** UML diagrams can now be added to frame-based HTML feature catalogues (xref:../targets/feature catalogue/Feature_Catalogue.adoc#Inclusion_of_UML_Diagrams[link])
+*** Updated ontology target (based on ISO/IS 19150) (xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[link])
+*** Added mechanism to semantically validate a ShapeChange configuration file (xref:./Validation_of_the_Configuration.adoc#Semantic_Validation[link])
+*** Model transformations now validate constraints (e.g. OCL) (xref:../transformations/Common_Transformer_Functionality.adoc#Parsing_and_Validating_Constraints[link])
+*** New transformation for association classes (xref:../transformations/Association_Class_Mapper.adoc[link])
+*** New XSD encoding rule to allow absence of codelist codes when transforming OCL constraints that refer to actual code values (xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed[link])
+*** Several bugfixes
+**  Known issues
+*** Unit testing of creating a docx feature catalogue that includes UML diagrams is disabled because the name and size of images created via the Enterprise Architect API are not stable.
+**  Future work
+*** Updates to ArcGIS target
+*** Updates to SQL DDL target
+* ShapeChange 2.1.0 (02.03.2016)
+**  Overview
+*** Support for multiple stereotypes and multiple values per tag (tagged
+values / stereotype attributes)
+**** NOTE: not all targets support this capability, by default the stereotype or value is used in these cases
+*** The derivation of metadata about model elements, e.g. aliases/definition/description/codes/etc has been formalised (xref:./The_element_input.adoc#Descriptor_sources[input descriptors])
+**** Support for ISO 19109:2015 has been added, too, including multi-lingual support
+*** New output target: Replication XML Schema - xref:../targets/Replication_XML_Schema.adoc
+**** NOTE: This target is still marked as work in progress
+*** ArcGIS Workspace target supports Java 8, but relies on the Java API provided by EA 12
+*** Migration of code repository to https://github.com/ShapeChange[GitHub]
+**** Factored out GSIP model implementation
+*** Several bugfixes
+** Known issues
+*** Unit testing of creating a docx feature catalogue that includes UML diagrams is disabled because the name and size of images created via the Enterprise Architect API are not stable.
+** Future work
+*** Model diff as an HTML report
+*** Inclusion of diagrams in frame-based HTML feature catalogues
+*** Revision of ontology and JSON targets
+* ShapeChange 2.0.1 (02.06.2015)
+** Overview
+*** This release contains a number of bug fixes and updates. Several xref:../transformations/Transformations.adoc[transformations] as well as another target (xref:../targets/fol to schematron/First_Order_Logic_FOL_to_Schematron.adoc[First Order Logic 2 Schematron]) have been added as well.
+**  Known issues
+*** Same as for 2.0.0 release
+*** In addition:
+**** ArcGIS Workspace target: the target currently does not work correctly with Java 8; the next release will support Java 8 but will rely on the Java API provided by EA 12
+** Beta (ongoing testing)
+*** Transformations:
+**** xref:../transformations/AIXM_Schema_Merger.adoc[AIXM Schema Merger]
+**** xref:../transformations/Constraint_Loader.adoc[Constraint Loader]
+**** xref:../transformations/First_Order_Logic_Constraint_Parser.adoc[First Order Logic Constraint Parser]
+*** Targets:
+**** xref:../targets/SQL_DDL.adoc[SQL DDL]
+**** xref:../targets/arcgis/ArcGIS_Workspace.adoc[ArcGIS Workspace]
+**** xref:../targets/fol to schematron/First_Order_Logic_FOL_to_Schematron.adoc[First Order Logic 2 Schematron]
+**  Future work
+*** Same as for 2.0.0 release
+* ShapeChange 2.0.0 (26.01.2015)
+** Overview
+*** Since the last release ShapeChange has been continuously extended to support a number of additional xref:../targets/Output_Targets.adoc[output targets] as well as other capabilities important for model-driven implementations, especially model xref:../transformations/Transformations.adoc[transformations].
+** Known issues
+*** Unit testing of creating a docx feature catalogue that includes UML diagrams is disabled because the name and size of images created via the Enterprise Architect API are not stable.
+*** Unit testing of the Profiler transformation is disabled because of an issue not yet fully understood (profiling result is correct, but the generated feature catalogue files do not always 100% match the reference files).
+** Known bugs
+*** The test scripts (test.bat, test.sh) still use the '-SNAPSHOT' suffix in the name of the ShapeChange jar file. The correct file name to use in the script is ShapeChange-2.0.0.jar. This will be fixed in the next release. In the meantime, you can manually update the file name in your local copy of the test script.
+**  Beta (ongoing testing)
+*** xref:../targets/SQL_DDL.adoc[SQL DDL target]
+*** xref:../targets/arcgis/ArcGIS_Workspace.adoc[ArcGIS Workspace target]
+**  Future work
+*** Unit tests for the ontology target
+*** Unit tests for INSPIRE encoding rule
+*** Unit tests for Schematron

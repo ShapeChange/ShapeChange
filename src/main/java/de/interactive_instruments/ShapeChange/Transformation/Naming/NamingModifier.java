@@ -79,7 +79,7 @@ public class NamingModifier implements Transformer, MessageSource {
      * 
      * Applies to rule {@value #RULE_TRF_ADD_SUFFIX}.
      * 
-     * The parameter is optional - the default value is: {@value #DEFAULT_SUFFIX}.
+     * The parameter is optional - the default value is: "_".
      */
     public static final String PARAM_SUFFIX = "suffix";
 

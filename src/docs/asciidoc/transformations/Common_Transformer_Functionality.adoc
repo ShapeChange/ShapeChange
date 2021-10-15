@@ -1,0 +1,371 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Common_Transformer_Functionality]]
+= Common Transformer Functionality
+
+The execution of a transformer (e.g. identity and profiler
+transformation) can include invocation of common pre- and/or
+postprocessing functionality. A transformer may also explicitly define
+the schemas that it processes.
+
+The following sections describe which common functionality is available
+and define how to configure it.
+
+[[Preprocessing]]
+== Preprocessing
+
+Preprocessing functionality is executed on a model right before the
+transformer specific processing (e.g. profiling) is invoked.
+
+Currently no specific common preprocessing functionality is available.
+
+[[Postprocessing]]
+== Postprocessing
+
+Postprocessing functionality is executed on a model right after the
+transformer specific processing (e.g. profiling) has been completed.
+
+[[Setting_Tagged_Values]]
+=== Setting Tagged Values
+
+[[Setting_Tagged_Values_Overview]]
+==== Overview
+
+This function supports setting and re-setting of tagged values for model
+elements after a transformation.
+
+Filter instructions support the identification of model elements for
+which a tagged value is to be (re-)set.
+
+It is possible to add a tagged value to a model element without
+providing an actual value in the configuration. In that case ShapeChange
+determines if the tagged value already exists. If so, the existing value
+is kept. Otherwise the tagged value is initialized with the empty
+string. If the configuration contains a value for the tagged value, it
+is set.
+
+[[Setting_Tagged_Values_Configuration]]
+==== Configuration
+
+In order to configure which tagged values to set after a specific
+transformer has been completed, add a <taggedValues> element as child to
+the <Transformer> element in the ShapeChangeConfiguration. Within the
+<taggedValues> element, add one or more <TaggedValue> elements, with the
+information items described in the following sections.
+
+[[Name]]
+===== Name
+
+Type: string
+
+Explanation: Name of the tagged value to (re-)set.
+
+Required / optional: required
+
+Default value: _none_
+
+[[Value]]
+===== Value
+
+Type: string
+
+Explanation: Value of the tagged value.
+
+Required / optional: optional
+
+Default value: _none_
+
+[[Model_element_filter_criteria]]
+===== Model element filter criteria
+
+The attributes described in the following sections represent filter
+criteria to select relevant model elements. The filter criteria are
+connected by an implicit AND. If all filters evaluate to true, the model
+element is a relevant one, i.e. in this case the <TaggedValue> element
+applies to it.
+
+NOTE: Only model elements from the schemas selected for processing are
+considered. Furthermore, non-navigable properties are ignored.
+
+[[Model_element_name]]
+====== Model element name
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the name of a given model element matches the regular
+expression, this filter criterium evaluates to true.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Model_element_type]]
+====== Model element type
+
+Type: string – one of:
+
+* Association
+* Class
+* Package
+* Property
+* Attribute
+* AssociationRole
+
+Explanation: If the model element is of the stated type, this filter
+criterium evaluates to true.
+
+NOTE: Using 'Property', the filter will evaluate to true for both
+attributes and association roles.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Model_element_stereotype]]
+====== Model element stereotype
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If one of the stereotypes of a given model element matches
+the regular expression, this filter criterium evaluates to true.
+
+NOTE: Stereotypes are recognized via their well-known form only, not via
+their aliases (see
+xref:../application schemas/UML_profile.adoc#Stereotypes[ShapeChange
+Stereotypes] for further information). The regular expression must be
+defined accordingly. Also note that this filter criterium does not
+support a combined check of multiple stereotypes (e.g. to ensure that a
+model element has both stereotype A and B).
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Model_element_owner_name]]
+====== Model element owner name
+
+(since v2.4.0)
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the name of the owner of the given model element matches
+the regular expression, this filter criterium evaluates to true.
+
+The filter only applies to model elements that (can) have an owner:
+
+* The owner of a property is the class to which the property belongs.
+* The owner of class is the package that contains it.
+* The owner of a package is the package that contains it.
+
+If a model element has no owner (the element is an association or root
+package), the filter automatically evaluates to true.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Model_element_owner_stereotype]]
+====== Model element owner stereotype
+
+(since v2.11.0)
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If a stereotype of the owner of the given model element
+matches the regular expression, this filter criterium evaluates to true.
+
+The filter only applies to model elements that (can) have an owner:
+
+* The owner of a property is the class to which the property belongs.
+* The owner of class is the package that contains it.
+* The owner of a package is the package that contains it.
+
+If a model element has no owner (the element is an association or root
+package), the filter automatically evaluates to true.
+
+NOTE: Stereotypes are recognized via their well-known form only, not via
+their aliases (see
+xref:../application schemas/UML_profile.adoc#Stereotypes[ShapeChange
+Stereotypes] for further information). The regular expression must be
+defined accordingly. Also note that this filter criterium does not
+support a combined check of multiple stereotypes (e.g. to ensure that a
+model element has both stereotype A and B).
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Property_value_type_stereotype]]
+====== Property value type stereotype
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the given model element is a property and one of the
+stereotypes of the value type of the property matches the regular
+expression, this filter criterium evaluates to true. If the model
+element is not a property, the filter automatically evaluates to true.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Application_schema_name]]
+====== Application schema name
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the name of the application schema that a given model
+element belongs to matches the regular expression, this filter criterium
+evaluates to true. This criterium is useful in case that processing
+shall only be applied to model elements within a specific application
+schema.
+
+NOTE: If the model element type is association, then the application
+schema name filter will be matched if the name of the application schema
+of (at least) one of the classes at the association ends or - if it
+exists - the association class matches the regular expression.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
+[[Setting_Tagged_Values_Example]]
+==== Example
+
+Setting of the following tagged values adds information about the DGIWG
+Spatial Profile implemented by the MyAppSchema application schema to the
+model. More specifically, the tagged values are set on the package with
+(normalized) stereotype "application schema" and name "MyAppSchema".
+
+[source,xml,linenumbers]
+----------
+<taggedValues>
+ <TaggedValue name="dgiwgComplianceLevel" value="L1_3D" modelElementStereotype="(?i:application schema)" modelElementName="MyAppSchema"/>
+ <TaggedValue name="dgiwgGMLProfileSchema" value="http://schemas.dgiwg.org/gml/3.2/spatial/1.0/3dGeometry.xsd" modelElementStereotype="(?i:application schema)" modelElementName="MyAppSchema"/>
+</taggedValues>
+----------
+
+[[Setting_Model_Generation_Date_and_Time]]
+=== Setting Model Generation Date and Time
+
+[[Setting_Model_Generation_Date_and_Time-Overview]]
+==== Overview
+
+The time that a model has been transformed by ShapeChange can be added
+to the model.
+
+More specifically, ShapeChange adds the "generationDateTime" tagged
+value for each selected application schema (selection can be controlled
+via parameters on the <input> configuration element, e.g. the paramter
+appSchemaName - see the
+xref:../get started/The_element_input.adoc["input" element
+documentation] for further information). The value is a time instant in
+UTC with the format: yyyy-MM-dd'T'HH:mm:ss'Z'.
+
+[[Setting_Model_Generation_Date_and_Time-Configuration]]
+==== Configuration
+
+In order to configure this functionality, simply add a
+<ProcessParameter> element to the configuration of a transformer, with
+the attribute "name" set to "setGenerationDateTimeTaggedValue" and the
+attribute "value" set to "true".
+
+[[Setting_Model_Generation_Date_and_Time-Example]]
+==== Example
+
+[source,xml,linenumbers]
+----------
+<parameters>
+    <ProcessParameter name="setGenerationDateTimeTaggedValue" value="true"/>
+</parameters>
+----------
+
+[[Parsing_and_Validating_Constraints]]
+=== Parsing and Validating Constraints
+
+(since v2.2.0)
+
+A model transformation (for example profiling) can modify the model in
+such a way that constraints - especially OCL and FOL constraints - are
+no longer valid. By default, ShapeChange parses and validates
+constraints when postprocessing a transformed model.
+
+Invalid constraints are converted into simple text constraints, so that
+processing can proceed. However, warnings in the log will identify
+invalid constraints (together with the reason why they are invalid). The
+user can then either modify the input model (e.g. constraint
+definitions), the transformations (e.g. profiling), or the output (if
+there were only minor issues).
+
+Parsing and validating constraints of a transformed model can help
+prevent errors.
+
+However, the functionality can also be skipped by including
+_rule-trf-all-postprocess-skip-constraint-validation_ in the rules of a
+particular transformation. This can be useful if constraints of
+transformed models are irrelevant for target processing (i.e., the
+derivation of the final output).
+
+(since v2.10.0)
+
+By default, the ShapeChange OCL parser does not support navigating
+across non-navigable association roles, which is an optional feature
+according to the OCL standard. By setting the value of the
+_navigatingNonNavigableAssociationsWhenParsingOcl_ parameter to true,
+navigation across non-navigable association roles while parsing OCL
+during a transformation - or when an internal copy of the input model is
+created for the transformation - is enabled.
+
+[[Selecting_the_Schemas_to_Process]]
+== Selecting the Schemas to Process
+
+(since v2.6.0)
+
+When processing a model, the default behavior of ShapeChange is to
+process all schemas contained in that model. The typical use case,
+however, is that a specific (set of) application schema(s) shall be
+processed, and that other schemas - like the ISO schemas – merely
+provide type definitions. The following configuration parameters are
+used to select the set of schemas to process:
+xref:../get started/The_element_input.adoc#appSchemaName[_appSchemaName_],
+xref:../get started/The_element_input.adoc#appSchemaNameRegex[_appSchemaNameRegex_],
+and
+xref:../get started/The_element_input.adoc#appSchemaNamespaceRegex[_appSchemaNamespaceRegex_].
+They are typically set in the input configuration, and that is the
+default place for ShapeChange to look for them. However, a transformer
+configuration can also define one or more of these parameters. If it
+does, then ShapeChange will use the parameters from the transformer
+configuration, rather than the input configuration, to select the
+schemas to be processed by the transformer.

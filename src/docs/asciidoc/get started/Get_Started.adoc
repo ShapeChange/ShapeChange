@@ -1,0 +1,100 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+:source-highlighter: pygments
+
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+
+[[Get_Started]]
+= Get Started
+
+To start using ShapeChange, follow these steps:
+
+[width="100%",cols="1,9"]
+|===
+|1 |Verify that you are using the *Java Runtime Environment 11* or later.
+
+|2
+|#TODO - where to publish future releases?# https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.10.0/ShapeChange-2.10.0.zip[Download ShapeChange (all platforms; version 2.10.0 04 November 2020)] xref:./Release_Notes.adoc[Release Notes]
+
+|3 |*Unpack the ZIP archive*. An overview of the contents of the archive can be found xref:./Distribution_contents.adoc[here]. Use a path without whitespace in filenames as the XSLT processor currently used by ShapeChange cannot handle such path names properly.
+
+|4 a|
+If you plan to process Enterprise Architect models, then the steps to do so depend on the version of Java you'd like to use. If you have a 64bit machine, then we recommend using 64bit Java.
+
+* 64bit Java:
+** Copy the file SSJavaCOM64.dll located in _<EA installation folder>/Java API_ to <__Windows folder>/System32 (on a 64-bit machine).__
+* 32 bit Java:
+** Copy the file SSJavaCom.dll located in _<EA installation folder>/Java API_ to <__Windows folder>/System32__ (on a 32-bit machine) or to
+<__Windows folder>/SysWOW64__ (on a 64-bit machine).
+
+NOTE: If you are searching for a 32bit JDK, take a look at the JDKs from https://adoptium.net/[Adoptium]. They provide 32bit OpenJDK for Java 8, 11, and later.
+
+The latest version of ShapeChange has been tested with the 64bit OpenJDK 11 from Adoptium (more precisely: its predecessor AdoptOpenJDK).
+
+|5 |If you plan to create
+xref:../targets/feature catalogue/Feature_Catalogue.adoc[feature catalogues] or to apply
+xref:../targets/Output_Targets.adoc#Apply_XSL_Transformation[XSL transformations] to output files and would like to use Saxon as XSLT processor, then download the Saxon HE jar from the https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE[official maven repository]. Each release of ShapeChange uses a specific version of Saxon HE. The table in the xref:./Release_Notes.adoc#Overview[Release Notes] indicates which version is needed for the ShapeChange release that you are using. Copy the Saxon HE jar to the lib folder of your ShapeChange distribution.
+|===
+
+*ShapeChange is now ready to be used.*
+
+To test the installation, open a shell / DOS box and make the unzipped folder your current directory. Execute
+
+#TODO - reference resources on GitHub?#
+
+_java -jar ShapeChange-2.10.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testXMI.xml_
+
+You should now see the following information message:
+
+_I Application schema found, package name: TestSchema, target namespace: https://shapechange.net/test_
+
+After the execution is complete, you will find
+
+* Log messages are written to _test/xmi/log.xml_
+* The GML application schema has been created as _test/xmi/INPUT/test.xsd_
+* The HTML feature catalogue has been created as _test/xmi/INPUT/test.html_
+
+To test the access to Enterprise Architect models (note that this test requires Enterprise Architect and can be executed only on Windows), execute
+
+#TODO - reference resources on GitHub?#
+
+_java -jar ShapeChange-2.10.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testEA.xml_
+
+You should see the same results as in the XMI test, except that the results are written into the folder _test/ea_.
+
+#TODO - reference resources on GitHub?#
+
+Sample reference results can be found at https://shapechange.net/resources/test/xmi/[https://shapechange.net/resources/test/xmi] and https://shapechange.net/resources/test/ea/[https://shapechange.net/resources/test/ea].
+
+Configurations for the use of ShapeChange are made available on the xref:./Examples.adoc[examples page].
+
+More information about xref:./Executing_ShapeChange.adoc[executing] and xref:./Configuration.adoc[configuring] ShapeChange is in the linked subpages.
+
+If you notice errors when executing the tests, have a look at some of the xref:./Typical_problems.adoc[typical problems] in setting up ShapeChange.

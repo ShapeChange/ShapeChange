@@ -1,0 +1,53 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Ontology]]
+= Ontology
+
+[[Overview]]
+== Overview
+
+ShapeChange can create an ontology representation in RDF/OWL of an
+application schema in UML.  OWL (Web Ontology Language) is a series of
+knowledge representation languages for describing
+ontologies-relationships among individuals and classes.
+
+Currently, two ShapeChange targets exist for the creation of an ontology
+representation. They are described briefly in the following sections,
+which also link to the detailed documentation for each target.
+
+[[UML_to_RDFOWL_based_on_the_OWS-8_encoding_rule]]
+== UML to RDF/OWL (based on the OWS-8 encoding rule)
+
+This target is the initial implementation of the process for deriving an
+ontology representation from an application schema in UML. It is based
+on schema conversion rules that were developed during the OGC Web
+Service testbed OWS-8.
+
+xref:./UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[More
+information]
+
+[[UML_to_RDFOWL_based_on_ISO_19150-2]]
+== UML to RDF/OWL (based on ISO 19150-2)
+
+This target derives an ontology representation from an application
+schema in UML based on the conversion rules defined by ISO 19150-2.
+
+* The implementation based on ISO/IS 19150-2 is documented
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[here].
+It is available since ShapeChange v2.2.0.
+* The implementation based on ISO/DIS 19150-2 is documented
+xref:./UML_to_RDF_OWL_based_on_ISO_DIS_19150_2.adoc[here]. It
+is available up until, and including to, ShapeChange v2.1.0.

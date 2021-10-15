@@ -1,0 +1,86 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Association_Class_Mapper]]
+= Association Class Mapper
+
+[[Introduction]]
+== Introduction
+
+(since v2.2.0)
+
+This transformation maps an association class into a semantically
+equivalent class and set of associations, as defined by the OGC GML 3.3
+standard.
+
+[[Role_Tagging]]
+=== Role Tagging
+
+(since v2.4.0)
+
+Subsequent processing steps may want to identify association roles that
+originate from mapping an association class, for example to avoid
+encoding a role that represents a self reference to a feature type (see
+for example
+xref:./Flattener.adoc#rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin[_rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin_]).
+
+To support this, tagged values are added to the roles of the two new
+associations between a former association class and the other two
+classes. Tagged value _fromAssociationClassTo_ is added to the roles
+that belong to the association class, while tagged value
+_toAssociationClassFrom_ is added to the roles that belong to the other
+classes. The value of these tagged values on the roles of one of the two
+associations is the name of the other class, i.e. the class that is not
+the former association class.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper_
+
+[[Parameters]]
+=== Parameters
+
+_None at present_
+
+[[Rules]]
+=== Rules
+
+_None at present_
+
+[[Map_Entries]]
+=== Map Entries
+
+_None at present_
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+_None at present_
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer id="TRF1" class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper"/>
+----------

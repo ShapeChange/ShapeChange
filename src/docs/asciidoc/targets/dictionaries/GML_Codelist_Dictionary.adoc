@@ -1,0 +1,293 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[GML_Codelist_Dictionary]]
+= GML Codelist Dictionary
+
+[[Overview]]
+== Overview
+
+The GML Codelist Dictionary target is a tool for encoding GML
+dictionaries for the code lists and – if so configured – the
+enumerations of an application schema.
+
+ISO 19103 defines a code list as an "open enumeration", one which is
+extensible under certain circumstances.  It is therefore convenient to
+be able to produce listings of the allowable values for these
+enumerations.
+
+ISO 19136:2007 (the GML 3.2.1 specification), clause 15, provides a GML
+Dictionary schema for capturing and disseminating definitions in an
+easily-accessible and nestable format.
+
+The following rules apply:
+
+* A code list will be processed *except* if its "asDictionary" tagged
+value is set to _false_.
+* An enumeration will be processed *if* parameter
+xref:./GML_Codelist_Dictionary.adoc#enumerations[_enumerations_]
+is set to true.
+* Each code list / enumeration will be output as its own XML file with a
+top-level <gml:Dictionary> element.
+* The filename will be the name of the UML class with an ".xml"
+extension.
+* For each <gml:Dictionary>:
+** The gml:id attribute of the dictionary will be the name of the code
+list / enumeration.
+** The value of the <gml:description> element of the dictionary is
+derived via the parameters
+xref:./GML_Codelist_Dictionary.adoc#documentationTemplate[_documentationTemplate_]
+and
+xref:./GML_Codelist_Dictionary.adoc#documentationNoValue[_documentationNoValue_],
+using the descriptors of the code list / enumeration. If the value is
+empty, no <gml:description> is created.
+** The value of the <gml:identifier> element of the dictionary will be
+the first non-empty value retrieved via one of the sources specified by
+parameter
+xref:./GML_Codelist_Dictionary.adoc#identifier[_identifier_].
+The @codeSpace of that element will be the target namespace of the
+schema to which the code list / enumeration belongs.
+** A <gml:name> element will be added to the dictionary for each
+non-empty source specified by parameter
+xref:./GML_Codelist_Dictionary.adoc#names[_names_].
+** A <gml:Definition> will be added to the dictionary for each of the
+codes/enumerants defined for the code list / enumeration - as well as
+its direct and indirect supertypes.
+* For each <gml:Definition>:
+** The gml:id attribute of the definition will have the value retrieved
+from the source specified by parameter
+xref:./GML_Codelist_Dictionary.adoc#gmlid[_gmlid_]
+(prepending an underscore if the value does not start with a letter or
+an underscore). If no value was found, then the value of gml:id will be
+an underscore followed by the model id of the code / enumerant.
+** The value of the <gml:description> element of the definition is
+derived via the parameters
+xref:./GML_Codelist_Dictionary.adoc#documentationTemplate[_documentationTemplate_]
+and
+xref:./GML_Codelist_Dictionary.adoc#documentationNoValue[_documentationNoValue_],
+using the descriptors of the code / enumerant. If the value is empty, no
+<gml:description> is created.
+** The value of the <gml:identifier> element of the definition will be
+the first non-empty value retrieved via one of the sources specified by
+parameter
+xref:./GML_Codelist_Dictionary.adoc#identifier[_identifier_].
+The @codeSpace of that element will be looked up in the following order:
+*** tagged value codeList
+*** tagged value infoURL
+*** the target namespace of the schema to which the code list /
+enumeration belongs, followed by "/" and the name of the code list /
+enumeration
+** A <gml:name> element will be added to the definition for each
+non-empty source specified by parameter
+xref:./GML_Codelist_Dictionary.adoc#names[_names_].
+
+ 
+
+[[Configuration]]
+== Configuration
+
+The <Target> element definition for the GML Codelist Dictionary target
+is a standard ShapeChange target.  An example is given below:
+
+[source,xml,linenumbers]
+----------
+<Target
+class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries"
+mode="enabled">
+<targetParameter name="outputDirectory" value="results/dictionaries" />
+</Target>
+----------
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries._
+
+[[Target_Parameters]]
+=== Target Parameters
+
+[[documentationNoValue]]
+==== documentationNoValue
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "" _(i.e., the empty string)_
+
++++Explanation+++: If a descriptor is used in the documentation template
+(see the according
+xref:./GML_Codelist_Dictionary.adoc#documentationTemplate[parameter]),
+but has no value, this parameter will be used. See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[documentationTemplate]]
+==== documentationTemplate
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: \[[definition]]
+
++++Explanation+++:
+
+The template for the documentation that is generated for
+<gml:description> elements. The patterns "\[[descriptor]]" will be
+replaced by the value of the descriptor, or the value of parameter
+xref:./GML_Codelist_Dictionary.adoc#documentationNoValue[_documentationNoValue_],
+if the descriptor has no value for the model element. A single quote
+will be escaped with two single quotes. See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[enumerations]]
+==== enumerations
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: If set to true, enumerations are also encoded as
+dictionaries.
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[gmlid]]
+==== gmlid
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: id
+
++++Explanation+++: Specify the source for the value of the gml:id
+attribute of a <gml:Definition> element, which corresponds to a code /
+enumerant. Valid sources are:
+
+* "id" – corresponding to the id of the code / enumerant
+* "name" – corresponding to the name of the code / enumerant
+* "alias" – corresponding to the alias name of the code / enumerant
+* "initialValue" – corresponding to the initial value that may be
+defined for the code / enumerant
+* A tagged value of the code / enumerant, identified via "@" + \{tagged
+value name}
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[identifier]]
+==== identifier
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: List of Strings (comma-separated)
+
++++Default Value+++: name
+
++++Explanation+++: Specify the sources for the value of the
+<gml:identifier> element that is created for <gml:Dictionary> and
+<gml:Definition> elements. The elements correspond to a code list /
+enumeration and its codes / enumerants. The first non-empty value
+retrieved from the sources will be chosen. Valid sources are:
+
+* "id" – corresponding to the id of the model element
+* "name" – corresponding to the name of the model element
+* "alias" – corresponding to the alias name of the model element
+* "initialValue" – corresponding to the initial value that may be
+defined for a code / enumerant
+* A tagged value of the model element, identified via "@" + \{tagged
+value name}
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[names]]
+==== names
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: List of Strings (comma-separated)
+
++++Default Value+++: alias, initialValue
+
++++Explanation+++: Specify the sources for the values of the <gml:name>
+elements that are created for <gml:Dictionary> and <gml:Definition>
+elements (which correspond to a code list / enumeration and its codes /
+enumerants). For each non-empty value, a <gml:name> element will be
+created. Valid sources are:
+
+* "id" – corresponding to the id of the model element
+* "name" – corresponding to the name of the model element
+* "alias" – corresponding to the alias name of the model element
+* "initialValue" – corresponding to the initial value that may be
+defined for a code / enumerant
+* A tagged value of the model element, identified via "@" + \{tagged
+value name}
+
++++Applies to Rule(s)+++: _none_ – default behavior
+
+[[outputDirectory]]
+==== outputDirectory
+
++++Type+++: String
+
++++Default Value+++: <the current run directory>
+
++++Explanation+++: The path to which the XML files representing the
+dictionaries will be written. Because there may be a large number of
+such files, it is suggested that a unique directory be designated for
+this purpose.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<TargetXmlSchema
+ class="de.interactive_instruments.ShapeChange.Target.Codelists.CodelistDictionaries" mode="enabled"
+ inputs="TRF">
+ <targetParameter name="outputDirectory"
+  value="results/codeLists/CodeListDictionaries_GML"/>
+ <targetParameter name="sortedOutput" value="true"/>
+ <targetParameter name="documentationTemplate" value="[[documentation]]"/>
+ <targetParameter name="enumerations" value="true"/>
+ <targetParameter name="gmlid" value="name"/>
+ <targetParameter name="names" value="alias, initialValue, @name"/>
+ <targetParameter name="identifier" value="name"/>
+ <xi:include href="https://shapechange.net/resources/config/StandardNamespaces.xml"/>
+</TargetXmlSchema>
+----------

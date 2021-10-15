@@ -263,10 +263,26 @@
 					</filesets>
 				</configuration>
 			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-javadoc-plugin</artifactId> -->
+<!-- 				<version>3.1.1</version> -->
+<!-- 			</plugin> -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+<!-- 						<phase>generate-resources</phase> -->
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<configuration>
+							<reportOutputDirectory>${project.build.directory}/gh-pages</reportOutputDirectory>
+							<destDir>javadoc</destDir>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -281,6 +297,35 @@
 						<configuration>
 							<excludeResources>true</excludeResources>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<sourceDirectory>src/docs/asciidoc</sourceDirectory>
+					<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
+<!-- 					<imagesDir>./</imagesDir> -->
+					<preserveDirectories>true</preserveDirectories>
+<!-- 					<sourceHighlighter>pygments</sourceHighlighter> -->
+					<backend>html5</backend>
+					<doctype>book</doctype>
+					<attributes>
+						<project-version>${project.version}</project-version>
+						<source-highlighter>coderay</source-highlighter>
+						<imagesdir>./</imagesdir>
+						<!-- <stylesheet>my-theme.css</stylesheet> -->
+					</attributes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>output-html</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

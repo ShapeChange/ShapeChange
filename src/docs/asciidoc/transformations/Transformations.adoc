@@ -1,0 +1,166 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Transformations]]
+= Transformations
+
+[[General_Information]]
+== General Information
+
+ShapeChange can apply a number of transformations to an input model,
+before generating target representations for it. Transformations are
+applied on a given base model. This can be the input model (e.g. from an
+Enterprise Architect project file) or the result of another
+transformation. It is thus possible to create a chain or tree of model
+transformations.
+
+[[Java_Implementation_Details]]
+=== Java Implementation Details
+
+Within the ShapeChange Java framework, each transformation is
+implemented as a Java class.  In keeping with the modularity of
+ShapeChange, each such transformer implements the
+de.interactive-instruments.ShapeChange.Transformation.Transformer
+interface, which contains a method "hook" for processing a given model. 
+The fully-qualified name of this class must be provided in the
+configuration file.
+
+[[Configuration]]
+=== Configuration
+
+Each individual transformer is defined in the configuration file as its
+own <Transformer> element.  All <Transformer> definitions are nested
+under the <transformers> element.
+
+All <Transformer> definitions, no matter the actual transformer type,
+are configured via XML attributes and parameters.  <ProcessMapEntry>
+definitions may also be used to customize mappings that are applied
+during a transformation.
+
+[[Transformer_Attributes]]
+==== Transformer Attributes
+
+Each <Transformer> element has four attributes, two required and two
+optional.  These attributes are as follows:
+
+[width="100%",cols="1,1,1,3"]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|* class* | Required | - |A string representing the fully-qualified
+transformer "handler" class (that implements the Transformer interface).
+
+|* mode* | Optional | enabled a|
+Whether or not this particular transformer is "turned on".  This allows
+for transformers to be turned on/off at will.  The possible values are:
+
+* enabled: The transformer is processed.
+* disabled: The transformer is ignored.
+* diagnostics-only: The transformation is processed, but no output is
+created. However, not all transformers support this mode yet and some
+will treat this mode identical to "enabled".
+
+| *id* | Required | - |Unique identifier of the transformer within the
+configuration file. This identifier is used by other transformers and/or
+targets to reference the output of the transformer as input for their
+processing tasks.
+
+|* input* | Optional | - (defaults to input model) |References the id of
+the input model or another transformer. The according model will be
+processed by the transformer. If the attribute is omitted or no value is
+provided, the input model defined in the configuration file is used.
+|===
+
+[[Transformer_Parameters]]
+==== Transformer Parameters
+
+In addition to the required attributes, each <Transformer> may have
+additional parameters defined via <ProcessParameter> elements which are
+nested under the <parameters> element.
+
+Each transformer type may define its own expected or required
+parameters; the transformer-specific subheadings of the subpages will
+describe these for each transformer type.
+
+[[Rules]]
+==== Rules
+
+A <Transformer> can have a number of <ProcessRuleSet> elements (nested
+under the <rules> element). They are used to configure the optional
+processing steps to be executed by the transformer. Each rule set has a
+required and an optional attribute. These attributes are as follows:
+
+[cols=",,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Explanation_*
+
+|*name* |Required |Identifier of the rule set.
+
+|*extends* |Optional |Can be used to add specific rules to a standard
+process rule set.
+|===
+
+A <ProcessRuleSet> can contain a number of <rule> elements. Each of them
+identifies (via the value of the required "name" attribute) a specific
+type of processing to be applied by the transformer.
+
+Each transformer type can define its own rule sets and rules; the
+transformer-specific subheadings of the subpages will describe these for
+each transformer type.
+
+[[Process_Map_Entries]]
+==== Process Map Entries
+
+The <mapEntries> section of the <Transformer> element may contain a
+series of <ProcessMapEntry> definitions.
+
+Map entries allow for customized mapping and processing of UML classes.
+Each transformer type defines which map entries apply to which of its
+rules; the transformer-specific subheadings of the subpages will
+describe these for each transformer type.
+
+The attributes of a <ProcessMapEntry> are as follows:
+
+[cols=",,",]
+|===
+|*_Attribute Name_* |*_Required/Optional_* |*_Explanation_*
+
+|*type* |Required |The UML type/class name to be mapped.
+
+|*rule* |Required |The transformation "rule" where this mapping is
+applicable.
+
+|*targetType* |Optional |The type to which the *type* will be
+mapped. The interpretation of its value is left to the code implementing
+the transformer.
+
+|*param* |Optional |A parameter for the mapping. The interpretation of
+its value is left to the code implementing the transformer.
+|===
+
+[[Common_Transformer_Functionality]]
+== Common Transformer Functionality
+
+Specific functionality (e.g. setting tagged values) can be executed for
+all transformers.
+
+xref:./Common_Transformer_Functionality.adoc[More
+Information]
+
+[[Supported_Transformer_Types]]
+== Supported Transformer Types
+
+A list of the currently supported transformations is given xref:../index.adoc#Transformations[here].
