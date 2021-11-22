@@ -1,6 +1,6 @@
 CREATE TABLE c1py (
 
-   t1_class1_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
    py text NOT NULL,
    PRIMARY KEY (t1_class1_id, py)
 );
@@ -8,35 +8,35 @@ CREATE TABLE c1py (
 CREATE TABLE t1_class1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
-   pa2_fk bigserial NOT NULL,
-   pa4_fk bigserial NOT NULL,
-   pa5_fk bigserial NOT NULL
+   pa2_fk bigint NOT NULL,
+   pa4_fk bigint NOT NULL,
+   pa5_fk bigint NOT NULL
 );
 
 CREATE TABLE t1_class1_pa1 (
 
-   t1_class1_id bigserial NOT NULL,
-   t1_class2_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
+   t1_class2_id bigint NOT NULL,
    PRIMARY KEY (t1_class1_id, t1_class2_id)
 );
 
 CREATE TABLE t1_class1_pa6 (
 
-   t1_class1_id bigserial NOT NULL,
-   t1_class2_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
+   t1_class2_id bigint NOT NULL,
    PRIMARY KEY (t1_class1_id, t1_class2_id)
 );
 
 CREATE TABLE t1_class1_pa7 (
 
-   t1_class1_id bigserial NOT NULL,
-   t1_class2_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
+   t1_class2_id bigint NOT NULL,
    PRIMARY KEY (t1_class1_id, t1_class2_id)
 );
 
 CREATE TABLE t1_class1_px (
 
-   t1_class1_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
    px text NOT NULL,
    PRIMARY KEY (t1_class1_id, px)
 );
@@ -44,10 +44,10 @@ CREATE TABLE t1_class1_px (
 CREATE TABLE t1_class2 (
 
    _id bigserial NOT NULL PRIMARY KEY,
-   pb3_fk bigserial NOT NULL,
-   pb6_1_fk bigserial NOT NULL,
-   pb6_2_fk bigserial,
-   pb6_3_fk bigserial
+   pb3_fk bigint NOT NULL,
+   pb6_1_fk bigint NOT NULL,
+   pb6_2_fk bigint,
+   pb6_3_fk bigint
 );
 
 CREATE TABLE t2_class1 (
@@ -61,29 +61,29 @@ CREATE TABLE t3_class1 (
    _id bigserial NOT NULL PRIMARY KEY,
    p1 integer NOT NULL,
    p2_t3c2p1 text NOT NULL,
-   p3_fkdt bigserial NOT NULL,
-   p5_fkdt bigserial NOT NULL,
-   p7_fk bigserial NOT NULL
+   p3_fkdt bigint NOT NULL,
+   p5_fkdt bigint NOT NULL,
+   p7_fk bigint NOT NULL
 );
 
 CREATE TABLE t3_class1_p4 (
 
-   t3_class1_id bigserial NOT NULL,
-   t3_class4_id bigserial NOT NULL,
+   t3_class1_id bigint NOT NULL,
+   t3_class4_id bigint NOT NULL,
    PRIMARY KEY (t3_class1_id, t3_class4_id)
 );
 
 CREATE TABLE t3_class1_p6 (
 
-   t3_class1_id bigserial NOT NULL,
-   tb_extdtinmodel_id bigserial NOT NULL,
+   t3_class1_id bigint NOT NULL,
+   tb_extdtinmodel_id bigint NOT NULL,
    PRIMARY KEY (t3_class1_id, tb_extdtinmodel_id)
 );
 
 CREATE TABLE t3_class1_p8 (
 
-   t3_class1_id bigserial NOT NULL,
-   tb_extdtoutsidemodel_id bigserial NOT NULL,
+   t3_class1_id bigint NOT NULL,
+   tb_extdtoutsidemodel_id bigint NOT NULL,
    PRIMARY KEY (t3_class1_id, tb_extdtoutsidemodel_id)
 );
 
@@ -108,15 +108,15 @@ CREATE TABLE t4_class1 (
 
 CREATE TABLE t4_class1_t4c1p1 (
 
-   t4_class1_id bigserial NOT NULL,
-   tb_extft_id bigserial NOT NULL,
+   t4_class1_id bigint NOT NULL,
+   tb_extft_id bigint NOT NULL,
    PRIMARY KEY (t4_class1_id, tb_extft_id)
 );
 
 CREATE TABLE t4c1toextft (
 
-   t4_class1_id bigserial NOT NULL,
-   tb_extft_id bigserial NOT NULL,
+   t4_class1_id bigint NOT NULL,
+   tb_extft_id bigint NOT NULL,
    PRIMARY KEY (t4_class1_id, tb_extft_id)
 );
 
@@ -127,7 +127,7 @@ CREATE TABLE t5_class1 (
 
 CREATE TABLE t5_class1_t5c1p1 (
 
-   t5_class1_id bigserial NOT NULL,
+   t5_class1_id bigint NOT NULL,
    t5c1p1 text NOT NULL,
    PRIMARY KEY (t5_class1_id, t5c1p1)
 );
@@ -140,15 +140,15 @@ CREATE TABLE t5_class2 (
 
 CREATE TABLE t5_class2_t5c1p1 (
 
-   t5_class2_id bigserial NOT NULL,
+   t5_class2_id bigint NOT NULL,
    t5c1p1 text NOT NULL,
    PRIMARY KEY (t5_class2_id, t5c1p1)
 );
 
 CREATE TABLE tablepb1pa3 (
 
-   t1_class1_id bigserial NOT NULL,
-   t1_class2_id bigserial NOT NULL,
+   t1_class1_id bigint NOT NULL,
+   t1_class2_id bigint NOT NULL,
    PRIMARY KEY (t1_class1_id, t1_class2_id)
 );
 

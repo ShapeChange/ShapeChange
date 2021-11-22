@@ -41,7 +41,7 @@ XML format). Details on each of these steps are provided in the
 following subsections.
 
 NOTE: The ArcGIS workspace model is created within an EA repository.
-This requires execution of ShapeChange with 32bit Java. Furthermore,
+Before EA v15, that required execution of ShapeChange with 32bit Java. Furthermore,
 when creating the ArcGIS workspace, ShapeChange adds elements with
 stereotypes from the ArcGIS MDG technology. The MDG must be activated on
 the system where ShapeChange is executed, otherwise creating such

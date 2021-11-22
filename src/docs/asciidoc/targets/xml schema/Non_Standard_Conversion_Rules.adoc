@@ -461,10 +461,7 @@ deleted.
 [[rule-xsd-cls-local-basictype]]
 ==== rule-xsd-cls-local-basictype
 
-Classes identified as basic types are by default converted to
-a *named* simpleType (for global scope). If this conversion rule is part
-of an encoding rule, these types are converted to
-an *anonymous* simpleType for local scope.
+Modifies the behavior of rule-xsd-cls-basictype as follows: According to rule-xsd-cls-basictype, classes identified as basic types are converted to a *named* simpleType (for global scope). If rule-xsd-cls-local-basictype is part of an encoding rule in addition to rule-xsd-cls-basictype, these types are converted to an *anonymous* simpleType for local scope.
 
 [[rule-xsd-cls-local-enumeration]]
 ==== rule-xsd-cls-local-enumeration

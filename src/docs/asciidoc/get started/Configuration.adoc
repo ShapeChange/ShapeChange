@@ -43,7 +43,8 @@ element*] defines which transformations shall be applied on the input
 model before target representations are created.
 * The xref:./The_element_targets.adoc[*<targets>
 element*] contains the configurations of each target format, such as XML
-Schema (the default).
+Schema.
+** NOTE: Even though <targets> is typically used in a ShapeChange configuration, ShapeChange does not actually require the element to be present. An example where <targets> has been omitted is simply loading and thereby checking the input model.
 * The xref:./The_element_log.adoc[*<log> element*]
 defines logging parameters.
 

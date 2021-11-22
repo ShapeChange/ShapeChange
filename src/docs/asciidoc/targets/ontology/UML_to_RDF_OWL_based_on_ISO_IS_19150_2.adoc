@@ -245,22 +245,21 @@ ensuring that they are mutually disjoint.
 ==== rule-owl-cls-encode-basictypes
 
 ShapeChange supports the notion of
-xref:../../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[_basic
-type_]. They are primarily used by the XML Schema target. However, if
-that target is contained in the ShapeChange configuration, it has
-implications on how UML types are loaded. In this case, it may lead to
-UML types being loaded as _basic types_. A UML type is loaded as a basic
+so called _basic types_]. They are primarily used by the XML Schema target. 
+However, if that target is contained in the ShapeChange configuration, it has
+implications on how UML types are loaded. A UML type is loaded as a basic
 type if:
 
-* rule-xsd-cls-basictype is contained in the XSD encoding rule, and:
-** the UML type has the stereotype \<<BasicType>>, or
-** the UML type is an object type, mixin type, or data type and has a
-supertype that is identified as a basic type through an XSD map entry
-(which does not have its xmlTypeType and xmlTypeContent attributes both
-set to 'complex' - either explicitly or by using the default values,
-which is 'complex' for both attributes).
+* rule-xsd-cls-basictype is contained in the XSD encoding rule, and 
+the UML type has the stereotype \<<BasicType>>, or
+* the UML type is an object type, mixin type, or data type and has a
+supertype that is identified as a basic type through:
+** the previous behavior (matching rule-xsd-cls-basictype and having stereotype <<BasicType>>), or
+** an XSD map entry being defined for the supertype which does not 
+have its xmlTypeType and xmlTypeContent attributes both set to 'complex' - 
+either explicitly or by using the default values, which is 'complex' for both attributes.
 
-For the ontology conversion rules, a _basic type_ is usually treated as
+For the ontology conversion rules, a ShapeChange _basic type_ is usually treated as
 any other type. If UML types are loaded by ShapeChange as basic types,
 include _rule-owl-cls-encode-basictypes_ to convert them to OWL classes.
 

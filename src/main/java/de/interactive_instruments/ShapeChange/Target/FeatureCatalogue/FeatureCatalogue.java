@@ -2346,6 +2346,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	     */
 	    this.xsltWrite(indocumentxmlFile, xsldocxfileName, outdocumentxmlFile);
 
+	    /*
+	     * FIXME JE 2021-10-27: imageList ist leer wegen DeferrableOutputWriter.
+	     * Vermutlich müssen wir die Infos nochmal aus .tmp.xml lesen.
+	     */
 	    if (includeDiagrams && !imageList.isEmpty()) {
 		/*
 		 * === Process image information ===

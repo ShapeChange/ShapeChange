@@ -482,6 +482,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    }
 
 	    if (foreignKeyColumnDataTypeFromConfig == null) {
+		// FIXME - should be bigint for PostgreSQL
+		// add foreignKeyDataType() to DatabaseStrategy?
 		foreignKeyColumnDataType = databaseStrategy.primaryKeyDataType();
 	    } else {
 		foreignKeyColumnDataType = new ColumnDataType(foreignKeyColumnDataTypeFromConfig);

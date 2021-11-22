@@ -40,8 +40,9 @@ These targets and the associated encoding rules are
 described xref:../targets/Output_Targets.adoc[here].
 
 ShapeChange directly accesses *Enterprise Architect* models via their
-Java API. It can also read *XMI 1.0*. Information on these models and
-the *UML profile* supported by ShapeChange can be
+Java API. It can also read other model formats (e.g. ShapeChange XML [SCXML],
+although new model formats require an according model reader extension).
+Information on these models and the *UML profile* supported by ShapeChange can be
 found xref:../application schemas/Application_schemas.adoc[here].
 
 Information on installation and use of the ShapeChange tool can be
@@ -49,7 +50,5 @@ found xref:../get started/Get_Started.adoc[here].
 
 The source code of ShapeChange is available under
 the http://www.gnu.org/copyleft/gpl.html[GNU General Public License].
-
-#TBD# update the figure
 
 image::../images/sc-overview.png[image,title="ShapeChange overview figure"]

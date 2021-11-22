@@ -87,7 +87,7 @@ avoided. If a class is abstract, this must be indicated using the UML
 flag for abstractness, not the stereotype. If the stereotype is
 provided, it is ignored by ShapeChange.
 
-[cols="20%,20%,60%",options="header",]
+[cols="20%,20%,60%a",options="header",]
 |===
 |Stereotype |Aliases |Description
 
@@ -97,7 +97,25 @@ provided, it is ignored by ShapeChange.
 
 |\<<attributeConcept>> |  |An attribute concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a dependency to an attribute concept classifier and a property of the same name ShapeChange will use the documentation of the concept as the documentation of the property if the documentation of the property is empty.
 
-|\<<BasicType>> |  |A basic type with a simple representation on most platforms. Usually it is a restriction of CharacterString or Number.
+|\<<BasicType>> |  |Marks a so called basic type, which can have a simple representation in one or more target encodings. It usually is a restriction of CharacterString or Number – or a structured version thereof (e.g. "one two three four" – or any other meaningful combination of such types that is supported by a given encoding).
+
+NOTE: This stereotype has originally been defined for use with the XML Schema target. 
+
+[WARNING]
+======
+For use in internal processing ShapeChange currently identifies classes as basic types while loading the model, if:
+
+* rule-xsd-cls-basictype is contained in the XSD encoding rule, and the UML type has the stereotype \<<BasicType>>, or
+* the UML type is an object type, mixin type, or data type and has a supertype that is identified as a basic type through: 
+** the previous behavior (matching rule-xsd-cls-basictype and having stereotype \<<BasicType>>), or
+** an XSD map entry being defined for the supertype which does not have its xmlTypeType and xmlTypeContent attributes both set to 'complex' – either explicitly or by using the default values, which is 'complex' for both attributes.
+
+Attempting to identify so called basic types in the conceptual model, and especially the use of stereotype \<<BasicType>>, can be an issue if 1) XML Schema is not one of the target encodings (in which case the configuration of an XmlSchema target – potentially disabled - would be necessary to identify basic types while loading the model) and 2) one or more of the targets do not support so called basic types. 
+======
+
+RECOMMENDATION: Avoid using this stereotype in your application schema. 
+
+In the future, each target that supports the concept of target-specific basic types should categorize classes as such when the target is executed. The JSON Schema target is an example of how this can be done. Either the model structure is analyzed (e.g. inheritance from a type that is mapped to a basic type), or an encoding specific tagged value is used.
 
 |\<<CodeList>> |\<<conceptScheme>> \<<vocabulary>> |A code list. \<<conceptScheme>> and \<<vocabulary>> have been used to identify collections of enumerated values that may also have relationships like 'narrower'; for encoding purposes these are treated like code lists.
 

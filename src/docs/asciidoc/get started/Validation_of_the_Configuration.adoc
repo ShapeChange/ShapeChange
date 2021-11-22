@@ -72,7 +72,10 @@ can be skipped by including the input parameter
 
 The validation of the input parameters as well as any general semantic
 validation tasks are executed by the _BasicConfigurationValidator_ (in
-package _de.interactive_instruments.ShapeChange_). The following checks
+package _de.interactive_instruments.ShapeChange_). 
+
+////
+The following checks
 are performed:
 
 * If the parameter 'inputModelType' is set to 'EA7', then ShapeChange
@@ -81,6 +84,7 @@ checks that it is a) executed within a windows operating environment
 prevents one of the causes of a
 xref:./Typical_problems.adoc[typical problem:] the
 occurrence of an UnsatisfiedLinkError.
+////
 
 [[Implementation_of_Configuration_Validators]]
 === Implementation of Configuration Validators

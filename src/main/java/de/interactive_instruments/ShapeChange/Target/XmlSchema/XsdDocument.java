@@ -836,7 +836,7 @@ public class XsdDocument implements MessageSource {
 	    } else {
 		s = mapBaseType(cibase);
 		if (s == null) {
-		    result.addError(null, 158);
+		    result.addError(this, 158);
 		    s = "fixme:fixme";
 		}
 		addImport(cibase.pkg().xmlns(), cibase.pkg().targetNamespace());
@@ -4364,6 +4364,8 @@ public class XsdDocument implements MessageSource {
 	    return "??Failed to create enumeration type '$1$EnumerationType'.";
 	case 157:
 	    return "??Class of property '$1$' cannot be determined. The property is ignored.";
+	case 158:
+	    return "??MapEntry contains empty mapping target. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
 	case 166:
 	    return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
 	case 169:

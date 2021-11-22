@@ -355,6 +355,8 @@ gives an overview:
 |*On Update* |x |x |x |x |x
 .2+|*SQL Server* |*On Delete* |x |x |- |x |x
 |*On Update* |x |x |- |x |x
+.2+|*SQLite* |*On Delete* |x |x |x |x |x
+|*On Update* |x |x |x |x |x
 |===
 
 ShapeChange checks if the chosen database supports a given option. If

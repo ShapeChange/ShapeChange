@@ -107,6 +107,8 @@ mapped to one of the simple JSON Schema types _string_, _number_,
 _integer_, or _boolean_, then under _rule-json-cls-basictype_ that class
 represents a so called _basic type_.
 
+NOTE: Uses of the stereotype \<<BasicType>> with application schema classes are ignored by this conversion rule.
+
 A basic type does not define a JSON object. It represents a simple data
 value, e.g. a string. The JSON Schema definition of a basic type thus
 defines a simple JSON Schema type. A basic type can be restricted using
@@ -875,6 +877,8 @@ _pattern_).
 * for JSON types _integer_ and _number_: keywords _enum_, _const_,
 _multipleOf_, _maximum_, _minimum_, _exclusiveMaximum_,
 _exclusiveMinimum_
+
+NOTE: Multiple keywords may be specified as a semicolon-delimited list, e.g.: "keywords{minimum=0;maximum=3}".
 
 [[Parameter_encodingInfos]]
 ==== Parameter: encodingInfos

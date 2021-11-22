@@ -52,4 +52,5 @@ public class XmlSchemaConstants {
     public static final String PARAM_OKSTRA_KEY_VALUE_BASE_TYPE = "okstraKeyValueBaseType";
     public static final String PARAM_OKSTRA_OBJECT_REF_TYPE = "okstraObjectRefType";
     public static final String PARAM_OKSTRA = "okstra";
+    public static final String PARAM_INCLUDE_DOCUMENTATION = "includeDocumentation";
 }

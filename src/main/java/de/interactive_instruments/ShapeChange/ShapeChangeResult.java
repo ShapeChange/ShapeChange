@@ -1015,7 +1015,7 @@ public class ShapeChangeResult {
 	case 1002: // used by supertype class
 	    return "Restriction of property '$1$' in class '$2$' from supertype '$3$'.";
 	case 1003: //xxx
-	    return "The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
+	    return "??The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
 	case 1004: // used by supertype class
 	    return "Class '$1$' has an unknown category, an object is assumed.";
 	

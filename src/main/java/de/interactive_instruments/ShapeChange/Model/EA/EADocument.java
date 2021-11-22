@@ -519,7 +519,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		    relevantDiagram = true;
 		}
 
-	    } else if (type.equalsIgnoreCase("Logical")) {
+	    } else if (type.equalsIgnoreCase("Logical") || type.equalsIgnoreCase("class")) {
 
 		regexForModelElement = packageDiagramRegex.replaceAll(elementNameKeyForMatching, pi.name());
 		if (imgName.matches(regexForModelElement)) {
@@ -595,7 +595,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		// package
 		addDiagramToPackage(pi, imgMeta);
 
-	    } else if (type.equalsIgnoreCase("Logical")) {
+	    } else if (type.equalsIgnoreCase("Logical") || type.equalsIgnoreCase("class")) {
 
 		regexForModelElement = packageDiagramRegex.replaceAll(elementNameKeyForMatching, pi.name());
 		if (imgName.matches(regexForModelElement)) {

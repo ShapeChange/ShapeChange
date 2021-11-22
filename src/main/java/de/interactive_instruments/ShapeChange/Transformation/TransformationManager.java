@@ -78,7 +78,9 @@ public class TransformationManager implements MessageSource {
 
     public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
     public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
-    public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
+    
+    // 2021-11-08 JE - currently unused:
+    //public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
 
     private Options options = null;
     private ShapeChangeResult result = null;

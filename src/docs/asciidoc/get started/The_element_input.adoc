@@ -295,6 +295,7 @@ case, a workaround is to load the model with 32bit Java from the EA
 repository, export it to SCXML, and then execute ShapeChange again using
 64bit Java and loading the model from SCXML.
 
+
 [[isAIXM]]
 === isAIXM
 
@@ -511,7 +512,7 @@ is included in the encoding rule.
 Default Value: _none_
 
 Explanation: This parameter can be used instead of parameter 'inputFile'
-(if both are configure, 'inputFile' is given higher priority). It has
+(if both are configured, 'inputFile' will be ignored). It has
 been introduced to take into account that ShapeChange can also connect
 to EA repositories that are not available via an EA project file (.eap)
 but via a direct connection to a database server or Cloud Service.

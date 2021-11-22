@@ -19,6 +19,7 @@
 
 The following is a list of documents that are related to ShapeChange and its development. They were created as part of testbeds and pilots in the http://www.opengeospatial.org/ogc/programs/ip[OGC Innovation Program]:
 
+* OGC https://portal.ogc.org/files/?artifact_id=5344[Geospatial One-Stop – Transportation Pilot] (2003)
 * OGC Testbed-2: http://portal.opengeospatial.org/files/?artifact_id=8071[Application Schema Development] (2004, OGC document 04-100)
 * OGC Testbed-3: http://portal.opengeospatial.org/files/?artifact_id=12893[Schema Maintenance and Tailoring] (2005, OGC document 05-117)
 * OGC Testbed-3: http://portal.opengeospatial.org/files/?artifact_id=12894[UGAS Tool] (2005, OGC document 05-118)
