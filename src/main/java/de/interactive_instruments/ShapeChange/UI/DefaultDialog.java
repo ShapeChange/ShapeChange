@@ -47,6 +47,7 @@ import de.interactive_instruments.ShapeChange.Converter;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchemaConstants;
 
 public class DefaultDialog extends JFrame
                            implements ActionListener, Dialog {
@@ -217,7 +218,7 @@ public class DefaultDialog extends JFrame
          final JPanel otherPanel = new JPanel(new GridLayout(2, 1));
          docCB = new JCheckBox("Include documentation",true);
          boolean b = true;
-         String s = options.parameter(Options.TargetXmlSchemaClass, "includeDocumentation");
+         String s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION);
          if (s!=null && s.equals("false"))
         	 b = false;				
          docCB.setSelected(b);
@@ -266,9 +267,9 @@ public class DefaultDialog extends JFrame
 				options.setParameter("reportLevel", reportGroup.getSelection().getActionCommand()); 
 				options.setParameter(Options.TargetXmlSchemaClass,"defaultEncodingRule", ruleGroup.getSelection().getActionCommand());
 				if (docCB.isSelected())
-					 options.setParameter(Options.TargetXmlSchemaClass,"includeDocumentation", "true");
+					 options.setParameter(Options.TargetXmlSchemaClass,XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION, "true");
 				else
-					 options.setParameter(Options.TargetXmlSchemaClass,"includeDocumentation", "false");
+					 options.setParameter(Options.TargetXmlSchemaClass,XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION, "false");
 				if (!visCB.isSelected())
 					 options.setParameter("publicOnly", "true");
 				else

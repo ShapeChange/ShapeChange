@@ -206,6 +206,19 @@ definitions;
 [[Target_Parameters]]
 === Target Parameters
 
+[[basicTypeStyle]]
+==== basicTypeStyle
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "local" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-local-basictype[rule-xsd-cls-local-basictype] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
 [[defaultCodeListRepresentation]]
 ==== defaultCodeListRepresentation
 
@@ -349,6 +362,43 @@ Definition: [[definition]] - Description: [[description]]
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
+[[enumStyle]]
+==== enumStyle
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "local" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-local-enumeration[rule-xsd-cls-local-enumeration] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeDerivedProperties]]
+==== includeDerivedProperties
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "false" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-exclude-derived[rule-xsd-prop-exclude-derived] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeDocumentation]]
+==== includeDocumentation
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of target parameter includeDocumentation is equal to (ignoring case) "true" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-all-no-documentation[rule-xsd-all-no-documentation] will be ignored.
+
++++Applies to Rule(s)+++: xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-all-no-documentation[rule-xsd-all-no-documentation]
+
 [[outputDirectory]]
 ==== outputDirectory
 
@@ -358,6 +408,32 @@ Definition: [[definition]] - Description: [[description]]
 
 +++Explanation:+++ The path to which the XML Schema documents will be
 written.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[realisationLikeGeneralisation]]
+==== realisationLikeGeneralisation
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ By default, the XmlSchema target treats a realization relationship to a mixin type as a generalization relationship to that type. If this target parameter is set to "false" (ignoring case) then realization relationships will completely be ignored.
+
+NOTE: Realization relationships to class categories other than mixins are always ignored.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[schematron]]
+==== schematron
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "true" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule. 
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 

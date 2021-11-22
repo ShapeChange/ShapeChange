@@ -53,4 +53,9 @@ public class XmlSchemaConstants {
     public static final String PARAM_OKSTRA_OBJECT_REF_TYPE = "okstraObjectRefType";
     public static final String PARAM_OKSTRA = "okstra";
     public static final String PARAM_INCLUDE_DOCUMENTATION = "includeDocumentation";
+    public static final String PARAM_INCLUDE_DERIVED_PROPERTIES = "includeDerivedProperties";
+    public static final String PARAM_SCHEMATRON = "schematron";
+    public static final String PARAM_BASIC_TYPE_STYLE = "basicTypeStyle";
+    public static final String PARAM_ENUM_STYLE = "enumStyle";
+    public static final String PARAM_REALISATION_LIKE_GENERALISATION = "realisationLikeGeneralisation";
 }

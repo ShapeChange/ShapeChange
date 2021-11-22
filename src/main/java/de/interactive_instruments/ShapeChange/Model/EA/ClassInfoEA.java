@@ -67,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchemaConstants;
 import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
@@ -184,7 +185,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	 * input parameter. Loading of the input model should not depend on a specific
 	 * target.
 	 */
-	String realization = document.options.parameter(Options.TargetXmlSchemaClass, "realisationLikeGeneralisation");
+	String realization = document.options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION);
 	if (realization != null && realization.equalsIgnoreCase("false")) {
 	    this.realization = Boolean.FALSE;
 	}
