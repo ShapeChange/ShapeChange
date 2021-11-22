@@ -891,9 +891,9 @@ public class ShapeChangeResult {
 	case 107: //xx
 	    return "??The property '$1$' in class '$2$' has a sequence number that is already in use for another property ($3$) which will be overwritten.";
 	case 108: // used by supertype class
-	    return "??The class '$1$' is modelled as a feature or data type, but has at least one supertype of a different category. The supertype is ignored.";
+	    return "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has a supertype of a different category ('$2$'). The supertype may be ignored by some targets (e.g. the XmlSchema target).";
 	case 109: // used by supertype class
-	    return "??The class '$1$' is modelled as a feature or data type, but has more than one supertype of the same kind. All but one (arbitrary) supertypes are ignored.";
+	    return "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has more than one supertype of the same kind. Some targets (e.g. the XmlSchema target) ignore all but one (arbitrary) supertype.";
 	case 110: //xxxx
 	    return "??A target could not be created for schema '$1$'. This target is supported only for GML versions 3.2 and later.";
 	case 111: // used in Main - in static context

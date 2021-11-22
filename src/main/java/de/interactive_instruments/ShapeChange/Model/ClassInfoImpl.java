@@ -127,7 +127,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 			} else if (this.model().isInSelectedSchemas(this)) {
 			    // Not compatible and not mixin: An error
-			    MessageContext mc = result().addError(null, 108, name());
+			    MessageContext mc = result().addWarning(null, 108, name(), baseCI.name());
 			    if (mc != null)
 				mc.addDetail(null, 400, "Package", pkg().fullName());
 			    result().addDebug(null, 10003, name(), "" + cat, "!FALSE");
@@ -149,7 +149,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    if (stsize > 1) {
 
 		if (this.model().isInSelectedSchemas(this)) {
-		    MessageContext mc = result().addError(null, 109, name());
+		    MessageContext mc = result().addWarning(null, 109, name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Package", pkg().fullName());
 		} else {
@@ -992,7 +992,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			count++;
 			if (count == 2) {
 			    if (this.model().isInSelectedSchemas(this)) {
-				MessageContext mc = result().addError(null, 109, name());
+				MessageContext mc = result().addWarning(null, 109, name());
 				if (mc != null)
 				    mc.addDetail(null, 400, "Class", fullName());
 			    } else {
@@ -1010,7 +1010,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		    } else {
 
 			if (this.model().isInSelectedSchemas(this)) {
-			    MessageContext mc = result().addError(null, 108, name());
+			    MessageContext mc = result().addWarning(null, 108, name(), ci.name());
 			    if (mc != null)
 				mc.addDetail(null, 400, "Class", fullName());
 			} else {

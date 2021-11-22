@@ -1081,17 +1081,17 @@ public class Options {
      * Adds a stereotype alias mapping.
      *
      * @param alias     - the stereotype alias (in lower case)
-     * @param wellknown - the wellknown stereotype (in lower case) to which the
+     * @param wellknown - the wellknown stereotype to which the
      *                  alias maps
      */
     protected void addStereotypeAlias(String alias, String wellknown) {
-	fStereotypeAliases.put(alias, wellknown);
+	fStereotypeAliases.put(alias.toLowerCase(), wellknown);
     }
 
     /**
      * Retrieves the wellknown stereotype to which the given alias maps, or
      * <code>null</code> if no such mapping exists. The alias will automatically be
-     * converte to lower case to look up the mapping (the according key values in
+     * converted to lower case to look up the mapping (the according key values in
      * the stereotype map have also been converted to lower case).
      *
      * @param alias stereotype for which a mapping to a wellknown stereotype is
