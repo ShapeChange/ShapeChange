@@ -1195,6 +1195,9 @@ PostgreSQL, or when creating artifacts other than DDL (so a replication
 schema or database UML model) are not supported (yet - this would be
 future work).
 
+NOTE: If the value of tag sqlSchema is blank, the value of tag xmlns will 
+be used as schema name. If that is also blank, the string "fixme" will be used.
+
 [[rule-sql-all-suppressDocumentationViaInlineComments]]
 ==== rule-sql-all-suppressDocumentationViaInlineComments
 
