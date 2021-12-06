@@ -35,6 +35,7 @@ package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -66,6 +67,8 @@ import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -88,7 +91,9 @@ import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
 import de.interactive_instruments.ShapeChange.DefaultModelProvider;
@@ -2896,7 +2901,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
     }
 
-    public void initialise(Options o, ShapeChangeResult r) {
+    @Override
+    public void initialise(Options o, ShapeChangeResult r) throws ShapeChangeAbortException {
 
 	options = o;
 	result = r;
@@ -2906,6 +2912,33 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	initialiseFromOptions();
 	initialiseTransformationParameters();
 
+	/*
+	 * Parse image metadata from temporary XML. If there are none, the imageList
+	 * will simply be empty.
+	 */
+	File outDir = new File(outputDirectory);
+	String xmlName = outputFilename + ".tmp.xml";
+	File tmpXmlFile = new File(outDir, xmlName);
+
+	try {
+	    InputSource tmpXmlSource = new InputSource(new FileInputStream(tmpXmlFile));
+
+	    SAXParserFactory pfactory = SAXParserFactory.newInstance();
+	    pfactory.setNamespaceAware(true);
+	    pfactory.setValidating(false);
+	    SAXParser parser = pfactory.newSAXParser();
+	    XMLReader reader = parser.getXMLReader();
+
+	    ImageMetadataContentHandler imgContentHandler = new ImageMetadataContentHandler();
+	    reader.setContentHandler(imgContentHandler);
+	    reader.parse(tmpXmlSource);
+
+	    imageList = imgContentHandler.getImages();
+
+	} catch (Exception e) {
+	    result.addFatalError(this, 14, tmpXmlFile.getAbsolutePath(), e.getMessage());
+	    throw new ShapeChangeAbortException();
+	}
     }
 
     /**
@@ -3164,14 +3197,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * @return Message text or null
      */
     protected String messageText(int mnr) {
-	
+
 	switch (mnr) {
 	case 12:
 	    return "Directory named '$1$' does not exist or is not accessible.";
 	case 13:
 	    return "File '$1$' does not exist or is not accessible.";
 	case 14:
-	    return "TBD";
+	    return "Could not parse image metadata from temporary XML file at '$1$'. Aborting now. Exception message was: $2$";
 	case 15:
 	    return "URI syntax exception for configuration parameter '$1$'. Value was: '$2$'. Using default URI stated in XSLT. Exception message: $3$";
 	case 16:
@@ -3206,7 +3239,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    return "Directory '$1$' could not be created.";
 	case 32:
 	    return "Removed empty XSLT transformation target file at $1$.";
-	    
+
 	case 308:
 	    return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
 
