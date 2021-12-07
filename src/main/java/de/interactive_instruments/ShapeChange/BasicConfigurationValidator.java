@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -251,6 +252,15 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	    }
 	}
 
+	/*
+	 * Check for errors in encoding rule setup.
+	 */
+	SortedSet<String> ruleRegistrationErrors = options.getRuleRegistry().getRuleRegistrationErrors();
+	isValid = isValid && ruleRegistrationErrors.isEmpty();
+	for (String err : ruleRegistrationErrors) {
+	    result.addProcessFlowError(this, 500, err);
+	}
+
 	return isValid;
     }
 
@@ -302,6 +312,10 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	// 400-499: Validation of TaggedValue elements in transformations
 	case 400:
 	    return "Transformer with id '$1$' has invalid model element selection criteria in TaggedValue element. Details: $2$";
+
+	// 500-599: Validation of (encoding) rules and their registration
+	case 500:
+	    return "Invalid rule setup: $1$";
 
 	default:
 	    return "(" + BasicConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

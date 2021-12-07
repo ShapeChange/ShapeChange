@@ -47,9 +47,9 @@
 		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/xsd/propertyMetadata/results/gml33"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="defaultEncodingRule" value="myrule"/>
+			<targetParameter name="defaultEncodingRule" value="mygml33rule"/>
 			<rules>
-				<EncodingRule extends="gml33" name="myrule">
+				<EncodingRule extends="gml33" name="mygml33rule">
 					<rule name="rule-xsd-prop-metadata"/>
 					<rule name="rule-xsd-cls-basictype"/>
 					<rule name="rule-xsd-cls-mixin-classes-as-group"/>
@@ -610,9 +610,9 @@
 		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/xsd/propertyMetadata/results/iso19136_2007"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="defaultEncodingRule" value="myrule"/>
+			<targetParameter name="defaultEncodingRule" value="mygml32rule"/>
 			<rules>
-				<EncodingRule extends="iso19136_2007" name="myrule">
+				<EncodingRule extends="iso19136_2007" name="mygml32rule">
 					<rule name="rule-xsd-prop-metadata"/>
 					<rule name="rule-xsd-cls-basictype"/>
 					<rule name="rule-xsd-cls-mixin-classes-as-group"/>

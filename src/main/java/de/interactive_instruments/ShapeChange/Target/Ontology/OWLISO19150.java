@@ -57,6 +57,7 @@ import org.apache.jena.riot.RDFFormat;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.PropertyConversionParameter;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -1539,7 +1540,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	// declare default encoding rule
-	r.addExtendsEncRule("iso19150_2014", "*");
+	ProcessRuleSet iso19150_2014Prs = new ProcessRuleSet("iso19150_2014","*");
+	r.addRuleSet(iso19150_2014Prs);
 
 	// declare optional rules
 	r.addRule("rule-owl-all-constraints-byConstraintMapping");

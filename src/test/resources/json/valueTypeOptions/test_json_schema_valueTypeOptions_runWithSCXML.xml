@@ -76,9 +76,9 @@
 			
 			<targetParameter name="appSchemaNameRegex" value="Test Schema.*"/>
 			<targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
-			<targetParameter name="defaultEncodingRule" value="myjson"/>
+			<targetParameter name="defaultEncodingRule" value="myplainjson"/>
 			<rules>
-				<EncodingRule name="myjson">
+				<EncodingRule name="myplainjson">
 					<rule name="rule-json-cls-name-as-anchor"/>
 					<rule name="rule-json-cls-name-as-entityType"/>
 					<rule name="rule-json-cls-valueTypeOptions"/>
@@ -126,9 +126,9 @@
 			
 			<targetParameter name="appSchemaNameRegex" value="Test Schema.*"/>
 			<targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
-			<targetParameter name="defaultEncodingRule" value="myjson"/>
+			<targetParameter name="defaultEncodingRule" value="mynestedjson"/>
 			<rules>
-				<EncodingRule name="myjson">
+				<EncodingRule name="mynestedjson">
 					<rule name="rule-json-cls-nestedProperties"/>
 					<rule name="rule-json-cls-name-as-anchor"/>
 					<rule name="rule-json-cls-name-as-entityType"/>

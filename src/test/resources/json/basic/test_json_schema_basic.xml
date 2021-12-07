@@ -84,7 +84,7 @@
 
    <targetParameter name="entityTypeName" value="@type"/>
 
-   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   <targetParameter name="defaultEncodingRule" value="my201909json"/>
    <rules>
 
     <EncodingRule name="json_basic" extends="*">
@@ -92,7 +92,7 @@
      <!--     <rule name="rule-json-all-documentation"/>  -->
     </EncodingRule>
 
-    <EncodingRule name="myjson" extends="json_basic">
+    <EncodingRule name="my201909json" extends="json_basic">
      <rule name="rule-json-cls-basictype"/>
      <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
@@ -136,9 +136,9 @@
    <targetParameter name="jsonSchemaVersion" value="draft-07"/>
    <!-- NOTE: Restriction of application schemas that are converted! -->
    <targetParameter name="appSchemaNameRegex" value="Test Schema (01).*"/>
-   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   <targetParameter name="defaultEncodingRule" value="mydraf07json"/>
    <rules>
-    <EncodingRule name="myjson">
+    <EncodingRule name="mydraf07json">
      <rule name="rule-json-cls-name-as-anchor"/>
     </EncodingRule>
    </rules>
@@ -162,7 +162,7 @@
    <targetParameter name="objectIdentifierType" value="string, number"/>
    <targetParameter name="objectIdentifierRequired" value="true"/>
 
-   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   <targetParameter name="defaultEncodingRule" value="myopenapi30jsonA"/>
 
    <rules>
 
@@ -171,7 +171,7 @@
      <!--     <rule name="rule-json-all-documentation"/>  -->
     </EncodingRule>
 
-    <EncodingRule name="myjson" extends="json_basic">
+    <EncodingRule name="myopenapi30jsonA" extends="json_basic">
      <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>
@@ -217,7 +217,7 @@
    <targetParameter name="objectIdentifierType" value="string, number"/>
    <targetParameter name="objectIdentifierRequired" value="true"/>
 
-   <targetParameter name="defaultEncodingRule" value="myjson"/>
+   <targetParameter name="defaultEncodingRule" value="myopenapi30jsonB"/>
 
    <rules>
 
@@ -226,7 +226,7 @@
      <!--     <rule name="rule-json-all-documentation"/>  -->
     </EncodingRule>
 
-    <EncodingRule name="myjson" extends="json_basic">
+    <EncodingRule name="myopenapi30jsonB" extends="json_basic">
      <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
      <rule name="rule-json-cls-union-propertyCount"/>

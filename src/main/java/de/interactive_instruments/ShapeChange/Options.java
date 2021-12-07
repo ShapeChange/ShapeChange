@@ -1616,15 +1616,7 @@ public class Options {
 		 */
 		if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)) {
 		    for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
-			String nam = prs.getName();
-			String ext = prs.getExtendedRuleSetName();
-			ruleRegistry.addExtendsEncRule(nam, ext);
-
-			if (prs.hasAdditionalRules()) {
-			    for (String rule : prs.getAdditionalRules()) {
-				ruleRegistry.addRule(rule, nam);
-			    }
-			}
+			ruleRegistry.addRuleSet(prs);
 		    }
 
 		    /*
@@ -1964,15 +1956,7 @@ public class Options {
 		 * Ensure that we have all the rules defined by the XmlSchema target.
 		 */
 		for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
-		    String nam = prs.getName();
-		    String ext = prs.getExtendedRuleSetName();
-		    ruleRegistry.addExtendsEncRule(nam, ext);
-
-		    if (prs.hasAdditionalRules()) {
-			for (String rule : prs.getAdditionalRules()) {
-			    ruleRegistry.addRule(rule, nam);
-			}
-		    }
+		    ruleRegistry.addRuleSet(prs);
 		}
 
 		/*
@@ -2007,14 +1991,7 @@ public class Options {
 
 		// add encoding rules
 		for (ProcessRuleSet prs : currentProcessConfig.getRuleSets().values()) {
-		    String nam = prs.getName();
-		    String ext = prs.getExtendedRuleSetName();
-		    ruleRegistry.addExtendsEncRule(nam, ext);
-		    if (prs.hasAdditionalRules()) {
-			for (String rule : prs.getAdditionalRules()) {
-			    ruleRegistry.addRule(rule, nam);
-			}
-		    }
+		    ruleRegistry.addRuleSet(prs);
 		}
 	    }
 
@@ -3219,7 +3196,7 @@ public class Options {
 	NodeList processRuleSetsNl = processElement.getElementsByTagName(ruleSetElementTagName);
 	Node processRuleSetN;
 	Element processRuleSetE;
-	Set<String> ruleSetRules;
+	SortedSet<String> ruleSetRules;
 
 	if (processRuleSetsNl != null && processRuleSetsNl.getLength() != 0) {
 
@@ -3253,7 +3230,7 @@ public class Options {
 			    if (processRuleSetRuleN.getNodeType() == Node.ELEMENT_NODE) {
 				Element processRuleSetRuleE = (Element) processRuleSetRuleN;
 				if (ruleSetRules == null)
-				    ruleSetRules = new HashSet<String>();
+				    ruleSetRules = new TreeSet<String>();
 				String ruleName = processRuleSetRuleE.getAttribute("name");
 
 				// we do not need to check rules for

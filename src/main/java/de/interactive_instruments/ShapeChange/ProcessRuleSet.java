@@ -31,7 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange;
 
-import java.util.Set;
+import java.util.Objects;
+import java.util.SortedSet;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Represents a set of rules. This set may be accompanied by a set of
@@ -42,64 +45,104 @@ import java.util.Set;
  */
 public class ProcessRuleSet {
 
-	/**
-	 * Name of this rule set.
-	 */
-	private String name;
-	/**
-	 * Name of the rule set that this rule set extends. Optional
-	 */
-	private String extendedRuleSetName = null;
-	/**
-	 * Set of identifiers for the additional, otherwise optional rules, that are declared for this rule set.
-	 */
-	private Set<String> additionalRules = null;
+    /**
+     * Name of this rule set.
+     */
+    private String name;
+    /**
+     * Name of the rule set that this rule set extends. Optional
+     */
+    private String extendedRuleSetName = null;
+    /**
+     * Set of identifiers for the additional, otherwise optional rules, that are
+     * declared for this rule set.
+     */
+    private SortedSet<String> additionalRules = null;
 
-	/**
-	 * @param name Name of this rule set.	
-	 * @param additionalRules Set of identifiers for the additional, otherwise optional rules, that are declared for this rule set.
-	 */
-	public ProcessRuleSet(String name, Set<String> additionalRules) {
-		this.name = name;
-		this.additionalRules = additionalRules;
-	}
+    /**
+     * @param name            Name of this rule set.
+     * @param additionalRules Set of identifiers for the additional, otherwise
+     *                        optional rules, that are declared for this rule set.
+     */
+    public ProcessRuleSet(String name, SortedSet<String> additionalRules) {
+	this.name = name;
+	this.additionalRules = additionalRules;
+    }
 
-	/**
-	 * @param name Name of this rule set.
-	 * @param extendedRuleSetName Name of the rule set that this rule set extends. May be null if there is no such extension.
-	 * @param additionalRules Set of identifiers for the additional, otherwise optional rules, that are declared for this rule set.
-	 */
-	public ProcessRuleSet(String name, String extendedRuleSetName,
-			Set<String> additionalRules) {
-		this.name = name;
-		this.extendedRuleSetName = extendedRuleSetName;
-		this.additionalRules = additionalRules;
-	}
+    /**
+     * @param name                Name of this rule set.
+     * @param extendedRuleSetName Name of the rule set that this rule set extends.
+     *                            May be null if there is no such extension.
+     */
+    public ProcessRuleSet(String name, String extendedRuleSetName) {
+	this.name = name;
+	this.extendedRuleSetName = extendedRuleSetName;
+    }
 
-	/**
-	 * @return Name of this rule set.
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @param name                Name of this rule set.
+     * @param extendedRuleSetName Name of the rule set that this rule set extends.
+     *                            May be null if there is no such extension.
+     * @param additionalRules     Set of identifiers for the additional, otherwise
+     *                            optional rules, that are declared for this rule
+     *                            set.
+     */
+    public ProcessRuleSet(String name, String extendedRuleSetName, SortedSet<String> additionalRules) {
+	this.name = name;
+	this.extendedRuleSetName = extendedRuleSetName;
+	this.additionalRules = additionalRules;
+    }
 
-	/**
-	 * @return Name of the rule set that is extended by this set of rules;
-	 *         null if there is no such extension.
-	 */
-	public String getExtendedRuleSetName() {
-		return extendedRuleSetName;
-	}
+    /**
+     * @return Name of this rule set.
+     */
+    public String getName() {
+	return name;
+    }
 
-	/**
-	 * @return Set of identifiers for the additional, otherwise optional rules, that are declared for this rule set.
-	 */
-	public Set<String> getAdditionalRules() {
-		return additionalRules;
-	}
-	
-	public boolean hasAdditionalRules() {
-		return additionalRules != null && !additionalRules.isEmpty();
-	}
+    /**
+     * @return Name of the rule set that is extended by this set of rules; null if
+     *         there is no such extension.
+     */
+    public String getExtendedRuleSetName() {
+	return extendedRuleSetName;
+    }
+
+    /**
+     * @return Set of identifiers for the additional, otherwise optional rules, that
+     *         are declared for this rule set.
+     */
+    public SortedSet<String> getAdditionalRules() {
+	return additionalRules;
+    }
+
+    public boolean hasAdditionalRules() {
+	return additionalRules != null && !additionalRules.isEmpty();
+    }
+
+    @Override
+    public int hashCode() {
+	return Objects.hash(additionalRules, extendedRuleSetName, name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	ProcessRuleSet other = (ProcessRuleSet) obj;
+	return Objects.equals(additionalRules, other.additionalRules)
+		&& Objects.equals(extendedRuleSetName, other.extendedRuleSetName) && Objects.equals(name, other.name);
+    }
+
+    @Override
+    public String toString() {
+	return "ProcessRuleSet [name=" + name + ", extends="
+		+ (extendedRuleSetName == null ? "<none>" : extendedRuleSetName) + ", rules="
+		+ (additionalRules == null ? "<none>" : StringUtils.join(additionalRules, ", ")) + "]";
+    }
 
 }

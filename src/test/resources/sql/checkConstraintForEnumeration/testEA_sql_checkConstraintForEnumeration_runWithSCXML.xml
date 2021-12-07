@@ -198,10 +198,10 @@
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="F_multiplicity" mode="enabled">
 			<targetParameter name="databaseSystem" value="SQLite"/>
-			<targetParameter name="defaultEncodingRule" value="customRule"/>
+			<targetParameter name="defaultEncodingRule" value="customRuleWithAssociativeTables"/>
 			<targetParameter name="outputDirectory" value="testResults/sql/checkConstraintForEnumeration/ddl_sqlite"/>
 			<rules>
-				<EncodingRule extends="sql" name="customRule">
+				<EncodingRule extends="sql" name="customRuleWithAssociativeTables">
 					<rule name="rule-sql-all-associativetables"/>
 					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
 				</EncodingRule>

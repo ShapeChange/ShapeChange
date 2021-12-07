@@ -46,7 +46,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,6 +56,7 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -999,26 +1002,28 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-prop-initialValueAsDefault");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-voidable");
-
-	r.addExtendsEncRule("defaultGeoJson", "*");
-
-	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty", "defaultGeoJson");
-	r.addRule("rule-json-cls-ignoreIdentifier", "defaultGeoJson");
-	r.addRule("rule-json-cls-name-as-anchor", "defaultGeoJson");
-	r.addRule("rule-json-cls-nestedProperties", "defaultGeoJson");
-	r.addRule("rule-json-cls-virtualGeneralization", "defaultGeoJson");
-	r.addRule("rule-json-prop-derivedAsReadOnly", "defaultGeoJson");
-	r.addRule("rule-json-prop-initialValueAsDefault", "defaultGeoJson");
-	r.addRule("rule-json-prop-readOnly", "defaultGeoJson");
-	r.addRule("rule-json-prop-voidable", "defaultGeoJson");
-
-	r.addExtendsEncRule("defaultPlainJson", "*");
-
-	r.addRule("rule-json-cls-name-as-anchor", "defaultPlainJson");
-	r.addRule("rule-json-prop-derivedAsReadOnly", "defaultPlainJson");
-	r.addRule("rule-json-prop-initialValueAsDefault", "defaultPlainJson");
-	r.addRule("rule-json-prop-readOnly", "defaultPlainJson");
-	r.addRule("rule-json-prop-voidable", "defaultPlainJson");
+	
+	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson","*",new TreeSet<>(Stream.of(
+		"rule-json-cls-defaultGeometry-singleGeometryProperty",
+		"rule-json-cls-ignoreIdentifier",
+		"rule-json-cls-name-as-anchor",
+		"rule-json-cls-nestedProperties",
+		"rule-json-cls-virtualGeneralization",
+		"rule-json-prop-derivedAsReadOnly",
+		"rule-json-prop-initialValueAsDefault",
+		"rule-json-prop-readOnly",
+		"rule-json-prop-voidable"		
+		).collect(Collectors.toSet())));
+	r.addRuleSet(defaultGeoJsonPrs);
+	
+	ProcessRuleSet defaultPlainJsonPrs = new ProcessRuleSet("defaultPlainJson","*",new TreeSet<>(Stream.of(
+		"rule-json-cls-name-as-anchor",
+		"rule-json-prop-derivedAsReadOnly",
+		"rule-json-prop-initialValueAsDefault",
+		"rule-json-prop-readOnly",
+		"rule-json-prop-voidable"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(defaultPlainJsonPrs);
     }
 
     @Override

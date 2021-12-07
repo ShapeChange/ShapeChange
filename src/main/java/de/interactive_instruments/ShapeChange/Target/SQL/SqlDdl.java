@@ -53,6 +53,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -1239,8 +1242,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-replicationSchema-optional");
 
 	// declare rule sets
-	r.addExtendsEncRule("sql", "*");
-	r.addRule("rule-sql-cls-feature-types", "sql");
+	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql","*",new TreeSet<>(Stream.of(
+		"rule-sql-cls-feature-types").collect(Collectors.toSet())));
+	r.addRuleSet(sqlPrs);
     }
 
     @Override
