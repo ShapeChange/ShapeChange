@@ -41,6 +41,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
@@ -219,7 +221,7 @@ public class ModelCleaner implements Transformer, MessageSource {
 
 					// check that tagged value and field for
 					// implementedByNilReason are set correctly
-					if (p1.taggedValue(TV_IMPLEMENTED_BY_NILREASON) != null
+					if (StringUtils.isNotBlank(p1.taggedValue(TV_IMPLEMENTED_BY_NILREASON))
 							&& Boolean.parseBoolean(
 									p1.taggedValue(TV_IMPLEMENTED_BY_NILREASON)
 											.trim())) {
@@ -240,7 +242,7 @@ public class ModelCleaner implements Transformer, MessageSource {
 
 					// check that tagged value and field for
 					// implementedByNilReason are set correctly
-					if (p2.taggedValue(TV_IMPLEMENTED_BY_NILREASON) != null
+					if (StringUtils.isNotBlank(p2.taggedValue(TV_IMPLEMENTED_BY_NILREASON))
 							&& Boolean.parseBoolean(
 									p2.taggedValue(TV_IMPLEMENTED_BY_NILREASON)
 											.trim())) {

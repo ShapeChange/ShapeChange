@@ -82,7 +82,7 @@ public abstract class PropertyInfoImpl extends InfoImpl implements PropertyInfo 
     public String language() {
 	String lang = this.taggedValue("language");
 
-	if (lang == null || lang.isEmpty()) {
+	if (StringUtils.isBlank(lang)) {
 	    ClassInfo ci = inClass();
 	    if (ci != null)
 		return ci.language();
@@ -319,18 +319,18 @@ public abstract class PropertyInfoImpl extends InfoImpl implements PropertyInfo 
 	    if (matches("req-xsd-prop-codelist-obligation") && ci != null && ci.category() == Options.CODELIST) {
 		s = ci.taggedValue("vocabulary");
 		s2 = taggedValue("obligation");
-		if (s2 != null && !s2.isEmpty() && !s2.equalsIgnoreCase("implementingRule")
+		if (StringUtils.isNotBlank(s2) && !s2.equalsIgnoreCase("implementingRule")
 			&& !s2.equalsIgnoreCase("technicalGuidance")) {
 		    MessageContext mc = result().addError(null, 203, "obligation", inClass().name() + "." + pn, s2);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", fullName());
-		} else if (s2 != null && !s2.isEmpty() && (s == null || s.isEmpty())) {
+		} else if (StringUtils.isNotBlank(s2) && StringUtils.isBlank(s)) {
 		    MessageContext mc = result().addError(null, 203, "obligation", inClass().name() + "." + pn, s2);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", fullName());
 		}
 		s = taggedValue("extendableMyMS");
-		if (s != null && !s.isEmpty()) {
+		if (StringUtils.isNotBlank(s)) {
 		    MessageContext mc = result().addError(null, 204, "extendableMyMS", inClass().name() + "." + pn);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", fullName());
@@ -501,7 +501,7 @@ public abstract class PropertyInfoImpl extends InfoImpl implements PropertyInfo 
 	    // attempt to parse from profiles tagged value
 	    String profilesTV = this.taggedValue(Profiles.PROFILES_TAGGED_VALUE);
 
-	    if (profilesTV == null || profilesTV.trim().length() == 0) {
+	    if (StringUtils.isBlank(profilesTV)) {
 
 		// No specific profiles declared, which is valid.
 		this.profiles = new Profiles();

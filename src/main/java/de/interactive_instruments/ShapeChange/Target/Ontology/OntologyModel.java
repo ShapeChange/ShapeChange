@@ -229,7 +229,7 @@ public class OntologyModel implements MessageSource {
 
 	    ontologyName = mpackage.taggedValue(ontologyNameTVName);
 
-	    if (ontologyName == null) {
+	    if (StringUtils.isBlank(ontologyName)) {
 		result.addWarning(this, 26, OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_BY_TAGGED_VALUE, ontologyNameTVName,
 			mpackage.fullNameInSchema());
 	    }
@@ -983,7 +983,7 @@ public class OntologyModel implements MessageSource {
 
 		String tag = pi.taggedValue(OWLISO19150.TV_UNION_SET);
 
-		if (tag != null && pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS)) {
+		if (StringUtils.isNotBlank(tag) && pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS)) {
 		    SortedSet<PropertyInfo> set;
 
 		    if (sets.containsKey(tag)) {
@@ -2032,7 +2032,7 @@ public class OntologyModel implements MessageSource {
     protected void addMultiplicity(OntClass cls, PropertyInfo pi, OntProperty p) {
 
 	if ((pi.inClass().category() == Options.UNION && pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION))
-		|| (pi.taggedValue(OWLISO19150.TV_UNION_SET) != null
+		|| (StringUtils.isNotBlank(pi.taggedValue(OWLISO19150.TV_UNION_SET))
 			&& pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS))) {
 	    /*
 	     * A class expression to specify union semantics for this property will be

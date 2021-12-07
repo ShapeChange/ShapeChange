@@ -896,9 +896,9 @@ public class Converter implements MessageSource {
 			if (compMeth.getName().equals("taggedValue")) {
 			    String s1 = ci1.taggedValue((String) compMethArgs[0]);
 			    String s2 = ci2.taggedValue((String) compMethArgs[0]);
-			    if (s1 == null)
+			    if (StringUtils.isBlank(s1))
 				s1 = ci1.name();
-			    if (s2 == null)
+			    if (StringUtils.isBlank(s2))
 				s2 = ci2.name();
 			    return s1.compareTo(s2);
 			} else

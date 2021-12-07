@@ -48,6 +48,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -496,7 +497,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	    int size = -1;
 
-	    if (pi.taggedValue(TV_SIZE) != null && pi.taggedValue(TV_SIZE).trim().length() > 0) {
+	    if (StringUtils.isNotBlank(pi.taggedValue(TV_SIZE))) {
 		try {
 		    size = Integer.parseInt(pi.taggedValue(TV_SIZE).trim());
 		} catch (NumberFormatException e) {

@@ -288,10 +288,10 @@ public class JsonSchemaDocument implements MessageSource {
 	if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.STRING) {
 
 	    String length = ci.taggedValue("length");
-	    if (length == null) {
+	    if (StringUtils.isBlank(length)) {
 		length = ci.taggedValue("maxLength");
 	    }
-	    if (length == null) {
+	    if (StringUtils.isBlank(length)) {
 		length = ci.taggedValue("size");
 	    }
 

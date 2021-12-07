@@ -188,7 +188,7 @@ public class CityGMLTransformer implements MessageSource, Transformer {
 
 			GenericClassInfo targetType = null;
 
-			if (qname != null) {
+			if (StringUtils.isNotBlank(qname)) {
 
 				if (classByQname.containsKey(qname)) {
 

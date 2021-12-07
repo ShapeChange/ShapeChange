@@ -1674,7 +1674,7 @@ public class Flattener implements Transformer, MessageSource {
 	    // parse 'geometry' tagged value, if present
 	    SortedSet<String> geometryTVValues = new TreeSet<String>();
 	    String geometryTV = genCi.taggedValue("geometry");
-	    if (geometryTV != null) {
+	    if (StringUtils.isNotBlank(geometryTV)) {
 		geometryTVValues = new TreeSet<String>(commaSplitter.splitToList(geometryTV));
 	    }
 
@@ -1759,7 +1759,7 @@ public class Flattener implements Transformer, MessageSource {
 
 			SortedSet<String> supertypeGeometryTVValues = new TreeSet<String>();
 			String supertypeGeometryTV = supertype.taggedValue("geometry");
-			if (supertypeGeometryTV != null) {
+			if (StringUtils.isNotBlank(supertypeGeometryTV)) {
 			    supertypeGeometryTVValues = new TreeSet<String>(
 				    commaSplitter.splitToList(supertypeGeometryTV));
 			}
@@ -3114,14 +3114,8 @@ public class Flattener implements Transformer, MessageSource {
 	    code = info.aliasName();
 	}
 
-	if (code != null) {
-	    if (code.trim().length() == 0) {
-		code = null;
-	    } else {
-		code = code.trim();
-	    }
-	}
-
+	code = StringUtils.stripToNull(code);
+	
 	return code;
     }
 
@@ -3426,7 +3420,7 @@ public class Flattener implements Transformer, MessageSource {
 	    // get TaggedValue omitWhenFlattened
 	    boolean omitWhenFlattened = false;
 	    String tvOmitWhenFlattened = typeToProcess.taggedValue("omitWhenFlattened");
-	    if (tvOmitWhenFlattened != null && tvOmitWhenFlattened.trim().equalsIgnoreCase("true")) {
+	    if ("true".equalsIgnoreCase(StringUtils.strip(tvOmitWhenFlattened))) {
 		omitWhenFlattened = true;
 	    }
 
@@ -3532,8 +3526,8 @@ public class Flattener implements Transformer, MessageSource {
 			    GenericPropertyInfo typeGPi = (GenericPropertyInfo) typePi;
 
 			    if (ignoreSelfReferenceByPropertyWithAssociationClassOrigin
-				    && genPi.taggedValue("toAssociationClassFrom") != null
-				    && typeGPi.taggedValue("fromAssociationClassTo") != null
+				    && StringUtils.isNotBlank(genPi.taggedValue("toAssociationClassFrom"))
+				    && StringUtils.isNotBlank(typeGPi.taggedValue("fromAssociationClassTo"))
 				    && genPi.taggedValue("toAssociationClassFrom")
 					    .equals(typeGPi.taggedValue("fromAssociationClassTo"))) {
 				continue;
@@ -3736,11 +3730,11 @@ public class Flattener implements Transformer, MessageSource {
 			    String piNameTV = pi.taggedValue("name");
 			    String typeGPiNameTV = typeGPi.taggedValue("name");
 
-			    if (piNameTV != null && piNameTV.trim().length() > 0) {
+			    if (StringUtils.isNotBlank(piNameTV)) {
 
 				String newNameTV = piNameTV;
 
-				if (typeGPiNameTV != null && typeGPiNameTV.trim().length() > 0) {
+				if (StringUtils.isNotBlank(typeGPiNameTV)) {
 				    // we need to merge the 'name' tagged values
 				    newNameTV = piNameTV + " - " + typeGPiNameTV;
 				} else {
@@ -3805,7 +3799,7 @@ public class Flattener implements Transformer, MessageSource {
 
 				    tvs.put(UNION_SET_TAG_NAME, setName);
 				    copy.setTaggedValues(tvs, false);
-				} else if (copy.taggedValue(UNION_SET_TAG_NAME) != null) {
+				} else if (StringUtils.isNotBlank(copy.taggedValue(UNION_SET_TAG_NAME))) {
 				    /*
 				     * extend union identifier tag in the copy
 				     */
@@ -4627,7 +4621,7 @@ public class Flattener implements Transformer, MessageSource {
 		int maxOccurs = maxOccursGlobal;
 		String piMaxOccTaggedValue = genPi.taggedValue(PARAM_MAXOCCURS);
 
-		if (piMaxOccTaggedValue != null && piMaxOccTaggedValue.trim().length() > 0) {
+		if (StringUtils.isNotBlank(piMaxOccTaggedValue)) {
 
 		    int piMaxOcc = Integer.parseInt(piMaxOccTaggedValue);
 		    if (piMaxOcc < 1) {
@@ -6196,7 +6190,7 @@ public class Flattener implements Transformer, MessageSource {
 	    codevalue = info.taggedValue(tvNameForCodeValue);
 	}
 
-	if (codevalue != null && codevalue.trim().length() > 0) {
+	if (StringUtils.isNotBlank(codevalue)) {
 	    return true;
 	} else {
 	    return false;
@@ -7013,7 +7007,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		String isFlatTarget_genPi = genPi.taggedValue(TAGGED_VALUE_IS_FLAT_TARGET);
 
-		if (isFlatTarget_genPi != null && isFlatTarget_genPi.trim().equalsIgnoreCase("true")) {
+		if (StringUtils.isNotBlank(isFlatTarget_genPi) && isFlatTarget_genPi.trim().equalsIgnoreCase("true")) {
 
 		    // remove navigability of genPi - so remove genPi completely
 		    genPisToRemove.add(genPi);
@@ -7042,10 +7036,10 @@ public class Flattener implements Transformer, MessageSource {
 		String isFlatTarget_pi1_tv = pi1.taggedValue(TAGGED_VALUE_IS_FLAT_TARGET);
 		String isFlatTarget_pi2_tv = pi2.taggedValue(TAGGED_VALUE_IS_FLAT_TARGET);
 
-		boolean isFlatTarget_pi1 = isFlatTarget_pi1_tv != null
+		boolean isFlatTarget_pi1 = StringUtils.isNotBlank(isFlatTarget_pi1_tv)
 			? Boolean.parseBoolean(isFlatTarget_pi1_tv.trim())
 			: false;
-		boolean isFlatTarget_pi2 = isFlatTarget_pi2_tv != null
+		boolean isFlatTarget_pi2 = StringUtils.isNotBlank(isFlatTarget_pi2_tv)
 			? Boolean.parseBoolean(isFlatTarget_pi2_tv.trim())
 			: false;
 

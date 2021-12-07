@@ -42,6 +42,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -340,7 +341,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 		// Fetching constraints from tagged value named 'oclExpressions' ...
 		HashMap<String, OclConstraintXmi10> namefilter = new HashMap<String, OclConstraintXmi10>();
 		String tv = doc.taggedValue(id, "oclExpressions");
-		if (tv != null) {
+		if (StringUtils.isNotBlank(tv)) {
 			// Find first inv [name] : pattern
 			Pattern pat = Pattern.compile("inv\\s*\\w*\\s*:");
 			Matcher mat = pat.matcher(tv);

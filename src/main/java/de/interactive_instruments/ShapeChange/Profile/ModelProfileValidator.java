@@ -193,7 +193,7 @@ public class ModelProfileValidator implements MessageSource {
 
 				// validate geometry profile parameter
 				String geometryTV = ci.taggedValue("geometry");
-				if (geometryTV != null) {
+				if (StringUtils.isNotBlank(geometryTV)) {
 
 					// identify set of geometries from tagged value
 					SortedSet<String> geometryTVValues = new TreeSet<String>(

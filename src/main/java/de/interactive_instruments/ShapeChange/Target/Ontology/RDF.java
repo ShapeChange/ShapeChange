@@ -46,6 +46,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -372,9 +373,9 @@ public class RDF implements Target, MessageSource {
 	addAttribute(document, e1, "rdf:resource", W3C_OWL + "Thing");
 
 	String s = ci.taggedValue("name");
-	if (s == null)
+	if (StringUtils.isBlank(s))
 	    s = ci.taggedValue("title");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e1 = document.createElementNS(W3C_SKOS, "prefLabel");
 	    e0.appendChild(e1);
 	    addAttribute(document, e1, "rdf:datatype", Options.W3C_XML_SCHEMA + "#string");
@@ -400,7 +401,7 @@ public class RDF implements Target, MessageSource {
 	    String label = null;
 	    if (taggedValueForTitle != null)
 		label = propi.taggedValue(taggedValueForTitle);
-	    if (label == null)
+	    if (StringUtils.isBlank(label))
 		label = PrepareToPrint(propi.name());
 
 	    String code = propi.initialValue();
@@ -431,7 +432,7 @@ public class RDF implements Target, MessageSource {
 
 	    if (taggedValueForCode != null) {
 		s = propi.taggedValue(taggedValueForCode);
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 		    e1 = document.createElementNS(W3C_SKOS, "altLabel");
 		    e0.appendChild(e1);
 		    addAttribute(document, e1, "rdf:datatype", Options.W3C_XML_SCHEMA + "#string");
@@ -442,9 +443,9 @@ public class RDF implements Target, MessageSource {
 
 	    if (propi.matches("rule-rdf-prop-parent")) {
 		s = propi.taggedValue("parent");
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 		    String s1 = ci.taggedValue("parent");
-		    if (s1 != null) {
+		    if (StringUtils.isNotBlank(s1)) {
 			String[] sap = s.split(";");
 			String[] sac = s1.split(";");
 			for (String sc : sac) {
@@ -619,7 +620,7 @@ public class RDF implements Target, MessageSource {
 	String s;
 	if (taggedValueForTitle != null) {
 	    s = ci.taggedValue(taggedValueForTitle);
-	    if (s != null) {
+	    if (StringUtils.isNotBlank(s)) {
 		e1 = document.createElementNS(W3C_RDFS, "label");
 		e0.appendChild(e1);
 		addAttribute(document, e1, "xml:lang", language);
@@ -706,7 +707,7 @@ public class RDF implements Target, MessageSource {
 
 	if (taggedValueForTitle != null) {
 	    s = propi.taggedValue(taggedValueForTitle);
-	    if (s != null) {
+	    if (StringUtils.isNotBlank(s)) {
 		e1 = document.createElementNS(W3C_RDFS, "label");
 		e0.appendChild(e1);
 		addAttribute(document, e1, "xml:lang", language);

@@ -334,6 +334,9 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
 				String tvValue = genCi.taggedValue(tv);
 
+				/*
+				 * Here we really compare with null, since we are fine inheriting empty tags
+				 */
 				if (tvValue != null) {
 
 					String subtypeTvValue = subtype.taggedValue(tv);

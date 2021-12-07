@@ -76,7 +76,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     public String language() {
 	String lang = this.taggedValue("language");
 
-	if (lang == null || lang.isEmpty()) {
+	if (StringUtils.isBlank(lang)) {
 	    PackageInfo pi = this.pkg();
 	    if (pi != null)
 		return pi.language();

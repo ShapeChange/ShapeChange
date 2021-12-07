@@ -638,7 +638,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    writer.startElement("taggedValues");
 
 	    s = pi.taggedValue(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME);
-	    if (s != null && s.trim().length() > 0) {
+	    if (StringUtils.isNotBlank(s)) {
 		writer.dataElement(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, PrepareToPrint(s));
 	    }
 
@@ -1422,19 +1422,19 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		}
 
 		s = ci.taggedValue("alwaysVoid");
-		if (s != null && s.length() > 0) {
+		if (StringUtils.isNotBlank(s)) {
 		    writer.startElement("constraint");
 		    writer.dataElement("description", "Properties that are always void: " + s);
 		    writer.endElement("constraint");
 		}
 		s = ci.taggedValue("neverVoid");
-		if (s != null && s.length() > 0) {
+		if (StringUtils.isNotBlank(s)) {
 		    writer.startElement("constraint");
 		    writer.dataElement("description", "Properties that are never void: " + s);
 		    writer.endElement("constraint");
 		}
 		s = ci.taggedValue("appliesTo");
-		if (s != null && s.length() > 0) {
+		if (StringUtils.isNotBlank(s)) {
 		    writer.startElement("constraint");
 		    writer.dataElement("description", "Applies to the following network elements: " + s);
 		    writer.endElement("constraint");
@@ -1444,7 +1444,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		// backwards compatibility
 		s = ci.taggedValue("name");
-		if (s != null && s.trim().length() > 0) {
+		if (StringUtils.isNotBlank(s)) {
 		    writer.dataElement("name", PrepareToPrint(s), op);
 		}
 
@@ -1760,14 +1760,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	// backwards compatibility
 	s = propi.taggedValue("name");
-	if (s != null && s.trim().length() > 0) {
+	if (StringUtils.isNotBlank(s)) {
 	    writer.dataElement("name", PrepareToPrint(s), op);
 	}
 	String[] tags = propi.taggedValuesForTag("length");
-	if (tags != null && tags.length > 0) {
-	    for (String tag : tags) {
-		writer.dataElement("length", PrepareToPrint(tag), op);
-	    }
+	for (String tag : tags) {
+	    writer.dataElement("length", PrepareToPrint(tag), op);
 	}
 
 	if (representTaggedValues != null) {
@@ -1853,10 +1851,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 			    if (includeCodelistURI) {
 				String cl = cix.taggedValue("codeList");
-				if (cl == null || cl.isEmpty()) {
+				if (StringUtils.isBlank(cl)) {
 				    cl = cix.taggedValue("vocabulary");
 				}
-				if (cl != null && !cl.isEmpty()) {
+				if (StringUtils.isNotBlank(cl)) {
 				    atts.addAttribute("", "codeList", "", "CDATA", options.internalize(cl));
 				}
 			    }

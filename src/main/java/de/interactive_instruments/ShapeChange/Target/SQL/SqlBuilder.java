@@ -164,7 +164,7 @@ public class SqlBuilder implements MessageSource {
 	    // identify table name - using tagged value or default name
 	    tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
 
-	    if (tableName == null || tableName.trim().length() == 0) {
+	    if (StringUtils.isBlank(tableName)) {
 
 		tableName = pi.inClass().name() + "_" + pi.name();
 
@@ -687,7 +687,7 @@ public class SqlBuilder implements MessageSource {
 	String tableNameEnd1InClass = determineTableNameForType(ai.end1().inClass());
 	String tableNameEnd2InClass = determineTableNameForType(ai.end2().inClass());
 
-	if (tableName == null || tableName.trim().length() == 0) {
+	if (StringUtils.isBlank(tableName)) {
 
 	    if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
 
@@ -2058,7 +2058,7 @@ public class SqlBuilder implements MessageSource {
 
 	int size = SqlDdl.defaultSize;
 
-	if (tvSize != null) {
+	if (StringUtils.isNotBlank(tvSize)) {
 	    try {
 		size = Integer.parseInt(tvSize);
 	    } catch (NumberFormatException e) {
@@ -2169,8 +2169,7 @@ public class SqlBuilder implements MessageSource {
 		    String columnName = SqlDdl.oneToManyReferenceColumnName;
 		    String tv_oneToManyReferenceColumnName = ci
 			    .taggedValue(SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME);
-		    if (tv_oneToManyReferenceColumnName != null
-			    && tv_oneToManyReferenceColumnName.trim().length() > 0) {
+		    if (StringUtils.isNotBlank(tv_oneToManyReferenceColumnName)) {
 			columnName = tv_oneToManyReferenceColumnName.trim();
 		    }
 

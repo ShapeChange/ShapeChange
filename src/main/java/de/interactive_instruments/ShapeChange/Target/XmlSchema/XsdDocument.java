@@ -317,8 +317,8 @@ public class XsdDocument implements MessageSource {
 		String dgiwgComplianceLevel = pi.taggedValue("dgiwgComplianceLevel");
 		String dgiwgGMLProfileSchema = pi.taggedValue("dgiwgGMLProfileSchema");
 
-		if (dgiwgComplianceLevel != null && !dgiwgComplianceLevel.trim().isEmpty()
-			&& dgiwgGMLProfileSchema != null && !dgiwgGMLProfileSchema.trim().isEmpty()) {
+		if (StringUtils.isNotBlank(dgiwgComplianceLevel)
+			&& StringUtils.isNotBlank(dgiwgGMLProfileSchema)) {
 		    // if (e2==null)
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 		    addAttribute(e2, "source", options.schemaLocationOfNamespace(DGIWGSP_NS));
@@ -337,7 +337,7 @@ public class XsdDocument implements MessageSource {
 
 		String gmlsfComplianceLevel = pi.taggedValue("gmlsfComplianceLevel");
 
-		if (gmlsfComplianceLevel != null && !gmlsfComplianceLevel.trim().isEmpty()) {
+		if (StringUtils.isNotBlank(gmlsfComplianceLevel)) {
 
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 		    addAttribute(e2, "source", options.schemaLocationOfNamespace(GMLSF_NS));
@@ -1429,7 +1429,7 @@ public class XsdDocument implements MessageSource {
 
 		String base = ci.taggedValue("base");
 		String length = ci.taggedValue("length");
-		if (length == null)
+		if (StringUtils.isBlank(length))
 		    length = ci.taggedValue("maxLength");
 		String pattern = ci.taggedValue("pattern");
 		String min = ci.taggedValue("rangeMinimum");
@@ -1444,7 +1444,7 @@ public class XsdDocument implements MessageSource {
 		 */
 		String baseType = null;
 
-		if (base == null) {
+		if (StringUtils.isBlank(base)) {
 
 		    /*
 		     * Identify base and type content from the direct supertypes; this is important
@@ -1480,7 +1480,7 @@ public class XsdDocument implements MessageSource {
 		    baseType = base;
 		}
 
-		if (base != null) {
+		if (StringUtils.isNotBlank(base)) {
 
 		    Element e3;
 		    Element e4;
@@ -1505,27 +1505,27 @@ public class XsdDocument implements MessageSource {
 			e4.appendChild(e3);
 		    }
 		    addAttribute(e3, "base", base);
-		    if (facetSupported("totalDigits", baseType) && length != null) {
+		    if (facetSupported("totalDigits", baseType) && StringUtils.isNotBlank(length)) {
 			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
 			e3.appendChild(e5);
 			addAttribute(e5, "value", length);
 		    }
-		    if (facetSupported("maxLength", baseType) && length != null) {
+		    if (facetSupported("maxLength", baseType) && StringUtils.isNotBlank(length)) {
 			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 			e3.appendChild(e5);
 			addAttribute(e5, "value", length);
 		    }
-		    if (facetSupported("pattern", baseType) && pattern != null) {
+		    if (facetSupported("pattern", baseType) && StringUtils.isNotBlank(pattern)) {
 			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 			e3.appendChild(e5);
 			addAttribute(e5, "value", pattern);
 		    }
-		    if (facetSupported("minInclusive", baseType) && min != null) {
+		    if (facetSupported("minInclusive", baseType) && StringUtils.isNotBlank(min)) {
 			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
 			e3.appendChild(e5);
 			addAttribute(e5, "value", min);
 		    }
-		    if (facetSupported("maxInclusive", baseType) && max != null) {
+		    if (facetSupported("maxInclusive", baseType) && StringUtils.isNotBlank(max)) {
 			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
 			e3.appendChild(e5);
 			addAttribute(e5, "value", max);
@@ -1995,7 +1995,7 @@ public class XsdDocument implements MessageSource {
 	ClassInfo ci = model.classById(pi.typeInfo().id);
 
 	String asAtt = pi.taggedValue("xsdAsAttribute");
-	if (asAtt == null)
+	if (StringUtils.isBlank(asAtt))
 	    asAtt = pi.taggedValue("asXMLAttribute");
 	String asAttRef = "";
 	String asAttGroupRef = "";
@@ -2042,7 +2042,7 @@ public class XsdDocument implements MessageSource {
 		String nsabr = asAttGroupRef.substring(0, idx);
 		addImport(nsabr, options.fullNamespace(nsabr));
 	    }
-	} else if (pi.matches("rule-xsd-prop-xsdAsAttribute") && asAtt != null && asAtt.equalsIgnoreCase("true")
+	} else if (pi.matches("rule-xsd-prop-xsdAsAttribute") && "true".equalsIgnoreCase(asAtt)
 		&& (m.maxOccurs == 1 || asList(pi)) && !inAssocClass) {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 	    addStandardAnnotation(e1, pi);
@@ -2103,11 +2103,11 @@ public class XsdDocument implements MessageSource {
 	    simpleContent.appendChild(restriction);
 
 	    String codeListUri = ci.taggedValue("codeList");
-	    if (codeListUri == null) {
+	    if (StringUtils.isBlank(codeListUri)) {
 		codeListUri = ci.taggedValue("vocabulary");
 	    }
 
-	    if (codeListUri != null && codeListUri.trim().length() > 0) {
+	    if (StringUtils.isNotBlank(codeListUri)) {
 		Element attribute = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 		addAttribute(attribute, "name", "codeSpace");
 		addAttribute(attribute, "type", "anyURI");
@@ -2165,8 +2165,8 @@ public class XsdDocument implements MessageSource {
 	     * to be added within the 'addTaggedValues' input parameter of the ShapeChange
 	     * config file. FIXME
 	     */
-	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (pi.taggedValue("length") != null
-		    || (pi.taggedValue("size") != null && pi.taggedValue("pattern") != null))) {
+	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (StringUtils.isNotBlank(pi.taggedValue("length"))
+		    || (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))))) {
 
 		Element simpleType = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
 		e1.appendChild(simpleType);
@@ -2178,11 +2178,11 @@ public class XsdDocument implements MessageSource {
 
 		Element concreteRestriction = null;
 		// maxLength
-		if (pi.taggedValue("length") != null) {
+		if (StringUtils.isNotBlank(pi.taggedValue("length"))) {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 		    addAttribute(concreteRestriction, "value", pi.taggedValue("length"));
 		    // pattern
-		} else if (pi.taggedValue("size") != null && pi.taggedValue("pattern") != null) {
+		} else if (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))) {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 		    addAttribute(concreteRestriction, "value",
 			    pi.taggedValue("pattern") + "{" + pi.taggedValue("size") + "}");
@@ -2196,10 +2196,10 @@ public class XsdDocument implements MessageSource {
 		    && pi.categoryOfValue() != Options.ENUMERATION) {
 
 		String length = pi.taggedValue("length");
-		if (length == null) {
+		if (StringUtils.isBlank(length)) {
 		    length = pi.taggedValue("maxLength");
 		}
-		if (length == null) {
+		if (StringUtils.isBlank(length)) {
 		    length = pi.taggedValue("size");
 		}
 		String pattern = pi.taggedValue("pattern");
@@ -2207,7 +2207,7 @@ public class XsdDocument implements MessageSource {
 		String max = pi.taggedValue("rangeMaximum");
 		String typecontent = "simple/simple";
 
-		if (length != null || pattern != null || min != null || max != null) {
+		if (StringUtils.isNotBlank(length) || StringUtils.isNotBlank(pattern) || StringUtils.isNotBlank(min) || StringUtils.isNotBlank(max)) {
 
 		    /*
 		     * baseType is the simple type that is the foundation of the restriction. It is
@@ -2284,27 +2284,27 @@ public class XsdDocument implements MessageSource {
 			    e4.appendChild(e3);
 			}
 			addAttribute(e3, "base", base);
-			if (facetSupported("totalDigits", baseType) && length != null) {
+			if (facetSupported("totalDigits", baseType) && StringUtils.isNotBlank(length)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", length);
 			}
-			if (facetSupported("maxLength", baseType) && length != null) {
+			if (facetSupported("maxLength", baseType) && StringUtils.isNotBlank(length)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", length);
 			}
-			if (facetSupported("pattern", baseType) && pattern != null) {
+			if (facetSupported("pattern", baseType) && StringUtils.isNotBlank(pattern)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", pattern);
 			}
-			if (facetSupported("minInclusive", baseType) && min != null) {
+			if (facetSupported("minInclusive", baseType) && StringUtils.isNotBlank(min)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", min);
 			}
-			if (facetSupported("maxInclusive", baseType) && max != null) {
+			if (facetSupported("maxInclusive", baseType) && StringUtils.isNotBlank(max)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", max);
@@ -2327,7 +2327,7 @@ public class XsdDocument implements MessageSource {
 	boolean asArray = false;
 	if (propi.matches("rule-xsd-prop-gmlArrayProperty")) {
 	    String s = propi.taggedValue("gmlArrayProperty");
-	    asArray = s != null && s.equalsIgnoreCase("true");
+	    asArray = "true".equalsIgnoreCase(s);
 	}
 	if (asArray) {
 	    if (!propi.matches("rule-xsd-prop-inlineOrByReference") || !propi.inlineOrByReference().equals("inline")) {
@@ -2344,7 +2344,7 @@ public class XsdDocument implements MessageSource {
 	boolean asList = false;
 	if (propi.matches("rule-xsd-prop-gmlListProperty")) {
 	    String s = propi.taggedValue("gmlListProperty");
-	    asList = s != null && s.equalsIgnoreCase("true");
+	    asList = "true".equalsIgnoreCase(s);
 	}
 	return asList;
     }
@@ -2499,7 +2499,7 @@ public class XsdDocument implements MessageSource {
 		boolean softtyped = false;
 		if (propi.matches("rule-xsd-prop-soft-typed")) {
 		    String s = propi.taggedValue("soft-typed");
-		    softtyped = s != null && s.equalsIgnoreCase("true");
+		    softtyped = "true".equalsIgnoreCase(s);
 		}
 
 		boolean asList = asList(propi);
@@ -3019,8 +3019,8 @@ public class XsdDocument implements MessageSource {
 		     */
 		    if (ci.matches("rule-xsd-cls-standard-swe-property-types"))
 			embedPropertyType = embedPropertyType
-				|| (propi.matches("rule-xsd-prop-soft-typed") && propi.taggedValue("soft-typed") != null
-					&& propi.taggedValue("soft-typed").equalsIgnoreCase("true"));
+				|| (propi.matches("rule-xsd-prop-soft-typed")
+					&& "true".equalsIgnoreCase(propi.taggedValue("soft-typed")));
 		    /*
 		     * 6. the property has qualifiers
 		     */
@@ -3311,12 +3311,12 @@ public class XsdDocument implements MessageSource {
 	    XpathFragment xpath;
 
 	    String s = typeCi.taggedValue("codeList");
-	    if (s == null || s.isEmpty())
+	    if (StringUtils.isBlank(s))
 		s = typeCi.taggedValue("vocabulary");
 
 	    if (typeCi.matches("rule-xsd-cls-standard-19139-property-types")) {
 
-		if (s != null && !s.isEmpty()) {
+		if (StringUtils.isNotBlank(s)) {
 		    xpath = new XpathFragment(0, propi.qname() + "/*/@codeList='" + s + "'");
 		    schDoc.addAssertion(cibase, xpath, "Code list is '" + s + "'");
 		}
@@ -3334,7 +3334,7 @@ public class XsdDocument implements MessageSource {
 		// on its representation
 		s = typeCi.taggedValue("codeListRepresentation");
 
-		if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 
 		    xpath = new XpathFragment(0, "(not contains('" + s2 + "', '#') and document('" + s2
 			    + "')/gml:Definition) or (contains('" + s2 + "', '#') and document(substring-before('" + s2
@@ -3376,7 +3376,7 @@ public class XsdDocument implements MessageSource {
 		// on its representation
 		s = typeCi.taggedValue("codeListRepresentation");
 
-		if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 		    xpath = new XpathFragment(0, "(not contains(" + propi.qname() + "/@xlink:href, '#') and document("
 			    + propi.qname() + "/@xlink:href)/gml:Definition) or (contains(" + propi.qname()
 			    + "/@xlink:href, '#') and document(substring-before(" + propi.qname()
@@ -3431,7 +3431,7 @@ public class XsdDocument implements MessageSource {
 		    // assert that the remote resource has the correct element
 		    // based on its representation
 		    s = typeCi.taggedValue("codeListRepresentation");
-		    if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		    if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 			xpath = new XpathFragment(0, "(not contains('" + s2 + "', '#') and document('" + s2
 				+ "')/gml:Definition) or (contains('" + s2 + "', '#') and document(substring-before('"
 				+ s2 + "','#'))/id(substring-after('" + s2
@@ -4119,7 +4119,7 @@ public class XsdDocument implements MessageSource {
 
 	if (propi.matches("rule-xsd-prop-soft-typed")) {
 	    String s = propi.taggedValue("soft-typed");
-	    if (s != null && s.equalsIgnoreCase("true")) {
+	    if ("true".equalsIgnoreCase(s)) {
 		Element e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 		typeOrExtension.appendChild(e4);
 		addName(e4);

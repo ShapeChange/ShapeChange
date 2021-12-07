@@ -71,7 +71,7 @@ public abstract class AssociationInfoImpl extends InfoImpl
 	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang == null || lang.isEmpty()) {
+		if (StringUtils.isBlank(lang)) {
 			ClassInfo ci = this.assocClass();
 			if (ci != null)
 				return ci.language();

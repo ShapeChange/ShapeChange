@@ -351,7 +351,7 @@ public class CodelistRegister implements SingleTarget {
 					|| diff.subElementType == ElementType.SUBPACKAGE
 					|| diff.subElementType == ElementType.PROPERTY) {
 				    String s2 = diff.subElement.taggedValue("AAA:Kennung");
-				    if (s2 != null && !s2.isEmpty())
+				    if (StringUtils.isNotBlank(s2))
 					s += " (" + s2 + ")";
 				} else if (diff.subElementType == ElementType.ENUM) {
 				    String s2 = ((PropertyInfo) diff.subElement).initialValue();

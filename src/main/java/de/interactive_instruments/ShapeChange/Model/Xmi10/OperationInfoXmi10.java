@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -142,7 +143,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 					s = doc.taggedValue(id, "description");
 				}
 
-				if (s != null) {
+				if (StringUtils.isNotBlank(s)) {
 					ls.add(new LangString(options().internalize(s)));
 					this.descriptors().put(descriptor, ls);
 				}

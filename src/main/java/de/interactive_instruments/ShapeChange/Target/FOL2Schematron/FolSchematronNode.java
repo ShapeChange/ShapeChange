@@ -1889,11 +1889,11 @@ public abstract class FolSchematronNode {
 									"rule-xsd-cls-codelist-asDictionaryGml33")
 									|| is19139)) {
 						String uri = ci.taggedValue("codeList");
-						if (uri != null && uri.length() > 0) {
+						if (StringUtils.isNotBlank(uri)) {
 							clvpat = "{codeList}/{value}";
 						}
 						String vp = ci.taggedValue("codeListValuePattern");
-						if (vp != null && vp.length() > 0)
+						if (StringUtils.isNotBlank(vp))
 							clvpat = vp;
 						clvpat = clvpat.replace("{codeList}", "',{codeList},'");
 						clvpat = clvpat.replace("{value}", "',{value},'");

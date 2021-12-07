@@ -40,6 +40,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -264,7 +265,7 @@ public class GenericPackageContentHandler
 					
 					// handle loading of prohibited classes
 					String statusTaggedValue = genCi.taggedValue("status");
-					if (statusTaggedValue != null && options
+					if (StringUtils.isNotBlank(statusTaggedValue) && options
 							.prohibitedStatusValuesWhenLoadingClasses()
 							.contains(statusTaggedValue)) {
 						classHandlersToRemove.add(gcch);

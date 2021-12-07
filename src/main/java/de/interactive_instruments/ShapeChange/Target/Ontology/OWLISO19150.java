@@ -1275,7 +1275,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	    String sourceTV = i.taggedValue(sourceTaggedValue);
 
-	    if (sourceTV != null) {
+	    if (StringUtils.isNotBlank(sourceTV)) {
 		return sourceTV;
 	    }
 	}
