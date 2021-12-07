@@ -11,7 +11,7 @@
   <element name="FT_A" substitutionGroup="gml:AbstractFeature" type="t:FT_AType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">A</taggedValue>
+        <sc:taggedValue tag="tvA">A</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -22,7 +22,7 @@
           <element name="a" type="string">
             <annotation>
               <appinfo>
-                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">B</taggedValue>
+                <sc:taggedValue tag="tvB">B</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -46,7 +46,7 @@
           <element name="x" type="t:FT_APropertyType">
             <annotation>
               <appinfo>
-                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">B</taggedValue>
+                <sc:taggedValue tag="tvB">B</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>

@@ -6,7 +6,7 @@
   <element name="FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeAType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="valueTypeOptions">place=PointPositionSpecification,SurfacePositionSpecification</taggedValue>
+        <sc:taggedValue tag="valueTypeOptions">place=PointPositionSpecification,SurfacePositionSpecification</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -44,7 +44,7 @@
   <element name="FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeCType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</taggedValue>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -68,7 +68,7 @@
   <element name="FeatureTypeD" substitutionGroup="cc:FeatureTypeC" type="cc:FeatureTypeDType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</taggedValue>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -89,7 +89,7 @@
   <element name="FeatureTypeE" substitutionGroup="cc:FeatureTypeD" type="cc:FeatureTypeEType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="valueTypeOptions">place=LocationSpecification;supertype=A,B</taggedValue>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification;supertype=A,B</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -155,7 +155,7 @@
   <element name="Type" substitutionGroup="gml:AbstractGML" type="cc:TypeType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="valueTypeOptions">place=CurvePositionSpecification</taggedValue>
+        <sc:taggedValue tag="valueTypeOptions">place=CurvePositionSpecification</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>

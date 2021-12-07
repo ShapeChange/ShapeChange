@@ -356,10 +356,10 @@ public class XsdDocument implements MessageSource {
 
 	    if (e2 == null)
 		e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-	    Element e3 = document.createElementNS(Options.SCAI_NS, "globalIdentifier");
+	    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":globalIdentifier");
 	    e2.appendChild(e3);
 	    e3.appendChild(document.createTextNode(info.globalIdentifier()));
-	    addImport("sc", Options.SCAI_NS);
+	    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 	}
 
 	if (info instanceof PropertyInfo) {
@@ -405,10 +405,10 @@ public class XsdDocument implements MessageSource {
 
 			if (e2 == null)
 			    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			Element e3 = document.createElementNS(Options.SCAI_NS, "targetCodeListURI");
+			Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":targetCodeListURI");
 			e2.appendChild(e3);
 			e3.appendChild(document.createTextNode(codeListURI));
-			addImport("sc", Options.SCAI_NS);
+			addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 		    }
 		}
 	    }
@@ -453,11 +453,11 @@ public class XsdDocument implements MessageSource {
 			if (v.trim().length() > 0) {
 			    if (e2 == null)
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			    Element e3 = document.createElementNS(Options.SCAI_NS, "taggedValue");
+			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":taggedValue");
 			    addAttribute(e3, "tag", tag);
 			    e3.appendChild(document.createTextNode(v));
 			    e2.appendChild(e3);
-			    addImport("sc", Options.SCAI_NS);
+			    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 			}
 		    }
 		}
@@ -490,14 +490,14 @@ public class XsdDocument implements MessageSource {
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 			    }
 
-			    Element e3 = document.createElementNS(Options.SCAI_NS, "descriptor");
+			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":descriptor");
 			    addAttribute(e3, "name", descToRep.getName());
 			    if (ls.hasLang()) {
 				addAttribute(e3, "lang", ls.getLang());
 			    }
 			    e3.appendChild(document.createTextNode(ls.getValue()));
 			    e2.appendChild(e3);
-			    addImport("sc", Options.SCAI_NS);
+			    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 			}
 		    }
 		}
@@ -4285,7 +4285,7 @@ public class XsdDocument implements MessageSource {
 	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 	    serializer.setWriter(outputXML);
 	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
+	    outputXML.close();		    
 	} catch (IOException ioe) {
 	    result.addError(null, 171, name);
 	}

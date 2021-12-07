@@ -10,7 +10,7 @@
       <enumeration value="MYENUM">
         <annotation>
           <appinfo>
-            <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">SOME_THING</taggedValue>
+            <sc:taggedValue tag="tvA">SOME_THING</sc:taggedValue>
           </appinfo>
         </annotation>
       </enumeration>
@@ -38,7 +38,7 @@
   <element name="O_P_Q_R" substitutionGroup="gml:AbstractFeature" type="ccuc:O_P_Q_RType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">FOO_BAR_ID</taggedValue>
+        <sc:taggedValue tag="tvB">FOO_BAR_ID</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -49,8 +49,8 @@
           <element name="ABCD_ID" type="boolean">
             <annotation>
               <appinfo>
-                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">A_L_OHA</taggedValue>
-                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvB">FOO_BAR_LM</taggedValue>
+                <sc:taggedValue tag="tvA">A_L_OHA</sc:taggedValue>
+                <sc:taggedValue tag="tvB">FOO_BAR_LM</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -58,7 +58,7 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">ccuc:PROP_X1</reversePropertyName>
-                <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="tvA">SOME_WHERE_OVER_HERE</taggedValue>
+                <sc:taggedValue tag="tvA">SOME_WHERE_OVER_HERE</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>

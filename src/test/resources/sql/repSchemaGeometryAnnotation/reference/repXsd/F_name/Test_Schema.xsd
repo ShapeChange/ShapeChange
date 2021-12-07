@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ts="http://example.org/shapechange/repSchema/geometryAnnotation/rep" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/repSchema/geometryAnnotation/rep" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" xmlns:ts="http://example.org/shapechange/repSchema/geometryAnnotation/rep" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/repSchema/geometryAnnotation/rep" version="1.0">
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="FEATURETYPE1" type="ts:FEATURETYPE1Type">
     <annotation>
@@ -17,8 +17,8 @@
         <annotation>
           <appinfo>EAID_E0F4E64B_1C2C_41ec_BB0D_9D57168B8068</appinfo>
           <appinfo>
-            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Point</geometryType>
-            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+            <sc:geometryType>GM_Point</sc:geometryType>
+            <sc:srid>31467</sc:srid>
           </appinfo>
         </annotation>
       </element>
@@ -41,8 +41,8 @@
         <annotation>
           <appinfo>EAID_7B0284E1_408E_4851_B63D_38E6913DF236</appinfo>
           <appinfo>
-            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Surface</geometryType>
-            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+            <sc:geometryType>GM_Surface</sc:geometryType>
+            <sc:srid>31467</sc:srid>
           </appinfo>
         </annotation>
       </element>
@@ -65,8 +65,8 @@
         <annotation>
           <appinfo>EAID_D667C723_BB8D_4d52_A708_8CEC90AADFC3.EAID_5752E024_0B0B_421c_9B40_000DD10A1F3C</appinfo>
           <appinfo>
-            <geometryType xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">GM_Curve</geometryType>
-            <srid xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">31467</srid>
+            <sc:geometryType>GM_Curve</sc:geometryType>
+            <sc:srid>31467</sc:srid>
           </appinfo>
         </annotation>
       </element>
