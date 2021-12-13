@@ -20,6 +20,13 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.32</version>
+			<!-- <scope>test</scope> -->
+		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
@@ -129,10 +136,11 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
 		<dependency>
 			<groupId>org.docx4j</groupId>
-			<artifactId>docx4j</artifactId>
-			<version>6.1.2</version>
+			<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+			<version>11.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>de.interactive_instruments.ShapeChange</groupId>
@@ -263,17 +271,17 @@
 					</filesets>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-javadoc-plugin</artifactId> -->
-<!-- 				<version>3.1.1</version> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+			<!-- <version>3.1.1</version> -->
+			<!-- </plugin> -->
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.3.1</version>
 				<executions>
 					<execution>
-<!-- 						<phase>generate-resources</phase> -->
+						<!-- <phase>generate-resources</phase> -->
 						<goals>
 							<goal>javadoc</goal>
 						</goals>
