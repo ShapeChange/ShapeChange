@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- (c) 2013 interactive instruments GmbH -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom">
 	<xsl:output method="html"/>
@@ -139,13 +139,13 @@
          </xsl:if>
             </xsl:if>
          <xsl:if test="/*/atom:link[@rel='predecessor']">
-	         <p><span>Vorgänger:</span>
-				<a href="{/*/atom:link[@rel='predecessor']/@href}" title='Vorgänger'><xsl:value-of select="/*/atom:link[@rel='predecessor']/@href"/></a>
+	         <p><span>VorgÃ¤nger:</span>
+				<a href="{/*/atom:link[@rel='predecessor']/@href}" title='VorgÃ¤nger'><xsl:value-of select="/*/atom:link[@rel='predecessor']/@href"/></a>
 	         </p>
          </xsl:if>
          <xsl:if test="/*/atom:link[@rel='successor']">
 	         <p><span>Nachfolger:</span>
-				<a href="{/*/atom:link[@rel='successor']/@href}" title='Vorgänger'><xsl:value-of select="/*/atom:link[@rel='successor']/@href"/></a>
+				<a href="{/*/atom:link[@rel='successor']/@href}" title='VorgÃ¤nger'><xsl:value-of select="/*/atom:link[@rel='successor']/@href"/></a>
 	         </p>
          </xsl:if>
          <xsl:if test="/*/atom:category[@scheme=concat($baseuri,'/version')]">
@@ -156,7 +156,7 @@
          </xsl:if>
          <xsl:if test="/*/atom:published">
          	<xsl:variable name="date" select="/*/atom:published"/>
-	         <p><span>Veröffentlicht:</span><xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/></p>
+	         <p><span>VerÃ¶ffentlicht:</span><xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/></p>
          </xsl:if>
          <xsl:if test="/*/atom:updated">
          	<xsl:variable name="date" select="/*/atom:updated"/>

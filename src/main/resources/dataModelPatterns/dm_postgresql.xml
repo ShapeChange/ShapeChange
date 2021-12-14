@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <XMI xmi.version="1.1" xmlns:UML="omg.org/UML1.3" timestamp="2014-06-23 10:26:40">
 	<XMI.header>
 		<XMI.documentation>
@@ -95,7 +95,7 @@
 							</UML:Namespace.ownedElement>
 							<UML:Collaboration.interaction/>
 						</UML:Collaboration>
-						<UML:Class name="«Database» PostgreSQL" xmi.id="EAID_946F5750_75E7_4387_B0E7_E03CA68A8AC0" visibility="public" namespace="EAPK_DFD18641_9CC9_465d_BBA1_DA57904CD889" isRoot="false" isLeaf="false" isAbstract="false">
+						<UML:Class name="Â«DatabaseÂ» PostgreSQL" xmi.id="EAID_946F5750_75E7_4387_B0E7_E03CA68A8AC0" visibility="public" namespace="EAPK_DFD18641_9CC9_465d_BBA1_DA57904CD889" isRoot="false" isLeaf="false" isAbstract="false">
 							<UML:ModelElement.stereotype>
 								<UML:Stereotype name="EAReportSpecification"/>
 							</UML:ModelElement.stereotype>

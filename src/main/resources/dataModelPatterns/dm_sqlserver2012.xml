@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1252"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <XMI xmi.version="1.1" xmlns:UML="omg.org/UML1.3" timestamp="2014-06-23 10:26:19">
 	<XMI.header>
 		<XMI.documentation>
@@ -35,7 +35,7 @@
 						<UML:TaggedValue tag="gentype" value="&lt;none&gt;"/>
 					</UML:ModelElement.taggedValue>
 					<UML:Namespace.ownedElement>
-						<UML:Class name="«Database» SQLServer2012" xmi.id="EAID_3FCCC1E2_4B88_47af_8476_21BAD390A809" visibility="public" namespace="EAPK_620B425E_C3EB_42a2_88A0_BA0A07F04214" isRoot="false" isLeaf="false" isAbstract="false">
+						<UML:Class name="Â«DatabaseÂ» SQLServer2012" xmi.id="EAID_3FCCC1E2_4B88_47af_8476_21BAD390A809" visibility="public" namespace="EAPK_620B425E_C3EB_42a2_88A0_BA0A07F04214" isRoot="false" isLeaf="false" isAbstract="false">
 							<UML:ModelElement.stereotype>
 								<UML:Stereotype name="EAReportSpecification"/>
 							</UML:ModelElement.stereotype>

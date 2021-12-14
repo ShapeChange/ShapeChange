@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- (c) 2013 interactive instruments GmbH -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:atom="http://www.w3.org/2005/Atom" xmlns="http://www.opengis.net/gml/3.2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<xsl:output method="xml"/>
@@ -28,7 +28,7 @@
   <remarks>Typ: Register. 
 <xsl:if test="/*/atom:category[@scheme=concat($baseuri,'/version')]">GeoInfoDok-Versionen: <xsl:for-each select="/*/atom:category[@scheme=concat($baseuri,'/version')]"><xsl:value-of select="@label"/><xsl:text> </xsl:text></xsl:for-each>.
 </xsl:if>
-<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>Veröffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
+<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>VerÃ¶ffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
 <xsl:if test="/*/atom:updated"><xsl:variable name="date" select="/*/atom:updated"/>Aktualisiert: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
@@ -79,7 +79,7 @@
 </xsl:if>
 <xsl:if test="/*/atom:category[@scheme=concat($baseuri,'/version')]">GeoInfoDok-Versionen: <xsl:for-each select="/*/atom:category[@scheme=concat($baseuri,'/version')]"><xsl:value-of select="@label"/><xsl:text> </xsl:text></xsl:for-each>.
 </xsl:if>
-<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>Veröffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
+<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>VerÃ¶ffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
 <xsl:if test="/*/atom:updated"><xsl:variable name="date" select="/*/atom:updated"/>Aktualisiert: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
@@ -167,13 +167,13 @@
   <remarks>Typ: Werteart.
 <xsl:if test="/atom:entry/atom:category[@scheme=concat($baseuri,'/status')]">Status: <xsl:value-of select="/atom:entry/atom:category[@scheme=concat($baseuri,'/status')]/@label"/>.
 </xsl:if>
-<xsl:if test="/*/atom:link[@rel='predecessor']">Vorgänger: <xsl:value-of select="/*/atom:link[@rel='predecessor']/@href"/>.
+<xsl:if test="/*/atom:link[@rel='predecessor']">VorgÃ¤nger: <xsl:value-of select="/*/atom:link[@rel='predecessor']/@href"/>.
 </xsl:if>
 <xsl:if test="/*/atom:link[@rel='successor']">Nachfolger: <xsl:value-of select="/*/atom:link[@rel='successor']/@href"/>.
 </xsl:if>
 <xsl:if test="/*/atom:category[@scheme=concat($baseuri,'/version')]">GeoInfoDok-Versionen: <xsl:for-each select="/*/atom:category[@scheme=concat($baseuri,'/version')]"><xsl:value-of select="@label"/><xsl:text> </xsl:text></xsl:for-each>.
 </xsl:if>
-<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>Veröffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
+<xsl:if test="/*/atom:published"><xsl:variable name="date" select="/*/atom:published"/>VerÃ¶ffentlicht: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
 <xsl:if test="/*/atom:updated"><xsl:variable name="date" select="/*/atom:updated"/>Aktualisiert: <xsl:value-of select="substring($date,9,2)"/>.<xsl:value-of select="substring($date,6,2)"/>.<xsl:value-of select="substring($date,1,4)"/>.
 </xsl:if>
