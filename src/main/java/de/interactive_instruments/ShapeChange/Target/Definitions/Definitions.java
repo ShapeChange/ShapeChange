@@ -43,6 +43,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -275,7 +276,7 @@ public class Definitions implements Target {
 	e1.appendChild(e2);
 
 	s = ci.taggedValue("Title");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/title");
 	    e2.appendChild(lDocument.createTextNode(s));
@@ -283,7 +284,7 @@ public class Definitions implements Target {
 	}
 
 	s = ci.taggedValue("primaryCode");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/primaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
@@ -291,7 +292,7 @@ public class Definitions implements Target {
 	}
 
 	s = ci.taggedValue("secondaryCode");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/secondaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
@@ -350,7 +351,7 @@ public class Definitions implements Target {
 	String[] tags = options.parameter("representTaggedValues").split("\\,");
 	for (int i = 0; i < tags.length; i++) {
 	    s = ci.taggedValue(tags[i].trim());
-	    if (s != null && !tags[i].trim().equals("primaryCode") && !tags[i].trim().equals("secondaryCode")) {
+	    if (StringUtils.isNotBlank(s) && !tags[i].trim().equals("primaryCode") && !tags[i].trim().equals("secondaryCode")) {
 		e2 = lDocument.createElementNS(DEF_NS, "taggedValue");
 		addAttribute(lDocument, e2, "tag", tags[i].trim());
 		e2.appendChild(lDocument.createTextNode(s));
@@ -388,7 +389,7 @@ public class Definitions implements Target {
 	e3.appendChild(e2);
 
 	s = propi.taggedValue("Title");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/title");
 	    e2.appendChild(lDocument.createTextNode(s));
@@ -396,7 +397,7 @@ public class Definitions implements Target {
 	}
 
 	s = propi.taggedValue("primaryCode");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/primaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
@@ -404,7 +405,7 @@ public class Definitions implements Target {
 	}
 
 	s = propi.taggedValue("secondaryCode");
-	if (s != null) {
+	if (StringUtils.isNotBlank(s)) {
 	    e2 = lDocument.createElementNS(options.GML_NS, "name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/secondaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));

@@ -1674,7 +1674,7 @@ public abstract class SchematronConstraintNode {
 				if (!isgml33) {
 
 					String uri = argumentClass.taggedValue("codeList");
-					if (uri != null && uri.length() > 0) {
+					if (StringUtils.isNotBlank(uri)) {
 						clvpat = "{codeList}/{value}";
 					}
 
@@ -2797,7 +2797,7 @@ public abstract class SchematronConstraintNode {
 					if (ci != null && iscodelist && !piIsGml33Encoded) {
 
 						String uri = ci.taggedValue("codeList");
-						if (uri != null && uri.length() > 0) {
+						if (StringUtils.isNotBlank(uri)) {
 							clvpat = "{codeList}/{value}";
 						}
 
@@ -3303,7 +3303,7 @@ public abstract class SchematronConstraintNode {
 					if (iscodelist) {
 
 						String uri = ci.taggedValue("codeList");
-						if (uri != null && uri.length() > 0) {
+						if (StringUtils.isNotBlank(uri)) {
 							clVPat = "{codeList}/{value}";
 							clUri = uri;
 						}

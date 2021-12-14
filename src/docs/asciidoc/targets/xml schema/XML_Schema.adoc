@@ -1,0 +1,869 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[XML_Schema]]
+= XML Schema
+
+[[Encoding_Rules_Overview]]
+== Encoding Rules Overview
+
+The main functionality of ShapeChange is to generate XML Schema
+representations of application schemas, encoded as a set of XML Schema
+documents (XSDs). The conversion rules from UML to XML Schema are based
+on the encoding rules specified in Annex E of the GML 3.2 standard, in
+the GML 3.3 standard and ISO/TS 19139:2007 - as well as a series of
+extensions to the standardized rules.  These encoding rules are based on
+the general idea that the *classifiers* in the application schema are
+mapped to *type* and *element* declarations in XML Schema, so that the
+objects in the instance model can be mapped to corresponding element
+structures in the XML document. Different use cases result in different
+encoding rules. Currently, the geographic information standards specify
+the following *_XML-based encoding rules_*:
+
+* *GML 3.2 Annex E* specifies a XML-based encoding rule for ISO 19109
+conformant application schemas that can be represented using a
+restricted profile of UML that allows for a conversion to XML Schema.
+The encoding rule has mainly been developed for the purpose of
+application schemas specifying _feature types and their properties_. GML
+3.2 is also published as ISO 19136:2007.
+xref:./GML_3.2_Encoding_Rule.adoc[More information...]
+* *GML 3.3* specifies two extensions to the GML 3.2 encoding rules
+related to the encoding of code-list-valued properties and to support
+association classes. xref:./GML_3.3_Encoding_Rule.adoc[More
+information...]
+* *SWE Common Data Model 2.0* specifies a variation of the GML encoding
+rule for schemas that describe data in the context of measurements by
+sensors.
+* *ISO/TS 19139* specifies a XML based encoding rule for conceptual
+schemas specifying _types that describe geographic resources, e.g.
+metadata according to ISO 19115 and feature catalogues according to ISO
+19110_. The encoding rule supports the UML profile as used in the UML
+models commonly used in the standards developed by ISO/TC
+211. xref:./ISO_TS_19139_Encoding_Rule.adoc[More information...]
+
+The reader is directed to
+the http://portal.opengeospatial.org/files/?artifact_id=20509[GML 3.2],
+https://portal.opengeospatial.org/files/?artifact_id=46568[GML 3.3],
+http://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
+Data Model 2.0] and
+http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=32557[ISO/TS
+19139] standards for further details of the encoding rules therein. In
+addition, ShapeChange supports a number of
+xref:./Non_Standard_Conversion_Rules.adoc[extensions to these
+encoding rules].
+
+[[Specifying_Encoding_Rules]]
+== Specifying Encoding Rules
+
+The range of possible encoding rules for the ShapeChange XML Schema
+conversion is represented by the following enumeration of text
+abbreviations:
+
+[cols="1,2",options="header"]
+|===
+|Encoding Rule Identifier |Description
+
+|xref:./GML_3.2_Encoding_Rule.adoc[iso19136_2007] |The GML 3.2
+(ISO 19136:2007) Annex E encoding rule. If not encoding rule is
+specified, this is the default encoding rule.
+
+|xref:./GML_3.3_Encoding_Rule.adoc[gml33] |The GML 3.2 (ISO
+19136:2007) Annex E encoding rule with the GML 3.3 extensions.
+
+|xref:./ISO_TS_19139_Encoding_Rule.adoc[iso19139_2007] |The
+ISO/TS 19139 encoding rule.
+
+|xref:./SWE_Common_Data_Model_2.0_Encoding_Rule.adoc[ogcSweCommon2] |The SWE Common
+Data Model 2.0 encoding rule.
+|===
+
+These standardized encoding rules are fixed as part of the Java code of
+ShapeChange. The standardized encoding rules build on a
+xref:./Conversion_Rule_Basics.adoc[common set of schema
+conversion rules]. While the GML 3.2 and GML 3.3 encoding rules have
+been specified in the context of these specific versions of GML, the
+encoding rules can also be applied with a target version of GML 2.1 or
+GML 3.1. The extensions can be aggregated into a new encoding rule as
+part of the configuration. Some examples of commonly used encoding rules
+are part of
+ https://shapechange.net/resources/config/StandardRules.xml[StandardRules.xml] that
+may be included in configuration files. These are:
+
+[cols="2,4",options="header"]
+|===
+|Encoding Rule Identifier |Description
+
+|iso19136_2007_INSPIRE_Extensions |The GML 3.3 encoding rule with
+extensions related to INSPIRE, the Infrastructure for Spatial
+Information in the European Community. The encoding rule is described in
+http://inspire.jrc.ec.europa.eu/documents/Data_Specifications/D2.7_v3.3rc2.pdf[INSPIRE
+document D2.7].
+
+|iso19136_2007_ShapeChange_1.0_Extensions |The GML 3.2 encoding rule
+with a large number of the extensions implemented by ShapeChange.
+
+|notEncoded |The model element is not encoded in the XML Schema.
+
+|gml21 |Encoding rule that extends the ISO 19136:2007 encoding rules
+with additional rules to create a GML schema based on GML 2.1.
+
+|okstra |The GML-3.2-based encoding rule used for the OKSTRA GML
+application schema. This includes support for an extended UML profile.
+OKSTRA is a feature catalogue and application schema for road and
+traffic related data. More information can be found on
+the http://www.okstra.de/umlmodell.html[OKSTRA website.]
+
+|citygml-ade |The GML-3.2-based encoding rule that can be used for
+CityGML Application Domain Extensions (ADEs) using GML 3.1. This
+includes support for an extended UML profile. It is planned to add
+support for ADEs in UML in the next version of CityGML. More information
+will be added as it becomes available.
+
+|metadata-profiles |An ISO/TS-19139-based encoding rule for specifying
+ISO 19115 profiles in UML. More information will be added later.
+|===
+
+Custom encoding rules may be specified in a configuration.
+
+The encoding rule to apply in a conversion may be provided in two ways:
+as a conversion-wide default (specified in the configuration file), or
+as tagged values on individual model elements to control the conversion
+of those elements to XML Schema.
+
+* Model-Element-Specific Encoding Rule: To identify the *applicable
+encoding rule for a model element* (package, classifier or property), a
+*tagged value* "*xsdEncodingRule*" may be provided on that element.
+
+* Default Encoding Rule: In addition to model-element-specific encoding
+rules, it is common (indeed, desirable) to specify a *default encoding
+rule*.  The __"__**defaultEncodingRule"**__ __parameter specified in the
+<TargetXmlSchema> element of the ShapeChange configuration file
+represents the default encoding rule for that target/conversion.  This
+default *is overridden* by individual "xsdEncodingRule" tags on
+packages, classifiers and properties.
+
+The valid values for "defaultEncodingRule" and "xsdEncodingRule" are the
+built-in encoding rule identifiers, the encoding rule identifiers
+specified in
+ https://shapechange.net/resources/config/StandardRules.xml[StandardRules.xml] or
+a custom encoding rule identifier specified in the configuration. The
+default, if no default encoding rule is provided in the configuration,
+is "iso19136_2007".
+
+[[Configuration]]
+== Configuration
+
+[[Overview]]
+=== Overview
+
+The XML Schema target in ShapeChange, as the main and most configurable
+target, is the only one to be represented by a unique target element:
+<TargetXmlSchema>.  This is a variant of a standard <Target> element
+except that the class attribute is fixed to
+de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema.  Like
+all target definitions, <TargetXmlSchema> is nested under the <targets>
+element.
+
+The following is a sample <TargetXmlSchema> definition:
+
+[source,xml,linenumbers]
+----------
+<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled">
+  <targetParameter name="outputDirectory" value="testResults/xmi"/>
+  <targetParameter name="sortedOutput" value="true"/>
+  <targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+  <xi:include href="src/main/resources/config/StandardRules.xml"/>
+  <xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+  <xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+  <xsdMapEntries>
+    <XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+  </xsdMapEntries>
+</TargetXmlSchema>
+----------
+
+A <TargetXmlSchema> entry may contain:
+
+* <targetParameter> definitions;
+* one or more <rules> elements containing <EncodingRule> definitions;
+* one or more <xmlNamespaces> element containing <XmlNamespace>
+definitions;
+* one or more <xsdMapEntries> element containing <XsdMapEntry>
+definitions;
+* XInclude directives.
+
+[[Target_Parameters]]
+=== Target Parameters
+
+[[basicTypeStyle]]
+==== basicTypeStyle
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "local" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-local-basictype[rule-xsd-cls-local-basictype] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[defaultCodeListRepresentation]]
+==== defaultCodeListRepresentation
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: This parameter can be used to provide a global
+default in case that, for a given code list, the tagged value
+_codeListRepresentation_ is undefined or does not have a value, and a
+Schematron Schema with constraints to check code list typed properties
+shall be created as defined by
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[_rule-xsd-cls-codelist-constraints2_].
+
+Code list representations include:
+
+* application/gml+xml;version=3.2 – A GML 3.2 dictionary
+(gml:Dictionary).
+* application/x.iso19139+xml – An ISO 19139:2007 dictionary
+(gmx:CodeListDictionary or gmx:ML_CodeListDictionary).
+** NOTE: application/x.iso19139+xml is a preliminary identifier. It uses
+the https://tools.ietf.org/html/rfc6838#section-3.4[unregistered x.
+Tree] as defined by IETF RFC 6838 - Media Type Specifications and
+Registration Procedures.
+
+One example where this parameter can be useful is the case of a metadata
+profile, where code lists are typically encoded as ISO 19139:2007 code
+list dictionaries. Then application/x.iso19139+xml could be configured
+as default code list representation, instead of modeling it on each code
+list.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[_rule-xsd-cls-codelist-constraints2_]
+
+[[defaultCodeListValuePattern]]
+==== defaultCodeListValuePattern
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: When an OCL constraint compares a code value (either
+as a literal value, or as an attribute access), then the pattern in
+which such values shall be encoded for a given code list is important.
+That pattern can be defined with tagged value _codeListValuePattern_ on
+each code list. More information can be found in the
+https://portal.opengeospatial.org/files/?artifact_id=46324[OWS-8 CCI
+Schema Automation Engineering Report]. This parameter can be used to
+configure a global default for the pattern.
+
+One example where this would be useful is the case of a metadata
+profile, which is encoded according to ISO 19139:2007, and only depends
+on similarly encoded base schemas (like ISO 19115). Then \{value} could
+be configured as default pattern, instead of modeling it on each code
+list – especially the code lists from the base schemas.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[_rule-xsd-pkg-schematron_]
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
++++Type:+++ String
+
++++Default Value:+++ iso19136_2007
+
++++Explanation:+++ The identifier of the default encoding rule governing
+the conversion into XML Schema. This default value may be overridden by
+tagged values set on individual modeling elements. For a complete
+discussion of GML encoding rules, see
+xref:./XML_Schema.adoc#Encoding_Rules_Overview[above].
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[defaultVoidReasonType]]
+==== defaultVoidReasonType
+
+(since v2.9.0)
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ Identifies an enumeration that shall be used as the
+default void reason type in
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nilReason-constraints[rule-xsd-prop-nilReason-constraints].
+
+The enumeration is identified by its name: the simple classifier name,
+if the enumeration belongs to the schema that is being processed by the
+XmlSchema target, or the full package-qualified name, starting with the
+package of the schema to which the enumeration belongs (e.g. "Some
+Application Schema::Some Subpackage::Another Subpackage::VoidReason").
+
+NOTE: If the enumeration is used as void reason type by multiple
+schemas, it is better to identify it using its full package-qualified
+name via the _defaultVoidReasonType_ target parameter.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-nilReason-constraints[rule-xsd-prop-nilReason-constraints]
+
+[[documentationNoValue]]
+==== documentationNoValue
+
++++Type:+++ String
+
++++Default Value:+++ _the empty string_
+
++++Explanation:+++ If a descriptor is used in the documentation
+template, but has no value, the value of this parameter will be used.
+See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[documentationTemplate]]
+==== documentationTemplate
+
++++Type:+++ String
+
++++Default Value:+++ \[[definition]]
+
++++Explanation:+++ The template for the documentation that is added to
+XML Schema elements. Each occurrence of "[[_descriptor_]]" will be
+replaced by the value of the descriptor, or the value of the target
+parameter _documentationNoValue_, if the descriptor has no value for the
+model element. See
+xref:../../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
+Example:
+
+[source,text,linenumbers]
+----------
+Definition: [[definition]] - Description: [[description]]
+----------
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[enumStyle]]
+==== enumStyle
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "local" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-local-enumeration[rule-xsd-cls-local-enumeration] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeDerivedProperties]]
+==== includeDerivedProperties
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "false" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-exclude-derived[rule-xsd-prop-exclude-derived] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule.
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeDocumentation]]
+==== includeDocumentation
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of target parameter includeDocumentation is equal to (ignoring case) "true" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-all-no-documentation[rule-xsd-all-no-documentation] will be ignored.
+
++++Applies to Rule(s)+++: xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-all-no-documentation[rule-xsd-all-no-documentation]
+
+[[outputDirectory]]
+==== outputDirectory
+
++++Type:+++ String
+
++++Default Value:+++ <the current run directory>
+
++++Explanation:+++ The path to which the XML Schema documents will be
+written.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[realisationLikeGeneralisation]]
+==== realisationLikeGeneralisation
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ By default, the XmlSchema target treats a realization relationship to a mixin type as a generalization relationship to that type. If this target parameter is set to "false" (ignoring case) then realization relationships will completely be ignored.
+
+NOTE: Realization relationships to class categories other than mixins are always ignored.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[schematron]]
+==== schematron
+
++++Type:+++ Boolean
+
++++Default Value:+++ _none_
+
++++Explanation:+++ If the value of this target parameter is equal to (ignoring case) "true" then xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron] applies to the encoding rule of a given model element, even if that conversion rule is not part of that encoding rule. 
+
+NOTE: In general, it is recommended to add the conversion rule to the relevant encoding rule(s), rather than using this parameter.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[schematronFileNameTemplate]]
+==== schematronFileNameTemplate
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: \[[SCHEMA_XSD_BASENAME]].xsd_SchematronSchema.xml
+
++++Explanation+++: The template for the name of schematron files
+generated by the target. Each occurrence of "\[[SCHEMA_XSD_BASENAME]]"
+will be replaced by the base name of the XSD file that belongs to the
+schema for which a schematron file is generated.
+
+For example, if the application schema has tagged value
+_xsdDocument=example.xsd_, and parameter _schematronFileNameTemplate_
+has value _\[[SCHEMA_XSD_BASENAME]]_SchematronSchema.sch_, then the name
+of the schematron file for the application schema would be
+_example_SchematronSchema.sch_.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron]
+
+[[schematronXlinkHrefPrefix]]
+==== schematronXlinkHrefPrefix
+
++++Type+++: String
+
++++Default Value+++: #
+
++++Explanation+++: Prefix to be used when constructing a concat( )
+operation for testing the value of an @id or @gml:id attribute against
+the value of an @xlink:href.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron]
+
+[[schematronXlinkHrefPostfix]]
+==== schematronXlinkHrefPostfix
+
++++Type+++: String
+
++++Default Value+++: _the empty string_
+
++++Explanation+++: Postfix to be used when constructing a concat( )
+operation for testing the value of an @id or @gml:id attribute against
+the value of an @xlink:href.
+
++++Applies to Rule(s)+++:
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron]
+
+[[segmentSchematron]]
+==== segmentSchematron
+
+(since v2.10.0)
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: If set to 'true', Schematron assertions are
+segregated into multiple Schematron files - one per XML Schema document
+created for the application schema (which is typically controlled by
+setting the tagged value _xsdDocument_ on the packages of the
+application schema). If such a Schematron schema would contain no
+assertions, i.e. it would not check anything, it should not be created.
+
++++Applies to
+Rule(s)+++: xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-pkg-schematron[rule-xsd-pkg-schematron]
+
+[[skipXmlSchemaOutput]]
+==== skipXmlSchemaOutput
+
+(since v2.6.0)
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: If set to 'true', the target does not output XML
+Schemas. That can be useful if only the Schematron schema is of
+interest.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[sortedOutput]]
+==== sortedOutput
+
++++Type:+++ Boolean (true or false)
+
++++Default Value:+++ false
+
++++Explanation:+++ If "true", classes within a package will be sorted
+alphabetically before being output to the XSD (this aids in comparison
+with other models).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[Encoding_Rules]]
+=== Encoding Rules
+
+An <EncodingRule> element defines an encoding rule.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule name="iso19136_2007_INSPIRE_Extensions" extends="gml33">
+ <rule name="req-all-all-documentation"/>
+ <rule name="req-xsd-cls-codelist-asDictionary-true"/>
+ <rule name="req-xsd-prop-codelist-obligation"/>
+ <rule name="req-xsd-cls-codelist-extensibility-values"/>
+ <rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
+ <rule name="req-xsd-cls-datatype-noPropertyType"/>
+ <rule name="req-xsd-cls-objecttype-noPropertyType"/>
+ <rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
+ <rule name="req-xsd-cls-enum-no-supertypes"/>
+ <rule name="req-xsd-cls-codelist-no-supertypes"/>
+ <rule name="rule-xsd-cls-mixin-classes"/>
+ <rule name="rule-xsd-prop-nillable"/>
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used in the defaultEncodingRule
+parameter or xsdEncodingRule tagged values.
+
+The optional *extends* attribute of the <EncodingRule> element includes
+all rules from the referenced encoding rule in this encoding rule, too.
+In the example, the INSPIRE encoding rules extends the GML 3.3 encoding
+rule.
+
+Each *<rule>* references either a
+xref:../../application schemas/UML_profile.adoc[requirement or
+recommendation] to be tested during the validation before the schema
+conversion process or a conversion rule. The implemented conversion
+rules are documented on the subpages to this page, for use in encoding
+rules defined in configurations the
+xref:./Non_Standard_Conversion_Rules.adoc[non-standard conversion
+rules] are the most relevant ones.
+
+[[Namespace_Identifiers]]
+=== Namespace Identifiers
+
+An <XmlNamespace> element defines a namespace and its properties.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<xmlNamespaces>
+ <XmlNamespace nsabr="icism" ns="urn:us:gov:ic:ism:v2" location="http://schemas.opengis.net/ic/2.1/IC-ISM-v2.1.xsd"/>
+</xmlNamespaces>
+----------
+
+The attributes for <XmlNamespace> are as follows:
+
+[cols=",,",]
+|===
+|*_Attribute Name_* |*_Default Value_* |*_Explanation_*
+
+|*ns* |(Required) |The full namespace.
+
+|*nsabr* |(Required) |The namespace abbreviation.
+
+|*location* |(Optional) |The location of the corresponding XML Schema
+document.
+
+|*packageName* | |The package name.
+|===
+
+The file
+https://shapechange.net/resources/config/StandardNamespaces.xml[StandardNamespaces.xml]
+contains a series of standard namespace definitions, and is included by
+default (via XInclude) in configuration files. Alternative versions
+exist for GML 3.1
+(https://shapechange.net/resources/config/StandardNamespaces-v31.xml[StandardNamespaces-v31.xml])
+and GML 2.1
+(https://shapechange.net/resources/config/StandardNamespaces-v21.xml[StandardNamespaces-v21.xml]).
+
+NOTE: (relevant for ShapeChange v2.10.0 and later): ShapeChange
+automatically creates XML Schema imports and includes. By default, it
+does not import XML Schemas that are not directly used by the GML
+application schema that is produced by the XmlSchema target. In some use
+cases, however, it can be useful to enforce certain XML Schema imports
+in the GML application schema. An example would be where the GML
+application schema imports the XML Schema (B) of an abstract type (e.g.
+a metadata type), but the imported XML Schema (B) does not define any
+non-abstract implementation of that type. In such a situation, the
+application schema designer may want to enforce imports of additional
+XML Schemas (C, D, ...) that define non-abstract implementations of the
+abstract type. Then an XML instance document that defines the GML
+application schema in its xsi:schemaLocation attribute will be able to
+validate the non-abstract definitions of the abstract type from XML
+Schema B, without having to add the namespaces and locations of XML
+Schemas C, D, etc. to the xsi:schemaLocation attribute (which can easily
+be forgotten). In order to enforce the import of another XML Schema, set
+tagged value _xsdForcedImports_ on the (application) schema package. The
+value is a comma-separated list of XML namespace abbreviations (as
+configured in the XmlSchema target using <XmlNamespace> elements) that
+identify the XML Schemas that shall be imported.
+
+[[XSD_Map_Entries]]
+=== XSD Map Entries
+
+<xsdMapEntries> contain
+<xref:./XML_Schema.adoc#XsdMapEntry[XsdMapEntry]> and
+<xref:./XML_Schema.adoc#XsdPropertyMapEntry[XsdPropertyMapEntry]>
+elements, which map UML types (classes) as well as UML properties
+(attributes and association roles) to corresponding XML Schema elements,
+types and attributes.
+
+NOTE: The file
+"https://shapechange.net/resources/config/StandardMapEntries.xml[StandardMapEntries.xml]"
+defines the complete mapping of large sections of the ISO 19100 model
+and OGC standards into corresponding GML (3.2) elements, and is
+typically in-cluded in ShapeChange configuration files via XInclude. It
+should not be changed. Additional XInclude files, or individual
+<XsdMapEntry> and <XsdPropertyMapEntry> elements added to the
+<xsdMapEntries> section of the configuration file, may be used to
+customize the map entries to support additional pre-defined conceptual
+UML classes, encoding rules, and existing XML grammars.
+
+If using a version of GML other than 3.2, the mappings in
+StandardMapEntries.xml may not apply and the map entries will have to be
+configured as part of the configuration.
+
+[[XsdMapEntry]]
+==== XsdMapEntry
+
+An <XsdMapEntry> element represents a mapping from a UML type (class) to
+a GML element, type, or attribute (compare with Table D.2 of GML 3.2).
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<xsdMapEntries>
+ <XsdMapEntry type="URN" xsdEncodingRules="*" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+ <XsdMapEntry type="URI" xsdEncodingRules="*" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+ <XsdMapEntry type="URL" xsdEncodingRules="*" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+ <XsdMapEntry type="CharacterString" xsdEncodingRules="iso19139_2007" xmlElement="gco:CharacterString" xmlPropertyType="gco:CharacterString_PropertyType" xmlType="gco:CharacterString_Type"/>
+ <XsdMapEntry type="SecurityAttributesGroupType" xsdEncodingRules="iso19136_2007 iso19136_2007_ShapeChange_1.0_Extensions iso19136_2007_INSPIRE_Extensions" xmlAttributeGroup="icism:SecurityAttributesOptionGroup"/>
+</xsdMapEntries>
+----------
+
+An <XsdMapEntry> element contains the following attributes:
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+|Attribute Name |Default Value |Explanation
+
+|*type* |(Required) |The unqualified UML type/class name to be mapped.
+Should be unique within the model (if it is not unique, this can lead to
+unexpected results).
+
+|*xsdEncodingRules* |(Required) |The XSD encoding rules to which this
+mapping applies.  May be "\*" or a space-delimited sequence of encoding
+rule abbreviations. "*" indicates that the mapping applies to all
+encoding rules.
+
+|*xmlElement* |(no XML element represents the UML class) |The global XML
+element that corresponds to the UML class.
+
+|*xmlType* |(no XML type represents the UML class) |The global XML type
+that represents the XML content model of the UML class.
+
+|*xmlPropertyType* |(no XML type represents the property type for the
+UML class) a|
+The type name of the XML Schema type to be used in a property element if
+the value of the property is the UML class.
+
+If no pre-defined property type exists and _xmlElement_ has been
+provided then a value of "\_P_" will result in the use of an anonymous
+complex type as property type. A value of "\_MP_"  will result in the use
+of an anonymous complex type as property type that extends
+gml:AbstractMetadataPropertyType.
+
+|*xmlTypeType* |complex |Identifies, if the xmlType is "simple" or
+"complex".
+
+|*xmlTypeContent* |complex |Identifies, if the content of the xmlType is
+"simple" or "complex".
+
+|*xmlTypeNilReason* |true |Identifies, if the xmlPropertyType contains a
+nilReason attribute in its content model.
+
+|*xmlAttribute* |(no XML attribute represents the UML class) |The global
+XML attribute that corresponds to the UML class. This requires that the
+conversion rule extension "rule-xsd-prop-att-map-entry" is part of the
+encoding rule.
+
+|*xmlAttributeGroup* |(no XML attribute group represents the UML class)
+|The global XML attribute group that corresponds to the UML class. This
+requires that the conversion rule extension
+"rule-xsd-prop-att-map-entry" is part of the encoding rule.
+
+|*xmlElementHasSimpleContent (since v2.6.0)* |none |By default, object
+elements will not have simple content in all encoding rules. Setting the
+value to 'true' indicates that the object element defined by @xmlElement
+has simple content. This XML attribute is typically used to correctly
+configure XSD map entries for the ISO 19139 encoding rule, where basic
+data types like 'Integer' or code list values are elements with simple
+content. If the attribute is not set or set to 'false', ShapeChange will
+use the default logic.
+
+|*xmlReferenceable (since v2.6.0)* |none |By default, the stereotype and
+the encoding rule will determine, if the XML representation of a type
+will have an identifier attribute that can be used for referencing. In
+general, all classifiers where the instance has identity (i.e., UML
+classifiers that are classes, e.g., feature types) will be represented
+by an element with an identifier. If conversion rule
+'rule-xsd-all-naming-19139' is used, also classifiers that are data
+types are assumed to have an identifier attribute. Setting the value to
+'false' indicates that the XML representation of the mapped type does
+not have an ID attribute, and thus cannot be referenced by means of
+xlink:href. This XML attribute is typically used to correctly configure
+XSD map entries for the ISO 19139 encoding rule, in particular for code
+list value elements. If the attribute is not set or set to 'true',
+ShapeChange will use the default logic to determine if the XML
+representation of the type can be referenced.
+|===
+
+[[XsdPropertyMapEntry]]
+==== XsdPropertyMapEntry
+
+(since v2.7.0)
+
+<xsdMapEntries> may also contain <XsdPropertyMapEntry> elements, which
+represent mappings from UML properties (attributes and association
+roles) to XML elements defined in external XML Schemas.
+
+NOTE: XsdPropertyMapEntry does not apply to enums and codes.
+
+If an XsdPropertyMapEntry provides a mapping to an XML Schema element
+for a UML property from the processed schema, then the UML property is
+not encoded. Instead, whenever the UML property is used in the schema,
+the target element specified by the map entry is used in the XML Schema
+implementation. By not providing a target element, an
+XsdPropertyMapEntry can also be used to fully omit the conversion of a
+UML property.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<xsdMapEntries>
+ <!-- Omit 'identifier' from MyFeatureType in Test Schema1 -->
+ <XsdPropertyMapEntry property="MyFeatureType::identifier" schema="Test Schema1"/>
+ <!-- Map other occurrences of 'identifier' to dcterms:identifier - but only in Test Schema1. -->
+ <XsdPropertyMapEntry property="identifier" schema="Test Schema1" targetElement="dcterms:identifier"/>
+ <!-- Map occurrences of 'creator' to dcterms:creator - in any schema selected for processing. -->
+ <XsdPropertyMapEntry property="creator" targetElement="dcterms:creator"/>
+ <XsdPropertyMapEntry property="date" schema="Test Schema1" targetElement="dcterms:date"/>
+ <XsdPropertyMapEntry property="format" schema="Test Schema1" targetElement="dcterms:format"/>
+ <XsdPropertyMapEntry property="title" schema="Test Schema1" targetElement="dcterms:title"/>
+ <XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="anyURI"
+  xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+</xsdMapEntries>
+<xmlNamespaces>
+ <XmlNamespace nsabr="dcterms" ns="http://purl.org/dc/terms/" location="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
+</xmlNamespaces>
+----------
+
+An <XsdPropertyMapEntry> element contains the following attributes:
+
+[cols="1,2,1,1,4",options="header"]
+|===
+|Attribute Name |Datatype & Structure |Required / Optional
+|Default Value |Explanation
+
+|*property* |String |Required |_not applicable_ |Name of a UML property,
+optionally scoped to a class (example: FeatureX::propertyY).
+
+|*schema* |String |Optional |_none_ |The name of the application schema
+package to which the UML property belongs. Used to avoid ambiguity in
+case that multiple schemas are being processed.
+
+|*targetElement* |String; the value is expected to be given as a QName,
+with the namespace prefix matching the namespace abbreviation of a
+namespace declared in the configuration. |Optional |_none_ |XML Element
+to which the UML property shall be mapped (e.g. ex:elementX). Can be
+empty or omitted if the property shall not be encoded.
+|===
+
+[NOTE]
+======
+The configuration may contain multiple XsdPropertyMapEntry
+elements that apply to a UML property P. When mapping the UML property,
+the applicable map entry is looked up as follows:
+
+* If a map entry has the same combination of class name, property name,
+and schema then that map entry is chosen (because it is most specific
+for P).
+* Otherwise, if a map entry has the same property name and schema, but
+the property name is not scoped to a specific class (example: att4) then
+that map entry is chosen (because it provides a generic mapping for the
+property that is specific to its schema).
+* Otherwise, if a map entry does not define any schema, but has the same
+combination of class name and property name, then it is chosen (because
+it is a slightly more specific mapping for P compared to the generic
+mapping).
+* Otherwise, if a map entry does not define any schema, but has the same
+property name and is not scoped to a specific class, then it is chosen
+(because it is a generic mapping for P).
+======
+
+NOTE: Using an XsdPropertyMapEntry to map a UML property to an XML
+element from another XML Schema can result in an invalid Schematron
+implementation of OCL constraints in which the UML property occurs. The
+most prominent example of why the Schematron would be invalid is if the
+type of the XML element is incompatible with the type of the UML
+property. If the UML property has a type like CharacterString, which is
+typically mapped to xs:string, and the XML element has a different
+simple type, like xs:boolean, or has a complex type, then that would
+clearly be a type mismatch. If an OCL constraint contains a comparison
+involving the UML property then with mismatching types of the UML
+property and the XML element to which it is mapped, the comparison in
+the resulting Schematron assertion would be invalid or non-sensical.
+Another example of a type mismatch resulting in invalid Schematron is if
+the UML property occurs in an OCL constraint as an intermediate
+navigation step, and the XML element to which the UML property is mapped
+does not have child elements similar to what would result when
+converting the value type of the UML property to XML Schema. If the
+structure is different then navigation steps within the OCL constraint
+that follow the navigation step of the UML property would never succeed.
+Using an XsdPropertyMapEntry to omit encoding of a UML property
+altogether woud be another, obvious example for a situation in which the
+Schematron conversion of an OCL constraint that uses that property is
+not possible.

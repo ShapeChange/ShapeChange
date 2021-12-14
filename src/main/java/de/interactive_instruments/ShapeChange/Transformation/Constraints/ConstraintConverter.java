@@ -610,7 +610,7 @@ public class ConstraintConverter implements Transformer, MessageSource {
 		    String join = commaJoiner.join(geometryTVValues);
 
 		    String geometryTV = genCi.taggedValue("geometry");
-		    if (geometryTV != null) {
+		    if (StringUtils.isNotBlank(geometryTV)) {
 			MessageContext mc = result.addWarning(this, 102, genCi.name(), geometryTV, join);
 			if (mc != null) {
 			    mc.addDetail(this, 1, genCi.fullName());

@@ -1,0 +1,201 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Tagged_Value_Transformer]]
+= Tagged Value Transformer
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation provides specific rules to process tagged values.
+
+NOTE: Common transformer functionality supports setting of tagged
+values. See
+xref:./Common_Transformer_Functionality.adoc#Setting_Tagged_Values[Setting
+Tagged Values] for further details.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer_
+
+[[Rules]]
+=== Rules
+
+[[rule-trf-taggedValue-inheritance]]
+==== rule-trf-taggedValue-inheritance
+
+Copies the tagged values specified via configuration parameter
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceGeneralList[_taggedValueInheritanceGeneralList_]
+from supertypes of the whole model down to their subtypes, starting at
+the top of inheritance trees. If the tagged value already exists in the
+subtype, then by default it is retained. However, the value can also be
+overwritten and the two values can be merged - for further details, see
+configuration parameters
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceOverwriteList[_taggedValueInheritanceOverwriteList_]
+and
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceAppendList[_taggedValueInheritanceAppendList_].
+
+NOTE: Care should be taken in case that the model contains classes with
+multiple supertypes.
+
+NOTE: The implementation currently does not support tagged values with
+multiple values.
+
+[[Parameters]]
+=== Parameters
+
+[[taggedValueInheritanceAppendList]]
+==== taggedValueInheritanceAppendList
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String (comma-separated list)
+
++++Default Value+++: _none_
+
++++Explanation+++: Comma-separated list of names of tagged values. If a
+subtype already has a tagged value that would be copied from a supertype
+under
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_],
+and that tagged value is contained in the list, then the value from the
+tagged value of the supertype shall be appended to the value of the
+tagged value from the subtype, using the separator defined by
+configuration parameter
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceAppendSeparator[_taggedValueInheritanceAppendSeparator_].
+
+NOTE: Appending a tagged value has lower priority than overwriting (see
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceOverwriteList[_taggedValueInheritanceOverwriteList_]).
+If a tagged value is listed for both parameters
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceOverwriteList[_taggedValueInheritanceOverwriteList_]
+and
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceAppendList[_taggedValueInheritanceAppendList_]
+then it will be ignored in the latter.
+
++++Applies to Rule(s)+++:
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+
+[[taggedValueInheritanceAppendSeparator]]
+==== taggedValueInheritanceAppendSeparator
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: ", "
+
++++Explanation+++: Define the separator to use when a tagged value
+inherited from a supertype under
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+shall be appended to the tagged value of the subtype.
+
++++Applies to Rule(s)+++:
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+
+[[taggedValueInheritanceGeneralList]]
+==== taggedValueInheritanceGeneralList
+
++++Alias+++: _none_
+
++++Required / Optional+++: Required
+
++++Type+++: String (comma-separated list)
+
++++Default Value+++: _none_
+
++++Explanation+++: Comma-separated list of names of tagged values for
+which
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+shall be applied.
+
++++Applies to Rule(s)+++:
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+
+[[taggedValueInheritanceOverwriteList]]
+==== taggedValueInheritanceOverwriteList
+
++++Alias+++: _none_
+
++++Required / Optional+++: Required
+
++++Type+++: String (comma-separated list)
+
++++Default Value+++: _none_
+
++++Explanation+++: Comma-separated list of names of tagged values. If a
+subtype already has a tagged value that would be copied from a supertype
+under
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_],
+and that tagged value is contained in the list, then the tagged value
+shall be overwritten in the subtype, rather than being retained.
+
+NOTE: Overwriting a tagged value has higher priority than appending (see
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceAppendList[_taggedValueInheritanceAppendList_]).
+If a tagged value is listed for both parameters
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceOverwriteList[_taggedValueInheritanceOverwriteList_]
+and
+xref:./Tagged_Value_Transformer.adoc#taggedValueInheritanceAppendList[_taggedValueInheritanceAppendList_]
+then it will be ignored in the latter.
+
++++Applies to Rule(s)+++:
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[_rule-trf-taggedValue-inheritance_]
+
+[[Map_Entries]]
+=== Map Entries
+
+_None at present_
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+_None at present_
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer
+  class="de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer"
+  input="INPUT" id="taggedValueInheritance" mode="enabled">
+  <parameters>
+   <ProcessParameter name="taggedValueInheritanceGeneralList"
+    value="tv1,tv2,tv3,tvIgnoredInAppendList,other1,other3"/>
+   <ProcessParameter name="taggedValueInheritanceOverwriteList"
+    value="tv2,tvIgnoredInAppendList,other1,other1,other1,other2"/>
+   <ProcessParameter name="taggedValueInheritanceAppendList"
+    value="tv3,tvIgnoredInAppendList,other3,other3,other3,other4"/>
+   <ProcessParameter name="taggedValueInheritanceAppendSeparator" value="|"/>
+  </parameters>
+  <rules>
+   <ProcessRuleSet name="taggedValueInheritance">
+    <rule name="rule-trf-taggedValue-inheritance"/>
+   </ProcessRuleSet>
+  </rules>
+ </Transformer>
+----------

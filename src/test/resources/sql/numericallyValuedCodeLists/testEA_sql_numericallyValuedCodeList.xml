@@ -64,14 +64,14 @@
 	<targets>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			inputs="F_multiplicity" mode="enabled">
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRuleWithPrecisionAndScale" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/numericallyValuedCodeLists/ddl" />
 			<targetParameter name="size" value="-1" />
 			<targetParameter name="srid" value="31467" />
 			<targetParameter name="createReferences" value="true" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRuleWithPrecisionAndScale" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-cls-code-lists" />
 					<rule name="rule-sql-all-precisionAndScale" />

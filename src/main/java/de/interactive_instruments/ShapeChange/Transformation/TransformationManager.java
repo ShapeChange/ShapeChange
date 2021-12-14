@@ -46,6 +46,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
@@ -76,7 +78,9 @@ public class TransformationManager implements MessageSource {
 
     public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
     public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
-    public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
+    
+    // 2021-11-08 JE - currently unused:
+    //public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
 
     private Options options = null;
     private ShapeChangeResult result = null;
@@ -96,7 +100,7 @@ public class TransformationManager implements MessageSource {
 		    .newInstance();
 	} catch (Exception e) {
 	    throw new ShapeChangeAbortException("Could not load transformer class '" + trfConfig.getClassName()
-		    + " for transformer ID '" + trfConfig.getId() + "'.");
+		    + " for transformer ID '" + trfConfig.getId() + "'. Exception message is: " + StringUtils.defaultString(e.getMessage(),"<null>"));
 	}
 
 	/*
@@ -519,7 +523,8 @@ public class TransformationManager implements MessageSource {
     public static SortedSet<String> getRecognizedParameters() {
 
 	return new TreeSet<>(Stream.of(TransformationConstants.TRF_CFG_PARAM_SETGENERATIONDATETIMETV,
-		"navigatingNonNavigableAssociationsWhenParsingOcl").collect(Collectors.toSet()));
+		"navigatingNonNavigableAssociationsWhenParsingOcl", "appSchemaName", "appSchemaNameRegex",
+		"appSchemaNamespaceRegex").collect(Collectors.toSet()));
     }
 
     @Override

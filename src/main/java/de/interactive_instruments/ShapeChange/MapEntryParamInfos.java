@@ -159,6 +159,12 @@ public class MapEntryParamInfos implements MessageSource {
 			    while (pim.find()) {
 
 				String parameterName = pim.group(1);
+				
+				if(charactByParameterName.containsKey(parameterName)) {
+				    MessageContext mc = result.addWarning(this, 5, parameterName);
+				    mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
+				    continue;
+				}
 
 				Map<String, String> characteristics = new HashMap<String, String>();
 				charactByParameterName.put(parameterName, characteristics);
@@ -175,6 +181,13 @@ public class MapEntryParamInfos implements MessageSource {
 				    while (cim.find()) {
 
 					String characteristicId = cim.group(1);
+					
+					if(characteristics.containsKey(characteristicId)) {
+					    MessageContext mc = result.addWarning(this, 6, characteristicId, parameterName);
+					    mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
+					    continue;
+					}
+					
 					String characteristicValue = cim.group(2);
 
 					characteristics.put(characteristicId, characteristicValue);
@@ -353,7 +366,11 @@ public class MapEntryParamInfos implements MessageSource {
 		    + PARAM_VALIDATION_PATTERN + ".";
 	case 4:
 	    return "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
-
+	case 5:
+	    return "Found duplicate parameter name '$1$' in map entry 'param'. Only the first occurrence of the parameter will be used. If you intended to define multiple characteristics for this parameter, note that multiple characteristics of a parameter are encoded as key-value pairs within a semicolon delimited list (example: theParameter{characteristicA=xyz;characteristicB=42;characteristicC}).";
+	case 6:
+	    return "Found duplicate characteristic id '$1$' for parameter with name '$2$' in map entry 'param'. Only the first occurrence of the characteristic will be used. Note that it depends on the actual characteristic whether it is multi-valued or not. See the documentation of the according characteristic for further details.";
+	    
 	default:
 	    return "(" + MapEntryParamInfos.class.getName() + ") Unknown message with number: " + mnr;
 	}

@@ -39,12 +39,28 @@ public class NamingModifierTest extends BasicTestSCXML {
 
     @Test
     public void testRuleTrfCamelcaseToUppercase() {
-	/*
-	 * Test rule-trf-camelcase-to-uppercase of NamingModifier transformation
-	 */
+
 	multiTest(
 		"src/test/resources/namingModifier/camelCaseToUpperCase/testEA_namingmodifier_camelcasetouppercase.xml",
 		new String[] { "xsd" }, "testResults/namingModifier/camelcaseToUppercase",
 		"src/test/resources/namingModifier/camelCaseToUpperCase/reference");
+    }
+    
+    @Test
+    public void testRuleTrfAddSuffix1() {
+
+	multiTest(
+		"src/test/resources/namingModifier/addSuffix1/testEA_namingmodifier_addSuffix1.xml",
+		new String[] { "xsd" }, "testResults/namingModifier/addSuffix1",
+		"src/test/resources/namingModifier/addSuffix1/reference");
+    }
+    
+    @Test
+    public void testRuleTrfAddSuffix2() {
+
+	multiTest(
+		"src/test/resources/namingModifier/addSuffix2/testEA_namingmodifier_addSuffix2.xml",
+		new String[] { "xsd" }, "testResults/namingModifier/addSuffix2",
+		"src/test/resources/namingModifier/addSuffix2/reference");
     }
 }

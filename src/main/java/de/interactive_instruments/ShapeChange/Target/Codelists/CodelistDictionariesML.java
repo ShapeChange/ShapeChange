@@ -635,11 +635,11 @@ public class CodelistDictionariesML implements Target, MessageSource {
 
 	String codeSpace = ci.taggedValue("infoURL");
 
-	if (codeSpace == null || codeSpace.trim().length() == 0) {
+	if (StringUtils.isBlank(codeSpace)) {
 
 	    codeSpace = options.parameter(this.getClass().getName(), PARAM_INFOURL);
 
-	    if (codeSpace == null || codeSpace.trim().length() == 0) {
+	    if (StringUtils.isBlank(codeSpace)) {
 		codeSpace = ci.pkg().targetNamespace();
 	    }
 
@@ -656,9 +656,9 @@ public class CodelistDictionariesML implements Target, MessageSource {
 	 * the "infoURL" of the code list class.
 	 */
 	String codeSpace = ci.taggedValue("infoURL");
-	if (codeSpace == null || codeSpace.trim().length() == 0) {
+	if (StringUtils.isBlank(codeSpace)) {
 	    codeSpace = options.parameter(this.getClass().getName(), PARAM_INFOURL);
-	    if (codeSpace == null || codeSpace.trim().length() == 0)
+	    if (StringUtils.isBlank(codeSpace))
 		codeSpace = ci.pkg().targetNamespace();
 	    codeSpace += "/" + ci.name();
 	}

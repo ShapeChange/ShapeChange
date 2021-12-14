@@ -32,6 +32,8 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
+import org.junit.platform.commons.util.StringUtils;
+
 public abstract class OperationInfoImpl extends InfoImpl
 		implements OperationInfo {
 
@@ -58,7 +60,7 @@ public abstract class OperationInfoImpl extends InfoImpl
 	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang != null && !lang.isEmpty())
+		if (StringUtils.isNotBlank(lang))
 			return lang;
 
 		return null;

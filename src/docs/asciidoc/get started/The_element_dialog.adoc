@@ -1,0 +1,43 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[The_element_dialog]]
+= The element "dialog"
+
+The optional <dialog> element establishes the class that is to be used
+as the user interface dialog for the invocation of ShapeChange specified
+by a given configuration file.
+
+For example:
+
+[source,xml,linenumbers]
+----------
+<dialog>
+    <parameter name="dialogClass" value="de.adv_online.aaa.katalogtool.KatalogDialog"/>
+</dialog>
+----------
+
+The <dialog> element requires only one parameter, as above:
+
+[cols=",,",]
+|===
+|*_Parameter Name_* |*_Default Value_* |*_Explanation_*
+
+|*dialogClass* |<blank> |(Required) Fully-qualified name of the dialog
+class.
+|===
+
+Dialog classes must implement the
+de.interactive_instruments.ShapeChange.UI.Dialog interface.

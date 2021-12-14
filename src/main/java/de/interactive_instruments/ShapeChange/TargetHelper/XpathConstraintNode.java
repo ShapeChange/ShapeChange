@@ -44,6 +44,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
@@ -2658,7 +2660,7 @@ public abstract class XpathConstraintNode {
 						String resuri = litex.umlProperty
 								.taggedValue("resourceURI");
 						// If there is, this is going to be it
-						if (resuri != null && resuri.length() > 0)
+						if (StringUtils.isNotBlank(resuri))
 							value = resuri;
 					}
 					// Make literal value

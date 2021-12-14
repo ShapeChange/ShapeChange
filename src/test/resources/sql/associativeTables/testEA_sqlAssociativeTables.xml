@@ -105,6 +105,7 @@
 	  <targetParameter name="documentationTemplate" value="[[definition]]" />
 	  <targetParameter name="documentationNoValue" value="" />
       <targetParameter name="defaultEncodingRule" value="mysql"/>
+      <targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
       <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
       <targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
       <mapEntries>

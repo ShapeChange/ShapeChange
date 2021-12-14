@@ -1,0 +1,43 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+
+[[Contributors]]
+= Contributors
+
+The ShapeChange tool was originally written by interactive instruments GmbH, and expanded by The MITRE Corporation and the Danish Geodata Agency.
+
+Contributors are:
+
+[cols="1,2",options="header"]
+|===
+|Name |Organization
+|Clemens Portele |interactive instruments GmbH
+|Johannes Echterhoff |interactive instruments GmbH
+|Ellen D. Badgley |The MITRE Corporation
+|Paul Birkel |The MITRE Corporation
+|Reinhard Erstling |interactive instruments GmbH
+|Remi Koblenzer |interactive instruments GmbH
+|Stefan Olk |interactive instruments GmbH
+|Jörg Schmittwilken |interactive instruments GmbH
+|Heidi Vanparys |Danish Agency for Data Supply and Efficiency
+|===
+
+ShapeChange is made available under the terms of the http://www.gnu.org/licenses/gpl-3.0.en.html[General Public License
+(GPL)].
+
+Package _de.interactive_instruments.ShapeChange_ and its subpackages: ©2002-2021, interactive instruments GmbH
+
+Package _us.mitre.ShapeChange_ and its subpackages: © 2007-2013, The MITRE Corporation.

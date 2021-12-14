@@ -42,7 +42,7 @@ public class ProfilerConfigurationValidator extends AbstractConfigurationValidat
 		Profiles.parse(profilesParameterValue, true);
 	    } catch (MalformedProfileIdentifierException e) {
 		isValid = false;
-		result.addError(null, 20206, Profiler.PARAM_PROFILES, e.getMessage());
+		result.addError(this, 20206, Profiler.PARAM_PROFILES, e.getMessage());
 	    }
 	}
 
@@ -63,7 +63,7 @@ public class ProfilerConfigurationValidator extends AbstractConfigurationValidat
 
 	    if (!validConstraintHandlingParameter) {
 		isValid = false;
-		result.addError(null, 20221, Profiler.PARAM_CONSTRAINTHANDLING);
+		result.addError(this, 20221, Profiler.PARAM_CONSTRAINTHANDLING);
 	    }
 	}
 
@@ -76,7 +76,11 @@ public class ProfilerConfigurationValidator extends AbstractConfigurationValidat
 
 	case 100:
 	    return "Required parameter '" + Profiler.PARAM_PROFILES + "' not set.";
-
+	case 20206: //x
+	    return "Error parsing component of '$1$' configuration parameter: $2$";
+	case 20221: //x
+	    return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
+	    
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

@@ -31,11 +31,15 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
@@ -47,8 +51,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Stereotypes;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ModelElementSelectionInfo implements MessageSource {
@@ -57,11 +60,20 @@ public class ModelElementSelectionInfo implements MessageSource {
 	ASSOCIATION, CLASS, PACKAGE, PROPERTY, ATTRIBUTE, ASSOCIATIONROLE
     };
 
+    private boolean validated = false;
+
     private ModelElementType modelElementType = null;
+    private String modelElementStereotype = null;
     private Pattern modelElementStereotypePattern = null;
+    private String modelElementName = null;
     private Pattern modelElementNamePattern = null;
+    private String modelElementOwnerName = null;
     private Pattern modelElementOwnerNamePattern = null;
+    private String modelElementOwnerStereotype = null;
+    private Pattern modelElementOwnerStereotypePattern = null;
+    private String propertyValueTypeStereotype = null;
     private Pattern propertyValueTypeStereotypePattern = null;
+    private String applicationSchemaName = null;
     private Pattern applicationSchemaNamePattern = null;
 
     /**
@@ -73,17 +85,90 @@ public class ModelElementSelectionInfo implements MessageSource {
 	super();
     }
 
-    public ModelElementSelectionInfo(ModelElementType modelElementType, Pattern modelElementStereotypePattern,
-	    Pattern modelElementNamePattern, Pattern modelElementOwnerNamePattern,
-	    Pattern propertyValueTypeStereotypePattern, Pattern applicationSchemaNamePattern) {
+    public ModelElementSelectionInfo(ModelElementType modelElementType, String modelElementStereotype,
+	    String modelElementName, String modelElementOwnerName, String modelElementOwnerStereotype,
+	    String propertyValueTypeStereotype, String applicationSchemaName) {
 
 	super();
 	this.modelElementType = modelElementType;
-	this.modelElementStereotypePattern = modelElementStereotypePattern;
-	this.modelElementNamePattern = modelElementNamePattern;
-	this.modelElementOwnerNamePattern = modelElementOwnerNamePattern;
-	this.propertyValueTypeStereotypePattern = propertyValueTypeStereotypePattern;
-	this.applicationSchemaNamePattern = applicationSchemaNamePattern;
+	this.modelElementStereotype = modelElementStereotype;
+	this.modelElementName = modelElementName;
+	this.modelElementOwnerName = modelElementOwnerName;
+	this.modelElementOwnerStereotype = modelElementOwnerStereotype;
+	this.propertyValueTypeStereotype = propertyValueTypeStereotype;
+	this.applicationSchemaName = applicationSchemaName;
+    }
+
+    public void validate() throws ModelElementSelectionParseException {
+
+	validated = true;
+
+	List<String> compileErrors = new ArrayList<>();
+
+	if (this.modelElementName != null) {
+	    try {
+		this.modelElementNamePattern = Pattern.compile(this.modelElementName);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add("@modelElementName - invalid value (" + modelElementName + "): " + e.getMessage());
+	    }
+	}
+
+	if (this.modelElementOwnerName != null) {
+	    try {
+		modelElementOwnerNamePattern = Pattern.compile(modelElementOwnerName);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add(
+			"@modelElementOwnerName - invalid value (" + modelElementOwnerName + "): " + e.getMessage());
+	    }
+	}
+
+	if (this.modelElementOwnerStereotype != null) {
+	    try {
+		modelElementOwnerStereotypePattern = Pattern.compile(modelElementOwnerStereotype);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add("@modelElementOwnerStereotype - invalid value (" + modelElementOwnerStereotype + "): "
+			+ e.getMessage());
+	    }
+	}
+
+	if (this.modelElementStereotype != null) {
+	    try {
+		modelElementStereotypePattern = Pattern.compile(modelElementStereotype);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add(
+			"@modelElementStereotype - invalid value (" + modelElementStereotype + "): " + e.getMessage());
+	    }
+	}
+
+	if (this.propertyValueTypeStereotype != null) {
+	    try {
+		propertyValueTypeStereotypePattern = Pattern.compile(propertyValueTypeStereotype);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add("@propertyValueTypeStereotype - invalid value (" + propertyValueTypeStereotype + "): "
+			+ e.getMessage());
+	    }
+	}
+
+	if (this.applicationSchemaName != null) {
+	    try {
+		applicationSchemaNamePattern = Pattern.compile(applicationSchemaName);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add(
+			"@applicationSchemaName - invalid value (" + applicationSchemaName + "): " + e.getMessage());
+	    }
+	}
+
+	if (!compileErrors.isEmpty()) {
+	    throw new ModelElementSelectionParseException(
+		    "Compiling regular expression(s) of model element selection attribute(s) did not succeed. Issues: "
+			    + StringUtils.join(compileErrors, ", "));
+	}
+    }
+
+    public Pattern getModelElementOwnerStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
+	return modelElementOwnerStereotypePattern;
     }
 
     /**
@@ -92,7 +177,34 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementStereotypePattern;
+    }
+
+    private void raiseNotValidatedIllegalStateException() {
+	/*
+	 * 2021-09-22 JE: We do not want to throw an exception while loading the
+	 * configuration in case that one of the regular expressions does not compile. A
+	 * situation where that would be the case is loading TaggedValue elements within
+	 * a transformer configuration.
+	 * 
+	 * However, afterwards we do want to compile the regexes so that we can use
+	 * them. So there must be a point in time in the code where the compilation
+	 * happens.
+	 * 
+	 * In order to avoid parsing exceptions whenever the pattern objects that result
+	 * from the regexes are accessed, we do the compilation once, via the validate()
+	 * method. For cases in which the ModelElementSelectionInfo is created while
+	 * loading the configuration, validate() should be used during the semantic
+	 * validation of the configuration. In other cases, for example when the
+	 * information is parsed from the sc:advancedProcessConfigurations element,
+	 * validate() should be called directly after parsing. Any process (transformer
+	 * or target) that makes use of model element selection infos in its
+	 * configuration must ensure that they are validated.
+	 */
+	throw new IllegalStateException(
+		"ModelElementSelectionInfo.validate() has not been called. This is an implementation error.");
     }
 
     /**
@@ -101,6 +213,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         filter criterium was not set in the configuration.
      */
     public Pattern getPropertyValueTypeStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return propertyValueTypeStereotypePattern;
     }
 
@@ -110,6 +224,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementNamePattern;
     }
 
@@ -119,6 +235,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementOwnerNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementOwnerNamePattern;
     }
 
@@ -128,6 +246,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         configuration.
      */
     public ModelElementType getModelElementType() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementType;
     }
 
@@ -137,6 +257,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getApplicationSchemaNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return applicationSchemaNamePattern;
     }
 
@@ -145,6 +267,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementName attribute, else <code>false</code>
      */
     public boolean hasModelElementNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementNamePattern != null;
     }
 
@@ -153,6 +277,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementOwnerName attribute, else <code>false</code>
      */
     public boolean hasModelElementOwnerNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementOwnerNamePattern != null;
     }
 
@@ -161,7 +287,15 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementStereotype attribute, else <code>false</code>
      */
     public boolean hasModelElementStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementStereotypePattern != null;
+    }
+
+    public boolean hasModelElementOwnerStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
+	return modelElementOwnerStereotypePattern != null;
     }
 
     /**
@@ -169,6 +303,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         propertyValueTypeStereotype attribute, else <code>false</code>
      */
     public boolean hasPropertyValueTypeStereotypePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return propertyValueTypeStereotypePattern != null;
     }
 
@@ -177,6 +313,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         applicationSchemaName attribute, else <code>false</code>
      */
     public boolean hasApplicationSchemaNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return applicationSchemaNamePattern != null;
     }
 
@@ -185,6 +323,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementType attribute, else <code>false</code>
      */
     public boolean hasModelElementType() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
 	return modelElementType != null;
     }
 
@@ -198,6 +338,9 @@ public class ModelElementSelectionInfo implements MessageSource {
      */
     public boolean matches(Info infoType) {
 
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
+
 	Options options = infoType.options();
 	ShapeChangeResult result = infoType.result();
 
@@ -205,6 +348,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	boolean propertyValueTypeStereotypeMatch = true;
 	boolean modelElementNameMatch = true;
 	boolean modelElementOwnerNameMatch = true;
+	boolean modelElementOwnerStereotypeMatch = true;
 	boolean applicationSchemaNameMatch = true;
 	boolean modelElementTypeMatch = true;
 
@@ -258,6 +402,66 @@ public class ModelElementSelectionInfo implements MessageSource {
 		} else {
 		    result.addDebug(this, 101, stereotype, modelElementStereotypePattern.pattern());
 		}
+	    }
+	}
+
+	if (hasModelElementOwnerStereotypePattern()) {
+
+	    modelElementOwnerStereotypeMatch = false;
+
+	    Info owner = null;
+
+	    if (infoType instanceof PropertyInfo) {
+		owner = ((PropertyInfo) infoType).inClass();
+	    } else if (infoType instanceof ClassInfo) {
+		owner = ((ClassInfo) infoType).pkg();
+	    } else if (infoType instanceof PackageInfo) {
+		PackageInfo pkg = (PackageInfo) infoType;
+		if (pkg.owner() != null) {
+		    owner = pkg.owner();
+		}
+	    }
+
+	    if (owner != null) {
+
+		Stereotypes stereotypes = owner.stereotypes();
+
+		// TBD: what if a model element has no stereotype?
+		// stereotypes in info types have been normalized
+		if (stereotypes.isEmpty()) {
+
+		    String stereotype = null;
+
+		    if (infoType instanceof PropertyInfo)
+			stereotype = "";
+		    else if (infoType instanceof ClassInfo)
+			stereotype = "";
+		    else if (infoType instanceof PackageInfo)
+			stereotype = "";
+
+		    stereotypes = options.stereotypesFactory();
+		    stereotypes.add(stereotype);
+		}
+
+		for (String stereotype : stereotypes.asArray()) {
+
+		    Matcher matcher = modelElementOwnerStereotypePattern.matcher(stereotype);
+
+		    if (matcher.matches()) {
+			modelElementOwnerStereotypeMatch = true;
+			result.addDebug(this, 100, stereotype, modelElementOwnerStereotypePattern.pattern());
+			break;
+		    } else {
+			result.addDebug(this, 101, stereotype, modelElementOwnerStereotypePattern.pattern());
+		    }
+		}
+
+	    } else {
+		/*
+		 * Info type has no specific owner (could be an association or root package).
+		 * Assume that filter criteria matches.
+		 */
+		modelElementOwnerStereotypeMatch = true;
 	    }
 	}
 
@@ -363,7 +567,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    SortedSet<String> applicationSchemaNames = determineApplicationSchemaName(infoType);
 
 	    for (String applicationSchemaName : applicationSchemaNames) {
-		
+
 		Matcher matcher = applicationSchemaNamePattern.matcher(applicationSchemaName);
 
 		if (matcher.matches()) {
@@ -376,47 +580,46 @@ public class ModelElementSelectionInfo implements MessageSource {
 	}
 
 	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
-		&& propertyValueTypeStereotypeMatch && modelElementTypeMatch && applicationSchemaNameMatch;
+		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && modelElementTypeMatch
+		&& applicationSchemaNameMatch;
     }
 
     public static ModelElementSelectionInfo parse(Element element) {
 
-	Pattern modelElementNamePattern = null;
+	String modelElementName = null;
 
 	if (element.hasAttribute("modelElementName")) {
-	    String modelElementName = element.getAttribute("modelElementName");
-	    modelElementNamePattern = Pattern.compile(modelElementName);
+	    modelElementName = element.getAttribute("modelElementName");
 	}
 
-	Pattern modelElementOwnerNamePattern = null;
+	String modelElementOwnerName = null;
 
 	if (element.hasAttribute("modelElementOwnerName")) {
-	    String modelElementOwnerName = element.getAttribute("modelElementOwnerName");
-	    modelElementOwnerNamePattern = Pattern.compile(modelElementOwnerName);
+	    modelElementOwnerName = element.getAttribute("modelElementOwnerName");
+	}
+	
+	String modelElementOwnerStereotype = null;
+
+	if (element.hasAttribute("modelElementOwnerStereotype")) {
+	    modelElementOwnerStereotype = element.getAttribute("modelElementOwnerStereotype");
 	}
 
-	Pattern modelElementStereotypePattern = null;
+	String modelElementStereotype = null;
 
 	if (element.hasAttribute("modelElementStereotype")) {
-
-	    String modelElementStereotype = element.getAttribute("modelElementStereotype");
-	    modelElementStereotypePattern = Pattern.compile(modelElementStereotype);
+	    modelElementStereotype = element.getAttribute("modelElementStereotype");
 	}
 
-	Pattern propertyValueTypeStereotypePattern = null;
+	String propertyValueTypeStereotype = null;
 
 	if (element.hasAttribute("propertyValueTypeStereotype")) {
-
-	    String propertyValueTypeStereotype = element.getAttribute("propertyValueTypeStereotype");
-	    propertyValueTypeStereotypePattern = Pattern.compile(propertyValueTypeStereotype);
+	    propertyValueTypeStereotype = element.getAttribute("propertyValueTypeStereotype");
 	}
 
-	Pattern applicationSchemaNamePattern = null;
+	String applicationSchemaName = null;
 
 	if (element.hasAttribute("applicationSchemaName")) {
-
-	    String applicationSchemaName = element.getAttribute("applicationSchemaName");
-	    applicationSchemaNamePattern = Pattern.compile(applicationSchemaName);
+	    applicationSchemaName = element.getAttribute("applicationSchemaName");
 	}
 
 	ModelElementType modelElementType = null;
@@ -440,8 +643,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
-	return new ModelElementSelectionInfo(modelElementType, modelElementStereotypePattern, modelElementNamePattern,
-		modelElementOwnerNamePattern, propertyValueTypeStereotypePattern, applicationSchemaNamePattern);
+	return new ModelElementSelectionInfo(modelElementType, modelElementStereotype, modelElementName,
+		modelElementOwnerName, modelElementOwnerStereotype, propertyValueTypeStereotype, applicationSchemaName);
     }
 
     /**

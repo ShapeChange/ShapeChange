@@ -1,0 +1,80 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[The_element_log]]
+= The element "log"
+
+This element controls the logging of messages by ShapeChange.  An
+example:
+
+[source,xml,linenumbers]
+----------
+<log>
+     <parameter name="reportLevel" value="WARNING" />
+     <parameter name="logFile" value="./NAS_v1_3_MDB/result.xml" />
+</log>
+----------
+
+Since ShapeChange v2.10.0, log messages fall into two categories:
+process and process flow. All log messages created by a ShapeChange
+process, i.e. transformer and target, as well as while loading a model
+(e.g. the input model), fall under the first category. Some log
+messages, created by transformers, that merely announce the execution of
+a certain transformation rule, are the exception. Log messages created
+outside of a ShapeChange process, fall into the second category. Such
+messages primarily log information about the steps of the ShapeChange
+execution (work)flow, including any general errors encountered during
+execution (such as an invalid configuration file).
+
+Log levels for process and process flow log messages are: DEBUG, INFO,
+WARNING, ERROR, and FATALERROR.
+
+At the end of execution, ShapeChange produces an HTML result report,
+which contains the log messages as well as links to resulting files. The
+report allows a user to show and hide log messages of a particular
+category and level, independently of log messages of other categories
+and levels. A user can thus keep full information about the process
+flow, while only showing process log messages on level error and above.
+This can be useful for determining the source of an error.
+
+Parameters for the <log> element are as follows:
+
+[width="100%",cols="34%,33%,33%",]
+|===
+|*_Parameter Name_* |*_Default Value_* |*_Explanation_*
+
+|*reportLevel* |INFO a|
+The level at which to log process messages. Possible values are:
+
+* DEBUG
+* INFO
+* WARNING
+* ERROR
+
+|*processFlowReportLevel* |INFO a|
+The level at which to log process flow messages. Possible values are:
+
+* DEBUG
+* INFO
+* WARNING
+* ERROR
+
+|*logFile* |log.xml |The file name of the XML log file. This should have
+the extension ".xml".In the same directory also an HTML version of the
+log file (extension ".html") will be generated.
+
+|*xsltFile* |src/main/resources/xslt/result.xsl |The file name of an
+XSLT stylesheet that converts the log file to HTML.
+|===

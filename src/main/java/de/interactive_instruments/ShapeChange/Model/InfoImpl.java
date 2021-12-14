@@ -44,6 +44,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMode;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetRegistry;
+import de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchemaConstants;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -153,12 +154,10 @@ public abstract class InfoImpl implements Info {
 			 */
 			if (this instanceof PropertyInfo) {
 
-				PropertyInfo pi = (PropertyInfo) this;
-
-				mc.addDetail(null, 791, pi.name(), pi.inClass().name());
+				mc.addDetail(null, 791, this.fullName());
 
 			} else {
-				mc.addDetail(null, 790, this.toString(), this.name());
+				mc.addDetail(null, 790, this.fullName());
 			}
 		}
 	}
@@ -815,25 +814,25 @@ public abstract class InfoImpl implements Info {
 		String param;
 		if (rule.equals("rule-xsd-cls-local-enumeration")) {
 			param = options().parameter(Options.TargetXmlSchemaClass,
-					"enumStyle");
+				XmlSchemaConstants.PARAM_ENUM_STYLE);
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-cls-local-basictype")) {
 			param = options().parameter(Options.TargetXmlSchemaClass,
-					"basicTypeStyle");
+				XmlSchemaConstants.PARAM_BASIC_TYPE_STYLE);
 			if (param != null && param.equalsIgnoreCase("local"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-pkg-schematron")) {
 			param = options().parameter(Options.TargetXmlSchemaClass,
-					"schematron");
+				XmlSchemaConstants.PARAM_SCHEMATRON);
 			if (param != null && param.equalsIgnoreCase("true"))
 				return true;
 		}
 		if (rule.equals("rule-xsd-prop-exclude-derived")) {
 			param = options().parameter(Options.TargetXmlSchemaClass,
-					"includeDerivedProperties");
+				XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES);
 			if (param != null && param.equalsIgnoreCase("false"))
 				return true;
 		}

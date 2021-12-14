@@ -1,0 +1,109 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Validation_of_the_Configuration]]
+= Validation of the Configuration
+
+[[Overview]]
+== Overview
+
+The ShapeChange configuration defines how a UML model is read and
+processed by ShapeChange. It is therefore essential to ensure that the
+configuration is correct. ShapeChange performs two types of validations:
+
+* syntactic validation based on the XML Schema definition of the
+ShapeChange configuration, and
+* semantic validation (this feature is available since ShapeChange
+version 2.2.0)
+
+Both types of validation are described in more detail in the following
+sections.
+
+[[XML_Schema_based_Validation]]
+== XML Schema based Validation
+
+The XML Schema (XSD) configured in the _xsi:schemaLocation_ attribute of
+the ShapeChange configuration root element is used to check the
+syntactical correctness of the configuration. The latest version of the
+ShapeChange configuration XSD can be found at
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd
+
+[[Semantic_Validation]]
+== Semantic Validation
+
+(since v2.2.0)
+
+In addition to the XML Schema based validation, ShapeChange can also
+check the parameters and rules defined in the configuration for
+consistency. The intent is to prevent configuration mistakes that would
+otherwise only be noticed during or after processing a UML model. As
+processing the model can take a significant amount of time, it is useful
+to identify and correct configuration issues before the model is
+processed.
+
+An example of a common configuration mistake is not specifying a
+parameter that is required by a conversion rule.
+
+ShapeChange performs the semantic validation before it converts the
+model. The validation can result in log messages with different severity
+level. An error causes the validation to fail, which also prevents model
+conversion. In that case, the configuration issues reported in the log
+should be corrected before ShapeChange is executed again.
+
+NOTE: In case that semantic validation is not behaving as expected, it
+can be skipped by including the input parameter
+'skipSemanticValidationOfShapeChangeConfiguration' with a value of
+'true'.
+
+[[Basic_Configuration_Validator]]
+=== Basic Configuration Validator
+
+The validation of the input parameters as well as any general semantic
+validation tasks are executed by the _BasicConfigurationValidator_ (in
+package _de.interactive_instruments.ShapeChange_). 
+
+////
+The following checks
+are performed:
+
+* If the parameter 'inputModelType' is set to 'EA7', then ShapeChange
+checks that it is a) executed within a windows operating environment
+(which can be a virtual machine) and b) executed by a 32bit JRE. This
+prevents one of the causes of a
+xref:./Typical_problems.adoc[typical problem:] the
+occurrence of an UnsatisfiedLinkError.
+////
+
+[[Implementation_of_Configuration_Validators]]
+=== Implementation of Configuration Validators
+
+This section documents how specific configuration validators are
+implemented.
+
+Semantic validation of transformers and targets is implemented by
+specific classes that are dynamically instantiated by ShapeChange.
+
+* The class must be located in the same package as the
+transformer/target.
+* It must have the same name as the transformer/target, just with the
+suffix 'ConfigurationValidator'.
+* The class must have a constructor without arguments.
+* The class must implement the interface
+_de.interactive_instruments.ShapeChange.ConfigurationValidator_.
+
+For example, the implementation of the validator for the
+FeatureCatalogue target has the name
+'FeatureCatalogueConfigurationValidator' and is located in package
+'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue'.

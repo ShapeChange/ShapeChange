@@ -40,7 +40,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -53,6 +55,7 @@ import org.xml.sax.SAXException;
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -95,7 +98,7 @@ public class XmlSchema implements Target, MessageSource {
 	if (pi.matches("rule-xsd-all-notEncoded") && pi.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 	    return;
 
-	result.addDebug(null, 10012, pi.name());
+	result.addDebug(this, 10012, pi.name());
 
 	config = (TargetXmlSchemaConfiguration) o.getCurrentProcessConfig();
 
@@ -170,7 +173,7 @@ public class XmlSchema implements Target, MessageSource {
 	    return;
 
 	int cat = ci.category();
-	result.addDebug(null, 10016, ci.name(), ci.encodingRule("xsd"));
+	result.addDebug(this, 10016, ci.name(), ci.encodingRule("xsd"));
 
 	if (ci.matches("rule-xsd-all-notEncoded") && ci.encodingRule("xsd").equalsIgnoreCase("notencoded"))
 	    return;
@@ -180,7 +183,7 @@ public class XmlSchema implements Target, MessageSource {
 	while (xsd == null) {
 	    pi = pi.owner();
 	    if (pi == null) {
-		MessageContext mc = result.addError(null, 10, ci.name(), ci.pkg().name());
+		MessageContext mc = result.addError(this, 10, ci.name(), ci.pkg().name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 		return;
@@ -833,7 +836,7 @@ public class XmlSchema implements Target, MessageSource {
 
 	if (xsdDocument != null && xsdDocument.length() > 0) {
 	    try {
-		result.addDebug(null, 10017, xsdDocument, pi.name());
+		result.addDebug(this, 10017, xsdDocument, pi.name());
 
 		xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
 			determineSchematronSchemaForXsdDocument(xsdDocument));
@@ -846,9 +849,9 @@ public class XmlSchema implements Target, MessageSource {
 	    xsd = xsdcurr;
 	    if (xsd == null) {
 		xsdDocument = pi.name() + ".xsd";
-		result.addWarning(null, 15, pi.name(), xsdDocument);
+		result.addWarning(this, 15, pi.name(), xsdDocument);
 		try {
-		    result.addDebug(null, 10017, xsdDocument, pi.name());
+		    result.addDebug(this, 10017, xsdDocument, pi.name());
 		    xsd = new XsdDocument(pi, model, options, result, config, xsdDocument,
 			    determineSchematronSchemaForXsdDocument(xsdDocument));
 		    res = true;
@@ -1165,21 +1168,26 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * Associate these with a core encoding rule
 	 */
-	r.addRule("req-xsd-pkg-xsdDocument-unique", "*");
-	r.addRule("req-xsd-cls-name-unique", "*");
-	r.addRule("req-xsd-cls-ncname", "*");
-	r.addRule("req-xsd-prop-data-type", "*");
-	r.addRule("req-xsd-prop-value-type-exists", "*");
-	r.addRule("req-xsd-prop-ncname", "*");
-	r.addRule("rule-xsd-pkg-contained-packages", "*");
-	r.addRule("rule-xsd-pkg-dependencies", "*");
-	r.addRule("rule-xsd-cls-unknown-as-object", "*");
-	r.addRule("rule-xsd-cls-object-element", "*");
-	r.addRule("rule-xsd-cls-type", "*");
-	r.addRule("rule-xsd-cls-property-type", "*");
-	r.addRule("rule-xsd-cls-local-properties", "*");
-	r.addRule("rule-xsd-cls-union-as-choice", "*");
-	r.addRule("rule-xsd-cls-sequence", "*");
+	ProcessRuleSet starPrs = new ProcessRuleSet("*",new TreeSet<>(Stream.of(
+		"req-xsd-pkg-xsdDocument-unique",
+		"req-xsd-cls-name-unique",
+		"req-xsd-cls-ncname",
+		"req-xsd-prop-data-type",
+		"req-xsd-prop-value-type-exists",
+		"req-xsd-prop-ncname",
+		"rule-xsd-pkg-contained-packages",
+		"rule-xsd-pkg-dependencies",
+		"rule-xsd-cls-unknown-as-object",
+		"rule-xsd-cls-object-element",
+		"rule-xsd-cls-type",
+		"rule-xsd-cls-property-type",
+		"rule-xsd-cls-local-properties",
+		"rule-xsd-cls-union-as-choice",
+		"rule-xsd-cls-sequence"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(starPrs);
+
+
 	/*
 	 * GML 3.2 / ISO 19136:2007 rules
 	 */
@@ -1198,19 +1206,22 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the iso19136_2007 encoding rule and extend the core encoding rule
 	 */
-	r.addExtendsEncRule("iso19136_2007", "*");
-	r.addRule("req-xsd-cls-generalization-consistent", "iso19136_2007");
-	r.addRule("rule-xsd-all-naming-gml", "iso19136_2007");
-	r.addRule("rule-xsd-cls-global-enumeration", "iso19136_2007");
-	r.addRule("rule-xsd-cls-codelist-asDictionary", "iso19136_2007");
-	r.addRule("rule-xsd-cls-standard-gml-property-types", "iso19136_2007");
-	r.addRule("rule-xsd-cls-noPropertyType", "iso19136_2007");
-	r.addRule("rule-xsd-cls-byValuePropertyType", "iso19136_2007");
-	r.addRule("rule-xsd-pkg-gmlProfileSchema", "iso19136_2007");
-	r.addRule("rule-xsd-prop-targetElement", "iso19136_2007");
-	r.addRule("rule-xsd-prop-reverseProperty", "iso19136_2007");
-	r.addRule("rule-xsd-prop-defaultCodeSpace", "iso19136_2007");
-	r.addRule("rule-xsd-prop-inlineOrByReference", "iso19136_2007");
+	ProcessRuleSet iso19136_2007Prs = new ProcessRuleSet("iso19136_2007","*",new TreeSet<>(Stream.of(
+		"req-xsd-cls-generalization-consistent",
+		"rule-xsd-all-naming-gml",
+		"rule-xsd-cls-global-enumeration",
+		"rule-xsd-cls-codelist-asDictionary",
+		"rule-xsd-cls-standard-gml-property-types",
+		"rule-xsd-cls-noPropertyType",
+		"rule-xsd-cls-byValuePropertyType",
+		"rule-xsd-pkg-gmlProfileSchema",
+		"rule-xsd-prop-targetElement",
+		"rule-xsd-prop-reverseProperty",
+		"rule-xsd-prop-defaultCodeSpace",
+		"rule-xsd-prop-inlineOrByReference"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(iso19136_2007Prs);
+
 	/*
 	 * additional GML 3.3 rules
 	 */
@@ -1219,20 +1230,23 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the gml33 encoding rule and extend the core encoding rule
 	 */
-	r.addExtendsEncRule("gml33", "*");
-	r.addRule("req-xsd-cls-generalization-consistent", "gml33");
-	r.addRule("rule-xsd-all-naming-gml", "gml33");
-	r.addRule("rule-xsd-cls-global-enumeration", "gml33");
-	r.addRule("rule-xsd-cls-codelist-asDictionaryGml33", "gml33");
-	r.addRule("rule-xsd-cls-standard-gml-property-types", "gml33");
-	r.addRule("rule-xsd-cls-noPropertyType", "gml33");
-	r.addRule("rule-xsd-cls-byValuePropertyType", "gml33");
-	r.addRule("rule-xsd-pkg-gmlProfileSchema", "gml33");
-	r.addRule("rule-xsd-prop-targetElement", "gml33");
-	r.addRule("rule-xsd-prop-reverseProperty", "gml33");
-	r.addRule("rule-xsd-prop-defaultCodeSpace", "gml33");
-	r.addRule("rule-xsd-prop-inlineOrByReference", "gml33");
-	r.addRule("rule-xsd-rel-association-classes", "gml33");
+	ProcessRuleSet gml33Prs = new ProcessRuleSet("gml33","*",new TreeSet<>(Stream.of(
+		"req-xsd-cls-generalization-consistent",
+		"rule-xsd-all-naming-gml",
+		"rule-xsd-cls-global-enumeration",
+		"rule-xsd-cls-codelist-asDictionaryGml33",
+		"rule-xsd-cls-standard-gml-property-types",
+		"rule-xsd-cls-noPropertyType",
+		"rule-xsd-cls-byValuePropertyType",
+		"rule-xsd-pkg-gmlProfileSchema",
+		"rule-xsd-prop-targetElement",
+		"rule-xsd-prop-reverseProperty",
+		"rule-xsd-prop-defaultCodeSpace",
+		"rule-xsd-prop-inlineOrByReference",
+		"rule-xsd-rel-association-classes"
+		).collect(Collectors.toSet())));
+r.addRuleSet(gml33Prs);
+
 	/*
 	 * ISO/TS 19139:2007 rules
 	 */
@@ -1245,12 +1259,15 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the iso19139_2007 encoding rule and extend the core encoding rule
 	 */
-	r.addExtendsEncRule("iso19139_2007", "*");
-	r.addRule("rule-xsd-cls-enum-object-element", "iso19139_2007");
-	r.addRule("rule-xsd-cls-enum-property-type", "iso19139_2007");
-	r.addRule("rule-xsd-cls-global-enumeration", "iso19139_2007");
-	r.addRule("rule-xsd-cls-standard-19139-property-types", "iso19139_2007");
-	r.addRule("rule-xsd-all-naming-19139", "iso19139_2007");
+	ProcessRuleSet iso19139_2007Prs = new ProcessRuleSet("iso19139_2007","*",new TreeSet<>(Stream.of(
+		"rule-xsd-cls-enum-object-element",
+		"rule-xsd-cls-enum-property-type",
+		"rule-xsd-cls-global-enumeration",
+		"rule-xsd-cls-standard-19139-property-types",
+		"rule-xsd-all-naming-19139"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(iso19139_2007Prs);
+
 	/*
 	 * SWE Common Data Model 2.0 rules
 	 */
@@ -1263,23 +1280,26 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the ogcSweCommon2 encoding rule and extend the core encoding rule
 	 */
-	r.addExtendsEncRule("ogcSweCommon2", "*");
-	r.addRule("req-xsd-cls-generalization-consistent", "ogcSweCommon2");
-	r.addRule("rule-xsd-all-naming-swe", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-global-enumeration", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-codelist-asDictionary", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-standard-swe-property-types", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-noPropertyType", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-byValuePropertyType", "ogcSweCommon2");
-	r.addRule("rule-xsd-pkg-gmlProfileSchema", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-targetElement", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-reverseProperty", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-defaultCodeSpace", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-inlineOrByReference", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-xsdAsAttribute", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-soft-typed", "ogcSweCommon2");
-	r.addRule("rule-xsd-cls-union-as-group-property-type", "ogcSweCommon2");
-	r.addRule("rule-xsd-prop-initialValue", "ogcSweCommon2");
+	ProcessRuleSet ogcSweCommon2Prs = new ProcessRuleSet("ogcSweCommon2","*",new TreeSet<>(Stream.of(
+		"req-xsd-cls-generalization-consistent",
+		"rule-xsd-all-naming-swe",
+		"rule-xsd-cls-global-enumeration",
+		"rule-xsd-cls-codelist-asDictionary",
+		"rule-xsd-cls-standard-swe-property-types",
+		"rule-xsd-cls-noPropertyType",
+		"rule-xsd-cls-byValuePropertyType",
+		"rule-xsd-pkg-gmlProfileSchema",
+		"rule-xsd-prop-targetElement",
+		"rule-xsd-prop-reverseProperty",
+		"rule-xsd-prop-defaultCodeSpace",
+		"rule-xsd-prop-inlineOrByReference",
+		"rule-xsd-prop-xsdAsAttribute",
+		"rule-xsd-prop-soft-typed",
+		"rule-xsd-cls-union-as-group-property-type",
+		"rule-xsd-prop-initialValue"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(ogcSweCommon2Prs);
+
 
 	/*
 	 * additional GML 2.1 rules
@@ -1289,9 +1309,11 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the gml21 encoding rule and extend the core encoding rule
 	 */
-	r.addExtendsEncRule("gml21", "iso19136_2007");
-	r.addRule("rule-xsd-all-gml21", "gml21");
-	r.addRule("rule-xsd-cls-codelist-anonymous-xlink", "gml21");
+	ProcessRuleSet gml21Prs = new ProcessRuleSet("gml21","iso19136_2007",new TreeSet<>(Stream.of(
+		"rule-xsd-all-gml21",
+		"rule-xsd-cls-codelist-anonymous-xlink"
+		).collect(Collectors.toSet())));
+	r.addRuleSet(gml21Prs);
 
 	/*
 	 * non-standard extensions - requirements
@@ -1327,6 +1349,7 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
 	r.addRule("rule-xsd-cls-adeelement");
 	r.addRule("rule-xsd-cls-basictype");
+	r.addRule("rule-xsd-cls-basictype-list");	
 	r.addRule("rule-xsd-cls-codelist-constraints");
 	r.addRule("rule-xsd-cls-codelist-constraints2");
 	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
@@ -1395,6 +1418,10 @@ public class XmlSchema implements Target, MessageSource {
 	    return "Context: association class '$1$'.";
 	case 3:
 	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 10:
+	    return "Class '$1$' in package '$2$' is not associated with an XSD document.";
+	case 15:
+	    return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 
 	case 1000:
 	    return "Skipping XML Schema output, as configured.";
@@ -1428,6 +1455,14 @@ public class XmlSchema implements Target, MessageSource {
 	    return "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
 	case 2013:
 	    return "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
+	
+	case 10012:
+	    return "Generating XML Schema for application schema '$1$'.";
+	case 10016:
+	    return "Processing class '$1$', rule '$2$'.";
+	case 10017:
+	    return "Creating XSD document '$1$' for package '$2$'.";
+	
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

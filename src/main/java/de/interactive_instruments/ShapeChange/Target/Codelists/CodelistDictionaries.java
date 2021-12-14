@@ -290,9 +290,9 @@ public class CodelistDictionaries implements Target, MessageSource {
 	}
 
 	String codeSpace = ci.taggedValue("codeList");
-	if (codeSpace == null)
+	if (StringUtils.isBlank(codeSpace))
 	    codeSpace = ci.taggedValue("infoURL");
-	if (codeSpace == null)
+	if (StringUtils.isBlank(codeSpace))
 	    codeSpace = ci.pkg().targetNamespace() + "/" + ci.name();
 
 	addAttribute(lDocument, e2, "codeSpace", codeSpace);

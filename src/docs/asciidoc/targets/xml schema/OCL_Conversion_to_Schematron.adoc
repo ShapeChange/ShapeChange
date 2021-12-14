@@ -1,0 +1,413 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[OCL_Conversion_to_Schematron]]
+= OCL Conversion to Schematron
+
+Conversion from OCL to Schematron is performed on the basis of a
+ShapeChange-internal syntax representation of OCL expressions. The
+representation is close to the Concrete Syntax structure described in
+the OCL 2.2 standard.
+
+Naturally, the syntax representation of OCL is recursive. Therefore the
+principles of translation from OCL to another language can best be
+described using a recursive notation. Below we describe, how some
+particular constructs such as the application of the select() iterator
+
+x->select(t|pred(t))
+
+translate to XPath 1.0, where the translation results of the constituent
+parts (such as x and pred(t)) are presumed.
+
+For a valid OCL expression x let τ(x) denote the equivalent XPath 1.0
+expression. The expression x may contain free variables (explicit or
+implicit), which need to be treated when computing τ(x). One typical
+variable is _self_, which translates to _current()._ So,
+τ(self)=current().
+
+[width="100%",cols="1,1,1,2",options="header"]
+|===
+|Category |OCL syntax |In words |Schematron translation
+
+|Variable access _self_ |self |The current object in the context of
+which the expression shall hold. |current()
+
+NOTE: Whenever the current
+node happens to be identical to current() there is no need to explicitly
+generate current() for self. Relative path syntax is to be used in these
+cases.
+
+|Iterator variable access |t defined in an iterator used in x(t) |t has
+to be assigned a current value from the path that leads to x(t). a|
+_If t has a realization in the path leading to x:_../../.. .../.. (As many
+.. as are required to reach the binding context of t). _No realization in
+the path (may be xlink:href):_
+
+[red]#Cannot be translated because there is no unique XPath expression to
+define this.#
+
+|Let variable access |t defined in a let construct used in x(t) |t
+necessarily has a value from the initialize expression. a|
+__If t is defined in the outer (current()) context:__ $id, where id is
+some unique <let> variable. The let initializer is translated in the
+current() context and initializes a Schemtron <let> element.
+
+_Other:_
+
+The let initializer of the variable t is translated in the current
+context and substitutes t.
+
+|Let expression |let x=y in z(x) |Assignment of expression y to variable
+x. Result is z(x). a|
+__If x and y are defined in the outer (current()) context:__ τ(z(τ(x)))
+
+Additionally, a Schematron <let> is created.
+
+_Other:_
+
+τ(z(τ(y)))
+
+This means we are substituting the initializers.
+
+|Integer or real constants |123 or 3.1415 | |same
+
+|Boolean constants |true or false | |true() or false()
+
+|String constants |'xxxxx' | |same
+
+|Enumeration constants |Type::value | |'value'
+
+|Codelist constants |Type::value | a|
+__GML 3.3 rules:__ The constant is translated to an external codelist
+reference according to a pattern in tagged values in the codelist class.
+
+_Other GML version rules:_
+
+'value'
+
+|If expression |if x then y else z endif |If x evaluates to true then
+the value of the expression is y, otherwise z. a|
+__If τ(y) and τ(z) are represented by nodesets:__ τ(y)[τ(x)] \|
+τ(z)[not(τ(x))]
+
+x needs to be compiled in the tail context of τ(y) and τ(z).
+
+_If τ(y) and τ(z) are strings:_
+
+concat(substring(τ(y),number(not(τ(x)))*string-length(τ(y))+1),substring(τ(z),
+number(τ(x))*string-length(τ(z))+1))
+
+The trick is to concatenate substrings which either comprise the full
+argument or nothing, depending on the value of the predicate.
+
+_If τ(y) and τ(z) are numbers or Booleans:_
+
+As for strings. The result has to be converted into the proper type.
+
+|Attribute call |x . attname |Set of object instances reached from the
+instance or set repre­sented by x by applying attribute _attname_. a|
+__If simple-typed (19136 encoding):__ τ(x)/attname
+
+_If simple-typed (19139 encoding – non-codelist):_
+
+τ(x)/attname/*
+
+_If simple-typed (19139 encoding – codelist):_
+
+τ(x)/attname/*/@codeListValue
+
+_If nested and complex-typed:_
+
+τ(x)/attname/*
+
+_If realized by means of xlink:href:_
+
+*[concat(α,@gml:id,β)=τ(x)/attname/@xlink:href] where α and β are
+constant prefixes and postfixes surrounding the identifier proper in the
+xlink:href value. The values for α and β can be configured.
+
+__If the type of linkage is unknown:__ A nodeset union of the expressions
+above.
+
+|Attribute call according to nilReason implementation pattern |x .
+attname . valuex . attname . reason |Set of instances reached by
+attname, respectively by attname/@nilReason a|
+__Case x . attname . value:__ τ(x.attname)
+
+Compilation as above – 'x.attname' is assumed to have the type of
+'value'.
+
+_Case x . attname . reason (19136 encoding):_
+
+τ(x.attname)[@xsi.nil='true']/@nilReason
+
+_Case x . attname . reason (19139 encoding):_
+
+τ(x.attname)[not(*)]/@gco:nilReason
+
+|Operation call allInstances() |x . allInstances() |Set of all object
+instances of type x.x represents a type-valued expression. a|
+__If x is a type constant:__ Nodeset union (n~1~\|…\|n~i~), where
+
+n~k~=//T~k~[@gml:id] and T~k~ is one of the concrete derivations of the
+type of x (including x).
+
+_If x is a type expression:_
+
+Cannot be translated because required schema information is not
+available at run-time.
+
+|Operation call oclIsKindOf() |x . oclIsKindOf(y) |The single object
+instance x is checked for complying with type y. a|
+__If y is a type constant:__ boolean(τ(x)[name()='T~1~' or … or
+name()='T~i~']), where
+
+T~k~ is one of the names of the concrete derivations of y, including y.
+
+boolean(…) may be omitted if the argument is known to be used by
+operands, which do an implicit conversion to Boolean.
+
+_If y is a type expression:_
+
+Cannot be translated because required schema information is not
+available at run-time.
+
+|Operation call oclIsTypeOf() |x . oclIsTypeOf(y) |The single object
+instance x is checked for being of type y. a|
+__If y is a type constant:__ boolean(τ(x) [name()='T']), where T is the
+name of the type y.
+
+_If y is a type expression:_
+
+boolean(τ(x)/self::*[name()=name(τ(y))])
+
+boolean(…) may be omitted if the argument is known to be used by
+operands, which do an implicit conversion to Boolean.
+
+NOTE: Expression part not implemented.
+
+_Type-comparing CharacterString to code lists:_
+
+We are making an exception to the strict rules with simple data elements
+which we permit being successfully type-compared to code lists.
+
+|Operation call oclAsType() |x . oclAsType(y) |The single object
+instance x is downcast to type y. The value is 'undefined' if this is
+not possible. a|
+__If y is a type constant:__ τ(x)[name()='T~1~' or … or name()='T~i~'],
+where
+
+T~k~ is one of the names of the concrete derivations of y, including y.
+
+_If y is a type expression:_
+
+Cannot be translated because required schema information is not
+available at run-time.
+
+_Casting CharacterString to code lists:_
+
+We are making an exception to the strict rules with simple data elements
+which we permit being casted to code list types.
+
+|Operation call +,-,*,/ |x + y, etc. |Value of x.+(y), etc. a|
+τ(x) + τ(y)
+
+τ(x) - τ(y)
+
+τ(x) * τ(y)
+
+τ(x) div τ(y)
+
+|Operation calls =, <> a|
+x = y,
+
+x <> y
+
+a|
+Value of x.=(y),
+
+x.<>(y)
+
+a|
+__If x and y are simple types:__ τ(x) = τ(y)
+
+τ(x) != τ(y)
+
+_If x and y is are objects:_
+
+generate-id(τ(x)) = generate-id(τ(y))
+
+generate-id(τ(x)) != generate-id(τ(y))
+
+|Operation call <, >, <=, >= |x < y |Value of x.<(y), etc. a|
+τ(x) < τ(y)
+
+τ(x) > τ(y)
+
+τ(x) <= τ(y)
+
+τ(x) >= τ(y)
+
+|Operation call size() |x . size() |Number of characters in the string
+instance x. |string-length(τ(x))
+
+|Operation call concat() |x . concat(y) |String concatenation of x and
+y. |concat(τ(x),τ(y)) 
+
+A series of concats may be joined to a
+multi-argument concat invocation.
+
+|Operation call substring() |x . substring(y,z) |Substring of x running
+from position y to position z |substring(τ(x), τ(y), τ(z)-τ(y)+1)
+
+|Operation call and, or, xor, implies a|
+x and y
+
+x or y
+
+x xor y
+
+x implies y
+
+|Logical combination as indicated a|
+τ(x) and τ(y)
+
+τ(x) or τ(y)
+
+boolean(τ(x))!=boolean(τ(y))
+
+not(τ(x)) or τ(y)
+
+|Set operation call size() |x -> size() |Number of objects in x.
+|count(τ(x))
+
+|Set operation callisEmpty() |x->isEmpty() |Predicate: Is the set
+represented by x empty? |not(τ(x))
+
+|Set operation callnotEmpty() |x->notEmpty() |Predicate: Is the set
+represented by x not empty? |boolean(τ(x)) 
+
+boolean may be omitted, if
+τ(x) is known to be Boolean or is used by operands, which do an implicit
+conversion to Boolean.
+
+|Iterator call exists() |x -> exists(t\|b(t)) |Predicate: Does the set x
+contain an objects t for which the Boolean expression b(t) holds?
+|boolean(τ(x)[τ(b(.))])
+
+boolean may be omitted, if τ(x) is known to be
+Boolean or is used by operands, which do an implicit conversion to
+Boolean.
+
+|Iterator call forAll() |x -> forAll(t\|b(t)) |Predicate: Does the set x
+only contain objects t for which the Boolean expression b(t) holds?
+|count(τ(x))=count(τ(x)[τ(b(.))])
+
+In the implementation we map forAll()
+to exists(). We can do this because according to first level logic, we
+have:x->forAll(t\|b(t))  =  not(x->exists(t\|not(b(t)))
+
+|Iterator call isUnique() |x -> isUnique(t\|y(t)) |Predicate: Does the
+set x only contain objects t for which the expression y(t) creates
+mutually different objects? a|
+[red]+This is a hard one, which could only be solved in a few cases:+
+
+__If y is a constant, y(t)=const:__
+
++++count(τ(x))<=1+++
+
+_If y is identity and x is object-valued, y(t)=t:_
+
+true()
+
+This is because nodesets are sets.
+
+_If y is identity and x is a collection of basic types, y(t)=t:_
+
+not(τ(x)[.=(preceding::*\|ancestor::*)[count(.\|τ(x))=count(τ(x))]])
+
+This means any value in τ(x) must not be contained in the intersection
+of τ(x) with the previous part of the tree.
+
+_If y is an object-valued attribute, y(t)=t.a:_
+
+count(τ(x))=count(τ(x.a))
+
+This is true due to the pigeonhole principle. Note that t.a is required
+to be a single value, not a set!
+
+_If y is an attribute carrying a basic data type, y(t)=t.b (19136
+encoding):_
+
+// original expression: not(τ(x)[b=(preceding::*|ancestor::*)[count(.|τ(x))=count(τ(x))]/b])
+
+not(τ(x)[b=(preceding::\*\|ancestor::*)[count(.\|τ(x))=count(τ(x))]/b])
+
+This means the value of any b must not be contained in the intersection
+of τ(x) with the previous part of the tree. As above, t.b needs to be a
+single value.
+
+_If y is an attribute carrying a basic data type, y(t)=t.b (19139
+encoding):_
+
+// original expression: not(τ(x)[b/*=(preceding::*|ancestor::*)[count(.|τ(x))=count(τ(x))]/b/*])
+
+not(τ(x)[b/\*=(preceding::*\|ancestor::\*)[count(.\|τ(x))=count(τ(x))]/b/*])
+
+NOTE: This is again different for 19139 codelist access. See "attribute
+call" row for this.
+
+_Nested attributes of either kind, y(t)=t.a1.a2…b:_
+
+Each single step needs to be unique. Hence we can reduce this to:
+
+τ(x->isUnique(t\|t.a1)) and τ(x.a1->isUnique(t\|t.a2)) and … and
+τ(x.a1.a2…->isUnique(t\|t.b))
+
+_Any other, particularly arbitrary expressions:_
+
+[red]#Cannot be translated because no way to express this in XPath 1.0 has
+been found.#
+
+|Iterator call select() |x -> select(t\|b(t)) |Compute the set of those
+objects t in x, for which the predicate b(t) holds. a|
+τ(x) [τ(b(.))]
+
+Note that this is very similar to exists(), the only
+difference being the Boolean interpretation of the result in the
+exists() case.
+
+ 
+
+|Pattern matching function on Strings a|
+x . matches( pattern )
+
+Note: This operation call is an extension. It is not part of the OCL
+standard.
+
+|Boolean function which yields true if the pattern of type String
+matches the String argument. |[red]#There is no way to express matches() in
+XPath 1.0 except by way of using a Java extension function or by making
+use of the matches function available in XPath 2.0.#
+
+The implementation
+allows configuring either the use of an extension function or of XPath
+2.0 syntax. The XPath translation target is configurable text (a
+function call), which receives τ(x) and τ(pattern) as substitutes for
+the strings '$object$' and '$pattern$', which both have to be part of
+the configured function call.
+|===
+
+ 

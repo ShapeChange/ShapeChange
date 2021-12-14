@@ -1,0 +1,197 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Support_for_Mixin_Classes]]
+= Support for Mixin Classes
+
+Due to the fact that several implementation platforms including XML
+Schema support only *single inheritance *(type derivation from a single
+base type, element substitutablity in XML Schema is restricted to a
+single element, too), the use of multiple inheritance is currently not
+supported by GML 3.2 Annex E.
+
+However, for conceptual modelling, the ability to define abstract types
+which capture a *set* of properties that are associated with a concept
+is sometimes very convenient.
+
+The following additional rules for such abstract types are therefore
+supported by ShapeChange:
+
+* If a class is a *specialization* of another class, then this class
+shall have one of the stereotypes \<<featureType>>, \<<dataType>>, no
+stereotype, \<<type>> or \<<interface>>.
+* The class shall have zero or one supertype with the same stereotype
+and zero or more abstract supertypes of the stereotype \<<type>> or
+\<<interface>>.
+* I.e., disregarding classes with stereotype \<<type>> or \<<interface>>,
+a generalization relationship shall be specified only between two
+classes that are either:
+** both feature types (stereotype \<<featureType>>),
+** both object types (no stereotype), or
+** both data types (stereotype \<<dataType>>).
+* For every class \<<type>> or \<<interface>> all direct or indirect
+subtypes shall be either
+** all feature or object types (stereotypes \<<featureType>>, no
+stereotype, \<<type>> or \<<interface>>),
+** all data types (stereotypes \<<dataType>>, \<<type>> or \<<interface>>).
+* All generalization relationships between classes shall have no
+stereotype. The discriminator property of the UML generalization shall
+be blank.
+
+The abstract mixin class (example in the GSIP: GeometryInfo, example in
+INSPIRE: HydroObject) are marked as mixin classes by a tagged value
+'*gmlMixin*' set to '*true*'.
+
+In order for ShapeChange to recognize and process mixin classes, include
+the encoding rule
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-mixin-classes[rule-xsd-cls-mixin-classes]
+in the XML Schema conversion rules. Another rule that - depending on the
+use case - can be included is
+xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-mixin-classes-as-group[rule-xsd-cls-mixin-classes-as-group].
+
+NOTE: If rule-xsd-cls-mixin-classes is part of the conversion rules,
+then abstract \<<type>> classes are treated as mixin classes, even if the
+'gmlMixin' tagged value is not set.
+
+By default, mixin classes are not to object elements and their
+properties are not processed. A property type with references to all
+subtypes with object elements is created. The properties are included in
+all non-mixin subtypes.
+
+For example, the property type for the HydroObject mixin class is:
+
+[source,xml,linenumbers]
+----------
+<complexType name="HydroObjectPropertyType">
+ <choice minOccurs="0">
+  <element ref="hy-p:DrainageBasin"/>
+  <element ref="hy-n:HydroNode"/>
+  ...
+  <element ref="hy-n:WatercourseLinkSequence"/>
+  <element ref="hy-n:WatercourseSeparatedCrossing"/>
+ </choice>
+ <attributeGroup ref="gml:AssociationAttributeGroup"/>
+ <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+</complexType>
+----------
+
+And the content model of hy-p:DrainageBasin contains the HydroObject
+properties:
+
+[source,xml,linenumbers]
+----------
+<complexType name="DrainageBasinType">
+ <complexContent>
+  <extension base="gml:AbstractFeatureType">
+   <sequence>
+    ...
+    <element maxOccurs="unbounded" minOccurs="0" name="hydroId" nillable="true">
+     <complexType>
+      <sequence>
+       <element ref="hy:HydroIdentifier"/>
+      </sequence>
+      <attribute name="nilReason" type="gml:NilReasonType"/>
+     </complexType>
+    </element>
+    <element maxOccurs="unbounded" minOccurs="0" name="relatedHydroObject" type="gml:ReferenceType"/>
+     <annotation>
+      <appinfo>
+       <targetElement xmlns="http://www.opengis.net/gml/3.2">hy:HydroObject</targetElement>
+      </appinfo>
+     </annotation>
+    </element>
+    ...
+   </sequence>
+  </extension>
+ </complexContent>
+</complexType>
+----------
+
+If the conversion rule "*rule-xsd-cls-mixin-classes-as-group*" is
+active, the mixin class is encoded as a group with all properties
+(attributes and navigable association ends) encoded as usual. This group
+will be referenced from subtypes.
+
+The following example is for the mixin class GeometryInfo and the
+instantiable subtype PointGeometryInfo:
+
+[source,xml,linenumbers]
+----------
+<group name="GeometryInfoGroup">
+ <annotation>
+  <documentation>Geometry Information: An abstract modeling entity serving as a superclass that collects shared properties (attributes and associations) of modeling entities that specify geometric representation information about a feature. [desc] For example, the horizontal and/or vertical metadata, notes, and/or restriction(s) and/or security control(s) applicable to dissemination of data regarding the geometric representation of the feature. [constraint] There exists an associated: Event Entity or Feature Entity</documentation>
+  <appinfo>
+   <sc:taggedValue tag="primaryCode">GeometryInfo</sc:taggedValue>
+   <sc:taggedValue tag="secondaryCode">ZI029</sc:taggedValue>
+   <sc:taggedValue tag="oclExpressions">inv: self.eventEntity-&gt;notEmpty() or self.featureEntity-&gt;notEmpty()</sc:taggedValue>
+  </appinfo>
+ </annotation>
+ <sequence>
+  <element maxOccurs="unbounded" minOccurs="0″ name="eventEntity" type="gml:ReferenceType">
+   <annotation>
+    <documentation>Geometry of Event Entity: An event for which this geometry representation applies.</documentation>
+    <appinfo>
+     <targetElement xmlns="http://www.opengis.net/gml/3.2″>gsip:EventEntity</targetElement>
+     <reversePropertyName xmlns="http://www.opengis.net/gml/3.2″>gsip:geometry</reversePropertyName>
+     <sc:taggedValue tag="primaryCode">eventEntity</sc:taggedValue>
+    </appinfo>
+   </annotation>
+  </element>
+  <element maxOccurs="unbounded" minOccurs="0″ name="featureEntity" type="gml:ReferenceType">
+   <annotation>
+    <documentation>Geometry of Feature Entity: A feature entity for which this geometry representation applies.</documentation>
+    <appinfo>
+     <targetElement xmlns="http://www.opengis.net/gml/3.2″>gsip:FeatureEntity</targetElement>
+     <reversePropertyName xmlns="http://www.opengis.net/gml/3.2″>gsip:geometry</reversePropertyName>
+     <sc:taggedValue tag="primaryCode">featureEntity</sc:taggedValue>
+    </appinfo>
+   </annotation>
+  </element>
+  <element name="horizontalCoordMetadata" type="gml:ReferenceType">
+   <annotation>
+    <documentation>Horizontal Coordinate Metadata: The horizontal coordinate metadata of this geometry.</documentation>
+    <appinfo>
+     <targetElement xmlns="http://www.opengis.net/gml/3.2″>gsip:HorizCoordMetadata</targetElement>
+     <reversePropertyName xmlns="http://www.opengis.net/gml/3.2″>gsip:geometryInfo</reversePropertyName>
+     <sc:taggedValue tag="primaryCode">horizontalCoordMetadata</sc:taggedValue>
+    </appinfo>
+   </annotation>
+  </element>
+  <!– … –>
+ </sequence>
+</group>
+----------
+
+[source,xml,linenumbers]
+----------
+<element name="PointGeometryInfo" substitutionGroup="gml:Point" type="gsip:PointGeometryInfoType"/>
+<complexType name="PointGeometryInfoType">
+ <annotation>
+  <documentation>Point Geometry Information: A modeling entity collecting geometric representation information about a feature that is modeled as a spatial point. [desc] A spatial point is a 0-dimensional geometric primitive, representing a position.</documentation>
+  <appinfo>
+   <sc:taggedValue tag="primaryCode">PointGeometryInfo</sc:taggedValue>
+   <sc:taggedValue tag="secondaryCode">ZI007</sc:taggedValue>
+  </appinfo>
+ </annotation>
+ <complexContent>
+  <extension base="gml:PointType">
+   <sequence>
+    <group ref="gsip:GeometryInfoGroup"/>
+    <!– … –>
+   </sequence>
+  </extension>
+ </complexContent>
+</complexType>
+----------

@@ -1,0 +1,2078 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 6
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 6
+
+[[UML_to_RDFOWL_based_on_ISOIS_19150-2]]
+= UML to RDF/OWL (based on ISO/IS 19150-2)
+
+[[Overview]]
+== Overview
+
+[red]#(NOTE: This target is available since ShapeChange version 2.2.0. The
+execution of this target requires Java 8 or higher (tested with Java
+8).)#
+
+http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/IS
+19150-2] defines rules for mapping ISO geographic information UML models
+to OWL ontologies. This target derives an ontology representation from
+an application schema in UML based upon these rules.
+
+NOTE: A number of configuration options and extensions have been
+implemented. They are documented in detail in the _OGC Testbed 12
+ShapeChange Engineering Report_
+(http://docs.opengeospatial.org/per/16-020.html[OGC document number
+16-020]). The report also documents which model transformations may need
+to be applied before executing this target, for example to transform
+association classes. Therefore, if you are looking for a complete
+introduction of the conversion from UML to RDF/OWL/SKOS, read the
+according chapter in the OGC Engineering Report first. This page
+provides a quick reference of the available conversion rules,
+parameters, and configuration elements.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150._
+
+[[Conversion_Rules]]
+=== Conversion Rules
+
+The behavior for processing a model is primarily controlled through
+conversion rules. In addition, parameters and other configuration
+elements (like map entries) influence the way a schema is processed. An
+encoding rule represents a specific set of conversion rules.
+
+An encoding rule is defined by an <EncodingRule> element.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<EncodingRule name="myencodingrule>
+ <rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+ <rule name="rule-owl-pkg-ontologyName-code"/>
+ <rule name="rule-owl-pkg-versionInfo"/>
+ <rule name="rule-owl-pkg-versionIRI"/>
+ <rule name="rule-owl-cls-generalization"/>
+ <rule name="rule-owl-cls-encode-featuretypes"/>
+ <rule name="rule-owl-cls-encode-objecttypes"/>
+ <rule name="rule-owl-cls-encode-datatypes"/>
+ <rule name="rule-owl-prop-general"/>
+ <rule name="rule-owl-prop-range-global"/>
+ <rule name="rule-owl-prop-localScopeAll"/>
+ <rule name="rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction"/>
+ <rule name="rule-owl-prop-inverseOf"/>
+ <rule name="rule-owl-cls-union"/>
+ <rule name="rule-owl-cls-unionSets"/>
+ <rule name="rule-owl-cls-iso191502Enumeration"/>
+ <rule name="rule-owl-cls-codelist-19150-2"/> 
+</EncodingRule>
+----------
+
+The *name* attribute of the <EncodingRule> element defines the
+identifier of the encoding rule to be used in the defaultEncodingRule
+parameter.
+
+The optional *extends* attribute of the <EncodingRule> element includes
+all rules from the referenced encoding rule in this encoding rule, too.
+
+Each *<rule>* references either a conversion rule or - possibly in the
+future - a xref:../../application schemas/UML_profile.adoc[requirement
+or recommendation] to be tested before the conversion process.
+
+This target supports the rules defined in the following subsections.
+
+[[rule-owl-all-constraints-byConstraintMapping]]
+==== rule-owl-all-constraints-byConstraintMapping
+
+If this conversion rule is enabled, then constraints on UML classes and
+properties are converted to an RDF property, as specified via the
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#Constraint_Mappings[_constraintMappings_]
+configuration.
+
+If no constraint mapping is defined for a specific constraint type
+(text, OCL, SBVR) then the following mapping is used:
+
+* constraintType: _applies to each of the supported constraint types_
+* target: "iso19150-2:constraint"
+* template: "\[[name]]: \[[text]]"
+* noValue: ""
+* multiValueConnectorToken: ""
+* format: "string"
+
+[[rule-owl-all-constraints-humanReadableTextOnly]]
+==== rule-owl-all-constraints-humanReadableTextOnly
+
+If this rule is enabled then only the human readable text of a
+constraint is encoded. This means:
+
+* For ShapeChange text constraints as well as constraints parsed from
+SBVR, the complete text is encoded.
+* For ShapeChange OCL constraints, the values of the comment property
+are encoded (multiple comments are concatenated using a single space
+character as separator).
+* In both cases, the constraint name is prepended to the text.
+
+[[rule-owl-cls-codelist-19150-2]]
+==== rule-owl-cls-codelist-19150-2
+
+If this rule is enabled then \<<codeList>> UML classes are converted as
+defined by ISO/IS 19150-2 (section 6.7.2) - except for the SKOS
+collection (for which a
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-skos-collection[separate
+conversion rule] is defined).
+
+[[rule-owl-cls-codelist-19150-2-conceptSchemeSubclass]]
+==== rule-owl-cls-codelist-19150-2-conceptSchemeSubclass
+
+This rule is an extension of the behavior defined by ISO/IS 19150-2 for
+the conversion of code lists.
+
+If the rule is enabled, then another OWL class representing the code
+list is created. It is a subclass of skos:ConceptScheme. If the tagged
+value _skosConceptSchemeSubclassName_ is provided for the code list,
+then it is used as the name for this class. Otherwise, its name is the
+name of the code list (potentially augmented via parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#skosConceptSchemeSubclassSuffix[_skosConceptSchemeSubclassSuffix_]).
+The named individual that would otherwise be created per ISO 19150-2 as
+a type of skos:ConceptScheme will then be created using the subclass of
+skos:ConceptScheme as type. This additional subclass can be useful in
+case there is a need to differentiate between different kinds of concept
+schemes.
+
+[[rule-owl-cls-codelist-19150-2-differentIndividuals]]
+==== rule-owl-cls-codelist-19150-2-differentIndividuals
+
+If this rule is enabled, then an individual inequality axiom is defined
+for the named individuals that represent the codes of a code list that
+is converted under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2].
+This axiom ensures that a reasoner will never consider these individuals
+as equal. Without this axiom, a reasoner can treat individuals as equal
+because the semantics of OWL 2 does not make the unique name assumption
+- that is, it does not assume distinct individuals to be necessarily
+different.
+
+[[rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration]]
+==== rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration
+
+If this rule is enabled, and the code list (that is converted under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2])
+actually is an \<<enumeration>> that is treated like a code list under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[_rule-owl-cls-enumerationAsCodelist_],
+then an OWL ObjectOneOf class expression is defined for the OWL class
+representing the code list. The expression enumerates the named
+individuals representing the code values and thus expresses the
+semantics of the enumeration as a closed list, in a standard way.
+
+[[rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace]]
+==== rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace
+
+If this rule is enabled, then the OWL class that is derived from the
+code list (under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2])
+is assigned to an RDF namespace defined by the configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#codeListOwlClassNamespace[_codeListOwlClassNamespace_].
+Otherwise the OWL class will be assigned to the application schema
+namespace, as in ISO 19150-2.
+
+* If the namespace of the application schema ontology can change between
+subsequent versions of the ontology, we recommend moving the OWL class
+representing the code list to a namespace that is different from the
+application schema ontology namespace. This is explained in more detail
+in the OGC Testbed 12
+http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+Report] (OGC 16-020).
+* The
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#codeListOwlClassNamespaceForEnumerations[_codeListOwlClassNamespaceForEnumerations_]
+configuration parameter can be used to set a specific namespace URI for
+the OWL class derived from enumerations when encoding them like
+codelists under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[_rule-owl-cls-enumerationAsCodelist_].
+
+[[rule-owl-cls-codelist-19150-2-skos-collection]]
+==== rule-owl-cls-codelist-19150-2-skos-collection
+
+If this rule is enabled together with
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2],
+then a SKOS collection is created for a code list.
+
+NOTE: Omitting the SKOS collection may be desirable for a community,
+because all concepts belonging to a particular scheme can be identified
+using their skos:inScheme relations. SKOS collections are primarily
+useful for grouping concepts - especially a subset of the concepts in a
+concept scheme - under a common label.
+
+[[rule-owl-cls-codelist-external]]
+==== rule-owl-cls-codelist-external
+
+If this conversion rule is enabled, then a code list that has the
+_vocabulary_ or _codeList_ tagged value is not represented as part of
+the OWL ontology derived from the application schema.
+
+Background: Communities often already manage their code lists outside of
+the application schema, SKOS being a prominent encoding. In such a case,
+\<<codeList>> UML classes are contained in the application schema without
+declaring any specific code values. These classes serve as stubs. They
+can be used as value types for properties. In addition, they can - and
+should - provide links to the resource that represents the code list
+using a tagged value.
+
+[[rule-owl-cls-disjoint-classes]]
+==== rule-owl-cls-disjoint-classes
+
+If this rule is enabled, then an OWL disjoint classes axiom is created
+for each case where a supertype has more than one subtype. The axiom
+contains a collection of the direct subtypes of the supertype, thus
+ensuring that they are mutually disjoint.
+
+[[rule-owl-cls-encode-basictypes]]
+==== rule-owl-cls-encode-basictypes
+
+ShapeChange supports the notion of
+so called _basic types_]. They are primarily used by the XML Schema target. 
+However, if that target is contained in the ShapeChange configuration, it has
+implications on how UML types are loaded. A UML type is loaded as a basic
+type if:
+
+* rule-xsd-cls-basictype is contained in the XSD encoding rule, and 
+the UML type has the stereotype \<<BasicType>>, or
+* the UML type is an object type, mixin type, or data type and has a
+supertype that is identified as a basic type through:
+** the previous behavior (matching rule-xsd-cls-basictype and having stereotype <<BasicType>>), or
+** an XSD map entry being defined for the supertype which does not 
+have its xmlTypeType and xmlTypeContent attributes both set to 'complex' - 
+either explicitly or by using the default values, which is 'complex' for both attributes.
+
+For the ontology conversion rules, a ShapeChange _basic type_ is usually treated as
+any other type. If UML types are loaded by ShapeChange as basic types,
+include _rule-owl-cls-encode-basictypes_ to convert them to OWL classes.
+
+NOTE: Omitting this encoding rule can be useful when creating a taxonomy
+of particular UML types.
+
+[[rule-owl-cls-encode-datatypes]]
+==== rule-owl-cls-encode-datatypes
+
+If this rule is enabled, data types will be converted to OWL classes.
+
+NOTE: Omitting this encoding rule can be useful when creating a taxonomy
+of particular UML types.
+
+[[rule-owl-cls-encode-featuretypes]]
+==== rule-owl-cls-encode-featuretypes
+
+If this rule is enabled, feature types will be converted to OWL classes.
+
+NOTE: Omitting this encoding rule can be useful when creating a taxonomy
+of particular UML types.
+
+[[rule-owl-cls-encode-mixintypes]]
+==== rule-owl-cls-encode-mixintypes
+
+ShapeChange supports the notion of _mixin type_ (for further details,
+see xref:../../targets/xml schema/Support_for_Mixin_Classes.adoc[Support for Mixin Classes]). They are
+primarily used by the XML Schema target. However, if that target is
+contained in the ShapeChange configuration, it has implications on how
+UML types are loaded. In this case, it may lead to UML types being
+loaded as _mixin types_. A UML type is loaded as a mixin type if:
+
+* rule-xsd-cls-mixin-classes is contained in the XSD encoding rule and:
+** the tagged value gmlMixin is set to true, or
+** the type has the stereotype \<<type>>, is abstract, and the tagged
+value gmlMixin is not set to false.
+
+For the ontology conversion rules, a _mixin type_ is usually treated as
+any other object type. If UML types are loaded by ShapeChange as mixin
+types, include _rule-owl-cls-encode-mixintypes_ to convert them to OWL
+classes.
+
+NOTE: Omitting this encoding rule can be useful when creating a taxonomy
+of particular UML types.
+
+[[rule-owl-cls-encode-objecttypes]]
+==== rule-owl-cls-encode-objecttypes
+
+ShapeChange treats UML types without stereotype as plain objects with
+identity, called _object types_. UML types with stereotype \<<type>> are
+usually also treated this way.
+
+If this rule is enabled, object types will be converted to OWL classes.
+
+NOTE: Omitting this encoding rule can be useful when creating a taxonomy
+of particular UML types.
+
+[[rule-owl-cls-enumerationAsCodelist]]
+==== rule-owl-cls-enumerationAsCodelist
+
+This rule takes into account that the conceptual difference between
+enumerations and code lists is rather small. An enumeration is
+considered to be a complete list of codes, while a code list is
+extensible. Both contain lists of acceptable values to be used with
+properties, typically as strings of natural language or mnemonic
+abbreviations. Optionally (and preferably) both kinds of elements are
+provided with definitions. 
+
+Due to their dynamic nature, code lists are
+now often encoded using SKOS and managed separately from the application
+schema. SKOS representation can be applied to enumerations as well. If
+_rule-owl-cls-enumerationAsCodelist_ is enabled, then the conversion to
+RDF treats enumerations as code lists.
+
+NOTE: That means that tagged values _vocabulary_ and _codeList_ can be
+relevant on enumerations. If _rule-owl-cls-enumerationAsCodelist_ and
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-external[_rule-owl-cls-codelist-external_]
+are enabled and an enumeration has the tagged value _vocabulary_ or
+_codeList_, then the enumeration will be treated as externally managed.
+It will not be converted to an OWL class and SKOS individuals; instead,
+the OWL representation of UML properties that have the enumeration as
+value type will reference the external representation of the
+enumeration.
+
+Treating enumerations as code lists may also be desirable for the
+following reasons:
+
+* The representation of enumerations as string values (within an
+owl:oneOf declaration as specified by ISO 19150-2) does not allow for
+providing definitions of the enumerants within the ontology.
+* The approach in ISO 19150-2 makes the representation of enumerations
+very different from the representation of code lists, even though
+conceptually the two are similar except for enumerations being supposed
+to be a complete, closed coverage of the value space.
+* Applications that are designed to utilize controlled vocabularies in
+SKOS - for example for tagging and indexing - cannot make use of
+enumerations represented as defined by ISO 19150-2.
+* In the RDF/XML serialization of owl:oneOf, the rdf:List structure,
+with its LISP-like nesting, is unwieldy.
+
+[[rule-owl-cls-generalization]]
+==== rule-owl-cls-generalization
+
+If this rule is enabled, then a generalization relationship between a
+class in the schema and another class is implemented as an
+rdfs:subClassOf declaration.
+
+[[rule-owl-cls-iso191502Enumeration]]
+==== rule-owl-cls-iso191502Enumeration
+
+This rule implements the conversion of enumerations as defined by ISO
+19150-2.
+
+The enumeration corresponds to an RDFS datatype that specifies the
+restricted list of literals using an owl:oneOf declaration.
+
+[[rule-owl-cls-iso191502IsAbstract]]
+==== rule-owl-cls-iso191502IsAbstract
+
+If this rule is enabled, then the owl:Class representation of an
+abstract class from the schema receives the annotation property
+iso19150-2:isAbstract with value set to _true_.
+
+[[rule-owl-cls-union]]
+==== rule-owl-cls-union
+
+This rule converts \<<union>> types , preserving their semantics.
+
+The approach is based on a logical combination of unqualified
+cardinality constraints. The according class expression ensures that
+values are given for only one of the properties in the union.
+
+More specifically, the class expression is created as follows:
+
+* For each property P in the union:
+** Create a set of unqualified cardinality restrictions, to express the
+multiplicity of P (for example by restricting the minimum cardinality of
+P to 1), and that the cardinality of the other properties is restricted
+to 0.
+*** NOTE: If multiplicity is not encoded (neither
+_rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction_ nor
+_rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction_ is part
+of the encoding rule) then the minimum cardinality of P would explicitly
+be set to zero, so that the combination of cardinality restrictions
+covers the other properties as well as P.
+** Combine the cardinality restrictions within an _intersection class
+expression_. The meaning of this expression is that if a value is given
+for P, then no values may be provided for the other new properties.
+* Combine the intersection class expressions within a single _union
+class expression_. This essentially represents the meaning of the
+\<<union>>: if a value is given for one of the options, then there must
+not be values for the other options.
+
+The class expression is added to the OWL class representation of the
+union. It ensures that values exist only for one of the union
+properties, with the number of values constrained as defined by the
+multiplicity of that property in the UML model.
+
+Each union property is converted to an OWL property according to the
+general rules defined for properties. This ensures that the value type
+of the property can be represented properly.
+
+NOTE: An encoding rule may omit rules to convert multiplicity. In that
+case, the multiplicity defined by the UML model is not specified by
+cardinality restrictions in the resulting ontology. Nevertheless, to
+model the semantics of a union in OWL, a class expression as described
+above would still be used - just with owl:minCardinality 0 as
+cardinality restriction for the applicable union property.
+
+For further details, see the OGC Testbed 12
+http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+Report] (OGC 16-020).
+
+[[rule-owl-cls-unionSets]]
+==== rule-owl-cls-unionSets
+
+This rule uses information in tagged values to create class expressions
+that represent the union semantics.
+
+The information is typically created by model transformations, either
+xref:../../transformations/Flattener.adoc#rule-trf-prop-flatten-types[rule-trf-prop-flatten-types]
+or
+xref:../../transformations/Flattener.adoc#rule-trf-cls-replace-with-union-properties[rule-trf-cls-replace-with-union-properties]
+(in both cases, the parameter
+xref:../../transformations/Flattener.adoc#includeUnionIdentifierTaggedValue[includeUnionIdentifierTaggedValue]
+must be set to 'true').
+
+[[rule-owl-pkg-dctSourceTitle]]
+==== rule-owl-pkg-dctSourceTitle
+
+If this rule is enabled, then the conversion of a UML package into an
+ontology also adds information about the title of the specification or
+standard that is the source of the ontology definitions, using a
+dct:source element as described by ISO 19150-2.
+
+The value of this element is computed as follows:
+
+* If the configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#sourceTaggedValueName[_sourceTaggedValueName_]
+is set and the package has this tagged value, its value is used.
+* Otherwise, if the configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#source[_source_]
+is set, then its value is used.
+* Otherwise the value "FIXME" is used (obviously, this requires manual
+adjustment after the ontology has been created by ShapeChange).
+
+[[rule-owl-pkg-importISO191502Base]]
+==== rule-owl-pkg-importISO191502Base
+
+If this rule is enabled, then each ontology imports the base ontology
+defined by ISO 19150-2 with IRI
+http://def.isotc211.org/iso19150-2/2012/base#
+
+[[rule-owl-pkg-ontologyName-appendVersion]]
+==== rule-owl-pkg-ontologyName-appendVersion
+
+If this rule is enabled, and the 'version' tagged value of the
+application schema package contains a non-empty string, then the version
+is appended to the ontology name with separator "/".
+
+NOTE: Although including a version number in the ontology name is not
+common practice, it can be useful to better enforce use of a particular
+version of an ontology within a community.
+
+[[rule-owl-pkg-ontologyName-byTaggedValue]]
+==== rule-owl-pkg-ontologyName-byTaggedValue
+
+If this rule is enabled and a tagged value - identified by the
+configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#ontologyNameTaggedValue[_ontologyNameTaggedValue_]
+is set for the package its value is used to construct the
+_ontologyName_.
+
+NOTE: This option is useful if ontologies shall be derived from multiple
+schemas, and each shall have a specific ontology name that is defined in
+the UML model.
+
+[[rule-owl-pkg-ontologyName-code]]
+==== rule-owl-pkg-ontologyName-code
+
+If
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-singleOntologyPerSchema[_rule-owl-pkg-singleOntologyPerSchema_]
+and _rule-owl-pkg-ontologyName-code_ are both in effect, the
+_ontologyName_ is constructed as follows: a code value is appended to a
+base URI with "/" as separator.
+
+NOTE: The base URI is determined as follows: if the configuration
+parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#URIbase[_URIbase_]
+is set, then its value is used - otherwise the targetNamespace of the
+package provides the value of the base URI.
+
+The code value is determined by first looking at the configuration
+parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#ontologyNameCode[ontologyNameCode].
+If it exists, its value is used. Otherwise, the abbreviation defined for
+an application schema package - via the tagged value _xmlns_ on the
+application schema package - is used for constructing the ontology name.
+If neither the configuration parameter nor the tagged value exist or
+contain a non-empty string, then "FIXME" will be used as code value.
+
+NOTE: The name of the file in which the ontology is stored will then
+also be constructed using the code – instead of the package name (which
+would be normalized according to ISO 19150-2).
+
+NOTE: This conversion rule can be useful if a community uses specific
+codes to identify its schemas.
+
+[[rule-owl-pkg-ontologyName-iso191502]]
+==== rule-owl-pkg-ontologyName-iso191502
+
+If this rule is enabled, then the ontology name is the normalized
+package name appended to a base URI (with "/" as separator).
+
+NOTE: The base URI is determined as follows: if the configuration
+parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#URIbase[_URIbase_]
+is set, then its value is used - otherwise the targetNamespace of the
+package provides the value of the base URI.
+
+[[rule-owl-pkg-ontologyName-withPath]]
+==== rule-owl-pkg-ontologyName-withPath
+
+If this rule is enabled then the umlPackageName (that is appended to a
+base URI with "/" as separator) is constructed using the path of the
+package to the upmost owner that is in the same target namespace - using
+a combination of "/" and normalized package names for all parent
+packages in the same target namespace.
+
+NOTE: This option is useful if child packages of a schema shall be converted
+to ontologies with different names, and the package names are suitable
+to construct the ontology name.
+
+NOTE: The base URI is determined as follows: if the configuration
+parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#URIbase[_URIbase_]
+is set, then its value is used - otherwise the targetNamespace of the
+package provides the value of the base URI.
+
+[[rule-owl-pkg-singleOntologyPerSchema]]
+==== rule-owl-pkg-singleOntologyPerSchema
+
+If this rule is enabled, then one ontology namespace will be created for
+the selected schema and its child packages.
+
+NOTE: The content of a UML package, i.e. UML classes and their
+properties, will be converted to OWL depending upon the conversion rules
+that have been configured.
+
+[[rule-owl-pkg-versionInfo]]
+==== rule-owl-pkg-versionInfo
+
+If this rule is enabled and a package that is converted into an ontology
+has version information, then the information is encoded in an
+owl:versionInfo element.
+
+NOTE: ShapeChange looks up the version of a package either directly in
+the configuration (more specifically: in PackageInfo elements) or in the
+tagged value "version" of the package. If no version information is
+found there, the version of the parent package is checked. If the parent
+package has version information, it is used for the child package.
+Because of this, \<<leaf>> packages of an application schema usually have
+the same version as the application schema. This can be useful if
+ontologies are created for all packages within a given application
+schema.
+
+[[rule-owl-pkg-versionIRI]]
+==== rule-owl-pkg-versionIRI
+
+If this rule is enabled and a package that is converted into an ontology
+has version information, then the versionIRI of the ontology is
+constructed as follows:
+
+[source,turtle,linenumbers]
+----------
+ontologyName "/" version
+----------
+
+NOTE: ShapeChange looks up the version of a package either directly in
+the configuration (more specifically: in PackageInfo elements) or in the
+tagged value "version" of the package. If no version information is
+found there, the version of the parent package is checked. If the parent
+package has version information, it is used for the child package.
+Because of this, \<<leaf>> packages of an application schema usually have
+the same version as the application schema. This can be useful if
+ontologies are created for all packages within a given application
+schema.
+
+[[rule-owl-pkg-versionIRI-avoid-duplicate-version]]
+==== rule-owl-pkg-versionIRI-avoid-duplicate-version
+
+If
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-versionIRI[_rule-owl-pkg-versionIRI_]
+and
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-appendVersion[_rule-owl-pkg-ontologyName-appendVersion_]
+are both enabled, and the package has version information, then the
+version would be duplicated in the versionIRI. To avoid this, enable
+_rule-owl-pkg-versionIRI-avoid-duplicate-version_.
+
+[[rule-owl-prop-code-broader-byBroaderListedValue]]
+==== rule-owl-prop-code-broader-byBroaderListedValue
+
+If this rule is enabled, then skos:broader relationships are established
+for code values as follows:
+
+* If a code - e.g. "longTermAccommodation" - has the tag
+"broaderListedValue" and it contains the name of another code - e.g.
+"accommodation" - from the same code list, then the following triple is
+added to the ontology:
+** "longTermAccommodation" skos:broader "accommodation".
+* If a code does not have a value for the tag "broaderListedValue" then
+a skos:topConceptOf relationship is added to the SKOS concept that
+represents the code, referencing the SKOS concept scheme that the
+concept is skos:inScheme of.
+* If the value of the tag "broaderListedValue" does not match any code
+in the code list, then ShapeChange logs a warning and treats it as a top
+concept.
+
+[[rule-owl-prop-external-reference]]
+==== rule-owl-prop-external-reference
+
+(available since: v2.4.0)
+
+When a UML property is converted to an OWL property, and the value type
+of the UML property has tagged values "codeList" or "vocabulary", then
+for each of these tagged values this rule will add a predicate to the
+OWL property that references the URI provided by the tagged value. The
+predicate is identified via the configuration parameter
+_xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#propExternalReference_targetProperty[propExternalReference_targetProperty]_.
+
+Typically, code lists use the tagged values "codeList" and "vocabulary"
+to point to a resource with further information about the code list.
+This can be, for example, a registry entry - where both HTML and RDF
+representations of the resource are available.
+
+This conversion rule is useful if no specific class is available to
+represent a code list. That can be the case if the code list is not
+encoded and the external encoding only uses generic types (such as
+skos:Concept(Scheme)). Consequently, the range of the OWL property can
+only specify a general class, such as skos:Concept. The predicate that
+is added by this rule at least provides a hint for implementers to
+determine which values should be used, using information that is
+contained in the conceptual model (by the tagged values "codeList" and
+"vocabulary").
+
+Example:
+
+[source,turtle,linenumbers]
+----------
+ex:property
+        a                 owl:ObjectProperty ;
+        rdfs:range        skos:Concept ;
+        rdfs:seeAlso      <http://example.org/codelist> .
+----------
+
+[[rule-owl-prop-general]]
+==== rule-owl-prop-general
+
+The conversion of UML properties (attributes and navigable association
+roles) into OWL properties is enabled or disabled by respectively
+including or excluding _rule-owl-prop-general_ in the encoding rule.
+
+However, this rule does not apply to UML properties of \<<codeList>> and
+\<<enumeration>> types, because the rules defined to convert those types
+specify if and how their properties - i.e., listed values - are
+converted.
+
+NOTE: Being able to "switch off" property conversion is useful for
+example when deriving a taxonomy instead of a complete ontology from the
+application schema.
+
+[[rule-owl-prop-globalScopeAttributes]]
+==== rule-owl-prop-globalScopeAttributes
+
+Some communities specify most (if not all) schema concepts within a
+dictionary. In addition to concepts for classes, the dictionary also
+contains concepts for each attribute that occurs within the schema. A
+specific class concept in the application schema uses a particular set
+of common attribute concepts defined in the dictionary. Given such a
+framework, all UML attributes can be encoded as globally scoped OWL
+properties. This behavior will be executed if
+_rule-owl-prop-globalScopeAttributes_ is enabled.
+
+[[rule-owl-prop-globalScopeByConversionParameter]]
+==== rule-owl-prop-globalScopeByConversionParameter
+
+If this rule is enabled, then
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#PropertyConversionParameter[PropertyConversionParameters]
+contained in the OWL target of the ShapeChange configuration file
+specify which properties from the conceptual schema in UML shall be
+represented as global OWL properties.
+
+[[rule-owl-prop-globalScopeByUniquePropertyName]]
+==== rule-owl-prop-globalScopeByUniquePropertyName
+
+If this rule is enabled, then ShapeChange will determine if the name of
+a UML property from the application schema is going to be unique within
+the ontology into which its OWL property representation will be placed.
+If it is unique, then the property will be converted to a globally
+scoped property.
+
+[[rule-owl-prop-inverseOf]]
+==== rule-owl-prop-inverseOf
+
+If the association to which an association role belongs is
+bi-directional and _rule-owl-prop-inverseOf_ is enabled, then an
+owl:inverseOf predicate is added to the OWL property representing the
+association role, with the IRI of the inverse property as value.
+
+[[rule-owl-prop-iso191502Aggregation]]
+==== rule-owl-prop-iso191502Aggregation
+
+If an association role is playing the part role in a shared or composite
+aggregation, and _rule-owl-prop-iso191502Aggregation_ is enabled, then
+an iso19150-2:aggregationType annotation is added to the OWL property
+representing the association role, with value "partOfSharedAggregation"
+or "partOfCompositeAggregation" - depending upon the given type of
+aggregation.
+
+[[rule-owl-prop-iso191502AssociationName]]
+==== rule-owl-prop-iso191502AssociationName
+
+If the association to which an association role belongs has a name and
+_rule-owl-prop-iso191502AssociationName_ is enabled, then an
+iso19150-2:associationName annotation is added to the OWL property
+representing the association role, with the association name as value.
+
+[[rule-owl-prop-iso191502-naming]]
+==== rule-owl-prop-iso191502-naming
+
+If this rule is enabled, properties are named as defined by ISO 19150-2.
+
+The OWL property name is a combination of the RDF namespace of the
+ontology, the UML class name (conditional), and the UML property name:
+
+[source,text,linenumbers]
+----------
+propertyName = rdfNamespace [umlClassName "."] propertyLocalName
+propertyLocalName = umlAttributeName / umlRoleName
+----------
+
+The property local name is given in lower camel case. Punctuation
+characters other than dash and underscore are replaced by underscore
+characters. Space characters are removed.
+
+The UML class name is included if the property is not converted to a
+globally scoped property.
+
+NOTE: At the moment, _rule-owl-prop-iso191502-naming_ is the default for
+creating the name of an OWL property. Additional rules can be added in
+the future to implement alternative naming conventions.
+
+[[rule-owl-prop-localScopeAll]]
+==== rule-owl-prop-localScopeAll
+
+In UML, an attribute belongs to the class that defines it. Likewise, an
+association role is a property that belongs to a specific class. In RDF,
+a property can be described in terms of the class to which it applies
+(as its domain), but it can also be described independently of any
+class.
+
+Apparently there is a mismatch between UML and RDF: in UML, a property
+belongs to its class, while in RDF, a property can be used by multiple
+classes. In other words: in UML, a property is always scoped to a
+specific class, while in RDF the scope of properties can be global.NOTE:
+A property domain axiom is defined for an RDF property with local scope.
+No such axiom is defined for an RDF property with global scope, allowing
+it to be used by multiple classes.A straightforward solution for
+converting UML properties would be to convert each UML property to a
+uniquely corresponding OWL property, relating it to a specific class by:
+
+. adding the class name that the property belongs to in UML to the OWL
+property name (so that the OWL property declaration is unique in the
+ontology), and
+. declaring the OWL representation of its owning UML class as the domain
+of the OWL property.
+
+This approach is covered by the conversion rule
+_rule-owl-prop-localScopeAll_.
+
+[[rule-owl-prop-mapping-compare-specifications]]
+==== rule-owl-prop-mapping-compare-specifications
+
+If a property is mapped to a global one, ShapeChange can compare the
+range, definition, description, and alias of the two properties. This
+can be useful to identify potential inconsistencies that may be
+introduced through the mapping. A warning will be logged for each
+potential inconsistency. This comparison is implemented in
+_rule-owl-prop-mapping-compare-specifications_.
+
+[[rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction]]
+==== rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction
+
+If this rule is enabled, then the multiplicity of a UML property is
+encoded with a qualified cardinality restriction.
+
+[[rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction]]
+==== rule-owl-prop-multiplicityAsUnqualifiedCardinalityRestriction
+
+If this rule is enabled, then the multiplicity of a UML property is
+encoded with an unqualified cardinality restriction.
+
+[[rule-owl-prop-propertyEnrichment]]
+==== rule-owl-prop-propertyEnrichment
+
+(since v2.7.0)
+
+Enables property enrichment as documented in the _OGC Testbed-14:
+http://docs.opengeospatial.org/per/18-032r2.html[Application
+Schema-based Ontology Development Engineering Report]_ (OGC 18-032r2).
+
+[[rule-owl-prop-range-global]]
+==== rule-owl-prop-range-global
+
+If this rule is enabled, then an OWL range axiom
+(Object-/DataPropertyRange) is defined for the OWL property that
+represents the UML property.
+
+[[rule-owl-prop-range-local-withUniversalQuantification]]
+==== rule-owl-prop-range-local-withUniversalQuantification
+
+If this rule is enabled, then OWL universal quantifications are included
+in the ontology, to restrict the range of a property only within the
+scope of those OWL classes which represent UML classes that own the
+property.
+
+[[rule-owl-prop-voidable-as-minCardinality0]]
+==== rule-owl-prop-voidable-as-minCardinality0
+
+If this rule is enabled and a property is voidable, then its
+multiplicity is encoded with lower bound 0.
+
+[[Rule_execution_priority_and_dependencies]]
+=== Rule execution priority and dependencies
+
+Some of the conversion rules supported by this target address the same
+conversion aspects. When conflicting conversion rules are included in
+the encoding rule, ShapeChange usually only executes one of them. This
+section documents the execution priorities and dependencies of rules
+that address the same conversion aspects.
+
+[[Ontology_Name]]
+==== Ontology Name
+
+The conversion rules to determine the ontology name are executed with
+the following priority:
+
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-byTaggedValue[_rule-owl-pkg-ontologyName-byTaggedValue_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-code[_rule-owl-pkg-ontologyName-code_]
+(only in combination with
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-singleOntologyPerSchema[_rule-owl-pkg-singleOntologyPerSchema_])
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-withPath[_rule-owl-pkg-ontologyName-withPath_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-iso191502[_rule-owl-pkg-ontologyName-iso191502_]
+
+If none of these rules is enabled, ShapeChange will log a warning and
+use _rule-owl-pkg-ontologyName-iso191502_ as fallback.
+
+Appending a version to the ontology name is an additional processing
+step. Therefore,
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-appendVersion[_rule-owl-pkg-ontologyName-appendVersion_]
+is independent of the other rules.
+
+[[Unions]]
+==== Unions
+
+The conversion rules for unions -
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-union[_rule-owl-cls-union_]
+and
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-unionSets[_rule-owl-cls-unionSets_]
+- are independent of each other.
+
+If none of these rules is enabled, unions and union semantics will not
+be encoded. The range of properties with a union as value type will then
+be set to the value of the ShapeChange configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#defaultTypeImplementation[_defaultTypeImplementation_].
+
+[[Enumerations]]
+==== Enumerations
+
+The conversion rules for enumerations are mutually exclusive.
+
+If both
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[rule-owl-cls-enumerationAsCodelist]
+and
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-iso191502Enumeration[rule-owl-cls-iso191502Enumeration]
+are enabled, ShapeChange will log a warning and continue processing as
+if only _rule-owl-cls-iso191502Enumeration_ was enabled.
+
+If none of these rules is enabled, enumerations will not be encoded. The
+range of properties with an enumeration as value type will then be set
+to the value of the ShapeChange configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#defaultTypeImplementation[_defaultTypeImplementation_].
+
+[[Code_lists]]
+==== Code lists
+
+The conversion rules for code lists are executed with the following
+priority:
+
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-external[_rule-owl-cls-codelist-external_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[_rule-owl-cls-codelist-19150-2_]
+
+The following conversion rule(s) can be used with this
+_rule-owl-cls-codelist-19150-2_:
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-skos-collection[_rule-owl-cls-codelist-19150-2-skos-collection_]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration[_rule-owl-cls-codelist-19150-2-objectOneOfForEnumeration_]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-differentIndividuals[_rule-owl-cls-codelist-19150-2-differentIndividuals_]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace[_rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace_]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-conceptSchemeSubclass[_rule-owl-cls-codelist-19150-2-conceptSchemeSubclass_]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-code-broader-byBroaderListedValue[_rule-owl-prop-code-broader-byBroaderListedValue_]
+
+Additional rules may be added in the future.
+
+[NOTE]
+======
+
+Because the rules are not mutually exclusive, they can be combined in an
+encoding rule. An application schema can therefore have code lists that
+are used as stubs (to reference an external resource representing the
+code list), as well as code lists that contain actual codes. This can be
+useful when:
+
+* The application schema contains some code lists that are managed by
+other organisations. These code lists would only be referenced in the
+application schema, using _rule-owl-cls-codelist-external_ to encode
+them.
+* The application schema also contains code lists with actual codes, for
+which an encoding (to OWL and SKOS) is not available yet and thus shall
+automatically be derived by ShapeChange, for example using
+_rule-owl-cls-codelist-19150-2_.
+** Once the encoding is available, the \<<codeList>> UML classes can be
+transformed into stubs to reference the externally managed encoding.
+This approach supports the transition to an application schema where all
+code lists used by the schema are managed externally. In this case, it
+is recommended that
+_rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace_ be used
+during the initial conversion of the code list.
+
+======
+
+[[Scope_of_OWL_Properties]]
+==== Scope of OWL Properties
+
+The conversion rules to determine the scope of OWL properties are
+executed with the following priority:
+
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-localScopeAll[_rule-owl-prop-localScopeAll_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-globalScopeAttributes[_rule-owl-prop-globalScopeAttributes_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-globalScopeByUniquePropertyName[_rule-owl-prop-globalScopeByUniquePropertyName_]
+. xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-globalScopeByConversionParameter[_rule-owl-prop-globalScopeByConversionParameter_]
+
+Additional rules may be added in the future.
+
+[[Constraint]]
+==== Constraint
+
+The conversion rules for constraints are mutually exclusive. If both
+rules
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-all-constraints-byConstraintMapping[rule-owl-all-constraints-byConstraintMapping]
+and
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-all-constraints-humanReadableTextOnly[rule-owl-all-constraints-humanReadableTextOnly]
+are enabled, ShapeChange will log a warning and continue processing as
+if only _rule-owl-all-constraints-humanReadableTextOnly_ was enabled. If
+none of these rules is enabled, constraints will not be encoded.
+
+[[Parameters]]
+=== Parameters
+
+This target supports the parameters defined in the following
+subsections.
+
+[[codeListOwlClassNamespace]]
+==== codeListOwlClassNamespace
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Defines the RDF namespace for an OWL class that is derived from a code
+list according to ISO 19150-2.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace[rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace]
+
+[[codeListOwlClassNamespaceForEnumerations]]
+==== codeListOwlClassNamespaceForEnumerations
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Defines a specific namespace URI for OWL classes derived from
+enumerations when encoding them like code lists.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace[rule-owl-cls-codelist-19150-2-owlClassInDifferentNamespace]
+** For enumerations encoded as code lists under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[rule-owl-cls-enumerationAsCodelist]
+
+[[codeNamespace]]
+==== codeNamespace
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Set this parameter to a specific URI to override the rules from ISO
+19150-2 (section 6.2.7, table 8) for constructing the _codeNamespace_.
+This is useful if the code namespace chosen by a community does not
+match the structure defined by ISO 19150-2.
+
+NOTE: This would result in a single namespace for all code lists,
+which is suitable if
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-singleOntologyPerSchema[_rule-owl-pkg-singleOntologyPerSchema_]
+is enabled.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2]
+
+[[codeNamespaceForEnumerations]]
+==== codeNamespaceForEnumerations
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Set this parameter to a specific URI to override the rules from ISO
+19150-2 (section 6.2.7, table 8) for constructing the _codeNamespace_
+for enumerations encoded as code lists. This is useful if the code
+namespace chosen by a community does not match the structure defined by
+ISO 19150-2.
+
+NOTE: This would result in a single namespace for all enumerations
+that are encoded as code lists, which is suitable if
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-singleOntologyPerSchema[_rule-owl-pkg-singleOntologyPerSchema_]
+is enabled.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2]
+** For enumerations encoded as code lists under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[rule-owl-cls-enumerationAsCodelist]
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+The identifier of the default encoding rule governing the conversion
+into the ontology representation. This default value may be overridden
+by tagged values set on individual modeling elements.
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[defaultTypeImplementation]]
+==== defaultTypeImplementation
+
+Type: String (structured as a QName)
+
+Default Value: "owl:Class"
+
+Explanation:
+
+QName identifying the resource to use as default implementation for
+schema types. The schema type - a class of the application schema or the
+value type of a property - is not encoded and no RdfTypeMapEntry
+identifying a more specific implementation is defined for it.
+
+Situations where this can occur include:
+
+* A type from the application schema is the value type of a property
+that shall be encoded, but the encoding rule does not contain a
+conversion rule to process this type.
+* A code list is encoded under
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-external[rule-owl-cls-codelist-external]
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[language]]
+==== language
+
+Type: String
+
+Default Value: "en"
+
+Explanation:
+
+The language code to be used for generating the ontology representation.
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[ontologyNameCode]]
+==== ontologyNameCode
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Defines the code value that is appended to a base URI to construct the
+_ontologyName_ (see ISO/IS 19150-2, section 6.2.2 - Ontology name).
+
+NOTE: The code value is determined by first looking at this
+configuration parameter. If it exists, its value is used. Otherwise, the
+abbreviation defined for an application schema package - via the tagged
+value _xmlns_ on the application schema package - is used for
+constructing the ontology name. If neither the configuration parameter
+nor the tagged value exist or contain a non-empty string, then "FIXME"
+will be used as code value.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-code[rule-owl-pkg-ontologyName-code]
+in combination with
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-singleOntologyPerSchema[rule-owl-pkg-singleOntologyPerSchema]
+
+[[ontologyNameTaggedValue]]
+==== ontologyNameTaggedValue
+
+Type: String
+
+Default Value: "ontologyName"
+
+Explanation:
+
+Name of the tagged value which, if present on a package, defines the
+_ontologyName_ of the package (see ISO/IS 19150-2, section 6.2.2 -
+Ontology name).
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-byTaggedValue[rule-owl-pkg-ontologyName-byTaggedValue]
+
+[[outputDirectory]]
+==== outputDirectory
+
+Type: String
+
+Default Value: <the current run directory>
+
+Explanation:
+
+The path to which the ontology file(s) will be written.
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[outputFormat]]
+==== outputFormat
+
+Type: String
+
+Default Value: "Turtle"
+
+Explanation:
+
+The format in which an ontology will be stored.
+
+Allowed values are (case is ignored by ShapeChange):
+
+* Turtle
+* NTriples
+* RDFXML
+* JSONLD
+* RDFJSON
+* TriG
+* NQuads
+* TriX
+* RDFThrift
+
+NOTE: The implementation of this target leverages the
+https://jena.apache.org/index.html[Apache Jena] API. Therefore, for
+further details on the supported formats, see the documentation of the
+https://jena.apache.org/documentation/io/rdf-output.html[RIOT (RDF I/O
+technology) output capabilities of Apache Jena].
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[propExternalReference_targetProperty]]
+==== propExternalReference_targetProperty
+
+(available since: v2.4.0)
+
+Type: String (structured as a QName)
+
+Default Value: "rdfs:seeAlso"
+
+Explanation:
+
+Provide a QName that identifies an RDF(S) or OWL property to use for
+encoding an external reference in
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-external-reference[rule-owl-prop-external-reference].
+The reference is defined by tagged values 'codeList' and 'vocabulary' on
+the value type of a UML property. The reference value will be encoded as
+IRI, the range of the chosen RDF(S)/OWL property should support this.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-external-reference[rule-owl-prop-external-reference]
+
+[[rdfNamespaceSeparator]]
+==== rdfNamespaceSeparator
+
+Type: String
+
+Default Value: "#"
+
+Explanation:
+
+Defines the character to append to the _ontologyName_ to creat the
+_rdfNamespace_ of an ontology.
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[rdfXmlWriterBlockRules]]
+==== rdfXmlWriterBlockRules
+
+(since v2.4.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: " idAttr,propertyAttr"
+
++++Explanation+++: Define the value of the 'blockRules' property of the
+Apache Jena RDF writer when using RDF/XML as output format. For further
+details on this property, see
+the https://jena.apache.org/documentation/io/rdfxml_howto.html#advanced-rdfxml-output[advanced RDF/XML output options of Apache Jena]
+
+NOTE: The 'daml:collection' cannot be blocked, contrary to what is
+stated by the Apache Jena documentation. This is the result of a test
+with Jena 3.1.0 and 3.6.0 on Apr 6, 2018.
+
++++Applies to Rule(s)+++: none (general parameter)
+
+[[skosConceptSchemeSubclassSuffix]]
+==== skosConceptSchemeSubclassSuffix
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Defines a string to use as suffix for the name of the OWL class that is
+a subclass of SKOS ConceptScheme.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-conceptSchemeSubclass[rule-owl-cls-codelist-19150-2-conceptSchemeSubclass]
+
+[[skosConceptSchemeSuffix]]
+==== skosConceptSchemeSuffix
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Defines a string to use as suffix to augment the name of the SKOS
+concept scheme individual that is created under
+rule-owl-cls-codelist-19150-2.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2]
+
+[[sortedOutput]]
+==== sortedOutput
+
+Type: String
+
+Default Value: "false"
+
+Explanation:
+
+If "false", the types in a schema will be processed in random order.
+
+If "true", the types will be processed alphabetically.
+
+If "taggedValue=<tag>", the types will be processed in the order of the
+values of the tagged value with name "<tag>".
+
+Applies to Rule(s):
+
+_none_ - this is a common target parameter
+
+[[source]]
+==== source
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Parameter relevant to identify the value for the dc:source that
+qualifies an ontology element. That value is computed according to the
+following instructions, in descending order:
+
+* if the target parameter _sourceTaggedValueName_ is set and the model
+element has the according tagged value, its value is used
+* if this target parameter (_source_) is set then its value is used
+* otherwise "FIXME" is used
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-dctSourceTitle[rule-owl-pkg-dctSourceTitle]
+
+[[sourceTaggedValueName]]
+==== sourceTaggedValueName
+
+Type: String
+
+Default Value: _none_
+
+Explanation:
+
+Name of the tagged value relevant to identify the value for the
+dc:source that qualifies an ontology element. That value is computed
+according to the following instructions, in descending order:
+
+* if this target parameter (_sourceTaggedValueName_) is set and the
+model element has the according tagged value, its value is used
+* if the target parameter _source_ is set then its value is used
+* otherwise "FIXME" is used
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-dctSourceTitle[rule-owl-pkg-dctSourceTitle]
+
+[[suppressMessagesForUnsupportedCategoryOfClasses]]
+==== suppressMessagesForUnsupportedCategoryOfClasses
+
+(since v2.7.0)
+
+Type: Boolean
+
+Default Value: _false_
+
+Explanation:
+
+Set this parameter to _true_ in order to suppress log messages informing
+about unsupported class categories, which can occur if
+the encoding rule does not include a rule that enables the conversion of this type of class. This parameter can be helpful in situations where the goal is to
+create an ontology from a subset of the types contained in the
+application schema.
+
+Applies to Rule(s): _none - general behaviour_
+
+[[URIbase]]
+==== URIbase
+
+Type: URI
+
+Default Value: _none_
+
+Explanation:
+
+Defines the global base URI for construction of the ontologyName.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-code[rule-owl-pkg-ontologyName-code]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-iso191502[rule-owl-pkg-ontologyName-iso191502]
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-withPath[rule-owl-pkg-ontologyName-withPath]
+
+[[Descriptor_Targets]]
+=== Descriptor Targets
+
+The documentation of UML packages, classes, properties and associations
+includes the following pieces of generic descriptive information, called
+_descriptors_:
+
+[cols="1,4",options="header"]
+|===
+|Descriptor Name (& ID) |Explanation
+|Name (name) |The name of the model element (as named in the source UML,
+i.e. using upper and lower camel case).
+
+|Alias (alias) |An alternative, human-readable name for the model
+element.
+
+|Definition (definition) |The normative specification of the model
+element.
+
+|Description (description) |Additional information about the model
+element.
+
+|Example(s) (example) |Example(s) illustrating the model element.
+
+|Legal basis (legalBasis) |The legal basis for the model element. 
+
+NOTE: This descriptor is optional. For some communities, this information is
+needed in model documentation generated by ShapeChange.
+
+|Data capture statement(s) (dataCaptureStatement) |Statement(s)
+describing how to capture instances of this model element from the real
+world.
+
+|Primary code (primaryCode) |The primary code for this model element.
+
+NOTE: The main code for a model element should be assigned to this
+descriptor. The primary code may be the only one. Optional additional
+tagged values may be added for other codes.
+|===
+
+NOTE: The descriptor ID is used in templates of descriptor targets - see
+next table.
+
+Typically, a community has a preferred way to model and encode this
+information. For example, one community may want to encode the
+definition of a model element in a skos:definition property, while
+another prefers to encode it as part of an rdfs:comment property. Yet
+another community may want to do both. ShapeChange can support this type
+of diversity through _descriptor targets_, which are part of the
+configuration. A _descriptor target_ specifies how the content of a
+specific RDF property (that shall be generated while converting a model
+element) is constructed from descriptors. It uses a template to do so.
+The _descriptor target_ also takes into account that a model element may
+not have an actual value for each descriptor, and that some descriptors
+can have multiple values.
+
+In addition to the well-known descriptors (see previous list),
+additional descriptive information can be incorporated through tagged
+values. For example, a"name" tagged value on classes could be used to
+create skos:prefLabel declarations.
+
+The following table documents the structure of a _descriptor target_. An
+example is also provided below the table.
+
+[width="100%",cols="1,2,1,2,4",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|appliesTo |one of "ontology", "class", "conceptscheme", "property",
+"all" |Optional |"all" a|
+Identifies the type of ontology element to which the DescriptorTarget
+applies. A value of "all" means that the descriptor applies to an
+ontology, class, conceptschema, and property.
+
+|target |string; the syntax shall follow QNames, with the prefix being
+equal to the namespace abbreviation of a namespace that is contained in
+the configuration of the ShapeChange ontology target |Required |_not
+applicable_ a|
+IRI of an RDF property that will be added with the resource representing
+the model element as subject. The value is determined by the _template_
+attribute, with the value format being defined by the _format_
+attribute.
+
+|template |string |Required |_not applicable_ a|
+Text template where an occurrence of the field "[[_descriptor-ID_]]" is
+replaced with the value(s) of that descriptor. The IDs of supported
+descriptors are listed in the previous table.
+
+An occurrence of the field "\[[TV:name]]" is replaced with the value(s)
+of the tag with the given name.
+
+A tagged value can also be split into multiple strings. In that case,
+use a field "[[TV(_separator_):name]]". The tagged value will be split
+around matches of the given separator (which is treated as a literal).
+
+NOTE: You can add a CDATA wrapper to the template like this:
+template="\&lt;![CDATA[__your_actual_template_string__]]\&gt;"
+
+|format |enum: _string_, _langString_, or _IRI_ |Optional |_langString_
+a|
+Defines the format of the property value:
+
+* _langString_: language tagged string; the configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#language[_language_]
+provides the value of the language tag
+* _string_: string without language tag
+* _IRI_: the value is the IRI of a resource
+
+|noValueBehavior |enum: _ignore_ or _populateOnce_ |Optional |_ignore_
+a|
+Determines the behavior in case that no value is available for any of
+the fields contained in the template:
+
+* _ignore_: No target property is created.
+* _populateOnce_: A single target property is created, with the
+_noValueText_ being used for all fields.
+
+|noValueText |string |Optional |_the empty string_ a|
+If a descriptor used in a template has no value, then this information
+item provides the text to use instead (e.g. "N/A" or "FIXME").
+
+|multiValue Behavior |enum: either _connectInSingleTarget_ or
+_splitToMultipleTargets_ |Optional |_connectInSingleTarget_ a|
+Specifies the behavior how descriptors with multiple values shall be
+encoded:
+
+* _connectInSingleTarget_: Multiple values of a descriptor contained in
+the template are combined in a single target property value, using the
+_multiValueConnectorToken_ to combine them.
+* _splitToMultipleTargets_: Multiple values for one or more descriptors
+result in multiple target properties, one for each value-combination of
+multi-valued descriptors (resulting in a permutation of the values of
+each descriptor contained in the template).
+
+|multiValue ConnectorToken |string |Optional |_a single space character_
+a|
+If a descriptor used in a template has multiple values, and the
+_multiValueBehavior_ of the descriptor target is set to
+_connectInSingleTarget_, then the values are concatenated to a single
+string value using this token as connector between two values.
+
+|===
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<descriptorTargets>
+ <DescriptorTarget appliesTo="ontology" target="rdfs:label" template="[[TV:taxonomyName]]" format="langString"/>
+ <DescriptorTarget appliesTo="ontology" target="skos:definition"
+  template="&lt;![CDATA[Definition: [[TV:taxonomyDefinition]]  Description: [[TV:taxonomyDescription]]]]&gt;" noValueText="[None Specified]" format="langString"/>
+ <DescriptorTarget appliesTo="ontology" target="rdfs:isDefinedBy" template="[[TV:taxonomyResourceURI]]" format="IRI"/>
+ <DescriptorTarget appliesTo="ontology" target="skos:prefLabel" template="[[TV:name]]" format="langString"/>
+ <DescriptorTarget appliesTo="ontology" target="skos:altLabel" template="[[TV(|):aliasList]]" multiValueBehavior="splitToMultipleTargets" format="langString"/>
+ <DescriptorTarget appliesTo="class" target="rdfs:label" template="[[TV:primaryCode]]" format="langString"/>
+ <DescriptorTarget appliesTo="class" target="skos:definition" template="&lt;![CDATA[Definition: [[TV:definition]]  Description: [[TV:description]]]]&gt;" noValueText="[None Specified]" format="langString"/>
+ <DescriptorTarget appliesTo="class" target="rdfs:isDefinedBy" template="http://nsgreg.nga.mil/as/view?i=[[TV:mdbPK]]" format="IRI"/>
+ <DescriptorTarget appliesTo="class" target="skos:prefLabel" template="[[TV:name]]" format="langString"/>
+ <DescriptorTarget appliesTo="class" target="skos:altLabel" template="[[TV(|):aliasList]]" multiValueBehavior="splitToMultipleTargets" format="langString"/>
+ <DescriptorTarget appliesTo="conceptscheme" target="rdfs:label" template="[[TV:primaryCode]]_ConceptScheme" format="langString"/>
+ <DescriptorTarget appliesTo="conceptscheme" target="skos:definition" template="&lt;![CDATA[Definition: [[TV:definition]]  Description: [[TV:description]]]]&gt;" noValueText="[None Specified]" format="langString"/>
+ <DescriptorTarget appliesTo="conceptscheme" target="rdfs:isDefinedBy" template="http://nsgreg.nga.mil/as/view?i=[[TV:mdbPK]]" format="IRI"/>
+ <DescriptorTarget appliesTo="conceptscheme" target="skos:prefLabel" template="[[TV:name]] - Concept Scheme" format="langString"/>
+ <DescriptorTarget appliesTo="property" target="skos:prefLabel" template="[[TV:name]]" format="langString"/>
+ <DescriptorTarget appliesTo="property" target="skos:altLabel" template="[[TV(|):aliasList]]" multiValueBehavior="splitToMultipleTargets" format="langString"/>
+</descriptorTargets>
+----------
+
+[[RDF_Map_Entries]]
+=== RDF Map Entries
+
+<rdfMapEntries> contain <RdfTypeMapEntry> and <RdfPropertyMapEntry>
+elements, which map UML types (classes) as well as UML properties
+(attributes and association roles) to corresponding ontology resources.
+
+[[RdfTypeMapEntry]]
+==== RdfTypeMapEntry
+
+If an RdfTypeMapEntry in the ShapeChange configuration provides a
+mapping for a UML type from the processed schema, then the UML type is
+not encoded. Instead, whenever the UML type is used in the schema, the
+target RDFS or OWL class specified by the map entry is used in the RDF
+implementation.
+
+[width="100%",cols="2,2,1,1,4",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|type |String |Required |_not applicable_ |Name of a UML type.
+
+|schema |String |Optional |_none_ a|
+The name of the application schema package to which the UML type
+belongs. Used to avoid ambiguity in case that multiple schemas are being
+processed.
+
+If no schema is given, the map entry applies to the given type in all
+schemas.
+
+|target |String |Required |_not applicable_ a|
+IRI of the RDFS/OWL class or datatype to which the UML type shall be
+mapped (e.g. "ex1:A").
+
+NOTE: The value is expected to be given as a QName, with the namespace
+prefix matching the namespace abbreviation of a namespace declared in
+the configuration.
+
+|targetType |one of "datatype" and "class" |Optional |"class" |Type of
+the target (class or datatype) to which the UML type will be mapped.
+|===
+
+NOTE: Provision of the "targetType" in an RdfTypeMapEntry is necessary
+to differentiate if the target is an RDFS class or a datatype. UML
+properties with the type stated in the map entry as value type can then
+be encoded accordingly. The default value for "targetType" is "class".
+
+[NOTE]
+======
+The configuration may contain multiple RdfTypeMapEntry elements
+(RTME) for a specific type (T), each with a different 'schema'. The
+look-up of the RdfTypeMapEntry that applies to T is performed as
+follows:
+
+* If one RdfTypeMapEntry from RTME has a schema that matches the schema
+of T then that map entry is chosen (because it is specific for T).
+* Otherwise, if one RdfTypeMapEntry from RTME does not define any
+schema, then it is chosen (because it is a generic mapping for T).
+* Otherwise none of the elements in RTME applies to T.
+
+======
+
+[[RdfPropertyMapEntry]]
+==== RdfPropertyMapEntry
+
+If an RdfPropertyMapEntry provides a mapping to an RDF/OWL property for
+a UML property from the processed schema, then the UML property is not
+encoded. Instead, whenever the UML property is used in the schema, the
+RDF/OWL property specified by the map entry is used in the RDF
+implementation. By not providing a target property, an
+RdfPropertyMapEntry can also be used to fully omit the conversion of a
+UML property.
+
+[cols="1,3,1,1,3",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|property |String |Required |_not applicable_ |Name of a UML property,
+optionally scoped to a class from the application schema (example:
+FeatureX::propertyY).
+
+|schema |String |Optional |_none_ |The name of the application schema
+package to which the UML property belongs. Used to avoid ambiguity in
+case that multiple schemas are being processed.
+
+|target |String; the value is expected to be given as a QName, with the
+namespace prefix matching the namespace abbreviation of a namespace
+declared in the configuration. |Required |_not applicable_ |IRI of the
+RDF/OWL property to which the UML property shall be mapped (e.g.
+"ex1:propZ"). Can be omitted or empty if the property shall not be
+encoded.
+
+|range |String; the value is expected to be given as a QName, with the
+namespace prefix matching the namespace abbreviation of a namespace
+declared in the configuration. |Optional |_none_ |Range to use in class
+expressions involving the target (RDF/OWL) property.
+|===
+
+[NOTE]
+======
+* An RdfPropertyMapEntry is used to describe the mapping of application
+schema properties to RDF/OWL properties
+* An RdfPropertyMapEntry can be used to define the range of the RDF/OWL
+property, which may be especially useful when using it to implement a
+specific UML property.
+* If a UML property P is mapped to an RDF/OWL property from an external
+ontology EX, then the resulting ontology RES will import EX. The
+property declaration from EX will then be available and used in RES. RES
+will not contain an OWL property declaration of P in its own namespace.
+* No 'targetType' attribute is defined in the XML Schema of
+RdfPropertyMapEntry. As in an RdfTypeMapEntry, such an attribute could
+indicate whether the 'target' is an RDF property, an OWL object
+property, or an OWL datatype property. Currently, this information is
+not required for the conversion to RDF/OWL/SKOS. This can change in the
+future.
+======
+
+[[RDF_Map_Entries_Example]]
+==== Example
+
+[source,xml,linenumbers]
+----------
+<rdfMapEntries>        
+ <RdfTypeMapEntry type="CadastralZoningLevelValue" target="skos:Concept"/> 
+ <RdfPropertyMapEntry property="inspireId"/>
+ <RdfPropertyMapEntry property="label" target="rdfs:label"/>
+</rdfMapEntries>
+----------
+
+[[RDF_Conversion_Parameters]]
+=== RDF Conversion Parameters
+
+<rdfConversionParameters> contain <StereotypeConversionParameter>,
+<TypeConversionParameter>, and <PropertyConversionParameter> elements,
+which contain instructions for the conversion of UML types, UML types
+with specific stereotype, and UML properties.
+
+[[StereotypeConversionParameter]]
+==== StereotypeConversionParameter
+
+A StereotypeConversionParameter defines a custom rdfs:subClassOf mapping
+for all UML types with a well-known stereotype. For example, all feature
+types can thus be a subClassOf GeoSPARQL "Feature".
+
+[cols="2,3,1,1,3",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|wellknown |one of "DataType", "FeatureType", "Enumeration", "CodeList",
+"Union", "Type", and "BasicType" |Required |_not applicable_ |Stereotype
+that is well-known to ShapeChange
+
+|subClassOf |String; multiple values are separated with spaces; each
+value is expected to be given as a QName, with the namespace prefix
+matching the namespace abbreviation of a namespace declared in the
+configuration. |Required |_not applicable_ |IRIs of classes of which UML
+types with this stereotype shall be rdfs:subClassOf.
+|===
+
+[[TypeConversionParameter]]
+==== TypeConversionParameter
+
+A TypeConversionParameter defines a custom rdfs:subClassOf mapping for a
+UML type.
+
+[cols="2,3,1,1,3",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+|type |String |Required |_not applicable_ |Name of a UML type.
+
+|schema |String |Optional |_none_ |The name of the application schema
+package to which the UML type belongs. Used to avoid ambiguity in case
+that multiple schemas are being processed.
+
+|subClassOf |String; multiple values are separated with spaces; each
+value is expected to be given as a QName, with the namespace prefix
+matching the namespace abbreviation of a namespace declared in the
+configuration. |Required |_not applicable_ |IRIs of classes of which the
+UML type shall be rdfs:subClassOf.
+|===
+
+[[PropertyConversionParameter]]
+==== PropertyConversionParameter
+
+A PropertyConversionParameter can be used to:
+
+* Declare that a property shall be encoded with global scope (see
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-globalScopeByConversionParameter[rule-owl-prop-globalScopeByConversionParameter]).
+* Map a UML property to the RDF/OWL implementation of another UML
+property.
+* Define a custom rdfs:subPropertyOf mapping for the UML property.
+
+[cols="2,4,2,1,4",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|property |String |Required |_not applicable_ |Name of a UML property,
+optionally scoped to a class from the application schema (example:
+FeatureX::propertyY).
+
+|schema |String |Optional |_none_ |The name of the application schema
+package to which the UML property belongs. Used to avoid ambiguity in
+case that multiple schemas are being processed.
+
+|global | Boolean | Optional | false | Specifies if the UML property
+shall be encoded as a global property.
+
+|subPropertyOf | String; multiple values are separated with spaces; each
+value is expected to be given as a QName, with the namespace prefix
+matching the namespace abbreviation of a namespace declared in the
+configuration. | Optional | _none_ |IRIs of RDF/OWL properties of which
+the RDF/OWL implementation of the UML property shall be an
+rdfs:subPropertyOf.
+
+|target |String |Optional |_not applicable_ |Name of the target UML
+property, scoped to a class from the application schema (example:
+FeatureY::propertyZ), whose RDF/OWL implementation will be used to
+implement this property.
+
+|targetSchema | String | Conditional (required if "target" is provided)
+| _none_ |The name of the application schema package to which the target
+property belongs. Used to avoid ambiguity in case that multiple schemas
+are being processed.
+|===
+
+[NOTE]
+======
+* If a UML property is the subject of both a PropertyConversionParameter
+and an RdfPropertyMapEntry, then the former is ignored and ShapeChange
+logs a warning.
+* Setting "global" to "true" is only allowed if the "property"
+identifies the property of a specific UML class from a specific schema.
+This way, there cannot be ambiguity regarding the semantics of the
+globally scoped property - it is defined by a single UML property from
+the model.
+* "global" has no effect if "target" is also present in the same
+conversion parameter - because then the UML property will be mapped to
+another UML property that is implemented as a global property.
+* If the PropertyConversionParameter has a "target" (which shall be
+scoped to a class to avoid ambiguity when a schema is encoded as
+multiple ontologies) then it must also have a "targetSchema", to
+unambiguously identify a global property to which the "property" from
+the PropertyConversionParameter is mapped.
+* Currently, there is no mechanism to encode a specific UML property as
+a global RDF/OWL property with a name that is different than the one
+computed from the name of the UML property.
+* The combination of "global" and "subPropertyOf" is allowed. In that
+case, a "subPropertyOf" declaration is added to the encoding of the
+global OWL property.
+======
+
+[[RDF_Conversion_Parameters_Example]]
+==== Example
+
+[source,xml,linenumbers]
+----------
+<rdfConversionParameters>
+ <StereotypeConversionParameter wellknown="FeatureType" subClassOf="geo:Feature"/>
+ <PropertyConversionParameter property="CadastralParcel::geometry" schema="CadastralParcels" subPropertyOf="locn:geometry geo:hasDefaultGeometry"/>
+ <PropertyConversionParameter property="CadastralParcel::referencePoint" schema="CadastralParcels" subPropertyOf="locn:geometry" global="true"/>
+ <PropertyConversionParameter property="CadastralZoning::geometry" schema="CadastralParcels" subPropertyOf="locn:geometry geo:hasDefaultGeometry"/>
+ <PropertyConversionParameter property="CadastralZoning::referencePoint" schema="CadastralParcels" target="CadastralParcel::referencePoint" targetSchema="CadastralParcels"/>
+ <PropertyConversionParameter property="CadastralBoundary::geometry" schema="CadastralParcels" subPropertyOf="locn:geometry geo:hasDefaultGeometry"/>
+ <TypeConversionParameter type="Feature1" schema="Schema 1" subClassOf="ex1:C"/>
+</rdfConversionParameters>
+----------
+
+[[Constraint_Mappings]]
+=== Constraint Mappings
+
+<constraintMappings> contain <ConstraintMapping> elements, which contain
+instructions for the conversion of constraints defined on UML types and
+UML properties.
+
+[width="100%",cols="2,3,1,2,3",options="header"]
+|===
+|Information Item (configured via XML attribute) |Datatype &
+Structure |Required / Optional |Default Value |Description
+
+|constraintType |enum: "Text", "OCL", or "FOL" |Required |_not
+applicable_ a|
+Identifies the type of constraint for which the mapping is defined.
+
+|target |String; the syntax shall follow QNames, with the prefix being
+equal to the namespace abbreviation of a namespace that is contained in
+the configuration of the ShapeChange ontology target |Optional
+|iso19150-2:constraint a|
+IRI of an RDF property or OWL annotation property that will be used to
+represent the constraint. The subject is the OWL class or property
+representing the UML class or property on which the constraint is
+defined (i.e., its context model element). The object is a language
+tagged string. The string content is determined by the template. The
+configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#language[_language_]
+provides the value of the language tag.
+
+|template |String |Required |_not applicable_ a|
+Text template where an occurrence of the field "[[_constraint property
+ID_]]" is replaced with the value of that property. The available
+constraint property IDs as well as additional details are documented in
+the table below.
+
+|noValue |String |Optional |_the empty string_ a|
+If a constraint property used in a template has no value, then this
+information item provides the text to use instead (e.g., "N/A" or
+"FIXME").
+
+|multiValue ConnectorToken |String |Optional |_a single space character_
+a|
+If a constraint property used in a template has multiple values, they
+are concatenated to a single string value using this token as connector
+between two values.
+
+|format |enum: _string_, or _langString_ |Optional |_string_ a|
+Defines the format of the target property value:
+
+* _langString_: language tagged string; the configuration parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#language[_language_]
+provides the value of the language tag
+* _string_: string without language tag
+
+|===
+
+[NOTE]
+======
+* Only a single mapping is allowed per constraint type.
+* A constraint is mapped using the template that is most specific for
+the given constraint type. For example, FOL constraints are subtypes of
+Text constraints. If the configuration contains mappings for both Text
+and FOL constraints, then the latter is applied for a FOL constraint,
+but not the former. If the configuration only contained a mapping for
+Text constraints, then it would be applied for a FOL constraint (because
+no mapping is provided that is more specific for a FOL constraint).
+* If the ShapeChange configuration does not contain a mapping for a
+constraint type encountered in the application schema (or one of its
+supertypes), ShapeChange will report a warning and use the default
+values for noValue and multiValueConnectorToken, as well as the default
+template: \[[name]]: \[[text]]
+======
+The following table documents which properties are available for which
+type of constraint supported by ShapeChange.
+
+[cols=",,,,",options="header",]
+|===
+|*Constraint Property ID* |*Single- or multi-valued (S/M)* |*Available
+in Text Constraint (Y/N)* |*Available in OCL Constraint (Y/N)*
+|*Available in FOL Constraint (Y/N)*
+|name |S |Y |Y |Y
+
+|text |S |Y |Y |Y
+
+|status |S |Y |Y |Y
+
+|comment |M |N |Y |Y
+|===
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<constraintMappings>
+ <ConstraintMapping constraintType="Text" target="rdfs:comment" template="[[name]] ([[status]]): [[text]]" noValue="[None Specified]" format="langString"/>
+ <ConstraintMapping constraintType="OCL" template="[[name]]: [[comment]] --- OCL expression: [[text]]" format="langString"/>
+</constraintMappings>
+----------
+
+[[Namespaces]]
+=== Namespaces
+
+A <Namespace> element defines a namespace and its properties. A
+namespace must be declared for each prefix used in RDF map entries and
+conversion parameters.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<namespaces>
+ <Namespace nsabr="xsd" ns="http://www.w3.org/2001/XMLSchema#"/>
+ <Namespace nsabr="rdf" ns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+ <Namespace nsabr="rdfs" ns="http://www.w3.org/2000/01/rdf-schema#"/>
+ <Namespace nsabr="owl" ns="http://www.w3.org/2002/07/owl#"/>
+ <Namespace nsabr="dcat" ns="http://www.w3.org/ns/dcat#" location="https://www.w3.org/ns/dcat.ttl"/>
+ <Namespace nsabr="skos" ns="http://www.w3.org/2004/02/skos/core#"
+  location="http://www.w3.org/2004/02/skos/core"/>
+ <Namespace nsabr="geo" ns="http://www.opengis.net/ont/geosparql#"
+  location="http://www.opengis.net/ont/geosparql"/>
+ <Namespace nsabr="locn" ns="https://www.w3.org/ns/locn#" location="https://www.w3.org/ns/locn.ttl"/>
+</namespaces>
+----------
+
+The attributes for <Namespace> are as follows:
+
+[cols=",,,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|*ns* |Required |- |The full namespace of an ontology.
+
+|*nsabr* |Required |- |The namespace abbreviation.
+
+|*location* |Optional |- |The location of the ontology document.
+|===
+
+The file
+https://shapechange.net/resources/config/StandardNamespaces-owl.xml[StandardNamespaces-owl.xml]
+contains a series of standard namespace definitions for the derivation
+of an ontology representation. This file can be included (via XInclude)
+in configuration files.
+
+[[General_Properties]]
+=== General Properties
+
+(since v2.7.0)
+
+As documented in the OGC Testbed-14:
+http://docs.opengeospatial.org/per/18-032r2.html[Application
+Schema-based Ontology Development Engineering Report] (OGC 18-032r2),
+ShapeChange supports the creation of new, general RDF/OWL properties.
+Such properties are defined in the configuration using the
+<rdfGeneralProperties> element. For further details, see the Engineering
+Report.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<TargetOwl class="de.interactive_instruments.ShapeChange.Target.Ontology.OWLISO19150" mode="enabled"
+ inputs="TRF">
+ <targetParameter name="outputDirectory" value="results/base"/>
+ <targetParameter name="defaultEncodingRule" value="ENC_RDF"/>
+ <targetParameter name="URIbase" value="http://my.example.org/ont"/>
+ <targetParameter name="language" value="en"/>
+ <targetParameter name="defaultTypeImplementation" value="owl:Class"/>
+ <descriptorTargets>
+  <DescriptorTarget target="rdfs:label" template="[[alias]]"/>
+  <DescriptorTarget target="rdfs:isDefinedBy" template="[[TV:inspireConcept]]" format="IRI"/>
+  <DescriptorTarget target="skos:definition" template="[[definition]]" noValueText="N/A"/>
+  <DescriptorTarget target="rdfs:comment" template="[[description]]" noValueText="N/A"/>
+ </descriptorTargets>
+ <xi:include href="config/StandardNamespaces-owl.xml"/>
+ <namespaces>
+  <Namespace nsabr="locn" ns="https://www.w3.org/ns/locn#" location="https://www.w3.org/ns/locn.ttl"/>
+ </namespaces>
+ <xi:include href="config/StandardMapEntries-owl.xml"/>
+ <rdfMapEntries>
+  <RdfTypeMapEntry type="AddressRepresentation" target="locn:Address"/>
+  <RdfTypeMapEntry type="TM_Position" target="xsd:date"/>
+  <RdfTypeMapEntry type="ConditionOfFacilityType" target="skos:Concept"/>
+  <RdfTypeMapEntry type="VoidValueReason" target="skos:Concept"/>
+  <RdfTypeMapEntry type="ApplicationSchemaValue" target="skos:Concept"/>
+ </rdfMapEntries>
+ <rdfConversionParameters>
+  <StereotypeConversionParameter wellknown="FeatureType" subClassOf="geo:Feature"/>
+ </rdfConversionParameters>
+ <rules>
+  <EncodingRule name="ENC_RDF">
+   <rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+   <rule name="rule-owl-pkg-ontologyName-code"/>
+   <rule name="rule-owl-pkg-versionInfo"/>
+   <rule name="rule-owl-pkg-versionIRI"/>
+   <rule name="rule-owl-cls-iso191502IsAbstract"/>
+   <rule name="rule-owl-cls-generalization"/>
+   <rule name="rule-owl-cls-encode-featuretypes"/>
+   <rule name="rule-owl-cls-encode-objecttypes"/>
+   <rule name="rule-owl-cls-encode-mixintypes"/>
+   <rule name="rule-owl-cls-encode-datatypes"/>
+   <rule name="rule-owl-cls-encode-basictypes"/>
+   <rule name="rule-owl-prop-general"/>
+   <rule name="rule-owl-prop-range-global"/>
+   <rule name="rule-owl-prop-globalScopeByConversionParameter"/>
+   <rule name="rule-owl-prop-mapping-compare-specifications"/>
+   <rule name="rule-owl-all-constraints-humanReadableTextOnly"/>
+   <rule name="rule-owl-cls-union"/>
+   <rule name="rule-owl-cls-unionSets"/>
+   <rule name="rule-owl-cls-iso191502Enumeration"/>
+   <rule name="rule-owl-cls-codelist-external"/>
+  </EncodingRule>
+ </rules>
+</TargetOwl>
+----------

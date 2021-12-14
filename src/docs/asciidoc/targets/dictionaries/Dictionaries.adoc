@@ -1,0 +1,35 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Dictionaries]]
+= Dictionaries
+
+[[GML_Codelist_Dictionary]]
+== GML Codelist Dictionary
+
+The GML Codelist Dictionary target is a tool for encoding GML
+dictionaries for code lists and enumerations of an application schema.
+The full documentation of the target can be found
+xref:./GML_Codelist_Dictionary.adoc[here].
+
+[[ISO_19139_Codelist_Dictionary]]
+== ISO 19139 Codelist Dictionary
+
+This target creates ISO 19139 codelist dictionaries for the code lists
+contained in an application schema. The full documentation of the target
+can be found
+xref:./ISO_19139_Codelist_Dictionary.adoc[here].
+
+ 

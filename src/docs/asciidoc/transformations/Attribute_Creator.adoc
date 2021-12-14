@@ -1,0 +1,211 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Attribute_Creator]]
+= Attribute Creator
+
+[[Introduction]]
+== Introduction
+
+Supports adding new attributes to classes of selected schemas.
+
+The new attributes as well as the classes to which they shall be added
+are defined via the configuration.
+
+NOTE: Adding new associations / association roles as well as overwriting
+existing attributes is not supported by this transformer.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.Adding.AttributeCreator_
+
+[[Parameters]]
+=== Parameters
+
+At the moment no specific parameters are defined for this
+transformation.
+
+[[Rules]]
+=== Rules
+
+At the moment no specific rules are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+The _<advancedProcessConfigurations>_ element inside of the
+_<Transformer>_ element is used to define new attributes. An
+_<AttributeDefinition>_ element is added for each new attribute. Class
+selection information inside of such a definition allows the attribute
+to be added to multiple classes within selected schemas.
+
+An _<AttributeDefinition>_ is structured as follows (the exact XML
+Schema definition is available in the
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChangeConfiguration.xsd]):
+
+[width="99%",cols="2,1,1,1,1,3"]
+|===
+|*_Element Name_* |*_Subelement / -attribute_* |*_Required / Optional_*
+|*_Type_* |*_Default Value_* |*_Explanation_*
+
+|*classSelection* | PackageSelector | Required | (complex) | - a|
+Classes to which new attributes will be added must be owned by the
+packages identified by this selector. Selection occurs as follows:
+
+* schemaNameRegex: identifies a number of packages from the selected
+schemas (including all child packages in the same targetNamespace) - if
+not provided, all selected schemas are identified, else only those whose
+name matches the regular expression
+* nameRegex: if provided, only those child packages from the schema
+packages (selected by the schemaNameRegex) whose name match the regular
+expression remain in the result set
+* stereotypeRegex: if provided, only those child packages from the
+schema packages (selected by the schemaNameRegex) where at least one
+normalized(!) stereotype matches the regular expression remain in the
+result set
+
+| | ClassSelector | Required | (complex) | - a|
+Classes to which new attributes will be added are selected as follows:
+
+* They must be owned by one of the packages selected by the
+PackageSelector.
+* nameRegex: if provided, only classes whose name matches the regular
+expression remain in the result set
+* stereotypeRegex: if provided, only those classes where at least one
+normalized(!) stereotype matches the regular expression remain in the
+result set
+
+|* descriptors* | - | Optional | (complex) | - a|
+Descriptors to be assigned to the new attribute.
+
+* Known descriptors are listed
+xref:../get started/The_element_input.adoc#Descriptor_sources[here].
+* Multiple values can be provided, each value can also have a language
+tag (use codes from IETF RFC 5646).
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<descriptors>
+ <Descriptor name="definition">
+ <descriptorValues>
+ <DescriptorValue>This is a ...</DescriptorValue>
+ <DescriptorValue lang="de">Dies ist ein ...</DescriptorValue>
+ </descriptorValues>
+ </Descriptor>
+ <Descriptor name="alias">
+ <descriptorValues>
+ <DescriptorValue>My feature type alias</DescriptorValue>
+ </descriptorValues>
+ </Descriptor>
+</descriptors>
+----------
+
+| *initialValue* | - | Optional | String | - |An initial value for the
+new attribute.
+
+| *isDerived* | - | Optional | Boolean | false |True, if the new
+attribute shall be a derived property.
+
+| *isOrdered* | - | Optional | Boolean | false |True, if the new
+attribute shall be ordered.
+
+| *isReadOnly* | - | Optional | Boolean | false |True, if the new
+attribute shall be read only.
+
+| *name* | - | Required | String | - |The name of the new
+attribute. 
+
+NOTE: If the name equals one of the properties that already
+exist for a selected class, then the new attribute will not be added to
+that class (overwriting existing properties is not allowed). The new
+attribute may, however, restrict a property with the same name from a
+supertype of the selected class.
+
+| *multiplicity* | - | Optional | String | 1 |The multiplicity of the
+new attribute (must be compliant to usual UML notation).
+
+| *stereotypes* | Stereotype | Optional | String | - |Stereotype(s) to
+be assigned to the new attribute.
+
+| *taggedValues* | TaggedValue | Optional | (complex) | - a|
+Tagged value(s) to be assigned to the new attribute. NOTE: Some tagged
+values have specific meaning
+
+* documentation: information that in the Enterprise Architect modeling
+environment is usually provided via the "Notes" field
+* sequenceNumber:
+** if provided, the property is added with that sequenceNumber (unless
+an existing property has the same sequenceNumber - in that case the
+sequenceNumber of the new attribute is extended with a subcomponent so
+that it is unique within the existing properties)
+** otherwise, a sequenceNumber is chosen so that the new attribute is
+put at the end of the list of existing properties
+
+| *type* | - | Required | String | - |Name of the class that shall be
+used as the type of the new attribute. 
+
+NOTE: If the type does not exist
+within the model, the new attribute is created with unknown category of
+value. For derivation of target representations this may still be ok, if
+the target defines a mapping for the type.
+
+|===
+
+=== 
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Adding.AttributeCreator"
+  id="trf">
+  <advancedProcessConfigurations>
+   <AttributeDefinition>
+    <classSelection>
+     <PackageSelector schemaNameRegex="Test Schema[1-2]"/>
+     <ClassSelector stereotypeRegex="featuretype"/>
+    </classSelection>
+    <descriptors>
+     <Descriptor name="alias">
+      <descriptorValues>
+       <DescriptorValue>Alias</DescriptorValue>
+      </descriptorValues>
+     </Descriptor>
+    </descriptors>
+    <name>GMLID</name>
+    <taggedValues>
+     <TaggedValue name="sequenceNumber" value="0"/>
+    </taggedValues>
+    <type>CharacterString</type>
+   </AttributeDefinition>
+  </advancedProcessConfigurations>
+ </Transformer>
+----------

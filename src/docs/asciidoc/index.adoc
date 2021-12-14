@@ -1,0 +1,207 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+:source-highlighter: coderay
+
+= ShapeChange Technical Documentation
+
+:toc:
+
+// link:javadoc/index.html[Javadoc]
+
+== xref:about/About.adoc[About]
+
+=== xref:about/Contact.adoc[Contact]
+
+=== xref:about/Contributors.adoc[Contributors]
+
+=== xref:about/Background_documents_from_OGC_Testbeds_and_Pilots.adoc[Background documents from_OGC Testbeds and Pilots]
+
+
+
+== xref:get started/Get_Started.adoc[Getting started]
+
+=== xref:get started/Distribution_contents.adoc[Distribution contents]
+
+=== xref:get started/Executing_ShapeChange.adoc[Executing ShapeChange]
+
+==== xref:get started/Publication_of_Processing_Status_Events.adoc[Publication of processing status events]
+
+=== xref:get started/Configuration.adoc[Configuration]
+
+==== xref:get started/The_element_input.adoc[The element input]
+
+==== xref:get started/The_element_dialog.adoc[The element dialog]
+
+==== xref:get started/The_element_log.adoc[The element log]
+
+==== xref:get started/The_element_transformers.adoc[The element transformers]
+
+==== xref:get started/The_element_targets.adoc[The element targets]
+
+==== xref:get started/Validation_of_the_Configuration.adoc[Validation of the configuration]
+
+=== xref:get started/Examples.adoc[Examples]
+
+=== xref:get started/Packages.adoc[Packages]
+
+=== xref:get started/Release_Notes.adoc[Release notes]
+
+=== xref:get started/Typical_problems.adoc[Typical problems]
+
+=== xref:get started/How_to_extend_ShapeChange.adoc[How to extend ShapeChange]
+
+
+
+== xref:application schemas/Application_schemas.adoc[Application schemas]
+
+=== xref:application schemas/UML_profile.adoc[UML profile]
+
+=== xref:application schemas/Constraints.adoc[Constraints]
+
+=== xref:application schemas/Enterprise_Architect_models.adoc[Enterprise Architect models]
+
+=== xref:application schemas/SCXML_models.adoc[ShapeChange XML models]
+
+// === xref:application schemas/GSIP_models.adoc[GSIP models]
+
+=== xref:application schemas/XMI_1.0_models.adoc[XMI 1.0 models]
+
+
+[[Transformations]]
+== xref:transformations/Transformations.adoc[Transformations]
+
+=== xref:transformations/Common_Transformer_Functionality.adoc[Common transformer functionality]
+
+=== xref:transformations/AIXM_Schema_Merger.adoc[AIXM schema merger]
+
+=== xref:transformations/Association_Class_Mapper.adoc[Association class mapper]
+
+=== xref:transformations/Attribute_Creator.adoc[Attribute creator]
+
+=== xref:transformations/CityGML_Transformer.adoc[CityGML transformer]
+
+=== xref:transformations/Code_List_Loader.adoc[Code list loader]
+
+=== xref:transformations/Constraint_Converter.adoc[Constraint converter]
+
+=== xref:transformations/Constraint_Loader.adoc[Constraint loader]
+
+=== xref:transformations/Descriptor_Transformer.adoc[Descriptor transformer]
+
+=== xref:transformations/First_Order_Logic_Constraint_Parser.adoc[First order logic constraint parser]
+
+=== xref:transformations/Flattener.adoc[Flattener]
+
+=== xref:transformations/Identity.adoc[Identity]
+
+=== xref:transformations/LinkedDocumentTransformer.adoc[Linked document transformer]
+
+=== xref:transformations/Naming_Modifier.adoc[Naming modifier]
+
+=== xref:transformations/profiling/Profiling.adoc[Profiling]
+
+==== xref:transformations/profiling/Profile_Constraint_Transformer.adoc[Profile constraint transformer]
+
+==== xref:transformations/profiling/Profile_Loader.adoc[Profile loader]
+
+==== xref:transformations/profiling/Profiler.adoc[Profiler]
+
+===== xref:transformations/profiling/Profiling_with_explicit_profile_settings_rule_enabled.adoc[Profiling with explicit profile settings rule enabled]
+
+=== xref:transformations/Tagged_Value_Transformer.adoc[Tagged value transformer]
+
+=== xref:transformations/Type_Converter.adoc[Type converter]
+
+[[Targets]]
+== xref:targets/Output_Targets.adoc[Targets]
+
+=== xref:targets/Application_Schema_Metadata.adoc[Application schema metadata]
+
+=== xref:targets/arcgis/ArcGIS_Workspace.adoc[ArcGIS workspace]
+
+==== xref:targets/arcgis/Pre_Processing_through_Flattening.adoc[Pre-processing through flattening]
+
+==== xref:targets/arcgis/Creating_the_ArcGIS_Workspace_UML_Model.adoc[Creating the ArcGIS workspace UML model]
+
+=== xref:targets/CDB.adoc[CDB]
+
+=== xref:targets/dictionaries/Dictionaries.adoc[Dictionaries]
+
+==== xref:targets/dictionaries/GML_Codelist_Dictionary.adoc[GML codelist dictionary]
+
+==== xref:targets/dictionaries/ISO_19139_Codelist_Dictionary.adoc[ISO 19139 codelist dictionary]
+
+=== xref:targets/feature catalogue/Feature_Catalogue.adoc[Feature catalogue]
+
+==== xref:targets/feature catalogue/Cascading_Style_Sheets_CSS.adoc[Cascading style sheets (CSS)]
+
+==== xref:targets/feature catalogue/Application_Schema_Differences.adoc[Application schema differences]
+
+=== xref:targets/fol to schematron/First_Order_Logic_FOL_to_Schematron.adoc[First order logic (FOL) to schematron]
+
+==== xref:targets/fol to schematron/Deriving_Schematron_from_AIXM_Business_Rules.adoc[Deriving schematron from AIXM business rules]
+
+==== xref:targets/fol to schematron/Deriving_Schematron_from_SBVR_constraints_for_ISO_19109_compliant_schema.adoc[Deriving schematron from SBVR constraints for ISO 19109 compliant schema]
+
+=== xref:targets/GeoPackage_Template.adoc[GeoPackage template]
+
+=== xref:targets/JSON_Schema.adoc[JSON Schema]
+
+=== xref:targets/JSON_Schema_deprecated.adoc[JSON Schema (deprecated)]
+
+=== xref:targets/ldproxy_Configuration.adoc[ldproxy configuration]
+
+=== xref:targets/Model_Export.adoc[Model export]
+
+=== xref:targets/ontology/Ontology.adoc[Ontology]
+
+==== xref:targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[UML to RDF OWL (based on ISO IS 19150-2)]
+
+==== xref:targets/ontology/UML_to_RDF_OWL_based_on_ISO_DIS_19150_2.adoc[UML to RDF OWL (based on ISO DIS 19150-2)]
+
+==== xref:targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF OWL (based on OWS-8 encoding rule)]
+
+=== xref:targets/OpenAPI_Definition.adoc[OpenAPI definition]
+
+=== xref:targets/Profile_Transfer_to_EA_Repository.adoc[Profile transfer to EA repository]
+
+=== xref:targets/Replication_XML_Schema.adoc[Replication XML schema]
+
+=== xref:targets/SQL_DDL.adoc[SQL DDL]
+
+=== xref:targets/UML_model.adoc[UML model]
+
+=== xref:targets/xml schema/XML_Schema.adoc[XML Schema]
+
+==== xref:targets/xml schema/Conversion_Rule_Basics.adoc[Conversion rule basics]
+
+==== xref:targets/xml schema/GML_3.2_Encoding_Rule.adoc[GML 3.2 encoding rule]
+
+==== xref:targets/xml schema/GML_3.3_Encoding_Rule.adoc[GML 3.3 encoding rule]
+
+==== xref:targets/xml schema/ISO_TS_19139_Encoding_Rule.adoc[ISO TS 19139 encoding rule]
+
+==== xref:targets/xml schema/SWE_Common_Data_Model_2.0_Encoding_Rule.adoc[SWE Common data model 2.0 encoding rule]
+
+==== xref:targets/xml schema/Non_Standard_Conversion_Rules.adoc[Non-standard conversion rules]
+
+===== xref:targets/xml schema/OCL_Conversion_to_Schematron_xslt2_query_binding.adoc[OCL conversion to schematron (xslt2 query binding)]
+
+===== xref:targets/xml schema/OCL_Conversion_to_Schematron.adoc[OCL conversion to schematron]
+
+===== xref:targets/xml schema/Support_for_Mixin_Classes.adoc[Support for mixin classes]
+
+===== xref:targets/xml schema/Support_for_nillable_and_nilReason.adoc[Support for nillable and nilReason]

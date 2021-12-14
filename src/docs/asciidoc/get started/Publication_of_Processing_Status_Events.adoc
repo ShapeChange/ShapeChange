@@ -1,0 +1,136 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Publication_of_Processing_Status_Events]]
+= Publication of Processing Status Events
+
+During execution, ShapeChange publishes a certain set of status events.
+If ShapeChange is not invoked as a standalone command line application
+then Java objects (that are part of a larger application) that implement
+the _StatusReader_ interface can be registered with the _StatusBoard_
+singleton to receive these events.
+
+NOTE: The information provided on this page is for advanced users,
+specifically for the case embedding ShapeChange in another application.
+
+[[Status_Events]]
+== Status Events
+
+[cols=",,,",]
+|===
+|Event Source / ShapeChange Class |Name of ShapeChange Class Public
+Constant defining the Status Code |Status Code (Integer) |Description
+
+| EADocument/GSIP | STATUS_EADOCUMENT_INITSTART | 101 |
+
+| EADocument/GSIP | STATUS_EADOCUMENT_READMODEL | 102 |
+
+| EADocument/GSIP | STATUS_EADOCUMENT_ESTABLISHCLASSES | 103 |
+
+| EADocument/GSIP | STATUS_EADOCUMENT_READCONSTARINTS | 104 |
+
+| Converter | STATUS_TARGET_INITSTART | 201 | Initialization of a
+_Target_ before it processes an application schema.
+
+| Converter | STATUS_TARGET_PROCESS | 202 |A _Target_ starts processing
+an application schema.
+
+| Converter | STATUS_TARGET_WRITE | 203 |A _Target_ starts the output
+writing phase after it has processed an application schema (usually
+irrelevant for __SingleTarget__s like the _FeatureCatalogue_).
+
+| Converter | STATUS_TARGET_WRITEALL | 204 | A _SingleTarget_ starts the
+output writing phase after it has processed all relevant application
+schemasThe _FeatureCatalogue_ only writes a temporary XML at this stage.
+
+| Converter | STATUS_TARGET_DEFERRED_WRITE | 205 | Final phase for all
+targets where writing the output can be highly memory intensive (like
+performing an XSL transformation that requires several GB of memory -
+example: transformation of the temporary XML by the
+_FeatureCatalogue_).NOTE1: ShapeChange starts this phase once the model
+has been processed by all transformations and targets, as a kind of
+postprocessing phase.NOTE2: currently, the ID of the target for which
+the deferred output write is executed cannot be retrieved from the
+Converter.
+
+| Converter | STATUS_TRANSFORMER_PROCESS | 206 | Indicates that a
+transformation is being processed. NOTE: Currently, the Converter does
+not provide further information about which transformation is being
+processed. A transformation itself might publish more specific status
+events; the _Profiler_ is an example.
+
+| FeatureCatalogue | STATUS_WRITE_PDF | 22 |
+
+| FeatureCatalogue | STATUS_WRITE_HTML | 23 |
+
+| FeatureCatalogue | STATUS_WRITE_XML | 24 |
+
+| FeatureCatalogue | STATUS_WRITE_RTF | 25 |
+
+| FeatureCatalogue | STATUS_WRITE_FRAMEHTML | 26 |
+
+| FeatureCatalogue | STATUS_WRITE_DOCX | 27 |
+
+| Profiler(code range 200100-200199)
+| STATUS_PREPROCESSING_PROFILESVALUECONSISTENCYCHECK | 200100 | The
+_Profiler_ starts execution of
+_rule-trf-profiling-preprocessing-modelConsistencyCheck_
+
+| Profiler | STATUS_PREPROCESSING_MODELCONSISTENCYCHECK | 200101 | The
+_Profiler_ starts execution of
+_rule-trf-profiling-preprocessing-profilesValueConsistencyCheck_
+
+| Profiler | STATUS_PROCESSING_PROFILING | 200130 | The _Profiler_
+starts the actual profiling process
+
+| Profiler | STATUS_POSTPROCESSING_REMOVERESIDUALTYPES | 200170 | The
+_Profiler_ starts execution of
+_rule-trf-profiling-postprocessing-removeResidualTypes_
+
+| Profiler | STATUS_POSTPROCESSING_REMOVEEMPTYPACKAGES | 200171 | The
+_Profiler_ starts execution of
+_rule-trf-profiling-postprocessing-removeEmptyPackage_
+
+| Application Schema Metadata (code range 301500-301599)
+| STATUS_RULE_ALL_IDENTIFY_PROFILES | 301500 | The _Application Schema
+Metadata_ target starts execution of _rule-asm-all-identify-profiles_
+|===
+
+ 
+
+[[Pseudocode_Example]]
+== Pseudocode Example
+
+[source,java,linenumbers]
+----------
+public class XYZ implements StatusReader {
+
+// ...
+
+   public boolean myMethod() {
+   
+   // ...
+
+   StatusBoard.getStatusBoard().registerStatusReader(this);
+   converter = new Converter(options, result);
+   converter.convert();
+
+   // ...
+
+   }
+}
+----------
+
+ 

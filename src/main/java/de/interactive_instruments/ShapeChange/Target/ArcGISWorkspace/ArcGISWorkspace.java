@@ -1010,7 +1010,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		String rMin = pi.taggedValue(TV_RANGE_MIN);
 		String rMax = pi.taggedValue(TV_RANGE_MAX);
 
-		if (rMin != null && rMin.trim().length() > 0) {
+		if (StringUtils.isNotBlank(rMin)) {
 
 		    try {
 			lowerBoundaryValue = Double.parseDouble(rMin.trim());
@@ -1021,7 +1021,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		    }
 		}
 
-		if (rMax != null && rMax.trim().length() > 0) {
+		if (StringUtils.isNotBlank(rMax)) {
 
 		    try {
 			upperBoundaryValue = Double.parseDouble(rMax.trim());
@@ -1250,7 +1250,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    }
 	}
 	String fieldTypeTV = codeListOrEnumeration.taggedValue(ArcGISWorkspaceConstants.TV_FIELD_TYPE);
-	if (fieldTypeTV != null && fieldTypeTV.trim().length() > 0) {
+	if (StringUtils.isNotBlank(fieldTypeTV)) {
 	    fieldType = fieldTypeTV.trim();
 	}
 
@@ -1378,7 +1378,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    String hasM = "false";
 	    if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASM)) {
 		String hasMFromTV = ci.taggedValue("HasM");
-		if (hasMFromTV != null && hasMFromTV.trim().equalsIgnoreCase("true")) {
+		if (StringUtils.isNotBlank(hasMFromTV) && hasMFromTV.trim().equalsIgnoreCase("true")) {
 		    hasM = "true";
 		}
 	    }
@@ -1389,7 +1389,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    String hasZ = "false";
 	    if (ci.matches(ArcGISWorkspaceConstants.RULE_CLS_HASZ)) {
 		String hasZFromTV = ci.taggedValue("HasZ");
-		if (hasZFromTV != null && hasZFromTV.trim().equalsIgnoreCase("true")) {
+		if (StringUtils.isNotBlank(hasZFromTV) && hasZFromTV.trim().equalsIgnoreCase("true")) {
 		    hasZ = "true";
 		}
 	    }
@@ -2275,6 +2275,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 		     * create foreign key fields in assocClass to reference source and target
 		     */
 
+		    String srcAlias = "";
+		    if(sourceRole != null && StringUtils.isNotBlank(sourceRole.aliasName())) {
+			srcAlias = sourceRole.aliasName();
+		    }
 		    String fkSrcName = roleNameSource + foreignKeySuffix;
 		    fkSrcName = normalizeName(fkSrcName);
 
@@ -2288,7 +2292,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			/*
 			 * in an association class, this field references a source object
 			 */
-			foreignKeyFieldSrc = createForeignKeyField(assocClass, fkSrcName, "", "", source_);
+			foreignKeyFieldSrc = createForeignKeyField(assocClass, fkSrcName, srcAlias, "", source_);
 
 			if (sourceRole != null) {
 			    addTaggedValuesToRepresent(foreignKeyFieldSrc, sourceRole);
@@ -2299,6 +2303,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			return;
 		    }
 
+		    String tgtAlias = "";
+		    if(targetRole != null && StringUtils.isNotBlank(targetRole.aliasName())) {
+			tgtAlias = targetRole.aliasName();
+		    }
 		    String fkTgtName = roleNameTarget + foreignKeySuffix;
 		    fkTgtName = normalizeName(fkTgtName);
 
@@ -2312,7 +2320,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			/*
 			 * in an association class, this field references a target object
 			 */
-			foreignKeyFieldTgt = createForeignKeyField(assocClass, fkTgtName, "", "", target_);
+			foreignKeyFieldTgt = createForeignKeyField(assocClass, fkTgtName, tgtAlias, "", target_);
 
 			if (targetRole != null) {
 			    addTaggedValuesToRepresent(foreignKeyFieldTgt, targetRole);
@@ -2476,10 +2484,10 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	if (source.matches(ArcGISWorkspaceConstants.RULE_ALL_RELCLASSNAME_BY_TAGGEDVALUE_OF_CLASSES)) {
 
-	    if (source.taggedValue(shortNameByTaggedValue) != null) {
+	    if (StringUtils.isNotBlank(source.taggedValue(shortNameByTaggedValue))) {
 		sourceName = source.taggedValue(shortNameByTaggedValue);
 	    }
-	    if (target.taggedValue(shortNameByTaggedValue) != null) {
+	    if (StringUtils.isNotBlank(target.taggedValue(shortNameByTaggedValue))) {
 		targetName = target.taggedValue(shortNameByTaggedValue);
 	    }
 	}
@@ -2585,7 +2593,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	}
 
 	String name = normalizeName(roleNameSource + foreignKeySuffix);
-
+	String alias = "";
+	if(roleSource != null && StringUtils.isNotBlank(roleSource.aliasName())) {
+	    alias = roleSource.aliasName();
+	}
+	
 	if (exceedsMaxLength(name)) {
 	    this.result.addWarning(this, 205, name, roleNameSource, target.name(), "" + maxNameLength);
 	    name = clipToMaxLength(name);
@@ -2595,7 +2607,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	Attribute foreignKeyField;
 	try {
 	    // the foreign key field is used to reference a source object
-	    foreignKeyField = createForeignKeyField(eaClassTarget, name, "", "", source);
+	    foreignKeyField = createForeignKeyField(eaClassTarget, name, alias, "", source);
 	    if (roleSource != null) {
 		addTaggedValuesToRepresent(foreignKeyField, roleSource);
 	    }
@@ -2882,8 +2894,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	String scaleTV = pi.taggedValue(nameOfScaleTV);
 
 	if ((pi.matches(ArcGISWorkspaceConstants.RULE_ALL_SCALE)
-		|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_SCALE)) && scaleTV != null
-		&& scaleTV.trim().length() > 0) {
+		|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_SCALE)) && StringUtils.isNotBlank(scaleTV)) {
 
 	    try {
 		Integer scale = Integer.parseInt(scaleTV.trim());
@@ -2912,8 +2923,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	String precisionTV = pi.taggedValue(nameOfPrecisionTV);
 
 	if ((pi.matches(ArcGISWorkspaceConstants.RULE_ALL_PRECISION)
-		|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_PRECISION)) && precisionTV != null
-		&& precisionTV.trim().length() > 0) {
+		|| pi.matches(ArcGISWorkspaceConstants.RULE_PROP_PRECISION)) && StringUtils.isNotBlank(precisionTV)) {
 
 	    try {
 		Integer prec = Integer.parseInt(precisionTV.trim());
@@ -2964,7 +2974,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 		String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
 
-		if (tv != null && tv.trim().length() > 0) {
+		if (StringUtils.isNotBlank(tv)) {
 
 		    try {
 			Integer value = Integer.parseInt(tv.trim());
@@ -3007,7 +3017,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
 	    String tv = pi.taggedValue(nameOfTVToDetermineFieldLength);
 
-	    if (tv != null && tv.trim().length() > 0) {
+	    if (StringUtils.isNotBlank(tv)) {
 
 		try {
 		    Integer value = Integer.parseInt(tv.trim());

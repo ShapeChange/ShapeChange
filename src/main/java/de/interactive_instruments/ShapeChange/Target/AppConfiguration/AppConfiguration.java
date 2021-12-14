@@ -40,6 +40,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -256,7 +257,7 @@ public class AppConfiguration implements Target, MessageSource {
 
 		    String form = "text";
 
-		    if (type.equals("text") && pi.taggedValue("formrows") != null) {
+		    if (type.equals("text") && StringUtils.isNotBlank(pi.taggedValue("formrows"))) {
 
 			form = "textarea";
 
@@ -291,22 +292,22 @@ public class AppConfiguration implements Target, MessageSource {
 		    addAttribute(doc, pE, "form", form);
 
 		    if (form.equals("text") || form.equals("textarea")) {
-			if (pi.taggedValue("formcols") != null) {
+			if (StringUtils.isNotBlank(pi.taggedValue("formcols"))) {
 			    addAttribute(doc, pE, "formcols", pi.taggedValue("formcols").trim());
 			}
 		    }
 		    if (form.equals("textarea")) {
-			if (pi.taggedValue("formrows") != null) {
+			if (StringUtils.isNotBlank(pi.taggedValue("formrows"))) {
 			    addAttribute(doc, pE, "formrows", pi.taggedValue("formrows").trim());
 			}
 		    }
 		}
 
-		if (pi.taggedValue("validate") != null) {
+		if (StringUtils.isNotBlank(pi.taggedValue("validate"))) {
 		    addAttribute(doc, pE, "validate", pi.taggedValue("validate").trim());
 		}
 
-		if (pi.taggedValue("Reiter") != null) {
+		if (StringUtils.isNotBlank(pi.taggedValue("Reiter"))) {
 		    addAttribute(doc, pE, "tab", pi.taggedValue("Reiter").trim());
 		}
 	    }
@@ -331,7 +332,7 @@ public class AppConfiguration implements Target, MessageSource {
 
 	int size = defaultSize;
 
-	if (tvSize != null) {
+	if (StringUtils.isNotBlank(tvSize)) {
 	    try {
 		size = Integer.parseInt(tvSize);
 	    } catch (NumberFormatException e) {

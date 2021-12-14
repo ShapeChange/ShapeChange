@@ -1,0 +1,219 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[How_to_extend_ShapeChange]]
+= How to extend ShapeChange
+
+This page describes how you can extend ShapeChange.
+
+The main extension points are:
+
+* Creating a new model implementation - In case that you have another
+model source that is not supported by ShapeChange yet. The model could
+be stored in a specific file format, or be accessible through a specific
+server interface.
+* Creating a new model transformation - In case you would like to
+develop a new model transformation.
+* Creating a new ShapeChange target - This will allow you to derive new
+representations from an application schema.
+
+How to use each of the three extension points is described in more
+detail in the following sections.
+
+When developing an extension for ShapeChange, the goal should be that
+you do not need to modify the code of ShapeChange itself. However, if
+changes to ShapeChange are needed, you can fork the
+https://github.com/ShapeChange/ShapeChange[ShapeChange GitHub
+repository], modify the code as needed, and create a PullRequest once
+you are satisfied with the results (and all UnitTests pass).
+
+This page also describes how you can set up your development
+environment.
+
+NOTE: If you experience any issue with extending ShapeChange, please
+report it via our
+https://github.com/ShapeChange/ShapeChange/issues[issue tracker on
+GitHub].
+
+[[Creating_a_new_model_implementation]]
+== Creating a new model implementation
+
+To load a model from a custom source, you need to provide a model
+implementation. You need to implement the following interfaces in
+package
+https://github.com/ShapeChange/ShapeChange/tree/master/src/main/java/de/interactive_instruments/ShapeChange/Model[de.interactive_instruments.ShapeChange.Model]:
+
+* AssociationInfo
+* ClassInfo
+* Model
+* OperationInfo
+* PackageInfo
+* PropertyInfo
+
+For each of these interfaces, the package provides a class with suffix
+"Impl" (e.g. ClassInfoImpl), which you should base your implementation
+on, since these classes provide implementations for a number of the
+methods defined by the interfaces.
+
+ShapeChange provides a model implementation to read a UML model from an
+Enterprise Architect repository. This is a good example for a model
+implementation. See package
+https://github.com/ShapeChange/ShapeChange/tree/master/src/main/java/de/interactive_instruments/ShapeChange/Model/EA[de.interactive_instruments.ShapeChange.Model.EA].
+
+To instruct ShapeChange to use your model implementation, provide the
+fully qualified class name of your ModelInfo implementation as value of
+the xref:./The_element_input.adoc#Parameters[input
+parameter] 'inputModelType', or similar configuration parameters like
+'referenceModelType'.
+
+[[Creating_a_new_model_transformation]]
+== Creating a new model transformation
+
+In ShapeChange, a transformation modifies a given model, with the goal
+to bring it in a form that is suited to derive a desired representation
+via a ShapeChange target. The Flattener transformation, for example,
+provides a number of transformation rules to simplify complex model
+structures, which is needed for a number of implementation environments
+(e.g. databases). The reusability of the Flattener to support various
+use cases is a key benefit of that transformation. Ideally, a new
+transformation is implemented in such a way that it can usefully be
+applied to a number of different application schemas.
+
+Creating a new transformation requires implementing interface
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Transformation/Transformer.java[de.interactive_instruments.ShapeChange.Transformation.Transformer].
+
+The execution of a transformation often requires information from the
+user, which can be provided via the ShapeChange configuration. More
+specifically, a transformation can have parameters, rules, map entries,
+and also a custom (XML based) configuration. The transformations that
+are already supported by ShapeChange provide ample implementation and
+configuration examples.
+
+[[Creating_a_new_target]]
+== Creating a new target
+
+A ShapeChange target reads a model (that has been loaded and -
+optionally - transformed by ShapeChange) and derives one or more
+artifacts from the model. These artifacts are sometimes also called
+implementation schemas.
+
+Creating a new target requires implementing interface
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Target/Target.java[de.interactive_instruments.ShapeChange.Target.Target].
+Depending on the use case, a new target may also be implemented as a
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Target/SingleTarget.java[de.interactive_instruments.ShapeChange.Target.SingleTarget]
+and may also implement the interface
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Target/DeferrableOutputWriter.java[de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter].
+A SingleTarget processes all application schemas in the model that were
+selected for processing before it writes the results, while a Target
+does so once all the classes of a given application schema have been
+processed. SingleTargets should be used when the implementation needs to
+have information on all application schemas before the output can be
+created. An example of such a target is the
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Target/FeatureCatalogue/FeatureCatalogue.java[FeatureCatalogue]
+target, which can create a single document with information on all
+relevant application schemas. For further details on these interfaces,
+please consult their java documentation.
+
+Just like for transformations, the execution of a target often requires
+information from the user, which can be provided via the ShapeChange
+configuration. More specifically, a target can have parameters, rules,
+and map entries. The targets that are already supported by ShapeChange
+provide a number of implementation and configuration examples.
+
+[NOTE]
+======
+Targets often implement a number of conversion rules. Furthermore,
+standard encoding rules may exist that aggregate a specific set of
+conversion rules. Targets (like the XmlSchema target) may also define
+specific requirements, identified by a unique string. The
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/Model/Info.java[de.interactive_instruments.ShapeChange.Model.Info].matches(String)
+method is used in ShapeChange to determine if a given model element
+matches one of these rules. Consequently, ShapeChange needs to know them
+(i.e., the rules). The rules can be registered as follows:
+
+* Since ShapeChange v2.9.0: By the Target implementation, via method
+registerRulesAndRequirements(RuleRegistry). For further details, see the
+javadoc of that method. ShapeChange automatically calls the method for
+each Target implementation found on the classpath.
+* Before ShapeChange v2.9.0: Target rules had to be configured in the
+ShapeChange code of
+de.interactive_instruments.ShapeChange.Options.addStandardRules(). In
+other words, an update of the ShapeChange code was needed.
+
+======
+
+[[Setting_up_your_development_environment]]
+== Setting up your development environment
+
+We describe two different setups for developing a ShapeChange extension:
+
+* An extension that shall be incorporated in ShapeChange itself.
+* An extension that shall be developed and hosted in a separate project,
+and just include ShapeChange as one of - potentially many -
+dependencies.
+
+[[Extending_the_ShapeChange_core_code_basis]]
+=== Extending the ShapeChange core code basis
+
+To extend ShapeChange itself, and thus feed new/modified code back to
+ShapeChange:
+
+* Fork the ShapeChange GitHub repository
+* Clone that fork so that you have the files on your machine.
+* Integrate the ShapeChange project in your IDE.
+** In Eclipse, this can be done by simply importing the project as a
+maven project.
+* Add/modify code as necessary.
+* Once you are satisfied with the results (and all UnitTests pass),
+create a PullRequest.
+
+[[Developing_and_hosting_an_extension_in_a_separate_project]]
+=== Developing and hosting an extension in a separate project
+
+You can develop your ShapeChange extension in a separate project. Your
+model implementations, transformations, and targets would then be
+deployed in a separate jar, alongside the jar that contains the code of
+the ShapeChange core project.
+
+To reference - and include - the jar with the ShapeChange code in your
+project, add the following maven dependency (with updated version
+number, depending on which release of ShapeChange you'd like to base
+your developments on; in general we recommend to keep your code in synch
+with the latest release):
+
+[source,xml,linenumbers]
+----------
+<dependency>
+ <groupId>net.shapechange</groupId>
+ <artifactId>ShapeChange</artifactId>
+ <version>2.3.0</version>
+ </dependency>
+----------
+
+The maven configuration entry to identify the ShapeChange maven
+repository is:
+
+[source,xml,linenumbers]
+----------
+<repository>
+ <id>ShapeChange</id>
+ <name>ShapeChange repository</name>
+ <url>https://shapechange.net/resources/dist/</url>
+ </repository>
+----------
+
+The https://github.com/ShapeChange/AAATools[AAATools project] provides
+an example of a separate project that depends on the ShapeChange core
+project and implements additional ShapeChange targets.

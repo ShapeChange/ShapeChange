@@ -155,7 +155,8 @@ public class XsdDocument implements MessageSource {
 	    descriptorsToRepresent.add(desc);
 	}
 
-	String s = options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE);
+	String s = options.parameter(Options.TargetXmlSchemaClass,
+		XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE);
 	if (s != null)
 	    okstraKeyValuePropertyType = s;
 	else
@@ -316,8 +317,8 @@ public class XsdDocument implements MessageSource {
 		String dgiwgComplianceLevel = pi.taggedValue("dgiwgComplianceLevel");
 		String dgiwgGMLProfileSchema = pi.taggedValue("dgiwgGMLProfileSchema");
 
-		if (dgiwgComplianceLevel != null && !dgiwgComplianceLevel.trim().isEmpty()
-			&& dgiwgGMLProfileSchema != null && !dgiwgGMLProfileSchema.trim().isEmpty()) {
+		if (StringUtils.isNotBlank(dgiwgComplianceLevel)
+			&& StringUtils.isNotBlank(dgiwgGMLProfileSchema)) {
 		    // if (e2==null)
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 		    addAttribute(e2, "source", options.schemaLocationOfNamespace(DGIWGSP_NS));
@@ -336,7 +337,7 @@ public class XsdDocument implements MessageSource {
 
 		String gmlsfComplianceLevel = pi.taggedValue("gmlsfComplianceLevel");
 
-		if (gmlsfComplianceLevel != null && !gmlsfComplianceLevel.trim().isEmpty()) {
+		if (StringUtils.isNotBlank(gmlsfComplianceLevel)) {
 
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 		    addAttribute(e2, "source", options.schemaLocationOfNamespace(GMLSF_NS));
@@ -355,10 +356,10 @@ public class XsdDocument implements MessageSource {
 
 	    if (e2 == null)
 		e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-	    Element e3 = document.createElementNS(Options.SCAI_NS, "globalIdentifier");
+	    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":globalIdentifier");
 	    e2.appendChild(e3);
 	    e3.appendChild(document.createTextNode(info.globalIdentifier()));
-	    addImport("sc", Options.SCAI_NS);
+	    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 	}
 
 	if (info instanceof PropertyInfo) {
@@ -404,10 +405,10 @@ public class XsdDocument implements MessageSource {
 
 			if (e2 == null)
 			    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			Element e3 = document.createElementNS(Options.SCAI_NS, "targetCodeListURI");
+			Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":targetCodeListURI");
 			e2.appendChild(e3);
 			e3.appendChild(document.createTextNode(codeListURI));
-			addImport("sc", Options.SCAI_NS);
+			addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 		    }
 		}
 	    }
@@ -452,11 +453,11 @@ public class XsdDocument implements MessageSource {
 			if (v.trim().length() > 0) {
 			    if (e2 == null)
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			    Element e3 = document.createElementNS(Options.SCAI_NS, "taggedValue");
+			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":taggedValue");
 			    addAttribute(e3, "tag", tag);
 			    e3.appendChild(document.createTextNode(v));
 			    e2.appendChild(e3);
-			    addImport("sc", Options.SCAI_NS);
+			    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 			}
 		    }
 		}
@@ -489,14 +490,14 @@ public class XsdDocument implements MessageSource {
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 			    }
 
-			    Element e3 = document.createElementNS(Options.SCAI_NS, "descriptor");
+			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":descriptor");
 			    addAttribute(e3, "name", descToRep.getName());
 			    if (ls.hasLang()) {
 				addAttribute(e3, "lang", ls.getLang());
 			    }
 			    e3.appendChild(document.createTextNode(ls.getValue()));
 			    e2.appendChild(e3);
-			    addImport("sc", Options.SCAI_NS);
+			    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 			}
 		    }
 		}
@@ -541,7 +542,7 @@ public class XsdDocument implements MessageSource {
      * Verify QName and add import of namespace
      */
     private String addImport(String qname) {
-	result.addDebug(null, 10022, qname);
+	result.addDebug(this, 10022, qname);
 	String s = qname.trim();
 	if (s.isEmpty())
 	    return null;
@@ -593,7 +594,7 @@ public class XsdDocument implements MessageSource {
 	    if (classHasObjectElement(ci)) {
 		s = elementName(ci, true);
 	    } else {
-		MessageContext mc = result.addError(null, 119, ci.name());
+		MessageContext mc = result.addError(this, 119, ci.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 	    }
@@ -618,7 +619,7 @@ public class XsdDocument implements MessageSource {
 	} else if (ci.matches("rule-xsd-all-naming-gml") || ci.matches("rule-xsd-all-naming-swe")) {
 	    return (qualified ? ci.qname() : ci.name());
 	} else {
-	    MessageContext mc = result.addError(null, 154, "object element", ci.name());
+	    MessageContext mc = result.addError(this, 154, "object element", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -645,7 +646,7 @@ public class XsdDocument implements MessageSource {
 	    return options.internalize(
 		    (qualified ? ci.qname() : ci.name()) + (ci.name().endsWith("Property") ? "_" : "") + "Type");
 	} else {
-	    MessageContext mc = result.addError(null, 154, "type", ci.name());
+	    MessageContext mc = result.addError(this, 154, "type", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -671,7 +672,7 @@ public class XsdDocument implements MessageSource {
 	    propertyTypeName = options.internalize(propertyTypeName);
 	    return propertyTypeName;
 	} else {
-	    MessageContext mc = result.addError(null, 154, "property type", ci.name());
+	    MessageContext mc = result.addError(this, 154, "property type", ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -835,7 +836,7 @@ public class XsdDocument implements MessageSource {
 	    } else {
 		s = mapBaseType(cibase);
 		if (s == null) {
-		    result.addError(null, 158);
+		    result.addError(this, 158);
 		    s = "fixme:fixme";
 		}
 		addImport(cibase.pkg().xmlns(), cibase.pkg().targetNamespace());
@@ -901,7 +902,7 @@ public class XsdDocument implements MessageSource {
 		    addMixinProperties(ci, ret, schDoc);
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 155, ci.name());
+	    MessageContext mc = result.addError(this, 155, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
@@ -1000,12 +1001,12 @@ public class XsdDocument implements MessageSource {
 			addAttribute(e3, "ref", s);
 			addImport(vci.pkg().xmlns(), vci.pkg().targetNamespace());
 		    } else {
-			MessageContext mc = result.addError(null, 166, vci.name(), ci.name());
+			MessageContext mc = result.addError(this, 166, vci.name(), ci.name());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 		    }
 		} else {
-		    MessageContext mc = result.addError(null, 166, vci.name(), ci.name());
+		    MessageContext mc = result.addError(this, 166, vci.name(), ci.name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -1041,7 +1042,7 @@ public class XsdDocument implements MessageSource {
 		addGroupReferences(ci, ret, true);
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 155, ci.name());
+	    MessageContext mc = result.addError(this, 155, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
@@ -1344,119 +1345,199 @@ public class XsdDocument implements MessageSource {
 
     /** create anonymous basic type */
     private Element pAnonymousBasicType(ClassInfo ci) {
+
 	Element e1 = null;
 	String id = ci.id();
 	if (id != null) {
-	    String base = ci.taggedValue("base");
-	    String length = ci.taggedValue("length");
-	    if (length == null)
-		length = ci.taggedValue("maxLength");
-	    String pattern = ci.taggedValue("pattern");
-	    String min = ci.taggedValue("rangeMinimum");
-	    String max = ci.taggedValue("rangeMaximum");
-	    String typecontent = "simple/simple";
 
-	    /*
-	     * baseType is the simple type that is the foundation of the basic type
-	     * implementation; it is either defined directly, via the tagged value "base" of
-	     * the type, or indirectly, by a map entry in the supertypes (direct and
-	     * indirect) that maps to a simple type with simple content.
-	     */
-	    String baseType = null;
+	    if (ci.matches("rule-xsd-cls-basictype-list") && ci.properties().size() == 1
+		    && ci.properties().values().iterator().next().cardinality().maxOccurs > 1) {
 
-	    if (base == null) {
+		// encode as a list-based simple type
+		e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+		addStandardAnnotation(e1, ci);
 
-		/*
-		 * Identify base and type content from the direct supertypes; this is important
-		 * for correct declaration of the basic type
-		 */
-		if (ci.supertypes() != null) {
-		    for (String supertypeId : ci.supertypes()) {
-			ClassInfo cix = model.classById(supertypeId);
-			if (cix != null) {
-			    MapEntry me = options.baseMapEntry(cix.name(), ci.encodingRule("xsd"));
-			    if (me != null) {
-				base = me.p1;
-				typecontent = me.p2;
-			    }
-			    if (base == null) {
-				base = cix.qname() + "Type";
-			    }
+		PropertyInfo pi = ci.properties().values().iterator().next();
+		ClassInfo typeCi = model.classByIdOrName(pi.typeInfo());
+
+		String itemType = null;
+		if (typeCi != null) {
+		    MapEntry me = options.baseMapEntry(typeCi.name(), ci.encodingRule("xsd"));
+		    if (me != null) {
+			itemType = me.p1;
+			addImport(me.p1);
+		    }
+		    if (itemType == null) {
+			itemType = typeCi.qname() + "Type";
+			addImport(typeCi.pkg().xmlns(), typeCi.pkg().targetNamespace());
+		    }
+		} else {
+		    MapEntry me = options.baseMapEntry(pi.typeInfo().name, ci.encodingRule("xsd"));
+		    if (me != null) {
+			itemType = me.p1;
+			addImport(me.p1);
+		    } else {
+			itemType = "FIXME";
+			MessageContext mc = result.addError(this, 2001, pi.typeInfo().name, pi.name(), ci.name());
+			if (mc != null)
+			    mc.addDetail(null, 400, "Class", ci.fullName());
+		    }
+		}
+
+		Element eList = document.createElementNS(Options.W3C_XML_SCHEMA, "list");
+		addAttribute(eList, "itemType", itemType);
+
+		if (pi.cardinality().minOccurs == 0 && pi.cardinality().maxOccurs == Integer.MAX_VALUE) {
+
+		    // no length restriction
+		    e1.appendChild(eList);
+
+		} else {
+
+		    // some length restriction
+		    Element eRestrict = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+		    e1.appendChild(eRestrict);
+
+		    Element eSimpleTypeChild = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+		    eSimpleTypeChild.appendChild(eList);
+		    eRestrict.appendChild(eSimpleTypeChild);
+
+		    if (pi.cardinality().minOccurs == pi.cardinality().maxOccurs) {
+
+			int length = pi.cardinality().minOccurs;
+			Element eLength = document.createElementNS(Options.W3C_XML_SCHEMA, "length");
+			addAttribute(eLength, "value", "" + length);
+			eRestrict.appendChild(eLength);
+
+		    } else {
+
+			if (pi.cardinality().minOccurs > 0) {
+			    Element eMinLength = document.createElementNS(Options.W3C_XML_SCHEMA, "minLength");
+			    addAttribute(eMinLength, "value", "" + pi.cardinality().minOccurs);
+			    eRestrict.appendChild(eMinLength);
+			}
+
+			if (pi.cardinality().maxOccurs != Integer.MAX_VALUE) {
+			    Element eMaxLength = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
+			    addAttribute(eMaxLength, "value", "" + pi.cardinality().maxOccurs);
+			    eRestrict.appendChild(eMaxLength);
 			}
 		    }
 		}
 
-		/*
-		 * Identify base type that has xmlTypeType="simple" and xmlTypeContent="simple"
-		 */
-		MapEntry me = findBaseMapEntryInSupertypes(ci, ci.encodingRule("xsd"), "simple", "simple");
-
-		if (me != null) {
-		    baseType = me.p1;
-		}
-	    }
-
-	    if (baseType == null) {
-		baseType = base;
-	    }
-
-	    if (base != null) {
-
-		Element e3;
-		Element e4;
-		if (typecontent.equals("complex/simple")) {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
-		    addStandardAnnotation(e1, ci);
-		    e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
-		    e1.appendChild(e4);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
-		    e4.appendChild(e3);
-		} else if (typecontent.equals("simple/simple")) {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
-		    addStandardAnnotation(e1, ci);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
-		    e1.appendChild(e3);
-		} else {
-		    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
-		    addStandardAnnotation(e1, ci);
-		    e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
-		    e1.appendChild(e4);
-		    e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
-		    e4.appendChild(e3);
-		}
-		addAttribute(e3, "base", base);
-		if (facetSupported("totalDigits", baseType) && length != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", length);
-		}
-		if (facetSupported("maxLength", baseType) && length != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", length);
-		}
-		if (facetSupported("pattern", baseType) && pattern != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", pattern);
-		}
-		if (facetSupported("minInclusive", baseType) && min != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", min);
-		}
-		if (facetSupported("maxInclusive", baseType) && max != null) {
-		    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
-		    e3.appendChild(e5);
-		    addAttribute(e5, "value", max);
-		}
 	    } else {
-		MessageContext mc = result.addError(null, 122, ci.name());
-		if (mc != null)
-		    mc.addDetail(null, 400, "Class", ci.fullName());
+
+		String base = ci.taggedValue("base");
+		String length = ci.taggedValue("length");
+		if (StringUtils.isBlank(length))
+		    length = ci.taggedValue("maxLength");
+		String pattern = ci.taggedValue("pattern");
+		String min = ci.taggedValue("rangeMinimum");
+		String max = ci.taggedValue("rangeMaximum");
+		String typecontent = "simple/simple";
+
+		/*
+		 * baseType is the simple type that is the foundation of the basic type
+		 * implementation; it is either defined directly, via the tagged value "base" of
+		 * the type, or indirectly, by a map entry in the supertypes (direct and
+		 * indirect) that maps to a simple type with simple content.
+		 */
+		String baseType = null;
+
+		if (StringUtils.isBlank(base)) {
+
+		    /*
+		     * Identify base and type content from the direct supertypes; this is important
+		     * for correct declaration of the basic type
+		     */
+		    if (ci.supertypes() != null) {
+			for (String supertypeId : ci.supertypes()) {
+			    ClassInfo cix = model.classById(supertypeId);
+			    if (cix != null) {
+				MapEntry me = options.baseMapEntry(cix.name(), ci.encodingRule("xsd"));
+				if (me != null) {
+				    base = me.p1;
+				    typecontent = me.p2;
+				}
+				if (base == null) {
+				    base = cix.qname() + "Type";
+				}
+			    }
+			}
+		    }
+
+		    /*
+		     * Identify base type that has xmlTypeType="simple" and xmlTypeContent="simple"
+		     */
+		    MapEntry me = findBaseMapEntryInSupertypes(ci, ci.encodingRule("xsd"), "simple", "simple");
+
+		    if (me != null) {
+			baseType = me.p1;
+		    }
+		}
+
+		if (baseType == null) {
+		    baseType = base;
+		}
+
+		if (StringUtils.isNotBlank(base)) {
+
+		    Element e3;
+		    Element e4;
+		    if (typecontent.equals("complex/simple")) {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
+			addStandardAnnotation(e1, ci);
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleContent");
+			e1.appendChild(e4);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			e4.appendChild(e3);
+		    } else if (typecontent.equals("simple/simple")) {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
+			addStandardAnnotation(e1, ci);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "restriction");
+			e1.appendChild(e3);
+		    } else {
+			e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
+			addStandardAnnotation(e1, ci);
+			e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
+			e1.appendChild(e4);
+			e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "extension");
+			e4.appendChild(e3);
+		    }
+		    addAttribute(e3, "base", base);
+		    if (facetSupported("totalDigits", baseType) && StringUtils.isNotBlank(length)) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", length);
+		    }
+		    if (facetSupported("maxLength", baseType) && StringUtils.isNotBlank(length)) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", length);
+		    }
+		    if (facetSupported("pattern", baseType) && StringUtils.isNotBlank(pattern)) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", pattern);
+		    }
+		    if (facetSupported("minInclusive", baseType) && StringUtils.isNotBlank(min)) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", min);
+		    }
+		    if (facetSupported("maxInclusive", baseType) && StringUtils.isNotBlank(max)) {
+			Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
+			e3.appendChild(e5);
+			addAttribute(e5, "value", max);
+		    }
+		} else {
+		    MessageContext mc = result.addError(this, 122, ci.name());
+		    if (mc != null)
+			mc.addDetail(null, 400, "Class", ci.fullName());
+		}
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 123, ci.name());
+	    MessageContext mc = result.addError(this, 123, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -1641,7 +1722,7 @@ public class XsdDocument implements MessageSource {
 	    document.getDocumentElement().appendChild(e1);
 	    addAttribute(e1, "name", typeName(ci, false));
 	} else {
-	    MessageContext mc = result.addError(null, 124, typeName(ci, false));
+	    MessageContext mc = result.addError(this, 124, typeName(ci, false));
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -1754,7 +1835,7 @@ public class XsdDocument implements MessageSource {
 	    document.getDocumentElement().appendChild(e1);
 	    addAttribute(e1, "name", ci.name() + "EnumerationType");
 	} else {
-	    MessageContext mc = result.addError(null, 156, ci.name());
+	    MessageContext mc = result.addError(this, 156, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -1914,7 +1995,7 @@ public class XsdDocument implements MessageSource {
 	ClassInfo ci = model.classById(pi.typeInfo().id);
 
 	String asAtt = pi.taggedValue("xsdAsAttribute");
-	if (asAtt == null)
+	if (StringUtils.isBlank(asAtt))
 	    asAtt = pi.taggedValue("asXMLAttribute");
 	String asAttRef = "";
 	String asAttGroupRef = "";
@@ -1961,7 +2042,7 @@ public class XsdDocument implements MessageSource {
 		String nsabr = asAttGroupRef.substring(0, idx);
 		addImport(nsabr, options.fullNamespace(nsabr));
 	    }
-	} else if (pi.matches("rule-xsd-prop-xsdAsAttribute") && asAtt != null && asAtt.equalsIgnoreCase("true")
+	} else if (pi.matches("rule-xsd-prop-xsdAsAttribute") && "true".equalsIgnoreCase(asAtt)
 		&& (m.maxOccurs == 1 || asList(pi)) && !inAssocClass) {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 	    addStandardAnnotation(e1, pi);
@@ -2000,7 +2081,7 @@ public class XsdDocument implements MessageSource {
 		    addImport(cis.pkg().xmlns(), cis.pkg().targetNamespace());
 		}
 	    } else {
-		MessageContext mc = result.addError(null, 145, cibase.name());
+		MessageContext mc = result.addError(this, 145, cibase.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", cibase.fullName());
 	    }
@@ -2022,11 +2103,11 @@ public class XsdDocument implements MessageSource {
 	    simpleContent.appendChild(restriction);
 
 	    String codeListUri = ci.taggedValue("codeList");
-	    if (codeListUri == null) {
+	    if (StringUtils.isBlank(codeListUri)) {
 		codeListUri = ci.taggedValue("vocabulary");
 	    }
 
-	    if (codeListUri != null && codeListUri.trim().length() > 0) {
+	    if (StringUtils.isNotBlank(codeListUri)) {
 		Element attribute = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 		addAttribute(attribute, "name", "codeSpace");
 		addAttribute(attribute, "type", "anyURI");
@@ -2084,8 +2165,8 @@ public class XsdDocument implements MessageSource {
 	     * to be added within the 'addTaggedValues' input parameter of the ShapeChange
 	     * config file. FIXME
 	     */
-	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (pi.taggedValue("length") != null
-		    || (pi.taggedValue("size") != null && pi.taggedValue("pattern") != null))) {
+	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (StringUtils.isNotBlank(pi.taggedValue("length"))
+		    || (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))))) {
 
 		Element simpleType = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
 		e1.appendChild(simpleType);
@@ -2097,11 +2178,11 @@ public class XsdDocument implements MessageSource {
 
 		Element concreteRestriction = null;
 		// maxLength
-		if (pi.taggedValue("length") != null) {
+		if (StringUtils.isNotBlank(pi.taggedValue("length"))) {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 		    addAttribute(concreteRestriction, "value", pi.taggedValue("length"));
 		    // pattern
-		} else if (pi.taggedValue("size") != null && pi.taggedValue("pattern") != null) {
+		} else if (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))) {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 		    addAttribute(concreteRestriction, "value",
 			    pi.taggedValue("pattern") + "{" + pi.taggedValue("size") + "}");
@@ -2115,10 +2196,10 @@ public class XsdDocument implements MessageSource {
 		    && pi.categoryOfValue() != Options.ENUMERATION) {
 
 		String length = pi.taggedValue("length");
-		if (length == null) {
+		if (StringUtils.isBlank(length)) {
 		    length = pi.taggedValue("maxLength");
 		}
-		if (length == null) {
+		if (StringUtils.isBlank(length)) {
 		    length = pi.taggedValue("size");
 		}
 		String pattern = pi.taggedValue("pattern");
@@ -2126,7 +2207,7 @@ public class XsdDocument implements MessageSource {
 		String max = pi.taggedValue("rangeMaximum");
 		String typecontent = "simple/simple";
 
-		if (length != null || pattern != null || min != null || max != null) {
+		if (StringUtils.isNotBlank(length) || StringUtils.isNotBlank(pattern) || StringUtils.isNotBlank(min) || StringUtils.isNotBlank(max)) {
 
 		    /*
 		     * baseType is the simple type that is the foundation of the restriction. It is
@@ -2203,27 +2284,27 @@ public class XsdDocument implements MessageSource {
 			    e4.appendChild(e3);
 			}
 			addAttribute(e3, "base", base);
-			if (facetSupported("totalDigits", baseType) && length != null) {
+			if (facetSupported("totalDigits", baseType) && StringUtils.isNotBlank(length)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "totalDigits");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", length);
 			}
-			if (facetSupported("maxLength", baseType) && length != null) {
+			if (facetSupported("maxLength", baseType) && StringUtils.isNotBlank(length)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", length);
 			}
-			if (facetSupported("pattern", baseType) && pattern != null) {
+			if (facetSupported("pattern", baseType) && StringUtils.isNotBlank(pattern)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", pattern);
 			}
-			if (facetSupported("minInclusive", baseType) && min != null) {
+			if (facetSupported("minInclusive", baseType) && StringUtils.isNotBlank(min)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "minInclusive");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", min);
 			}
-			if (facetSupported("maxInclusive", baseType) && max != null) {
+			if (facetSupported("maxInclusive", baseType) && StringUtils.isNotBlank(max)) {
 			    Element e5 = document.createElementNS(Options.W3C_XML_SCHEMA, "maxInclusive");
 			    e3.appendChild(e5);
 			    addAttribute(e5, "value", max);
@@ -2231,7 +2312,7 @@ public class XsdDocument implements MessageSource {
 
 		    } else {
 
-			MessageContext mc = result.addError(null, 180, ci.name(), pi.name());
+			MessageContext mc = result.addError(this, 180, ci.name(), pi.name());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", pi.fullName());
 		    }
@@ -2246,12 +2327,12 @@ public class XsdDocument implements MessageSource {
 	boolean asArray = false;
 	if (propi.matches("rule-xsd-prop-gmlArrayProperty")) {
 	    String s = propi.taggedValue("gmlArrayProperty");
-	    asArray = s != null && s.equalsIgnoreCase("true");
+	    asArray = "true".equalsIgnoreCase(s);
 	}
 	if (asArray) {
 	    if (!propi.matches("rule-xsd-prop-inlineOrByReference") || !propi.inlineOrByReference().equals("inline")) {
 		asArray = false;
-		MessageContext mc = result.addError(null, 170, propi.inClass().name() + "." + propi.name());
+		MessageContext mc = result.addError(this, 170, propi.inClass().name() + "." + propi.name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Property", propi.fullName());
 	    }
@@ -2263,7 +2344,7 @@ public class XsdDocument implements MessageSource {
 	boolean asList = false;
 	if (propi.matches("rule-xsd-prop-gmlListProperty")) {
 	    String s = propi.taggedValue("gmlListProperty");
-	    asList = s != null && s.equalsIgnoreCase("true");
+	    asList = "true".equalsIgnoreCase(s);
 	}
 	return asList;
     }
@@ -2310,7 +2391,7 @@ public class XsdDocument implements MessageSource {
 		if (me.p2.equalsIgnoreCase("simple/simple")) {
 		    String propertyTypeName = addImport(me.p1);
 		    if (propertyTypeName == null) {
-			MessageContext mc = result.addError(null, 174, me.p1);
+			MessageContext mc = result.addError(this, 174, me.p1);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			propertyTypeName = "fixme:fixme";
@@ -2320,7 +2401,7 @@ public class XsdDocument implements MessageSource {
 		    // complex value, use URI to reference it
 		    addAttribute(e1, "type", "anyURI");
 		} else {
-		    MessageContext mc = result.addError(null, 175, me.p1);
+		    MessageContext mc = result.addError(this, 175, me.p1);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		    addAttribute(e1, "type", "string");
@@ -2337,18 +2418,18 @@ public class XsdDocument implements MessageSource {
 			// use URI to reference it
 			addAttribute(e1, "type", "anyURI");
 		    } else if (ci.category() == Options.DATATYPE || ci.category() == Options.UNION) {
-			MessageContext mc = result.addError(null, 178, ci.qname());
+			MessageContext mc = result.addError(this, 178, ci.qname());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			addAttribute(e1, "type", "string");
 		    } else {
-			MessageContext mc = result.addError(null, 179, ci.qname());
+			MessageContext mc = result.addError(this, 179, ci.qname());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			addAttribute(e1, "type", "string");
 		    }
 		} else {
-		    MessageContext mc = result.addError(null, 177, q.type);
+		    MessageContext mc = result.addError(this, 177, q.type);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		    addAttribute(e1, "type", "string");
@@ -2418,7 +2499,7 @@ public class XsdDocument implements MessageSource {
 		boolean softtyped = false;
 		if (propi.matches("rule-xsd-prop-soft-typed")) {
 		    String s = propi.taggedValue("soft-typed");
-		    softtyped = s != null && s.equalsIgnoreCase("true");
+		    softtyped = "true".equalsIgnoreCase(s);
 		}
 
 		boolean asList = asList(propi);
@@ -2487,7 +2568,7 @@ public class XsdDocument implements MessageSource {
 
 		String propertyTypeName = addImport(me.p1);
 		if (propertyTypeName == null) {
-		    result.addError(null, 174, me.p1);
+		    result.addError(this, 174, me.p1);
 		    propertyTypeName = "fixme:fixme";
 		}
 
@@ -2498,7 +2579,7 @@ public class XsdDocument implements MessageSource {
 		if (isAttribute) {
 		    boolean simpleType = me.p2 != null && me.p2.equals("simple/simple");
 		    if (!simpleType || addNilReason || addMetadata || softtyped) {
-			MessageContext mc = result.addError(null, 128, pName);
+			MessageContext mc = result.addError(this, 128, pName);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			/*
@@ -2515,7 +2596,7 @@ public class XsdDocument implements MessageSource {
 		if (asList) {
 		    boolean simpleType = me.p2 != null && me.p2.equals("simple/simple");
 		    if (!simpleType) {
-			MessageContext mc = result.addError(null, 169, pName, me.p1);
+			MessageContext mc = result.addError(this, 169, pName, me.p1);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 			return false;
@@ -2528,7 +2609,7 @@ public class XsdDocument implements MessageSource {
 		    MapEntry me2 = options.elementMapEntry(ti.name, cibase.encodingRule("xsd"));
 		    if (me2 == null) {
 			asArray = false;
-			MessageContext mc = result.addError(null, 172, pName, ti.name);
+			MessageContext mc = result.addError(this, 172, pName, ti.name);
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", propi.fullName());
 		    } else
@@ -2728,7 +2809,7 @@ public class XsdDocument implements MessageSource {
 		    return true;
 		}
 	    }
-	    MessageContext mc = result.addError(null, 129, ci.name(), pName);
+	    MessageContext mc = result.addError(this, 129, ci.name(), pName);
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
@@ -2736,7 +2817,7 @@ public class XsdDocument implements MessageSource {
 	boolean asArray = asArray(propi);
 	if (asArray && !classHasObjectElement(ci)) {
 	    asArray = false;
-	    MessageContext mc = result.addError(null, 173, pName, ci.name());
+	    MessageContext mc = result.addError(this, 173, pName, ci.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	}
@@ -2810,7 +2891,7 @@ public class XsdDocument implements MessageSource {
 	} else if (classHasObjectElement(ci)) {
 
 	    if (ci.pkg() == null || ci.pkg().xmlns() == null) {
-		MessageContext mc = result.addError(null, 141, ci.name(), propi.inClass().name());
+		MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
 		if (mc != null)
 		    mc.addDetail(null, 400, "Class", ci.fullName());
 
@@ -2938,8 +3019,8 @@ public class XsdDocument implements MessageSource {
 		     */
 		    if (ci.matches("rule-xsd-cls-standard-swe-property-types"))
 			embedPropertyType = embedPropertyType
-				|| (propi.matches("rule-xsd-prop-soft-typed") && propi.taggedValue("soft-typed") != null
-					&& propi.taggedValue("soft-typed").equalsIgnoreCase("true"));
+				|| (propi.matches("rule-xsd-prop-soft-typed")
+					&& "true".equalsIgnoreCase(propi.taggedValue("soft-typed")));
 		    /*
 		     * 6. the property has qualifiers
 		     */
@@ -3077,7 +3158,7 @@ public class XsdDocument implements MessageSource {
 		}
 
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3093,7 +3174,7 @@ public class XsdDocument implements MessageSource {
 			    && !ci.matches("rule-xsd-cls-local-basictype"))) {
 
 		if (ci.pkg() == null || ci.pkg().xmlns() == null) {
-		    MessageContext mc = result.addError(null, 141, ci.name(), propi.inClass().name());
+		    MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Class", ci.fullName());
 		} else {
@@ -3126,7 +3207,7 @@ public class XsdDocument implements MessageSource {
 		}
 
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3134,12 +3215,12 @@ public class XsdDocument implements MessageSource {
 		e1 = pAnonymousEnumeration(ci);
 		e.appendChild(e1);
 		if (propi.nilReasonAllowed() || (propi.voidable() && propi.matches("rule-xsd-prop-nillable"))) {
-		    MessageContext mc = result.addWarning(null, 1010, pName, "enumeration");
+		    MessageContext mc = result.addWarning(this, 1010, pName, "enumeration");
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
@@ -3148,22 +3229,22 @@ public class XsdDocument implements MessageSource {
 		e1 = pAnonymousBasicType(ci);
 		e.appendChild(e1);
 		if (propi.nilReasonAllowed() || (propi.voidable() && propi.matches("rule-xsd-prop-nillable"))) {
-		    MessageContext mc = result.addWarning(null, 1010, pName, "basic type");
+		    MessageContext mc = result.addWarning(this, 1010, pName, "basic type");
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 		if (propi.isMetadata()) {
-		    MessageContext mc = result.addWarning(null, 1009, pName);
+		    MessageContext mc = result.addWarning(this, 1009, pName);
 		    if (mc != null)
 			mc.addDetail(null, 400, "Property", propi.fullName());
 		}
 	    } else {
-		MessageContext mc = result.addError(null, 130, pName);
+		MessageContext mc = result.addError(this, 130, pName);
 		if (mc != null)
 		    mc.addDetail(null, 400, "Property", propi.fullName());
 	    }
 	} else {
-	    MessageContext mc = result.addError(null, 130, pName);
+	    MessageContext mc = result.addError(this, 130, pName);
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	}
@@ -3230,12 +3311,12 @@ public class XsdDocument implements MessageSource {
 	    XpathFragment xpath;
 
 	    String s = typeCi.taggedValue("codeList");
-	    if (s == null || s.isEmpty())
+	    if (StringUtils.isBlank(s))
 		s = typeCi.taggedValue("vocabulary");
 
 	    if (typeCi.matches("rule-xsd-cls-standard-19139-property-types")) {
 
-		if (s != null && !s.isEmpty()) {
+		if (StringUtils.isNotBlank(s)) {
 		    xpath = new XpathFragment(0, propi.qname() + "/*/@codeList='" + s + "'");
 		    schDoc.addAssertion(cibase, xpath, "Code list is '" + s + "'");
 		}
@@ -3253,7 +3334,7 @@ public class XsdDocument implements MessageSource {
 		// on its representation
 		s = typeCi.taggedValue("codeListRepresentation");
 
-		if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 
 		    xpath = new XpathFragment(0, "(not contains('" + s2 + "', '#') and document('" + s2
 			    + "')/gml:Definition) or (contains('" + s2 + "', '#') and document(substring-before('" + s2
@@ -3295,7 +3376,7 @@ public class XsdDocument implements MessageSource {
 		// on its representation
 		s = typeCi.taggedValue("codeListRepresentation");
 
-		if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 		    xpath = new XpathFragment(0, "(not contains(" + propi.qname() + "/@xlink:href, '#') and document("
 			    + propi.qname() + "/@xlink:href)/gml:Definition) or (contains(" + propi.qname()
 			    + "/@xlink:href, '#') and document(substring-before(" + propi.qname()
@@ -3350,7 +3431,7 @@ public class XsdDocument implements MessageSource {
 		    // assert that the remote resource has the correct element
 		    // based on its representation
 		    s = typeCi.taggedValue("codeListRepresentation");
-		    if (s == null || s.isEmpty() || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
+		    if (StringUtils.isBlank(s) || s.equalsIgnoreCase("application/gml+xml;version=3.2")) {
 			xpath = new XpathFragment(0, "(not contains('" + s2 + "', '#') and document('" + s2
 				+ "')/gml:Definition) or (contains('" + s2 + "', '#') and document(substring-before('"
 				+ s2 + "','#'))/id(substring-after('" + s2
@@ -3780,7 +3861,7 @@ public class XsdDocument implements MessageSource {
 
 	ClassInfo cibase = propi.inClass();
 	if (cibase == null) {
-	    MessageContext mc = result.addError(null, 157, propi.name());
+	    MessageContext mc = result.addError(this, 157, propi.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	    return false;
@@ -3984,7 +4065,7 @@ public class XsdDocument implements MessageSource {
 	    }
 
 	} else {
-	    MessageContext mc = result.addError(null, 116, propi.name());
+	    MessageContext mc = result.addError(this, 116, propi.name());
 	    if (mc != null)
 		mc.addDetail(null, 400, "Property", propi.fullName());
 	    return false;
@@ -4038,7 +4119,7 @@ public class XsdDocument implements MessageSource {
 
 	if (propi.matches("rule-xsd-prop-soft-typed")) {
 	    String s = propi.taggedValue("soft-typed");
-	    if (s != null && s.equalsIgnoreCase("true")) {
+	    if ("true".equalsIgnoreCase(s)) {
 		Element e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 		typeOrExtension.appendChild(e4);
 		addName(e4);
@@ -4123,7 +4204,7 @@ public class XsdDocument implements MessageSource {
 	}
 	if (!found) {
 	    imports.add(ns);
-	    result.addDebug(null, 10021, ns);
+	    result.addDebug(this, 10021, ns);
 	    if (nsabr != null) {
 		addAttribute(root, "xmlns:" + nsabr, ns);
 	    }
@@ -4204,7 +4285,7 @@ public class XsdDocument implements MessageSource {
 	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 	    serializer.setWriter(outputXML);
 	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
+	    outputXML.close();		    
 	} catch (IOException ioe) {
 	    result.addError(null, 171, name);
 	}
@@ -4255,6 +4336,63 @@ public class XsdDocument implements MessageSource {
 	case 12:
 	    return "Directory named '$1$' does not exist or is not accessible.";
 
+	case 116:
+	    return "Target object element(s) missing in property type for property '$1$'.";
+	case 119:
+	    return "No element for type '$1$' is defined. Only object and data types are represented by elements.";
+	case 122:
+	    return "The type with the name '$1$' has no tagged value 'base' or valid supertype and cannot be mapped to a basic type.";
+	case 123:
+	    return "The type with the name '$1$' has no ID and cannot be mapped to a basic type.";
+	case 124:
+	    return "Failed to create basic type '$1$'.";
+	case 128:
+	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML attribute, but the type is not a simple type.";
+	case 129:
+	    return "Union '$1$' as the value type of '$2$' could not be mapped as it does not contain the expected number of exactly one property to be encoded in the application schema.";
+	case 130:
+	    return "No type can be provided for the property '$1$'.";
+	case 141:
+	    return "The class '$1$' referenced from class '$2$' is not part of any package nor is it mapped to a well-known XML Schema type. The class is ignored.";
+	case 145:
+	    return "ADE class '$1$' cannot be suppressed, as it has no supertype.";
+	case 154:
+	    return "??No rule to name the '$1$' of class '$2$' is configured. Please check the current configuration.";
+	case 155:
+	    return "??No rule for a choice/sequence/all container for class '$1$' is configured, sequence is used. Please check the current configuration.";
+	case 156:
+	    return "??Failed to create enumeration type '$1$EnumerationType'.";
+	case 157:
+	    return "??Class of property '$1$' cannot be determined. The property is ignored.";
+	case 158:
+	    return "??MapEntry contains empty mapping target. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
+	case 166:
+	    return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
+	case 169:
+	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML Schema list attribute, but the type '$2$' is not a simple type.";
+	case 170:
+	    return "??The property '$1$' cannot be made an array propery as it is not restricted to inline content. Set 'inlineOrByReference' to 'inline' on the property.";
+	case 172:
+	    return "??The property '$1$' cannot be made an array propery as the type map does not specify an XML element for type '$2$'.";
+	case 173:
+	    return "??The property '$1$' cannot be made an array propery as the type '$2$' is not represented by an object element in XML.";
+	case 174:
+	    return "??MapEntry contains mapping target '$1$' from unknown schema. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
+	case 175:
+	    return "??'$1$' is a complex type with simple content which cannot be used in a qualifier. 'string' is used instead.";
+	case 177:
+	    return "??A qualifier has type '$1$' which could not be identified unambiguously in model. 'string' is used instead.";
+	case 178:
+	    return "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
+	case 179:
+	    return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
+	case 180:
+	    return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+	case 1009:
+	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
+	case 1010:
+	    return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
+
 	/*
 	 * 1000 - 1999: Schematron assertions (for code lists, etc.)
 	 */
@@ -4269,7 +4407,16 @@ public class XsdDocument implements MessageSource {
 	 */
 	case 2000:
 	    return "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
+	case 2001:
+	    return "Could not find QName for value type '$1$' of property '$2$' in basic type '$3$'. Using 'FIXME' instead.";
+
+	case 10021:
+	    return "Import to namespace '$1$' added.";
+	case 10022:
+	    return "Found: '$1$'";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
-	return null;
     }
 };

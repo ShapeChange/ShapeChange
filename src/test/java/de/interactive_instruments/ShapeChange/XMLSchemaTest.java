@@ -339,4 +339,14 @@ public class XMLSchemaTest extends BasicTestSCXML {
 				"testResults/xsd/forcedImports",
 				"src/test/resources/xsd/forcedImports/reference");
 	}
+	
+	@Test
+	public void test_basicTypeList() {
+		
+		multiTest(
+				"src/test/resources/xsd/basicTypeList/testEA_xsd_basicTypeList.xml",
+				new String[] { "xsd" },
+				"testResults/xsd/basicTypeList",
+				"src/test/resources/xsd/basicTypeList/reference");
+	}
 }

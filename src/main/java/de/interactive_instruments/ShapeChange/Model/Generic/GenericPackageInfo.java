@@ -63,7 +63,7 @@ public class GenericPackageInfo extends PackageInfoImpl
 	protected SortedSet<GenericPackageInfo> childPi = null;
 	protected SortedSet<String> supplierIds = null;
 
-	protected SortedSet<GenericClassInfo> classes = null;
+	protected SortedSet<GenericClassInfo> classes = new TreeSet<>();
 
 	/**
 	 * 

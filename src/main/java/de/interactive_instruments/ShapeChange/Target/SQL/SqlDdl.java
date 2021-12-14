@@ -53,6 +53,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +68,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -482,6 +485,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    }
 
 	    if (foreignKeyColumnDataTypeFromConfig == null) {
+		// FIXME - should be bigint for PostgreSQL
+		// add foreignKeyDataType() to DatabaseStrategy?
 		foreignKeyColumnDataType = databaseStrategy.primaryKeyDataType();
 	    } else {
 		foreignKeyColumnDataType = new ColumnDataType(foreignKeyColumnDataTypeFromConfig);
@@ -858,7 +863,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	List<Statement> stmts;
 	try {
 	    stmts = builder.process(cisToProcess);
-	} catch (Exception e) {
+	} catch (SqlDdlException e) {
 	    result.addError(this, 32);
 	    return;
 	}
@@ -1226,6 +1231,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-check-constraints-for-enumerations");
 	r.addRule("rule-sql-prop-check-constraint-restrictTimeOfDate");
 	r.addRule("rule-sql-prop-exclude-derived");
+	r.addRule("rule-sql-prop-multiplicity-orderAndUniqueness");
 	r.addRule("rule-sql-prop-uniqueConstraints");
 
 	r.addRule("rule-sql-all-replicationSchema");
@@ -1236,8 +1242,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-replicationSchema-optional");
 
 	// declare rule sets
-	r.addExtendsEncRule("sql", "*");
-	r.addRule("rule-sql-cls-feature-types", "sql");
+	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql","*",new TreeSet<>(Stream.of(
+		"rule-sql-cls-feature-types").collect(Collectors.toSet())));
+	r.addRuleSet(sqlPrs);
     }
 
     @Override

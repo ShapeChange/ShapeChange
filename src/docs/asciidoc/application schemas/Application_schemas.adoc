@@ -1,0 +1,56 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+
+[[Application_schemas]]
+= Application schemas
+
+:toc:
+
+ISO 19109 defines an application schema as a "conceptual schema for data
+required by one or more applications." Its purpose is twofold: "to
+provide a computer-readable data description defining the data
+structure, which makes it possible to apply automated mechanisms for
+data management; and to achieve a common and correct understanding of
+the data, by documenting the data content of the particular application
+field, thereby making it possible to unambiguously retrieve information
+from the data."
+
+ISO 19109 specifies "rules for creating application schemas in a
+consistent manner (including the consistent definition of features) to
+facilitate the acquiring, processing, analyzing, accessing, presenting
+and transferring of geographic data between different users, systems and
+locations. The rules are, in the case of data transfer or interchange,
+used by suppliers and users of geographic data to
+
+* build a transfer application schema for data interchange;
+* interpret the semantics of the transferred dataset with respect to
+user's local data and content and structure of data; and
+* determine the necessary transformations between the two datasets."
+
+If such application schemas are modelled in UML using
+a specific xref:./UML_profile.adoc[UML
+profile], ShapeChange can be used to convert them to
+xref:../targets/Output_Targets.adoc[various target representations]
+including transfer application schemas in
+xref:../targets/xml schema/XML_Schema.adoc[XML Schema] or JSON Schema.
+
+ShapeChange accepts application schemas modelled using UML in one of the
+following formats:
+
+* an xref:./Enterprise_Architect_models.adoc[Enterprise Architect
+project file]
+* an xref:./XMI_1.0_models.adoc[XMI 1.0 document]
+* a xref:./SCXML_models.adoc[ShapeChange XML]

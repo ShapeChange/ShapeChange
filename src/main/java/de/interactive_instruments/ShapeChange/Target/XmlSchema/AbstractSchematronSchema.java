@@ -47,7 +47,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
-import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
@@ -64,7 +63,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public abstract class AbstractSchematronSchema implements SchematronSchema, MessageSource {
+public abstract class AbstractSchematronSchema implements SchematronSchema {
 
     public static class RuleCreationStatus {
 	public XpathFragment lastPathStatus;

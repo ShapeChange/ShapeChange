@@ -36,8 +36,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -76,7 +76,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     public String language() {
 	String lang = this.taggedValue("language");
 
-	if (lang == null || lang.isEmpty()) {
+	if (StringUtils.isBlank(lang)) {
 	    PackageInfo pi = this.pkg();
 	    if (pi != null)
 		return pi.language();
@@ -127,7 +127,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 			} else if (this.model().isInSelectedSchemas(this)) {
 			    // Not compatible and not mixin: An error
-			    MessageContext mc = result().addError(null, 108, name());
+			    MessageContext mc = result().addWarning(null, 108, name(), baseCI.name());
 			    if (mc != null)
 				mc.addDetail(null, 400, "Package", pkg().fullName());
 			    result().addDebug(null, 10003, name(), "" + cat, "!FALSE");
@@ -149,7 +149,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    if (stsize > 1) {
 
 		if (this.model().isInSelectedSchemas(this)) {
-		    MessageContext mc = result().addError(null, 109, name());
+		    MessageContext mc = result().addWarning(null, 109, name());
 		    if (mc != null)
 			mc.addDetail(null, 400, "Package", pkg().fullName());
 		} else {
@@ -992,7 +992,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			count++;
 			if (count == 2) {
 			    if (this.model().isInSelectedSchemas(this)) {
-				MessageContext mc = result().addError(null, 109, name());
+				MessageContext mc = result().addWarning(null, 109, name());
 				if (mc != null)
 				    mc.addDetail(null, 400, "Class", fullName());
 			    } else {
@@ -1010,7 +1010,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		    } else {
 
 			if (this.model().isInSelectedSchemas(this)) {
-			    MessageContext mc = result().addError(null, 108, name());
+			    MessageContext mc = result().addWarning(null, 108, name(), ci.name());
 			    if (mc != null)
 				mc.addDetail(null, 400, "Class", fullName());
 			} else {
@@ -1234,5 +1234,5 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	return null;
-    }
+    }    
 }

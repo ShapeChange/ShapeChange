@@ -6,7 +6,7 @@
   <simpleType name="CodeListType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</globalIdentifier>
+        <sc:globalIdentifier>EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</sc:globalIdentifier>
       </appinfo>
     </annotation>
     <union memberTypes="test:CodeListEnumerationType test:CodeListOtherType"/>
@@ -14,21 +14,21 @@
   <simpleType name="CodeListEnumerationType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</globalIdentifier>
+        <sc:globalIdentifier>EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</sc:globalIdentifier>
       </appinfo>
     </annotation>
     <restriction base="string">
       <enumeration value="code1">
         <annotation>
           <appinfo>
-            <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_AB6E277F_52A4_4d0c_B8FB_4A0B114A7725</globalIdentifier>
+            <sc:globalIdentifier>EAID_AB6E277F_52A4_4d0c_B8FB_4A0B114A7725</sc:globalIdentifier>
           </appinfo>
         </annotation>
       </enumeration>
       <enumeration value="code2">
         <annotation>
           <appinfo>
-            <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_CC8937E2_D8C5_4a9a_A92C_25861E78AF93</globalIdentifier>
+            <sc:globalIdentifier>EAID_CC8937E2_D8C5_4a9a_A92C_25861E78AF93</sc:globalIdentifier>
           </appinfo>
         </annotation>
       </enumeration>
@@ -42,7 +42,7 @@
   <element name="DataType" substitutionGroup="gml:AbstractObject" type="test:DataTypeType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_1AC74D26_1066_4c77_A146_6C81DE7987BB</globalIdentifier>
+        <sc:globalIdentifier>EAID_1AC74D26_1066_4c77_A146_6C81DE7987BB</sc:globalIdentifier>
       </appinfo>
     </annotation>
   </element>
@@ -51,7 +51,7 @@
       <element name="att3" type="test:UnionPropertyType">
         <annotation>
           <appinfo>
-            <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_7C53CD54_9DAD_4b1e_993B_CC0E78D49A2C</globalIdentifier>
+            <sc:globalIdentifier>EAID_7C53CD54_9DAD_4b1e_993B_CC0E78D49A2C</sc:globalIdentifier>
           </appinfo>
         </annotation>
       </element>
@@ -65,7 +65,7 @@
   <element name="FeatureType" substitutionGroup="gml:AbstractFeature" type="test:FeatureTypeType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</globalIdentifier>
+        <sc:globalIdentifier>EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</sc:globalIdentifier>
       </appinfo>
     </annotation>
   </element>
@@ -76,14 +76,14 @@
           <element name="att1" type="test:DataTypePropertyType">
             <annotation>
               <appinfo>
-                <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_BECBC365_6DEA_445b_A5A7_CDF12FAB81D4</globalIdentifier>
+                <sc:globalIdentifier>EAID_BECBC365_6DEA_445b_A5A7_CDF12FAB81D4</sc:globalIdentifier>
               </appinfo>
             </annotation>
           </element>
           <element name="role1" type="test:TypePropertyType">
             <annotation>
               <appinfo>
-                <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_dstAD9263_21FE_4ee9_B470_16B459EFA385</globalIdentifier>
+                <sc:globalIdentifier>EAID_dstAD9263_21FE_4ee9_B470_16B459EFA385</sc:globalIdentifier>
               </appinfo>
             </annotation>
           </element>
@@ -101,7 +101,7 @@
   <element name="Type" substitutionGroup="gml:AbstractGML" type="test:TypeType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_A8C59613_4BA2_43dc_AD65_D6E50F36396E</globalIdentifier>
+        <sc:globalIdentifier>EAID_A8C59613_4BA2_43dc_AD65_D6E50F36396E</sc:globalIdentifier>
       </appinfo>
     </annotation>
   </element>
@@ -112,14 +112,14 @@
           <element name="att2" type="test:CodeListType">
             <annotation>
               <appinfo>
-                <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_A8BB3719_132F_4c68_8BF9_2320CBEB6CEE</globalIdentifier>
+                <sc:globalIdentifier>EAID_A8BB3719_132F_4c68_8BF9_2320CBEB6CEE</sc:globalIdentifier>
               </appinfo>
             </annotation>
           </element>
           <element name="att4" type="gml:ReferenceType">
             <annotation>
               <appinfo>
-                <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_FDD712CA_7CA3_4f54_B330_E76265A0D8E8</globalIdentifier>
+                <sc:globalIdentifier>EAID_FDD712CA_7CA3_4f54_B330_E76265A0D8E8</sc:globalIdentifier>
                 <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListAsDictionary</targetCodeList>
               </appinfo>
             </annotation>
@@ -138,7 +138,7 @@
   <element name="Union" substitutionGroup="gml:AbstractObject" type="test:UnionType">
     <annotation>
       <appinfo>
-        <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_FDB1F6A8_CB3A_432f_86F7_E029E3ECCDBA</globalIdentifier>
+        <sc:globalIdentifier>EAID_FDB1F6A8_CB3A_432f_86F7_E029E3ECCDBA</sc:globalIdentifier>
       </appinfo>
     </annotation>
   </element>
@@ -147,14 +147,14 @@
       <element name="choice1" type="string">
         <annotation>
           <appinfo>
-            <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_4DEC923A_6588_42af_ACF5_7561551F1A7D</globalIdentifier>
+            <sc:globalIdentifier>EAID_4DEC923A_6588_42af_ACF5_7561551F1A7D</sc:globalIdentifier>
           </appinfo>
         </annotation>
       </element>
       <element name="choice2" type="double">
         <annotation>
           <appinfo>
-            <globalIdentifier xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">EAID_BBEE9DA4_30D4_4d44_B680_C868255F98D0</globalIdentifier>
+            <sc:globalIdentifier>EAID_BBEE9DA4_30D4_4d44_B680_C868255F98D0</sc:globalIdentifier>
           </appinfo>
         </annotation>
       </element>

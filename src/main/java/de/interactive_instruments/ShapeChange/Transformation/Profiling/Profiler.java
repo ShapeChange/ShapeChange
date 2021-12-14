@@ -44,6 +44,8 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
@@ -569,7 +571,7 @@ public class Profiler implements Transformer, MessageSource {
 								String geometryTV = genCi.taggedValue(
 										PROFILE_PARAMETER_GEOMETRY);
 
-								if (geometryTV == null) {
+								if (StringUtils.isBlank(geometryTV)) {
 
 									/*
 									 * The class does not restrict geometries,

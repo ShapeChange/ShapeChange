@@ -37,6 +37,7 @@ import java.util.Vector;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -47,7 +48,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /** Information about an UML association. */
-public class AssociationInfoXmi10 extends AssociationInfoImpl implements AssociationInfo {
+public class AssociationInfoXmi10 extends AssociationInfoImpl implements AssociationInfo, MessageSource {
 	// Data
 	protected Element ass = null;
 	protected Xmi10Document doc = null;
@@ -127,7 +128,7 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end2);
 					doc.fRoles.put(end1.typeInfo().id, l1);
 				}
-				doc.result.addDebug(null,10002,end2.name(), end1.name());
+				doc.result.addDebug(this,10002,end2.name(), end1.name());
 			}
 
 			if (vis1 && end1.isNavigable() && end1.name() != null) {
@@ -138,12 +139,12 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 					l1.add(end1);
 					doc.fRoles.put(end2.typeInfo().id, l1);
 				}
-				doc.result.addDebug(null,10002,end1.name(), end2.name());
+				doc.result.addDebug(this,10002,end1.name(), end2.name());
 			}
 		} else if (!ass.hasAttribute("xmi.idref")) {
-			doc.result.addError(null,103,name(),id, ""+nl.getLength());
+			doc.result.addError(this,103,name(),id, ""+nl.getLength());
 		}		
-		doc.result.addDebug(null,10013,"association",id, name());
+		doc.result.addDebug(this,10013,"association",id, name());
 	}
 
 	public ClassInfo assocClass() {
@@ -151,4 +152,19 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 		return null;
 	}
 
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 103:
+		    return "??The association with name '$1$' and ID '$2$' does not have 2 connections: $3$ connections. All Roles will be ignored.";
+		
+		case 10002:
+		    return "The association end with name '$1$' is the reverse property to '$2$'.";
+				    
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
+	}
 }

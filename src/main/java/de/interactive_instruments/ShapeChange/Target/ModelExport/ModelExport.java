@@ -58,6 +58,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -418,6 +419,8 @@ public class ModelExport implements SingleTarget, MessageSource {
     }
 
     private void printAssociation(AssociationInfo ai) throws Exception {
+	
+	if(ai != null && ai.end1() != null && ai.end2() != null) {
 
 	writer.startElement(NS, "Association");
 
@@ -431,6 +434,7 @@ public class ModelExport implements SingleTarget, MessageSource {
 	printAssociationRole(ai.end2(), "end2");
 
 	writer.endElement(NS, "Association");
+	}
     }
 
     private void printAssociationRole(PropertyInfo pi, String tag) throws SAXException {
@@ -781,7 +785,15 @@ public class ModelExport implements SingleTarget, MessageSource {
 	    printDataElement("isNavigable", pi.isNavigable(), true);
 	}
 
-	printDataElement("sequenceNumber", pi.sequenceNumber().getString());
+	if (pi.sequenceNumber() == null) {
+	    MessageContext mc = this.result.addError(this, 100, pi.name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, pi.fullName());
+	    }
+	    printDataElement("sequenceNumber", "0");
+	} else {
+	    printDataElement("sequenceNumber", pi.sequenceNumber().getString());
+	}
 
 	Type ti = pi.typeInfo();
 
@@ -1040,12 +1052,24 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 	switch (mnr) {
 
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "Context: class '$1$'.";
+	case 2:
+	    return "Context: association class '$1$'.";
+	case 3:
+	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
 	case 11:
 	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
 	case 12:
 	    return "Directory named '$1$' does not exist or is not accessible.";
 	case 13:
 	    return "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
+
+	case 100:
+	    return "Sequence number is undefined for property '$1$'. Using '0'.";
 
 	default:
 	    return "(ModelExport.java) Unknown message with number: " + mnr;

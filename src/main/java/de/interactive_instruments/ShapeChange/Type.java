@@ -66,29 +66,32 @@ public class Type {
     }
 
     public static Type from(ClassInfo ci) {
-	
+
 	Type t = new Type();
 	t.name = ci.name();
 	t.id = ci.id();
-	
-	return t;
-	}
 
-	/**
-	 * Create a {@link Type} based on a name and a generic model. If a
-	 * {@link ClassInfo} with the given name is found in the {@link GenericModel}
-	 * the type will get the id of that {@link ClassInfo}, otherwise the id will be
-	 * set to "unknown".
-	 * 
-	 * @param typeName name of the type to find and create
-	 * @param genModel generic model
-	 * 
-	 */
-	public static Type from(String typeName, GenericModel genModel) {
-		ClassInfo classInfo = genModel.classByName(typeName);
-		Type type = new Type();
-		type.id = (classInfo != null) ? classInfo.id() : "unknown";
-		type.name = typeName;
-		return type;
-	}
+	return t;
+    }
+
+    /**
+     * Create a {@link Type} based on a name and a generic model. If a
+     * {@link ClassInfo} with the given name is found in the {@link GenericModel}
+     * the type will get the id of that {@link ClassInfo}, otherwise the id will be
+     * set to "unknown".
+     * 
+     * @param typeName name of the type to find and create
+     * @param genModel generic model
+     * @return a new Type object with ID matching the ID of the ClassInfo with given
+     *         type name, if found in the model, otherwise 'unknown'; the name will
+     *         be the given name
+     * 
+     */
+    public static Type from(String typeName, GenericModel genModel) {
+	ClassInfo classInfo = genModel.classByName(typeName);
+	Type type = new Type();
+	type.id = (classInfo != null) ? classInfo.id() : "unknown";
+	type.name = typeName;
+	return type;
+    }
 }

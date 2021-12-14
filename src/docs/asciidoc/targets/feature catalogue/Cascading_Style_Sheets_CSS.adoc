@@ -1,0 +1,86 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Cascading_Style_Sheets_CSS]]
+= Cascading Style Sheets (CSS)
+
+[[Introduction]]
+== Introduction
+
+ShapeChange uses CSS to define the appearance of an HTML feature
+catalogue.
+
+[[CSS_for_Single_Page_HTML_Feature_Catalogue]]
+== CSS for Single Page HTML Feature Catalogue
+
+For a plain HTML feature catalogue (target parameter outputFormat is
+*html*), CSS is embedded in the resulting HTML page.
+
+In order to adapt this CSS, either modify the HTML page or - if you are
+going to create multiple single page HTML feature catalogues with
+modified styling - customize the html.xsl file (see feature catalogue
+target parameter *xslhtmlFile*) directly.
+
+[[CSS_for_Frame-Based_HTML_Feature_Catalogue]]
+== CSS for Frame-Based HTML Feature Catalogue
+
+The appearance of a frame-based HTML feature catalogue is defined by CSS
+instructions that are contained in a separate file, called
+'stylesheet.css'.
+
+When creating a frame-based HTML feature catalouge, by default
+ShapeChange looks for the file called 'stylesheet.css' in the folder
+that contains the XSLT for the feature catalogue transformation (see
+feature catalogue target parameter *xsltPath*). This CSS file is copied
+to the resulting feature catalogue, more specifically into the top
+directory that contains the index.html file.
+
+In order to modify the stylesheet.css that is used by the frame-based
+HTML feature catalouge, you can:
+
+. modify the stylesheet.css in the resulting feature catalogue
+. modify the stylesheet.css template that is used when a feature
+catalogue is created
+
+The second option is better if you need to create many feature
+catalogues with modified CSS, or in case that you might need to create
+the same feature catalogue multiple times (e.g. during model
+development). You can point ShapeChange to a local directory that
+contains the modified stylesheet via the target parameter *cssPath*.
+
+[[Banner_Settings]]
+=== Banner Settings
+
+Per default, ShapeChange adds the name of the feature catalogue
+(configured via target parameter *name*) as heading in the top section -
+let us call it 'banner' - of the resulting HTML frame structure. If
+desired, you can also add a graphical image as background of this
+banner. To do so, modify the following settings in the stylesheet.css:
+
+* *header*: add *background-image* setting with the path to the image -
+either an absolute path to a location on the web, or a path relative to
+the location of the stylesheet.css in the folder of the resulting
+feature catalogue; example: background-image: url("./logo.png");
+* *div.contentDiv*: set the *top* setting to the height of the image
+(e.g. top: 300px) - for small images, pick a suitable height so that the
+heading with the feature catalogue name is visible
+* *h1.banner*:
+** set the *height* to the height of the image (e.g. height: 300px) -
+for small images, pick a suitable height so that the heading with the
+feature catalogue name is visible
+** the horizontal placement of the heading text can be adjusted via the
+*margin-left* setting; if, for example, you want the heading to appear
+right beside the image, set margin-left to the width of the image (e.g.
+margin-left: 400px;)

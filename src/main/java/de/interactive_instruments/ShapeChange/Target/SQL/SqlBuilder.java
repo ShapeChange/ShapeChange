@@ -82,8 +82,10 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ConstraintAlterExpression;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PrimaryKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SQLitePragma;
@@ -122,6 +124,7 @@ public class SqlBuilder implements MessageSource {
     private List<Alter> uniqueConstraints = new ArrayList<>();
     private List<Statement> geometryMetadataUpdateStatements = new ArrayList<>();
     private List<Statement> geometryIndexStatements = new ArrayList<>();
+    private List<Statement> nonGeometryIndexStatements = new ArrayList<>();
     private List<Insert> insertStatements = new ArrayList<>();
     private List<Comment> commentStatements = new ArrayList<>();
     private List<Statement> schemaInitializationStatements = new ArrayList<>();
@@ -161,7 +164,7 @@ public class SqlBuilder implements MessageSource {
 	    // identify table name - using tagged value or default name
 	    tableName = pi.taggedValuesAll().getFirstValue(SqlConstants.TV_ASSOCIATIVETABLE);
 
-	    if (tableName == null || tableName.trim().length() == 0) {
+	    if (StringUtils.isBlank(tableName)) {
 
 		tableName = pi.inClass().name() + "_" + pi.name();
 
@@ -251,9 +254,72 @@ public class SqlBuilder implements MessageSource {
 
 	columns.add(cdPi);
 
-	PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
-	pkc.setColumns(columns);
-	table.addConstraint(pkc);
+	boolean createPrimaryKeyConstraint = true;
+
+	if (pi.matches(SqlConstants.RULE_TGT_SQL_PROP_MULT_ORDER_AND_UNIQUENESS)) {
+
+	    if (pi.isOrdered()) {
+
+		String encodingRule = pi.encodingRule("sql");
+		ProcessMapEntry pme = options.targetMapEntry("Integer", encodingRule);
+		ColumnDataType seqNoColDt = determineTypeFromMapEntry(pme);
+		Column seqNoCol = createColumn(table, null, "", "seqno", seqNoColDt, SqlConstants.NOT_NULL_COLUMN_SPEC,
+			false, false);
+		columns.add(seqNoCol);
+
+		if (pi.isUnique()) {
+
+		    // {ordered}
+		    List<Column> columnsForUniqueConstraint = new ArrayList<>();
+		    columnsForUniqueConstraint.add(cdInClassReference);
+		    columnsForUniqueConstraint.add(cdPi);
+		    UniqueConstraint uc = new UniqueConstraint(null, columnsForUniqueConstraint);
+		    table.addConstraint(uc);
+
+		} else {
+
+		    /*
+		     * {sequence}
+		     * 
+		     * Nothing more to do here.
+		     */
+
+		}
+
+	    } else {
+
+		// non ordered
+
+		if (pi.isUnique()) {
+
+		    /*
+		     * set semantics - UML default, nothing specific to add here
+		     */
+
+		} else {
+
+		    // {bag}
+		    createPrimaryKeyConstraint = false;
+
+		    // create simple index
+		    Index index = new Index("idx_" + table.getFullName());
+		    index.addColumn(cdInClassReference);
+		    index.addColumn(cdPi);
+
+		    CreateIndex cIndex = new CreateIndex();
+		    cIndex.setIndex(index);
+		    cIndex.setTable(table);
+
+		    nonGeometryIndexStatements.add(cIndex);
+		}
+	    }
+	}
+
+	if (createPrimaryKeyConstraint) {
+	    PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
+	    pkc.setColumns(columns);
+	    table.addConstraint(pkc);
+	}
 
 	return table;
     }
@@ -621,7 +687,7 @@ public class SqlBuilder implements MessageSource {
 	String tableNameEnd1InClass = determineTableNameForType(ai.end1().inClass());
 	String tableNameEnd2InClass = determineTableNameForType(ai.end2().inClass());
 
-	if (tableName == null || tableName.trim().length() == 0) {
+	if (StringUtils.isBlank(tableName)) {
 
 	    if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
 
@@ -1992,7 +2058,7 @@ public class SqlBuilder implements MessageSource {
 
 	int size = SqlDdl.defaultSize;
 
-	if (tvSize != null) {
+	if (StringUtils.isNotBlank(tvSize)) {
 	    try {
 		size = Integer.parseInt(tvSize);
 	    } catch (NumberFormatException e) {
@@ -2030,7 +2096,7 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
-    public List<Statement> process(List<ClassInfo> cisToProcess) throws Exception {
+    public List<Statement> process(List<ClassInfo> cisToProcess) throws SqlDdlException  {
 
 	checkRequirements(cisToProcess);
 
@@ -2103,8 +2169,7 @@ public class SqlBuilder implements MessageSource {
 		    String columnName = SqlDdl.oneToManyReferenceColumnName;
 		    String tv_oneToManyReferenceColumnName = ci
 			    .taggedValue(SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME);
-		    if (tv_oneToManyReferenceColumnName != null
-			    && tv_oneToManyReferenceColumnName.trim().length() > 0) {
+		    if (StringUtils.isNotBlank(tv_oneToManyReferenceColumnName)) {
 			columnName = tv_oneToManyReferenceColumnName.trim();
 		    }
 
@@ -2727,7 +2792,7 @@ public class SqlBuilder implements MessageSource {
 	return alter;
     }
 
-    private void checkRequirements(List<ClassInfo> cisToProcess) throws Exception {
+    private void checkRequirements(List<ClassInfo> cisToProcess) throws SqlDdlException {
 
 	/*
 	 * TBD Checking requirements on an input model should be a common pre-processing
@@ -2779,7 +2844,7 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 	if (hasCircularDependencies(dataTypesToProcessById)) {
-	    throw new Exception("Circular dependencies in datatypes detected.");
+	    throw new SqlDdlException("Circular dependencies in datatypes detected.");
 	}
     }
 
@@ -2975,6 +3040,7 @@ public class SqlBuilder implements MessageSource {
 	stmts.addAll(this.uniqueConstraints);
 	stmts.addAll(this.geometryMetadataUpdateStatements);
 	stmts.addAll(this.geometryIndexStatements);
+	stmts.addAll(this.nonGeometryIndexStatements);
 	stmts.addAll(this.insertStatements);
 	stmts.addAll(this.commentStatements);
 

@@ -38,6 +38,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -86,7 +87,6 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 		options.logParameters.keySet(), result) && isValid;
 	result.addInfo(this, 4, "log");
 
-	
 	String imt = options.parameter("inputModelType");
 
 	if (imt == null) {
@@ -121,6 +121,23 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 //				result.addProcessFlowError(this, 2, osArch);
 //				isValid = false;
 //			}
+	}
+
+	for (Entry<String, TransformerConfiguration> trfConfigE : options.getTransformerConfigs().entrySet()) {
+
+	    String trfId = trfConfigE.getKey();
+	    TransformerConfiguration trfConfig = trfConfigE.getValue();
+
+	    if (trfConfig.hasTaggedValues()) {
+		for (TaggedValueConfigurationEntry tvce : trfConfig.getTaggedValues()) {
+		    try {
+			tvce.getModelElementSelectionInfo().validate();
+		    } catch (ModelElementSelectionParseException e) {
+			isValid = false;
+			result.addError(this, 400, trfId, e.getMessage());
+		    }
+		}
+	    }
 	}
 
 	/* === check output processing parameters === */
@@ -235,6 +252,15 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	    }
 	}
 
+	/*
+	 * Check for errors in encoding rule setup.
+	 */
+	SortedSet<String> ruleRegistrationErrors = options.getRuleRegistry().getRuleRegistrationErrors();
+	isValid = isValid && ruleRegistrationErrors.isEmpty();
+	for (String err : ruleRegistrationErrors) {
+	    result.addProcessFlowError(this, 500, err);
+	}
+
 	return isValid;
     }
 
@@ -282,6 +308,15 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	    return "XsdPropertyMapEntry '$1$' is invalid because the @targetElement is not a QName like string.";
 	case 302:
 	    return "XsdPropertyMapEntry '$1$' is invalid because the configuration does not contain a namespace definition with the namespace prefix '$2$', which is used by the @targetElement.";
+
+	// 400-499: Validation of TaggedValue elements in transformations
+	case 400:
+	    return "Transformer with id '$1$' has invalid model element selection criteria in TaggedValue element. Details: $2$";
+
+	// 500-599: Validation of (encoding) rules and their registration
+	case 500:
+	    return "Invalid rule setup: $1$";
+
 	default:
 	    return "(" + BasicConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
 	}

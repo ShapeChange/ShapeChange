@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" xmlns:test="http://example.org/shapechange/xsd/descriptorAnnotation" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/xsd/descriptorAnnotation" version="1.0">
   <annotation>
     <appinfo>
-      <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_3C71400F_3784_4f7a_B884_573BFC270352</descriptor>
+      <sc:descriptor name="globalIdentifier">EAID_3C71400F_3784_4f7a_B884_573BFC270352</sc:descriptor>
     </appinfo>
   </annotation>
   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
@@ -10,9 +10,9 @@
   <simpleType name="CodeListType">
     <annotation>
       <appinfo>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">CL</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">CodeList documentation</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</descriptor>
+        <sc:descriptor name="alias">CL</sc:descriptor>
+        <sc:descriptor name="documentation">CodeList documentation</sc:descriptor>
+        <sc:descriptor name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</sc:descriptor>
       </appinfo>
     </annotation>
     <union memberTypes="test:CodeListEnumerationType test:CodeListOtherType"/>
@@ -20,27 +20,27 @@
   <simpleType name="CodeListEnumerationType">
     <annotation>
       <appinfo>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">CL</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">CodeList documentation</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</descriptor>
+        <sc:descriptor name="alias">CL</sc:descriptor>
+        <sc:descriptor name="documentation">CodeList documentation</sc:descriptor>
+        <sc:descriptor name="globalIdentifier">EAID_B8C177FB_3408_49dd_91B3_1DED7E81150E</sc:descriptor>
       </appinfo>
     </annotation>
     <restriction base="string">
       <enumeration value="code1">
         <annotation>
           <appinfo>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">c1</descriptor>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">code1 documentation</descriptor>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_AB6E277F_52A4_4d0c_B8FB_4A0B114A7725</descriptor>
+            <sc:descriptor name="alias">c1</sc:descriptor>
+            <sc:descriptor name="documentation">code1 documentation</sc:descriptor>
+            <sc:descriptor name="globalIdentifier">EAID_AB6E277F_52A4_4d0c_B8FB_4A0B114A7725</sc:descriptor>
           </appinfo>
         </annotation>
       </enumeration>
       <enumeration value="code2">
         <annotation>
           <appinfo>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">c2</descriptor>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">code2 documentation</descriptor>
-            <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_CC8937E2_D8C5_4a9a_A92C_25861E78AF93</descriptor>
+            <sc:descriptor name="alias">c2</sc:descriptor>
+            <sc:descriptor name="documentation">code2 documentation</sc:descriptor>
+            <sc:descriptor name="globalIdentifier">EAID_CC8937E2_D8C5_4a9a_A92C_25861E78AF93</sc:descriptor>
           </appinfo>
         </annotation>
       </enumeration>
@@ -55,11 +55,11 @@
     <annotation>
       <documentation>FT: FeatureType definition english</documentation>
       <appinfo>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">FT</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">FeatureType documentation</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" lang="de" name="definition">FeatureType definition deutsch</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" lang="en" name="definition">FeatureType definition english</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</descriptor>
+        <sc:descriptor name="alias">FT</sc:descriptor>
+        <sc:descriptor name="documentation">FeatureType documentation</sc:descriptor>
+        <sc:descriptor lang="de" name="definition">FeatureType definition deutsch</sc:descriptor>
+        <sc:descriptor lang="en" name="definition">FeatureType definition english</sc:descriptor>
+        <sc:descriptor name="globalIdentifier">EAID_229E7B68_2D8B_42cf_A7A2_BAB9EDA5AE2E</sc:descriptor>
       </appinfo>
     </annotation>
   </element>
@@ -70,22 +70,22 @@
           <element name="att1" type="integer">
             <annotation>
               <appinfo>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">a1</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="primaryCode">primaryCode att1</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">att1 documentation</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="description">description att1</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="language">en</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_BECBC365_6DEA_445b_A5A7_CDF12FAB81D4</descriptor>
+                <sc:descriptor name="alias">a1</sc:descriptor>
+                <sc:descriptor name="primaryCode">primaryCode att1</sc:descriptor>
+                <sc:descriptor name="documentation">att1 documentation</sc:descriptor>
+                <sc:descriptor name="description">description att1</sc:descriptor>
+                <sc:descriptor name="language">en</sc:descriptor>
+                <sc:descriptor name="globalIdentifier">EAID_BECBC365_6DEA_445b_A5A7_CDF12FAB81D4</sc:descriptor>
               </appinfo>
             </annotation>
           </element>
           <element name="role1" type="test:TypePropertyType">
             <annotation>
               <appinfo>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">r1</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">role1 documentation</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="legalBasis">legalBasis role1</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_dstAD9263_21FE_4ee9_B470_16B459EFA385</descriptor>
+                <sc:descriptor name="alias">r1</sc:descriptor>
+                <sc:descriptor name="documentation">role1 documentation</sc:descriptor>
+                <sc:descriptor name="legalBasis">legalBasis role1</sc:descriptor>
+                <sc:descriptor name="globalIdentifier">EAID_dstAD9263_21FE_4ee9_B470_16B459EFA385</sc:descriptor>
               </appinfo>
             </annotation>
           </element>
@@ -103,11 +103,11 @@
   <element name="Type" substitutionGroup="gml:AbstractGML" type="test:TypeType">
     <annotation>
       <appinfo>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">T</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">Type documentation</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="example">Example1 Type</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="example">Example2 Type</descriptor>
-        <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_A8C59613_4BA2_43dc_AD65_D6E50F36396E</descriptor>
+        <sc:descriptor name="alias">T</sc:descriptor>
+        <sc:descriptor name="documentation">Type documentation</sc:descriptor>
+        <sc:descriptor name="example">Example1 Type</sc:descriptor>
+        <sc:descriptor name="example">Example2 Type</sc:descriptor>
+        <sc:descriptor name="globalIdentifier">EAID_A8C59613_4BA2_43dc_AD65_D6E50F36396E</sc:descriptor>
       </appinfo>
     </annotation>
   </element>
@@ -118,10 +118,10 @@
           <element name="att2" type="test:CodeListType">
             <annotation>
               <appinfo>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="alias">a2</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="documentation">att2 documentation</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="dataCaptureStatement">data capture statement att2</descriptor>
-                <descriptor xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" name="globalIdentifier">EAID_A8BB3719_132F_4c68_8BF9_2320CBEB6CEE</descriptor>
+                <sc:descriptor name="alias">a2</sc:descriptor>
+                <sc:descriptor name="documentation">att2 documentation</sc:descriptor>
+                <sc:descriptor name="dataCaptureStatement">data capture statement att2</sc:descriptor>
+                <sc:descriptor name="globalIdentifier">EAID_A8BB3719_132F_4c68_8BF9_2320CBEB6CEE</sc:descriptor>
               </appinfo>
             </annotation>
           </element>

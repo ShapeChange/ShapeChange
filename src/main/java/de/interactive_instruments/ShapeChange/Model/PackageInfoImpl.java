@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.junit.platform.commons.util.StringUtils;
+
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 
 public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
@@ -53,7 +55,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	public String language() {
 		String lang = this.taggedValue("language");
 
-		if (lang == null || lang.isEmpty()) {
+		if (StringUtils.isBlank(lang)) {
 			if (this.isSchema())
 				return null;
 			PackageInfo pi = this.owner();

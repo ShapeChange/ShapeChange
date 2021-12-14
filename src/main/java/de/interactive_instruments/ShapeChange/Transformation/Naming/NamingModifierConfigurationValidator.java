@@ -31,16 +31,25 @@
  */
 package de.interactive_instruments.ShapeChange.Transformation.Naming;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.platform.commons.util.StringUtils;
+
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
+import de.interactive_instruments.ShapeChange.ModelElementSelectionInfo;
+import de.interactive_instruments.ShapeChange.ModelElementSelectionInfo.ModelElementType;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
+import de.interactive_instruments.ShapeChange.ProcessRuleModelElementSelectionConfigurationEntry;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
@@ -64,12 +73,103 @@ public class NamingModifierConfigurationValidator extends AbstractConfigurationV
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;
 
+	if (config.getAllRules().contains(NamingModifier.RULE_TRF_ADD_SUFFIX)) {
+	    List<ProcessRuleModelElementSelectionConfigurationEntry> prmesces = new ArrayList<>();
+
+	    try {
+
+		prmesces = ProcessRuleModelElementSelectionConfigurationEntry
+			.parseAndValidateConfigurationEntries(config.getAdvancedProcessConfigurations());
+
+		/*
+		 * Checks for RULE_TRF_ADD_SUFFIX
+		 */
+		List<ModelElementSelectionInfo> mesi = prmesces.stream()
+			.filter(e -> StringUtils.isNotBlank(e.getRule())
+				&& e.getRule().equalsIgnoreCase(NamingModifier.RULE_TRF_ADD_SUFFIX))
+			.map(e -> e.getModelElementSelectionInfo()).collect(Collectors.toList());
+
+		if (config.hasParameter(NamingModifier.PARAM_SUFFIX_REGEX)) {
+
+		    if (mesi.size() > 0) {
+
+			isValid = false;
+			result.addError(this, 102);
+
+		    } else {
+
+			try {
+
+			    Pattern regex = config.parameterAsRegexPattern(NamingModifier.PARAM_SUFFIX_REGEX, null);
+			    /*
+			     * that regex is null should not happen since we already established that the
+			     * parameter is defined in the configuration
+			     */
+
+			} catch (PatternSyntaxException e) {
+
+			    isValid = false;
+			    result.addError(this, 103, e.getMessage());
+			}
+		    }
+
+		} else if (mesi.size() == 0) {
+
+		    isValid = false;
+		    result.addError(this, 101);
+
+		} else {
+
+		    Set<ModelElementType> invalidMesiModelElementTypes = mesi.stream()
+			    .filter(e -> e.getModelElementType().equals(ModelElementType.ASSOCIATION)
+				    || e.getModelElementType().equals(ModelElementType.PACKAGE))
+			    .map(e -> e.getModelElementType()).collect(Collectors.toSet());
+
+		    if (!invalidMesiModelElementTypes.isEmpty()) {
+			isValid = false;
+			result.addError(this, 105);
+		    }
+		}
+
+	    } catch (ShapeChangeParseException e) {
+		isValid = false;
+		result.addError(this, 100, e.getMessage());
+	    }
+	}
+
 	return isValid;
     }
 
     @Override
     public String message(int mnr) {
 	switch (mnr) {
+
+	// Validation messages
+	case 100:
+	    return "Parameter '" + NamingModifier.PARAM_SUFFIX_REGEX + "' is required for rule '"
+		    + NamingModifier.RULE_TRF_ADD_SUFFIX
+		    + "' if no ProcessRuleModelElementSelection element is defined for that rule in the advanced process configuration, but no actual value was found in the configuration.";
+	case 101:
+	    return "Neither parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
+		    + "' nor any ProcessRuleModelElementSelection element (in the advanced process configuration) is defined for rule '"
+		    + NamingModifier.RULE_TRF_ADD_SUFFIX
+		    + "'. Either the (deprecated) parameter or a ProcessRuleModelElementSelection element must be defined.";
+	case 102:
+	    return "Both parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
+		    + "' and one or more ProcessRuleModelElementSelection elements (in the advanced process configuration) are defined for rule '"
+		    + NamingModifier.RULE_TRF_ADD_SUFFIX
+		    + "'. Either the (deprecated) parameter or a ProcessRuleModelElementSelection element must be defined - not both.";
+	case 103:
+	    return "Pattern syntax exception encountered while parsing (deprecated) parameter '"
+		    + NamingModifier.PARAM_SUFFIX_REGEX + "' for rule '" + NamingModifier.RULE_TRF_ADD_SUFFIX
+		    + "'. Fix the regular expression. The exception message is: $1$";
+
+	case 104:
+	    return "Invalid ProcessRuleModelElementSelection element(s) encountered. Details: $1$";
+
+	case 105:
+	    return "ProcessRuleModelElementSelection element(s) for " + NamingModifier.RULE_TRF_ADD_SUFFIX
+		    + " with @modelElementType set to association or package encountered, which is invalid for this rule.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

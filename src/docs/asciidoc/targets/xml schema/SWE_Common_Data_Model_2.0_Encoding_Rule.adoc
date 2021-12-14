@@ -1,0 +1,281 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[SWE_Common_Data_Model_20_Encoding_Rule]]
+= SWE Common Data Model 2.0 Encoding Rule
+
+[[Source]]
+== Source
+
+http://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
+Data Model 2.0]
+
+[[Encoding_Rule_Identifier]]
+== Encoding Rule Identifier
+
+The SWE Common Data Model 2.0 encoding rule has the identifier
+"ogcSweCommon2".
+
+[[Conversion_Rules]]
+== Conversion Rules
+
+[[Overview]]
+=== Overview
+
+The following is a list of schema conversion rules that apply to the SWE
+Common Data Model 2.0 encoding rule. These are in addition to
+xref:./Conversion_Rule_Basics.adoc[the common conversion
+rules].
+
+Since the SWE Common Data Model 2.0 encoding rule has been developed
+using the xref:./GML_3.2_Encoding_Rule.adoc[GML 3.2 encoding
+rule] as a starting point, it shares a large number of conversion rules
+with the GML 3.2 encoding rule.
+
+The standard itself lists the following differences from the GML 3.2
+encoding rule in Annex C:
+
+____
+* Relaxed rule on the mandatory 'id' attribute that is kept optional in
+the SWE Common Data Model schemas.
+* Introduced the additional XMI tagged value 'soft-typed', so that
+soft-typed- properties can be encoded in XML with an additional 'name'
+attribute.
+* Added support for encoding certain simple-type properties as XML
+attributes by introducing the additional XMI tagged value
+'asXMLAttribute'.
+* Use different base type for \<<Type>> stereotype (Elements are derived
+from swe:AbstractSWE instead of gml:AbstractGML).
+____
+
+However, in reality the differences are greater and additional
+conversion rules have been added to be able to generate XML Schema that
+reflects the http://schemas.opengis.net/sweCommon/2.0/[XSDs of SWE
+Common Data Model 2.0] (note that basicTypes.xsd as it is can only be
+constructed manually and not by automated conversion).
+
+Note also that SWE Common claims in its Foreword that "all elements are
+substitutable for gml:AbstractValue (and thus transitively for
+gml:AbstractObject) so that they can be used directly by GML application
+schemas." This seems to be an outdated statement as it is not correct.
+
+[cols="1,3",options="header"]
+|===
+|Rule |Description
+
+|rule-xsd-cls-codelist-asDictionary |If a the tagged value asDictionary
+of a code list is not 'true', create a global type for the code list;
+otherwise reference code list values using gml:CodeType
+
+|rule-xsd-cls-noPropertyType |If a the tagged value noPropertyType of a
+feature type, class, data type or union type is 'true', the property
+type creation is suppressed
+
+|rule-xsd-cls-byValuePropertyType |If a the tagged value
+byValuePropertyType of a feature type or class is 'true', an additional
+by-value property type is created
+
+|rule-xsd-pkg-gmlProfileSchema |Include gmlProfileSchema appinfo, if the
+tagged value is set on the application schema package
+
+|rule-xsd-prop-defaultCodeSpace |Include defaultCodeSpace appinfo, if
+applicable
+
+|rule-xsd-prop-inlineOrByReference |Take tagged value
+inlineOrByReference on properties into account when setting the type of
+a property element
+
+|rule-xsd-prop-reverseProperty |Include reversePropertyName appinfo, if
+applicable
+
+|rule-xsd-prop-targetElement |Include targetElement appinfo, if a
+property is byReference
+
+|rule-xsd-cls-global-enumeration |Convert enumerations to global types
+
+|rule-xsd-all-naming-swe |Use the naming strategy for schema components
+as specified by SWE Common Data Model 2.0
+
+|rule-xsd-cls-standard-swe-property-types |Use the strategy for property
+types as specified by SWE Common Data Model 2.0
+
+|rule-xsd-cls-union-as-group-property-type |Encode \<<union>> types as
+groups
+
+|rule-xsd-prop-xsdAsAttribute |Support tagged values xsdAsAttribute /
+asXmlAttribute
+
+|rule-xsd-prop-soft-typed |Support tagged value "soft-typed" to
+encode properties as XML elements with a generic element name but
+provide a "name" attribute for further disambiguation.
+
+|rule-xsd-prop-initialValue |Support default and fixed values
+|===
+
+[[rule-xsd-cls-codelist-asDictionary]]
+=== rule-xsd-cls-codelist-asDictionary
+
+If a the tagged value asDictionary of a code list is not 'true', create
+a global type for the code list; otherwise reference code list values
+using gml:CodeType
+
+[[rule-xsd-cls-noPropertyType]]
+=== rule-xsd-cls-noPropertyType
+
+If a the tagged value noPropertyType of a feature type, class, data type
+or union type is 'true', the property type creation is suppressed
+
+[[rule-xsd-cls-byValuePropertyType]]
+=== rule-xsd-cls-byValuePropertyType
+
+If a the tagged value byValuePropertyType of a feature type or class is
+'true', an additional by-value property type is created
+
+[[rule-xsd-cls-standard-gml-property-types]]
+=== rule-xsd-cls-standard-gml-property-types
+
+Reuse property types or create anonymous property types according to GML
+3.2
+
+[[rule-xsd-pkg-gmlProfileSchema]]
+=== rule-xsd-pkg-gmlProfileSchema
+
+Include gmlProfileSchema appinfo, if the tagged value is set on the
+application schema package
+
+[[rule-xsd-prop-defaultCodeSpace]]
+=== rule-xsd-prop-defaultCodeSpace
+
+Include defaultCodeSpace appinfo, if applicable
+
+[[rule-xsd-prop-inlineOrByReference]]
+=== rule-xsd-prop-inlineOrByReference
+
+Take tagged value inlineOrByReference on properties into account when
+setting the type of a property element
+
+[[rule-xsd-prop-reverseProperty]]
+=== rule-xsd-prop-reverseProperty
+
+Include reversePropertyName appinfo, if applicable
+
+[[rule-xsd-prop-targetElement]]
+=== rule-xsd-prop-targetElement
+
+Include targetElement appinfo, if a property is byReference
+
+[[rule-xsd-cls-global-enumeration]]
+=== rule-xsd-cls-global-enumeration
+
+Convert enumerations to global types
+
+[[rule-xsd-all-naming-swe]]
+=== rule-xsd-all-naming-swe
+
+Use the naming strategy for schema components as specified by SWE Common
+Data Model 2.0
+
+The difference to the GML 3.2 naming strategy is that a new abstract
+base type / element is used. A custom base element "AbstractSWE" and a
+base type "AbstractSWEType" is used for all complex types in the a
+SWE-Common-based schema.
+
+[[rule-xsd-cls-standard-swe-property-types]]
+=== rule-xsd-cls-standard-swe-property-types
+
+The conversion rules for reusing existing or creating new property types
+are similar to those in GML 3.2, with the following differences:
+
+* SWE Common specifies its own swe:AssociationAttributeGroup attribute
+group and swe:ReferenceType with a similar content model as the GML 3.2
+equivalents.
+* Property values from a code list are referenced using Xlinks like in
+the GML 3.3 encoding rule.
+* Soft-typed properties are treated differently,
+see rule-xsd-prop-soft-typed.
+
+[[rule-xsd-cls-union-as-group-property-type]]
+=== rule-xsd-cls-union-as-group-property-type
+
+\<<union>> types are encoded as groups and property types reference these
+groups.
+
+For example, the \<<union>> Quality is
+
+[source,xml,linenumbers]
+----------
+<group name="Quality">
+ <choice>
+  <element ref="swe:Quantity"/>
+  <element ref="swe:QuantityRange"/>
+  <element ref="swe:Category"/>
+  <element ref="swe:Text"/>
+ </choice>
+</group>
+----------
+
+[source,xml,linenumbers]
+----------
+<complexType name="QualityPropertyType">
+ <sequence minOccurs="0">
+  <group ref="swe:Quality"/>
+ </sequence>
+ <attributeGroup ref="swe:AssociationAttributeGroup"/>
+</complexType>
+----------
+
+[[rule-xsd-prop-xsdAsAttribute]]
+=== rule-xsd-prop-xsdAsAttribute
+
+If the tagged value 'asXMLAttribute' (or 'xsdAsAttribute') is set to
+'true' on a property, the property has a maximum multiplicity of 1 and
+the value of the property is simple, the property is converted to an XML
+attribute instead of an XML element.
+
+For example, the property "referenceFrame" in Vector is encoded as:
+
+[source,xml,linenumbers]
+----------
+<attribute name="referenceFrame" type="anyURI" use="required"/>
+----------
+
+[[rule-xsd-prop-soft-typed]]
+=== rule-xsd-prop-soft-typed
+
+Properties with a tagged value "soft-typed" with a value "true" are
+encoded as XML elements with a generic element name but provide an
+additional NCName-valued "name" attribute for further disambiguation.
+
+For example, the property "field" in DataRecord is encoded as:
+
+[source,xml,linenumbers]
+----------
+<element maxOccurs="unbounded" minOccurs="1" name="field">
+ <complexType>
+  <complexContent>
+   <extension base="swe:AbstractDataComponentPropertyType">
+    <attribute name="name" type="NCName" use="required"/>
+   </extension>
+  </complexContent>
+ </complexType>
+</element>
+----------
+
+[[rule-xsd-prop-initialValue]]
+=== rule-xsd-prop-initialValue
+
+If an attribute has an initial value, it is converted to a default value
+in XML Schema. If the attribute carries the constraint "\{frozen}", too,
+the initial value is converted to a fixed element value in XML Schema.

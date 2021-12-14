@@ -140,6 +140,10 @@ public class JsonSchemaDocument implements MessageSource {
 	classesByName.put(ci.name(), ci);
 	basicTypeInfoByClass.put(ci, simpleJsTypeInfo);
     }
+    
+    public boolean isBasicType(ClassInfo ci) {
+	return basicTypeInfoByClass.containsKey(ci);
+    }
 
     public boolean hasClasses() {
 	return !classesByName.isEmpty();
@@ -284,10 +288,10 @@ public class JsonSchemaDocument implements MessageSource {
 	if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.STRING) {
 
 	    String length = ci.taggedValue("length");
-	    if (length == null) {
+	    if (StringUtils.isBlank(length)) {
 		length = ci.taggedValue("maxLength");
 	    }
-	    if (length == null) {
+	    if (StringUtils.isBlank(length)) {
 		length = ci.taggedValue("size");
 	    }
 
@@ -1156,7 +1160,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    boolean byReferenceOnly = false;
 
-	    if ((pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT)
+	    if ((pi.categoryOfValue() == Options.FEATURE || (pi.categoryOfValue() == Options.OBJECT && !valueTypeIsBasicType(pi)))
 		    && !typeInfo.isSimpleType()) {
 
 		boolean addByReferenceOption = false;
@@ -1286,8 +1290,14 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    if (pi.isAttribute() && StringUtils.isNotBlank(pi.initialValue())
 		    && pi.matches(JsonSchemaConstants.RULE_PROP_INITIAL_VALUE_AS_DEFAULT)) {
+		
+		JsonSchemaTypeInfo actualTypeInfo = typeInfo;
+		
+		if(valueTypeIsBasicType(pi)) {
+		    actualTypeInfo = getBasicValueTypeDefinition(pi).get();
+		}
 
-		if (typeInfo.isSimpleType()) {
+		if (typeInfo.isSimpleType() || valueTypeIsBasicType(pi)) {
 
 		    if (typeInfo.getSimpleType() == JsonSchemaType.BOOLEAN) {
 			jsProp.default_(new JsonBoolean(pi.initialValue().trim()));
@@ -1328,6 +1338,50 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return jsProp;
+    }
+
+    private boolean valueTypeIsBasicType(PropertyInfo pi) {
+	
+	ClassInfo tci = model.classByIdOrName(pi.typeInfo());
+	
+	if(tci == null) {
+	    return false;
+	} else {
+	    Optional<JsonSchemaDocument> jsdOpt = jsonSchemaTarget.jsonSchemaDocument(tci);
+	    if(jsdOpt.isEmpty()) {
+		return false;
+	    } else {
+		return jsdOpt.get().hasBasicTypeDefinition(tci);
+	    }
+	}	
+    }
+    
+    private Optional<JsonSchemaTypeInfo> getBasicValueTypeDefinition(PropertyInfo pi) {
+	
+	ClassInfo tci = model.classByIdOrName(pi.typeInfo());
+	
+	JsonSchemaTypeInfo result;
+	
+	if(tci == null) {
+	    result = null;
+	} else {
+	    Optional<JsonSchemaDocument> jsdOpt = jsonSchemaTarget.jsonSchemaDocument(tci);
+	    if(jsdOpt.isEmpty()) {
+		result = null;
+	    } else {
+		result = jsdOpt.get().getBasicTypeDefinition(tci);
+	    }
+	}	
+	
+	return Optional.of(result);
+    }
+    
+    public boolean hasBasicTypeDefinition(ClassInfo ci) {
+	return this.basicTypeInfoByClass.containsKey(ci);
+    }
+    
+    public JsonSchemaTypeInfo getBasicTypeDefinition(ClassInfo ci) {
+	return this.basicTypeInfoByClass.get(ci);
     }
 
     /**

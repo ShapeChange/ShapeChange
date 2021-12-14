@@ -96,12 +96,12 @@
 			</mapEntries>
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="INPUT" mode="enabled">
-			<targetParameter name="defaultEncodingRule" value="oneTable"/>
+			<targetParameter name="defaultEncodingRule" value="oneTableIgnoringSingleValuedCase"/>
 			<targetParameter name="outputDirectory" value="testResults/sql/dataTypeEncoding_oneToMany/oneTable_ignoreSingleValuedCase"/>
 			<targetParameter name="size" value="-1"/>
 			<targetParameter name="createReferences" value="true"/>
 			<rules>
-				<EncodingRule extends="sql" name="oneTable">
+				<EncodingRule extends="sql" name="oneTableIgnoringSingleValuedCase">
 					<rule name="rule-sql-all-associativetables"/>
 					<rule name="rule-sql-cls-data-types"/>
 					<rule name="rule-sql-cls-data-types-oneToMany-oneTable"/>

@@ -38,7 +38,7 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
 			<targetParameter name="databaseSystem" value="PostgreSQL" />
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRulePostgres" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/constraintNameUsingShortName/postgresql" />
 			<targetParameter name="outputFilename" value="database_model_postgresql" />
@@ -53,7 +53,7 @@
 				value="shortName" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRulePostgres" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-constraintNameUsingShortName" />
 					<rule name="rule-sql-prop-uniqueConstraints"/>
@@ -67,7 +67,7 @@
 				<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
 			<targetParameter name="databaseSystem" value="Oracle" />
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRuleOracle" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/constraintNameUsingShortName/oracle" />
 			<targetParameter name="outputFilename" value="database_model_oracle" />
@@ -79,7 +79,7 @@
 			<targetParameter name="shortNameByTaggedValue"
 				value="myCode" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRuleOracle" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-constraintNameUsingShortName" />
 					<rule name="rule-sql-prop-uniqueConstraints"/>

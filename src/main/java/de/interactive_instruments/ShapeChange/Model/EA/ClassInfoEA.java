@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,16 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.sparx.Attribute;
 import org.sparx.Collection;
 import org.sparx.Connector;
+import org.sparx.ConnectorEnd;
+import org.sparx.Element;
 import org.sparx.Method;
 import org.sparx.TaggedValue;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -63,8 +67,11 @@ import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.StereotypeNormalizer;
+import de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchemaConstants;
+import de.interactive_instruments.ShapeChange.Util.ea.EAConnectorEndUtil;
+import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
-public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
+public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSource {
 
     /**
      * Flag used to prevent duplicate retrieval/computation of the alias of this
@@ -131,6 +138,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
     /** Roles registered as properties of the class */
     protected Vector<PropertyInfoEA> registeredRoles = new Vector<PropertyInfoEA>();
+    protected Vector<PropertyInfoEA> registeredRolesAsAttributes = new Vector<PropertyInfoEA>();
 
     /** Cache map for tagged values */
     // this map is already defined in InfoImpl
@@ -177,7 +185,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 	 * input parameter. Loading of the input model should not depend on a specific
 	 * target.
 	 */
-	String realization = document.options.parameter(Options.TargetXmlSchemaClass, "realisationLikeGeneralisation");
+	String realization = document.options.parameter(Options.TargetXmlSchemaClass, XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION);
 	if (realization != null && realization.equalsIgnoreCase("false")) {
 	    this.realization = Boolean.FALSE;
 	}
@@ -235,7 +243,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 		// Find out about the id of the base class (=supplier)
 		bclid = conn.GetSupplierID();
-		// From this determine the ClassInfo wrapper object
+		/*
+		 * From this determine the ClassInfo wrapper object Note: if the base class is
+		 * from an excluded package, it will not be contained in document.fClassById.
+		 */
 		ClassInfoEA baseCI = document.fClassById.get(String.valueOf(bclid));
 		// If such an object exists establish it as base class.
 		if (baseCI != null) {
@@ -318,13 +329,54 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		known = document.fAssociationById.containsKey(connid);
 		if (known)
 		    continue;
-		// First encounter: Create AssociationInfo wrapper and
-		// properties linkage.
-		AssociationInfoEA ai = new AssociationInfoEA(document, conn, connid);
-		// Register with global associations map, if relevant class
-		// association
-		if (ai.relevant)
-		    document.fAssociationById.put(connid, ai);
+
+		/*
+		 * Determine if the class at the other association end belongs to an excluded
+		 * package. If that end is navigable, only create an attribute.
+		 */
+		Integer clientId = conn.GetClientID();
+		Integer supplierId = conn.GetSupplierID();
+		Integer otherEndId = clientId.toString().equals(this.id()) ? supplierId : clientId;
+		Element otherEndClass = document.getEARepository().GetElementByID(otherEndId);
+		boolean otherEndNotInExcludedPackages = document.fClassById.containsKey(otherEndId.toString());
+
+		// only create something if the other end does not have a prohibited status
+		String statusTaggedValue = EAElementUtil.taggedValue(otherEndClass, "status");
+		if (StringUtils.isBlank(statusTaggedValue)
+			|| !options().prohibitedStatusValuesWhenLoadingClasses().contains(statusTaggedValue)) {
+
+		    if (otherEndNotInExcludedPackages) {
+
+			/*
+			 * First encounter: Create AssociationInfo wrapper and properties linkage.
+			 */
+			AssociationInfoEA ai = new AssociationInfoEA(document, conn, connid);
+
+			/*
+			 * Register with global associations map, if relevant class association
+			 */
+			if (ai.relevant) {
+			    document.fAssociationById.put(connid, ai);
+			}
+
+		    } else {
+			/*
+			 * If the association role at the other end is navigable, add it as an attribute
+			 * to this class.
+			 */
+			ConnectorEnd otherEnd = clientId.toString().equals(this.id()) ? conn.GetSupplierEnd()
+				: conn.GetClientEnd();
+			if (EAConnectorEndUtil.isNavigable(otherEnd, conn)) {
+
+			    PropertyInfoEA roleAsAttribute = new PropertyInfoEA(document, this, otherEnd, connid,
+				    otherEndClass.GetName());
+			    registeredRolesAsAttributes.add(roleAsAttribute);
+
+			} else {
+			    // not navigable, so simply ignore
+			}
+		    }
+		}
 	    }
 	}
     }
@@ -498,7 +550,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 		stereotypesCache.add("datatype");
 		document.result.addDebug(null, 52, this.name(), "datatype");
 	    }
-	    document.result.addDebug(null, 55, this.name(), Integer.toString(stereotypesCache.size()),
+	    document.result.addDebug(this, 55, this.name(), Integer.toString(stereotypesCache.size()),
 		    stereotypesCache.toString());
 	}
     } // validateStereotypesCache()
@@ -916,6 +968,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	    // Ensure that there are attributes before continuing
 	    if (attrs != null) {
+
 		for (Attribute attr : attrs) {
 		    // Pick public attributes if this has been requested
 		    if (document.options.parameter("publicOnly").equals("true")) {
@@ -944,6 +997,19 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
 
 	    // Load roles ...
 	    for (PropertyInfoEA pi : registeredRoles) {
+		// Check sequence number on duplicates
+		PropertyInfo piTemp = propertiesCache.get(pi.sequenceNumber());
+		if (piTemp != null) {
+		    MessageContext mc = document.result.addError(null, 107, pi.name(), name(), piTemp.name());
+		    if (mc != null)
+			mc.addDetail(null, 400, "Package", pkg().fullName());
+		}
+		// Add to properties cache
+		propertiesCache.put(pi.sequenceNumber(), pi);
+	    }
+
+	    // add cases of attributes that represent navigable roles to excluded types
+	    for (PropertyInfoEA pi : registeredRolesAsAttributes) {
 		// Check sequence number on duplicates
 		PropertyInfo piTemp = propertiesCache.get(pi.sequenceNumber());
 		if (piTemp != null) {
@@ -1108,4 +1174,18 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo {
       // }
       // return super.globalIdentifier;
       // }
+    
+    @Override
+    public String message(int mnr) {
+
+	switch (mnr) {
+
+	case 55:
+	    return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
+
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	}
+    }    
+
 }

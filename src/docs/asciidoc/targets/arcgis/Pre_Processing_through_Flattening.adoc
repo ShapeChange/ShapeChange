@@ -1,0 +1,197 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Pre-Processing_through_Flattening]]
+= Pre-Processing through Flattening
+
+Complex modeling constructs that are not supported by the ArcGIS 10.x
+geodatabase model can be removed using the
+xref:../../transformations/Flattener.adoc[Flattener]
+transformation. The sequence of applicable transformation procedures is
+described in the following sections. A configuration example for the
+Flattener is also provided (see last subsection).
+
+[[Remove_type]]
+== Remove type
+
+This optional flattening step allows removing application schema types
+that would lead to unnecessarily complex classes in the resulting ArcGIS
+workspace model. For example, if the application schema contained a
+construct that supported metadata for properties, the according metadata
+type can be removed using the type removal rule.
+
+[[Flatten_ONINAs]]
+== Flatten ONINAs
+
+This flattening step removes XxxReason \<<union>> types from the model
+and ensures that nil reason codes (other, noInformation, notApplicable)
+are incorporated in Xxx enumerations. Execution of this flattening rule
+is required for application schema that use the XxxReason \<<union>>
+modeling construct, and optional otherwise .
+
+[[Flatten_inheritance]]
+== Flatten inheritance
+
+In this optional flattening step, ShapeChange can flatten particular
+inheritance trees contained in the model. The ArcGIS workspace (UML)
+model supports inheritance to a certain extent, which will be explained
+later on. In specific cases, for example to prepare the execution of the
+homogeneous geometry flattening rule, inheritance flattening should be
+performed.
+
+If ArcGIS subtypes are explicitly modelled, inheritance flattening
+should NOT include these types. In order to prevent their inheritance
+relationships from being flattened, include
+xref:../../transformations/Flattener.adoc#rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes[_rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes_]
+in the rule set of the flattener transformation (that flattens
+inheritance).
+
+[[Flatten_multiplicity]]
+== Flatten multiplicity
+
+A database schema supports unlimited cardinality for a property only in
+the case of 1:n and n:m relationships between object or feature types.
+Accordingly, the multiplicity of properties where the value type is an
+object or feature type does not need to be flattened. In all other
+cases, this flattening step ensures that the maximum cardinality is
+restricted to a limited size (three, for example).
+
+For creating an ArcGIS workspace model, it is also important that the
+maximum cardinality of geometry typed properties is not greater than
+one.
+
+This flattening step is required if the application schema contains
+properties with unlimited maximum cardinality and a value type that is
+not a feature type (or object type, if the object type is not flattened
+in the following flattening step).
+
+[[Flatten_types]]
+== Flatten types
+
+This flattening step is used to move the contents of \<<dataType>> and
+\<<union>> types into feature and object types. The content of particular
+object types can also be flattened, if desired (for example in the case
+of a complex geometry type model). Type flattening can also apply a type
+mapping, for example to replace the type "Measure" (from ISO 19103) with
+type "Real", or "CI_Citation" with "CharacterString". This further
+reduces the complexity of the model.The flattening step is required in
+case that the application schema contains properties with a value type
+of \<<dataType>> or \<<union>> (or object types, in case they are not
+omitted from type flattening) that are not mapped to a simple type.
+
+Particularly in the case of flattening the "Measure" type, this mapping
+can lead to a loss of expressiveness - and should thus be well
+documented and the implications understood by the user of the ArcGIS
+workspace model. In this example, the community may have defined a
+recommended unit of measure for particular properties, which could then
+considered to be required for property values stored in an Esri
+geodatabase.
+
+[[Flatten_name]]
+=== Flatten name
+
+In this optional flattening step, the name of a model element (class or
+property, i.e. attribute or association end role) and its code (either
+stored in the alias or a tagged value of the model element) will be
+switched - if the code exists. This can be omitted for enumeration
+values, which is useful for the creation of the ArcGIS workspace model
+in case that the code represents the initial value for the enumeration.
+This will be explained in more detail later on.
+
+[[Remove_name_and_code_component]]
+== Remove name and code component
+
+This optional flattening step can remove particular components of model
+element names. The previous flattening steps, in particular type
+flattening, can lead to rather complex names (through concatenation of
+or addition to model element names). This flattening step can reduce
+that complexity by removing unnecessary name components.
+
+[[Flatten_homogeneous_geometries]]
+== Flatten homogeneous geometries
+
+If an application schema contains features with properties whose value
+type is a choice between different geometry types (either modelled as a
+\<<union>> or through inheritance) then this choice must be resolved. The
+reason is that the ArcGIS workspace model does not support the
+conversion of feature types that can have geometry of different types.
+
+[[Additional_Considerations]]
+== Additional Considerations
+
+[[Constraints]]
+=== Constraints
+
+Constraints are not flattened so that information to create range
+domains and identify the desired length for textual attributes is
+available in the model.
+
+[[Configuration_Example]]
+== Configuration Example
+
+The following code shows how the Flattener transformation can be
+configured to pre-process the application schema so that it can be
+converted to an ArcGIS workspace model. Note that the process map
+entries defined for the homogeneous geometry rule can be extended to
+take into account further geometry types that may occur in a given
+application schema.
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+  id="flattenedModel" input="input" mode="enabled">
+  <parameters>
+    <ProcessParameter name="removeType" value="TypeMeta,FeatureAttMetadata,GeometryMetadata"/>
+    <ProcessParameter name="maxOccurs" value="3"/>
+    <ProcessParameter name="maxOccursForSpecificProperties"
+      value="FeatureEntity::propGeometry::1,SourceInfo::prop9::2"/>
+    <ProcessParameter name="ignoreFeatureOrObjectTypedProperties" value="true"/>
+    <ProcessParameter name="flattenObjectTypes" value="false"/>
+    <ProcessParameter name="flattenObjectTypesIncludeRegex" value=".*GeometryInfo"/>
+    <ProcessParameter name="lowerCaseCodeForProperties" value="true"/>
+    <ProcessParameter name="removePropertyNameAndCodeComponent" value="(?i)\.valueOrReason"/>
+    <ProcessParameter name="flattenInheritanceIncludeRegex" value=".*GeometryInfo"/>
+    <ProcessParameter name="omitHomogeneousGeometriesForTypesWithSingleGeometryProperty"
+      value="true"/>
+    <ProcessParameter name="applyHomogeneousGeometriesOnSubtypes" value="true"/>
+    <ProcessParameter name="codeForEnumerationValues" value="false"/>
+  </parameters>
+  <rules>
+    <ProcessRuleSet name="flattener">
+      <rule name="rule-trf-all-removeType"/>
+      <rule name="rule-trf-prop-flatten-ONINAs"/>
+      <rule name="rule-trf-cls-flatten-inheritance"/>
+      <rule name="rule-trf-prop-flatten-multiplicity"/>
+      <rule name="rule-trf-prop-flatten-types"/>
+      <rule name="rule-trf-all-flatten-name"/>
+      <rule name="rule-trf-prop-remove-name-and-code-component"/>
+      <rule name="rule-trf-prop-flatten-homogeneousgeometries"/>
+    </ProcessRuleSet>
+  </rules>
+  <mapEntries>
+    <ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="CharacterString"
+      type="CI_Citation"/>
+    <ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="Real" type="Measure"/>
+    <ProcessMapEntry param="_P" rule="rule-trf-prop-flatten-homogeneousgeometries"
+      targetType="GM_Point" type="GM_Point"/>
+    <ProcessMapEntry param="_MP" rule="rule-trf-prop-flatten-homogeneousgeometries"
+      targetType="GM_MultiPoint" type="GM_MultiPoint"/>
+    <ProcessMapEntry param="_C" rule="rule-trf-prop-flatten-homogeneousgeometries"
+      targetType="GM_Curve" type="GM_Curve"/>
+    <ProcessMapEntry param="_S" rule="rule-trf-prop-flatten-homogeneousgeometries"
+      targetType="GM_Surface" type="GM_Surface"/>
+  </mapEntries>
+</Transformer>
+----------

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="original">
+		<parameter name="representTaggedValues" value="tvA,tvB" />
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/commonTransformer/setTaggedValues/common_settaggedvalues.eapx" />
+		<parameter name="appSchemaName" value="Test Schema" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="sc:extract"
+				token="Name" />
+			<DescriptorSource descriptor="primaryCode" source="sc:extract"
+				token="Primary code" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="sc:extract"
+				token="Example" />
+			<DescriptorSource descriptor="legalBasis" source="sc:extract"
+				token="Legal basis" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="sc:extract" token="Data capture statement" />
+			<DescriptorSource descriptor="language" source="sc:extract"
+				token="Language" />
+		</descriptorSources>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/commonTransformer/setTaggedValues/log.xml" />
+	</log>
+	<transformers>
+		<Transformer id="identity" input="original"
+			class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform">
+			<taggedValues>
+				<TaggedValue name="tvA" value="A" modelElementName="FT_A"/>
+				<TaggedValue name="tvB" value="B" modelElementName="a" modelElementType="Attribute" modelElementOwnerStereotype="^(?!enumeration).*$"/>
+				<TaggedValue name="tvB" value="B" modelElementName="x" modelElementType="AssociationRole"/>
+			</taggedValues>			
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema inputs="identity"
+			class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/commonTransformer/setTaggedValues" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="myrule" />
+			<rules>
+				<EncodingRule name="myrule" extends="iso19136_2007">
+					<rule name="rule-xsd-all-tagged-values" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml" />
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

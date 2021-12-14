@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/xsd/basicTypeList/testEA_xsd_basicTypeList.xml" end="Thu Jul 01 16:46:48 CEST 2021" resultCode="0" start="Thu Jul 01 16:46:41 CEST 2021" version="2.10.1-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="Validating input parameters."/>
+    <Info message="Validation of input parameters completed."/>
+    <Info message="Validating log parameters."/>
+    <Info message="Validation of log parameters completed."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+    <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/xsd/basicTypeList/INPUT/test.xsd" scope="http://example.org/shapechange/schema/test" target="XML Schema">test.xsd</Result>
+  </Results>
+</ShapeChangeResult>

@@ -112,7 +112,7 @@ public interface ClassInfo extends Info {
 
     /**
      * @return the parent package of the class, i.e. the package the class belongs
-     *         to
+     *         to; can be <code>null</code> in rare cases (e.g. a core datatype in an XMI model)
      */
     public PackageInfo pkg();
 

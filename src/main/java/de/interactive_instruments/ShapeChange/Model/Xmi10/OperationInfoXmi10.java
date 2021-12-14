@@ -37,8 +37,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -49,7 +51,7 @@ import de.interactive_instruments.ShapeChange.Model.OperationInfo;
 import de.interactive_instruments.ShapeChange.Model.OperationInfoImpl;
 
 public class OperationInfoXmi10 extends OperationInfoImpl
-		implements OperationInfo {
+		implements OperationInfo, MessageSource {
 	// Data
 	protected Element op = null;
 	protected Xmi10Document doc = null;
@@ -141,7 +143,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 					s = doc.taggedValue(id, "description");
 				}
 
-				if (s != null) {
+				if (StringUtils.isNotBlank(s)) {
 					ls.add(new LangString(options().internalize(s)));
 					this.descriptors().put(descriptor, ls);
 				}
@@ -205,7 +207,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 				s = "__RETURN__";
 			}
 			parameterNames.put(++parameterCount, s.trim());
-			doc.result.addDebug(null, 10011, id, name(), s);
+			doc.result.addDebug(this, 10011, id, name(), s);
 		}
 		return parameterNames;
 	};
@@ -238,5 +240,18 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 		op = e;
 		id = op.getAttribute("xmi.id");
 		doc.result.addDebug(null, 10013, "operation", id, name());
+	}
+	
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 10011:
+		    return "The operation with ID '$1$' and name '$2$' has the following parameter: '$3$'";
+		
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
 	}
 }

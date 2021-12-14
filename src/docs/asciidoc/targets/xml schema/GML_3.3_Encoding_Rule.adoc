@@ -1,0 +1,64 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[GML_33_Encoding_Rule]]
+= GML 3.3 Encoding Rule
+
+[[Source]]
+== Source
+
+https://portal.opengeospatial.org/files/?artifact_id=46568[GML 3.3]
+
+[[Encoding_Rule_Identifier]]
+== Encoding Rule Identifier
+
+The GML 3.3 encoding rule has the identifier "gml33".
+
+[[Conversion_Rules]]
+== Conversion Rules
+
+[[Overview]]
+=== Overview
+
+The schema conversion rules of GML 3.3 are identical to
+xref:./GML_3.2_Encoding_Rule.adoc[the ones for GML 3.2] with the
+following changes:
+
+[cols="1,3",options="header"]
+|===
+|Rule |Description
+
+|[line-through]#rule-xsd-cls-codelist-asDictionary# |This conversion
+rule does not apply to the GML 3.3 encoding rule
+
+|rule-xsd-cls-codelist-asDictionaryGml33 |If a the tagged value
+asDictionary of a code list is 'false', create a global type for the
+code list; otherwise reference code list values using simple xlinks
+
+|rule-xsd-rel-association-classes |Support the GML 3.3 association class
+encoding rule extension
+|===
+
+[[rule-xsd-cls-codelist-asDictionaryGml33]]
+=== rule-xsd-cls-codelist-asDictionaryGml33
+
+if a the tagged value asDictionary of a code list is 'false', create a
+global type for the code list; otherwise reference code list values
+using simple xlinks.
+
+[[rule-xsd-rel-association-classes]]
+=== rule-xsd-rel-association-classes
+
+Support the GML 3.3 association class encoding rule extension.

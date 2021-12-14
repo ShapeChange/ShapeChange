@@ -1,6 +1,7 @@
 package de.interactive_instruments.ShapeChange.Target;
 
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
 /**
@@ -26,8 +27,9 @@ public interface DeferrableOutputWriter {
 	 * 
 	 * @param o tbd
 	 * @param r tbd
+	 * @throws ShapeChangeAbortException tbd
 	 */
-	public void initialise(Options o, ShapeChangeResult r);
+	public void initialise(Options o, ShapeChangeResult r) throws ShapeChangeAbortException;
 
 	/**
 	 * Execute the deferred write of the desired output.

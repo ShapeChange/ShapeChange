@@ -51,6 +51,7 @@ import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -298,7 +299,8 @@ public class TypeConverter implements Transformer, MessageSource {
 
 	    for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-		if (!genPi.typeInfo().name.equals(type)) {
+		if (genPi.inClass().category() == Options.CODELIST || genPi.inClass().category() == Options.ENUMERATION ||
+			!genPi.typeInfo().name.equals(type)) {
 		    continue;
 		}
 
@@ -536,8 +538,9 @@ public class TypeConverter implements Transformer, MessageSource {
 			    otherRole.setCardinality(new Multiplicity("0..*"));
 			    otherRole.setTypeInfo(new Type(genCi.id(), genCi.name()));
 			    otherRole.setInClass(mdt);
+			    otherRole.setSequenceNumber(new StructuredNumber(otherRole.getNextNumberForAssociationRoleWithoutExplicitSequenceNumber()), true);
 			    genModel.register(otherRole);
-
+			    
 			    // create directed association
 			    GenericAssociationInfo genAi = new GenericAssociationInfo();
 			    genAi.setId("association_for_" + mdPi.id());

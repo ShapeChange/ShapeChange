@@ -63,7 +63,10 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	    XmlSchemaConstants.PARAM_REPRESENT_DESCRIPTORS, XmlSchemaConstants.PARAM_SCH_FILENAME_TEMPLATE,
 	    XmlSchemaConstants.PARAM_SCH_QUERY_BINDING, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_POSTFIX,
 	    XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX, XmlSchemaConstants.PARAM_SEGMENT_SCH,
-	    XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION)
+	    XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION,
+	    XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION, XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION,
+	    XmlSchemaConstants.PARAM_ENUM_STYLE, XmlSchemaConstants.PARAM_BASIC_TYPE_STYLE, 
+	    XmlSchemaConstants.PARAM_SCHEMATRON, XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES)
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream
 	    .of(Pattern.compile("^schematronExtension\\.(\\w+?)\\.function|schematronExtension\\.(\\w+?)\\.namespace$"))

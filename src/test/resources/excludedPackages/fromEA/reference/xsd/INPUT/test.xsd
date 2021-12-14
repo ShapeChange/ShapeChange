@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:t="http://example.org/shapechange/excludedPackages" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/excludedPackages" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="AssociationClassIn" substitutionGroup="gml:AbstractFeature" type="t:AssociationClassInType"/>
+  <complexType name="AssociationClassInType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AssociationClassInPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:AssociationClassIn"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="DataTypeIn" substitutionGroup="gml:AbstractObject" type="t:DataTypeInType"/>
+  <complexType name="DataTypeInType">
+    <sequence>
+      <element name="attDTI" type="string"/>
+    </sequence>
+  </complexType>
+  <complexType name="DataTypeInPropertyType">
+    <sequence>
+      <element ref="t:DataTypeIn"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationInType">
+    <restriction base="string">
+      <enumeration value="enumI1"/>
+      <enumeration value="enumI2"/>
+    </restriction>
+  </simpleType>
+  <element name="FeatureTypeIn" substitutionGroup="gml:AbstractFeature" type="t:FeatureTypeInType"/>
+  <complexType name="FeatureTypeInType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="roleFTItoFTE" type="string"/>
+          <element name="roleFTItoTE" type="string"/>
+          <element name="roleFTItoTI" type="t:TypeInPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeInPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FeatureTypeIn"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TypeIn" substitutionGroup="gml:AbstractGML" type="t:TypeInType"/>
+  <complexType name="TypeInType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypeInPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:TypeIn"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="UnionIn" substitutionGroup="gml:AbstractObject" type="t:UnionInType"/>
+  <complexType name="UnionInType">
+    <choice>
+      <element name="attUI1" type="string"/>
+      <element name="attUI2" type="integer"/>
+    </choice>
+  </complexType>
+  <complexType name="UnionInPropertyType">
+    <sequence>
+      <element ref="t:UnionIn"/>
+    </sequence>
+  </complexType>
+</schema>

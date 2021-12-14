@@ -806,289 +806,192 @@ public class ShapeChangeResult {
 	 * message in the output.
 	 */
 	switch (mnr) {
-	case 1:
-	    return "Unable to get a document builder factory.";
-	case 2:
-	    return "XML Parser was unable to be configured.";
-	case 3:
-	    return "Invalid XMI file.";
-	case 4:
-	    return "XMI version must be 1.0, found: '$1$'.";
-	case 5:
-	    return "Exactly only element <XMI> expected.";
-	case 6:
-	    return "Metamodel must be UML, found: '$1$'.";
-	case 7:
-	    return "The UML version must be 1.3, found: '$1$'.";
-	case 8:
-	    return "Exactly one element <XMI.metamodel> expected.";
-	case 9:
-	    return "Class '$1$' is not associated with a package.";
-	case 10:
-	    return "Class '$1$' in package '$2$' is not associated with an XSD document.";
-	case 11:
-	    return "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
-	case 12:
-	    return "No application schema found.";
-	case 13:
-	    return "Application schema '$1$' not found.";
-	case 15:
-	    return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
-	case 16:
-	    return "The XMI file is not associated with a DTD. The DTD is required for validating and processing the XMI file.";
-	case 18:
-	    return "Unsupported Java version: '$1$'. Java 11 or higher required.";
-	case 19:
-	    return "Model object could not be instantiated: '$1$'.";
-	case 20:
-	    return "Model object could not be accessed: '$1$'.";
-	case 21:
-	    return "??Rule name '$1$' is not valid. The rule is ignored.";
-	case 22:
-	    return "??Reference model '$1$' could not be loaded and is ignored.";
-	case 23:
-	    return "Could not create temporary directory for ShapeChange run with read/write access at: $1$.";
+//	case 1:
+//	    return "Unable to get a document builder factory.";
+//	case 2:
+//	    return "XML Parser was unable to be configured.";
+//	case 3:
+//	    return "Invalid XMI file.";
+//	case 5:
+//	    return "Exactly only element <XMI> expected.";
 
-	case 30:
+
+//	case 8:
+//	    return "Exactly one element <XMI.metamodel> expected.";
+	case 9: // used by supertype class
+	    return "Class '$1$' is not associated with a package.";
+	case 11: // used by supertype class
+	    return "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
+	
+
+//	case 12:
+//	    return "No application schema found.";
+//	case 13:
+//	    return "Application schema '$1$' not found.";
+//	case 16:
+//	    return "The XMI file is not associated with a DTD. The DTD is required for validating and processing the XMI file.";
+	case 18: //xx
+	    return "Unsupported Java version: '$1$'. Java 11 or higher required.";
+	case 19: //AAATools Katalog.java
+	    return "Model object could not be instantiated: '$1$'.";
+	case 20: //AAATools Katalog.java
+	    return "Model object could not be accessed: '$1$'.";
+	case 21: // used in supertype class
+	    return "??Rule name '$1$' is not valid. The rule is ignored.";
+	case 22: //AAATools Katalog.java
+	    return "??Reference model '$1$' could not be loaded and is ignored.";
+//	case 23:
+//	    return "Could not create temporary directory for ShapeChange run with read/write access at: $1$.";
+
+	case 30: //xxxxxx
 	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";
-	case 31:
+	case 31: //xxxx
 	    return "Enterprise Architect repository file named '$1$' not found";
-	case 32:
+	case 32: //xx
 	    return "Could not create directory $1$";
-	case 33:
-	    return "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
-	case 34:
-	    return "Could not delete directory $1$";
-	case 35:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
-	case 36:
-	    return "??The excel spreadsheet with SBVR rules was not found at file location '$1$'.";
-	case 37:
-	    return "??Loaded SBVR rules from excel spreadsheet for schema '$1$'.";
-	case 38:
+//	case 37:
+//	    return "??Loaded SBVR rules from excel spreadsheet for schema '$1$'.";
+	case 38: //xxx
 	    return "Encountered First Order Logic constraint with source type '$1$', parsing of which is not supported yet. A First Order Logic expression cannot be created.";
-	case 39:
+	case 39: //xxx
 	    return "Context: constraint '$1$' in class '$2$'.";
 
-	case 40:
-	    return "Microsoft Access Database named '$2$' cannot be opened. JDBC message is: '$1$'";
-	case 41:
-	    return "Microsoft Access Database file named '$1$' not found";
-	case 42:
-	    return "Error reading from Microsoft Access Database '$2$'.  Error message is: '$1$'";
-	case 43:
-	    return "Connecting to $1$";
-	case 44:
-	    return "Connected to $1$";
-	case 45:
-	    return "Starting reading $1$";
-	case 46:
-	    return "Finished reading $1$";
-
-	case 50:
+//	case 40:
+//	    return "Microsoft Access Database named '$2$' cannot be opened. JDBC message is: '$1$'";
+//	case 41:
+//	    return "Microsoft Access Database file named '$1$' not found";
+//	case 42:
+//	    return "Error reading from Microsoft Access Database '$2$'.  Error message is: '$1$'";
+	
+	case 50: // used in StereotypeNormalizer - in static context
 	    return "Element '$1$' has the following stereotype(s) in the input model: '$2$'.";
-	case 51:
+	case 51: // used in StereotypeNormalizer - in static context
 	    return "Stereotype '$2$' of element '$1$' normalized to '$3$'.";
-	case 52:
+	case 52: // used in StereotypeNormalizer - in static context
 	    return "Well-known stereotype '$2$' added to element '$1$'.";
-	case 53:
+	case 53: // used in StereotypeNormalizer - in static context
 	    return "No well-known stereotype found for stereotype '$2$' of element '$1$'.";
-	case 54:
+	case 54: // used in StereotypeNormalizer - in static context
 	    return "Element '$1$' has $2$ (well-known or additional) stereotype(s): '$3$'";
-	case 55:
-	    return "After taking into account data types and enumerations modelled without the use of stereotypes is element '$1$' treated as having $2$ well-known stereotype(s): '$3$'";
-	case 56:
+	case 56: // used in StereotypeNormalizer - in static context
 	    return "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '$2$' is added to element '$1$'.";
-	case 57:
+	case 57: // used in StereotypeNormalizer - in static context
 	    return "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' that stereotype is allowed. Thus stereotype '$2$' is added to element '$1$'.";
-
-	case 100:
+	
+	case 100: //xxxxxxx
 	    return "??The '$1$' with ID '$2$' has no name. The ID is used instead.";
-	case 101:
+	case 101: // used by supertype class
 	    return "??Application schema '$1$' with ID '$2$' is not associated with an XML Schema document. A default name is used: '$3$'.";
-	case 102:
-	    return "";
-	case 103:
-	    return "??The association with name '$1$' and ID '$2$' does not have 2 connections: $3$ connections. All Roles will be ignored.";
-	case 104:
+	case 104: // used by supertype class
 	    return "??The supertypes of class '$1$' are of different categories or the stereotype of the class cannot be determined. This is not supported, the class is ignored.";
-	case 105:
+	case 105: // used by supertype class
 	    return "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The lower multiplicity limit is smaller than in the supertype '$3$'.";
-	case 106:
+	case 106: // used by supertype class
 	    return "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The upper multiplicity limit is higher than in the supertype '$3$'.";
-	case 107:
+	case 107: //xx
 	    return "??The property '$1$' in class '$2$' has a sequence number that is already in use for another property ($3$) which will be overwritten.";
-	case 108:
-	    return "??The class '$1$' is modelled as a feature or data type, but has at least one supertype of a different category. The supertype is ignored.";
-	case 109:
-	    return "??The class '$1$' is modelled as a feature or data type, but has more than one supertype of the same kind. All but one (arbitrary) supertypes are ignored.";
-	case 110:
+	case 108: // used by supertype class
+	    return "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has a supertype of a different category ('$2$'). The supertype may be ignored by some targets (e.g. the XmlSchema target).";
+	case 109: // used by supertype class
+	    return "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has more than one supertype of the same kind. Some targets (e.g. the XmlSchema target) ignore all but one (arbitrary) supertype.";
+	case 110: //xxxx
 	    return "??A target could not be created for schema '$1$'. This target is supported only for GML versions 3.2 and later.";
-	case 111:
+	case 111: // used in Main - in static context
 	    return "??Missing argument to '$1$' option.";
-	case 115:
+	case 115: // used by supertype class
 	    return "??The class '$1$' is modelled as an interface, but has supertypes that are instantiable. The supertype relationships are ignored.";
-	case 116:
-	    return "Target object element(s) missing in property type for property '$1$'.";
-	case 117:
+	case 117: //xx
 	    return "??No XML Schema type for type '$1$' is defined. Only object and data types are supported.";
-	case 119:
-	    return "No element for type '$1$' is defined. Only object and data types are represented by elements.";
-	case 121:
+	case 121: //xx
 	    return "Base type '$1$' could not be mapped. Missing base type in complex type '$2$'.";
-	case 122:
-	    return "The type with the name '$1$' has no tagged value 'base' or valid supertype and cannot be mapped to a basic type.";
-	case 123:
-	    return "The type with the name '$1$' has no ID and cannot be mapped to a basic type.";
-	case 124:
-	    return "Failed to create basic type '$1$'.";
-	case 125:
+	case 125: // used by supertype class
 	    return "The class '$1$' is an enumeration. Generalization relationships are not supported for these classes. All such relationships are ignored.";
-	case 126:
+	case 126: //xx
 	    return "Failed to create enumeration type '$1$'.";
-	case 127:
+	case 127: // used by supertype class
 	    return "The class '$1$' is a codelist. Generalization relationships are not supported for these classes. All such relationships are ignored.";
-	case 128:
-	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML attribute, but the type is not a simple type.";
-	case 129:
-	    return "Union '$1$' as the value type of '$2$' could not be mapped as it does not contain the expected number of exactly one property to be encoded in the application schema.";
-	case 130:
-	    return "No type can be provided for the property '$1$'.";
-	case 131:
+	case 131: //xxxx
 	    return "??The type '$2$' of property '$1$' was not found.";
-	case 132:
+	case 132: //xx
 	    return "The class '$1$' is referenced, but is not part of any schema in the model nor is it mapped to a well-known XML Schema type. The class is ignored.";
-	case 133:
+	case 133: //xxx
 	    return "One or more errors encountered in OCL constraint in $3$ '$1$' : '$2$' ...";
-	case 134:
+	case 134: //xxx
 	    return "Line/column(s) $1$: $2$";
-	case 135:
+	case 135: //xxx
 	    return "??The type of property '$1$' was not found by id, only by name (fixed broken type definition).";
-	case 136:
+	case 136: //xx
 	    return "The enumeration element with ID '$1$' in class '$2$' contains an empty string as value.";
-	case 137:
-	    return "Property with id '$1' and name '$2' has no type.";
-	case 138:
-	    return "Property with id '$1' and name '$2' has a type with no name.";
-	case 139:
+	case 139: //xxx
 	    return "Cannot add properties of type '$1' in schema definitions since the type definition is not part of the model.";
-	case 140:
-	    return "Unknown value for $1: $2";
-	case 141:
-	    return "The class '$1$' referenced from class '$2$' is not part of any package nor is it mapped to a well-known XML Schema type. The class is ignored.";
-	case 142:
+	case 140: // used by supertype class
+    	    return "Unknown value for $1: $2";
+    	case 142: // used by supertype class
 	    return "Class '$1$' cannot be suppressed, as no direct or indirect, non-abstract supertype exists that is not suppressed.";
-	case 143:
+	case 143: // used by supertype class
 	    return "Class '$1$' cannot be suppressed, as it has a non-suppressed subtype '$2$'.";
-	case 144:
+	case 144: // used by supertype class
 	    return "Class '$1$' cannot be suppressed, as it add at least one property.";
-	case 145:
-	    return "ADE class '$1$' cannot be suppressed, as it has no supertype.";
-	case 146:
+	case 146: // used by supertype class
 	    return "??Schema '$1$' is missing tagged value '$2$'.";
-	case 147:
+	case 147: // used by supertype class
 	    return "??Package '$1$' has tagged value '$2$', but is not an application schema.";
-	case 148:
-	    return "??Property '$2$' of class '$1$' is not a composition, but has a data type as its value: '$3$'.";
-	case 149:
+	case 148: // used by supertype class
+    	    return "??Property '$2$' of class '$1$' is not a composition, but has a data type as its value: '$3$'.";
+	case 149: //xx
 	    return "??Name of '$1$' '$2$' includes invalid characters.";
-	case 150:
+	case 150: // used by supertype class
 	    return "??Schema '$1$' has dummy tagged value '$2$': '$3$'.";
-	case 151:
+	case 151: // used by supertype class
 	    return "??Documentation of schema '$1$' is missing the separator '$2$'.";
-	case 152:
+	case 152: // used by supertype class
 	    return "??Documentation of class '$1$' is missing the separator '$2$'.";
-	case 153:
+	case 153: // used by supertype class
 	    return "??Documentation of property '$1$' is missing the separator '$2$'.";
-	case 154:
-	    return "??No rule to name the '$1$' of class '$2$' is configured. Please check the current configuration.";
-	case 155:
-	    return "??No rule for a choice/sequence/all container for class '$1$' is configured, sequence is used. Please check the current configuration.";
-	case 156:
-	    return "??Failed to create enumeration type '$1$EnumerationType'.";
-	case 157:
-	    return "??Class of property '$1$' cannot be determined. The property is ignored.";
-	case 158:
-	    return "??MapEntry contains empty mapping target. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
-	case 159:
+	case 159: // used by supertype class
 	    return "??Package '$1$' has a dependency, but is not an application schema.";
-	case 160:
+	case 160: // used by supertype class
 	    return "??Package '$1$' is the supplier of a dependency to package '$2$', but is not an application schema.";
-	case 161:
+	case 161: // used by supertype classes
 	    return "??$1$ with id '$2$' is referenced, but cannot be found.";
-	case 162:
+	case 162: // used by supertype class
 	    return "??XML Schema document name '$1$' is used for more than one schema package.";
-	case 163:
+	case 163: // used by supertype class
 	    return "??Class name '$1$' is used more than once in application schema '$2$'.";
-	case 164:
+	case 164: // used by supertype class
 	    return "??Rule '$1$' is unknown, but referenced in the ShapeChange source code. This is a system error.";
-	case 166:
-	    return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
-	case 167:
+	case 167: // used by supertype class
 	    return "XML Schema document name '$1$' does not contain the .xsd file extension.";
-	case 168:
+	case 168: // used by supertype class
 	    return "??The property '$1$' in class '$2$' has no sequence number.";
-	case 169:
-	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML Schema list attribute, but the type '$2$' is not a simple type.";
-	case 170:
-	    return "??The property '$1$' cannot be made an array propery as it is not restricted to inline content. Set 'inlineOrByReference' to 'inline' on the property.";
-	case 171:
+	case 171: //xx
 	    return "XML Schema document with name '$1$' could not be created, invalid filename.";
-	case 172:
-	    return "??The property '$1$' cannot be made an array propery as the type map does not specify an XML element for type '$2$'.";
-	case 173:
-	    return "??The property '$1$' cannot be made an array propery as the type '$2$' is not represented by an object element in XML.";
-	case 174:
-	    return "??MapEntry contains mapping target '$1$' from unknown schema. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
-	case 175:
-	    return "??'$1$' is a complex type with simple content which cannot be used in a qualifier. 'string' is used instead.";
-	case 176:
-	    return "??A qualifier has no type. 'string' is used instead.";
-	case 177:
-	    return "??A qualifier has type '$1$' which could not be identified unambiguously in model. 'string' is used instead.";
-	case 178:
-	    return "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
-	case 179:
-	    return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
-	case 180:
-	    return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
-	case 181:
+	case 181: // used by supertype class
 	    return "??Encoding rule $1$ is specified as default encoding rule for platform $2$ but is not configured.";
 
-	case 200:
+	case 200: // used by supertype class
 	    return "??Tagged value '$1$' missing in class '$2$'.";
-	case 201:
+	case 201: // used by supertype class
 	    return "??Tagged value '$1$' has incorrect value '$3$' in class '$2$'.";
-	case 202:
-	    return "??Tagged value '$1$' missing in property '$2$'.";
-	case 203:
+	case 203: // used by supertype class
 	    return "??Tagged value '$1$' has incorrect value '$3$' in property '$2$'.";
-	case 204:
+	case 204: // used by supertype class
 	    return "??Outdated tagged value '$1$' used in property '$2$'.";
 
-	// FeatureCatalogue related messages (TBC)
-	case 301:
+	case 301: //xxx
 	    return "File '$1$' is not readable, processing of $2$ is skipped.";
-	case 303:
-	    return "Warning while transforming '$1$'. Message: $2$";
-	case 304:
+	case 304: //xx
 	    return "Error while transforming '$1$'. Message: $2$";
-	case 305:
-	    return "Fatal error while transforming '$1$'. Message: $2$";
-	case 306:
-	    return "XSLFO-File '$1$' does not exist, PDF generation is skipped.";
-	case 307:
+	case 307: //xx
 	    return "File '$1$' is not writable, processing of $2$ is skipped.";
-	case 308:
-	    return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
-
-	case 400:
+	
+	case 400: //xxxxxxxxxx
 	    return "Context: $1$ '$2$'";
 
 	// 600 - 699 Messages known to be used by multiple targets
-	case 600:
+	case 600: //xxxxxx
 	    return "File could not be deleted. Exception message: '$1$'.";
-	case 601:
+	case 601: //xxxx
 	    return "Directory named '$1$' does not exist or is not accessible.";
 
 	/*
@@ -1098,128 +1001,63 @@ public class ShapeChangeResult {
 	 * subtypes use message numbers not defined by InfoImpl and call
 	 * InfoImpl.message() to see if a code is covered there.
 	 */
-	case 701:
+	case 701: // used by supertype class
 	    return "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
-	case 702:
+	case 702: // used by supertype class
 	    return "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
-	case 703:
-	    return "Multiple values were requested for descriptor '$1$', but the source '$2$' specified in the configuration only supports single values. No values have been returned.";
-	case 704:
+	case 704: // used by supertype class
 	    return "??Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
-	case 790:
-	    return "Context: class InfoImpl. Element: $1$. Name: $2$";
-	case 791:
-	    return "Context: class InfoImpl (subtype: PropertyInfo). Name: $1$. In class: $2$";
+	case 790: // used by supertype class
+	    return "Context: class InfoImpl. Model element: $1$";
+	case 791: // used by supertype class
+	    return "Context: class InfoImpl (subtype: PropertyInfo). Model element: $1$";
 
-	case 1000:
-	    return "Testing UML version 1.4.";
-	case 1001:
-	    return "Class '$1$' with ID '$2$' cannot be identified as being part of any package. The package is probably ignored, for example, because it carries an unsupported stereotype. The ID of the missing package is: '$3$'";
-	case 1002:
+	case 1002: // used by supertype class
 	    return "Restriction of property '$1$' in class '$2$' from supertype '$3$'.";
-	case 1003:
-	    return "The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
-	case 1004:
+	case 1003: //xxx
+	    return "??The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
+	case 1004: // used by supertype class
 	    return "Class '$1$' has an unknown category, an object is assumed.";
-	case 1005:
-	    return "Stereotype <<$1$>> not supported for UML model elements of type '$2$'.";
-	case 1006:
-	    return "The $1$ '$2$' will be ignored.";
-	case 1007:
-	    return "The discriminator for the UML generalization with ID '$1$' is not blank. This genralization is ignored.";
-	case 1008:
-	    return "Property '$1$' with type of ID '$2$' has hidden labels: '$3$'";
-	case 1009:
-	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
-	case 1010:
-	    return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
-	case 1011:
-	    return "The constraint '$1$' cannot be associated with a modeling object (ID '$2$').";
-
-	case 10000:
-	    return "Added tagged value '$1$' for element with ID '$2$' with value: '$3$'.";
-	case 10001:
-	    return "The package with ID '$1$' and name '$2$' was created. Namespace: '$3$'.";
-	case 10002:
-	    return "The association end with name '$1$' is the reverse property to '$2$'.";
-	case 10003:
-	    return "Checked class '$1$', category '$2$', result '$3$'";
-	case 10004:
+	
+	case 10003: // used by supertype class
+	    return "Checked class '$1$', category '$2$', result '$3$'"; //x
+	case 10004: // used by supertype class
 	    return "Checking overloading. Class = '$1$'; current class = '$2$'.";
-	case 10005:
+	case 10005: //xxx
 	    return "Generating GML dictionaries with definitions for application schema '$1$'.";
-	case 10006:
+	case 10006: //xx
 	    return "Processing OCL constraint in class '$1$': '$2$'.";
-	case 10007:
-	    return "Constraint is of type '$1$'.";
-	case 10008:
-	    return "Target type: '$1$'.";
-	case 10009:
-	    return "Property: '$1$'.";
-	case 10010:
-	    return "Value condition: '$1$' '$2$' '$3$'";
-	case 10011:
-	    return "The operation with ID '$1$' and name '$2$' has the following parameter: '$3$'";
-	case 10012:
-	    return "Generating XML Schema for application schema '$1$'.";
-	case 10013:
-	    return "The '$1$' with ID '$2$' and name '$3$' was created.";
-	case 10014:
-	    return "Processing class '$1$'.";
-	case 10015:
-	    return "Class '$1$' is a service.";
-	case 10016:
-	    return "Processing class '$1$', rule '$2$'.";
-	case 10017:
-	    return "Creating XSD document '$1$' for package '$2$'.";
-	case 10018:
-	    return "Rose Bug Fix for Duplicate Global Data Types: DataType '$1$' replaced by '$2$'.";
-	case 10019:
-	    return "Added stereotype '$1$' for element with ID '$2$'.";
-	case 10020:
-	    return "Application schema found, package name: '$1$'";
-	case 10021:
-	    return "Import to namespace '$1$' added.";
-	case 10022:
-	    return "Found: '$1$'";
-	case 10023:
+	case 10013: //xxxxx
+	    return "The '$1$' with ID '$2$' and name '$3$' was created."; //x
+	case 10023: //xx
 	    return "Processing local properties of class '$1$'.";
-	case 10024:
+	case 10024: //xx
 	    return "OCL syntax tree: '$1$'";
-	case 10025:
+	case 10025: //xx
 	    return "OCL comment: '$1$'";
-
-	case 20103:
+	    
+	case 20103: //xxxxxxxxxx
 	    return "---------- now processing: $1$ ----------";
 
 	// common profiling related messages
-	case 20201:
-	    return "Profile identifier is not well-formed.";
-	case 20206:
-	    return "Error parsing component of '$1$' configuration parameter: $2$";
-	case 20216:
-	    return "Context: model element: '$1$'";
-	case 20217:
-	    return "Context: parsing message: '$1$'";
-	case 20218:
-	    return "Context: profiles string: '$1$'";
-	case 20221:
-	    return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
 
-	case 30800:
+	case 20216: //xxx
+	    return "Context: model element: '$1$'";
+	case 20217: //xxx
+	    return "Context: parsing message: '$1$'";
+	case 20218: //xxx
+	    return "Context: profiles string: '$1$'";
+
+	case 30800: //xxxxxxxxxx
 	    return "(Generic model element reader) Unexpected start element found by $1$: '$2$'.";
-	case 30801:
+	case 30801: //xxxxxxxxxxx
 	    return "(Generic model element reader) Unexpected end element found by $1$: '$2$'.";
-	case 30802:
-	    return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
-	case 30803:
-	    return "(Generic model element reader) Exception occurred while reading the model XML. Message is: $1$.";
-	case 30804:
+	case 30804: //x
 	    return "(Generic model element reader) SCXML producer: $1$, version: $2$";
 
-	case 1000000:
+	case 1000000: // used by supertype class
 	    return "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";
-	case 1000001:
+	case 1000001: // used by supertype class
 	    return "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing.";
 	    
 	default:

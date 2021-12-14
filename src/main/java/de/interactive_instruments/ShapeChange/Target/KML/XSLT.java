@@ -44,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
@@ -329,7 +330,7 @@ public class XSLT implements Target {
 
 	e2 = kmlDocument.createElementNS(NS_KML, "name");
 	s = pi.taggedValue("name");
-	if (s != null && s.length() > 0)
+	if (StringUtils.isNotBlank(s))
 	    e2.appendChild(kmlDocument.createTextNode(s.trim()));
 	else
 	    e2.appendChild(kmlDocument.createTextNode(pi.name()));
@@ -392,7 +393,7 @@ public class XSLT implements Target {
 
 	e2 = kmlDocument.createElementNS(NS_KML, "name");
 	String s = pix.taggedValue("name");
-	if (s != null && s.length() > 0)
+	if (StringUtils.isNotBlank(s))
 	    e2.appendChild(kmlDocument.createTextNode(s.trim()));
 	else
 	    e2.appendChild(kmlDocument.createTextNode(pix.name()));
@@ -569,10 +570,10 @@ public class XSLT implements Target {
 
     private String kmlReference(ClassInfo ci) {
 	String s = ci.taggedValue("kmlReference");
-	if (s == null || s.length() == 0) {
+	if (StringUtils.isBlank(s)) {
 	    s = options.parameter(this.getClass().getName(), PARAM_DEFAULT_REFERENCE);
 	}
-	if (s != null && s.length() > 0) {
+	if (StringUtils.isNotBlank(s)) {
 	    return s.trim();
 	}
 	return null;
@@ -580,7 +581,7 @@ public class XSLT implements Target {
 
     private String kmlStyleUrl(ClassInfo ci) {
 	String s = ci.taggedValue("kmlStyleUrl");
-	if (s != null && s.length() > 0) {
+	if (StringUtils.isNotBlank(s)) {
 	    return s.trim();
 	}
 	return kmlStyleUrl(ci, ci.pkg());
@@ -603,7 +604,7 @@ public class XSLT implements Target {
 	    return defaultKmlStyleUrl(ci);
 
 	String s = pi.taggedValue("kmlStyleUrl");
-	if (s != null && s.length() > 0) {
+	if (StringUtils.isNotBlank(s)) {
 	    return s.trim();
 	}
 	if (pi == null || pi.isAppSchema() || pi.owner() == null) {
@@ -631,14 +632,14 @@ public class XSLT implements Target {
 
     private String stringType(ClassInfo ci) {
 	String s = ci.taggedValue("name");
-	if (s != null && s.length() > 0)
+	if (StringUtils.isNotBlank(s))
 	    return s.trim();
 	return ci.name();
     }
 
     private String stringProperty(PropertyInfo propi) {
 	String s = propi.taggedValue("name");
-	if (s != null && s.length() > 0)
+	if (StringUtils.isNotBlank(s))
 	    return s.trim();
 	return propi.name();
     }
@@ -754,7 +755,7 @@ public class XSLT implements Target {
 	e5 = document.createElementNS(NS_KML, "name");
 	e4.appendChild(e5);
 	s = ci.taggedValue("name");
-	if (s != null && s.length() > 0) {
+	if (StringUtils.isNotBlank(s)) {
 	    e5.appendChild(document.createTextNode(s));
 	} else {
 	    e6 = document.createElementNS(NS_XSL, "value-of");
@@ -1049,7 +1050,7 @@ public class XSLT implements Target {
 	for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {
 	    PropertyInfo propi = j.next();
 	    s = propi.taggedValue(tag);
-	    if (s != null && s.toLowerCase().equals("true"))
+	    if (StringUtils.equalsIgnoreCase(s,"true"))
 		return propi.qname();
 
 	    // TODO temporary settings

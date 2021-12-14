@@ -1,0 +1,46 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Executing_ShapeChange]]
+= Executing ShapeChange
+
+ShapeChange is executed on the command line by calling
+
+_java -jar ShapeChange-X.Y.Z.jar (options) modelfile_
+
+with 'X.Y.Z' replaced with the version identifier of the ShapeChange
+distribution you are using and the following options:
+
+_-c cfgfile_
+
+The location of the main configuration file. XInclude is supported and
+can be used to modularise the confguration. The
+default is https://shapechange.net/resources/config/minimal.xml.
+
+_-x val rep_
+
+If a configuration file contains a parameter with a value of 'val' then
+the value will be replaced by 'rep'. This option may occur
+multiple times. Example: -x '$dir$' './result/xsd' would
+replace any parameter values '$dir$' in the configuration file with
+'./result/xsd'.
+
+_-d_
+
+Invokes the user interface.
+
+_-h_
+
+A help screen.

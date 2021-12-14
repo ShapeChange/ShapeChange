@@ -35,9 +35,11 @@ package de.interactive_instruments.ShapeChange.Model.Xmi10;
 import java.util.List;
 import java.util.Vector;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -54,7 +56,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfoImpl;
 
 public class PropertyInfoXmi10 extends PropertyInfoImpl
-		implements PropertyInfo {
+		implements PropertyInfo, MessageSource {
 	// Data
 	protected Element prp = null;
 	protected Xmi10Document doc = null;
@@ -166,11 +168,11 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		}
 
 		if (ti.id == null) {
-			doc.result.addError(null, 137, id(), name());
+			doc.result.addError(this, 137, id(), name());
 			return ti;
 		}
 		if (ti.name == null) {
-			doc.result.addError(null, 138, id(), name());
+			doc.result.addError(this, 138, id(), name());
 			return ti;
 		}
 
@@ -390,7 +392,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		associationInfo = ai;
 		id = prp.getAttribute("xmi.id");
 		String s = doc.taggedValue(id, "sequenceNumber");
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			sequenceNumber = new StructuredNumber(s);
 		} else {
 			sequenceNumber = attribute
@@ -449,5 +451,20 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 	public boolean isOwned() {
 		// TODO
 		return false;
+	}
+	
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 137:
+		    return "Property with id '$1' and name '$2' has no type.";
+		case 138:
+		    return "Property with id '$1' and name '$2' has a type with no name.";
+		
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
 	}
 }

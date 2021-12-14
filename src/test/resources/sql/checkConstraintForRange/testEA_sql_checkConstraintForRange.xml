@@ -36,7 +36,7 @@
 	<targets>
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRule1" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/checkConstraintForRange/ddl_postgresql" />
 			<targetParameter name="createReferences" value="true" />
@@ -44,7 +44,7 @@
 			<targetParameter name="eaAuthor" value="Test Author"/>
 			<targetParameter name="deletePreExistingDataModelPackage" value="true" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRule1" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-databaseModel" />
 					<rule name="rule-sql-prop-check-constraint-for-range" />
@@ -56,13 +56,13 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
 			<targetParameter name="databaseSystem" value="Oracle" />
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRule2" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/checkConstraintForRange/ddl_oracle" />
 			<targetParameter name="idColumnName" value="id" />
 			<targetParameter name="createReferences" value="true" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRule2" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-prop-check-constraint-for-range" />
 				</EncodingRule>
@@ -73,12 +73,12 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
 			<targetParameter name="databaseSystem" value="SQLServer" />
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRule3" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/checkConstraintForRange/ddl_sqlserver" />
 			<targetParameter name="createReferences" value="true" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRule3" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-prop-check-constraint-for-range" />
 				</EncodingRule>
@@ -89,12 +89,12 @@
 		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
 			mode="enabled">
 			<targetParameter name="databaseSystem" value="SQLite" />
-			<targetParameter name="defaultEncodingRule" value="customRule" />
+			<targetParameter name="defaultEncodingRule" value="customRule4" />
 			<targetParameter name="outputDirectory"
 				value="testResults/sql/checkConstraintForRange/ddl_sqlite" />
 			<targetParameter name="createReferences" value="true" />
 			<rules>
-				<EncodingRule name="customRule" extends="sql">
+				<EncodingRule name="customRule4" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-prop-check-constraint-for-range" />
 				</EncodingRule>

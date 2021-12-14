@@ -6,7 +6,7 @@
   <element name="FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeAType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="geometry">P,S</taggedValue>
+        <sc:taggedValue tag="geometry">P,S</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -44,7 +44,7 @@
   <element name="FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeCType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="geometry">C,P,S</taggedValue>
+        <sc:taggedValue tag="geometry">C,P,S</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>
@@ -67,7 +67,7 @@
   <element name="Type" substitutionGroup="gml:AbstractGML" type="cc:TypeType">
     <annotation>
       <appinfo>
-        <taggedValue xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo" tag="geometry">C</taggedValue>
+        <sc:taggedValue tag="geometry">C</sc:taggedValue>
       </appinfo>
     </annotation>
   </element>

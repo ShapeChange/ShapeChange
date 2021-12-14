@@ -42,8 +42,10 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.platform.commons.util.StringUtils;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
@@ -60,7 +62,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /** Information about an UML class. */
-public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
+public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageSource {
 
 	// Data
 	protected String id;
@@ -156,7 +158,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 		}
 		PackageInfo pkg = doc.fPackages.get(propId);
 		if (pkg == null) {
-			doc.result.addInfo(null, 1001, name(), id, propId);
+			doc.result.addInfo(this, 1001, name(), id, propId);
 		}
 		return pkg;
 	};
@@ -339,7 +341,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 		// Fetching constraints from tagged value named 'oclExpressions' ...
 		HashMap<String, OclConstraintXmi10> namefilter = new HashMap<String, OclConstraintXmi10>();
 		String tv = doc.taggedValue(id, "oclExpressions");
-		if (tv != null) {
+		if (StringUtils.isNotBlank(tv)) {
 			// Find first inv [name] : pattern
 			Pattern pat = Pattern.compile("inv\\s*\\w*\\s*:");
 			Matcher mat = pat.matcher(tv);
@@ -386,4 +388,16 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo {
 		return null;
 	}
 
+	@Override
+	public String message(int mnr) {
+
+		switch (mnr) {
+
+		case 1001:
+		    return "Class '$1$' with ID '$2$' cannot be identified as being part of any package. The package is probably ignored, for example, because it carries an unsupported stereotype. The ID of the missing package is: '$3$'";
+		
+		default:
+		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		}
+	}
 }

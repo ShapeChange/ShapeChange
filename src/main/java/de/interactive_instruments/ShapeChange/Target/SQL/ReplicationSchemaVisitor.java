@@ -152,6 +152,7 @@ public class ReplicationSchemaVisitor implements StatementVisitor, MessageSource
 	targetNamespace = SqlDdl.repSchemaTargetNamespace + SqlDdl.repSchemaTargetNamespaceSuffix;
 	addAttribute(root, "targetNamespace", targetNamespace);
 	addAttribute(root, "xmlns:" + SqlDdl.repSchemaTargetXmlns, targetNamespace);
+	addAttribute(root, "xmlns:" + Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 
 	if (options.getCurrentProcessConfig().parameterAsString(TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
 		true) == null) {
@@ -395,11 +396,11 @@ public class ReplicationSchemaVisitor implements StatementVisitor, MessageSource
 
 	    Element eAppInfo = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 
-	    Element eGeomType = document.createElementNS(Options.SCAI_NS, "geometryType");
+	    Element eGeomType = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":geometryType");
 	    eGeomType.appendChild(document.createTextNode(geometryType));
 	    eAppInfo.appendChild(eGeomType);
 
-	    Element eSrid = document.createElementNS(Options.SCAI_NS, "srid");
+	    Element eSrid = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":srid");
 	    eSrid.appendChild(document.createTextNode("" + SqlDdl.srid));
 	    eAppInfo.appendChild(eSrid);
 

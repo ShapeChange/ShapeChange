@@ -1,0 +1,1006 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Feature_Catalogue]]
+= Feature Catalogue
+
+[[Overview]]
+== Overview
+
+ISO 19110:2005 specifies a methodology for classifying and organizing
+feature types into a feature catalogue.  ShapeChange contains a target
+for generating an ISO 19110-compliant feature catalogue from an
+application schema (or one of its contained packages).
+
+The Feature Catalogue target can produce a feature catalogue in the
+following formats:
+
+* HTML (single or multi page)
+* DOCX
+
+The output is handled "under the hood" by XSLT stylesheets and
+transformations.
+
+[[Configuration]]
+== Configuration
+
+[[Example]]
+=== Example
+
+The <Target> element definition for the Feature Catalogue target is a
+standard ShapeChange target. An example from the generation of a feature
+catalogue for INSPIRE application schemas is given below.
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue" mode="enabled">
+ <targetParameter name="outputDirectory" value="result/fc"/>
+ <targetParameter name="outputFilename" value="FC_INSPIRE"/>
+ <targetParameter name="package" value=""/>
+ <targetParameter name="inheritedProperties" value="false"/>
+ <targetParameter name="changeInfo" value="false"/>
+ <targetParameter name="outputFormat" value="HTML"/>
+ <targetParameter name="name" value="'INSPIRE application schemas'"/>
+ <targetParameter name="scope" value="This feature catalogue gives an informative overview of the spatial object types and data types defined in the INSPIRE data specifications. These types are used by data providers for the exchange and classification of spatial objects from data sets that relate to one or several INSPIRE spatial data themes.[NEWLINE]For the normative requirements, please refer to the &lt;a href='http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:EN:PDF'>COMMISSION REGULATION (EU) No 1089/2010 of 23 November 2010 on the interoperability of spatial data sets and services&lt;/a>. For a more detailed description of the application schemas, see the data specification guidance documents at &lt;a href='http://inspire.jrc.ec.europa.eu/index.cfm/pageid/2'>http://inspire.jrc.ec.europa.eu/index.cfm/pageid/2&lt;/a>.[NEWLINE]All application schemas for spatial data themes of Annex II or III are draft schemas."/>
+ <targetParameter name="versionNumber" value="n/a (each application schema is versioned separately)"/>
+ <targetParameter name="versionDate" value="March 2012"/>
+ <targetParameter name="producer" value="European Commission, INSPIRE Drafting Team 'Data Specifications' and Thematic Working Groups"/>
+ <targetParameter name="xsltPath" value="https://shapechange.net/resources/xslt"/>
+ <targetParameter name="xslhtmlFile" value="html.xsl"/>
+ <targetParameter name="featureTerm" value="Spatial Object"/>
+</Target>
+----------
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue._
+
+[[Parameters]]
+=== Parameters
+
+[[cssPath]]
+==== cssPath
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: (same as the directory referenced by the
+xref:./Feature_Catalogue.adoc#xsltPath[xsltPath]
+parameter)
+
++++Explanation+++: The path (without a trailing "/") where the
+stylesheet.css template for the creation of a frame-based HTML feature
+catalogue is located.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[docxStyle]]
+==== docxStyle
+
+(since v2.7.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "default"
+
++++Explanation+++: Defines how the DOCX feature catalogue shall be
+styled. Available options are:
+
+*default*
+
+* the name of the feature catalogue is displayed with style Heading 1
+* the names of the packages are displayed with style Heading 2
+* the names of feature types are displayed with style Heading 3
+
+*custom1*
+
+* Feature catalogues containing more than one application schema:
+** The name of the feature catalogue is displayed with style Title.
+** The names of the application schemas and any subpackages are
+displayed with style Heading 1.
+** The names of feature types are displayed with style Heading 2.
+* Feature catalogues containing one application schema:
+** The name of the feature catalogue is displayed with style Title.
+** If a version is defined for the application schema, it will replace
+the version of the feature catalogue that is typically defined via the
+configuration (via parameter
+xref:./Feature_Catalogue.adoc#versionNumber[versionNumber]).
+** The name of the application schema is not included.
+** A heading called "Overview and dependencies" is displayed with style
+Heading 1.
+*** NOTE: It is possible to
+xref:./Feature_Catalogue.adoc#Localization[localise]
+the name of this heading.
+** The names of any subpackages are also displayed with style Heading 1.
+** The names of feature types are displayed with style Heading 2.
+
+NOTE: Additional custom styles can be added in the future.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[docxTemplateFilePath]]
+==== docxTemplateFilePath
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++:
+https://shapechange.net/resources/templates/template.docx
+
++++Explanation+++: Path to the template for the conversion to docx.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[featureTerm]]
+==== featureTerm
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "Feature"
+
++++Explanation+++: The term to be used for a Feature (a different term
+can be substituted if necessary).
+
+NOTE: Usually this parameter will not be needed. It has been added to
+support INSPIRE, which does not use the term "feature" and uses "spatial
+object" instead.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeAlias]]
+==== includeAlias
+
+(includeAlias since v2.7.0, alternative name includeTitle since before
+v2.7.0)
+
++++Alias+++: includeTitle
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: true
+
++++Explanation+++: If set to 'false', the alias of a model element is
+not included in the feature catalogue.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeCodelistsAndEnumerations]]
+==== includeCodelistsAndEnumerations
+
+(since v2.9.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: Set to 'true' in order to represent code lists and
+enumerations as individual classes in frame-based HTML feature
+catalogues.
+
+NOTE: These types are typically not contained in feature catalogues. The
+documentation of attributes with such value types contains a table with
+the codes/enums.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeCodeListURI]]
+==== includeCodeListURI
+
+(since v2.2.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: true
+
++++Explanation+++: Indicates if the URI of code lists (available via
+tagged value 'codeList' or 'vocabulary') shall be encoded as hyperlink
+on the name of a code list type in the feature catalogue.
+
+Set to 'false' to disable this behavior (can be useful for example when
+the overall linking to external code lists is not ready for publication
+yet).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeDiagrams]]
+==== includeDiagrams
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: Indicates if diagrams shall be included to document
+model elements (
+xref:./Feature_Catalogue.adoc#Inclusion_of_UML_Diagrams[more information]).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[includeVoidable]]
+==== includeVoidable
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: true
+
++++Explanation+++: Indicates if information whether or not a property is
+voidable shall be included in the documentation of the property.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[inheritedConstraints]]
+==== inheritedConstraints
+
+(since v2.7.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: true
+
++++Explanation+++: By default, the list of constraints shown for a class
+include the constraints from the direct and indirect supertypes of that
+class (except for constraints that have been overwritten). To only show
+the constraints defined by the class, set this parameter to "false".
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[inheritedProperties]]
+==== inheritedProperties
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: If "true", all of a type's inherited properties will
+be output.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[javaOptions]]
+==== javaOptions
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Can be used to set options – especially 'Xmx' – for
+the invocation of the java executable identified via the parameter
+xref:./Feature_Catalogue.adoc#pathToJavaExecutable[pathToJavaExecutable].
+
+NOTE: When processing documents of 100Mbytes or more, it is recommended
+to allocate – via the Xmx parameter – at least 5 times the size of the
+source document.
+
+Example: "-Xmx6000m"
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[logoFilePath]]
+==== logoFilePath
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Path to an image file that shall be added to the
+feature catalogue. The image will be copied into a subfolder of the
+folder in which the feature catalogue will be created.
+
+NOTE: Only applies to HTML-based feature catalogues. For a DOCX feature
+catalogue, the logo can be added to the DOCX template (use parameter
+xref:./Feature_Catalogue.adoc#docxTemplateFilePath[docxTemplateFilePath]
+to define the path to the custom template).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[name]]
+==== name
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "unknown"
+
++++Explanation+++: The name to be used for this feature catalogue.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[noAlphabeticSortingForProperties]]
+==== noAlphabeticSortingForProperties
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: By default, properties of a class are listed
+alphabetically in the feature catalogue. If this parameter is set to
+'true', the properties are listed as defined by their 'sequenceNumber'
+tagged values.
+
+NOTE: This parameter is ignored if a diff is performed.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[outputDirectory]]
+==== outputDirectory
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: <the current run directory>
+
++++Explanation+++: The path to which the Feature Catalogue (XML) files
+will be written.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[outputFilename]]
+==== outputFilename
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: FeatureCatalogue
+
++++Explanation+++: The name of the output file without extension. The
+appropriate extension will be added depending on the output format.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[outputFormat]]
+==== outputFormat
+
++++Alias+++: _none_
+
++++Required / Optional+++: required
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Comma-separated list of the desired output formats.
+The possible values are:
+
+* HTML
+* FRAMEHTML
+** requires an XSLT 2.0 processor (set parameter
+xref:./Feature_Catalogue.adoc#xslTransformerFactory[xslTransformerFactory]
+accordingly)
+* DOCX
+** requires an XSLT 2.0 processor (set parameter
+xref:./Feature_Catalogue.adoc#xslTransformerFactory[xslTransformerFactory]
+accordingly)
+
+Case is unimportant.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[package]]
+==== package
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: <the entire application schema>
+
++++Explanation+++: The name of the UML package in the application schema
+which is to be output as a Feature Catalogue.
+
+The default is the entire application schema; this parameter should not
+be specified or be left blank, if this is desired.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[pathToJavaExecutable]]
+==== pathToJavaExecutable
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Path to a java executable (usually 64bit). This
+parameter should be used whenever the feature catalogue to produce will
+be very large (hundreds of megabytes to gigabytes). Set the options for
+execution – especially 'Xmx' – via the parameter
+xref:./Feature_Catalogue.adoc#javaOptions[javaOptions].
+
+Example: "C:/Program Files/Java/jdk1.8.0_45/bin/java.exe"
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[producer]]
+==== producer
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "unknown"
+
++++Explanation+++: The producer name.
+
+NOTE: The producer is a mandatory property of a feature catalogue
+according to ISO 19110.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[referenceModelFileNameOrConnectionString]]
+==== referenceModelFileNameOrConnectionString
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Provide information for accessing the reference model
+(for performing an
+xref:./Application_Schema_Differences.adoc[application
+schema diff]):
+
+* In case of a file, provide the path to it. The path can be relative to
+the working directory.
+* If the model is contained in a database or other kind of repository
+(e.g. an EA cloud service), provide the connection string.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[referenceModelType]]
+==== referenceModelType
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: A string describing the format of the reference model
+(for performing an
+xref:./Application_Schema_Differences.adoc[application
+schema diff]). The current options are:
+
+* *EA7*: an Enterprise Architect repository, supported are versions 7.5
+and later
+// * *GSIP*: a GSIP model contained in a Microsoft Access Database (MDB)
+* *SCXML*: a model in a ShapeChange specific XML format. The Model
+Export target can create SCXML from any model that was loaded by
+ShapeChange. Loading a model from (SC)XML is fast. It is significantly
+faster than reading the model from an EA repository. This is useful when
+processing the same model multiple times.
+* *XMI10*: a UML model in XMI 1.0 format
+
+NOTE: Since v2.9.0, it is also possible to provide the fully qualified
+name of a Java class that implements the Model interface (i.e.
+de.interactive_instruments.ShapeChange.Model.Model.java).
+
+NOTE: Loading a model from an EA repository using the 32bit EA API 
+and 32bit Java, or performing processing (input loading, a 
+transformation, or a target)  that accesses an EA repository 
+using this 32bit setup (EA API and Java), can only
+be executed with a limited amount of main memory (one or two gigabytes).
+Typically, this is not an issue. However, for very large models with
+hundreds of classes, and a processing workflow that greatly increases
+the size of the model (e.g. through copies of models created while
+flattening the model), this limitation can be significant. In such a
+case, a workaround is to load the model with 32bit Java from the EA
+repository, export it to SCXML, and then execute ShapeChange again using
+64bit Java and loading the model from SCXML.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[scope]]
+==== scope
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "unknown"
+
++++Explanation+++: Information on the scope of this feature catalogue.
+This may contain HTML markup and "[NEWLINE]" to separate paragraphs.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[versionDate]]
+==== versionDate
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "unknown"
+
++++Explanation+++: The version date for this feature catalogue.
+
+NOTE (since v2.7.0): If set to "now" (case will be ignored) then the
+current date will automatically be set by ShapeChange, formatted as ISO
+date time with offset (e.g. 2018-11-20T11:27:12.06+01:00).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[versionNumber]]
+==== versionNumber
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: "unknown"
+
++++Explanation+++: The version number for this feature catalogue.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[xsldocxFile]]
+==== xsldocxFile
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: docx.xsl
+
++++Explanation+++: Name of the XSLT script for converting to DOCX.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[xslframeHtmlFileName]]
+==== xslframeHtmlFileName
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: frameHtml.xsl
+
++++Explanation+++: Name of the XSLT script for converting to frame-based
+HTML.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[xslhtmlFile]]
+==== xslhtmlFile
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: html.xsl
+
++++Explanation+++: Name of the XSLT script for converting to HTML.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[xsltPath]]
+==== xsltPath
+
++++Alias+++: xsltPfad
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: https://shapechange.net/resources/xslt
+
++++Explanation+++: The path (without a trailing "/") where the required
+XSLT files are located.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[xslTransformerFactory]]
+==== xslTransformerFactory
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: org.apache.xalan.processor.TransformerFactoryImpl
+(used for XSLT 1.0 transformations)
+
++++Explanation+++: Identifies the XSLT processor implementation.
+
+In order to process XSLT 2.0 transformations (which some of the XSLTs
+require), this parameter must point to the implementation of an XSLT
+processor that is capable of XSLT 2.0. The recommended XSLT 2.0
+processor is Saxon-HE (home edition; open source):
+
+* net.sf.saxon.TransformerFactoryImpl
+** NOTE: Download the Saxon HE jar from the
+https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE[official maven
+repository]. Each release of ShapeChange uses a specific version of
+Saxon HE. The table in the
+xref:../../get started/Release_Notes.adoc#Overview[Release
+Notes] indicates which version is needed for the ShapeChange release
+that you are using. Copy the Saxon HE jar to the lib folder of your
+ShapeChange distribution.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+
+[[Documentation_of_tagged_values]]
+=== Documentation of tagged values
+
+A feature catalogue can include tagged values of model elements. By
+default, tagged values are not included. However, by setting the input
+parameter
+xref:../../get started/The_element_input.adoc#representTaggedValues[representTaggedValues],
+the user can define the tagged values that shall be included when a
+feature catalogue is generated.
+
+NOTE: In v2.8.0 and earlier, tagged values of enums and codes are not
+printed by ShapeChange. Since v2.9.0, ShapeChange adds these tagged
+values (if identified by the _representTaggedValues_ input parameter) to
+the temporary XML that is created as an intermediary step in the feature
+catalogue production workflow. The current XSLT scripts ignore this
+information. However, users can modify the scripts so that the tagged
+values are shown in a manner of their choosing. The xsl... parameters of
+the feature catalogue target can be used to inform ShapeChange about the
+modified scripts.
+
+[[Localization]]
+=== Localization
+
+ShapeChange can create feature catalogue output in different languages.
+
+[[Localization_Configuration]]
+==== Configuration
+
+The localization functionality introduces the following additional
+target parameters:
+
+[width="100%",cols="34%,33%,33%",]
+|===
+|*_Parameter Name_* |*_Default Value_* |*_Explanation_*
+
+|*lang* |en a|
+Identifier of the language to be used by the feature catalogue.Currently
+supported by ShapeChange:
+
+* en (English)
+* fr (French)
+* de (German)
+* nl (Dutch)
+
+Additional languages can be added in customized localizationMessages.xml
+files (see link:#Adding_Additional_Languages[Adding Additional
+Languages]).
+
+|*localizationMessagesUri* |If this parameter is not set in the
+configuration, ShapeChange assumes that the localizationMessages.xml
+file is contained in the same directory as the XSLT file used to create
+the feature catalogue (which is determined by the xsltPath target
+parameter). a|
+URI pointing to the localizationMessages.xml file, which contains a list
+of all messages required when creating the feature catalogue, in
+different languages. This file can be customized to support additional
+languages. Examples:
+
+* https://shapechange.net/resources/xslt/localizationMessages.xml
+* file:/C:/myfolder/myLocalizationMessages.xml
+
+Unless a customized message file shall be used for the creation of the
+feature catalogue this parameter does not need to be set.
+
+|*xslLocalizationUri* |If this parameter is not set in the
+configuration, ShapeChange assumes that the localization.xsl file is
+contained in the same directory as the XSLT file used to create the
+feature catalogue (which is determined by the xsltPath target
+parameter). |URI to the localization.xsl file.Unless a custom directory
+was chosen for the XSLT that creates the feature catalogue in a specific
+format (e.g. html or docx) this parameter does not need to be set.
+|===
+
+[[Adding_Additional_Languages]]
+==== Adding Additional Languages
+
+In order to add another language, create a local copy of the
+localizationMessages.xml (available
+https://shapechange.net/resources/xslt/localizationMessages.xml[here])
+and simply add a translation for each message, like this:
+
+[source,xml,linenumbers]
+----------
+<message id="fc.Abstract">
+    <text lang="en">Abstract</text>
+    <text lang="de">Abstrakt</text>
+    <text lang="fr">Abstrait</text>
+</message>
+----------
+
+The value of the *lang* Attribute is the value to be used in the lang
+target parameter.In order to configure French as the language, you would
+need to follow these steps:
+
+* Complete the translation of all messages in the
+localizationMessages.xml.
+* Add the targetParameter *localizationMessagesUri* to your
+configuration, pointing to the modified localizationMessages.xml.
+* Set the targetParameter *lang* to "fr".
+
+[[HTML]]
+== HTML
+
+There are two types of HTML output that ShapeChange can create: a single
+HTML page and frame-based HTML.
+
+[[Single_HTML_Page]]
+=== Single HTML Page
+
+In order to create a feature catalogue on a single HTML page, use 'HTML'
+as value of the *outputFormat* parameter.
+
+[[Application_Schema_Diff]]
+==== Application Schema Diff
+
+If the outputFormat is 'HTML' and the configuration of this target
+contains valid values for the parameters *referenceModelType* and
+*referenceModelFileNameOrConnectionString* then ShapeChange will perform
+a diff between the application schemas from the input model and the
+reference model.
+
+More details can be found
+xref:./Application_Schema_Differences.adoc[here].
+
+[[Frame-based_HTML]]
+=== Frame-based HTML
+
+A frame-based HTML feature catalogue is much like an API documentation
+for Java classes. It uses HTML iframes to provide a navigation bar (for
+application schema and their contents) and a view to show details about
+a selected schema, package, or class.
+
+In order to create a frame-based HTML feature catalogue:
+
+* Use 'FRAMEHTML' as value of the *outputFormat* parameter.
+* Use an XSLT 2.0 processor implementation (configured via the
+*xslTransformerFactory* target parameter).
+
+[[Cascading_Style_SheetsCSS]]
+=== Cascading Style Sheets (CSS)
+
+CSS can be used to modify the appearance of an HTML feature catalogue.
+
+xref:./Cascading_Style_Sheets_CSS.adoc[More information]
+
+[[DOCX__Office_Open_XML_WordprocessingML]]
+== DOCX / Office Open XML WordprocessingML
+
+ShapeChange can create a feature catalogue in a copy of an existing
+template .docx file (more precisely, the file is formatted according to
+ISO/IEC 29500 (2012) - Office Open XML WordprocessingML). The template
+file can be a local or remote file. Its path is provided to ShapeChange
+via the *docxTemplateFilePath* targetParameter. The default template is
+located at https://shapechange.net/resources/templates/template.docx
+
+In order to create a feature catalogue in docx format:
+
+* Use 'DOCX' as value of the *outputFormat* parameter.
+* Use an XSLT 2.0 processor implementation (configured via the
+*xslTransformerFactory* target parameter).
+
+ShapeChange ensures that images are scaled to fit the page width. At the
+moment the max width of an image is set to 18cm. This assumes a DIN A4
+page layout. This setting can be adjusted via the parameter maxWidthCm
+(in docx.xsl; the location to a custom docx.xsl can be set via the
+target parameters xsltPath and xsldocxFile).
+
+[[Template_Requirements]]
+=== Template Requirements
+
+[[Placeholder]]
+==== Placeholder
+
+A specific placeholder text must be present in the template file.
+ShapeChange looks for this text and replaces it with the content of the
+feature catalogue. The placeholder that ShapeChange looks for is the
+word: *ShapeChangeFeatureCatalogue*
+
+[NOTE]
+======
+
+Sometimes (e.g. when writing half of the text, then saving, then
+writing the other half) word stores text in multiple pieces. If this
+happens with the placeholder then ShapeChange cannot create the docx
+feature catalogue.
+
+To prevent this issue, either write the placeholder as a single word
+without intermediate saving, or copy-paste the placeholder into the
+template document.
+======
+
+[[Headings]]
+==== Headings
+
+ShapeChange requires the first [underline]#three# levels of headings to be set in the
+template. If the template doesn't already contain such headings, simply
+create a heading in the template for each required level and save the
+document. Once the feature catalogue has been created, these headings
+can be removed in the resulting docx file.
+
+[[Table_of_contents_and_page_numbers]]
+==== Table of contents and page numbers
+
+ShapeChange does not create page numbers or a table of contents (TOC)
+when writing a feature catalogue in docx format.
+
+If the template itself already has page numbering and/or a TOC, then
+using this template results in a file that Word declares as being
+invalid. An according warning is issued when attempting to open the
+file. Word can repair that file, but we think that in this case it is
+better to avoid Word's auto-repair facility.
+
+We suggest the following procedure: use a template without page
+numbering and a TOC to generate the feature catalogue. Open the
+resulting file and copy the complete feature catalogue into another word
+document that has page numbering and/or a TOC. Then make sure to update
+the whole document (press Ctrl+A, then F9).
+
+[[Requirements_for_including_UML_diagrams]]
+==== Requirements for including UML diagrams
+
+The following requirements apply to the template if it shall be used to
+create a feature catalogue with UML diagrams.
+
+[[JPG_Image]]
+===== JPG Image
+
+Diagrams are saved as .jpg images. In order for the correct content type
+to be available, the template should contain a an image whose format is
+.jpg. If the template doesn't already contain such an image, simply
+insert one and save the template document. Once the feature catalogue
+has been created, the image can be removed in the resulting docx file.
+
+[[Caption]]
+===== Caption
+
+ShapeChange requires the caption style to be set in the template. If the
+template doesn't already contain such a caption, simply create one (e.g.
+for the required image - see above) and save the document. Once the
+feature catalogue has been created, this caption can be removed in the
+resulting docx file.
+
+[[Inclusion_of_UML_Diagrams]]
+== Inclusion of UML Diagrams
+
+[NOTE]
+======
+Currently this feature is available for EA input models and
+feature catalogues in the following formats:
+
+* DOCX
+* frame HTML (since 2.2.0)
+
+======
+
+Per default, a feature catalogue documents an application schema with
+relevant information about packages, feature types, properties etc.
+ShapeChange also supports the inclusion of diagrams to document schema
+elements.
+
+In order for diagrams stored in the input file to be available to the
+feature catalogue target, the appropriate input parameters need to be
+set (see
+xref:../../get started/The_element_input.adoc#Diagram_Image_Loading[here]
+for further details) and the targetParameter *includeDiagrams* must be
+set to 'true' for the feature catalogue target.
+
+[NOTE]
+======
+
+* Package and logical/class diagrams are currently supported.
+* By default the diagrams are sorted by their name. This can be disabled
+via the input parameter 'sortDiagramsByName'.
+* Diagrams outside of selected application schema packages are ignored.
+* The setting under Tools > Options > Diagram -> "Scale Saved Bitmaps
+to" in the EA input file controls the size and resolution of the
+diagrams):
+** 400% results in big images (causing a large document) with good
+resolution
+** 200% is ok
+** 100% results in small images with rather poor resolution
+* For DOCX feature catalogues, you can update the numbering of the
+figures in the resulting document by first pressing Ctrl+A (to select
+everything) and then F9 (to update everything).
+======

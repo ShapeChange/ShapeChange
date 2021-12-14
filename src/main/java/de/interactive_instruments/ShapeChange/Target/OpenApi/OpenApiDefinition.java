@@ -59,6 +59,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -892,8 +893,9 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	r.addRule("rule-openapi-all-notEncoded");
 	r.addRule("rule-openapi-cls-instantiable-feature-types");
 	r.addRule("rule-openapi-cls-top-level-feature-types");
-
-	r.addExtendsEncRule("openapi", "*");
+	
+	ProcessRuleSet openapiPrs = new ProcessRuleSet("openapi","*");
+	r.addRuleSet(openapiPrs);
     }
 
     @Override

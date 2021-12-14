@@ -12,7 +12,7 @@
             <annotation>
               <appinfo>
                 <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListA</targetCodeList>
-                <targetCodeListURI xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">http://example.org/codelist/A</targetCodeListURI>
+                <sc:targetCodeListURI>http://example.org/codelist/A</sc:targetCodeListURI>
               </appinfo>
             </annotation>
           </element>
@@ -20,7 +20,7 @@
             <annotation>
               <appinfo>
                 <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListB</targetCodeList>
-                <targetCodeListURI xmlns="http://www.interactive-instruments.de/ShapeChange/AppInfo">http://example.org/codelist/B</targetCodeListURI>
+                <sc:targetCodeListURI>http://example.org/codelist/B</sc:targetCodeListURI>
               </appinfo>
             </annotation>
           </element>

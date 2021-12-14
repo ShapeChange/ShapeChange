@@ -1,0 +1,151 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[AIXM_Schema_Merger]]
+= AIXM Schema Merger
+
+[[Introduction]]
+== Introduction
+
+[red]#(Beta)#
+
+The Aeronautical Information Exchange Model (AIXM) has a specific way of
+adding information to core schema classes that is different to how it is
+usually done in UML and in ISO application schema. Where usually
+information is added through subtyping, AIXM has the concept of
+extensions. An extension schema is a schema that:
+
+* Can define \<<extension>> classes that extend:
+** either a specific feature or object type
+** or all feature types
+* Can define \<<codelist>> classes that extend code lists from the core
+schema
+* Can define new code lists as well as feature and object types
+
+The objective of this approach is described in
+the http://www.aixm.aero/gallery/content/public/AIXM51/AIXM_Application_Schema_Generation-1.1.pdf[AIXM
+Application Schema Generation document], section 1.3, as follows:
+
+_"The core AIXM model provides the definition of standardised
+aeronautical information features. In order to use AIXM for a specific
+application, a Community of Interest (COI) will have to agree upon how
+instances of AIXM features are to be exchanged and communicated in the
+community. […]_
+
+_In the definition of the AIXM Application Schema, the COI might also
+want to extend the core AIXM with additional properties and features.
+Some principles that regulate such extensions include:_
+
+* _An extension of an existing AIXM feature should remain valid against
+the definition of the core AIXM XSD element with the same name (for that
+purpose, the AbstractSomeFeatureExtension element is provided in the
+core AIXM XSD). A consequence is that it is not possible to extend
+\<<datatype>> classes. Only \<<codelist>> may be extended._
+* _An additional feature and objects shall follow the core AIXM
+modelling conventions (stereotypes, naming, data types, etc.)"_
+
+A consequence of this approach is that actual AIXM data can contain
+information that is specified by multiple extensions, and that an AIXM
+processor is able to ignore unknown extensions to core AIXM features.
+
+With the AIXM extension mechanism, AIXM feature and object types
+conceptually own all the properties that are added to them via
+\<<extension>> types.
+
+This transformation merges AIXM extension schemas and the core schema.
+The result of the merging process is a single schema that contains the
+feature and object types declared in all schemas, where properties added
+via extensions have been copied to the relevant types. Merging also adds
+time slices to AIXM feature types. More specifically, time slice types
+are defined for each AIXM feature type, with the properties that belong
+to the feature type.
+
+While merging the schemas, ShapeChange keeps track of XML Schema
+information – like the target namespace and the preferred namespace
+prefix – for extension schema elements. This is necessary for example to
+create correct XPath expressions and namespace declarations when
+creating Schematron code.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+transformation.
+
+[[Precondition]]
+=== Precondition
+
+In order for this transformation to work, the input model must fulfill
+the following conditions:
+
+* the input parameter 'isAIXM' must be set to 'true'
+* the core AIXM schema must have a target namespace - either declared
+via the according tagged value or using a PackageInfo element in the
+input configuration; the target namespace shall match the value of the
+parameter 'coreSchemaTargetNamespace' (see further below)
+* the core AIXM schema as well as relevant extension schemas must be
+contained in the model and must be selected for processing (if the input
+parameters 'appSchemaName', 'appSchemaNameRegex' or
+'appSchemaNamespaceRegex' are used, they must include these schemas)
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.ShapeChange.Transformation.AIXM.AIXMSchemaMerger_.
+
+[[Parameters]]
+=== Parameters
+
+The following parameters are supported by this transformation.
+
+[cols=",,,,,",]
+|===
+|*_Parameter Name_* |*_Applies to rule_* |*_Required / Optional_*
+|*_Type_* |*_Default Value_* |*_Explanation_*
+
+|*coreSchemaTargetNamespace* |(none – default behavior) |Optional
+|String |http://www.aixm.aero/schema/5.1 |The target namespace of the
+core AIXM schema.
+
+| | | | | |
+
+| | | | | |
+|===
+
+[[Rules]]
+=== Rules
+
+At the moment no specific rules are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer
+  class="de.interactive_instruments.ShapeChange.Transformation.AIXM.AIXMSchemaMerger"
+  input="INPUT" id="step1" mode="enabled">
+  <parameters>
+    <ProcessParameter name="coreSchemaTargetNamespace"
+      value="http://www.aixm.aero/schema/5.1" />
+  </parameters>
+</Transformer>
+----------

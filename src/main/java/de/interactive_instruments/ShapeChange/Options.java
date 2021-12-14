@@ -98,6 +98,7 @@ public class Options {
     public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
     public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
+    public static final String SCAI_NS_PREFIX = "sc";
     public static final String SCAI_NS = "http://www.interactive-instruments.de/ShapeChange/AppInfo";
     public static final String SCHEMATRON_NS = "http://purl.oclc.org/dsdl/schematron";
 
@@ -1081,17 +1082,17 @@ public class Options {
      * Adds a stereotype alias mapping.
      *
      * @param alias     - the stereotype alias (in lower case)
-     * @param wellknown - the wellknown stereotype (in lower case) to which the
+     * @param wellknown - the wellknown stereotype to which the
      *                  alias maps
      */
     protected void addStereotypeAlias(String alias, String wellknown) {
-	fStereotypeAliases.put(alias, wellknown);
+	fStereotypeAliases.put(alias.toLowerCase(), wellknown);
     }
 
     /**
      * Retrieves the wellknown stereotype to which the given alias maps, or
      * <code>null</code> if no such mapping exists. The alias will automatically be
-     * converte to lower case to look up the mapping (the according key values in
+     * converted to lower case to look up the mapping (the according key values in
      * the stereotype map have also been converted to lower case).
      *
      * @param alias stereotype for which a mapping to a wellknown stereotype is
@@ -1615,15 +1616,7 @@ public class Options {
 		 */
 		if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)) {
 		    for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
-			String nam = prs.getName();
-			String ext = prs.getExtendedRuleSetName();
-			ruleRegistry.addExtendsEncRule(nam, ext);
-
-			if (prs.hasAdditionalRules()) {
-			    for (String rule : prs.getAdditionalRules()) {
-				ruleRegistry.addRule(rule, nam);
-			    }
-			}
+			ruleRegistry.addRuleSet(prs);
 		    }
 
 		    /*
@@ -1963,15 +1956,7 @@ public class Options {
 		 * Ensure that we have all the rules defined by the XmlSchema target.
 		 */
 		for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
-		    String nam = prs.getName();
-		    String ext = prs.getExtendedRuleSetName();
-		    ruleRegistry.addExtendsEncRule(nam, ext);
-
-		    if (prs.hasAdditionalRules()) {
-			for (String rule : prs.getAdditionalRules()) {
-			    ruleRegistry.addRule(rule, nam);
-			}
-		    }
+		    ruleRegistry.addRuleSet(prs);
 		}
 
 		/*
@@ -2006,14 +1991,7 @@ public class Options {
 
 		// add encoding rules
 		for (ProcessRuleSet prs : currentProcessConfig.getRuleSets().values()) {
-		    String nam = prs.getName();
-		    String ext = prs.getExtendedRuleSetName();
-		    ruleRegistry.addExtendsEncRule(nam, ext);
-		    if (prs.hasAdditionalRules()) {
-			for (String rule : prs.getAdditionalRules()) {
-			    ruleRegistry.addRule(rule, nam);
-			}
-		    }
+		    ruleRegistry.addRuleSet(prs);
 		}
 	    }
 
@@ -2156,11 +2134,11 @@ public class Options {
 
 	    Element e = (Element) nl.item(j);
 
-	    String name = e.getAttribute("packageName");
-	    String nsabr = e.getAttribute("nsabr");
-	    String ns = e.getAttribute("ns");
-	    String xsdDocument = e.getAttribute("xsdDocument");
-	    String version = e.getAttribute("version");
+	    String name = StringUtils.stripToNull(e.getAttribute("packageName"));
+	    String nsabr = StringUtils.stripToNull(e.getAttribute("nsabr"));
+	    String ns = StringUtils.stripToNull(e.getAttribute("ns"));
+	    String xsdDocument = StringUtils.stripToNull(e.getAttribute("xsdDocument"));
+	    String version = StringUtils.stripToNull(e.getAttribute("version"));
 
 	    PackageInfoConfiguration pic = new PackageInfoConfiguration(name, nsabr, ns, xsdDocument, version);
 
@@ -3108,7 +3086,7 @@ public class Options {
 
 		    // parse tagged values, if any are defined
 		    List<TaggedValueConfigurationEntry> taggedValues = parseTaggedValues(trfE);
-
+		    
 		    // get the transformer input - can be null, then set it to
 		    // global input element
 		    String trfConfigInput;
@@ -3218,7 +3196,7 @@ public class Options {
 	NodeList processRuleSetsNl = processElement.getElementsByTagName(ruleSetElementTagName);
 	Node processRuleSetN;
 	Element processRuleSetE;
-	Set<String> ruleSetRules;
+	SortedSet<String> ruleSetRules;
 
 	if (processRuleSetsNl != null && processRuleSetsNl.getLength() != 0) {
 
@@ -3252,7 +3230,7 @@ public class Options {
 			    if (processRuleSetRuleN.getNodeType() == Node.ELEMENT_NODE) {
 				Element processRuleSetRuleE = (Element) processRuleSetRuleN;
 				if (ruleSetRules == null)
-				    ruleSetRules = new HashSet<String>();
+				    ruleSetRules = new TreeSet<String>();
 				String ruleName = processRuleSetRuleE.getAttribute("name");
 
 				// we do not need to check rules for

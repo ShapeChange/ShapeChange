@@ -1,0 +1,82 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[Typical_problems]]
+= Typical problems
+
+This page discusses typical problems we have seen during setting up
+ShapeChange.
+
+[width="100%",cols="50%,50%",]
+|===
+|Problem |Description
+
+|A FileNotFound exception is raised when accessing a configuration file
+from shapechange.net, e.g.
+https://shapechange.net/resources/test/testXMI.xml a|
+ShapeChange cannot access shapechange.net. If you are connected to the
+internet it is likely that you can only access the internet through a
+proxy. There are two options:
+
+* Use local copies of the configuration files with http-references to
+files replaced by references to local copies. A
+https://shapechange.net/resources/resources.zip[ZIP archive of the main
+configuration files] is available. Download it and place the unzipped
+folder "resources" in the ShapeChange folder. Test your installation
+with (replacing 'x.y.z' with the version of ShapeChange you are using) +
++
+__java -jar ShapeChange-x.y.z.jar -Dfile.encoding=UTF-8 -c
+resources/config/testXMI.xml__ +
++
+and +
++
+__java -jar ShapeChange-x.y.z.jar -Dfile.encoding=UTF-8 -c
+resources/config/testEA.xml__
+
+* Contact your system administrators and ask them for the settings to
+access HTTP resources from Java Virtual Machines (e.g. using
+the -Dhttp.proxyHost -Dhttp.proxyPort parameters).
+
+|A FileNotFound exception is raised when generating a feature catalogue
+or the log file |Verify that the path to the ShapeChange folder is
+without whitespace (e.g. a blank) in filenames as the XSLT processor
+currently used by ShapeChange cannot handle such path names properly.
+Typically this is the reason for this error.
+
+|An UnsatisfiedLinkError exception is raised when trying to load
+SSJavaCOM.dll with the message: "no SSJavaCOM in java.library.path".
+|The SSJavaCOM.dll is not in a path known to the Java Virtual Machine
+you are executing, typically System32 or SysWOW64 depending on your
+operating system. Contact your system administrator, if you need help.
+
+|An UnsatisfiedLinkError exception is raised when trying to load
+SSJavaCOM.dll with the message: "Can't load IA 32-bit .dll on a AMD
+64-bit platform". |Most likely you are using Java 64-bit. As Enterprise
+Architect is a 32-bit application, you have to use Java 32-bit. Contact
+your system administrator, if you need help with setting up a 32-bit
+version of Java.
+
+|Some versions of Enterprise Architect seem to raise errors on 64-bit
+Windows even if 32-bit Java is used a|
+If you experience an error "Failed to construct object. Error code:
+0x80040154" please try to use a different version of Enterprise
+Architect and xref:../about/Contact.adoc[inform us] about
+your experiences. We have reports about this error:
+
+* with EA 11.0.1107 that were fixed by upgrading to EA 11.1.1111, and
+* with EA 15.0.1510 that were fixed by upgrading to a subsequent version
+of EA.
+
+|===

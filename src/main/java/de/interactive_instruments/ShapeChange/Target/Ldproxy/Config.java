@@ -1228,134 +1228,131 @@ public class Config implements SingleTarget, MessageSource {
 			    if (!mapCL.containsKey(cix.name())) {
 				// Look for the first "codeList" tagged value that has a http URI
 				String sa[] = cix.taggedValuesForTag(clUrlTV);
-				if (sa != null && sa.length > 0) {
-				    for (String surl : sa) {
-					if (surl.startsWith("http://") || surl.startsWith("https://")) {
-					    // retrieve codelist
+				for (String surl : sa) {
+				    if (surl.startsWith("http://") || surl.startsWith("https://")) {
+					// retrieve codelist
 
-					    // TODO, make this generic
-					    surl = surl.replace("/referenzlisten/", "/repository/");
+					// TODO, make this generic
+					surl = surl.replace("/referenzlisten/", "/repository/");
 
-					    // get xml doc
-					    InputStream configStream = null;
+					// get xml doc
+					InputStream configStream = null;
 
-					    URL url;
-					    try {
-						url = new URL(surl);
-						configStream = url.openStream();
-					    } catch (MalformedURLException e) {
-						MessageContext m = result.addError(this, 7, surl);
-						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						// try the next tagged value
-						continue;
-					    } catch (IOException e) {
-						MessageContext m = result.addError(this, 8, surl);
-						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						// try the next tagged value
-						continue;
-					    }
-
-					    // TODO make this more generic
-					    DocumentBuilder builder = null;
-					    ShapeChangeErrorHandler handler = null;
-					    try {
-						System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-							"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-						DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-						factory.setNamespaceAware(false);
-						factory.setValidating(false);
-						factory.setFeature("http://apache.org/xml/features/validation/schema",
-							false);
-						factory.setIgnoringElementContentWhitespace(true);
-						factory.setIgnoringComments(true);
-						factory.setXIncludeAware(true);
-						factory.setFeature(
-							"http://apache.org/xml/features/xinclude/fixup-base-uris",
-							false);
-						builder = factory.newDocumentBuilder();
-						handler = new ShapeChangeErrorHandler();
-						builder.setErrorHandler(handler);
-					    } catch (FactoryConfigurationError e) {
-						MessageContext m = result.addError(this, 9, surl);
-						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						// try the next tagged value
-						continue;
-					    } catch (ParserConfigurationException e) {
-						MessageContext m = result.addError(this, 10, surl);
-						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						// try the next tagged value
-						continue;
-					    }
-
-					    // parse file
-					    try {
-						Document document = builder.parse(configStream);
-						if (handler.errorsFound()) {
-						    MessageContext m = result.addError(this, 11, surl);
-						    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						    // try the next tagged value
-						    continue;
-						}
-
-						TreeMap<String, Object> cl = new TreeMap<>();
-						cl.put("id", cix.name());
-						cl.put("label", cix.definition());
-						cl.put("sourceUrl", surl);
-						cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
-
-						TreeMap<String, Object> entries = new TreeMap<>();
-						cl.put("entries", entries);
-
-						// parse input element specific content
-						NodeList nl = document.getElementsByTagName("item");
-						for (int j = 0; j < nl.getLength(); j++) {
-						    Element e = (Element) nl.item(j);
-						    Node n = e.getElementsByTagName("atomid").item(0);
-						    String code = (n != null ? ((Element) n).getTextContent().trim()
-							    : null);
-						    n = e.getElementsByTagName("shortname").item(0);
-						    String label1 = (n != null ? ((Element) n).getTextContent().trim()
-							    : "");
-						    n = e.getElementsByTagName("longname").item(0);
-						    String label2 = (n != null ? ((Element) n).getTextContent().trim()
-							    : "");
-						    if (code != null) {
-							// "(shortname) - longname"
-							// "longname", if shortname is missing
-							// "(shortname)", if longname is missing
-							// "(code)", if both are missing
-							if (label1.isEmpty() && label2.isEmpty())
-							    entries.put(code, "(" + code + ")");
-							else
-							    entries.put(code,
-								    (label1.isEmpty() ? ""
-									    : "(" + label1 + ")"
-										    + (label2.isEmpty() ? "" : " - "))
-									    + label2);
-						    } else {
-							MessageContext m = result.addError(this, 13, surl, "atomid");
-							m.addDetail(this, 99, pi.name(), pi.inClass().name(),
-								cix.name());
-						    }
-						}
-
-						mapCL.put(cix.name(), cl);
-						codelist = cix.name();
-
-					    } catch (Exception e) {
-						String msg = e.getMessage();
-						if (msg == null)
-						    msg = "Unknown error.";
-						MessageContext m = result.addError(this, 12, surl, msg);
-						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
-						// try the next tagged value
-						continue;
-					    }
-
-					    break;
+					URL url;
+					try {
+					    url = new URL(surl);
+					    configStream = url.openStream();
+					} catch (MalformedURLException e) {
+					    MessageContext m = result.addError(this, 7, surl);
+					    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+					    // try the next tagged value
+					    continue;
+					} catch (IOException e) {
+					    MessageContext m = result.addError(this, 8, surl);
+					    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+					    // try the next tagged value
+					    continue;
 					}
+
+					// TODO make this more generic
+					DocumentBuilder builder = null;
+					ShapeChangeErrorHandler handler = null;
+					try {
+					    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+						    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+					    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					    factory.setNamespaceAware(false);
+					    factory.setValidating(false);
+					    factory.setFeature("http://apache.org/xml/features/validation/schema",
+						    false);
+					    factory.setIgnoringElementContentWhitespace(true);
+					    factory.setIgnoringComments(true);
+					    factory.setXIncludeAware(true);
+					    factory.setFeature(
+						    "http://apache.org/xml/features/xinclude/fixup-base-uris", false);
+					    builder = factory.newDocumentBuilder();
+					    handler = new ShapeChangeErrorHandler();
+					    builder.setErrorHandler(handler);
+					} catch (FactoryConfigurationError e) {
+					    MessageContext m = result.addError(this, 9, surl);
+					    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+					    // try the next tagged value
+					    continue;
+					} catch (ParserConfigurationException e) {
+					    MessageContext m = result.addError(this, 10, surl);
+					    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+					    // try the next tagged value
+					    continue;
+					}
+
+					// parse file
+					try {
+					    Document document = builder.parse(configStream);
+					    if (handler.errorsFound()) {
+						MessageContext m = result.addError(this, 11, surl);
+						m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+						// try the next tagged value
+						continue;
+					    }
+
+					    TreeMap<String, Object> cl = new TreeMap<>();
+					    cl.put("id", cix.name());
+					    cl.put("label", cix.definition());
+					    cl.put("sourceUrl", surl);
+					    cl.put("sourceType", "ONEO_SCHLUESSELLISTE");
+
+					    TreeMap<String, Object> entries = new TreeMap<>();
+					    cl.put("entries", entries);
+
+					    // parse input element specific content
+					    NodeList nl = document.getElementsByTagName("item");
+					    for (int j = 0; j < nl.getLength(); j++) {
+						Element e = (Element) nl.item(j);
+						Node n = e.getElementsByTagName("atomid").item(0);
+						String code = (n != null ? ((Element) n).getTextContent().trim()
+							: null);
+						n = e.getElementsByTagName("shortname").item(0);
+						String label1 = (n != null ? ((Element) n).getTextContent().trim()
+							: "");
+						n = e.getElementsByTagName("longname").item(0);
+						String label2 = (n != null ? ((Element) n).getTextContent().trim()
+							: "");
+						if (code != null) {
+						    // "(shortname) - longname"
+						    // "longname", if shortname is missing
+						    // "(shortname)", if longname is missing
+						    // "(code)", if both are missing
+						    if (label1.isEmpty() && label2.isEmpty())
+							entries.put(code, "(" + code + ")");
+						    else
+							entries.put(code,
+								(label1.isEmpty() ? ""
+									: "(" + label1 + ")"
+										+ (label2.isEmpty() ? "" : " - "))
+									+ label2);
+						} else {
+						    MessageContext m = result.addError(this, 13, surl, "atomid");
+						    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+						}
+					    }
+
+					    mapCL.put(cix.name(), cl);
+					    codelist = cix.name();
+
+					} catch (Exception e) {
+					    String msg = e.getMessage();
+					    if (msg == null)
+						msg = "Unknown error.";
+					    MessageContext m = result.addError(this, 12, surl, msg);
+					    m.addDetail(this, 99, pi.name(), pi.inClass().name(), cix.name());
+					    // try the next tagged value
+					    continue;
+					}
+
+					break;
 				    }
 				}
+
 			    } else {
 				codelist = cix.name();
 			    }
@@ -1414,17 +1411,15 @@ public class Config implements SingleTarget, MessageSource {
 	if (!reportables.isEmpty()) {
 	    enable = false;
 	    String sa[] = pi.taggedValuesForTag("reportable");
-	    if (sa != null && sa.length > 0) {
-		for (String srep : sa) {
-		    for (String rep : reportables) {
-			if (srep.equalsIgnoreCase(rep)) {
-			    enable = true;
-			    break;
-			}
-		    }
-		    if (enable)
+	    for (String srep : sa) {
+		for (String rep : reportables) {
+		    if (srep.equalsIgnoreCase(rep)) {
+			enable = true;
 			break;
+		    }
 		}
+		if (enable)
+		    break;
 	    }
 	}
 	general.put("enabled", enable);
