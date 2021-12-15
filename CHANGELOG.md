@@ -1,5 +1,49 @@
 # Changelog
 
+## [2.11.0](https://github.com/ShapeChange/ShapeChange/tree/2.11.0) (2021-12-14)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.10.0...2.11.0)
+
+**Implemented enhancements:**
+
+- Identify duplicate encoding rule identifiers [\#285](https://github.com/ShapeChange/ShapeChange/issues/285)
+- Parsing of Map Entry parameter infos - detection of duplicate parameters and characteristics [\#284](https://github.com/ShapeChange/ShapeChange/issues/284)
+- NamingModifier Transformation: rule-trf-add-suffix and Role Properties [\#280](https://github.com/ShapeChange/ShapeChange/issues/280)
+- NamingModifier Transformation: rule-trf-add-suffix and class stereotype [\#279](https://github.com/ShapeChange/ShapeChange/issues/279)
+- SqlDdl target - conversion of order and uniqueness for attribute with max multiplicity greater 1 [\#273](https://github.com/ShapeChange/ShapeChange/issues/273)
+- XmlSchema target - Support rule to convert list based basic type [\#272](https://github.com/ShapeChange/ShapeChange/issues/272)
+
+**Fixed bugs:**
+
+- Flattener - reverse inheritance - uni-directional association from subtype to root type missing [\#287](https://github.com/ShapeChange/ShapeChange/issues/287)
+- Log - Error messages related to multiple inheritance should be reported as warnings [\#286](https://github.com/ShapeChange/ShapeChange/issues/286)
+- Feature Catalogue Target - DOCX missing UML diagrams [\#282](https://github.com/ShapeChange/ShapeChange/issues/282)
+- TypeConverter - rule-trf-switchValueTypes leads to NPE for enums and codes [\#278](https://github.com/ShapeChange/ShapeChange/issues/278)
+
+**Closed issues:**
+
+- Remove log4j usage in ShapeChange [\#288](https://github.com/ShapeChange/ShapeChange/issues/288)
+- Tagged Values: Empty vs. Absence [\#283](https://github.com/ShapeChange/ShapeChange/issues/283)
+- properties corresponding to UML attributes missing in .ttl [\#277](https://github.com/ShapeChange/ShapeChange/issues/277)
+-   Generating ontologies for "leaf", "informative", "deprecated"  [\#276](https://github.com/ShapeChange/ShapeChange/issues/276)
+- Generated empty ontology for the application schema "WaterML2.0" [\#275](https://github.com/ShapeChange/ShapeChange/issues/275)
+- generated empty .ttl ontologies [\#274](https://github.com/ShapeChange/ShapeChange/issues/274)
+- GeoPackage and ArcGIS / GeoPackage and spatial indexes [\#263](https://github.com/ShapeChange/ShapeChange/issues/263)
+- How to generate \<sc:taggedValue\> [\#232](https://github.com/ShapeChange/ShapeChange/issues/232)
+- General - Derivation of XML Schema from profile, using a different xmlns [\#40](https://github.com/ShapeChange/ShapeChange/issues/40)
+- General - Make parameter replacement mechanism available for Transformers [\#16](https://github.com/ShapeChange/ShapeChange/issues/16)
+- General - Select ordering method for enumerants in output [\#6](https://github.com/ShapeChange/ShapeChange/issues/6)
+
+**Merged pull requests:**
+
+- Next [\#289](https://github.com/ShapeChange/ShapeChange/pull/289) ([jechterhoff](https://github.com/jechterhoff))
+- Bump commons-io from 2.6 to 2.7 [\#271](https://github.com/ShapeChange/ShapeChange/pull/271) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Gpkg improvements [\#270](https://github.com/ShapeChange/ShapeChange/pull/270) ([heidivanparys](https://github.com/heidivanparys))
+- Bump guava from 28.0-jre to 29.0-jre [\#269](https://github.com/ShapeChange/ShapeChange/pull/269) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Flattener update [\#268](https://github.com/ShapeChange/ShapeChange/pull/268) ([heidivanparys](https://github.com/heidivanparys))
+- Bump jackson-databind from 2.10.1 to 2.10.5.1 [\#266](https://github.com/ShapeChange/ShapeChange/pull/266) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Suppress conversion only when tag gpkgEncodingRule = notEncoded [\#265](https://github.com/ShapeChange/ShapeChange/pull/265) ([heidivanparys](https://github.com/heidivanparys))
+
 ## [2.10.0](https://github.com/ShapeChange/ShapeChange/tree/2.10.0) (2020-11-04)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.9.1...2.10.0)
