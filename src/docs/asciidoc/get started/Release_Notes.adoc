@@ -32,6 +32,9 @@ with additional information including dependencies.
 |ShapeChange Release Version |Java Version(s) |Tested EA Version(s) NOTE
 A) |EA API included in distribution NOTE B) |Saxon JAR used C) |Comments
 
+|https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.11.0/ShapeChange-2.11.0.zip[2.11.0]
+|Java 11 |EA 15.2 |EA 15.2.1554 |Saxon-HE-10.2.jar |
+
 |https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.10.0/ShapeChange-2.10.0.zip[2.10.0]
 |Java 11 |EA 15.2 |EA 15.2.1554 |Saxon-HE-10.2.jar |
 

@@ -41,7 +41,7 @@ To start using ShapeChange, follow these steps:
 |1 |Verify that you are using the *Java Runtime Environment 11* or later.
 
 |2
-|#TODO - where to publish future releases?# https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.10.0/ShapeChange-2.10.0.zip[Download ShapeChange (all platforms; version 2.10.0 04 November 2020)] xref:./Release_Notes.adoc[Release Notes]
+|#TODO - where to publish future releases?# https://shapechange.net/resources/dist/net/shapechange/ShapeChange/2.11.0/ShapeChange-2.11.0.zip[Download ShapeChange (all platforms; version 2.11.0 14 December 2021)] xref:./Release_Notes.adoc[Release Notes]
 
 |3 |*Unpack the ZIP archive*. An overview of the contents of the archive can be found xref:./Distribution_contents.adoc[here]. Use a path without whitespace in filenames as the XSLT processor currently used by ShapeChange cannot handle such path names properly.
 
@@ -69,7 +69,7 @@ To test the installation, open a shell / DOS box and make the unzipped folder y
 
 #TODO - reference resources on GitHub?#
 
-_java -jar ShapeChange-2.10.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testXMI.xml_
+_java -jar ShapeChange-2.11.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testXMI.xml_
 
 You should now see the following information message:
 
@@ -85,7 +85,7 @@ To test the access to Enterprise Architect models (note that this test requires 
 
 #TODO - reference resources on GitHub?#
 
-_java -jar ShapeChange-2.10.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testEA.xml_
+_java -jar ShapeChange-2.11.0.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testEA.xml_
 
 You should see the same results as in the XMI test, except that the results are written into the folder _test/ea_.
 
