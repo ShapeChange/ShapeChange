@@ -3,7 +3,7 @@
  xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified"
  version="1.1.0b1">
  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
- <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+ <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="w3c/xml.xsd"/>
  <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
  <complexType name="ShapeChangeConfigurationType">
   <choice minOccurs="0" maxOccurs="unbounded">
