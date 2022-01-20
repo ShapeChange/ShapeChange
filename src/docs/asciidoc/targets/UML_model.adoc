@@ -54,6 +54,16 @@ the model (see target parameter
 xref:./UML_model.adoc#eapTemplate[_eapTemplate_])
 and/or use 'Import To User', i.e. install the MDG locally.
 
+NOTE: Enterprise Architect v15.2 ignores the stereotype 'application schema', i.e. a stereotype
+with this name is not created in the model. Such a case can occur if you
+run ShapeChange with standard stereotype aliases, resulting in the application
+schema package having the well-known stereotype 'application schema'. It is 
+unclear why EA behaves this way; maybe it is due to the stereotype definition of
+the built-in GML MDG technology, which defines 'application schema' as alias
+for the 'ApplicationSchema' stereotype. If you map 'application schema' to a different
+name, such as 'applicationSchema', the stereotype should be created by EA.
+'applicationSchema'
+
 For further details on configuring these mappings, see the
 xref:./UML_model.adoc#Map_Entries[Map Entries
 section], and especially the information about param _stereotype._

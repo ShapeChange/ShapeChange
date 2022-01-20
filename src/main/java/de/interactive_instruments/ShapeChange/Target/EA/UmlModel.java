@@ -775,6 +775,16 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    ClassInfo ci1 = propi1.inClass();
 	    ClassInfo ci2 = propi2.inClass();
 
+	    if (elementIdByClassInfo.get(ci1) == null) {
+		result.addWarning("Association between " + ci1.name() + " - " + ci2.name()
+			+ " not set as the first class is not part of target model.");
+		continue;
+	    } else if (elementIdByClassInfo.get(ci2) == null) {
+		result.addWarning("Association between " + ci1.name() + " - " + ci2.name()
+			+ " not set as the second class is not part of target model.");
+		continue;
+	    }
+
 	    int c1ElementId = elementIdByClassInfo.get(ci1);
 	    int c2ElementId = elementIdByClassInfo.get(ci2);
 
