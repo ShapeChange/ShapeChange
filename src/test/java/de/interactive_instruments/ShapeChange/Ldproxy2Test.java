@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2018 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,16 +35,13 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("SCXML")
-public class LdproxyTest extends BasicTestSCXML {
+public class Ldproxy2Test extends BasicTestSCXML {
 
 	@Test
-	public void testLdproxyConfiguration() {
-		/*
-		 * ldproxy configuration file 
-		 */
-		String[] filesToCheckWithoutExtension = { "sid" };
-		jsonTest("src/test/resources/ldproxy/basic/testEA_ldproxy.xml", filesToCheckWithoutExtension,
-				"testResults/ldproxy/basic/INPUT/config-store/entities/services",
-				"src/test/resources/ldproxy/basic/reference");
+	public void test_ldproxy2_basic() {
+		
+		multiTest("src/test/resources/ldproxy2/basic/test_ldproxy2.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/basic/results",
+			"src/test/resources/ldproxy2/basic/reference/results");
 	}
 }

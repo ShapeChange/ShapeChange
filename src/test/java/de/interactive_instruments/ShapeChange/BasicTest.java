@@ -79,6 +79,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
@@ -152,8 +153,8 @@ public abstract class BasicTest {
      * Simply processes the given configuration and ensure that an error was
      * reported.
      * 
-     * @param config tbd
-     * @param detailsOnExpectedError  tbd
+     * @param config                 tbd
+     * @param detailsOnExpectedError tbd
      */
     protected void executeAndError(String config, String detailsOnExpectedError) {
 
@@ -239,6 +240,10 @@ public abstract class BasicTest {
 				dirReference + File.separator + fres.getName());
 		    } else if (fresExtension.equals("eap") && fileFormatsToCheck.contains("eap")) {
 			similarEap(dirResults + File.separator + fres.getName(),
+				dirReference + File.separator + fres.getName());
+		    } else if ((fresExtension.equals("yaml") && fileFormatsToCheck.contains("yaml"))
+			    || (fresExtension.equals("yml") && fileFormatsToCheck.contains("yml"))) {
+			similarYaml(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
 		    } else {
 			// TBD add more similarity tests for further file
@@ -380,37 +385,38 @@ public abstract class BasicTest {
 	xsdTest(config, xsds, schs, null, basedirResults, basedirReference, noErrors);
     }
 
-    protected void xsdTest(String config, String[] xsds, String[] schs, HashMap<String, String> replacevalues,
+    protected void xsdTest(String config, String[] xsdFileNamesWithoutExtension, String[] schFileNamesWithoutExtension,
+	    HashMap<String, String> replacevalues, String basedirResults, String basedirReference, boolean noErrors) {
+
+	long start = (new Date()).getTime();
+	TestInstance test = new TestInstance(config, replacevalues);
+	long end = (new Date()).getTime();
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
+	if (noErrors)
+	    assertTrue(test.noError(), "Test model execution failed");
+	if (testTime)
+	    assertTrue(end - start < 90000, "Execution time too long");
+
+	if (xsdFileNamesWithoutExtension != null) {
+	    for (String xsdFileNameWithoutExtension : xsdFileNamesWithoutExtension) {
+		similar(basedirResults + "/" + xsdFileNameWithoutExtension + ".xsd",
+			basedirReference + "/" + xsdFileNameWithoutExtension + ".xsd");
+	    }
+	}
+	if (schFileNamesWithoutExtension != null) {
+	    for (String schFileNameWithoutExtension : schFileNamesWithoutExtension) {
+		similar(basedirResults + "/" + schFileNameWithoutExtension + ".xsd_SchematronSchema.xml",
+			basedirReference + "/" + schFileNameWithoutExtension + ".xsd_SchematronSchema.xml");
+	    }
+	}
+    }
+
+    protected void sqlTest(String config, String[] fileNamesWithoutExtension, HashMap<String, String> replacevalues,
 	    String basedirResults, String basedirReference, boolean noErrors) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config, replacevalues);
 	long end = (new Date()).getTime();
-	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
-	if (noErrors)
-	    assertTrue(test.noError(), "Test model execution failed");
-	if (testTime)
-	    assertTrue(end - start < 90000, "Execution time too long");
-
-	if (xsds != null) {
-	    for (String xsd : xsds) {
-		similar(basedirResults + "/" + xsd + ".xsd", basedirReference + "/" + xsd + ".xsd");
-	    }
-	}
-	if (schs != null) {
-	    for (String xsd : schs) {
-		similar(basedirResults + "/" + xsd + ".xsd_SchematronSchema.xml",
-			basedirReference + "/" + xsd + ".xsd_SchematronSchema.xml");
-	    }
-	}
-    }
-
-    protected void sqlTest(String config, String[] sqls, HashMap<String, String> replacevalues, String basedirResults,
-	    String basedirReference, boolean noErrors) {
-
-	long start = (new Date()).getTime();
-	TestInstance test = new TestInstance(config, replacevalues);
-	long end = (new Date()).getTime();
 
 	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
 
@@ -420,15 +426,16 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Execution time too long");
 
-	if (sqls != null) {
-	    for (String sql : sqls) {
-		similarTxt(basedirResults + "/" + sql + ".sql", basedirReference + "/" + sql + ".sql", true, true,
-			true);
+	if (fileNamesWithoutExtension != null) {
+	    for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
+		similarTxt(basedirResults + "/" + fileNameWithoutExtension + ".sql",
+			basedirReference + "/" + fileNameWithoutExtension + ".sql", true, true, true);
 	    }
 	}
     }
 
-    protected void ldproxyTest(String config, String[] files, String basedirResults, String basedirReference) {
+    protected void yamlTest(String config, String[] fileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -438,16 +445,17 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 90000, "Exceution time too long");
 
-	for (String file : files) {
+	for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
 
-	    String fileName = basedirResults + "/" + file;
-	    String referenceFileName = basedirReference + "/" + file;
+	    String fileName = basedirResults + "/" + fileNameWithoutExtension + ".yml";
+	    String referenceFileName = basedirReference + "/" + fileNameWithoutExtension + ".yml";
 
-	    similarJson(fileName, referenceFileName);
+	    similarYaml(fileName, referenceFileName);
 	}
     }
 
-    protected void jsonTest(String config, String[] typenames, String basedirResults, String basedirReference) {
+    protected void jsonTest(String config, String[] fileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -457,10 +465,10 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Exceution time too long");
 
-	for (String typename : typenames) {
+	for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
 
-	    String fileName = basedirResults + "/test/" + typename + ".json";
-	    String referenceFileName = basedirReference + "/test/" + typename + ".json";
+	    String fileName = basedirResults + "/" + fileNameWithoutExtension + ".json";
+	    String referenceFileName = basedirReference + "/" + fileNameWithoutExtension + ".json";
 
 	    similarJson(fileName, referenceFileName);
 	}
@@ -480,6 +488,25 @@ public abstract class BasicTest {
 	    fail("JSON Parse Exception: " + e.getMessage());
 	} catch (JsonMappingException e) {
 	    fail("JSON Mapping Exception: " + e.getMessage());
+	} catch (IOException e) {
+	    fail("IO Exception: " + e.getMessage());
+	}
+    }
+
+    private void similarYaml(String fileName, String referenceFileName) {
+
+	ObjectMapper m = new ObjectMapper(new YAMLFactory());
+
+	try {
+	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
+	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
+	    boolean equal = rootNodeResult.equals(rootNodeReference);
+	    assertTrue(equal, "YAML output differs from reference result. Result file: " + fileName
+		    + " - Reference file: " + referenceFileName);
+	} catch (JsonParseException e) {
+	    fail("Parse Exception: " + e.getMessage());
+	} catch (JsonMappingException e) {
+	    fail("Mapping Exception: " + e.getMessage());
 	} catch (IOException e) {
 	    fail("IO Exception: " + e.getMessage());
 	}
@@ -576,7 +603,8 @@ public abstract class BasicTest {
 	}
     }
 
-    protected void htmlTest(String config, String[] htmls, String basedirResults, String basedirReference) {
+    protected void htmlTest(String config, String[] fileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -588,10 +616,10 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-	if (htmls != null) {
-	    for (String htmlFileName : htmls) {
-		similarHtml(basedirResults + "/" + htmlFileName + ".html",
-			basedirReference + "/" + htmlFileName + ".html");
+	if (fileNamesWithoutExtension != null) {
+	    for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
+		similarHtml(basedirResults + "/" + fileNameWithoutExtension + ".html",
+			basedirReference + "/" + fileNameWithoutExtension + ".html");
 	    }
 	}
     }
@@ -636,7 +664,8 @@ public abstract class BasicTest {
 	}
     }
 
-    protected void docxTest(String config, String[] docxs, String basedirResults, String basedirReference) {
+    protected void docxTest(String config, String[] fileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	long start = (new Date()).getTime();
 	TestInstance test = new TestInstance(config);
@@ -648,10 +677,10 @@ public abstract class BasicTest {
 	if (testTime)
 	    assertTrue(end - start < 60000, "Execution time too long");
 
-	if (docxs != null) {
-	    for (String docxFileName : docxs) {
-		similarDocx(basedirResults + "/" + docxFileName + ".docx",
-			basedirReference + "/" + docxFileName + ".docx");
+	if (fileNamesWithoutExtension != null) {
+	    for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
+		similarDocx(basedirResults + "/" + fileNameWithoutExtension + ".docx",
+			basedirReference + "/" + fileNameWithoutExtension + ".docx");
 	    }
 	}
     }

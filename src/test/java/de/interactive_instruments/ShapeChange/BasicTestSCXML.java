@@ -38,12 +38,11 @@ import java.util.HashMap;
 import de.interactive_instruments.ShapeChange.scxmltest.SCXMLTestResourceConverter;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class BasicTestSCXML extends BasicTest {
-    
+
     SCXMLTestResourceConverter scxmlConverter = new SCXMLTestResourceConverter();
 
     protected ShapeChangeResult executeScxml(String configPath) {
@@ -92,7 +91,8 @@ public class BasicTestSCXML extends BasicTest {
     }
 
     @Override
-    protected void jsonTest(String config, String[] typenames, String basedirResults, String basedirReference) {
+    protected void jsonTest(String config, String[] jsonFileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	String pathToRelevantConfig;
 	try {
@@ -103,11 +103,12 @@ public class BasicTestSCXML extends BasicTest {
 	    return;
 	}
 
-	super.jsonTest(pathToRelevantConfig, typenames, basedirResults, basedirReference);
+	super.jsonTest(pathToRelevantConfig, jsonFileNamesWithoutExtension, basedirResults, basedirReference);
     }
 
     @Override
-    protected void docxTest(String config, String[] docxs, String basedirResults, String basedirReference) {
+    protected void docxTest(String config, String[] docxFileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	String pathToRelevantConfig;
 	try {
@@ -118,11 +119,12 @@ public class BasicTestSCXML extends BasicTest {
 	    return;
 	}
 
-	super.docxTest(pathToRelevantConfig, docxs, basedirResults, basedirReference);
+	super.docxTest(pathToRelevantConfig, docxFileNamesWithoutExtension, basedirResults, basedirReference);
     }
 
     @Override
-    protected void htmlTest(String config, String[] htmls, String basedirResults, String basedirReference) {
+    protected void htmlTest(String config, String[] htmlFileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	String pathToRelevantConfig;
 	try {
@@ -133,11 +135,12 @@ public class BasicTestSCXML extends BasicTest {
 	    return;
 	}
 
-	super.htmlTest(pathToRelevantConfig, htmls, basedirResults, basedirReference);
+	super.htmlTest(pathToRelevantConfig, htmlFileNamesWithoutExtension, basedirResults, basedirReference);
     }
 
     @Override
-    protected void ldproxyTest(String config, String[] files, String basedirResults, String basedirReference) {
+    protected void yamlTest(String config, String[] yamlFileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	String pathToRelevantConfig;
 	try {
@@ -148,11 +151,12 @@ public class BasicTestSCXML extends BasicTest {
 	    return;
 	}
 
-	super.ldproxyTest(pathToRelevantConfig, files, basedirResults, basedirReference);
+	super.yamlTest(pathToRelevantConfig, yamlFileNamesWithoutExtension, basedirResults, basedirReference);
     }
 
     @Override
-    protected void rdfTest(String config, String[] rdfs, String basedirResults, String basedirReference) {
+    protected void rdfTest(String config, String[] rdfFileNamesWithoutExtension, String basedirResults,
+	    String basedirReference) {
 
 	String pathToRelevantConfig;
 	try {
@@ -163,28 +167,29 @@ public class BasicTestSCXML extends BasicTest {
 	    return;
 	}
 
-	super.rdfTest(pathToRelevantConfig, rdfs, basedirResults, basedirReference);
+	super.rdfTest(pathToRelevantConfig, rdfFileNamesWithoutExtension, basedirResults, basedirReference);
     }
 
-    protected void sqlTest(String config, String[] sqls, HashMap<String, String> replacevalues, String basedirResults,
-	    String basedirReference, boolean noErrors) {
-
-	String pathToRelevantConfig;
-
-	try {
-	    pathToRelevantConfig = scxmlConverter.updateSCXMLTestResources(config);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    fail("Exception occurred while updating SCXML test resources.", e);
-	    return;
-	}
-
-	super.sqlTest(pathToRelevantConfig, sqls, replacevalues, basedirResults, basedirReference, noErrors);
-    }
-
-    @Override
-    protected void xsdTest(String config, String[] xsds, String[] schs, HashMap<String, String> replacevalues,
+    protected void sqlTest(String config, String[] sqlFileNamesWithoutExtension, HashMap<String, String> replacevalues,
 	    String basedirResults, String basedirReference, boolean noErrors) {
+
+	String pathToRelevantConfig;
+
+	try {
+	    pathToRelevantConfig = scxmlConverter.updateSCXMLTestResources(config);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    fail("Exception occurred while updating SCXML test resources.", e);
+	    return;
+	}
+
+	super.sqlTest(pathToRelevantConfig, sqlFileNamesWithoutExtension, replacevalues, basedirResults,
+		basedirReference, noErrors);
+    }
+
+    @Override
+    protected void xsdTest(String config, String[] xsdFileNamesWithoutExtension, String[] schFileNamesWithoutExtension,
+	    HashMap<String, String> replacevalues, String basedirResults, String basedirReference, boolean noErrors) {
 
 	String pathToRelevantConfig;
 	if (config == null) {
@@ -200,6 +205,7 @@ public class BasicTestSCXML extends BasicTest {
 	    }
 	}
 
-	super.xsdTest(pathToRelevantConfig, xsds, schs, replacevalues, basedirResults, basedirReference, noErrors);
+	super.xsdTest(pathToRelevantConfig, xsdFileNamesWithoutExtension, schFileNamesWithoutExtension, replacevalues,
+		basedirResults, basedirReference, noErrors);
     }
 }
