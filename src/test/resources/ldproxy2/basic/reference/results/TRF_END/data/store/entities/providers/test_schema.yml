@@ -1,0 +1,300 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+providerType: FEATURE
+featureProviderType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+nativeTimeZone: Europe/Berlin
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+  - ts1
+  - ts2
+types:
+  featuretype1:
+    sourcePath: featuretype1
+    type: OBJECT
+    objectType: FeatureType1
+    label: Alias FeatureType1
+    description: This is a feature type.
+    properties:
+      boolean:
+        type: BOOLEAN
+        constraints:
+          required: true
+        constantValue: "false"
+      character:
+        type: STRING
+        constraints:
+          required: true
+        constantValue: T
+      codelist:
+        sourcePath: codelist
+        type: STRING
+        constraints:
+          codelist: CodeList
+          required: true
+      datatype:
+        sourcePath: '[datatype_fkdt=id]datatype'
+        type: OBJECT
+        objectType: DataType
+        description: This is a data type.
+        constraints:
+          required: true
+        properties:
+          boolean:
+            sourcePath: boolean
+            type: BOOLEAN
+          datatype:
+            sourcePath: '[id=datatype_id]DataType_datatype/[datatype2_id=id]datatype2'
+            type: OBJECT_ARRAY
+            objectType: DataType2
+            description: This is another data type.
+            constraints:
+              minOccurrence: 0
+            properties:
+              integer:
+                sourcePath: integer
+                type: INTEGER
+              string:
+                sourcePath: '[id=datatype2_id]DataType2_string/string'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  required: true
+                  minOccurrence: 1
+          string:
+            sourcePath: '[id=datatype_id]DataType_string/string'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              required: true
+              minOccurrence: 1
+      date:
+        sourcePath: date
+        type: DATE
+        role: PRIMARY_INSTANT
+        constraints:
+          required: true
+      datetime:
+        sourcePath: datetime
+        type: DATETIME
+        constraints:
+          required: true
+      decimal:
+        sourcePath: decimal
+        type: FLOAT
+        constraints:
+          required: true
+      enum:
+        sourcePath: enum
+        type: INTEGER
+        constraints:
+          codelist: Enumeration
+          enum:
+          - "1"
+          - "2"
+          required: true
+      geometry:
+        sourcePath: geometry
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      ident:
+        sourcePath: ident
+        type: INTEGER
+        role: ID
+        constraints:
+          required: true
+      integer:
+        sourcePath: integer
+        type: INTEGER
+        description: This is an integer.
+      length:
+        sourcePath: length
+        type: FLOAT
+      measure:
+        sourcePath: measure
+        type: FLOAT
+        constraints:
+          required: true
+      metadata:
+        type: OBJECT
+        objectType: LINK
+        constraints:
+          required: true
+        properties:
+          href:
+            sourcePath: metadata
+            type: STRING
+            label: MD_Metadata-ID
+            transformations:
+            - stringFormat: https://example.org/metadata/{{value}}
+          title:
+            sourcePath: metadata
+            type: STRING
+            label: MD_Metadata-ID
+      nilUnion.reason:
+        sourcePath: nilunion.reason
+        type: STRING
+        label: nilUnion.reason
+      nilUnion.value:
+        sourcePath: '[nilunion.value_fkdt=id]datatype2'
+        type: OBJECT
+        objectType: DataType2
+        label: nilUnion.value
+        properties:
+          integer:
+            sourcePath: integer
+            type: INTEGER
+          string:
+            sourcePath: '[id=datatype2_id]DataType2_string/string'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              required: true
+              minOccurrence: 1
+      number:
+        type: FLOAT
+        constraints:
+          required: true
+        constantValue: "1"
+      real:
+        sourcePath: '[ident=featuretype1_id]FeatureType1_real/real'
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          minOccurrence: 0
+      role2:
+        type: OBJECT
+        objectType: LINK
+        constraints:
+          required: true
+        properties:
+          href:
+            sourcePath: role2_fk
+            type: STRING
+            label: FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/FeatureType2/items/{{value}}'
+          title:
+            sourcePath: role2_fk
+            type: STRING
+            label: FeatureType2-ID
+      string:
+        sourcePath: '[ident=featuretype1_id]FeatureType1_string/string'
+        type: VALUE_ARRAY
+        valueType: STRING
+        description: This is a string.
+        constraints:
+          required: true
+          minOccurrence: 1
+      time:
+        sourcePath: time
+        type: STRING
+        constraints:
+          required: true
+      union.option1:
+        sourcePath: union.option1
+        type: INTEGER
+        label: union.option1
+        constraints:
+          codelist: Enumeration
+          enum:
+          - "1"
+          - "2"
+      union.option2:
+        sourcePath: union.option2
+        type: INTEGER
+        label: union.option2
+      union.option3:
+        sourcePath: '[ident=featuretype1_id]FeatureType1_union.option3/union.option3'
+        type: VALUE_ARRAY
+        valueType: STRING
+        label: union.option3
+        constraints:
+          minOccurrence: 0
+      uri:
+        sourcePath: uri
+        type: STRING
+        constraints:
+          required: true
+  featuretype2:
+    sourcePath: featuretype2
+    type: OBJECT
+    objectType: FeatureType2
+    label: Alias FeatureType2
+    properties:
+      codelist:
+        sourcePath: codelist
+        type: STRING
+        constraints:
+          codelist: CodeList
+          required: true
+      ident:
+        sourcePath: ident
+        type: INTEGER
+        role: ID
+        constraints:
+          required: true
+      role1:
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: role1_fk
+            type: STRING
+            label: FeatureType1-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/FeatureType1/items/{{value}}'
+          title:
+            sourcePath: role1_fk
+            type: STRING
+            label: FeatureType1-ID
+      string:
+        sourcePath: string
+        type: STRING
+        constraints:
+          required: true
+  ts2_featuretype1:
+    sourcePath: ts2_featuretype1
+    type: OBJECT
+    objectType: TS2_FeatureType1
+    description: Documentation TS2_FeatureType1
+    properties:
+      attCodelist:
+        sourcePath: attcodelist
+        type: STRING
+        constraints:
+          codelist: TS2_Codelist
+          required: true
+      attEnum:
+        sourcePath: attenum
+        type: STRING
+        constraints:
+          codelist: TS2_Enumeration
+          enum:
+          - enum1
+          - enum2
+          required: true
+      attInt:
+        sourcePath: attint
+        type: INTEGER
+        constraints:
+          required: true
+      oid:
+        sourcePath: id
+        type: INTEGER
+        role: ID

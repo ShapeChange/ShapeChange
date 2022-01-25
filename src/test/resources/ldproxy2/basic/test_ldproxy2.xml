@@ -40,6 +40,8 @@
 					value="false" />
 				<ProcessParameter
 					name="flattenDataTypesExcludeRegex" value=".*" />
+				<ProcessParameter
+					name="separatorForPropertyFromUnion" value="." />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">
@@ -69,7 +71,7 @@
 			<targetParameter name="foreignKeyColumnSuffix"
 				value="_fk" />
 			<targetParameter
-				name="foreignKeyColumnSuffixDatatype" value="_fk" />
+				name="foreignKeyColumnSuffixDatatype" value="_fkdt" />
 			<!-- <targetParameter name="labelTemplate" value="[[alias]]"/> -->
 			<!-- <targetParameter name="maxNameLength" value="63"/> -->
 			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
@@ -99,7 +101,7 @@
 					<rule name="rule-ldp2-prop-readOnly" />
 				</EncodingRule>
 				<EncodingRule name="ldpCodelistTargetByTV">
-					<rule name="rule-ldp2-all-documentation" />					
+					<rule name="rule-ldp2-all-documentation" />
 					<rule name="rule-ldp2-all-schemas" />
 					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue" />
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint" />

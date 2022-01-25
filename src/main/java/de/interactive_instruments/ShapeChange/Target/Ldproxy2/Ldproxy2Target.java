@@ -37,8 +37,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -53,22 +55,23 @@ import de.ii.ldproxy.ogcapi.domain.FeatureTypeConfigurationOgcApi;
 import de.ii.ldproxy.ogcapi.domain.ImmutableFeatureTypeConfigurationOgcApi;
 import de.ii.ldproxy.ogcapi.domain.ImmutableOgcApiDataV2;
 import de.ii.ldproxy.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
-import de.ii.ldproxy.ogcapi.html.domain.ImmutableHtmlConfiguration;
-import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.codelists.domain.CodelistData.IMPORT_TYPE;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelistData;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
+import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.feature.provider.sql.domain.ConnectionInfoSql.Dialect;
+import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableConnectionInfoSql;
+import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableFeatureProviderSqlData;
+import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableQueryGeneratorSettings;
+import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableSqlPathDefaults;
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
 import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
-import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableConnectionInfoSql;
-import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableFeatureProviderSqlData;
-import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableQueryGeneratorSettings;
-import de.ii.xtraplatform.feature.provider.sql.domain.ImmutableSqlPathDefaults;
+import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
+import de.ii.xtraplatform.geometries.domain.SimpleFeatureGeometry;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -84,12 +87,6 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetUtil;
-import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaConstants;
-import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaDocument;
-import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget;
-import de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTypeInfo;
-import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
-import de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -102,16 +99,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static boolean diagnosticsOnly = false;
     protected static int numberOfEncodedSchemas = 0;
 
-    /**
-     * NOTE: If not set via the configuration, the default applies which is
-     * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
-     */
-    protected static String documentationTemplate = null;
-    /**
-     * NOTE: If not set via the configuration, the default applies which is
-     * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_NOVALUE}.
-     */
-    protected static String documentationNoValue = null;
+//    /**
+//     * NOTE: If not set via the configuration, the default applies which is
+//     * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE}.
+//     */
+//    protected static String documentationTemplate = null;
+//    /**
+//     * NOTE: If not set via the configuration, the default applies which is
+//     * {@value Options#DERIVED_DOCUMENTATION_DEFAULT_NOVALUE}.
+//     */
+//    protected static String documentationNoValue = null;
 
     protected static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
     protected static String cfgTemplatePath = null; // default TODO
@@ -166,6 +163,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     private PackageInfo mainAppSchema = null;
 
+    /**
+     * key outer map: top level type; value outer map: map with key: property path,
+     * value: list of property transformations
+     */
+    protected Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> serviceConfigPropertyTransformationsByTopLevelClass = new HashMap<>();
+
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -217,10 +220,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
 	    // change the default documentation template?
-	    documentationTemplate = options.parameter(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_DOCUMENTATION_TEMPLATE);
-	    documentationNoValue = options.parameter(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_DOCUMENTATION_NOVALUE);
+//	    documentationTemplate = options.parameter(this.getClass().getName(),
+//		    Ldproxy2Constants.PARAM_DOCUMENTATION_TEMPLATE);
+//	    documentationNoValue = options.parameter(this.getClass().getName(),
+//		    Ldproxy2Constants.PARAM_DOCUMENTATION_NOVALUE);
 
 	    cfgTemplatePath = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH, "FIXME", false, true);
@@ -484,8 +487,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	// TODO create the actual ldproxy configuration objects
-
 	if (!diagnosticsOnly) {
 
 	    /*
@@ -512,23 +513,40 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		String typeDefName = ci.name().toLowerCase(Locale.ENGLISH);
 
-		Optional<String> featureTitleTemplate = computeFeatureTitleTemplate(ci);
-
-		ImmutableFeaturesHtmlConfiguration fhtml = cfg.builder().ogcApiExtension().featuresHtml()
-			.featureTitleTemplate(featureTitleTemplate).build();
-
-		SortedMap<String, FeatureSchema> propertyDefs = computePropertyDefinitions(ci,
-			new ArrayList<PropertyInfo>());
+		/*
+		 * Create provider config entry
+		 */
+		SortedMap<String, FeatureSchema> propertyDefs = propertyDefinitions(ci, new ArrayList<PropertyInfo>());
 
 		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(typeDefName).objectType(ci.name()).label(computeLabel(ci))
-			.sourcePath(computeDatabaseTableName(ci, false)).description(computeDescription(ci))
-			.propertyMap(propertyDefs).build();
+			.name(typeDefName).objectType(ci.name()).label(label(ci))
+			.sourcePath(databaseTableName(ci, false)).description(description(ci)).propertyMap(propertyDefs)
+			.build();
+
+		providerTypeDefinitions.put(typeDefName, typeDef);
+
+		/*
+		 * Create service config entry (must be done after provider config entry
+		 * creation, in order for codelist transformation infos to be available for
+		 * inclusion in the service config)
+		 */
+
+		ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension()
+			.featuresHtml();
+
+		fhtmlBuilder.featureTitleTemplate(featureTitleTemplate(ci));
+
+		if (serviceConfigPropertyTransformationsByTopLevelClass.containsKey(ci)) {
+		    SortedMap<String, List<PropertyTransformation>> serviceConfigPropertyTransformations = serviceConfigPropertyTransformationsByTopLevelClass
+			    .get(ci);
+		    fhtmlBuilder.transformations(serviceConfigPropertyTransformations);
+		}
+
+		ImmutableFeaturesHtmlConfiguration fhtml = fhtmlBuilder.build();
 
 		ImmutableFeatureTypeConfigurationOgcApi serviceCollDef = new ImmutableFeatureTypeConfigurationOgcApi.Builder()
 			.id(typeDefName).label(typeDefName).addExtensions(fhtml).build();
 
-		providerTypeDefinitions.put(typeDefName, typeDef);
 		serviceCollectionDefinitions.put(typeDefName, serviceCollDef);
 	    }
 
@@ -539,8 +557,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	     * 
 	     * ================================
 	     */
-
-//	    ImmutableHtmlConfiguration html = cfg.builder().ogcApiExtension().html().footerText("TEST").build();
 
 	    ImmutableOgcApiDataV2 serviceConfig = cfg.builder().entity().api().id(mainId).entityStorageVersion(2)
 		    .label(serviceLabel).description(serviceDescription).serviceType("OGC_API")
@@ -587,24 +603,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			.withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
 	    }
 
-	    // TODO create the output directories and write the ldproxy configuration files
-//	    File entitiesDir = new File(outputDirectory, "data/store/entities");
-//	    if (!entitiesDir.exists()) {
-//		entitiesDir.mkdirs();
-//	    }
-//	    File codelistsDir = new File(entitiesDir, "codelists");
-//	    if (!codelistsDir.exists()) {
-//		codelistsDir.mkdir();
-//	    }
-//	    File providersDir = new File(entitiesDir, "providers");
-//	    if (!providersDir.exists()) {
-//		providersDir.mkdir();
-//	    }
-//	    File servicesDir = new File(entitiesDir, "services");
-//	    if (!servicesDir.exists()) {
-//		servicesDir.mkdir();
-//	    }
-
 	    // write api
 	    try {
 		cfg.writeEntity(serviceConfig);
@@ -619,13 +617,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     }
 
-    private SortedMap<String, FeatureSchema> computePropertyDefinitions(ClassInfo currentCi,
-	    List<PropertyInfo> visitedPiList) {
+    private SortedMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
+	    List<PropertyInfo> alreadyVisitedPiList) {
 
 	SortedMap<String, FeatureSchema> propertyDefs = new TreeMap<>();
 
 	/*
-	 * DETERMINE SPECIAL PROPERTIES - ONLY FOR TOP-LEVEL CLASS
+	 * DETERMINE SPECIAL PROPERTIES - ONLY RELEVANT FOR TOP-LEVEL CLASS
 	 */
 
 	PropertyInfo identifierPi = null;
@@ -639,11 +637,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	PropertyInfo defaultIntervalEndPi = null;
 	boolean multipleDefaultIntervalEndsEncountered = false;
 
-	if (visitedPiList.isEmpty()) {
+	if (alreadyVisitedPiList.isEmpty()) {
 
 	    for (PropertyInfo pi : currentCi.properties().values()) {
 
 		if (pi.matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+		    continue;
+		}
+
+		if (!valueTypeIsMapped(pi) && unsupportedCategoryOfValue(pi)) {
+		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullNameInSchema());
+		    }
 		    continue;
 		}
 
@@ -758,9 +764,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		continue;
 	    }
 
+	    if (!valueTypeIsMapped(pi) && unsupportedCategoryOfValue(pi)) {
+		MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		continue;
+	    }
+
+	    List<PropertyInfo> nowVisitedList = new ArrayList<>(alreadyVisitedPiList);
+	    nowVisitedList.add(pi);
+
 	    ImmutableFeatureSchema.Builder propMemberDefBuilder = new ImmutableFeatureSchema.Builder();
 
-	    Type ldpType = determineLdproxyType(pi);
+	    Type ldpType = ldproxyType(pi);
 
 	    if (pi.cardinality().maxOccurs > 1) {
 		if (ldpType == Type.OBJECT) {
@@ -774,6 +791,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		}
 	    } else {
 		propMemberDefBuilder.type(ldpType);
+	    }
+
+	    if (ldpType == Type.GEOMETRY) {
+		propMemberDefBuilder.geometryType(geometryType(pi));
 	    }
 
 	    Optional<Role> propRole;
@@ -795,12 +816,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    }
 	    propMemberDefBuilder.role(propRole);
 
-	    // FIXME - must take multiplicity into account - write method sourcePath(pi) ...
-	    String sourcePath = computeDatabaseColumnName(pi, false);
+	    Optional<String> sourcePathProperty = sourcePathPropertyLevel(pi);
 	    boolean ignoreSourcePathOnPropertyLevel = false;
 
 	    // handle embedded cases (datatype or link properties)
-	    if (isMappedToLink(pi) || isTypeWithIdentityValueType(pi)) {
+	    if (isMappedToOrImplementedAsLink(pi)) {
 
 		propMemberDefBuilder.objectType("LINK");
 
@@ -808,14 +828,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		SortedMap<String, FeatureSchema> linkPropertyDefs = new TreeMap<>();
 
-		linkPropertyDefs.put("title", new ImmutableFeatureSchema.Builder().name("title")
-			.label(pi.typeInfo().name + "-ID").type(Type.STRING).sourcePath(sourcePath).build());
+		linkPropertyDefs.put("title",
+			new ImmutableFeatureSchema.Builder().name("title").label(pi.typeInfo().name + "-ID")
+				.type(Type.STRING).sourcePath(databaseColumnName(pi, false)).build());
 
 		ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
 		linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			.sourcePath(sourcePath);
-		linkPropHrefBuilder.addAllTransformationsBuilders(new ImmutablePropertyTransformation.Builder()
-			.stringFormat(determineUrlTemplateForValueType(pi)));
+			.sourcePath(databaseColumnName(pi, false));
+		linkPropHrefBuilder.addAllTransformationsBuilders(
+			new ImmutablePropertyTransformation.Builder().stringFormat(urlTemplateForValueType(pi)));
 		linkPropertyDefs.put("href", linkPropHrefBuilder.build());
 
 		propMemberDefBuilder.propertyMap(linkPropertyDefs);
@@ -824,15 +845,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		ClassInfo typeCi = pi.typeClass();
 
-		List<PropertyInfo> newVisitedList = new ArrayList<>(visitedPiList);
-		newVisitedList.add(pi);
-
 		// detect circular dependency in the property path
-		if (visitedPiList.stream().anyMatch(vPi -> vPi.inClass() == typeCi) || typeCi == currentCi) {
+		if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == typeCi) || typeCi == currentCi) {
 
-		    ClassInfo topType = visitedPiList.get(0).inClass();
+		    ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
 
-		    MessageContext mc = result.addError(this, 117, topType.name(), propertyPath(newVisitedList));
+		    MessageContext mc = result.addError(this, 117, topType.name(), propertyPath(nowVisitedList));
 		    if (mc != null) {
 			mc.addDetail(this, 0, topType.fullNameInSchema());
 		    }
@@ -841,8 +859,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		} else {
 
-		    SortedMap<String, FeatureSchema> datatypePropertyDefs = computePropertyDefinitions(typeCi,
-			    newVisitedList);
+		    SortedMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi, nowVisitedList);
 		    propMemberDefBuilder.propertyMap(datatypePropertyDefs);
 		    propMemberDefBuilder.objectType(typeCi.name());
 		}
@@ -851,71 +868,333 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (StringUtils.isNotBlank(pi.initialValue()) && pi.isReadOnly()
 		    && pi.matches(Ldproxy2Constants.RULE_PROP_READONLY)) {
 
-		propMemberDefBuilder.constantValue(computeConstantValue(pi));
+		propMemberDefBuilder.constantValue(constantValue(pi));
 
 	    } else if (!ignoreSourcePathOnPropertyLevel) {
 
-		propMemberDefBuilder.sourcePath(sourcePath);
+		propMemberDefBuilder.sourcePath(sourcePathProperty);
 	    }
 
-	    // Generate constraints - from multiplicity and value type
+	    // Generate constraints
 	    Optional<ImmutableSchemaConstraints> constraints = Optional.empty();
-	    boolean constraintCreated = false;
+	    boolean providerConfigConstraintCreated = false;
 	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
 	    if (pi.cardinality().minOccurs != 0 && !pi.voidable()) {
-		constraintCreated = true;
+		providerConfigConstraintCreated = true;
 		constraintsBuilder.required(true);
 	    }
 	    if (pi.cardinality().maxOccurs > 1 && !(pi == identifierPi || pi == defaultGeometryPi)
 		    && ldpType != Type.GEOMETRY) {
 		if (pi.voidable()) {
-		    constraintCreated = true;
+		    providerConfigConstraintCreated = true;
 		    constraintsBuilder.minOccurrence(0);
 		} else {
-		    constraintCreated = true;
+		    providerConfigConstraintCreated = true;
 		    constraintsBuilder.minOccurrence(pi.cardinality().minOccurs);
 		}
 		if (pi.cardinality().maxOccurs != Integer.MAX_VALUE) {
-		    constraintCreated = true;
+		    providerConfigConstraintCreated = true;
 		    constraintsBuilder.maxOccurrence(pi.cardinality().maxOccurs);
 		}
 	    }
 	    if (isEnumerationOrCodelistValueType(pi)) {
-		constraintCreated = true;
-		constraintsBuilder.codelist(codelistId(pi.typeClass()));
+
+		ClassInfo typeCi = pi.typeClass();
+
+		providerConfigConstraintCreated = true;
+		String codelistId = codelistId(typeCi);
+		constraintsBuilder.codelist(codelistId);
+
+		if (pi.categoryOfValue() == Options.ENUMERATION
+			&& typeCi.matches(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT)) {
+		    constraintsBuilder.enumValues(enumValues(typeCi));
+		}
+
+		// now create content for inclusion in service config:
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
+			.build();
+		addServiceConfigPropertyTransformation(nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList),
+			trf);
 	    }
-	    if (constraintCreated) {
+
+	    if (providerConfigConstraintCreated) {
 		constraints = Optional.of(constraintsBuilder.build());
 	    }
 	    propMemberDefBuilder.constraints(constraints);
 
-	    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(computeLabel(pi))
-		    .description(computeDescription(pi)).build();
+	    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(label(pi))
+		    .description(description(pi)).build();
 	    propertyDefs.put(pi.name(), propMemberDef);
+
+	    // create more service constraint content
+	    if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
+		String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
+		if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
+		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
+			    .build();
+		    addServiceConfigPropertyTransformation(nowVisitedList.get(0).inClass(),
+			    propertyPath(nowVisitedList), trf);
+		} else {
+		    MessageContext mc = result.addError(this, 122, pi.name(), pi.taggedValue("ldpRemove"));
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullNameInSchema());
+		    }
+		}
+	    }
+	    if (ldpType == Type.DATE && StringUtils.isNotBlank(dateFormat)) {
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			.dateFormat(dateFormat).build();
+		addServiceConfigPropertyTransformation(nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList),
+			trf);
+	    }
+	    if (ldpType == Type.DATETIME && StringUtils.isNotBlank(dateTimeFormat)) {
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			.dateFormat(dateTimeFormat).build();
+		addServiceConfigPropertyTransformation(nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList),
+			trf);
+	    }
 	}
 
 	return propertyDefs;
     }
 
-    private String computeConstantValue(PropertyInfo pi) {
+    private void addServiceConfigPropertyTransformation(ClassInfo topLevelClass, String propertyPath,
+	    ImmutablePropertyTransformation trf) {
+
+	SortedMap<String, List<PropertyTransformation>> serviceConfigTrfsByPropPath;
+	if (serviceConfigPropertyTransformationsByTopLevelClass.containsKey(topLevelClass)) {
+	    serviceConfigTrfsByPropPath = serviceConfigPropertyTransformationsByTopLevelClass.get(topLevelClass);
+	} else {
+	    serviceConfigTrfsByPropPath = new TreeMap<>();
+	    serviceConfigPropertyTransformationsByTopLevelClass.put(topLevelClass, serviceConfigTrfsByPropPath);
+	}
+
+	if (serviceConfigTrfsByPropPath.containsKey(propertyPath)) {
+	    serviceConfigTrfsByPropPath.get(propertyPath).add(trf);
+	} else {
+	    List<PropertyTransformation> propTransforms = new ArrayList<>();
+	    propTransforms.add(trf);
+	    serviceConfigTrfsByPropPath.put(propertyPath, propTransforms);
+	}
+    }
+
+    private Iterable<String> enumValues(ClassInfo enumeration) {
+
+	List<String> res = new ArrayList<>();
+
+	for (PropertyInfo pi : enumeration.properties().values()) {
+	    if (StringUtils.isNotBlank(pi.initialValue())) {
+		res.add(pi.initialValue().trim());
+	    } else {
+		res.add(pi.name());
+	    }
+	}
+
+	return res;
+    }
+
+    private boolean unsupportedCategoryOfValue(PropertyInfo pi) {
+
+	return pi.categoryOfValue() == Options.UNION || pi.categoryOfValue() == Options.BASICTYPE
+		|| pi.categoryOfValue() == Options.MIXIN;
+    }
+
+    private boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
+	return isMappedToLink(pi) || isTypeWithIdentityValueType(pi);
+    }
+
+    private Optional<String> sourcePathPropertyLevel(PropertyInfo pi) {
+
+	String typeName = pi.typeInfo().name;
+	String typeId = pi.typeInfo().id;
+	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+
+	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+
+	    if (pme.hasTargetType()) {
+
+		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
+
+		    // the target only allows and thus assumes max mult = 1
+		    return Optional.of(databaseColumnName(pi, false));
+
+		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
+
+		    if (pi.cardinality().maxOccurs == 1) {
+			return Optional.empty();
+		    } else {
+			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi));
+		    }
+
+		} else {
+		    // value type is a simple ldproxy type
+		    if (pi.cardinality().maxOccurs == 1) {
+			return Optional.of(databaseColumnName(pi, false));
+		    } else {
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi) + "/" + databaseColumnName(pi, false));
+		    }
+		}
+
+	    } else {
+		// is checked via target configuration validator (which can be switched off)
+		result.addError(this, 118, typeName);
+		return Optional.of("FIXME");
+	    }
+	}
+
+	ClassInfo typeCi = pi.typeClass();
+
+	if (typeCi == null) {
+
+	    MessageContext mc = result.addError(this, 118, typeName);
+	    if (mc != null) {
+		mc.addDetail(this, 1, pi.fullNameInSchema());
+	    }
+	    return Optional.of("FIXME");
+
+	} else {
+
+	    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
+
+		if (pi.cardinality().maxOccurs == 1) {
+		    return Optional.of(databaseColumnName(pi, false));
+		} else {
+		    return Optional
+			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
+				    + associativeTableName(pi) + "/" + databaseColumnName(pi, false));
+		}
+
+	    } else if (typeCi.category() == Options.DATATYPE) {
+
+		if (pi.cardinality().maxOccurs == 1) {
+
+		    return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+			    + databaseTableName(typeCi, false));
+		} else {
+
+		    return Optional
+			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
+				    + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
+				    + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+		}
+
+	    } else {
+
+		if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
+
+		    // bi-directional association
+		    if (pi.cardinality().maxOccurs > 1 && pi.reverseProperty().cardinality().maxOccurs > 1) {
+
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
+					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+
+		    } else if (pi.cardinality().maxOccurs > 1) {
+
+			// case pB from ppt image
+			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ databaseColumnName(pi.reverseProperty(), true) + "]"
+				+ databaseTableName(typeCi, false));
+
+		    } else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
+
+			// case pA from ppt image
+			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+				+ databaseTableName(typeCi, false));
+
+		    } else {
+
+			// max mult = 1 on both ends
+			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+				+ databaseTableName(typeCi, false));
+		    }
+
+		} else {
+
+		    // attribute or uni-directional association
+		    if (pi.cardinality().maxOccurs == 1) {
+
+			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+				+ databaseTableName(typeCi, false));
+
+		    } else {
+
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
+					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+		    }
+		}
+
+	    }
+	}
+    }
+
+    private String primaryKeyColumn(ClassInfo ci) {
+
+	if (ci.matches(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE)) {
+	    for (PropertyInfo pi : ci.properties().values()) {
+		if (pi.stereotype("identifier")) {
+		    return databaseColumnName(pi, false);
+		}
+	    }
+	}
+
+	return primaryKeyColumn;
+    }
+
+    private String associativeTableName(PropertyInfo pi) {
+
+	if (StringUtils.isNotBlank(pi.taggedValue("associativeTable"))) {
+	    return pi.taggedValue("associativeTable");
+	} else if (pi.association() != null
+		&& StringUtils.isNotBlank(pi.association().taggedValue("associativeTable"))) {
+	    return pi.association().taggedValue("associativeTable");
+	}
+
+	String tableName = pi.inClass().name();
+	String propertyName = pi.name();
+
+	if (pi.association() != null && pi.reverseProperty().isNavigable()
+		&& pi.inClass().name().compareTo(pi.reverseProperty().inClass().name()) > 0) {
+	    /*
+	     * Name of class that owns the reverse property comes before name of
+	     * pi.inClass() (in alphabetical order).
+	     */
+	    tableName = pi.reverseProperty().inClass().name();
+	    propertyName = pi.reverseProperty().name();
+	}
+
+	return tableName + "_" + propertyName;
+    }
+
+    private String constantValue(PropertyInfo pi) {
 
 	String valueTypeName = pi.typeInfo().name;
 
 	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(valueTypeName,
 		pi.encodingRule(Ldproxy2Constants.PLATFORM));
-			
+
 	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, pi.typeInfo().id)) {
-	    
-	    if(valueTypeName.equalsIgnoreCase("Boolean")) {
-		
-		if("true".equalsIgnoreCase(pi.initialValue().trim())) {
+
+	    if (valueTypeName.equalsIgnoreCase("Boolean")) {
+
+		if ("true".equalsIgnoreCase(pi.initialValue().trim())) {
 		    return StringUtils.defaultIfBlank(mapEntryParamInfos.getCharacteristic(valueTypeName,
-			    pi.encodingRule(Ldproxy2Constants.PLATFORM), Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE),"true");
-		} else if("false".equalsIgnoreCase(pi.initialValue().trim())) {
+			    pi.encodingRule(Ldproxy2Constants.PLATFORM),
+			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
+			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE), "true");
+		} else if ("false".equalsIgnoreCase(pi.initialValue().trim())) {
 		    return StringUtils.defaultIfBlank(mapEntryParamInfos.getCharacteristic(valueTypeName,
-			    pi.encodingRule(Ldproxy2Constants.PLATFORM), Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE),"false");
+			    pi.encodingRule(Ldproxy2Constants.PLATFORM),
+			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
+			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE), "false");
 		}
 	    }
 	}
@@ -923,7 +1202,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return pi.initialValue();
     }
 
-    private String determineUrlTemplateForValueType(PropertyInfo pi) {
+    private String urlTemplateForValueType(PropertyInfo pi) {
 
 	String urlTemplate = null;
 
@@ -938,6 +1217,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    urlTemplate = mapEntryParamInfos.getCharacteristic(valueTypeName,
 		    pi.encodingRule(Ldproxy2Constants.PLATFORM), Ldproxy2Constants.ME_PARAM_LINK_INFOS,
 		    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE);
+
+	    urlTemplate = urlTemplate.replaceAll("\\(value\\)", "{{value}}").replaceAll("\\(serviceUrl\\)",
+		    "{{serviceUrl}}");
 	}
 
 	if (StringUtils.isBlank(urlTemplate)) {
@@ -968,6 +1250,22 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
+    private boolean valueTypeIsMapped(PropertyInfo pi) {
+
+	return valueTypeIsMapped(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    private boolean valueTypeIsMapped(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
     private boolean isSimpleLdproxyType(Type t) {
 
 	switch (t) {
@@ -992,40 +1290,39 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
     }
 
-    private Type determineTypeForValueType(PropertyInfo pi) {
-	return determineTypeForValueType(pi, pi.cardinality().maxOccurs);
+//    private Type typeForValueType(PropertyInfo pi) {
+//	return typeForValueType(pi, pi.cardinality().maxOccurs);
+//    }
+//
+//    private Type typeForValueType(PropertyInfo pi, int assumedMaxMultiplicity) {
+//
+//	return typeForValueType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM),
+//		assumedMaxMultiplicity);
+//    }
+//
+//    private Type typeForValueType(String typeName, String typeId, String encodingRule, int assumedMaxMultiplicity) {
+//
+//	Type resType = ldproxyType(typeName, typeId, encodingRule);
+//
+//	if (assumedMaxMultiplicity > 1) {
+//	    if (resType == Type.OBJECT) {
+//		resType = Type.OBJECT_ARRAY;
+//	    } else if (resType == Type.GEOMETRY) {
+//		// ignore -> no array for geometry properties
+//	    } else {
+//		resType = Type.VALUE_ARRAY;
+//	    }
+//	}
+//
+//	return resType;
+//    }
+
+    private Type ldproxyType(PropertyInfo pi) {
+
+	return ldproxyType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
     }
 
-    private Type determineTypeForValueType(PropertyInfo pi, int assumedMaxMultiplicity) {
-
-	return determineTypeForValueType(pi.typeInfo().name, pi.typeInfo().id,
-		pi.encodingRule(Ldproxy2Constants.PLATFORM), assumedMaxMultiplicity);
-    }
-
-    private Type determineTypeForValueType(String typeName, String typeId, String encodingRule,
-	    int assumedMaxMultiplicity) {
-
-	Type resType = determineLdproxyType(typeName, typeId, encodingRule);
-
-	if (assumedMaxMultiplicity > 1) {
-	    if (resType == Type.OBJECT) {
-		resType = Type.OBJECT_ARRAY;
-	    } else if (resType == Type.GEOMETRY) {
-		// ignore -> no array for geometry properties
-	    } else {
-		resType = Type.VALUE_ARRAY;
-	    }
-	}
-
-	return resType;
-    }
-
-    private Type determineLdproxyType(PropertyInfo pi) {
-
-	return determineLdproxyType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
-    }
-
-    private Type determineLdproxyType(String typeName, String typeId, String encodingRule) {
+    private Type ldproxyType(String typeName, String typeId, String encodingRule) {
 
 	Type resType = Type.STRING;
 
@@ -1074,7 +1371,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		    if (!valueType.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)
 			    && StringUtils.isNotBlank(valueType.taggedValue("numericType"))) {
-			resType = determineLdproxyType(valueType.taggedValue("numericType"), null,
+			resType = ldproxyType(valueType.taggedValue("numericType"), null,
 				valueType.encodingRule(Ldproxy2Constants.PLATFORM));
 		    } else {
 			resType = Type.STRING;
@@ -1088,11 +1385,44 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return resType;
     }
 
+    private Optional<SimpleFeatureGeometry> geometryType(PropertyInfo pi) {
+
+	String typeName = pi.typeInfo().name;
+	String typeId = pi.typeInfo().id;
+	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+
+	SimpleFeatureGeometry res = SimpleFeatureGeometry.ANY;
+
+	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
+		&& "GEOMETRY".equalsIgnoreCase(pme.getTargetType())
+		&& mapEntryParamInfos.hasCharacteristic(typeName, encodingRule,
+			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
+			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE)) {
+
+	    String t = mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
+		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
+		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE);
+
+	    res = SimpleFeatureGeometry.valueOf(t.toUpperCase(Locale.ENGLISH));
+
+	} else {
+	    // is checked via target configuration validator (which can be switched off)
+	    MessageContext mc = result.addError(this, 121, pi.name(), pi.typeInfo().name);
+	    if (mc != null) {
+		mc.addDetail(this, 1, pi.fullNameInSchema());
+	    }
+	}
+
+	return Optional.of(res);
+    }
+
     private boolean isTrueIgnoringCase(String s) {
 	return StringUtils.isNotBlank(s) && "true".equalsIgnoreCase(s.trim());
     }
 
-    private Optional<String> computeFeatureTitleTemplate(ClassInfo ci) {
+    private Optional<String> featureTitleTemplate(ClassInfo ci) {
 
 	String tv = ci.taggedValue("ldpFeatureTitleTemplate");
 	if (StringUtils.isBlank(tv)) {
@@ -1106,7 +1436,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	String id = codelistId(ci);
 
-	Optional<String> labelOpt = computeLabel(ci);
+	Optional<String> labelOpt = label(ci);
 	String label;
 	if (labelOpt.isEmpty()) {
 	    MessageContext mc = result.addError(this, 102, ci.name());
@@ -1178,7 +1508,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return icd;
     }
 
-    private String computeDatabaseTableName(ClassInfo ci, boolean isAssociativeTableContext) {
+    private String databaseTableName(ClassInfo ci, boolean isAssociativeTableContext) {
 
 	String result = ci.name();
 
@@ -1193,19 +1523,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return result;
     }
 
-    private String computeDatabaseColumnName(PropertyInfo pi, boolean isAssociativeTableContext) {
+    private String databaseColumnName(PropertyInfo pi, boolean isColumnInAssociativeTable) {
 
 	String result = pi.name();
 
-	if (isAssociativeTableContext) {
-	    result = result + associativeTableColumnSuffix;
-	} else {
-	    if (valueTypeIsTypeWithIdentity(pi)) {
-		result = result + foreignKeyColumnSuffix;
-	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
-		result = result + foreignKeyColumnSuffixDatatype;
-	    }
+//	if (isColumnInAssociativeTable) {
+//	    result = result + associativeTableColumnSuffix;
+//	} else {
+	if (valueTypeIsTypeWithIdentity(pi)) {
+	    result = result + foreignKeyColumnSuffix;
+	} else if (pi.categoryOfValue() == Options.DATATYPE) {
+	    result = result + foreignKeyColumnSuffixDatatype;
 	}
+//	}
 
 	result = result.toLowerCase(Locale.ENGLISH);
 
@@ -1222,7 +1552,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return ci.name().replaceAll("\\W", "_");
     }
 
-    private Optional<String> computeLabel(Info i) {
+    private Optional<String> label(Info i) {
 
 	if (i != null && labelTemplate != null && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
@@ -1233,7 +1563,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
-    private Optional<String> computeDescription(Info i) {
+    private Optional<String> description(Info i) {
 
 	if (i != null && descriptionTemplate != null && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
@@ -1257,8 +1587,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	dbSchemaNames = new TreeSet<String>();
 
-	documentationTemplate = null;
-	documentationNoValue = null;
+//	documentationTemplate = null;
+//	documentationNoValue = null;
 
 	associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
 	cfgTemplatePath = null; // default TODO
@@ -1341,10 +1671,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Schema '$1$' is not encoded.";
 	case 8:
 	    return "Class '$1$' is not encoded.";
-
-	case 10: // TODO used?
-	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-
+	
 	case 15:
 	    return "No map entries provided via the configuration.";
 	case 16:
@@ -1402,11 +1729,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??Expected simple ldproxy type implementation of value type '$1$' of property '$2$' in class '$3$'. Found '$4$'. Assuming ldproxy type 'STRING'.";
 	case 117:
 	    return "??Circular dependency detected when encoding type '$1$'. The property path '$2$' would create a circle. The last property in that path will not be encoded.";
-
-	case 503: // TODO used?
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 504: // TODO used?
-	    return "File has been deleted.";
+	case 118:
+	    return "??No target type is defined in map entry for type '$1$'. Setting source path for properties with this type as value type to 'FIXME'.";
+	case 119:
+	    return "??Value type '$1$' of property '$2$' is neither mapped nor found in the model. Is there a typo in value type name? Has the type not been loaded (e.g. by excluding some package during model loading) or removed (e.g. through a transformation)? Setting source path for the property to 'FIXME'.";
+	case 120:
+	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transform (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
+	case 121:
+	    return "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
+	case 122:
+	    return "??Value of tag 'ldpRemove' on property '$1$' is invalid. Allowed values are: IN_COLLECTION, ALWAYS, NEVER (case is ignored when parsing the value). Found value '$2$'.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

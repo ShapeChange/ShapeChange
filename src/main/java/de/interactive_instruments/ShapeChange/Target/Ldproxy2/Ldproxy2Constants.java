@@ -56,12 +56,12 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
     
     
-    /**
-     * Optional changes to the default documentation template and the default
-     * strings for descriptors without value
-     */
-    public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
-    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
+//    /**
+//     * Optional changes to the default documentation template and the default
+//     * strings for descriptors without value
+//     */
+//    public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
+//    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
     
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
     public static final String PARAM_CFG_TEMPLATE_PATH = "cfgTemplatePath";
