@@ -45,7 +45,7 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING = "initialValueEncoding";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE = "true";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE = "false";
-    public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED = "quoted";
+//    public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED = "quoted";
     
     public static final String ME_PARAM_GEOMETRY_INFOS = "geometryInfos";
     public static final String ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE = "geometryType";

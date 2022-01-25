@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.Options;
@@ -127,6 +128,17 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_LABEL);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH);
 
+	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER))) {
+	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER);
+	    try {
+		Force.valueOf(paramValue);
+	    } catch (IllegalArgumentException e) {
+		MessageContext mc = result.addError(this, 107, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, paramValue);
+		mc.addDetail(this, 0, targetConfigInputs);
+		isValid = false;
+	    }
+	}
+
 	return isValid;
     }
 
@@ -201,6 +213,21 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    ProcessMapEntry pme = mepp.getMapEntry(typeName, ruleName);
 	    String targetType = pme.getTargetType();
 
+	    if (StringUtils.isBlank(targetType)) {
+		isValid = false;
+		MessageContext mc = result.addError(this, 108, typeName);
+		if (mc != null) {
+		    mc.addDetail(this, 2, targetConfigInputs, typeRuleKey);
+		}
+	    } else if (!StringUtils.equalsAnyIgnoreCase(targetType, "FLOAT", "INTEGER", "STRING", "BOOLEAN", "DATETIME",
+		    "DATE", "GEOMETRY", "LINK")) {
+		isValid = false;
+		MessageContext mc = result.addError(this, 109, typeName, targetType);
+		if (mc != null) {
+		    mc.addDetail(this, 2, targetConfigInputs, typeRuleKey);
+		}
+	    }
+
 	    Map<String, Map<String, String>> characteristicsByParameter = entry.getValue();
 
 	    if (characteristicsByParameter.containsKey(Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS)) {
@@ -252,14 +279,14 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
 			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE, typeRuleKey, targetType);
 
-		    isValid = isValid & checkParameterOptionalCharacteristicHasValue(characteristicsByParameter,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED, typeRuleKey, targetType);
+//		    isValid = isValid & checkParameterOptionalCharacteristicHasValue(characteristicsByParameter,
+//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
+//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED, typeRuleKey, targetType);
 
-		    isValid = isValid & checkParameterCharacteristicHasAllowedValueIgnoringCase(
-			    characteristicsByParameter, Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED,
-			    new String[] { "true", "false" }, typeRuleKey, targetType);
+//		    isValid = isValid & checkParameterCharacteristicHasAllowedValueIgnoringCase(
+//			    characteristicsByParameter, Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
+//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED,
+//			    new String[] { "true", "false" }, typeRuleKey, targetType);
 		}
 	    }
 
@@ -364,6 +391,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$'.";
 	case 1:
 	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 2:
+	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
 	case 4:
 	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
 
@@ -373,16 +402,20 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
 	case 102:
 	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
-
 	case 103:
 	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
-
 	case 104:
 	    return "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
 	case 105:
 	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
 	case 106:
 	    return "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 107:
+	    return "Parameter '$1$' is set to '$2$'. This is not a valid value (case matters for this parameter).";
+	case 108:
+	    return "Invalid map entry for type '$1$': the target type is undefined.";
+	case 109:
+	    return "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
 
 	default:
 	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

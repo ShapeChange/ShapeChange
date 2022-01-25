@@ -64,6 +64,8 @@ public class TaggedValueNormalizer {
 
     /*
      * the list of tagged values specified by the JSON encoding rule
+     * 
+     * NOTE: defaultGeometry is also used by the ldproxy2 target.
      */
     protected static final Set<String> jsonTags = Stream.of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
 	    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern").collect(Collectors.toSet());
@@ -89,6 +91,14 @@ public class TaggedValueNormalizer {
      */
     protected static final Set<String> sqlTags = Stream
 	    .of("sqlEncodingRule", "sqlUnique", "sqlOnUpdate", "sqlOnDelete", "sqlSchema").collect(Collectors.toSet());
+
+    /*
+     * the list of tagged values specified by the Ldproxy2 target
+     */
+    protected static final Set<String> ldp2Tags = Stream
+	    .of("ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate",
+		    "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd")
+	    .collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by other encoding rules
@@ -133,6 +143,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(owlTags);
 	allowedTags.addAll(gpkgTags);
 	allowedTags.addAll(sqlTags);
+	allowedTags.addAll(ldp2Tags);
 	allowedTags.addAll(shapeChangeTags);
 
 	for (String s : options.parameter("representTaggedValues").split("\\,"))
