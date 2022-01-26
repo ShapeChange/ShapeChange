@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import de.ii.ldproxy.cfg.LdproxyCfg;
@@ -111,7 +113,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //    protected static String documentationNoValue = null;
 
     protected static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
-    protected static String cfgTemplatePath = null; // default TODO
+    protected static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
     protected static String dateFormat = null; // no default value
     protected static String dateTimeFormat = null; // no default value
     protected static String descriptionTemplate = "[[definition]]";
@@ -135,6 +137,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static boolean isUnitTest = false;
 
     protected static String outputDirectory = null;
+    protected static File dataDirectoryFile = null;
     protected static String mainId = null;
 
     /**
@@ -161,8 +164,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private PackageInfo schema = null;
     private boolean schemaNotEncoded = false;
 
-    private PackageInfo mainAppSchema = null;
-
     /**
      * key outer map: top level type; value outer map: map with key: property path,
      * value: list of property transformations
@@ -177,7 +178,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	model = m;
 	options = o;
 	result = r;
-	mainAppSchema = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
 	diagnosticsOnly = diagOnly;
 
 	if (!isEncoded(schema)) {
@@ -210,6 +210,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (outputDirectory == null)
 		outputDirectory = options.parameter(".");
 
+	    PackageInfo mainAppSchema = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o, r);
 	    if (mainAppSchema == null) {
 		mainId = schema.name();
 	    } else {
@@ -226,7 +227,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //		    Ldproxy2Constants.PARAM_DOCUMENTATION_NOVALUE);
 
 	    cfgTemplatePath = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH, "FIXME", false, true);
+		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
+		    "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml", false, true);
 
 	    dateFormat = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_DATE_FORMAT, null,
 		    false, true);
@@ -331,9 +333,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		result.addInfo(this, 10002);
 	    }
 
-	    File configDirectoryFile = new File(outputDirectory, "data");
-	    Path configDirectoryPath = configDirectoryFile.toPath();
-	    cfg = new LdproxyCfg(configDirectoryPath);
+	    dataDirectoryFile = new File(outputDirectory, "data");
+	    Path dataDirectoryPath = dataDirectoryFile.toPath();
+	    cfg = new LdproxyCfg(dataDirectoryPath);
 	}
 
 	/*
@@ -488,6 +490,22 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	if (!diagnosticsOnly) {
+
+	    // copy template file
+	    if (StringUtils.isNotBlank(cfgTemplatePath)) {
+
+		File cfgFile = new File(dataDirectoryFile, "cfg.yml");
+
+		try {
+		    if (cfgTemplatePath.startsWith("http")) {
+			FileUtils.copyURLToFile(new URL(cfgTemplatePath), cfgFile);
+		    } else {
+			FileUtils.copyFile(new File(cfgTemplatePath), cfgFile);
+		    }
+		} catch (IOException e) {
+		    result.addError(this, 123, cfgTemplatePath, cfgFile.getAbsolutePath());
+		}
+	    }
 
 	    /*
 	     * ===================================
@@ -645,12 +663,23 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    continue;
 		}
 
-		if (!valueTypeIsMapped(pi) && unsupportedCategoryOfValue(pi)) {
-		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
+		if (!valueTypeIsMapped(pi)) {
+
+		    if (pi.typeClass() == null || pi.typeClass().matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+			MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(),
+				pi.inClass().name());
+			if (mc != null) {
+			    mc.addDetail(this, 1, pi.fullNameInSchema());
+			}
+			continue;
+		    } else if (unsupportedCategoryOfValue(pi)) {
+			MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(),
+				pi.inClass().name());
+			if (mc != null) {
+			    mc.addDetail(this, 1, pi.fullNameInSchema());
+			}
+			continue;
 		    }
-		    continue;
 		}
 
 		if (pi.stereotype("identifier")
@@ -764,12 +793,21 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		continue;
 	    }
 
-	    if (!valueTypeIsMapped(pi) && unsupportedCategoryOfValue(pi)) {
-		MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
-		if (mc != null) {
-		    mc.addDetail(this, 1, pi.fullNameInSchema());
+	    if (!valueTypeIsMapped(pi)) {
+
+		if (pi.typeClass() == null || pi.typeClass().matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+		    MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullNameInSchema());
+		    }
+		    continue;
+		} else if (unsupportedCategoryOfValue(pi)) {
+		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullNameInSchema());
+		    }
+		    continue;
 		}
-		continue;
 	    }
 
 	    List<PropertyInfo> nowVisitedList = new ArrayList<>(alreadyVisitedPiList);
@@ -824,7 +862,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		propMemberDefBuilder.objectType("LINK");
 
-		ignoreSourcePathOnPropertyLevel = true;
+		ignoreSourcePathOnPropertyLevel = pi.cardinality().maxOccurs == 1;
 
 		SortedMap<String, FeatureSchema> linkPropertyDefs = new TreeMap<>();
 
@@ -996,7 +1034,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private boolean unsupportedCategoryOfValue(PropertyInfo pi) {
 
 	return pi.categoryOfValue() == Options.UNION || pi.categoryOfValue() == Options.BASICTYPE
-		|| pi.categoryOfValue() == Options.MIXIN;
+		|| pi.categoryOfValue() == Options.MIXIN || pi.categoryOfValue() == Options.UNKNOWN;
     }
 
     private boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
@@ -1554,7 +1592,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     private Optional<String> label(Info i) {
 
-	if (i != null && labelTemplate != null && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
+	if (i != null && StringUtils.isNotBlank(labelTemplate) && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
 	    return Optional.of(i.derivedDocumentation(labelTemplate, descriptorNoValue));
 
@@ -1565,7 +1603,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     private Optional<String> description(Info i) {
 
-	if (i != null && descriptionTemplate != null && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
+	if (i != null && StringUtils.isNotBlank(descriptionTemplate)
+		&& i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
 	    return Optional.of(i.derivedDocumentation(descriptionTemplate, descriptorNoValue));
 
@@ -1591,7 +1630,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //	documentationNoValue = null;
 
 	associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
-	cfgTemplatePath = null; // default TODO
+	cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
 	dateFormat = null; // no default value
 	dateTimeFormat = null; // no default value
 	descriptionTemplate = "[[definition]]";
@@ -1611,6 +1650,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	srid = 4326;
 
 	outputDirectory = null;
+	dataDirectoryFile = null;
 	mainId = null;
 
 	mapEntryParamInfos = null;
@@ -1671,7 +1711,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Schema '$1$' is not encoded.";
 	case 8:
 	    return "Class '$1$' is not encoded.";
-	
+
 	case 15:
 	    return "No map entries provided via the configuration.";
 	case 16:
@@ -1739,6 +1779,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
 	case 122:
 	    return "??Value of tag 'ldpRemove' on property '$1$' is invalid. Allowed values are: IN_COLLECTION, ALWAYS, NEVER (case is ignored when parsing the value). Found value '$2$'.";
+	case 123:
+	    return "Exception occurred while copying the cfg template from '$1$' to '$2$'. Exception message is: '$3$'.";
+	case 124:
+	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and either not present in the model, not correctly linked, or not encoded. The property will therefore not be encoded. Either define a mapping for the value type, or ensure that the value type is correctly linked to and that it actually is defined to be encoded by this target.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

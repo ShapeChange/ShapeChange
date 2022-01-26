@@ -1,0 +1,558 @@
+---
+id: test_1___basics
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+providerType: FEATURE
+featureProviderType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+nativeTimeZone: Europe/Berlin
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+  - ts1
+  - ts2
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  ts10_featuretype1:
+    sourcePath: ts10_featuretype1
+    type: OBJECT
+    objectType: TS10_FeatureType1
+    properties:
+      att1:
+        sourcePath: att1
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      att2:
+        sourcePath: att2
+        type: GEOMETRY
+        geometryType: POLYGON
+        constraints:
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts1_featuretype1:
+    sourcePath: ts1_featuretype1
+    type: OBJECT
+    objectType: TS1_FeatureType1
+    properties:
+      attCharacterString:
+        sourcePath: attcharacterstring
+        type: STRING
+        constraints:
+          required: true
+      attExtDt1:
+        type: OBJECT
+        objectType: LINK
+        constraints:
+          required: true
+        properties:
+          href:
+            sourcePath: attextdt1_fkdt
+            type: STRING
+            label: ExtDt-ID
+            transformations:
+            - stringFormat: https://example.org/dt/{{value}}
+          title:
+            sourcePath: attextdt1_fkdt
+            type: STRING
+            label: ExtDt-ID
+      attExtDt2:
+        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1ToExtDt'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          required: true
+          minOccurrence: 1
+        properties:
+          href:
+            sourcePath: attextdt2_fkdt
+            type: STRING
+            label: ExtDt-ID
+            transformations:
+            - stringFormat: https://example.org/dt/{{value}}
+          title:
+            sourcePath: attextdt2_fkdt
+            type: STRING
+            label: ExtDt-ID
+      attInteger:
+        sourcePath: attinteger
+        type: INTEGER
+      attLength:
+        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength/attlength'
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          required: true
+          minOccurrence: 1
+      attReal:
+        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal/attreal'
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          minOccurrence: 0
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      roleToFt2_1:
+        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1FT21/[ts1_featuretype2_id=idx]ts1_featuretype2'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: roletoft2_1_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+          title:
+            sourcePath: roletoft2_1_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+      roleToFt2_2:
+        type: OBJECT
+        objectType: LINK
+        properties:
+          href:
+            sourcePath: roletoft2_2_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+          title:
+            sourcePath: roletoft2_2_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+      roleToFt2_3:
+        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype2_id=idx]ts1_featuretype2'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: roletoft2_3_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+          title:
+            sourcePath: roletoft2_3_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+      roleToFt2_4:
+        type: OBJECT
+        objectType: LINK
+        properties:
+          href:
+            sourcePath: roletoft2_4_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+          title:
+            sourcePath: roletoft2_4_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+      roleToFt2_5:
+        type: OBJECT
+        objectType: LINK
+        properties:
+          href:
+            sourcePath: roletoft2_5_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+          title:
+            sourcePath: roletoft2_5_fk
+            type: STRING
+            label: TS1_FeatureType2-ID
+  ts1_featuretype2:
+    sourcePath: ts1_featuretype2
+    type: OBJECT
+    objectType: TS1_FeatureType2
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      roleToFt1_3:
+        sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype1_id=idx]ts1_featuretype1'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: roletoft1_3_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+          title:
+            sourcePath: roletoft1_3_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+      roleToFt1_4:
+        sourcePath: '[idx=roletoft2_4_fk]ts1_featuretype1'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: roletoft1_4_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+          title:
+            sourcePath: roletoft1_4_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+      roleToFt1_5:
+        type: OBJECT
+        objectType: LINK
+        properties:
+          href:
+            sourcePath: roletoft1_5_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+          title:
+            sourcePath: roletoft1_5_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+      roleToMd1:
+        type: OBJECT
+        objectType: LINK
+        constraints:
+          required: true
+        properties:
+          href:
+            sourcePath: roletomd1_fk
+            type: STRING
+            label: MD_Metadata-ID
+            transformations:
+            - stringFormat: https://example.org/metadata/{{value}}
+          title:
+            sourcePath: roletomd1_fk
+            type: STRING
+            label: MD_Metadata-ID
+      roleToMd2:
+        sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType2_roleToMd2'
+        type: OBJECT_ARRAY
+        objectType: LINK
+        constraints:
+          minOccurrence: 0
+        properties:
+          href:
+            sourcePath: roletomd2_fk
+            type: STRING
+            label: MD_Metadata-ID
+            transformations:
+            - stringFormat: https://example.org/metadata/{{value}}
+          title:
+            sourcePath: roletomd2_fk
+            type: STRING
+            label: MD_Metadata-ID
+  ts2_featuretype1:
+    sourcePath: ts2_featuretype1
+    type: OBJECT
+    objectType: TS2_FeatureType1
+    properties:
+      attCode1:
+        sourcePath: attcode1
+        type: STRING
+        constraints:
+          codelist: TS2_Codelist1
+          required: true
+      attDt:
+        sourcePath: '[attdt_fkdt=idx]ts2_datatype1'
+        type: OBJECT
+        objectType: TS2_DataType1
+        constraints:
+          required: true
+        properties:
+          attCode2:
+            sourcePath: attcode2
+            type: STRING
+            constraints:
+              codelist: TS2_CodeList2
+              required: true
+          attEnum2:
+            sourcePath: attenum2
+            type: INTEGER
+            constraints:
+              codelist: TS2_Enumeration2
+              enum:
+              - "1"
+              - "2"
+              required: true
+      attEnum1:
+        sourcePath: attenum1
+        type: STRING
+        constraints:
+          codelist: TS2_Enumeration1
+          enum:
+          - enum1
+          - enum2
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts3_featuretype1:
+    sourcePath: ts3_featuretype1
+    type: OBJECT
+    objectType: TS3_FeatureType1
+    label: Alias FeatureType1
+    description: Documentation FeatureType1
+    properties:
+      attDt:
+        sourcePath: '[attdt_fkdt=idx]ts3_datatype1'
+        type: OBJECT
+        objectType: TS3_DataType1
+        label: Alias attDt
+        description: Documentation attDt
+        constraints:
+          required: true
+        properties:
+          attB:
+            sourcePath: attb
+            type: BOOLEAN
+            label: Alias attB
+            description: Documentation attB
+            constraints:
+              required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      role:
+        type: OBJECT
+        objectType: LINK
+        label: Alias role
+        description: Documentation role
+        constraints:
+          required: true
+        properties:
+          href:
+            sourcePath: role_fk
+            type: STRING
+            label: TS3_Type1-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/TS3_Type1/items/{{value}}'
+          title:
+            sourcePath: role_fk
+            type: STRING
+            label: TS3_Type1-ID
+  ts3_type1:
+    sourcePath: ts3_type1
+    type: OBJECT
+    objectType: TS3_Type1
+    label: Alias Type1
+    description: Documentation Type1
+    properties:
+      attU.opt1:
+        sourcePath: attu.opt1
+        type: INTEGER
+        label: 'Alias attU : Alias opt1'
+        description: 'Documentation attU : Documentation opt1'
+      attU.opt2:
+        sourcePath: attu.opt2
+        type: STRING
+        label: 'Alias attU : Alias opt2'
+        description: 'Documentation attU : Documentation opt2'
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts4_featuretype1:
+    sourcePath: ts4_featuretype1
+    type: OBJECT
+    objectType: TS4_FeatureType1
+    properties:
+      attDt1:
+        sourcePath: '[attdt1_fkdt=idx]ts4_datatype1'
+        type: OBJECT
+        objectType: TS4_DataType1
+        constraints:
+          required: true
+        properties:
+          attB:
+            sourcePath: attb
+            type: BOOLEAN
+          attDt2:
+            sourcePath: '[idx=ts4_datatype1_id]TS4_DataType1_attDt2/[ts4_datatype2_id=idx]ts4_datatype2'
+            type: OBJECT_ARRAY
+            objectType: TS4_DataType2
+            constraints:
+              minOccurrence: 0
+            properties:
+              attS:
+                sourcePath: '[idx=ts4_datatype2_id]TS4_DataType2_attS/atts'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  required: true
+                  minOccurrence: 1
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts5_featuretype1:
+    sourcePath: ts5_featuretype1
+    type: OBJECT
+    objectType: TS5_FeatureType1
+    properties:
+      attU1.opt1:
+        sourcePath: attu1.opt1
+        type: INTEGER
+      attU1.opt2.opt1:
+        sourcePath: attu1.opt2.opt1
+        type: STRING
+      attU1.opt2.opt2:
+        sourcePath: attu1.opt2.opt2
+        type: FLOAT
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts6_featuretype1:
+    sourcePath: ts6_featuretype1
+    type: OBJECT
+    objectType: TS6_FeatureType1
+    properties:
+      att1:
+        sourcePath: att1
+        type: INTEGER
+        constraints:
+          required: true
+      att2:
+        sourcePath: att2
+        type: STRING
+        constraints:
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts6_featuretype2:
+    sourcePath: ts6_featuretype2
+    type: OBJECT
+    objectType: TS6_FeatureType2
+    properties:
+      att1:
+        sourcePath: att1
+        type: INTEGER
+        constraints:
+          required: true
+      att2:
+        sourcePath: att2
+        type: STRING
+        constraints:
+          required: true
+      att3:
+        sourcePath: att3
+        type: BOOLEAN
+        constraints:
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts7_featuretype1:
+    sourcePath: ts7_featuretype1
+    type: OBJECT
+    objectType: TS7_FeatureType1
+    properties:
+      att:
+        sourcePath: att
+        type: INTEGER
+        constraints:
+          required: true
+      ident:
+        sourcePath: ident
+        type: INTEGER
+        role: ID
+        constraints:
+          required: true
+  ts8_featuretype1:
+    sourcePath: ts8_featuretype1
+    type: OBJECT
+    objectType: TS8_FeatureType1
+    properties:
+      attDate:
+        sourcePath: attdate
+        type: DATE
+        role: PRIMARY_INSTANT
+        constraints:
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts8_featuretype2:
+    sourcePath: ts8_featuretype2
+    type: OBJECT
+    objectType: TS8_FeatureType2
+    properties:
+      attDateTime1:
+        sourcePath: attdatetime1
+        type: DATETIME
+        role: PRIMARY_INTERVAL_START
+        constraints:
+          required: true
+      attDateTime2:
+        sourcePath: attdatetime2
+        type: DATETIME
+        role: PRIMARY_INTERVAL_END
+        constraints:
+          required: true
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+  ts9_featuretype1:
+    sourcePath: ts9_featuretype1
+    type: OBJECT
+    objectType: TS9_FeatureType1
+    properties:
+      att1:
+        type: STRING
+        constraints:
+          required: true
+        constantValue: T
+      att2:
+        type: FLOAT
+        constraints:
+          required: true
+        constantValue: "1"
+      att3:
+        type: BOOLEAN
+        constraints:
+          required: true
+        constantValue: "false"
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID

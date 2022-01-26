@@ -9,8 +9,8 @@
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
 			value="src/test/resources/ldproxy2/basic/test_ldproxy2.eap" />
-		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
-		<parameter name="mainAppSchema" value="Test Schema" />
+		<parameter name="appSchemaNameRegex" value="Test.*" />
+		<parameter name="mainAppSchema" value="Test 1 - Basics" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
 		<parameter name="sortedSchemaOutput" value="true" />
@@ -42,6 +42,12 @@
 					name="flattenDataTypesExcludeRegex" value=".*" />
 				<ProcessParameter
 					name="separatorForPropertyFromUnion" value="." />
+				<ProcessParameter
+					name="descriptorModification_nonUnionSeparator"
+					value="documentation{ : }, alias{ : }, definition{ : }, description{ : }, primaryCode{ : }" />
+				<ProcessParameter
+					name="descriptorModification_unionSeparator"
+					value="documentation{ : }, alias{ : }, definition{ : }, description{ : }, primaryCode{ : }" />
 			</parameters>
 			<rules>
 				<ProcessRuleSet name="flattener">
@@ -76,7 +82,7 @@
 			<!-- <targetParameter name="maxNameLength" value="63"/> -->
 			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
 			<!-- <targetParameter name="objectIdentifierName" value="oid"/> -->
-			<targetParameter name="primaryKeyColumn" value="id" />
+			<targetParameter name="primaryKeyColumn" value="idx" />
 			<targetParameter name="serviceApiTemplatePath"
 				value="src/main/resources/templates/ldproxy2/serviceApiTemplate.yml" />
 			<targetParameter name="serviceDescription"
@@ -110,7 +116,16 @@
 				</EncodingRule>
 			</rules>
 			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+
+			<xi:include
 				href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
+			<mapEntries>
+				<MapEntry type="MD_Metadata" rule="*" targetType="LINK"
+					param="linkInfos{urlTemplate=https://example.org/metadata/(value)}" />
+				<MapEntry type="ExtDt" rule="*" targetType="LINK"
+					param="linkInfos{urlTemplate=https://example.org/dt/(value)}" />
+			</mapEntries>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

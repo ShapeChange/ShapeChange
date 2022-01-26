@@ -99,14 +99,14 @@ return true;
         <td>
           <p>Start time:</p>
         </td><td>
-          <p>Thu Jan 20 16:35:54 CET 2022</p>
+          <p>Wed Jan 26 16:23:30 CET 2022</p>
         </td>
       </tr>
       <tr>
         <td>
           <p>End time:</p>
         </td><td>
-          <p>Thu Jan 20 16:36:01 CET 2022</p>
+          <p>Wed Jan 26 16:23:38 CET 2022</p>
         </td>
       </tr>
       <tr>
@@ -200,7 +200,21 @@ return true;
         <td>
           <p>ProcessFlowInfo</p>
         </td><td>
-          <p>--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'INPUT' ...</p>
+          <p>--- Validating transformer with @id 'TRF_END' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating transformer with @id 'TRF_1' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ...</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
@@ -242,35 +256,233 @@ return true;
         <td>
           <p>ProcessFlowInfo</p>
         </td><td>
-          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test'</p>
+          <p>Now processing transformation 'TRF_1' for input ID: 'INPUT'.</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
         <td>
           <p>ProcessFlowInfo</p>
         </td><td>
-          <p>Now processing target 'Ldproxy (v2)' for input 'INPUT'.</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Type 'NilUnion' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it.</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Type 'Union' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it.</p>
+          <p>========== processing phase ==========</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
         <td>
           <p>ProcessFlowInfo</p>
         </td><td>
-          <p>Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'INPUT'.
+          <p>---------- now processing: rule-trf-cls-flatten-inheritance ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>========== postprocessing phase ==========</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Performed transformation for transformer ID 'TRF_1' for input ID: 'INPUT'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing transformation 'TRF_END' for input ID: 'TRF_1'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>========== processing phase ==========</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- now processing: rule-trf-prop-flatten-types ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>========== postprocessing phase ==========</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Performed transformation for transformer ID 'TRF_END' for input ID: 'TRF_1'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 3 - Documentation', target namespace: 'http://shapechange.net/test3'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 4 - DataTypes', target namespace: 'http://shapechange.net/test4'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 5 - Unions', target namespace: 'http://shapechange.net/test5'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 6 - Inheritance', target namespace: 'http://shapechange.net/test6'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 7 - identifier property', target namespace: 'http://shapechange.net/test7'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 8 - Date and DateTime', target namespace: 'http://shapechange.net/test8'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 9 - readOnly and initialValue', target namespace: 'http://shapechange.net/test9'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 10 - Geometry', target namespace: 'http://shapechange.net/test10'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test 2 - Enumerations and Codelists', target namespace: 'http://shapechange.net/test2'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_END'.
 -------------------------------------------------</p>
         </td>
       </tr>
