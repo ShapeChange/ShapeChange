@@ -13,6 +13,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -22,6 +23,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -31,6 +33,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -40,6 +43,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         attCode1:
         - codelist: TS2_Codelist1
@@ -57,6 +61,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{atttitle}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -66,6 +71,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -75,6 +81,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         attDt1.attDt2.attS:
         - remove: IN_COLLECTION
@@ -86,6 +93,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -95,6 +103,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -104,6 +113,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -113,6 +123,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{ident}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>
@@ -122,6 +133,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         attDate:
         - dateFormat: dd.MM.yyyy
@@ -133,6 +145,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         attDateTime1:
         - dateFormat: dd.MM.yyyy HH:mm:ss
@@ -146,6 +159,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{idx}}'
       transformations:
         '*{objectType=Link}':
         - reduceStringFormat: <a href="{{href}}">{{title}}</a>

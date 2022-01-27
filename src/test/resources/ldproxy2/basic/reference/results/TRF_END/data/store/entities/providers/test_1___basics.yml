@@ -23,7 +23,7 @@ sourcePathDefaults:
   sortKey: idx
 types:
   ts10_featuretype1:
-    sourcePath: ts10_featuretype1
+    sourcePath: /ts10_featuretype1
     type: OBJECT
     objectType: TS10_FeatureType1
     properties:
@@ -45,7 +45,7 @@ types:
         type: INTEGER
         role: ID
   ts1_featuretype1:
-    sourcePath: ts1_featuretype1
+    sourcePath: /ts1_featuretype1
     type: OBJECT
     objectType: TS1_FeatureType1
     properties:
@@ -185,7 +185,7 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
   ts1_featuretype2:
-    sourcePath: ts1_featuretype2
+    sourcePath: /ts1_featuretype2
     type: OBJECT
     objectType: TS1_FeatureType2
     properties:
@@ -275,7 +275,7 @@ types:
             type: STRING
             label: MD_Metadata-ID
   ts2_featuretype1:
-    sourcePath: ts2_featuretype1
+    sourcePath: /ts2_featuretype1
     type: OBJECT
     objectType: TS2_FeatureType1
     properties:
@@ -321,7 +321,7 @@ types:
         type: INTEGER
         role: ID
   ts3_featuretype1:
-    sourcePath: ts3_featuretype1
+    sourcePath: /ts3_featuretype1
     type: OBJECT
     objectType: TS3_FeatureType1
     label: Alias FeatureType1
@@ -342,6 +342,14 @@ types:
             label: Alias attB
             description: Documentation attB
             constraints:
+              required: true
+      attTitle:
+        sourcePath: atttitle
+        type: STRING
+        label: Alias attTitle
+        description: Documentation attTitle
+        constraints:
+          isRequired: true
               required: true
       oid:
         sourcePath: idx
@@ -366,7 +374,7 @@ types:
             type: STRING
             label: TS3_Type1-ID
   ts3_type1:
-    sourcePath: ts3_type1
+    sourcePath: /ts3_type1
     type: OBJECT
     objectType: TS3_Type1
     label: Alias Type1
@@ -387,7 +395,7 @@ types:
         type: INTEGER
         role: ID
   ts4_featuretype1:
-    sourcePath: ts4_featuretype1
+    sourcePath: /ts4_featuretype1
     type: OBJECT
     objectType: TS4_FeatureType1
     properties:
@@ -420,7 +428,7 @@ types:
         type: INTEGER
         role: ID
   ts5_featuretype1:
-    sourcePath: ts5_featuretype1
+    sourcePath: /ts5_featuretype1
     type: OBJECT
     objectType: TS5_FeatureType1
     properties:
@@ -438,7 +446,7 @@ types:
         type: INTEGER
         role: ID
   ts6_featuretype1:
-    sourcePath: ts6_featuretype1
+    sourcePath: /ts6_featuretype1
     type: OBJECT
     objectType: TS6_FeatureType1
     properties:
@@ -457,7 +465,7 @@ types:
         type: INTEGER
         role: ID
   ts6_featuretype2:
-    sourcePath: ts6_featuretype2
+    sourcePath: /ts6_featuretype2
     type: OBJECT
     objectType: TS6_FeatureType2
     properties:
@@ -481,7 +489,7 @@ types:
         type: INTEGER
         role: ID
   ts7_featuretype1:
-    sourcePath: ts7_featuretype1
+    sourcePath: /ts7_featuretype1
     type: OBJECT
     objectType: TS7_FeatureType1
     properties:
@@ -497,7 +505,7 @@ types:
         constraints:
           required: true
   ts8_featuretype1:
-    sourcePath: ts8_featuretype1
+    sourcePath: /ts8_featuretype1
     type: OBJECT
     objectType: TS8_FeatureType1
     properties:
@@ -512,7 +520,7 @@ types:
         type: INTEGER
         role: ID
   ts8_featuretype2:
-    sourcePath: ts8_featuretype2
+    sourcePath: /ts8_featuretype2
     type: OBJECT
     objectType: TS8_FeatureType2
     properties:
@@ -533,7 +541,7 @@ types:
         type: INTEGER
         role: ID
   ts9_featuretype1:
-    sourcePath: ts9_featuretype1
+    sourcePath: /ts9_featuretype1
     type: OBJECT
     objectType: TS9_FeatureType1
     properties:

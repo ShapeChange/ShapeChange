@@ -411,13 +411,28 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE) {
 
-	    typesWithIdentity.add(ci);
+	    if (typesWithIdentity.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
+		MessageContext mc = result.addError(this, 125, ci.name());
+		if (mc != null) {
+		    mc.addDetail(this, 0, ci.fullNameInSchema());
+		}
+	    } else {
+		typesWithIdentity.add(ci);
+	    }
 
 	} else if (ci.category() == Options.ENUMERATION || ci.category() == Options.CODELIST) {
 
-	    if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)
-		    || ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)) {
-		codelistsAndEnumerations.add(ci);
+	    if (matchesAnyCodelistConversionRule(ci)) {
+
+		if (codelistsAndEnumerations.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
+		    MessageContext mc = result.addError(this, 125, ci.name());
+		    if (mc != null) {
+			mc.addDetail(this, 0, ci.fullNameInSchema());
+		    }
+		} else {
+		    codelistsAndEnumerations.add(ci);
+		}
+		
 	    } else {
 		result.addInfo(this, 19, ci.name());
 	    }
@@ -538,8 +553,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
 			.name(typeDefName).objectType(ci.name()).label(label(ci))
-			.sourcePath(databaseTableName(ci, false)).description(description(ci)).propertyMap(propertyDefs)
-			.build();
+			.sourcePath("/" + databaseTableName(ci, false)).description(description(ci))
+			.propertyMap(propertyDefs).build();
 
 		providerTypeDefinitions.put(typeDefName, typeDef);
 
@@ -659,13 +674,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    for (PropertyInfo pi : currentCi.properties().values()) {
 
-		if (pi.matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+		if (!isEncoded(pi)) {
 		    continue;
 		}
 
 		if (!valueTypeIsMapped(pi)) {
 
-		    if (pi.typeClass() == null || pi.typeClass().matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+		    if (pi.typeClass() == null || !isEncoded(pi.typeClass())) {
 			MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(),
 				pi.inClass().name());
 			if (mc != null) {
@@ -789,13 +804,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	for (PropertyInfo pi : currentCi.properties().values()) {
 
-	    if (pi.matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+	    if (!isEncoded(pi)) {
 		continue;
 	    }
 
 	    if (!valueTypeIsMapped(pi)) {
 
-		if (pi.typeClass() == null || pi.typeClass().matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)) {
+		if (pi.typeClass() == null || !isEncoded(pi.typeClass())) {
 		    MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(), pi.inClass().name());
 		    if (mc != null) {
 			mc.addDetail(this, 1, pi.fullNameInSchema());
@@ -803,6 +818,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    continue;
 		} else if (unsupportedCategoryOfValue(pi)) {
 		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullNameInSchema());
+		    }
+		    continue;
+		} else if (isEnumerationOrCodelistValueType(pi) && !matchesAnyCodelistConversionRule(pi.typeClass())) {
+		    MessageContext mc = result.addError(this, 126, pi.typeInfo().name, pi.name(), pi.inClass().name());
 		    if (mc != null) {
 			mc.addDetail(this, 1, pi.fullNameInSchema());
 		    }
@@ -994,6 +1015,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	return propertyDefs;
+    }
+
+    private boolean matchesAnyCodelistConversionRule(ClassInfo ci) {
+	return ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)
+		|| ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
     }
 
     private void addServiceConfigPropertyTransformation(ClassInfo topLevelClass, String propertyPath,
@@ -1594,7 +1620,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	if (i != null && StringUtils.isNotBlank(labelTemplate) && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
-	    return Optional.of(i.derivedDocumentation(labelTemplate, descriptorNoValue));
+	    String label = i.derivedDocumentation(labelTemplate, descriptorNoValue);
+
+	    return StringUtils.isBlank(label) ? Optional.empty() : Optional.of(label);
 
 	} else {
 	    return Optional.empty();
@@ -1606,7 +1634,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	if (i != null && StringUtils.isNotBlank(descriptionTemplate)
 		&& i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
 
-	    return Optional.of(i.derivedDocumentation(descriptionTemplate, descriptorNoValue));
+	    String description = i.derivedDocumentation(descriptionTemplate, descriptorNoValue);
+
+	    return StringUtils.isBlank(description) ? Optional.empty() : Optional.of(description);
 
 	} else {
 	    return Optional.empty();
@@ -1783,7 +1813,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Exception occurred while copying the cfg template from '$1$' to '$2$'. Exception message is: '$3$'.";
 	case 124:
 	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and either not present in the model, not correctly linked, or not encoded. The property will therefore not be encoded. Either define a mapping for the value type, or ensure that the value type is correctly linked to and that it actually is defined to be encoded by this target.";
-
+	case 125:
+	    return "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
+	case 126:
+	    return "??The value type '$1$' of property '$2$' (of class '$3$') is an enumeration or code list. However, no conversion rule to represent the value type as ldproxy code list is defined in the encoding rule that applies to the value type. The property will not be encoded. Extend the encoding rule that applies to the value type with a conversion rule to represent the value type as ldproxy code list.";
+	
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:
