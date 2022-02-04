@@ -45,7 +45,6 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING = "initialValueEncoding";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE = "true";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE = "false";
-//    public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED = "quoted";
     
     public static final String ME_PARAM_GEOMETRY_INFOS = "geometryInfos";
     public static final String ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE = "geometryType";
@@ -77,10 +76,11 @@ public class Ldproxy2Constants {
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
-    public static final String PARAM_SERVICE_API_TEMPLATE_PATH = "serviceApiTemplatePath";
+//    public static final String PARAM_SERVICE_API_TEMPLATE_PATH = "serviceApiTemplatePath";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
-    public static final String PARAM_SERVICE_METADATA_TEMPLATE_PATH = "serviceMetadataTemplatePath";
+//    public static final String PARAM_SERVICE_METADATA_TEMPLATE_PATH = "serviceMetadataTemplatePath";
+    public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
 
     
@@ -89,6 +89,7 @@ public class Ldproxy2Constants {
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
     public static final String RULE_CLS_CODELIST_DIRECT = "rule-ldp2-cls-codelist-direct";
     public static final String RULE_CLS_CODELIST_TARGETBYTV = "rule-ldp2-cls-codelist-targetbytaggedvalue";
+    public static final String RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES = "rule-ldp2-cls-data-types-oneToMany-severalTables";
     public static final String RULE_CLS_ENUMERATION_ENUM_CONSTRAINT = "rule-ldp2-cls-enumeration-enum-constraint";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";

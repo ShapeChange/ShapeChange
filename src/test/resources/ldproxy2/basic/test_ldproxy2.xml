@@ -83,13 +83,15 @@
 			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
 			<!-- <targetParameter name="objectIdentifierName" value="oid"/> -->
 			<targetParameter name="primaryKeyColumn" value="idx" />
-			<targetParameter name="serviceApiTemplatePath"
-				value="src/main/resources/templates/ldproxy2/serviceApiTemplate.yml" />
+<!-- 			<targetParameter name="serviceApiTemplatePath" -->
+<!-- 				value="src/main/resources/templates/ldproxy2/serviceApiTemplate.yml" /> -->
 			<targetParameter name="serviceDescription"
 				value="..." />
 			<targetParameter name="serviceLabel" value="label" />
-			<targetParameter name="serviceMetadataTemplatePath"
-				value="src/main/resources/templates/ldproxy2/serviceMetadataTemplate.yml" />
+<!-- 			<targetParameter name="serviceMetadataTemplatePath" -->
+<!-- 				value="src/main/resources/templates/ldproxy2/serviceMetadataTemplate.yml" /> -->
+<targetParameter name="serviceConfigTemplatePath"
+				value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" />
 			<targetParameter name="srid" value="4326" />
 
 			<targetParameter name="_unitTestOverride"

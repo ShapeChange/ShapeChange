@@ -1,0 +1,18 @@
+---
+metadata:
+  attribution: 'Your organization, company, or other entity'
+  keywords:
+  - keyword_A
+  - keyword_B
+api:
+- buildingBlock: COLLECTIONS
+  additionalLinks:
+  - rel: describedby
+    type: application/pdf
+    title: Some PDF with further details
+    href: 'https://example.org/mypdf'
+    hreflang: de
+- buildingBlock: CRS
+  additionalCrs:
+  - code: 4326
+    forceAxisOrder: NONE

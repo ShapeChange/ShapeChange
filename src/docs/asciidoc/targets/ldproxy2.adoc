@@ -48,11 +48,15 @@ The ldproxy target creates the following folder structure in the output director
 **** providers
 **** services
 
-The target output will be written to these folders. Some configuration data is simply copied using template files. <<table_template_files>> lists the templates that the target uses, with information about:
+The target output will be written to these folders. 
+
+CAUTION: Make sure that when copying the output files, you end up with this folder structure! Do not, for example, forget to create the 'entities' folder by just copying the 'codelists', 'providers', and 'services' folders to a 'store' folder. Otherwise, ldproxy will just assume that the store is empty.
+
+Some configuration data can simply be copied using template files. <<table_template_files>> lists the templates that the target uses, with information about:
 
 * The name of the ShapeChange target parameter with which the path to the template file can be provided.
-* The default template location, i.e. the path that will be used by the target if no path is given via the target parameter.
-* The path within the output folder to which the template file will be copied, if applicable.
+* If applicable: The default template location, i.e. the path that will be used by the target if no path is given via the target parameter.
+* If applicable: The path within the output folder to which the template file will be copied.
 * A description of the template file.
 
 [#table_template_files,reftext='{table-caption} {counter:table-num}']
@@ -61,8 +65,7 @@ The target output will be written to these folders. Some configuration data is s
 |====================
 | target parameter name | default template location | output folder | description
 | cfgTemplatePath | https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml | data/cfg.yml | The cfg.yml contains the global configuration for all APIs in the intended API deployment.
-| serviceMetadataTemplatePath | #Later on: add URL to online file# | _none_ - will be integrated into the service configuration | The object defined by this template file will be added as value of the `metadata` member within the service configuration.
-| serviceApiTemplatePath | #Later on: add URL to online file# | _none_ - will be integrated into the service configuration | The object defined by this template file will be added as value of the `api` member within the service configuration.
+| serviceConfigTemplatePath | _none_ - Nevertheless, an example is provided at https://shapechange.net/resources/templates/ldproxy2/serviceConfigTemplate.yml | _none_ - will be integrated into the service configuration | The object defined by this template file will be patched into the service configuration.
 ||||
 |====================
 
@@ -86,10 +89,10 @@ Typically, a community has a preferred way to model and encode this information.
 
 * target parameter _labelTemplate_:
 ** default value: \[[alias]]
-** explanation: The template for the _label_ member generated for a type definition. The patterns “\[[descriptor]]” will be replaced by the value of the descriptor, or the value of parameter _descriptorNoValue_, if the descriptor has no value for the model element.
+** explanation: The template for the _label_ member generated for a type definition. The patterns "\[[descriptor]]" will be replaced by the value of the descriptor, or the value of parameter _descriptorNoValue_, if the descriptor has no value for the model element.
 * target parameter _descriptionTemplate_:
 ** default value: \[[definition]]
-** explanation: The template for the _description_ member generated for a type definition. The patterns “\[[descriptor]]” will be replaced by the value of the descriptor, or the value of parameter _descriptorNoValue_, if the descriptor has no value for the model element.
+** explanation: The template for the _description_ member generated for a type definition. The patterns "\[[descriptor]]" will be replaced by the value of the descriptor, or the value of parameter _descriptorNoValue_, if the descriptor has no value for the model element.
 * target parameter _descriptorNoValue_:
 ** default value: "" (i.e., the empty string)
 ** explanation: If a descriptor is used in a label or description template, but has no value, then the value of this parameter will be used instead.
@@ -148,6 +151,9 @@ The following information items are added to the provider configuration file:
 
 NOTE: Members of the provider configuration, whose value is equal to the default value for that member defined by ldproxy, may not actually be written to the provider configuration file created by the target.
 
+NOTE: The deployment-specific values of the `connectionInfo` member - i.e. the database, host, user, and password - should either be set via the enviornment variables #TBD#, or via an overriding configuration file.
+
+
 
 [[ldproxy2_schemaconversionrules_schemapackage_serviceconfig]]
 ==== Service Configuration
@@ -162,8 +168,8 @@ The following information items are added to the service configuration file:
 * label: value of target parameter _serviceLabel_; default is 'FIXME'
 * description: value of target parameter _serviceDescription_; default is 'FIXME'
 * serviceType: OGC_API
-* metadata: is provided - in form of a template - via target parameter _serviceMetadataTemplatePath_; metadata information for the actual API is typically not included in the model, therefore the target uses information provided via a separate template file
-* api: is provided - in form of a template - via target parameter _serviceApiTemplatePath_; information about the modules implemented by the actual API is typically not included in the model, therefore the target uses information provided via a separate template file
+* metadata: can be provided - in form of a template - via target parameter _serviceConfigTemplatePath_; metadata information for the actual API is typically not included in the model, therefore the target uses information provided via a separate template file
+* api: can be provided - in form of a template - via target parameter _serviceConfigTemplatePath_; information about the modules implemented by the actual API is typically not included in the model, therefore the target uses information provided via a separate template file
 * collections: will be populated as described in section <<ldproxy2_schemaconversionrules_types>>.
 
 NOTE: Members of the service configuration, whose value is equal to the default value for that member defined by ldproxy, may not actually be written to the service configuration file created by the target.
@@ -441,12 +447,12 @@ NOTE: You can transform unions, either flattening them (using the xref:../transf
 
 // https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/codelists
 
-Enumerations and code lists are not converted to top-level provider type definitions. Each \<<enumeration>> / \<<codelist>> is converted to a {id}.yml file in the data/store/entities/codelists folder. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
+Enumerations and code lists are not converted to top-level provider type definitions. Each \<<enumeration>> / \<<codelist>> that a) is not mapped, b) is not marked to not be encoded, and c) belongs to the schemas selected for processing, is converted to a {id}.yml file in the data/store/entities/codelists folder. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
 
 The following information items are encoded within the YAML file:
 
 * id: the enumeration / code list ID
-* label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
+* label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details) #TBD: should we use the _descriptionTemplate_ in this case?#
 * sourceType: TEMPLATES
 * entries: One entry `{code}: {target_value}` per enum / code defined by the enumeration / code list
 ** An enum / code is represented by an attribute in the UML model.
@@ -465,7 +471,7 @@ _rule-ldp2-cls-codelist-targetbytaggedvalue_ is useful in combination with model
 
 ======
 
-In addition, whenever a property, whose value type is the enumeration / code list, is encoded, information is added both to the provider and the service configurations.
+In addition, whenever a property, whose value type is the enumeration / code list, information is added both to the provider and the service configurations.
 
 The following information items are added to the property encoding in the provider configuration:
 
@@ -474,6 +480,8 @@ The following information items are added to the property encoding in the provid
 * If _rule-ldp2-cls-enumeration-enum-constraint_ applies to an enumeration, an enum constraint is added. If the enums have initial values, these are used within the constraint - otherwise, the enum names are used.
 
 // https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/constraints.md
+
+NOTE: If the enumeration / code list itself is not encoded, is mapped, or does not belong to the schemas selected for processing, ShapeChange will log a warning, informing the user that this situation is an issue unless an ldproxy codelist with corresponding ID has already been or will be established for the desired deployment by other means (e.g. by manually creating it).
 
 NOTE: Depending upon the use case, it may or may not be useful to convert enumerations to code lists before executing the ldproxy target, using the xref:../transformations/Type_Converter.adoc#rule-trf-enumeration-to-codelist[Type Converter rule-trf-enumeration-to-codelist]. An advantage would be that transformations that apply to code lists could then also be applied to enumerations. A disadvantage would be that _rule-ldp2-cls-enumeration-enum-constraint_ would then no longer be applied, since the types that have originally been enumerations would then be code lists.
 
@@ -543,7 +551,7 @@ Whenever a property from the application schema is encoded within an ldproxy pro
 The name is determined as follows:
 
 * Basically, the property name is used as column name.
-* A suffix can be added to the column name, depending upon the property value type. If the value type is a:
+* A suffix can be added to the column name, depending upon the property value type. If the value type is not mapped to or implemented as an ldproxy simple or geometry type, and is a:
 ** type with identity (i.e. feature or object type), then the value of target parameter _foreignKeyColumnSuffix_ (with default value being the empty string) is used as suffix
 ** data type, then the value of target parameter _foreignKeyColumnSuffixDatatype_ (with default value being the empty string) is used as suffix
 * In addition, the column name established so far is converted to lower case (using the english locale).
@@ -649,7 +657,7 @@ The `type` member of a property definition depends upon the value type of the pr
 [[link_object]]
 The definition of a link object within a property definition is as follows:
 
-* `objectType: LINK` 
+* `objectType: Link` 
 * `sourcePath`: As defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>); omitted if the maximum multiplicity of the property is (assumed to be) equal to 1.
 * `properties`:
 ** `title`: 

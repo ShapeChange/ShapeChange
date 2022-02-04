@@ -5,7 +5,25 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: label
 description: '...'
+enabled: true
 serviceType: OGC_API
+metadata:
+  keywords:
+  - keyword_A
+  - keyword_B
+  attribution: Your organization, company, or other entity
+api:
+- buildingBlock: COLLECTIONS
+  additionalLinks:
+  - rel: describedby
+    type: application/pdf
+    title: Some PDF with further details
+    href: https://example.org/mypdf
+    hreflang: de
+- buildingBlock: CRS
+  additionalCrs:
+  - code: 4326
+    forceAxisOrder: NONE
 collections:
   ts10_featuretype1:
     id: ts10_featuretype1
@@ -13,37 +31,24 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts1_featuretype1:
     id: ts1_featuretype1
     label: ts1_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts1_featuretype2:
     id: ts1_featuretype2
     label: ts1_featuretype2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts2_featuretype1:
     id: ts2_featuretype1
     label: ts2_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
       transformations:
         attCode1:
         - codelist: TS2_Codelist1
@@ -53,8 +58,8 @@ collections:
         - codelist: TS2_Enumeration2
         attEnum1:
         - codelist: TS2_Enumeration1
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
+        attExtCodelist:
+        - codelist: Ext_Codelist
   ts3_featuretype1:
     id: ts3_featuretype1
     label: ts3_featuretype1
@@ -62,104 +67,68 @@ collections:
     api:
     - buildingBlock: FEATURES_HTML
       featureTitleTemplate: '{{atttitle}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts3_type1:
     id: ts3_type1
     label: ts3_type1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts4_featuretype1:
     id: ts4_featuretype1
     label: ts4_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
       transformations:
         attDt1.attDt2.attS:
         - remove: IN_COLLECTION
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts5_featuretype1:
     id: ts5_featuretype1
     label: ts5_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts6_featuretype1:
     id: ts6_featuretype1
     label: ts6_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts6_featuretype2:
     id: ts6_featuretype2
     label: ts6_featuretype2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts7_featuretype1:
     id: ts7_featuretype1
     label: ts7_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{ident}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts8_featuretype1:
     id: ts8_featuretype1
     label: ts8_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
       transformations:
         attDate:
         - dateFormat: dd.MM.yyyy
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts8_featuretype2:
     id: ts8_featuretype2
     label: ts8_featuretype2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
       transformations:
         attDateTime1:
         - dateFormat: dd.MM.yyyy HH:mm:ss
         attDateTime2:
         - dateFormat: dd.MM.yyyy HH:mm:ss
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>
   ts9_featuretype1:
     id: ts9_featuretype1
     label: ts9_featuretype1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{idx}}'
-      transformations:
-        '*{objectType=Link}':
-        - reduceStringFormat: <a href="{{href}}">{{title}}</a>

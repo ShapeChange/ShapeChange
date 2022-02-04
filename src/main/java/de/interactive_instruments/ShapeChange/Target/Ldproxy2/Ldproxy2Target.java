@@ -126,10 +126,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static ZoneId nativeTimeZone = ZoneId.systemDefault();
     protected static String objectIdentifierName = "oid";
     protected static String primaryKeyColumn = "id";
-    protected static String serviceApiTemplatePath = null; // default TODO
+    protected static String serviceConfigTemplatePathString = null;
+//    protected static List<Path> serviceTemplatePaths = new ArrayList<>();
     protected static String serviceDescription = "FIXME";
     protected static String serviceLabel = "FIXME";
-    protected static String serviceMetadataTemplatePath = null; // default TODO
     protected static int srid = 4326;
 
     protected static SortedSet<String> dbSchemaNames = new TreeSet<String>();
@@ -146,11 +146,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
 
-//    protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
-//    protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
-
     protected static List<ClassInfo> typesWithIdentity = new ArrayList<>();
-    protected static List<ClassInfo> codelistsAndEnumerations = new ArrayList<>();
+    protected static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
 
     protected static LdproxyCfg cfg = null;
 
@@ -275,8 +272,39 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    associativeTableColumnSuffix = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, primaryKeyColumn, false, true);
 
-	    serviceApiTemplatePath = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, "FIXME", false, true);
+//	    String serviceApiTemplatePathString = options.parameterAsString(this.getClass().getName(),
+//		    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, null, false, true);
+//	    if (StringUtils.isNotBlank(serviceApiTemplatePathString)) {
+//		try {
+//		    Path serviceApiTemplatePath;
+//		    if (serviceApiTemplatePathString.startsWith("http")) {
+//			serviceApiTemplatePath = Paths.get(new URL(serviceApiTemplatePathString).toURI());
+//		    } else {
+//			serviceApiTemplatePath = (new File(serviceApiTemplatePathString)).getAbsoluteFile().toPath();
+//		    }
+//		    serviceTemplatePaths.add(serviceApiTemplatePath);
+//		} catch (Exception e) {
+//		    result.addError(this, 21, serviceApiTemplatePathString,
+//			    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, e.getMessage());
+//		}
+//	    }
+
+	    serviceConfigTemplatePathString = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, null, false, true);
+//	    if (StringUtils.isNotBlank(serviceConfigTemplatePathString)) {
+//		try {
+//		    Path serviceConfigTemplatePath;
+//		    if (serviceConfigTemplatePathString.startsWith("http")) {
+//			serviceConfigTemplatePath = Paths.get(new URL(serviceConfigTemplatePathString).toURI());
+//		    } else {
+//			serviceConfigTemplatePath = (new File(serviceConfigTemplatePathString)).getAbsoluteFile().toPath();
+//		    }
+//		    serviceTemplatePaths.add(serviceConfigTemplatePath);
+//		} catch (Exception e) {
+//		    result.addError(this, 21, serviceConfigTemplatePathString,
+//			    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, e.getMessage());
+//		}
+//	    }
 
 	    serviceDescription = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, "FIXME", false, true);
@@ -284,8 +312,23 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    serviceLabel = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_SERVICE_LABEL,
 		    "FIXME", false, true);
 
-	    serviceMetadataTemplatePath = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH, "FIXME", false, true);
+//	    String serviceMetadataTemplatePathString = options.parameterAsString(this.getClass().getName(),
+//		    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH, null, false, true);
+//	    if (StringUtils.isNotBlank(serviceMetadataTemplatePathString)) {
+//		try {
+//		    Path serviceMetadataTemplatePath;
+//		    if (serviceMetadataTemplatePathString.startsWith("http")) {
+//			serviceMetadataTemplatePath = Paths.get(new URL(serviceMetadataTemplatePathString).toURI());
+//		    } else {
+//			serviceMetadataTemplatePath = (new File(serviceMetadataTemplatePathString)).getAbsoluteFile()
+//				.toPath();
+//		    }
+//		    serviceTemplatePaths.add(serviceMetadataTemplatePath);
+//		} catch (Exception e) {
+//		    result.addError(this, 21, serviceMetadataTemplatePathString,
+//			    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH, e.getMessage());
+//		}
+//	    }
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
 
@@ -432,7 +475,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		} else {
 		    codelistsAndEnumerations.add(ci);
 		}
-		
+
 	    } else {
 		result.addInfo(this, 19, ci.name());
 	    }
@@ -518,7 +561,22 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			FileUtils.copyFile(new File(cfgTemplatePath), cfgFile);
 		    }
 		} catch (IOException e) {
-		    result.addError(this, 123, cfgTemplatePath, cfgFile.getAbsolutePath());
+		    result.addError(this, 123, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH, cfgTemplatePath,
+			    cfgFile.getAbsolutePath());
+		}
+	    }
+
+	    File serviceConfigTemplateFile = new File(outputDirectory, "tmp_serviceConfigTemplate.yml");
+	    if (StringUtils.isNotBlank(serviceConfigTemplatePathString)) {
+		try {
+		    if (serviceConfigTemplatePathString.startsWith("http")) {
+			FileUtils.copyURLToFile(new URL(serviceConfigTemplatePathString), serviceConfigTemplateFile);
+		    } else {
+			FileUtils.copyFile(new File(serviceConfigTemplatePathString), serviceConfigTemplateFile);
+		    }
+		} catch (IOException e) {
+		    result.addError(this, 123, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+			    serviceConfigTemplatePathString, serviceConfigTemplateFile.getAbsolutePath());
 		}
 	    }
 
@@ -595,8 +653,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    .label(serviceLabel).description(serviceDescription).serviceType("OGC_API")
 		    .collections(serviceCollectionDefinitions).build();
 
-	    // FIXME: Integrate metadata and api template
-
 	    if (isUnitTest) {
 		serviceConfig = serviceConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
 			.withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
@@ -629,8 +685,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    .queryGeneration(queryGeneration).nativeCrs(nativeCrs).nativeTimeZone(nativeTimeZone)
 		    .types(providerTypeDefinitions).build();
 
-	    // FIXME: API must not write all time zone details - just its name
-
 	    if (isUnitTest) {
 		providerConfig = providerConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
 			.withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
@@ -638,13 +692,21 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    // write api
 	    try {
-		cfg.writeEntity(serviceConfig);
+		if (serviceConfigTemplateFile.exists()) {
+		    cfg.writeEntity(serviceConfig, serviceConfigTemplateFile.toPath());
+		} else {
+		    cfg.writeEntity(serviceConfig);
+		}
 		cfg.writeEntity(providerConfig);
 		for (ImmutableCodelistData icd : codelists) {
 		    cfg.writeEntity(icd);
 		}
 	    } catch (IOException e) {
 		e.printStackTrace();
+	    } finally {
+		if (serviceConfigTemplateFile.exists()) {
+		    FileUtils.deleteQuietly(serviceConfigTemplateFile);
+		}
 	    }
 	}
 
@@ -876,24 +938,27 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    propMemberDefBuilder.role(propRole);
 
 	    Optional<String> sourcePathProperty = sourcePathPropertyLevel(pi);
+
 	    boolean ignoreSourcePathOnPropertyLevel = false;
 
 	    // handle embedded cases (datatype or link properties)
 	    if (isMappedToOrImplementedAsLink(pi)) {
 
-		propMemberDefBuilder.objectType("LINK");
+		// IMPORTANT: The object type must be 'Link', NOT 'LINK'!
+		propMemberDefBuilder.objectType("Link");
 
 		ignoreSourcePathOnPropertyLevel = pi.cardinality().maxOccurs == 1;
 
 		SortedMap<String, FeatureSchema> linkPropertyDefs = new TreeMap<>();
 
-		linkPropertyDefs.put("title",
-			new ImmutableFeatureSchema.Builder().name("title").label(pi.typeInfo().name + "-ID")
-				.type(Type.STRING).sourcePath(databaseColumnName(pi, false)).build());
+		String sourcePathInLinkProps = sourcePathLinkLevel(pi);
+
+		linkPropertyDefs.put("title", new ImmutableFeatureSchema.Builder().name("title")
+			.label(pi.typeInfo().name + "-ID").type(Type.STRING).sourcePath(sourcePathInLinkProps).build());
 
 		ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
 		linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			.sourcePath(databaseColumnName(pi, false));
+			.sourcePath(sourcePathInLinkProps);
 		linkPropHrefBuilder.addAllTransformationsBuilders(
 			new ImmutablePropertyTransformation.Builder().stringFormat(urlTemplateForValueType(pi)));
 		linkPropertyDefs.put("href", linkPropHrefBuilder.build());
@@ -956,12 +1021,24 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    constraintsBuilder.maxOccurrence(pi.cardinality().maxOccurs);
 		}
 	    }
-	    if (isEnumerationOrCodelistValueType(pi)) {
+	    if (isEnumerationOrCodelistValueType(pi) && !valueTypeIsMapped(pi)) {
 
 		ClassInfo typeCi = pi.typeClass();
 
 		providerConfigConstraintCreated = true;
 		String codelistId = codelistId(typeCi);
+
+		if (!codelistsAndEnumerations.contains(typeCi)) {
+		    /*
+		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
+		     * from the schemas selected for processing.
+		     */
+		    MessageContext mc = result.addWarning(this, 127, typeCi.name(), codelistId);
+		    if (mc != null) {
+			mc.addDetail(this, 0, typeCi.fullNameInSchema());
+		    }
+		}
+
 		constraintsBuilder.codelist(codelistId);
 
 		if (pi.categoryOfValue() == Options.ENUMERATION
@@ -1017,6 +1094,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return propertyDefs;
     }
 
+    private String sourcePathLinkLevel(PropertyInfo pi) {
+
+	if (pi.cardinality().maxOccurs == 1) {
+	    return databaseColumnName(pi);
+	} else {
+	    // return name of PK column
+	    return primaryKeyColumn;
+	}
+    }
+
     private boolean matchesAnyCodelistConversionRule(ClassInfo ci) {
 	return ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)
 		|| ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
@@ -1064,7 +1151,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     }
 
     private boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
-	return isMappedToLink(pi) || isTypeWithIdentityValueType(pi);
+
+	if (valueTypeIsMapped(pi)) {
+	    return isMappedToLink(pi);
+	} else {
+	    return isTypeWithIdentityValueType(pi);
+	}
     }
 
     private Optional<String> sourcePathPropertyLevel(PropertyInfo pi) {
@@ -1082,7 +1174,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
 
 		    // the target only allows and thus assumes max mult = 1
-		    return Optional.of(databaseColumnName(pi, false));
+		    return Optional.of(databaseColumnName(pi));
 
 		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
 
@@ -1096,11 +1188,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		} else {
 		    // value type is a simple ldproxy type
 		    if (pi.cardinality().maxOccurs == 1) {
-			return Optional.of(databaseColumnName(pi, false));
+			return Optional.of(databaseColumnName(pi));
 		    } else {
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi) + "/" + databaseColumnName(pi, false));
+			// FIXME ... presence of associative-table-specific sortKey may need to be made
+			// configurable
+			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
+				+ databaseTableName(pi.inClass(), true) + "}/" + databaseColumnName(pi));
 		    }
 		}
 
@@ -1126,25 +1220,42 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
 
 		if (pi.cardinality().maxOccurs == 1) {
-		    return Optional.of(databaseColumnName(pi, false));
+		    return Optional.of(databaseColumnName(pi));
 		} else {
-		    return Optional
-			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi) + "/" + databaseColumnName(pi, false));
+		    // FIXME ... presence of associative-table-specific sortKey may need to be made
+		    // configurable
+		    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+			    + databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
+			    + databaseTableName(pi.inClass(), true) + "}/" + databaseColumnName(pi));
 		}
 
 	    } else if (typeCi.category() == Options.DATATYPE) {
 
-		if (pi.cardinality().maxOccurs == 1) {
+		if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
 
-		    return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
-			    + databaseTableName(typeCi, false));
+		    if (pi.cardinality().maxOccurs == 1) {
+
+			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
+				+ databaseTableName(typeCi, false));
+		    } else {
+
+			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi));
+		    }
+
 		} else {
 
-		    return Optional
-			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
-				    + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+		    if (pi.cardinality().maxOccurs == 1) {
+
+			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
+				+ databaseTableName(typeCi, false));
+		    } else {
+
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
+					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+		    }
 		}
 
 	    } else {
@@ -1163,19 +1274,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 			// case pB from ppt image
 			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseColumnName(pi.reverseProperty(), true) + "]"
-				+ databaseTableName(typeCi, false));
+				+ databaseColumnName(pi.reverseProperty()) + "]" + databaseTableName(typeCi, false));
 
 		    } else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
 
 			// case pA from ppt image
-			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 				+ databaseTableName(typeCi, false));
 
 		    } else {
 
 			// max mult = 1 on both ends
-			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 				+ databaseTableName(typeCi, false));
 		    }
 
@@ -1184,7 +1294,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    // attribute or uni-directional association
 		    if (pi.cardinality().maxOccurs == 1) {
 
-			return Optional.of("[" + databaseColumnName(pi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 				+ databaseTableName(typeCi, false));
 
 		    } else {
@@ -1205,7 +1315,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	if (ci.matches(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE)) {
 	    for (PropertyInfo pi : ci.properties().values()) {
 		if (pi.stereotype("identifier")) {
-		    return databaseColumnName(pi, false);
+		    return databaseColumnName(pi);
 		}
 	    }
 	}
@@ -1235,7 +1345,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    propertyName = pi.reverseProperty().name();
 	}
 
-	return tableName + "_" + propertyName;
+	String res = tableName + "_" + propertyName;
+	return res;
     }
 
     private String constantValue(PropertyInfo pi) {
@@ -1287,7 +1398,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	if (StringUtils.isBlank(urlTemplate)) {
-	    urlTemplate = "{{serviceUrl}}/collections/" + valueTypeName + "/items/{{value}}";
+	    urlTemplate = "{{serviceUrl}}/collections/" + valueTypeName.toLowerCase(Locale.ENGLISH)
+		    + "/items/{{value}}";
 	}
 
 	return urlTemplate;
@@ -1330,7 +1442,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
-    private boolean isSimpleLdproxyType(Type t) {
+    private boolean isLdproxyGeometryType(Type t) {
+	return t == Type.GEOMETRY;
+    }
+
+    private boolean isLdproxySimpleType(Type t) {
 
 	switch (t) {
 	case STRING:
@@ -1353,33 +1469,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private boolean isTypeWithIdentityValueType(PropertyInfo pi) {
 	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
     }
-
-//    private Type typeForValueType(PropertyInfo pi) {
-//	return typeForValueType(pi, pi.cardinality().maxOccurs);
-//    }
-//
-//    private Type typeForValueType(PropertyInfo pi, int assumedMaxMultiplicity) {
-//
-//	return typeForValueType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM),
-//		assumedMaxMultiplicity);
-//    }
-//
-//    private Type typeForValueType(String typeName, String typeId, String encodingRule, int assumedMaxMultiplicity) {
-//
-//	Type resType = ldproxyType(typeName, typeId, encodingRule);
-//
-//	if (assumedMaxMultiplicity > 1) {
-//	    if (resType == Type.OBJECT) {
-//		resType = Type.OBJECT_ARRAY;
-//	    } else if (resType == Type.GEOMETRY) {
-//		// ignore -> no array for geometry properties
-//	    } else {
-//		resType = Type.VALUE_ARRAY;
-//	    }
-//	}
-//
-//	return resType;
-//    }
 
     private Type ldproxyType(PropertyInfo pi) {
 
@@ -1587,19 +1676,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return result;
     }
 
-    private String databaseColumnName(PropertyInfo pi, boolean isColumnInAssociativeTable) {
+    private String databaseColumnName(PropertyInfo pi) {
 
 	String result = pi.name();
 
-//	if (isColumnInAssociativeTable) {
-//	    result = result + associativeTableColumnSuffix;
-//	} else {
-	if (valueTypeIsTypeWithIdentity(pi)) {
-	    result = result + foreignKeyColumnSuffix;
-	} else if (pi.categoryOfValue() == Options.DATATYPE) {
-	    result = result + foreignKeyColumnSuffixDatatype;
+	Type t = ldproxyType(pi);
+
+	if (!(isLdproxySimpleType(t) || isLdproxyGeometryType(t))) {
+
+	    if (valueTypeIsTypeWithIdentity(pi)) {
+		result = result + foreignKeyColumnSuffix;
+	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
+		result = result + foreignKeyColumnSuffixDatatype;
+	    }
 	}
-//	}
 
 	result = result.toLowerCase(Locale.ENGLISH);
 
@@ -1673,11 +1763,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	nativeTimeZone = ZoneId.systemDefault();
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
-	serviceApiTemplatePath = null; // default TODO
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
-	serviceMetadataTemplatePath = null; // default TODO
 	srid = 4326;
+//	serviceTemplatePaths = new ArrayList<>();
+	serviceConfigTemplatePathString = null;
 
 	outputDirectory = null;
 	dataDirectoryFile = null;
@@ -1686,7 +1776,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	mapEntryParamInfos = null;
 
 	typesWithIdentity = new ArrayList<>();
-	codelistsAndEnumerations = new ArrayList<>();
+	codelistsAndEnumerations = new TreeSet<>();
 
 	cfg = null;
     }
@@ -1699,6 +1789,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
+	r.addRule(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES);
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
@@ -1755,7 +1846,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 20:
 	    return "Type '$1$' is abstract. Conversion of abstract types is not supported by this target. The type will be ignored. Apply inheritance flattening (a model transformation) in order to handle abstract supertypes.";
 	case 21:
-	    return "";
+	    return "Value '$1$' of configuration parameter '$2$' does not result in a valid path. Exception message is: $3$";
 	case 22:
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
@@ -1810,14 +1901,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 122:
 	    return "??Value of tag 'ldpRemove' on property '$1$' is invalid. Allowed values are: IN_COLLECTION, ALWAYS, NEVER (case is ignored when parsing the value). Found value '$2$'.";
 	case 123:
-	    return "Exception occurred while copying the cfg template from '$1$' to '$2$'. Exception message is: '$3$'.";
+	    return "Exception occurred while copying the template defined by target parameter '$1$' from '$2$' to '$3$'. Exception message is: '$3$'.";
 	case 124:
 	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and either not present in the model, not correctly linked, or not encoded. The property will therefore not be encoded. Either define a mapping for the value type, or ensure that the value type is correctly linked to and that it actually is defined to be encoded by this target.";
 	case 125:
 	    return "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
 	case 126:
 	    return "??The value type '$1$' of property '$2$' (of class '$3$') is an enumeration or code list. However, no conversion rule to represent the value type as ldproxy code list is defined in the encoding rule that applies to the value type. The property will not be encoded. Extend the encoding rule that applies to the value type with a conversion rule to represent the value type as ldproxy code list.";
-	
+	case 127:
+	    return "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
+
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:

@@ -56,7 +56,7 @@ types:
           required: true
       attExtDt1:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         constraints:
           required: true
         properties:
@@ -73,33 +73,33 @@ types:
       attExtDt2:
         sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1ToExtDt'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           required: true
           minOccurrence: 1
         properties:
           href:
-            sourcePath: attextdt2_fkdt
+            sourcePath: idx
             type: STRING
             label: ExtDt-ID
             transformations:
             - stringFormat: https://example.org/dt/{{value}}
           title:
-            sourcePath: attextdt2_fkdt
+            sourcePath: idx
             type: STRING
             label: ExtDt-ID
       attInteger:
         sourcePath: attinteger
         type: INTEGER
       attLength:
-        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength/attlength'
+        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength{sortKey=ts1_featuretype1_id}/attlength'
         type: VALUE_ARRAY
         valueType: FLOAT
         constraints:
           required: true
           minOccurrence: 1
       attReal:
-        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal/attreal'
+        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal{sortKey=ts1_featuretype1_id}/attreal'
         type: VALUE_ARRAY
         valueType: FLOAT
         constraints:
@@ -111,30 +111,30 @@ types:
       roleToFt2_1:
         sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1FT21/[ts1_featuretype2_id=idx]ts1_featuretype2'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           minOccurrence: 0
         properties:
           href:
-            sourcePath: roletoft2_1_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
           title:
-            sourcePath: roletoft2_1_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType2-ID
       roleToFt2_2:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         properties:
           href:
             sourcePath: roletoft2_2_fk
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
           title:
             sourcePath: roletoft2_2_fk
             type: STRING
@@ -142,44 +142,44 @@ types:
       roleToFt2_3:
         sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype2_id=idx]ts1_featuretype2'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           minOccurrence: 0
         properties:
           href:
-            sourcePath: roletoft2_3_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
           title:
-            sourcePath: roletoft2_3_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType2-ID
       roleToFt2_4:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         properties:
           href:
             sourcePath: roletoft2_4_fk
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
           title:
             sourcePath: roletoft2_4_fk
             type: STRING
             label: TS1_FeatureType2-ID
       roleToFt2_5:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         properties:
           href:
             sourcePath: roletoft2_5_fk
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType2/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
           title:
             sourcePath: roletoft2_5_fk
             type: STRING
@@ -196,54 +196,54 @@ types:
       roleToFt1_3:
         sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype1_id=idx]ts1_featuretype1'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           minOccurrence: 0
         properties:
           href:
-            sourcePath: roletoft1_3_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
           title:
-            sourcePath: roletoft1_3_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType1-ID
       roleToFt1_4:
         sourcePath: '[idx=roletoft2_4_fk]ts1_featuretype1'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           minOccurrence: 0
         properties:
           href:
-            sourcePath: roletoft1_4_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
           title:
-            sourcePath: roletoft1_4_fk
+            sourcePath: idx
             type: STRING
             label: TS1_FeatureType1-ID
       roleToFt1_5:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         properties:
           href:
             sourcePath: roletoft1_5_fk
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS1_FeatureType1/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
           title:
             sourcePath: roletoft1_5_fk
             type: STRING
             label: TS1_FeatureType1-ID
       roleToMd1:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         constraints:
           required: true
         properties:
@@ -260,18 +260,18 @@ types:
       roleToMd2:
         sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType2_roleToMd2'
         type: OBJECT_ARRAY
-        objectType: LINK
+        objectType: Link
         constraints:
           minOccurrence: 0
         properties:
           href:
-            sourcePath: roletomd2_fk
+            sourcePath: idx
             type: STRING
             label: MD_Metadata-ID
             transformations:
             - stringFormat: https://example.org/metadata/{{value}}
           title:
-            sourcePath: roletomd2_fk
+            sourcePath: idx
             type: STRING
             label: MD_Metadata-ID
   ts2_featuretype1:
@@ -292,6 +292,11 @@ types:
         constraints:
           required: true
         properties:
+          attBoolean:
+            sourcePath: attboolean
+            type: BOOLEAN
+            constraints:
+              required: true
           attCode2:
             sourcePath: attcode2
             type: STRING
@@ -315,6 +320,12 @@ types:
           enum:
           - enum1
           - enum2
+          required: true
+      attExtCodelist:
+        sourcePath: attextcodelist
+        type: STRING
+        constraints:
+          codelist: Ext_Codelist
           required: true
       oid:
         sourcePath: idx
@@ -349,15 +360,14 @@ types:
         label: Alias attTitle
         description: Documentation attTitle
         constraints:
-          isRequired: true
-              required: true
+          required: true
       oid:
         sourcePath: idx
         type: INTEGER
         role: ID
       role:
         type: OBJECT
-        objectType: LINK
+        objectType: Link
         label: Alias role
         description: Documentation role
         constraints:
@@ -368,7 +378,7 @@ types:
             type: STRING
             label: TS3_Type1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/TS3_Type1/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ts3_type1/items/{{value}}'
           title:
             sourcePath: role_fk
             type: STRING
@@ -417,7 +427,7 @@ types:
               minOccurrence: 0
             properties:
               attS:
-                sourcePath: '[idx=ts4_datatype2_id]TS4_DataType2_attS/atts'
+                sourcePath: '[idx=ts4_datatype2_id]TS4_DataType2_attS{sortKey=ts4_datatype2_id}/atts'
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
