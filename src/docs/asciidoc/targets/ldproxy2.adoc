@@ -65,7 +65,7 @@ Some configuration data can simply be copied using template files. <<table_templ
 |====================
 | target parameter name | default template location | output folder | description
 | cfgTemplatePath | https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml | data/cfg.yml | The cfg.yml contains the global configuration for all APIs in the intended API deployment.
-| serviceConfigTemplatePath | _none_ - Nevertheless, an example is provided at https://shapechange.net/resources/templates/ldproxy2/serviceConfigTemplate.yml | _none_ - will be integrated into the service configuration | The object defined by this template file will be patched into the service configuration.
+| serviceConfigTemplatePath | _none_ - Nevertheless, an example is provided at https://shapechange.net/resources/templates/ldproxy2/serviceConfigTemplate.yml | _none_ - will be integrated into the service configuration | The object defined by this template file will be patched into the service configuration. This is useful to, for example, define service metadata.
 ||||
 |====================
 
@@ -151,7 +151,7 @@ The following information items are added to the provider configuration file:
 
 NOTE: Members of the provider configuration, whose value is equal to the default value for that member defined by ldproxy, may not actually be written to the provider configuration file created by the target.
 
-NOTE: The deployment-specific values of the `connectionInfo` member - i.e. the database, host, user, and password - should either be set via the enviornment variables #TBD#, or via an overriding configuration file.
+NOTE: The deployment-specific values of the `connectionInfo` member - i.e. the database, host, user, and password - should either be set via environment variables, or via an overriding configuration file. The override would be placed in folder store/overrides/providers and carry the same name as the provider configuration whose connection infos shall be overridden.
 
 
 
@@ -452,7 +452,7 @@ Enumerations and code lists are not converted to top-level provider type definit
 The following information items are encoded within the YAML file:
 
 * id: the enumeration / code list ID
-* label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details) #TBD: should we use the _descriptionTemplate_ in this case?#
+* label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
 * sourceType: TEMPLATES
 * entries: One entry `{code}: {target_value}` per enum / code defined by the enumeration / code list
 ** An enum / code is represented by an attribute in the UML model.
@@ -595,7 +595,14 @@ Otherwise, if the property value type is mapped to LINK, the target assumes that
 .Default source path construction for value types that are mapped to LINK
 image::../images/ldp2_mapped_types_default_source_path_encoding.png[align="center"]
 
-Otherwise, if the property value type is a data type, source paths are constructed as shown in <<img_ldproxy2_property_access_datatypes_default>>.
+Otherwise, if the property value type is a data type, and:
+
+* the data type matches __rule-ldp2-cls-data-types-oneToMany-severalTables__, then source paths are constructed as shown in <<img_ldproxy2_property_access_datatypes_onetomany_severaltables>>,
+* otherwise source paths are constructed as shown in <<img_ldproxy2_property_access_datatypes_default>>
+
+[#img_ldproxy2_property_access_datatypes_onetomany_severaltables,reftext='{figure-caption} {counter:figure-num}']
+.Source path construction for value types that are data types and match __rule-ldp2-cls-data-types-oneToMany-severalTables__
+image::../images/ldp2_data_types_source_path_encoding_onetomany_severaltables.png[align="center"]
 
 [#img_ldproxy2_property_access_datatypes_default,reftext='{figure-caption} {counter:figure-num}']
 .Default source path construction for value types that are data types

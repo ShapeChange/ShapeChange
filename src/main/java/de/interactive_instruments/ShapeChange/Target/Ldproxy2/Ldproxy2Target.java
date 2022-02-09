@@ -127,7 +127,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static String objectIdentifierName = "oid";
     protected static String primaryKeyColumn = "id";
     protected static String serviceConfigTemplatePathString = null;
-//    protected static List<Path> serviceTemplatePaths = new ArrayList<>();
     protected static String serviceDescription = "FIXME";
     protected static String serviceLabel = "FIXME";
     protected static int srid = 4326;
@@ -272,63 +271,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    associativeTableColumnSuffix = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, primaryKeyColumn, false, true);
 
-//	    String serviceApiTemplatePathString = options.parameterAsString(this.getClass().getName(),
-//		    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, null, false, true);
-//	    if (StringUtils.isNotBlank(serviceApiTemplatePathString)) {
-//		try {
-//		    Path serviceApiTemplatePath;
-//		    if (serviceApiTemplatePathString.startsWith("http")) {
-//			serviceApiTemplatePath = Paths.get(new URL(serviceApiTemplatePathString).toURI());
-//		    } else {
-//			serviceApiTemplatePath = (new File(serviceApiTemplatePathString)).getAbsoluteFile().toPath();
-//		    }
-//		    serviceTemplatePaths.add(serviceApiTemplatePath);
-//		} catch (Exception e) {
-//		    result.addError(this, 21, serviceApiTemplatePathString,
-//			    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, e.getMessage());
-//		}
-//	    }
-
 	    serviceConfigTemplatePathString = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, null, false, true);
-//	    if (StringUtils.isNotBlank(serviceConfigTemplatePathString)) {
-//		try {
-//		    Path serviceConfigTemplatePath;
-//		    if (serviceConfigTemplatePathString.startsWith("http")) {
-//			serviceConfigTemplatePath = Paths.get(new URL(serviceConfigTemplatePathString).toURI());
-//		    } else {
-//			serviceConfigTemplatePath = (new File(serviceConfigTemplatePathString)).getAbsoluteFile().toPath();
-//		    }
-//		    serviceTemplatePaths.add(serviceConfigTemplatePath);
-//		} catch (Exception e) {
-//		    result.addError(this, 21, serviceConfigTemplatePathString,
-//			    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, e.getMessage());
-//		}
-//	    }
 
 	    serviceDescription = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, "FIXME", false, true);
 
 	    serviceLabel = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_SERVICE_LABEL,
 		    "FIXME", false, true);
-
-//	    String serviceMetadataTemplatePathString = options.parameterAsString(this.getClass().getName(),
-//		    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH, null, false, true);
-//	    if (StringUtils.isNotBlank(serviceMetadataTemplatePathString)) {
-//		try {
-//		    Path serviceMetadataTemplatePath;
-//		    if (serviceMetadataTemplatePathString.startsWith("http")) {
-//			serviceMetadataTemplatePath = Paths.get(new URL(serviceMetadataTemplatePathString).toURI());
-//		    } else {
-//			serviceMetadataTemplatePath = (new File(serviceMetadataTemplatePathString)).getAbsoluteFile()
-//				.toPath();
-//		    }
-//		    serviceTemplatePaths.add(serviceMetadataTemplatePath);
-//		} catch (Exception e) {
-//		    result.addError(this, 21, serviceMetadataTemplatePathString,
-//			    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH, e.getMessage());
-//		}
-//	    }
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
 
@@ -1766,7 +1716,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
 	srid = 4326;
-//	serviceTemplatePaths = new ArrayList<>();
 	serviceConfigTemplatePathString = null;
 
 	outputDirectory = null;

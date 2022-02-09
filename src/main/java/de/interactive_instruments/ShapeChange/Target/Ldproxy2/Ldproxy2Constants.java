@@ -76,10 +76,8 @@ public class Ldproxy2Constants {
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
-//    public static final String PARAM_SERVICE_API_TEMPLATE_PATH = "serviceApiTemplatePath";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
-//    public static final String PARAM_SERVICE_METADATA_TEMPLATE_PATH = "serviceMetadataTemplatePath";
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
 

@@ -69,10 +69,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
-//		    Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH, 
-		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
-		    Ldproxy2Constants.PARAM_SERVICE_LABEL, 
-//		    Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH,
+		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
 		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
 		    "_unitTestOverride").collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
@@ -126,10 +123,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_PK_COLUMN);
-//	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_API_TEMPLATE_PATH);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_LABEL);
-//	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_METADATA_TEMPLATE_PATH);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH);
 
 	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER))) {
@@ -282,15 +277,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    isValid = isValid & checkParameterOptionalCharacteristicHasValue(characteristicsByParameter,
 			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
 			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE, typeRuleKey, targetType);
-
-//		    isValid = isValid & checkParameterOptionalCharacteristicHasValue(characteristicsByParameter,
-//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED, typeRuleKey, targetType);
-
-//		    isValid = isValid & checkParameterCharacteristicHasAllowedValueIgnoringCase(
-//			    characteristicsByParameter, Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-//			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_QUOTED,
-//			    new String[] { "true", "false" }, typeRuleKey, targetType);
 		}
 	    }
 
