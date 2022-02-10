@@ -249,6 +249,83 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
+  <element name="FT5Root" substitutionGroup="gml:AbstractFeature" type="t:FT5RootType">
+    <annotation>
+      <documentation>Alias: </documentation>
+    </annotation>
+  </element>
+  <complexType name="FT5RootType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="_type" type="t:FT5RootTypeType">
+            <annotation>
+              <documentation>Alias: _type</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="attInFt5" type="integer">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="ft4" type="t:FT4PropertyType">
+            <annotation>
+              <documentation>Alias: </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT5RootPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT5Root"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="FT5RootTypeType">
+    <annotation>
+      <documentation>Alias: FT5RootTypeEnumeration</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="FT5B">
+        <annotation>
+          <documentation>Alias: FT5B</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5A">
+        <annotation>
+          <documentation>Alias: FTSubtype5A</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5B">
+        <annotation>
+          <documentation>Alias: FTSubtype5B</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5C">
+        <annotation>
+          <documentation>Alias: FTSubtype5C</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5D">
+        <annotation>
+          <documentation>Alias: FTSubtype5D</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5E">
+        <annotation>
+          <documentation>Alias: FTSubtype5E</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="FTSubtype5F">
+        <annotation>
+          <documentation>Alias: FTSubtype5F</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
   <element name="FTRoot1" substitutionGroup="gml:AbstractFeature" type="t:FTRoot1Type">
     <annotation>
       <documentation>Alias: FTR1</documentation>
