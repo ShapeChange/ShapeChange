@@ -394,6 +394,8 @@ If a type with identity has multiple temporal properties, i.e. properties whose 
 * If _defaultIntervalStart_ is `true` on one property, then the according property will be encoded with `role: PRIMARY_INTERVAL_START`. If more than one such property was found, an error will be logged.
 * If _defaultIntervalEnd_ is `true` on one property, then the according property will be encoded with `role: PRIMARY_INTERVAL_END`. If more than one such property was found, an error will be logged.
 
+WARNING: If none of the temporal properties of the type with identity is marked as PRIMARY_INSTANT, PRIMARY_INTERVAL_START, or PRIMARY_INTERVAL_END, then the first temporal property (following the order in which the properties are encoded in the provider type definition) will automatically be marked as PRIMARY_INSTANT. This reflects the behavior of ldproxy. If this is not desirable for a given type, then define which of the temporal properties should be used as primary instant or interval start / end.
+
 NOTE: The search for temporal properties that define primary instant / interval is performed on top-level properties only. I.e., properties of inlined (data) types are not considered by this search.
 
 NOTE: The ldproxy target expects all default temporal properties to have a maximum multiplicity of exactly 1. If a default temporal property with maximum multiplicity greater than 1 is encountered, the target logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
@@ -457,9 +459,10 @@ The following information items are encoded within the YAML file:
 * entries: One entry `{code}: {target_value}` per enum / code defined by the enumeration / code list
 ** An enum / code is represented by an attribute in the UML model.
 ** If _rule-ldp2-cls-codelist-direct_ applies, then the {code} value is the initial value, and the {target_value} is the enum / code name.
-*** NOTE: The ldproxy target will log an error if a code/enum has no initial value, and ignore the code/enum.
+*** NOTE: The ldproxy target will log a warning if a code/enum has no initial value, and proceed by using the enum / code name as {code} value.
 ** If _rule-ldp2-cls-codelist-targetbytaggedvalue_ applies, then the {code} value is the initial value, if defined, otherwise it is the enum / code name, and the {target_value} is given by tagged value _ldpCodeTargetValue_ on the enum / code attribute.
-*** NOTE: The ldproxy target will log an error if a code/enum has no non-blank value for the tag _ldpCodeTargetValue_, and ignore the code/enum.
+*** NOTE: The ldproxy target will log a warning if a code/enum has a blank value for the tag _ldpCodeTargetValue_, and proceed by using the enum / code name as {target_value}.
+** Otherwise, i.e. neither of the two conversion rules applies, the ldproxy target will encode both {code} and {target_value} with the name of the enum / code. So this will result in a one to one mapping of the enum / code.
 * fallback: The value is given by tagged value _ldpFallbackValue_ on the enumeration / code list. If the tagged value is blank (missing or empty), then the fallback is omitted. NOTE: The fallback value will be used (as-is) by ldproxy if a value stored in the database does not match any of the entries defined in the ldproxy code list (which can happen if a code list has evolved since the ldproxy code list has been created). An example for a fallback value would be 'unknown'.
 
 NOTE: If both _rule-ldp2-cls-codelist-direct_ and _rule-ldp2-cls-codelist-targetbytaggedvalue_ apply to a code list / enumeration, then _rule-ldp2-cls-codelist-direct_ is chosen.
@@ -525,6 +528,8 @@ NOTE: In the future, ways to convert restrictions defined by basic types could b
 === Properties
 
 The following sections describe how a property from a type with identity or a data type is converted by the ldproxy target.
+
+NOTE: The order in which the properties of a type with identity or a data type are encoded in the provider type definition is defined by the _sequenceNumber_ tagged values of these properties.
 
 NOTE: The conversion of properties from other kinds of classifiers, especially enumerations and code lists, is described in the according subsections of the <<ldproxy2_schemaconversionrules_types>> section.
 

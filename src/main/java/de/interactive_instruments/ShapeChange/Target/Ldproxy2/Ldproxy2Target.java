@@ -39,6 +39,7 @@ import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -415,19 +416,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	} else if (ci.category() == Options.ENUMERATION || ci.category() == Options.CODELIST) {
 
-	    if (matchesAnyCodelistConversionRule(ci)) {
-
-		if (codelistsAndEnumerations.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
-		    MessageContext mc = result.addError(this, 125, ci.name());
-		    if (mc != null) {
-			mc.addDetail(this, 0, ci.fullNameInSchema());
-		    }
-		} else {
-		    codelistsAndEnumerations.add(ci);
+	    if (codelistsAndEnumerations.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
+		MessageContext mc = result.addError(this, 125, ci.name());
+		if (mc != null) {
+		    mc.addDetail(this, 0, ci.fullNameInSchema());
 		}
-
 	    } else {
-		result.addInfo(this, 19, ci.name());
+		codelistsAndEnumerations.add(ci);
 	    }
 
 	} else {
@@ -557,7 +552,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		/*
 		 * Create provider config entry
 		 */
-		SortedMap<String, FeatureSchema> propertyDefs = propertyDefinitions(ci, new ArrayList<PropertyInfo>());
+		LinkedHashMap<String, FeatureSchema> propertyDefs = propertyDefinitions(ci,
+			new ArrayList<PropertyInfo>());
 
 		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
 			.name(typeDefName).objectType(ci.name()).label(label(ci))
@@ -662,10 +658,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     }
 
-    private SortedMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
+    private LinkedHashMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
 	    List<PropertyInfo> alreadyVisitedPiList) {
 
-	SortedMap<String, FeatureSchema> propertyDefs = new TreeMap<>();
+	LinkedHashMap<String, FeatureSchema> propertyDefs = new LinkedHashMap<>();
 
 	/*
 	 * DETERMINE SPECIAL PROPERTIES - ONLY RELEVANT FOR TOP-LEVEL CLASS
@@ -715,7 +711,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    if (!multipleIdentifierPisEncountered) {
 			identifierPi = pi;
 			if (pi.cardinality().maxOccurs > 1) {
-			    MessageContext mc = result.addError(this, 104, currentCi.name(), pi.name());
+			    MessageContext mc = result.addWarning(this, 104, currentCi.name(), pi.name());
 			    if (mc != null) {
 				mc.addDetail(this, 1, pi.fullNameInSchema());
 			    }
@@ -784,7 +780,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			} else {
 			    multipleDefaultIntervalStartsEncountered = true;
 			    MessageContext mc = result.addError(this, 110, pi.inClass().name(), pi.name(),
-				    defaultInstantPi.name());
+				    defaultIntervalStartPi.name());
 			    if (mc != null) {
 				mc.addDetail(this, 1, pi.fullNameInSchema());
 			    }
@@ -796,7 +792,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			} else {
 			    multipleDefaultIntervalEndsEncountered = true;
 			    MessageContext mc = result.addError(this, 111, pi.inClass().name(), pi.name(),
-				    defaultInstantPi.name());
+				    defaultIntervalEndPi.name());
 			    if (mc != null) {
 				mc.addDetail(this, 1, pi.fullNameInSchema());
 			    }
@@ -830,12 +826,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    continue;
 		} else if (unsupportedCategoryOfValue(pi)) {
 		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
-		    }
-		    continue;
-		} else if (isEnumerationOrCodelistValueType(pi) && !matchesAnyCodelistConversionRule(pi.typeClass())) {
-		    MessageContext mc = result.addError(this, 126, pi.typeInfo().name, pi.name(), pi.inClass().name());
 		    if (mc != null) {
 			mc.addDetail(this, 1, pi.fullNameInSchema());
 		    }
@@ -899,7 +889,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		ignoreSourcePathOnPropertyLevel = pi.cardinality().maxOccurs == 1;
 
-		SortedMap<String, FeatureSchema> linkPropertyDefs = new TreeMap<>();
+		LinkedHashMap<String, FeatureSchema> linkPropertyDefs = new LinkedHashMap<>();
 
 		String sourcePathInLinkProps = sourcePathLinkLevel(pi);
 
@@ -933,7 +923,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		} else {
 
-		    SortedMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi, nowVisitedList);
+		    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
+			    nowVisitedList);
 		    propMemberDefBuilder.propertyMap(datatypePropertyDefs);
 		    propMemberDefBuilder.objectType(typeCi.name());
 		}
@@ -1052,11 +1043,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    // return name of PK column
 	    return primaryKeyColumn;
 	}
-    }
-
-    private boolean matchesAnyCodelistConversionRule(ClassInfo ci) {
-	return ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)
-		|| ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
     }
 
     private void addServiceConfigPropertyTransformation(ClassInfo topLevelClass, String propertyPath,
@@ -1542,7 +1528,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	Optional<String> labelOpt = label(ci);
 	String label;
 	if (labelOpt.isEmpty()) {
-	    MessageContext mc = result.addError(this, 102, ci.name());
+	    MessageContext mc = result.addWarning(this, 102, ci.name());
 	    if (mc != null) {
 		mc.addDetail(this, 1, ci.fullNameInSchema());
 	    }
@@ -1564,15 +1550,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		String targetValue = null;
 
 		if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)) {
+
+		    targetValue = pi.name();
+
 		    if (StringUtils.isBlank(pi.initialValue())) {
-			MessageContext mc = result.addError(this, 100, ci.name(), pi.name());
+			MessageContext mc = result.addWarning(this, 100, ci.name(), pi.name());
 			if (mc != null) {
 			    mc.addDetail(this, 1, pi.fullNameInSchema());
 			}
-			continue;
+			code = pi.name();
 		    } else {
 			code = pi.initialValue();
-			targetValue = pi.name();
 		    }
 		} else if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)) {
 
@@ -1583,14 +1571,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    }
 
 		    if (StringUtils.isBlank(pi.taggedValue("ldpCodeTargetValue"))) {
-			MessageContext mc = result.addError(this, 101, ci.name(), pi.name());
+			MessageContext mc = result.addWarning(this, 101, ci.name(), pi.name());
 			if (mc != null) {
 			    mc.addDetail(this, 1, pi.fullNameInSchema());
 			}
-			continue;
+			targetValue = pi.name();
 		    } else {
 			targetValue = pi.taggedValue("ldpCodeTargetValue").trim();
 		    }
+		} else {
+		    code = pi.name();
+		    targetValue = pi.name();
 		}
 
 		entries.put(code, targetValue);
@@ -1791,7 +1782,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 18:
 	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 	case 19:
-	    return "No rule for the conversion to an ldproxy codelist is defined. Codelist/enumeration '$1$' will be ignored.";
+	    return "";
 	case 20:
 	    return "Type '$1$' is abstract. Conversion of abstract types is not supported by this target. The type will be ignored. Apply inheritance flattening (a model transformation) in order to handle abstract supertypes.";
 	case 21:
@@ -1803,10 +1794,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	case 100:
 	    return Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT
-		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' has no initial value. The code/enum cannot be encoded as defined by the conversion rule.";
+		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' has no initial value. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {code} in the enum/code mapping.";
 	case 101:
 	    return Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV
-		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag 'ldpCodeTargetValue'. The code/enum cannot be encoded as defined by the conversion rule.";
+		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag 'ldpCodeTargetValue'. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {target_value} in the enum/code mapping";
 	case 102:
 	    return "Could not compute a label for codelist/enumeration '$1$'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.";
 	case 103:
@@ -1856,7 +1847,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 125:
 	    return "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
 	case 126:
-	    return "??The value type '$1$' of property '$2$' (of class '$3$') is an enumeration or code list. However, no conversion rule to represent the value type as ldproxy code list is defined in the encoding rule that applies to the value type. The property will not be encoded. Extend the encoding rule that applies to the value type with a conversion rule to represent the value type as ldproxy code list.";
+	    return "";
 	case 127:
 	    return "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
 

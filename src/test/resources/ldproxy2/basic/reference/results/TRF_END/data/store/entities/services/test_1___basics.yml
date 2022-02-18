@@ -60,6 +60,17 @@ collections:
         - codelist: TS2_Enumeration1
         attExtCodelist:
         - codelist: Ext_Codelist
+  ts2_featuretype2:
+    id: ts2_featuretype2
+    label: ts2_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCode3:
+        - codelist: TS2_Codelist3
+        attEnum3:
+        - codelist: TS2_Enumeration3
   ts3_featuretype1:
     id: ts3_featuretype1
     label: ts3_featuretype1
@@ -115,6 +126,8 @@ collections:
       transformations:
         attDate:
         - dateFormat: dd.MM.yyyy
+        attOtherDate:
+        - dateFormat: dd.MM.yyyy
   ts8_featuretype2:
     id: ts8_featuretype2
     label: ts8_featuretype2
@@ -126,6 +139,17 @@ collections:
         - dateFormat: dd.MM.yyyy HH:mm:ss
         attDateTime2:
         - dateFormat: dd.MM.yyyy HH:mm:ss
+  ts8_featuretype3:
+    id: ts8_featuretype3
+    label: ts8_featuretype3
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attNonPrimaryDate:
+        - dateFormat: dd.MM.yyyy
+        attOtherNonPrimaryDate:
+        - dateFormat: dd.MM.yyyy
   ts9_featuretype1:
     id: ts9_featuretype1
     label: ts9_featuretype1
