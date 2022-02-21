@@ -3115,7 +3115,7 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	code = StringUtils.stripToNull(code);
-	
+
 	return code;
     }
 
@@ -4954,6 +4954,29 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	/*
+	 * We want to have keys from original properties in the subtypes, to use them
+	 * when comparing properties (to determine if they have same name, value type,
+	 * and multiplicity), without having to be concerned about changes of names
+	 * (through addition of suffixes) or changing of multiplicites (by setting min
+	 * card to 0 when copying up).
+	 */
+	Map<PropertyInfo,String> propKeyByProp = new HashMap<>();
+	for (GenericClassInfo genRootclass : genRootclassesById.values()) {
+	    for(PropertyInfo pi : genRootclass.properties().values()) {
+		String piKey = pi.name() + "#" + pi.typeInfo().name + "#"
+			    + pi.cardinality().toString();
+		propKeyByProp.put(pi, piKey);
+	    }
+	}
+	for (ClassInfo subClass : rootClassBySubtype.keySet()) {
+	    for(PropertyInfo pi : subClass.properties().values()) {
+		String piKey = pi.name() + "#" + pi.typeInfo().name + "#"
+			    + pi.cardinality().toString();
+		propKeyByProp.put(pi, piKey);
+	    }
+	}
+
+	/*
 	 * We want to copy the content of subtypes up to their supertypes, starting at
 	 * the bottom of the inheritance tree.
 	 * 
@@ -5006,8 +5029,7 @@ public class Flattener implements Transformer, MessageSource {
 			     */
 			} else {
 
-			    String subPiKey = subPi.name() + "#" + subPi.typeInfo().name + "#"
-				    + subPi.cardinality().toString();
+			    String subPiKey = propKeyByProp.get(subPi);
 
 			    /*
 			     * Determine if another subtype has a property of that name; if so, check if all
@@ -5022,8 +5044,7 @@ public class Flattener implements Transformer, MessageSource {
 
 				    otherSubtypeWithSameName = true;
 				    PropertyInfo otherSubPi = subtypeB.property(subPi.name());
-				    String otherSubPiKey = otherSubPi.name() + "#" + otherSubPi.typeInfo().name + "#"
-					    + otherSubPi.cardinality().toString();
+				    String otherSubPiKey = propKeyByProp.get(otherSubPi);
 				    if (!otherSubPiKey.equals(subPiKey)) {
 					onlySubtypePropsWithSameKey = false;
 					break;
@@ -5035,6 +5056,7 @@ public class Flattener implements Transformer, MessageSource {
 
 			    if (otherSubtypeWithSameName) {
 				if (onlySubtypePropsWithSameKey) {
+
 				    /*
 				     * Only one of the properties with same name, value type, and multiplicity shall
 				     * be moved; the rest will be ignored

@@ -33,7 +33,6 @@ package de.interactive_instruments.ShapeChange.Transformation.Naming;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -120,12 +119,9 @@ public class NamingModifierConfigurationValidator extends AbstractConfigurationV
 
 		} else {
 
-		    Set<ModelElementType> invalidMesiModelElementTypes = mesi.stream()
-			    .filter(e -> e.getModelElementType().equals(ModelElementType.ASSOCIATION)
-				    || e.getModelElementType().equals(ModelElementType.PACKAGE))
-			    .map(e -> e.getModelElementType()).collect(Collectors.toSet());
-
-		    if (!invalidMesiModelElementTypes.isEmpty()) {
+		    if (mesi.stream()
+			    .anyMatch(e -> e.getModelElementType() == ModelElementType.ASSOCIATION
+				    || e.getModelElementType() == ModelElementType.PACKAGE)) {
 			isValid = false;
 			result.addError(this, 105);
 		    }

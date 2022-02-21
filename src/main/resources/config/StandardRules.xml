@@ -40,6 +40,7 @@
 		<rule name="rule-sql-all-notEncoded"/>
 		<rule name="rule-cdb-all-notEncoded"/>
 		<rule name="rule-gpkg-all-notEncoded"/>
+		<rule name="rule-ldp2-all-notEncoded" />
 	</EncodingRule>
 	<EncodingRule name="citygml-ade" extends="iso19136_2007">
 		<rule name="req-xsd-cls-suppress-supertype"/>

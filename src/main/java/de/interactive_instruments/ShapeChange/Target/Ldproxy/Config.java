@@ -510,13 +510,13 @@ public class Config implements SingleTarget, MessageSource {
 		// executed as normal, but nothing will be written.
 		if (!diagOnly) {
 		    writer = new OutputStreamWriter(
-			    new BufferedOutputStream(new FileOutputStream(directoryMain + "/" + srvid)),
+			    new BufferedOutputStream(new FileOutputStream(directoryMain + "/" + srvid + ".json")),
 			    StandardCharsets.UTF_8);
 		    writerGeojson = new OutputStreamWriter(
-			    new BufferedOutputStream(new FileOutputStream(directoryGeojson + "/GeoJsonConfig")),
+			    new BufferedOutputStream(new FileOutputStream(directoryGeojson + "/GeoJsonConfig.json")),
 			    StandardCharsets.UTF_8);
 		    writerGml = new OutputStreamWriter(
-			    new BufferedOutputStream(new FileOutputStream(directoryGml + "/GmlConfig")),
+			    new BufferedOutputStream(new FileOutputStream(directoryGml + "/GmlConfig.json")),
 			    StandardCharsets.UTF_8);
 		}
 
