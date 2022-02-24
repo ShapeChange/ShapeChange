@@ -33,5 +33,9 @@
       <directory>target/appassembler/lic</directory>
       <outputDirectory>/</outputDirectory>
     </fileSet>
+    <fileSet>
+      <directory>target/documentation</directory>
+      <outputDirectory>/documentation</outputDirectory>
+    </fileSet>
   </fileSets>
 </assembly>

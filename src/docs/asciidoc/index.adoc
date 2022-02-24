@@ -15,7 +15,7 @@
 
 :source-highlighter: coderay
 
-= ShapeChange Technical Documentation
+= ShapeChange v{project-version} Technical Documentation
 
 :toc:
 

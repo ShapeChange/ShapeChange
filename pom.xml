@@ -328,7 +328,7 @@
 				<version>2.2.1</version>
 				<configuration>
 					<sourceDirectory>src/docs/asciidoc</sourceDirectory>
-					<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
+					<outputDirectory>${project.build.directory}/gh-pages/${project.version}</outputDirectory>
 					<preserveDirectories>true</preserveDirectories>
 					<backend>html5</backend>
 					<doctype>book</doctype>
@@ -341,7 +341,7 @@
 				<executions>
 					<execution>
 						<id>output-html</id>
-						<phase>generate-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>process-asciidoc</goal>
 						</goals>
@@ -517,6 +517,40 @@
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-resources-documentation1</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/documentation</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/gh-pages/${project.version}</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources-documentation2</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/docs</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>index.html</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
@@ -560,10 +594,32 @@
 				<version>3.0.0-M1</version>
 			</plugin>
 			<plugin>
+				<artifactId>maven-scm-publish-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<serverId>github.com</serverId>
+					<pubScmUrl>scm:git:https://github.com/ShapeChange/ShapeChange.git</pubScmUrl>
+					<scmBranch>gh-pages</scmBranch>
+					<checkinComment>Update documentation</checkinComment>
+					<content>${project.build.directory}/gh-pages</content>
+					<skipDeletedFiles>true</skipDeletedFiles>
+					<siteOutputEncoding>UTF-8</siteOutputEncoding>
+					<tryUpdate>true</tryUpdate>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>publish-scm</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>3.0.0-M1</version>
+				<version>3.0.0-M5</version>
 				<configuration>
+					<preparationGoals>clean verify asciidoctor:process-asciidoc scm-publish:publish-scm</preparationGoals>
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>
