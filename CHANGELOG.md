@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.12.0](https://github.com/ShapeChange/ShapeChange/tree/2.12.0) (2022-02-25)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.11.0...2.12.0)
+
+**Implemented enhancements:**
+
+- Create a new target to support the current version of ldproxy [\#292](https://github.com/ShapeChange/ShapeChange/issues/292)
+- UmlModel target - Add MDG validation [\#291](https://github.com/ShapeChange/ShapeChange/issues/291)
+
+**Closed issues:**
+
+- Port technical documentation from shapechange.net to GitHub [\#281](https://github.com/ShapeChange/ShapeChange/issues/281)
+
+**Merged pull requests:**
+
+- Next [\#294](https://github.com/ShapeChange/ShapeChange/pull/294) ([jechterhoff](https://github.com/jechterhoff))
+- Ldproxy2 [\#293](https://github.com/ShapeChange/ShapeChange/pull/293) ([jechterhoff](https://github.com/jechterhoff))
+- use local xml.xsd copy [\#290](https://github.com/ShapeChange/ShapeChange/pull/290) ([cportele](https://github.com/cportele))
+
 ## [2.11.0](https://github.com/ShapeChange/ShapeChange/tree/2.11.0) (2021-12-14)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.10.0...2.11.0)
@@ -22,17 +41,18 @@
 
 **Closed issues:**
 
-- Remove log4j usage in ShapeChange [\#288](https://github.com/ShapeChange/ShapeChange/issues/288)
-- Tagged Values: Empty vs. Absence [\#283](https://github.com/ShapeChange/ShapeChange/issues/283)
 - properties corresponding to UML attributes missing in .ttl [\#277](https://github.com/ShapeChange/ShapeChange/issues/277)
 -   Generating ontologies for "leaf", "informative", "deprecated"  [\#276](https://github.com/ShapeChange/ShapeChange/issues/276)
 - Generated empty ontology for the application schema "WaterML2.0" [\#275](https://github.com/ShapeChange/ShapeChange/issues/275)
 - generated empty .ttl ontologies [\#274](https://github.com/ShapeChange/ShapeChange/issues/274)
 - GeoPackage and ArcGIS / GeoPackage and spatial indexes [\#263](https://github.com/ShapeChange/ShapeChange/issues/263)
-- How to generate \<sc:taggedValue\> [\#232](https://github.com/ShapeChange/ShapeChange/issues/232)
 - General - Derivation of XML Schema from profile, using a different xmlns [\#40](https://github.com/ShapeChange/ShapeChange/issues/40)
 - General - Make parameter replacement mechanism available for Transformers [\#16](https://github.com/ShapeChange/ShapeChange/issues/16)
 - General - Select ordering method for enumerants in output [\#6](https://github.com/ShapeChange/ShapeChange/issues/6)
+- Remove log4j usage in ShapeChange [\#288](https://github.com/ShapeChange/ShapeChange/issues/288)
+- Tagged Values: Empty vs. Absence [\#283](https://github.com/ShapeChange/ShapeChange/issues/283)
+- Question on rule-trf-prop-flatten-measure-typed-properties-add-uom-property [\#267](https://github.com/ShapeChange/ShapeChange/issues/267)
+- How to generate \<sc:taggedValue\> [\#232](https://github.com/ShapeChange/ShapeChange/issues/232)
 
 **Merged pull requests:**
 
