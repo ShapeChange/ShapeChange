@@ -98,4 +98,14 @@ public class UmlModelTest extends WindowsBasicTest {
 				"testResults/uml/preservePackageHierarchy",
 				"src/test/resources/uml/preservePackageHierarchy/reference");
 	}
+	
+	@Test
+	public void testMdgValidation() {
+
+		multiTest(
+				"src/test/resources/uml/mdgValidation/testEA_mdg_validation.xml",
+				new String[] { "eap" },
+				"testResults/uml/mdgValidation",
+				"src/test/resources/uml/mdgValidation/reference");
+	}
 }

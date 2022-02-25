@@ -393,7 +393,7 @@ public class Converter implements MessageSource {
 		 */
 		String outputDirectory = outputDirectoryForTarget;
 
-		if (outputDirectoryForTarget != null && outputDirectoryForTarget.length() > 0) {
+		if (StringUtils.isNotBlank(outputDirectoryForTarget)) {
 		    outputDirectory = outputDirectoryForTarget.trim() + File.separator + modelProviderId;
 		    options.setParameter(tgt.getClassName(), "outputDirectory", outputDirectory);
 		}

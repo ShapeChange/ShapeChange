@@ -1,0 +1,158 @@
+---
+id: test_1___basics
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: label
+description: '...'
+enabled: true
+serviceType: OGC_API
+metadata:
+  keywords:
+  - keyword_A
+  - keyword_B
+  attribution: Your organization, company, or other entity
+api:
+- buildingBlock: COLLECTIONS
+  additionalLinks:
+  - rel: describedby
+    type: application/pdf
+    title: Some PDF with further details
+    href: https://example.org/mypdf
+    hreflang: de
+- buildingBlock: CRS
+  additionalCrs:
+  - code: 4326
+    forceAxisOrder: NONE
+collections:
+  ts10_featuretype1:
+    id: ts10_featuretype1
+    label: ts10_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts1_featuretype1:
+    id: ts1_featuretype1
+    label: ts1_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts1_featuretype2:
+    id: ts1_featuretype2
+    label: ts1_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts2_featuretype1:
+    id: ts2_featuretype1
+    label: ts2_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCode1:
+        - codelist: TS2_Codelist1
+        attDt.attCode2:
+        - codelist: TS2_CodeList2
+        attDt.attEnum2:
+        - codelist: TS2_Enumeration2
+        attEnum1:
+        - codelist: TS2_Enumeration1
+        attExtCodelist:
+        - codelist: Ext_Codelist
+  ts2_featuretype2:
+    id: ts2_featuretype2
+    label: ts2_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCode3:
+        - codelist: TS2_Codelist3
+        attEnum3:
+        - codelist: TS2_Enumeration3
+  ts3_featuretype1:
+    id: ts3_featuretype1
+    label: ts3_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      featureTitleTemplate: '{{atttitle}}'
+  ts3_type1:
+    id: ts3_type1
+    label: ts3_type1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts4_featuretype1:
+    id: ts4_featuretype1
+    label: ts4_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attDt1.attDt2.attS:
+        - remove: IN_COLLECTION
+  ts5_featuretype1:
+    id: ts5_featuretype1
+    label: ts5_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts6_featuretype1:
+    id: ts6_featuretype1
+    label: ts6_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts6_featuretype2:
+    id: ts6_featuretype2
+    label: ts6_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts7_featuretype1:
+    id: ts7_featuretype1
+    label: ts7_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts8_featuretype1:
+    id: ts8_featuretype1
+    label: ts8_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attDate:
+        - dateFormat: dd.MM.yyyy
+        attOtherDate:
+        - dateFormat: dd.MM.yyyy
+  ts8_featuretype2:
+    id: ts8_featuretype2
+    label: ts8_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attDateTime1:
+        - dateFormat: dd.MM.yyyy HH:mm:ss
+        attDateTime2:
+        - dateFormat: dd.MM.yyyy HH:mm:ss
+  ts8_featuretype3:
+    id: ts8_featuretype3
+    label: ts8_featuretype3
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attNonPrimaryDate:
+        - dateFormat: dd.MM.yyyy
+        attOtherNonPrimaryDate:
+        - dateFormat: dd.MM.yyyy
+  ts9_featuretype1:
+    id: ts9_featuretype1
+    label: ts9_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML

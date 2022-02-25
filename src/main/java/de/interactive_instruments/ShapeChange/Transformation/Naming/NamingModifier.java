@@ -495,8 +495,8 @@ public class NamingModifier implements Transformer, MessageSource {
 	List<ModelElementSelectionInfo> mesi = prmesces.stream()
 		.filter(e -> StringUtils.isNotBlank(e.getRule()) && e.getRule().equalsIgnoreCase(RULE_TRF_ADD_SUFFIX))
 		.map(e -> e.getModelElementSelectionInfo())
-		.filter(e -> !(e.getModelElementType().equals(ModelElementType.ASSOCIATION)
-			|| e.getModelElementType().equals(ModelElementType.PACKAGE)))
+		.filter(e -> !(e.getModelElementType() == ModelElementType.ASSOCIATION
+			|| e.getModelElementType() == ModelElementType.PACKAGE))
 		.collect(Collectors.toList());
 
 	/*

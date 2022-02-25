@@ -128,6 +128,8 @@ public class UmlModel implements SingleTarget, MessageSource {
     private static List<ClassInfo> classesToProcess = new ArrayList<ClassInfo>();
     private static Map<PackageInfo, Integer> eaPkgIdByPackageInfo = new HashMap<PackageInfo, Integer>();
     private static Map<String, String> stereotypeMappings = new HashMap<>();
+    private static Set<String> profilesWhoseLoadingStatusWasChecked = new HashSet<>();
+    private static Set<String> profilesNotLoaded = new HashSet<>();
 
     private Model model = null;
     private Options options = null;
@@ -611,15 +613,28 @@ public class UmlModel implements SingleTarget, MessageSource {
 	if (stereotypeMappings.isEmpty()) {
 	    return stereotypes;
 	} else {
-	    Stereotypes result = options.stereotypesFactory();
+	    Stereotypes res = options.stereotypesFactory();
 	    for (String stereotype : stereotypes.asSet()) {
 		if (stereotypeMappings.containsKey(stereotype)) {
-		    result.add(stereotypeMappings.get(stereotype));
+		    String mappingTarget = stereotypeMappings.get(stereotype);
+		    if (mappingTarget.contains("::")) {
+			String profile = mappingTarget.split("::")[0];
+			if (!profilesWhoseLoadingStatusWasChecked.contains(profile)) {
+			    if (!rep.IsTechnologyLoaded(profile)) {
+				profilesNotLoaded.add(profile);				
+			    }
+			    profilesWhoseLoadingStatusWasChecked.add(profile);
+			}			
+			if(profilesNotLoaded.contains(profile)) {
+			    result.addError(this, 106, profile, stereotype);
+			}
+		    }
+		    res.add(mappingTarget);
 		} else {
-		    result.add(stereotype);
+		    res.add(stereotype);
 		}
 	    }
-	    return result;
+	    return res;
 	}
     }
 
@@ -775,6 +790,16 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    ClassInfo ci1 = propi1.inClass();
 	    ClassInfo ci2 = propi2.inClass();
 
+	    if (elementIdByClassInfo.get(ci1) == null) {
+		result.addWarning("Association between " + ci1.name() + " - " + ci2.name()
+			+ " not set as the first class is not part of target model.");
+		continue;
+	    } else if (elementIdByClassInfo.get(ci2) == null) {
+		result.addWarning("Association between " + ci1.name() + " - " + ci2.name()
+			+ " not set as the second class is not part of target model.");
+		continue;
+	    }
+
 	    int c1ElementId = elementIdByClassInfo.get(ci1);
 	    int c2ElementId = elementIdByClassInfo.get(ci2);
 
@@ -900,6 +925,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 	classesToProcess = new ArrayList<>();
 	generalisations = HashMultimap.create();
 	stereotypeMappings = new HashMap<>();
+	profilesWhoseLoadingStatusWasChecked = new HashSet<>();
+	profilesNotLoaded = new HashSet<>();
 
 	includeAssociationEndOwnership = false;
 	mergeConstraintCommentsIntoText = false;
@@ -973,6 +1000,9 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    return "Subtype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
 	case 105:
 	    return "Generalisation relationship between subtype '$1$' and supertype '$2$' cannot be created because '$3$' is not part of the target model.";
+	case 106:
+	    return "??Profile '$1$', configured to be used in the mapping of stereotype '$2$', is not loaded in the EA repository. The stereotype will not be assigned correctly in the EA repository. Make sure to load the profile into the EA repository that will be used as output file (typically the template file, configured via target parameter '"
+		    + UmlModelConstants.PARAM_EAP_TEMPLATE + "').";
 
 	// 10001-10100: EA exceptions
 	case 10001:

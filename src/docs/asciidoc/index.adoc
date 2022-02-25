@@ -15,7 +15,7 @@
 
 :source-highlighter: coderay
 
-= ShapeChange Technical Documentation
+= ShapeChange v{project-version} Technical Documentation
 
 :toc:
 
@@ -162,7 +162,9 @@
 
 === xref:targets/JSON_Schema_deprecated.adoc[JSON Schema (deprecated)]
 
-=== xref:targets/ldproxy_Configuration.adoc[ldproxy configuration]
+=== xref:targets/ldproxy2.adoc[ldproxy configuration]
+
+=== xref:targets/ldproxy_Configuration.adoc[ldproxy configuration (old)]
 
 === xref:targets/Model_Export.adoc[Model export]
 

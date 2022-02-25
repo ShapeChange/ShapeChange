@@ -42,8 +42,8 @@ public class LdproxyTest extends BasicTestSCXML {
 		/*
 		 * ldproxy configuration file 
 		 */
-		String[] cfgfiles = { "sid" };
-		ldproxyTest("src/test/resources/ldproxy/basic/testEA_ldproxy.xml", cfgfiles,
+		String[] filesToCheckWithoutExtension = { "sid" };
+		jsonTest("src/test/resources/ldproxy/basic/testEA_ldproxy.xml", filesToCheckWithoutExtension,
 				"testResults/ldproxy/basic/INPUT/config-store/entities/services",
 				"src/test/resources/ldproxy/basic/reference");
 	}
