@@ -34,8 +34,12 @@ package de.interactive_instruments.ShapeChange;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
 @Tag("EARequired")
-public class DiffTargetTest extends BasicTestSCXML {
+public class DiffTargetTest extends WindowsBasicTest {
 
 	@Test
 	public void test_basic() {
