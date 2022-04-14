@@ -806,14 +806,16 @@ public class ShapeChangeResult {
 	 * message in the output.
 	 */
 	switch (mnr) {
-//	case 1:
-//	    return "Unable to get a document builder factory.";
-//	case 2:
-//	    return "XML Parser was unable to be configured.";
-//	case 3:
-//	    return "Invalid XMI file.";
-//	case 5:
-//	    return "Exactly only element <XMI> expected.";
+	
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "Context: class '$1$'.";
+	case 2:
+	    return "Context: association class '$1$'.";
+	case 3:
+	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+
 
 
 //	case 8:
@@ -1054,6 +1056,11 @@ public class ShapeChangeResult {
 	    return "(Generic model element reader) Unexpected end element found by $1$: '$2$'.";
 	case 30804: //x
 	    return "(Generic model element reader) SCXML producer: $1$, version: $2$";
+	    
+	case 30900: // used by supertype class
+	    return "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
+	case 30901: // used by supertype class
+	    return "Sequence number is undefined for property '$1$'. Using '0'.";
 
 	case 1000000: // used by supertype class
 	    return "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";

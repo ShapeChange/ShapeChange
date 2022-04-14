@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xmlns:saxon="http://saxon.sf.net/" xmlns:xerces="http://xerces.apache.org">
+<schema targetNamespace="http://shapechange.net/model" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:sc="http://shapechange.net/model" xmlns="http://www.w3.org/2001/XMLSchema"
+ xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0" xmlns:saxon="http://saxon.sf.net/"
+ xmlns:xerces="http://xerces.apache.org">
  <defaultOpenContent mode="interleave">
   <annotation>
    <documentation>This schema supports open content. For an element that is defined by this schema and that has complex content, an instance of this element may contain further elements that are not explicitly defined as content of the element - even if the additional elements have the same namespace as the target namespace of this schema - except for global elements declared by this schema. NOTE: Deprecated elements that have been removed from the SCXML schema will thus be allowed in instance data.</documentation>
@@ -494,14 +496,16 @@
   </all>
   <assert test="
     every $property in sc:properties/sc:Property
-     satisfies (not(exists($property/sc:isNavigable)) or $property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="All properties of a class shall be navigable." xerces:message="All properties of a class shall be navigable.">
+     satisfies (not(exists($property/sc:isNavigable)) or $property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="All properties of a class shall be navigable."
+   xerces:message="All properties of a class shall be navigable.">
    <annotation>
     <documentation>All properties of a class shall be navigable.</documentation>
    </annotation>
   </assert>
   <assert test="
     every $property in sc:properties/sc:Property
-     satisfies not(exists($property/sc:inClassId))" saxon:message="sc:inClassId shall not be defined for properties encoded within a Class." xerces:message="sc:inClassId shall not be defined for properties encoded within a Class.">
+     satisfies not(exists($property/sc:inClassId))" saxon:message="sc:inClassId shall not be defined for properties encoded within a Class."
+   xerces:message="sc:inClassId shall not be defined for properties encoded within a Class.">
    <annotation>
     <documentation>sc:inClassId shall not be defined for properties encoded within a Class.</documentation>
    </annotation>
@@ -674,22 +678,26 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
     </complexType>
    </element>
   </all>
-  <assert test="not(exists(sc:initialValue)) or (not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true'))" saxon:message="An initial value can only be defined for an attribute." xerces:message="An initial value can only be defined for an attribute.">
+  <assert test="not(exists(sc:initialValue)) or (not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true'))" saxon:message="An initial value can only be defined for an attribute."
+   xerces:message="An initial value can only be defined for an attribute.">
    <annotation>
     <documentation>An initial value can only be defined for an attribute.</documentation>
    </annotation>
   </assert>
-  <assert test="not(not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true')) or (not(exists(sc:isNavigable)) or sc:isNavigable/text() = ('1', 'true'))" saxon:message="If a property is an attribute, then it shall be navigable." xerces:message="If a property is an attribute, then it shall be navigable.">
+  <assert test="not(not(exists(sc:isAttribute)) or sc:isAttribute/text() = ('1', 'true')) or (not(exists(sc:isNavigable)) or sc:isNavigable/text() = ('1', 'true'))"
+   saxon:message="If a property is an attribute, then it shall be navigable." xerces:message="If a property is an attribute, then it shall be navigable.">
    <annotation>
     <documentation>If a property is an attribute, then it shall be navigable.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:qualifiers)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="Qualifiers can only be defined for an association role." xerces:message="Qualifiers can only be defined for an association role.">
+  <assert test="not(exists(sc:qualifiers)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="Qualifiers can only be defined for an association role."
+   xerces:message="Qualifiers can only be defined for an association role.">
    <annotation>
     <documentation>Qualifiers can only be defined for an association role.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:associationId)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="sc:associationId shall only be used on association roles." xerces:message="sc:associationId shall only be used on association roles.">
+  <assert test="not(exists(sc:associationId)) or (sc:isAttribute/text() = ('0', 'false'))" saxon:message="sc:associationId shall only be used on association roles."
+   xerces:message="sc:associationId shall only be used on association roles.">
    <annotation>
     <documentation>sc:associationId shall only be used on association roles.</documentation>
    </annotation>
@@ -731,32 +739,42 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
     </annotation>
    </element>
   </all>
-  <assert test="(exists(sc:end1/@ref) and not(exists(sc:end1/sc:Property))) or (exists(sc:end1/sc:Property) and not(exists(sc:end1/@ref)))" saxon:message="For association end1, either @ref or sc:Property shall be present." xerces:message="For association end1, either @ref or sc:Property shall be present.">
+  <assert test="(exists(sc:end1/@ref) and not(exists(sc:end1/sc:Property))) or (exists(sc:end1/sc:Property) and not(exists(sc:end1/@ref)))"
+   saxon:message="For association end1, either @ref or sc:Property shall be present." xerces:message="For association end1, either @ref or sc:Property shall be present.">
    <annotation>
     <documentation>For association end1, either @ref or sc:Property shall be present.</documentation>
    </annotation>
   </assert>
-  <assert test="(exists(sc:end2/@ref) and not(exists(sc:end2/sc:Property))) or (exists(sc:end2/sc:Property) and not(exists(sc:end2/@ref)))" saxon:message="For association end2, either @ref or sc:Property shall be present." xerces:message="For association end2, either @ref or sc:Property shall be present.">
+  <assert test="(exists(sc:end2/@ref) and not(exists(sc:end2/sc:Property))) or (exists(sc:end2/sc:Property) and not(exists(sc:end2/@ref)))"
+   saxon:message="For association end2, either @ref or sc:Property shall be present." xerces:message="For association end2, either @ref or sc:Property shall be present.">
    <annotation>
     <documentation>For association end2, either @ref or sc:Property shall be present.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end1/sc:Property)) or not(sc:end1/sc:Property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.">
+  <assert test="not(exists(sc:end1/sc:Property)) or not(sc:end1/sc:Property/sc:isNavigable/text() = ('1', 'true'))"
+   saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable."
+   xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.">
    <annotation>
     <documentation>An sc:Property element that is directly encoded within an association - here: sc:end1/sc:Property - shall not be navigable.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end2/sc:Property)) or not(sc:end2/sc:Property/sc:isNavigable/text() = ('1', 'true'))" saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable." xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.">
+  <assert test="not(exists(sc:end2/sc:Property)) or not(sc:end2/sc:Property/sc:isNavigable/text() = ('1', 'true'))"
+   saxon:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable."
+   xerces:message="An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.">
    <annotation>
     <documentation>An sc:Property element that is directly encoded within an association - here: sc:end2/sc:Property - shall not be navigable.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end1/sc:Property)) or exists(sc:end1/sc:Property/sc:inClassId)" saxon:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association." xerces:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association.">
+  <assert test="not(exists(sc:end1/sc:Property)) or exists(sc:end1/sc:Property/sc:inClassId)"
+   saxon:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association."
+   xerces:message="sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association.">
    <annotation>
     <documentation>sc:inClassId shall be defined for association roles - here: sc:end1/sc:Property - encoded within an Association.</documentation>
    </annotation>
   </assert>
-  <assert test="not(exists(sc:end2/sc:Property)) or exists(sc:end2/sc:Property/sc:inClassId)" saxon:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association." xerces:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association.">
+  <assert test="not(exists(sc:end2/sc:Property)) or exists(sc:end2/sc:Property/sc:inClassId)"
+   saxon:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association."
+   xerces:message="sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association.">
    <annotation>
     <documentation>sc:inClassId shall be defined for association roles - here: sc:end2/sc:Property - encoded within an Association.</documentation>
    </annotation>
@@ -967,7 +985,8 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
    <assert test="
      count(distinct-values(for $st in sc:Stereotype
      return
-      lower-case($st))) eq count(sc:Stereotype)" saxon:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case)." xerces:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case).">
+      lower-case($st))) eq count(sc:Stereotype)" saxon:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case)."
+    xerces:message="Within a collection of stereotypes, all stereotype names shall be unique (ignoring case).">
     <annotation>
      <documentation>Within a collection of stereotypes, all stereotype names shall be unique (ignoring case).</documentation>
     </annotation>
@@ -1018,4 +1037,103 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
    <field xpath="sc:name"/>
   </unique>
  </element>
+ <element name="ModelDiff" type="sc:ModelDiffType"/>
+ <complexType name="ModelDiffType">
+  <all>
+   <element name="sourceModel" minOccurs="0">
+    <complexType>
+     <all>
+      <element ref="sc:Model"/>
+     </all>
+    </complexType>
+   </element>
+   <element name="targetModel" minOccurs="0">
+    <complexType>
+     <all>
+      <element ref="sc:Model"/>
+     </all>
+    </complexType>
+   </element>
+   <element name="diffs">
+    <complexType>
+     <all maxOccurs="1" minOccurs="1">
+      <element maxOccurs="unbounded" minOccurs="0" ref="sc:DiffElement"/>
+     </all>
+    </complexType>
+   </element>
+  </all>
+  <attribute name="diffProducer" type="string">
+   <annotation>
+    <documentation>Identifies the software that produced the model diff.</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="diffProducerVersion" type="string">
+   <annotation>
+    <documentation>The version of the software that produced the model diff.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="DiffElement">
+  <complexType>
+   <complexContent>
+    <extension base="sc:DiffElementType">
+     <assert test="(count(sc:sourceId) + count(sc:sourceSchemaPath) + count(sc:targetId) + count(sc:targetSchemaPath)) > 0" saxon:message="At least one of sourceId, sourceSchemaPath, targetId, or targetSchemaPath must exist.">
+      <annotation>
+       <documentation>At least one of sourceId, sourceSchemaPath, targetId, or targetSchemaPath must exist.</documentation>
+      </annotation>
+     </assert>     
+    </extension>
+   </complexContent>
+  </complexType>
+ </element>
+ <complexType name="DiffElementType">
+  <all>
+   <element name="sourceId" type="string" minOccurs="0"/>
+   <element name="sourceSchemaPath" type="string" minOccurs="0"/>
+   <element name="targetId" type="string" minOccurs="0"/>
+   <element name="targetSchemaPath" type="string" minOccurs="0"/>
+   <element name="change" type="sc:DiffOperationType"/>
+   <element name="elementChangeType" type="sc:DiffElementChangeType"/>
+   <element minOccurs="0" name="subElementId" type="string"/>
+   <element minOccurs="0" name="subElementSchemaPath" type="string"/>
+   <element minOccurs="0" name="tag" type="string"/>
+   <element minOccurs="0" name="from" type="string"/>
+   <element minOccurs="0" name="to" type="string"/>
+  </all>
+ </complexType>
+ <simpleType name="DiffOperationType">
+  <restriction base="string">
+   <enumeration value="DELETE"/>
+   <enumeration value="INSERT"/>
+   <enumeration value="CHANGE"/>
+  </restriction>
+ </simpleType>
+ <simpleType name="DiffElementChangeType">
+  <restriction base="string">
+   <enumeration value="SELF"/>
+   <enumeration value="NAME"/>
+   <enumeration value="DOCUMENTATION"/>
+   <enumeration value="MULTIPLICITY"/>
+   <enumeration value="VALUETYPE"/>
+   <enumeration value="INITIALVALUE"/>
+   <enumeration value="CLASS"/>
+   <enumeration value="SUPERTYPE"/>
+   <enumeration value="SUBPACKAGE"/>
+   <enumeration value="PROPERTY"/>
+   <enumeration value="ENUM"/>
+   <enumeration value="STEREOTYPE"/>
+   <enumeration value="TAG"/>
+   <enumeration value="ALIAS"/>
+   <enumeration value="DEFINITION"/>
+   <enumeration value="DESCRIPTION"/>
+   <enumeration value="PRIMARYCODE"/>
+   <enumeration value="GLOBALIDENTIFIER"/>
+   <enumeration value="LEGALBASIS"/>
+   <enumeration value="AAAMODELLART"/>
+   <enumeration value="AAAGRUNDDATENBESTAND"/>
+   <enumeration value="AAALANDNUTZUNG"/>
+   <enumeration value="AAAGUELTIGBIS"/>
+   <enumeration value="AAARETIRED"/>
+  </restriction>
+ </simpleType>
 </schema>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/diffTarget/basic/test_diff.eap" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<parameter name="addStereotypes" value="*" />		
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="tag"
+				tag="legalBasis" />
+			<DescriptorSource descriptor="primaryCode" source="tag"
+				tag="primaryCode" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+		</descriptorSources>
+		<xi:include href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/diffTarget/basic/log.xml" />
+	</log>
+	<targets>
+		<Target
+			class="de.interactive_instruments.ShapeChange.Target.Diff.DiffTarget"
+			mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/diffTarget/basic/results" />
+			<targetParameter name="referenceModelType" value="EA7" />
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/basic/test_diff_refModel.eap" />
+			<targetParameter name="diffElementTypes" value="SELF, NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS" />
+			<targetParameter name="tagPattern" value="(?!sequenceNumber).*" />
+			<targetParameter name="includeModelData" value="false" />
+			<mapEntries>
+				<MapEntry type="Test Schema::Name_Test" targetType="Test Schema::NAME_TEST" rule="*"/>
+				<MapEntry type="NT_ENUMERation" targetType="nt_enumeration" rule="*"/>
+				<MapEntry type="NT_ENUMERation::enum1" targetType="nt_enumeration::ENUM1" rule="*"/>
+				<MapEntry type="NT_ENUMERation::enum2" targetType="nt_enumeration::ENUM2" rule="*"/>
+				<MapEntry type="NT_FEATURETYPE_ÄÖÜ" targetType="NT_Featuretype_äöü" rule="*"/>
+				<MapEntry type="NT_FEATURETYPE_ÄÖÜ::att" targetType="NT_Featuretype_äöü::ATT" rule="*"/>
+				<MapEntry type="NT_FEATURETYPE_ÄÖÜ::role" targetType="NT_Featuretype_äöü::ROLE" rule="*"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>
