@@ -41,6 +41,8 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.helpers.AttributesImpl;
@@ -49,8 +51,10 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement2;
+import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement2.ElementChangeType;
 import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
+import name.fraser.neil.plaintext.diff_match_patch.Operation;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -168,8 +172,48 @@ public class ModelDiffWriter extends AbstractModelWriter {
 		    printDataElement("tag", elmt.tag);
 		}
 		if (elmt.diff != null && !elmt.diff.isEmpty()) {
-		    writer.dataElement(NS, "from", elmt.diff_from());
-		    writer.dataElement(NS, "to", elmt.diff_to());
+
+		    SortedSet<String> fromValues = new TreeSet<>();
+
+		    if (elmt.elementChangeType.isDiffForPotentiallyMultipleStringValues()) {
+			fromValues = elmt.diff.stream()
+				.filter(d -> d.operation == Operation.DELETE || d.operation == Operation.EQUAL)
+				.map(d -> d.text).collect(Collectors.toCollection(TreeSet::new));
+			if (fromValues.isEmpty()) {
+			    fromValues.add("");
+			}
+		    } else {
+			fromValues.add(elmt.diff_from());
+		    }
+
+		    if (!fromValues.isEmpty()) {
+			writer.startElement(NS, "from");
+			for (String s : fromValues) {
+			    writer.dataElement(NS, "Value", s);
+			}
+			writer.endElement(NS, "from");
+		    }
+
+		    SortedSet<String> toValues = new TreeSet<>();
+
+		    if (elmt.elementChangeType.isDiffForPotentiallyMultipleStringValues()) {
+			toValues = elmt.diff.stream()
+				.filter(d -> d.operation == Operation.INSERT || d.operation == Operation.EQUAL)
+				.map(d -> d.text).collect(Collectors.toCollection(TreeSet::new));
+			if (toValues.isEmpty()) {
+			    toValues.add("");
+			}
+		    } else {
+			toValues.add(elmt.diff_to());
+		    }
+
+		    if (!toValues.isEmpty()) {
+			writer.startElement(NS, "to");
+			for (String s : toValues) {
+			    writer.dataElement(NS, "Value", s);
+			}
+			writer.endElement(NS, "to");
+		    }
 		}
 
 		writer.endElement(NS, "DiffElement");

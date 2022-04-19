@@ -50,5 +50,15 @@ public class DiffTargetTest extends WindowsBasicTest {
 				new String[] { "xml" }, "testResults/diffTarget/basic/results",
 				"src/test/resources/diffTarget/basic/reference");
 	}
+	
+	@Test
+	public void test_aaaSpecifics() {
+		/*
+		 * 
+		 */
+		multiTest("src/test/resources/diffTarget/aaaSpecifics/testEA_diffTarget_aaaSpecifics.xml",
+				new String[] { "xml" }, "testResults/diffTarget/aaaSpecifics/results",
+				"src/test/resources/diffTarget/aaaSpecifics/reference");
+	}
 
 }

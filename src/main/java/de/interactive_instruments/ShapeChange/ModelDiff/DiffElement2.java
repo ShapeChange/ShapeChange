@@ -39,87 +39,52 @@ import name.fraser.neil.plaintext.diff_match_patch.Diff;
 
 /**
  * 
- * TODO How to diff elements with multiple strings as value, for example
- * {@link Info#dataCaptureStatements()} and {@link Info#examples()}?
- *
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DiffElement2 {
 
     public enum Operation {
-	DELETE, INSERT, CHANGE;
+
+	DELETE("DELETE"), INSERT("INSERT"), CHANGE("CHANGE");
+
+	private String name;
+
+	Operation(String name) {
+	    this.name = name;
+	}
 
 	public String toString() {
-	    switch (this) {
-	    case DELETE:
-		return "DELETE";
-	    case INSERT:
-		return "INSERT";
-	    case CHANGE:
-		return "CHANGE";
-	    }
-	    return "(unknown)";
+	    return this.name;
 	}
     }
 
     public enum ElementChangeType {
-	SELF, NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, INITIALVALUE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM,
-	STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, AAAMODELLART,
-	AAAGRUNDDATENBESTAND, AAALANDNUTZUNG, AAAGUELTIGBIS, AAARETIRED;
+
+	SELF("SELF", false), NAME("NAME", false), DOCUMENTATION("DOCUMENTATION", false),
+	MULTIPLICITY("MULTIPLICITY", false), VALUETYPE("VALUETYPE", false), INITIALVALUE("INITIALVALUE", false),
+	CLASS("CLASS", false), SUPERTYPE("SUPERTYPE", false), SUBPACKAGE("SUBPACKAGE", false),
+	PROPERTY("PROPERTY", false), ENUM("ENUM", false), STEREOTYPE("STEREOTYPE", true), TAG("TAG", true),
+	ALIAS("ALIAS", false), DEFINITION("DEFINITION", false), DESCRIPTION("DESCRIPTION", false),
+	PRIMARYCODE("PRIMARYCODE", false), GLOBALIDENTIFIER("GLOBALIDENTIFIER", false), LEGALBASIS("LEGALBASIS", false),
+	DATACAPTURESTATEMENT("DATACAPTURESTATEMENT", true), EXAMPLE("EXAMPLE", true), LANGUAGE("LANGUAGE", false),
+	AAAMODELLART("AAAMODELLART", true), AAAGRUNDDATENBESTAND("AAAGRUNDDATENBESTAND", true),
+	AAALANDNUTZUNG("AAALANDNUTZUNG", false), AAARETIRED("AAARETIRED", false);
+
+	private String name;
+	private boolean isDiffForPotentiallyMultipleStringValues;
+
+	ElementChangeType(String name, boolean isDiffForPotentiallyMultipleStringValues) {
+	    this.name = name;
+	    this.isDiffForPotentiallyMultipleStringValues = isDiffForPotentiallyMultipleStringValues;
+	}
 
 	public String toString() {
-	    switch (this) {
-	    case SELF:
-		return "SELF";
-	    case NAME:
-		return "NAME";
-	    case DOCUMENTATION:
-		return "DOCUMENTATION";
-	    case MULTIPLICITY:
-		return "MULTIPLICITY";
-	    case VALUETYPE:
-		return "VALUETYPE";
-	    case INITIALVALUE:
-		return "INITIALVALUE";
-	    case CLASS:
-		return "CLASS";
-	    case SUPERTYPE:
-		return "SUPERTYPE";
-	    case SUBPACKAGE:
-		return "SUBPACKAGE";
-	    case PROPERTY:
-		return "PROPERTY";
-	    case ENUM:
-		return "ENUM";
-	    case STEREOTYPE:
-		return "STEREOTYPE";
-	    case TAG:
-		return "TAG";
-	    case ALIAS:
-		return "ALIAS";
-	    case DEFINITION:
-		return "DEFINITION";
-	    case DESCRIPTION:
-		return "DESCRIPTION";
-	    case LEGALBASIS:
-		return "LEGALBASIS";
-	    case PRIMARYCODE:
-		return "PRIMARYCODE";
-	    case GLOBALIDENTIFIER:
-		return "GLOBALIDENTIFIER";
-	    case AAAMODELLART:
-		return "AAAMODELLART";
-	    case AAAGRUNDDATENBESTAND:
-		return "AAAGRUNDDATENBESTAND";
-	    case AAALANDNUTZUNG:
-		return "AAALANDNUTZUNG";
-	    case AAAGUELTIGBIS:
-		return "AAAGUELTIGBIS";
-	    case AAARETIRED:
-		return "AAARETIRED";
-	    }
-	    return "(unknown)";
+	    return this.name;
+	}
+	
+	public boolean isDiffForPotentiallyMultipleStringValues() {
+	    return this.isDiffForPotentiallyMultipleStringValues;
 	}
     }
 

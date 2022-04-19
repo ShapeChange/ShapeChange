@@ -63,7 +63,8 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 		    DiffTargetConstants.PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING,
 		    DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE, DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES,
 		    DiffTargetConstants.PARAM_TAG_PATTERN, DiffTargetConstants.PARAM_INCLUDE_MODEL_DATA,
-		    DiffTargetConstants.PARAM_PRINT_MODEL_ELEMENT_PATHS).collect(Collectors.toSet()));
+		    DiffTargetConstants.PARAM_PRINT_MODEL_ELEMENT_PATHS, DiffTargetConstants.PARAM_AAA_MODEL,
+		    DiffTargetConstants.PARAM_RELEVANTE_MODELLARTEN).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -112,7 +113,7 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 		}
 	    }
 	    if (!invalidValues.isEmpty()) {
-		result.addError(this, 103, DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES,
+		result.addError(this, 104, DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES,
 			String.join(", ", invalidValues));
 		isValid = false;
 	    }

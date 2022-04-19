@@ -86,11 +86,12 @@ public class DiffElement2Comparator implements Comparator<DiffElement2> {
 		return compare;
 	    }
 
-	} else if (o1.sourceInfo != null) {
-	    return -1;
-	} else if (o2.sourceInfo != null) {
-	    return 1;
 	}
+//	else if (o1.sourceInfo != null) {
+//	    return -1;
+//	} else if (o2.sourceInfo != null) {
+//	    return 1;
+//	}
 
 	if (o1.targetInfo != null && o2.targetInfo != null) {
 
@@ -127,11 +128,12 @@ public class DiffElement2Comparator implements Comparator<DiffElement2> {
 		return compare;
 	    }
 
-	} else if (o1.targetInfo != null) {
-	    return -1;
-	} else if (o2.targetInfo != null) {
-	    return 1;
-	}
+	} 
+//	else if (o1.targetInfo != null) {
+//	    return -1;
+//	} else if (o2.targetInfo != null) {
+//	    return 1;
+//	}
 
 	if (o1.change != o2.change) {
 	    return o1.change.toString().compareTo(o2.change.toString());

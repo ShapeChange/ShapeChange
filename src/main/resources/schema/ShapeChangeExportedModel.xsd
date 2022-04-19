@@ -1077,11 +1077,12 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
   <complexType>
    <complexContent>
     <extension base="sc:DiffElementType">
-     <assert test="(count(sc:sourceId) + count(sc:sourceSchemaPath) + count(sc:targetId) + count(sc:targetSchemaPath)) > 0" saxon:message="At least one of sourceId, sourceSchemaPath, targetId, or targetSchemaPath must exist.">
+     <assert test="(count(sc:sourceId) + count(sc:sourceSchemaPath) + count(sc:targetId) + count(sc:targetSchemaPath)) > 0"
+      saxon:message="At least one of sourceId, sourceSchemaPath, targetId, or targetSchemaPath must exist.">
       <annotation>
        <documentation>At least one of sourceId, sourceSchemaPath, targetId, or targetSchemaPath must exist.</documentation>
       </annotation>
-     </assert>     
+     </assert>
     </extension>
    </complexContent>
   </complexType>
@@ -1097,8 +1098,20 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
    <element minOccurs="0" name="subElementId" type="string"/>
    <element minOccurs="0" name="subElementSchemaPath" type="string"/>
    <element minOccurs="0" name="tag" type="string"/>
-   <element minOccurs="0" name="from" type="string"/>
-   <element minOccurs="0" name="to" type="string"/>
+   <element minOccurs="0" name="from">
+    <complexType>
+     <all>
+      <element maxOccurs="unbounded" minOccurs="1" name="Value" type="string"/>
+     </all>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="to">
+    <complexType>
+     <all>
+      <element maxOccurs="unbounded" minOccurs="1" name="Value" type="string"/>
+     </all>
+    </complexType>
+   </element>
   </all>
  </complexType>
  <simpleType name="DiffOperationType">

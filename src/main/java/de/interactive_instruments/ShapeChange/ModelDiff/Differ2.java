@@ -33,7 +33,9 @@
 package de.interactive_instruments.ShapeChange.ModelDiff;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -45,6 +47,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,6 +59,7 @@ import de.interactive_instruments.ShapeChange.Model.Constraint;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement2.ElementChangeType;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement2.Operation;
 import name.fraser.neil.plaintext.diff_match_patch;
@@ -88,20 +92,22 @@ import name.fraser.neil.plaintext.diff_match_patch.Diff;
  */
 public class Differ2 {
 
-    private boolean aaaModel = false;
+    private boolean aaaModel;
     private Set<String> relevanteModellarten = new HashSet<>();
     private diff_match_patch strDiffer = new diff_match_patch();
     private MapEntryParamInfos mapEntryParamInfos;
     private Pattern tagsToDiff;
 
     public Differ2(MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff) {
+
+	this.aaaModel = false;
 	this.mapEntryParamInfos = mapEntryParamInfos;
 	this.tagsToDiff = tagsToDiff;
     }
 
-    public Differ2(boolean aaa, Set<String> relevanteModellarten, MapEntryParamInfos mapEntryParamInfos,
-	    Pattern tagsToDiff) {
-	this.aaaModel = aaa;
+    public Differ2(Set<String> relevanteModellarten, MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff) {
+
+	this.aaaModel = true;
 	this.relevanteModellarten = relevanteModellarten;
 	this.mapEntryParamInfos = mapEntryParamInfos;
 	this.tagsToDiff = tagsToDiff;
@@ -321,8 +327,10 @@ public class Differ2 {
 
 	// DIFF SCHEMA CLASSES
 
-	SortedSet<ClassInfo> sourceClasses = sourceSchema.model().classes(sourceSchema);
-	SortedSet<ClassInfo> targetClasses = targetSchema.model().classes(targetSchema);
+	SortedSet<ClassInfo> sourceClasses = sourceSchema.model().classes(sourceSchema).stream()
+		.filter(ci -> matchingAaaModellart(ci)).collect(Collectors.toCollection(TreeSet::new));
+	SortedSet<ClassInfo> targetClasses = targetSchema.model().classes(targetSchema).stream()
+		.filter(ci -> matchingAaaModellart(ci)).collect(Collectors.toCollection(TreeSet::new));
 
 	Map<ClassInfo, ClassInfo> matchingTargetClsBySourceCls = new HashMap<>();
 	for (ClassInfo sourceCi : sourceClasses) {
@@ -512,29 +520,6 @@ public class Differ2 {
 	diffs.add(diff);
     }
 
-    protected void tagDiff(List<DiffElement2> diffs, ElementChangeType type, Info source, Info target,
-	    String sourceStringIn, String targetStringIn, String tagName) {
-
-	String sourceString = StringUtils.defaultIfBlank(sourceStringIn, "");
-	String targetString = StringUtils.defaultIfBlank(targetStringIn, "");
-
-	LinkedList<Diff> strdiffs;
-
-	if (aaaModel && type == ElementChangeType.DOCUMENTATION) {
-	    strdiffs = aaaDocumentation(sourceString, targetString);
-	} else {
-	    strdiffs = strDiffer.diff_main(sourceString, targetString);
-	}
-
-	strDiffer.diff_cleanupEfficiency(strdiffs);
-
-	if (strDiffer.diff_levenshtein(strdiffs) == 0)
-	    return;
-
-	DiffElement2 diff = new DiffElement2(Operation.CHANGE, type, strdiffs, source, target, tagName, null);
-	diffs.add(diff);
-    }
-
     protected void infoDiffs(List<DiffElement2> diffs, Info source, Info target, ElementChangeType type,
 	    Collection<? extends Info> sourceSubElementsIn, Collection<? extends Info> targetSubElementsIn) {
 
@@ -566,7 +551,7 @@ public class Differ2 {
 	insertedTargetSubElements.removeAll(matchingTargetSubElementBySourceSubElement.values());
 
 	for (Info i : deletedSourceSubElements) {
-	    DiffElement2 diff = new DiffElement2(Operation.DELETE, type, null, source, null, null, i);
+	    DiffElement2 diff = new DiffElement2(Operation.DELETE, type, null, source, target, null, i);
 	    diffs.add(diff);
 
 	    /*
@@ -581,7 +566,7 @@ public class Differ2 {
 	}
 
 	for (Info i : insertedTargetSubElements) {
-	    DiffElement2 diff = new DiffElement2(Operation.INSERT, type, null, null, target, null, i);
+	    DiffElement2 diff = new DiffElement2(Operation.INSERT, type, null, source, target, null, i);
 	    diffs.add(diff);
 
 	    /*
@@ -612,76 +597,6 @@ public class Differ2 {
 		}
 	    }
 	}
-
-//	for (Info i : targetSubElements) {
-//
-//	    if (type != ElementChangeType.SUBPACKAGE && !MatchingMA(i))
-//		continue;
-//
-//	    boolean found = false;
-//
-//	    for (Info iRef : sourceSubElements) {
-//
-//		if (type != ElementChangeType.SUBPACKAGE && !MatchingMA(iRef))
-//		    continue;
-//
-//		boolean eq = i.name().equalsIgnoreCase(iRef.name());
-//
-//		/*
-//		 * Compare enums based on their initial value, if both have one
-//		 */
-//		if (type == ElementChangeType.ENUM) {
-//		    String s1 = ((PropertyInfo) i).initialValue();
-//		    String s2 = ((PropertyInfo) iRef).initialValue();
-//		    if (StringUtils.isNotBlank(s1) && StringUtils.isNotBlank(s2))
-//			eq = s1.equalsIgnoreCase(s2);
-//		}
-//
-//		if (eq) {
-//		    found = true;
-//		    break;
-//		}
-//	    }
-//	    if (!found) {
-//		DiffElement2 diff = new DiffElement2(Operation.INSERT, type, null, source, target, null, i);
-//		diffs.add(diff);
-//	    }
-//	}
-//	for (Info iRef : sourceSubElements) {
-//
-//	    if (!MatchingMA(iRef))
-//		continue;
-//
-//	    boolean found = false;
-//
-//	    for (Info i : targetSubElements) {
-//
-//		if (!MatchingMA(i))
-//		    continue;
-//
-//		boolean eq = i.name().equalsIgnoreCase(iRef.name());
-//
-//		/*
-//		 * Compare enums based on their initial value, if both have one
-//		 */
-//		if (type == ElementChangeType.ENUM) {
-//		    String s1 = ((PropertyInfo) i).initialValue();
-//		    String s2 = ((PropertyInfo) iRef).initialValue();
-//		    if (StringUtils.isNotBlank(s1) && StringUtils.isNotBlank(s2))
-//			eq = s1.equalsIgnoreCase(s2);
-//		}
-//
-//		if (eq) {
-//		    found = true;
-//		    break;
-//		}
-//	    }
-//
-//	    if (!found) {
-//		DiffElement2 diff = new DiffElement2(Operation.DELETE, type, null, source, target, null, iRef);
-//		diffs.add(diff);
-//	    }
-//	}
     }
 
     private String addConstraints(ClassInfo ci, String doc) {
@@ -718,11 +633,6 @@ public class Differ2 {
 
 	List<DiffElement2> diffs = new ArrayList<>();
 
-	/*
-	 * TODO: example and dataCaptureStatement, i.e. tags with potentially multiple
-	 * values
-	 */
-
 	if (aaaModel && target instanceof ClassInfo) {
 	    // TBD - why do we need this AAA specific code here?
 	    String targetDoc = addConstraints((ClassInfo) target, target.documentation());
@@ -734,29 +644,10 @@ public class Differ2 {
 	}
 
 	/*
-	 * Apply mappings for properties, classes, and packages when comparing their
-	 * name.
-	 * 
-	 * UPDATE: mappings have already be applied in infoDiffs to identify the
-	 * corresponding info object, thus we can compare the name of source and target
-	 * here in order to detect any name changes
+	 * NOTE: Mappings have already been applied in infoDiffs to identify the
+	 * corresponding info object. We can still compare the name of source and target
+	 * here - in order to detect a name change.
 	 */
-//	if (source instanceof ClassInfo) {
-//
-//	    String sourceName = mapTypeName(source.name(), source.encodingRule("modeldiff"));
-//	    stringDiff(diffs, ElementChangeType.NAME, source, target, sourceName, target.name());
-//
-//	} else if (source instanceof PropertyInfo) {
-//
-//	    String sourceName = mapPropertyName((PropertyInfo) source);
-//	    stringDiff(diffs, ElementChangeType.NAME, source, target, sourceName, target.name());
-//
-//	} else if (source instanceof PackageInfo) {
-//
-//	    String sourceName = mapPackageName((PackageInfo) source);
-//	    stringDiff(diffs, ElementChangeType.NAME, source, target, sourceName, target.name());
-//	}
-
 	stringDiff(diffs, ElementChangeType.NAME, source, target, source.name(), target.name());
 
 	stringDiff(diffs, ElementChangeType.ALIAS, source, target, source.aliasName(), target.aliasName());
@@ -772,9 +663,15 @@ public class Differ2 {
 	stringDiff(diffs, ElementChangeType.GLOBALIDENTIFIER, source, target, source.globalIdentifier(),
 		target.globalIdentifier());
 
-	stringDiff(diffs, ElementChangeType.STEREOTYPE, source, target,
-		source.stereotypes().toString().replace("[", "").replace("]", ""),
-		target.stereotypes().toString().replace("[", "").replace("]", ""));
+	stringDiff(diffs, ElementChangeType.LANGUAGE, source, target, source.language(), target.language());
+
+	stringDiff(diffs, ElementChangeType.DATACAPTURESTATEMENT, source, target, source.dataCaptureStatements(),
+		target.dataCaptureStatements());
+
+	stringDiff(diffs, ElementChangeType.EXAMPLE, source, target, source.examples(), target.examples());
+
+	stringDiff(diffs, ElementChangeType.STEREOTYPE, source, target, source.stereotypes().asArray(),
+		target.stereotypes().asArray());
 
 	// diff for retired in AAA
 	if (aaaModel) {
@@ -791,148 +688,231 @@ public class Differ2 {
 
 	// perform diff for the tagged values
 
-	// TODO handle tags with multiple values (using, for example, method
-	// taggedValuesForTagList(taglist))
+	// get all tagged values in source and target
+	TaggedValues sourceTVs = source.taggedValuesAll();
+	TaggedValues targetTVs = target.taggedValuesAll();
 
-	Map<String, String> taggedValuesTarget = target.taggedValues();
-	Map<String, String> taggedValuesSource = source.taggedValues();
-
-	for (Map.Entry<String, String> entry : taggedValuesTarget.entrySet()) {
-
-	    String key = entry.getKey();
-	    String valTarget = entry.getValue();
-
-	    if (!tagsToDiff.matcher(key).matches()) {
-		continue;
-	    }
-
-	    String valSource = taggedValuesSource.get(key);
-
-	    if (aaaModel && (key.equalsIgnoreCase("AAA:Modellart") || key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
-
-		if (key.equalsIgnoreCase("AAA:Modellart")) {
-		    valTarget = StringUtils.defaultIfBlank(valTarget, "Alle");
-		    valSource = StringUtils.defaultIfBlank(valSource, "Alle");
-		} else {
-		    valTarget = StringUtils.defaultIfBlank(valTarget, "");
-		    valSource = StringUtils.defaultIfBlank(valSource, "");
-		}
-		for (String ma : valTarget.split(",")) {
-		    ma = ma.trim();
-		    if (relevanteModellarten.contains(ma)) {
-			boolean found = false;
-			for (String ma2 : valSource.split(",")) {
-			    ma2 = ma2.trim();
-			    if (ma2.equals(ma)) {
-				found = true;
-				break;
-			    }
-			}
-			if (!found) {
-			    diffs.add(
-				    new DiffElement2(Operation.INSERT,
-					    (key.equalsIgnoreCase("AAA:Modellart")) ? ElementChangeType.AAAMODELLART
-						    : ElementChangeType.AAAGRUNDDATENBESTAND,
-					    null, source, target, ma, null));
-			}
-		    }
-		}
-
-	    } else if (aaaModel && key.equalsIgnoreCase("AAA:Landnutzung")) {
-
-		// normalize values
-		if (!"true".equalsIgnoreCase(valTarget))
-		    valTarget = null;
-		if (!"true".equalsIgnoreCase(valSource))
-		    valSource = null;
-		if (valSource == null && valTarget != null) {
-		    diffs.add(new DiffElement2(Operation.INSERT, ElementChangeType.AAALANDNUTZUNG, null, source, target,
-			    valTarget, null));
-		} else if (valTarget == null && valSource != null) {
-		    diffs.add(new DiffElement2(Operation.DELETE, ElementChangeType.AAALANDNUTZUNG, null, source, target,
-			    valSource, null));
-		}
-
-	    } else if (aaaModel && key.equalsIgnoreCase("AAA:GueltigBis")) {
-
-		stringDiff(diffs, ElementChangeType.AAAGUELTIGBIS, source, target, valSource, valTarget);
-
-	    } else {
-
-		tagDiff(diffs, ElementChangeType.TAG, source, target, valSource, valTarget, key);
-	    }
-	}
-
-	for (Map.Entry<String, String> entry : taggedValuesSource.entrySet()) {
-
-	    String key = entry.getKey();
-	    String valSource = entry.getValue();
-
-	    if (!tagsToDiff.matcher(key).matches()) {
-		continue;
-	    }
-
-	    String valTarget = taggedValuesTarget.get(key);
-
-	    if (aaaModel && (key.equalsIgnoreCase("AAA:Modellart") || key.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
-
-		if (key.equalsIgnoreCase("AAA:Modellart")) {
-		    valTarget = StringUtils.defaultIfBlank(valTarget, "Alle");
-		    valSource = StringUtils.defaultIfBlank(valSource, "Alle");
-		} else {
-		    valTarget = StringUtils.defaultIfBlank(valTarget, "");
-		    valSource = StringUtils.defaultIfBlank(valSource, "");
-		}
-		for (String ma : valSource.split(",")) {
-		    ma = ma.trim();
-		    if (relevanteModellarten.contains(ma)) {
-			boolean found = false;
-			for (String ma2 : valTarget.split(",")) {
-			    ma2 = ma2.trim();
-			    if (ma2.equals(ma)) {
-				found = true;
-				break;
-			    }
-			}
-			if (!found) {
-			    diffs.add(
-				    new DiffElement2(Operation.DELETE,
-					    (key.equalsIgnoreCase("AAA:Modellart")) ? ElementChangeType.AAAMODELLART
-						    : ElementChangeType.AAAGRUNDDATENBESTAND,
-					    null, source, target, ma, null));
-			}
-		    }
-		}
-	    } else if (aaaModel && key.equalsIgnoreCase("AAA:Landnutzung")) {
-
-		// normalize values
-		if (!"true".equalsIgnoreCase(valTarget))
-		    valTarget = null;
-		if (!"true".equalsIgnoreCase(valSource))
-		    valSource = null;
-
-		if (valSource == null && valTarget != null) {
-		    diffs.add(new DiffElement2(Operation.INSERT, ElementChangeType.AAALANDNUTZUNG, null, source, target,
-			    valTarget, null));
-		} else if (valTarget == null && valSource != null) {
-		    diffs.add(new DiffElement2(Operation.DELETE, ElementChangeType.AAALANDNUTZUNG, null, source, target,
-			    valSource, null));
-		}
-
-	    } else if (!taggedValuesTarget.containsKey(key)) {
-
-		if (aaaModel && key.equalsIgnoreCase("AAA:GueltigBis")) {
-
-		    stringDiff(diffs, ElementChangeType.AAAGUELTIGBIS, source, target, valSource, valTarget);
-
-		} else {
-
-		    tagDiff(diffs, ElementChangeType.TAG, source, target, valSource, valTarget, key);
-		}
-	    }
-	}
+	tagsDiff(diffs, source, target, sourceTVs, targetTVs);
 
 	return diffs;
+    }
+
+    private void tagsDiff(List<DiffElement2> diffs, Info source, Info target, TaggedValues sourceTVs,
+	    TaggedValues targetTVs) {
+
+	// identify relevant tags for source and target
+	SortedSet<String> sourceTags = sourceTVs.keySet().stream().filter(tag -> tagsToDiff.matcher(tag).matches())
+		.collect(Collectors.toCollection(TreeSet::new));
+	SortedSet<String> targetTags = targetTVs.keySet().stream().filter(tag -> tagsToDiff.matcher(tag).matches())
+		.collect(Collectors.toCollection(TreeSet::new));
+
+	SortedSet<String> allTags = new TreeSet<>(sourceTags);
+	allTags.addAll(targetTags);
+
+	for (String tag : allTags) {
+	    tagDiff(diffs, source, target, sourceTVs.get(tag), targetTVs.get(tag), tag);
+	}
+    }
+
+    private void stringDiff(List<DiffElement2> diffs, ElementChangeType changeType, Info source, Info target,
+	    String[] sourceValuesIn, String[] targetValuesIn) {
+
+	String[] sourceValues = sourceValuesIn == null ? new String[0] : sourceValuesIn;
+	String[] targetValues = targetValuesIn == null ? new String[0] : targetValuesIn;
+
+	SortedSet<String> valsSource = new TreeSet<>(Arrays.asList(sourceValues));
+	SortedSet<String> valsTarget = new TreeSet<>(Arrays.asList(targetValues));
+
+	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget);
+
+	if (valueDiffs.isEmpty()
+		|| valueDiffs.stream().allMatch(d -> d.operation == diff_match_patch.Operation.EQUAL)) {
+	    // there are no value changes
+	    return;
+	}
+
+	DiffElement2 diff = new DiffElement2(Operation.CHANGE, changeType, valueDiffs, source, target, null, null);
+	diffs.add(diff);
+    }
+
+    private LinkedList<Diff> diffsForMultipleStringValues(SortedSet<String> valsSource, SortedSet<String> valsTarget) {
+
+	LinkedList<Diff> valueDiffs = new LinkedList<>();
+
+	SortedSet<String> matchingVals = new TreeSet<>(valsSource);
+	matchingVals.retainAll(valsTarget);
+
+	SortedSet<String> deletedSourceVals = new TreeSet<>(valsSource);
+	deletedSourceVals.removeAll(matchingVals);
+
+	SortedSet<String> insertedTargetVals = new TreeSet<>(valsTarget);
+	insertedTargetVals.removeAll(matchingVals);
+
+	for (String v : deletedSourceVals) {
+	    Diff d = new Diff(diff_match_patch.Operation.DELETE, v);
+	    valueDiffs.add(d);
+	}
+	for (String v : insertedTargetVals) {
+	    Diff d = new Diff(diff_match_patch.Operation.INSERT, v);
+	    valueDiffs.add(d);
+	}
+	for (String v : matchingVals) {
+	    Diff d = new Diff(diff_match_patch.Operation.EQUAL, v);
+	    valueDiffs.add(d);
+	}
+	valueDiffs.sort(new Comparator<Diff>() {
+	    @Override
+	    public int compare(Diff o1, Diff o2) {
+		/*
+		 * simply sort based upon text comparison; we know that there are no duplicate
+		 * text values since the values are from a set
+		 */
+		return o1.text.compareTo(o2.text);
+	    }
+	});
+	return valueDiffs;
+    }
+
+    private void tagDiff(List<DiffElement2> diffs, Info source, Info target, String[] sourceTagValues,
+	    String[] targetTagValues, String tag) {
+
+	SortedSet<String> valsSource = normalizeTagValues(tag, sourceTagValues);
+	SortedSet<String> valsTarget = normalizeTagValues(tag, targetTagValues);
+
+	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget);
+
+	if (valueDiffs.isEmpty()
+		|| valueDiffs.stream().allMatch(d -> d.operation == diff_match_patch.Operation.EQUAL)) {
+	    // there are no value changes
+	    return;
+	}
+
+	DiffElement2 diff = new DiffElement2(Operation.CHANGE, ElementChangeType.TAG, valueDiffs, source, target, tag,
+		null);
+	diffs.add(diff);
+
+	/*
+	 * now compute the sets of deleted, inserted, and equal values again, in order
+	 * to cover specific tag cases
+	 */
+
+	SortedSet<String> deletedSourceVals = new TreeSet<>();
+	deletedSourceVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.DELETE)
+		.map(d -> d.text).collect(Collectors.toList()));
+
+	SortedSet<String> insertedTargetVals = new TreeSet<>();
+	insertedTargetVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.INSERT)
+		.map(d -> d.text).collect(Collectors.toList()));
+
+	SortedSet<String> matchingVals = new TreeSet<>();
+	matchingVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.EQUAL)
+		.map(d -> d.text).collect(Collectors.toList()));
+
+	// add individual diff elements for special AAA-cases
+	if (aaaModel && tag.equalsIgnoreCase("AAA:Modellart")) {
+
+	    if (!deletedSourceVals.isEmpty()) {
+		if (insertedTargetVals.isEmpty() && matchingVals.isEmpty()) {
+		    /*
+		     * change from specific set (source) to empty AAA:Modellart, i.e. to 'Alle'
+		     * (target)
+		     */
+		    LinkedList<Diff> details = new LinkedList<>();
+		    for (String v : deletedSourceVals) {
+			details.add(new Diff(diff_match_patch.Operation.DELETE, v));
+		    }
+		    details.add(new Diff(diff_match_patch.Operation.INSERT, "Alle"));
+		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, details,
+			    source, target, null, null);
+		    diffs.add(diff2);
+
+		} else {
+		    // target tag AAA:Modellart is not blank
+		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, valueDiffs,
+			    source, target, null, null);
+		    diffs.add(diff2);
+		}
+	    }
+
+	    if (!insertedTargetVals.isEmpty()) {
+		if (deletedSourceVals.isEmpty() && matchingVals.isEmpty()) {
+		    /*
+		     * change from empty AAA:Modellart, i.e. from 'Alle' (source), to specific set
+		     * (target)
+		     */
+		    LinkedList<Diff> details = new LinkedList<>();
+		    for (String v : insertedTargetVals) {
+			details.add(new Diff(diff_match_patch.Operation.INSERT, v));
+		    }
+		    details.add(new Diff(diff_match_patch.Operation.DELETE, "Alle"));
+		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, details,
+			    source, target, null, null);
+		    diffs.add(diff2);
+
+		} else {
+		    // source tag AAA:Modellart was not blank
+		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, valueDiffs,
+			    source, target, null, null);
+		    diffs.add(diff2);
+		}
+	    }
+
+	} else if (aaaModel && tag.equalsIgnoreCase("AAA:Grunddatenbestand")) {
+
+	    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAGRUNDDATENBESTAND, valueDiffs,
+		    source, target, null, null);
+	    diffs.add(diff2);
+
+	} else if (aaaModel && tag.equalsIgnoreCase("AAA:Landnutzung") && matchingVals.size() != 1) {
+	    String valSource = deletedSourceVals.isEmpty() ? "false" : deletedSourceVals.first();
+	    String valTarget = insertedTargetVals.isEmpty() ? "false" : insertedTargetVals.first();
+	    if (valSource.equalsIgnoreCase("false") && valTarget.equalsIgnoreCase("true")) {
+		diffs.add(new DiffElement2(Operation.INSERT, ElementChangeType.AAALANDNUTZUNG, null, null, target, null,
+			null));
+	    } else if (valTarget.equalsIgnoreCase("false") && valSource.equalsIgnoreCase("true")) {
+		diffs.add(new DiffElement2(Operation.DELETE, ElementChangeType.AAALANDNUTZUNG, null, source, null, null,
+			null));
+	    }
+	}
+    }
+
+    private SortedSet<String> normalizeTagValues(String tag, String[] values) {
+
+	SortedSet<String> result = new TreeSet<>();
+
+	for (String v : values) {
+	    if (StringUtils.isNotBlank(v)) {
+		/*
+		 * First check for special cases in which:
+		 * 
+		 * - the tag value itself is a list and thus needs to be split
+		 * 
+		 * - tag values must be filtered
+		 * 
+		 * - the tag value must be normalized (e.g. computing a comparable boolean
+		 * value)
+		 */
+		if (aaaModel
+			&& (tag.equalsIgnoreCase("AAA:Modellart") || tag.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
+		    for (String s : v.split(",")) {
+			s = s.trim();
+//			if (relevanteModellarten.isEmpty() || relevanteModellarten.contains(s)) {
+			result.add(s);
+//			}
+		    }
+		} else if (aaaModel && tag.equalsIgnoreCase("AAA:Landnutzung")) {
+		    if ("true".equalsIgnoreCase(v)) {
+			result.add("true");
+		    } else {
+			result.add("false");
+		    }
+		} else {
+		    result.add(v.trim());
+		}
+	    }
+	}
+
+	return result;
     }
 
     private String mapPropertyName(PropertyInfo pi) {

@@ -117,5 +117,10 @@ public class DiffTargetConstants {
     public static final String DEFAULT_TAG_PATTERN = ".*";
 
     public static final String PARAM_INCLUDE_MODEL_DATA = "includeModelData";
+    
     public static final String PARAM_PRINT_MODEL_ELEMENT_PATHS = "printModelElementPaths";
+    
+    public static final String PARAM_AAA_MODEL = "aaaModel";
+    
+    public static final String PARAM_RELEVANTE_MODELLARTEN = "relevanteModellarten";
 }

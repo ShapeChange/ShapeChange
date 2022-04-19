@@ -88,6 +88,8 @@ public class DiffTarget implements SingleTarget, MessageSource {
     protected static Pattern tagPattern = null;
     protected static boolean includeModelData = false;
     protected static boolean printModelElementPaths = true;
+    protected static boolean aaaModel = false;
+    protected static Set<String> relevantModellarten = null;
 
     protected static File outputDirectoryFile;
     protected static String outputDirectory;
@@ -145,6 +147,10 @@ public class DiffTarget implements SingleTarget, MessageSource {
 	    includeModelData = config.parameterAsBoolean(DiffTargetConstants.PARAM_INCLUDE_MODEL_DATA, false);
 	    printModelElementPaths = config.parameterAsBoolean(DiffTargetConstants.PARAM_PRINT_MODEL_ELEMENT_PATHS,
 		    true);
+	    aaaModel = config.parameterAsBoolean(DiffTargetConstants.PARAM_AAA_MODEL, false);
+	    List<String> relMaList = config.parameterAsStringList(DiffTargetConstants.PARAM_RELEVANTE_MODELLARTEN, null,
+		    true, true);
+	    relevantModellarten = new HashSet<>(relMaList);
 
 	    if (!(m instanceof GenericModel)) {
 		model = new GenericModel(m);
@@ -293,7 +299,12 @@ public class DiffTarget implements SingleTarget, MessageSource {
 		PackageInfo refSchema = set.iterator().next();
 
 		// compute diffs
-		Differ2 differ = new Differ2(mapEntryParamInfos, tagPattern);
+		Differ2 differ;
+		if (aaaModel) {
+		    differ = new Differ2(relevantModellarten, mapEntryParamInfos, tagPattern);
+		} else {
+		    differ = new Differ2(mapEntryParamInfos, tagPattern);
+		}
 		List<DiffElement2> diffs = differ.diffSchemas(refSchema, inputSchema);
 
 		// filter to relevant diff elements, then merge into allDiffs
@@ -352,6 +363,8 @@ public class DiffTarget implements SingleTarget, MessageSource {
 
 	includeModelData = false;
 	printModelElementPaths = true;
+	aaaModel = false;
+	relevantModellarten = null;
 
 	schemasToProcess = new TreeSet<>();
 
