@@ -54,6 +54,7 @@
 				<MapEntry type="NT_FEATURETYPE_ÄÖÜ" targetType="NT_Featuretype_äöü" rule="*"/>
 				<MapEntry type="NT_FEATURETYPE_ÄÖÜ::att" targetType="NT_Featuretype_äöü::ATT" rule="*"/>
 				<MapEntry type="NT_FEATURETYPE_ÄÖÜ::role" targetType="NT_Featuretype_äöü::ROLE" rule="*"/>
+				<MapEntry type="Test Schema2" targetType="Test Schema New Name" rule="*"/>
 			</mapEntries>
 		</Target>
 	</targets>

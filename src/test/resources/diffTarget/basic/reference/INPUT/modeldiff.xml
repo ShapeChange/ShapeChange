@@ -3,9 +3,17 @@
   <sc:diffs>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUBPACKAGE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Deleted Package</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SUBPACKAGE</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Inserted Package</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Deleted Package</sc:sourceSchemaPath>
@@ -39,9 +47,17 @@
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>ENUM</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::deletedCode</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>ENUM</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::insertedCode</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::deletedCode</sc:sourceSchemaPath>
@@ -49,10 +65,23 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::insertedCode</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>ENUM</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::deletedEnum</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>ENUM</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::insertedEnum</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::deletedEnum</sc:sourceSchemaPath>
@@ -60,106 +89,262 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::insertedEnum</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType22DeletedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType22DeletedGeneralisation</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType2</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType23InsertedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType23InsertedGeneralisation</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType2</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType32DeletedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType32DeletedGeneralisation</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType3DeletedGeneralisation</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType33InsertedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType33InsertedGeneralisation</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType3DeletedGeneralisation</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType3DeletedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType3DeletedGeneralisation</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType1</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType42DeletedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType42DeletedGeneralisation</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType43InsertedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType43InsertedGeneralisation</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType1</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Inserted Package</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Inserted Package::ISPKG_FeatureType</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::oneChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::oneChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>1</sc:from>
-      <sc:to>0..*</sc:to>
+      <sc:from>
+        <sc:Value>1</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>0..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::oneOrManyChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::oneOrManyChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>1..*</sc:from>
-      <sc:to>0..*</sc:to>
+      <sc:from>
+        <sc:Value>1..*</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>0..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::zeroOrManyChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::zeroOrManyChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>0..*</sc:from>
-      <sc:to>1..*</sc:to>
+      <sc:from>
+        <sc:Value>0..*</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>1..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::zeroOrOneChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType1::zeroOrOneChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>0..1</sc:from>
-      <sc:to>1..*</sc:to>
+      <sc:from>
+        <sc:Value>0..1</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>1..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::oneChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::oneChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>1</sc:from>
-      <sc:to>0..*</sc:to>
+      <sc:from>
+        <sc:Value>1</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>0..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::oneOrManyChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::oneOrManyChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>1..*</sc:from>
-      <sc:to>1</sc:to>
+      <sc:from>
+        <sc:Value>1..*</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>1</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::zeroOrManyChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::zeroOrManyChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>0..*</sc:from>
-      <sc:to>0..1</sc:to>
+      <sc:from>
+        <sc:Value>0..*</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>0..1</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::zeroOrOneChanged</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Multiplicity_Test::MT_FeatureType2::zeroOrOneChanged</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>MULTIPLICITY</sc:elementChangeType>
-      <sc:from>0..1</sc:from>
-      <sc:to>0..*</sc:to>
+      <sc:from>
+        <sc:Value>0..1</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>0..*</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Name_Test</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::NAME_TEST</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>Name_Test</sc:from>
-      <sc:to>NAME_TEST</sc:to>
+      <sc:from>
+        <sc:Value>Name_Test</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>NAME_TEST</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Name_Test</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Name_Test::NT_DeletedFeatureType</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>NT_FEATURETYPE_ÄÖÜ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>NT_Featuretype_äöü</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ::att</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü::ATT</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>att</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ATT</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü::ROLE</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>role</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ROLE</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>NT_ENUMERation</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>nt_enumeration</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation::enum1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration::ENUM1</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>enum1</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ENUM1</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation::enum2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration::ENUM2</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>enum2</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ENUM2</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Name_Test::NT_DeletedFeatureType</sc:sourceSchemaPath>
@@ -172,64 +357,25 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>NT_ENUMERation</sc:from>
-      <sc:to>nt_enumeration</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation::enum1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration::ENUM1</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>enum1</sc:from>
-      <sc:to>ENUM1</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_ENUMERation::enum2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::nt_enumeration::ENUM2</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>enum2</sc:from>
-      <sc:to>ENUM2</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>NT_FEATURETYPE_ÄÖÜ</sc:from>
-      <sc:to>NT_Featuretype_äöü</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ::att</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü::ATT</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>att</sc:from>
-      <sc:to>ATT</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Name_Test::NT_FEATURETYPE_ÄÖÜ::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::NAME_TEST::NT_Featuretype_äöü::ROLE</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>NAME</sc:elementChangeType>
-      <sc:from>role</sc:from>
-      <sc:to>ROLE</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SUBPACKAGE</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Deleted Package No Two</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::CodeLists</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::CodeLists</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::CodeLists::DeletedCodeList</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::CodeLists</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::CodeLists</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::CodeLists::InsertedCodeList</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::CodeLists::DeletedCodeList</sc:sourceSchemaPath>
@@ -237,10 +383,23 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::CodeLists::InsertedCodeList</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::DataTypes</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::DataTypes</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::DataTypes::DeletedDatatype</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::DataTypes</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::DataTypes</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::DataTypes::InsertedDataType</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::DataTypes::DeletedDatatype</sc:sourceSchemaPath>
@@ -250,6 +409,11 @@
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::DataTypes::DeletedDatatype::prop</sc:sourceSchemaPath>
       <sc:change>DELETE</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::DataTypes::InsertedDataType</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
@@ -264,9 +428,17 @@
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Enumerations</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Enumerations</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Enumerations::DeletedEnumeration</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Enumerations</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Enumerations</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Enumerations::DeletedEnumeration</sc:sourceSchemaPath>
@@ -289,10 +461,33 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration::enum1</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration::enum2</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Feature Types::DeletedFeatureType</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Feature Types</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::InsertedFeatureType</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::DeletedFeatureType</sc:sourceSchemaPath>
@@ -311,15 +506,29 @@
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>PROPERTY</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType1::prop2</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>PROPERTY</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType1::roleFT1_1</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType1::insertedProperty</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1::insertedProperty</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType1::prop2</sc:sourceSchemaPath>
@@ -333,9 +542,17 @@
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType2</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>PROPERTY</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType2::deleted_roleFT2_3</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType2</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType2::inserted_roleFT2_4</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Feature Types::FeatureType2::deleted_roleFT2_3</sc:sourceSchemaPath>
@@ -343,10 +560,28 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType2::inserted_roleFT2_4</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Feature Types::InsertedFeatureType</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Types</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Types</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Types::DeletedType</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Types</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Types</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Types::InsertedType</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Types::DeletedType</sc:sourceSchemaPath>
@@ -359,10 +594,23 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::Package::Types::InsertedType</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Unions</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Unions</sc:targetSchemaPath>
       <sc:change>DELETE</sc:change>
       <sc:elementChangeType>CLASS</sc:elementChangeType>
       <sc:subElementSchemaPath>Test Schema::Package::Unions::DeletedUnion</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Package::Unions</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Package::Unions</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::Package::Unions::InsertedUnion</sc:subElementSchemaPath>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Package::Unions::DeletedUnion</sc:sourceSchemaPath>
@@ -380,918 +628,6 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
-      <sc:from>featuretype</sc:from>
-      <sc:to>Objektart</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>byValuePropertyType</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>gmlMixin</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>isCollection</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>noPropertyType</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
-      <sc:from>type</sc:from>
-      <sc:to>datatype</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>byValuePropertyType</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>gmlMixin</sc:tag>
-      <sc:from>false</sc:from>
-      <sc:to></sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>ALIAS</sc:elementChangeType>
-      <sc:from>alias</sc:from>
-      <sc:to>new alias</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
-      <sc:from>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:from>
-      <sc:to>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
-      <sc:from>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
-      <sc:from>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:from>
-      <sc:to>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>legalBasis</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>XYZABC</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>primaryCode</sc:tag>
-      <sc:from>XYZ</sc:from>
-      <sc:to>ABCXYZ</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::prop_changedVT</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::prop_changedVT</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>VALUETYPE</sc:elementChangeType>
-      <sc:from>Integer</sc:from>
-      <sc:to>CharacterString</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::roleChangedVT</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::roleChangedVT</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>VALUETYPE</sc:elementChangeType>
-      <sc:from>VTC_FeatureType2</sc:from>
-      <sc:to>VTC_FeatureType3</sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema2</sc:sourceSchemaPath>
-      <sc:change>DELETE</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema2::DeletedFeatureType</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema2::DeletedFeatureType</sc:sourceSchemaPath>
-      <sc:change>DELETE</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SUBPACKAGE</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Inserted Package</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>ENUM</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::insertedCode</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_CodeList::insertedCode</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>ENUM</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::insertedEnum</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::EnumChanges_Test::EC_Enumeration::insertedEnum</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType23InsertedGeneralisation</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType2</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType33InsertedGeneralisation</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType3DeletedGeneralisation</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType43InsertedGeneralisation</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Generalization_Test::GT_FeatureType4InsertedGeneralisation</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SUPERTYPE</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Generalization_Test::GT_FeatureType1</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Inserted Package</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Inserted Package::ISPKG_FeatureType</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::CodeLists</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::CodeLists::InsertedCodeList</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::CodeLists::InsertedCodeList</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::DataTypes</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::DataTypes::InsertedDataType</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::DataTypes::InsertedDataType</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Enumerations</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration::enum1</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Enumerations::InsertedEnumeration::enum2</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::InsertedFeatureType</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType1::insertedProperty</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType1::insertedProperty</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType2</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Feature Types::FeatureType2::inserted_roleFT2_4</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types::FeatureType2::inserted_roleFT2_4</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Feature Types::InsertedFeatureType</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Types</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Types::InsertedType</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Types::InsertedType</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>SELF</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Package::Unions</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema::Package::Unions::InsertedUnion</sc:subElementSchemaPath>
-    </sc:DiffElement>
-    <sc:DiffElement>
       <sc:targetSchemaPath>Test Schema::Package::Unions::InsertedUnion</sc:targetSchemaPath>
       <sc:change>INSERT</sc:change>
       <sc:elementChangeType>SELF</sc:elementChangeType>
@@ -1307,14 +643,1145 @@
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema2</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>CLASS</sc:elementChangeType>
-      <sc:subElementSchemaPath>Test Schema2::InsertedFeatureType</sc:subElementSchemaPath>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>featuretype</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>Objektart</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema2::InsertedFeatureType</sc:targetSchemaPath>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>byValuePropertyType</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>gmlMixin</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>isCollection</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>noPropertyType</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>type</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>datatype</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>byValuePropertyType</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::StereotypeChanges_Test::SC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>gmlMixin</sc:tag>
+      <sc:from>
+        <sc:Value>false</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_CodeList::code</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_DataType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Enumeration::enum</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::prop</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_FeatureType::role</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Type</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>ALIAS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>alias</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>new alias</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DEFINITION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DESCRIPTION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>DOCUMENTATION</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition_changed&#xD;&#xA;definition_deleted&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description_changed&#xD;&#xA;description_deleted</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>-- Definition --&#xD;&#xA;definition&#xD;&#xA;definition is changed now&#xD;&#xA;new definition&#xD;&#xA;&#xD;&#xA;-- Description --&#xD;&#xA;description&#xD;&#xA;description is changed now&#xD;&#xA;new description</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>LEGALBASIS</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>PRIMARYCODE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>legalBasis</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>XYZABC</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::TextualChanges_Test::TC_Union</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>primaryCode</sc:tag>
+      <sc:from>
+        <sc:Value>XYZ</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>ABCXYZ</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::prop_changedVT</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::prop_changedVT</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>VALUETYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>Integer</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>CharacterString</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::roleChangedVT</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::ValueTypeChange_Test::VTC_FeatureType1::roleChangedVT</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>VALUETYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>VTC_FeatureType2</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>VTC_FeatureType3</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema New Name</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>NAME</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>Test Schema2</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>Test Schema New Name</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema New Name</sc:targetSchemaPath>
+      <sc:change>DELETE</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema2::DeletedFeatureType</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema New Name</sc:targetSchemaPath>
       <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>CLASS</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema New Name::InsertedFeatureType</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema New Name::InsertedFeatureType</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema2::DeletedFeatureType</sc:sourceSchemaPath>
+      <sc:change>DELETE</sc:change>
       <sc:elementChangeType>SELF</sc:elementChangeType>
     </sc:DiffElement>
   </sc:diffs>

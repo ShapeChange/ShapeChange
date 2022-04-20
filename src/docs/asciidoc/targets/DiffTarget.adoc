@@ -1,0 +1,563 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+
+[[DiffTarget]]
+= Model Differences
+
+(since v2.13.0)
+
+This target computes differences between schemas selected for processing in two models: the model that is given to the target as input, as well as a particular reference model. 
+
+The reference model is used as 'source' for the comparison, while the input model is used as 'target'. This target uses the terms 'source' and 'target' accordingly, for example in the encoding of model differences. 
+
+In information technology, diff views of code and text files typically provide a split view, where two versions of the file are presented side-by-side, and you can see content changes between left and right view. You can think of computed model differences in a similar way, where the source model would be on the left side, and the target model is on the right side, and the differences between the two are shown. Of course, model differences are not the same as text/code differences. The kinds of model differences that this target can detect are documented in link:#Supported_kinds_of_model_differences[one of the following sections].
+
+
+[[Computation_and_encoding_of_model_differences]]
+== Computation and encoding of model differences
+
+
+[[Scope_of_model_difference_computation]]
+=== Scope of model difference computation
+
+A ShapeChange target processes one or more (application) schemas from a given input model. The way in which these schemas are selected is documented for all targets xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[here].
+
+For each such schema in the input model, the target looks up a corresponding schema in the reference model. The lookup is based upon the name of the schema package. link:#Map_Entries[Map entries] defined for this target are taken into account, i.e. it is possible to compare a schema even if its name changed. If a corresponding schema was found, then differences are computed for the model elements contained in the two schemas from reference - also called 'source' - and input - also called 'target' - model.
+
+
+[[Matching_elements_in_source_and_target_models]]
+=== Matching elements in source and target models
+
+The target compares packages and classes - together with their properties (attributes and association roles) - contained in a given schema from source and target models. In order to do so, the target must find corresponding model elements in the two models. 
+
+* A package from the source schema matches a package from the target schema if its full name (i.e. the package qualified path) within the schema (i.e. NOT starting at the model root, but instead with the name of the (application) schema package) are equal. 
+** In order to take into account restructuring and/or renaming of packages between two versions of the same schema (in source and target models), the target considers map entries. Example: if the full name of a package is A::B::C in the source schema, and in the target schema it is A::B::D, then a map entry would be defined with @type=A::B::C and @targetType=A::B::D. Similarly, if the full name within the target schema was A::X::D - and either package C is the only child of package A::B in the source schema, or package B was renamed to X - then it would suffice to define a map entry with @type=A::B and @targetType=A::X.
+* Classes are matched simply by their name, since class names must be unique within a single schema.
+** Restructuring of classes, i.e. moving a class to a different package within the schema, can thus be ignored. However, changing the name of a class is covered through map entries. Simply define a map entry with @type=ClassNameInSourceModel and @targetType=ClassNameInTargetModel.
+* Like classes, properties are matched by their name. A prerequisite for a property comparison is that two corresponding classes have been found.
+** Renaming of properties can be taken into account with map entries. However, in order to achieve unique map entries, the property name must be qualified by the name of its class. A map entry for a property thus has @type=ClassNameInSourceModel::PropertyNameInSourceModel and @targetType=ClassNameInTargetModel::PropertyNameInTargetModel.
+
+
+[[Supported_kinds_of_model_differences]]
+=== Supported kinds of model differences
+
+The following tables document the kinds of model differences that can be detected by the target. 
+
+NOTE: Use parameter link:#diffElementTypes[diffElementTypes] in order to control which differences shall be detected and reported.
+
+The table columns are defined as follows:
+
+* Change operation: Whether the model element or facet has been deleted, inserted, or changed. Deleted means that the element or facet was present in the source model, but is no longer present in the target model. For insert it is the other way round.
+* Model element change type: Identifies the type of model difference: 
+** ALIAS: The value of the alias xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** CLASS: A class has been deleted from or inserted into a package.
+** DATACAPTURESTATEMENT: The set of values of the dataCaptureStatement xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** DEFINITION: The value of the definition xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** DESCRIPTION: The value of the description xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** DOCUMENTATION: The value of the documentation xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** ENUM: An enum of an enumeration or code list has been deleted or inserted.
+** EXAMPLE: The set of values of the example xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** GLOBALIDENTIFIER: The value of the globalIdentifier xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** INITIALVALUE: The initial value of a property changed.
+** LANGUAGE: The value of the language xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** LEGALBASIS: The value of the legalBasis xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** MULTIPLICITY: The multiplicity of a property changed.
+** NAME: The name of the model element changed.
+** PRIMARYCODE: The value of the primaryCode xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
+** PROPERTY: A property of a class - which is not an enumeration or code list - has been deleted or inserted.
+** SELF: The model element itself was deleted or inserted.
+** STEREOTYPE: The set of stereotypes of a model element has changed.
+** SUBPACKAGE: A sub-package of a package has been deleted or inserted.
+** SUPERTYPE: A supertype of a class has been deleted or inserted.
+** TAG: The set of values of a given tag has changed. Note that the target parameters link:#tagPattern[tagPattern] and link:#tagsToSplit[tagsToSplit] influence which tags are checked, and how they are parsed.
+** VALUETYPE: The value type of a property changed.
+* Model element type (source and target): The kind of model element for which the model difference can be detected - package, class, and / or property.
+* source info is set: Whether source information elements (element id and/or schema path) will be encoded in the model difference.
+* target info is set: Whether target information elements (element id and/or schema path) will be encoded in the model difference.
+* tag is set: Whether the 'tag' element will be encoded in the model difference.
+* sub element is set: Whether the sub element information elements (element id and/or schema path) will be encoded in the model difference.
+* sub element type: The kind of model element that will be reported for the model difference, if relevant; valid values are package, class, and/or property.
+* difference for single or (potentially) multiple string values: declares whether the model difference will only describe the change of a single value (from source to target model element or facet), or whether changes of multiple values may be reported. 
+* comment: additional explanations regarding the model difference
+
+[#table_supported_model_differences_self,reftext='{table-caption} {counter:table-num}']
+.Deletions and insertions of packages, classes, and properties
+[options="header"]
+|===
+| Change Operation | Model Element Change Type | Model Element Type (source and target) | source info is set | target info is set  | tag is set | sub element is set | sub element type | difference for single or (potentially) multiple string values | Comment 
+
+| DELETE | SELF | Package | yes | no | no | no | _not applicable_ | _not applicable_ | Will be reported for any package that has been deleted, including subpackages of deleted packages. 
+| INSERT | SELF | Package | no | yes | no | no | _not applicable_ | _not applicable_ | Will be reported for any package that has been inserted, including subpackages of inserted packages. 
+| DELETE | SELF | Class | yes | no | no | no | _not applicable_ | _not applicable_ | 
+| INSERT | SELF | Class | no | yes | no | no | _not applicable_ | _not applicable_ | 
+| DELETE | SELF | Property | yes | no | no | no | _not applicable_ | _not applicable_ | Reported for properties of a class that has been deleted. Will also be reported for cases where the class still exists (or has a matching class in the target model) but the property has been deleted.  
+| INSERT | SELF | Property | no | yes | no | no | _not applicable_ | _not applicable_ | Reported for properties of a class that has been inserted. Will also be reported for cases where the class still exists (or has a matching class in the target model) and the property has been inserted.
+|===
+
+
+[#table_supported_model_differences_referenced_elements,reftext='{table-caption} {counter:table-num}']
+.Differences of referenced elements
+[options="header"]
+|===
+| Change Operation | Model Element Change Type | Model Element Type (source and target) | source info is set | target info is set  | tag is set | sub element is set | sub element type | difference for single or (potentially) multiple string values | Comment 
+ 
+| DELETE | SUBPACKAGE | Package | yes | yes | no | yes | Package | _not applicable_ | Reported for each sub-package that has been removed from the package.
+| INSERT | SUBPACKAGE | Package | yes | yes | no | yes | Package | _not applicable_ | Reported for each sub-package that has been added to the package.
+| DELETE | CLASS | Package | yes | yes | no | yes | Class | _not applicable_ | Reported for each sub-package that has been removed from the package.
+| INSERT | CLASS | Package | yes | yes | no | yes | Class | _not applicable_ | Reported for each sub-package that has been added to the package.
+| DELETE | SUPERTYPE | Class | yes | yes | no | yes | Class | _not applicable_ | Reported for each supertype that has been removed from the class.
+| INSERT | SUPERTYPE | Class | yes | yes | no | yes | Class | _not applicable_ | Reported for each supertype that has been added to the class.
+| DELETE | PROPERTY | Class (NOT a code list or enumeration) | yes | yes | no | yes | Property | _not applicable_ | Reported for each property that has been deleted from the class (NOT a code list or enumeration).
+| INSERT | PROPERTY | Class (NOT code list or enumeration) | yes | yes | no | yes | Property | _not applicable_ | Reported for each property that has been added to the class (NOT a code list or enumeration).
+| DELETE | ENUM | Class (code list or enumeration) | yes | yes | no | yes | Property | _not applicable_ | Reported for each enum that has been deleted from the class (code list or enumeration).
+| INSERT | ENUM | Class (code list or enumeration) | yes | yes | no | yes | Property | _not applicable_ | Reported for each enum that has been added to the class (code list or enumeration).
+|===
+
+[#table_supported_model_differences_basic_infos,reftext='{table-caption} {counter:table-num}']
+.Changes of basic information items
+[options="header"]
+|===
+| Change Operation | Model Element Change Type | Model Element Type (source and target) | source info is set | target info is set  | tag is set | sub element is set | sub element type | difference for single or (potentially) multiple string values | Comment 
+
+| CHANGE | STEREOTYPE | Package, Class, Property | yes | yes | no | no | _not applicable_ | multiple | 
+| CHANGE | TAG | Package, Class, Property | yes | yes | yes | no | _not applicable_ | multiple | 
+| CHANGE | DOCUMENTATION | Package, Class, Property | yes | yes | no | no | _not applicable_ | single |
+| CHANGE | NAME | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | ALIAS | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | DEFINITION | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | DESCRIPTION | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | LEGALBASIS | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | PRIMARYCODE | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | GLOBALIDENTIFIER | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | LANGUAGE | Package, Class, Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | DATACAPTURESTATEMENT | Package, Class, Property | yes | yes | no | no | _not applicable_ | multiple | 
+| CHANGE | EXAMPLE | Package, Class, Property | yes | yes | no | no | _not applicable_ | multiple | 
+|===
+
+[#table_supported_model_differences_property_specifics,reftext='{table-caption} {counter:table-num}']
+.Property specific changes
+[options="header"]
+|===
+| Change Operation | Model Element Change Type | Model Element Type (source and target) | source info is set | target info is set  | tag is set | sub element is set | sub element type | difference for single or (potentially) multiple string values | Comment 
+
+| CHANGE | VALUETYPE | Property | yes | yes | no | no | _not applicable_ | single | 
+| CHANGE | INITIALVALUE | Property | yes | yes | no | no | _not applicable_ | single | 
+|===
+
+
+[[Encoding]]
+=== Encoding
+
+The output of the target, i.e. the model differences, are encoded in XML, following the XML Schema definition for element 'ModelDiff', as defined in http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd.
+
+A ModelDiff element contains XML attributes that provide information about the software that produced the ModelDiff, as well as the version of that software. In addition, the element may contain the source and target models, encoded as SCXML. By default, these models are not encoded in the ModelDiff. However, by setting target parameter link:#includeModelData[includeModelData] to true, they will be encoded.
+
+A list of diff elements follows. The XML Schema content of these elements is defined as follows:
+
+[source,xml,linenumbers]
+----------
+ <complexType name="DiffElementType">
+  <all>
+   <element name="sourceId" type="string" minOccurs="0"/>
+   <element name="sourceSchemaPath" type="string" minOccurs="0"/>
+   <element name="targetId" type="string" minOccurs="0"/>
+   <element name="targetSchemaPath" type="string" minOccurs="0"/>
+   <element name="change" type="sc:DiffOperationType"/>
+   <element name="elementChangeType" type="sc:DiffElementChangeType"/>
+   <element minOccurs="0" name="subElementId" type="string"/>
+   <element minOccurs="0" name="subElementSchemaPath" type="string"/>
+   <element minOccurs="0" name="tag" type="string"/>
+   <element minOccurs="0" name="from">
+    <complexType>
+     <all>
+      <element maxOccurs="unbounded" minOccurs="1" name="Value" type="string"/>
+     </all>
+    </complexType>
+   </element>
+   <element minOccurs="0" name="to">
+    <complexType>
+     <all>
+      <element maxOccurs="unbounded" minOccurs="1" name="Value" type="string"/>
+     </all>
+    </complexType>
+   </element>
+  </all>
+ </complexType>
+----------
+
+Examples of XML encoded model differences can be found in the unit tests of this target, the resources of which are located at https://github.com/ShapeChange/ShapeChange/tree/master/src/test/resources/diffTarget.
+
+
+[[AAA_specific_functionality]]
+== AAA specific functionality
+
+The target provides additional functionality to support processing of the GeoInfoDok, the UML model that contains application schemas of the German Surveying Agencies. If target parameter link:#aaaModel[aaaModel] is set to true, then the target exhibits the following behavior:
+
+* The parameter link:#relevanteModellarten[relevanteModellarten] will be taken into account when reporting changes to model elements. If that parameter is set and not empty, the target only reports model differences for a subset of the model. When processing classes and their properties, the value of tag 'AAA:Modellart' is checked against the value of parameter link:#relevanteModellarten[relevanteModellarten]. The tagged value matches the parameter if either the parameter or the tagged value is blank (unset or empty), or if one of the (comma-separated) values of the tag is equal to one of the parameter values. When comparing two model elements, at least one of them must produce a match (as described). Otherwise no difference will be computed for these model elements. When a model element has no equivalence in the other model, then it will only be reported under element change type SELF if it produces a match (as described).
+* Diff computation of element change type DOCUMENTATION:
+  * All OCL constraints defined for a given class are added as new segments 'Konsistenzbedingung' - each with the name of the OCL constraint (unless that name is equal to 'alle') - to the value of the descriptor 'documentation';
+  * The presence of different segments within the documentation of GeoInfoDok model elements is taken into account when comparing the documentation. In the GeoInfoDok model element documentation, segments headers are marked with '-==-'. An example of such a segment is: '-==- Bildungsregel -==-'. Only segments with matching header are compared. Thus, a revision of the order of segments would be ignored, while an actual change in the content of a particular segment will be detected as a change in the documentation.
+  
+NOTE: The target parameter link:#tagsToSplit[tagsToSplit] should be set to the value 'AAA:Modellart|AAA:Grunddatenbestand', if TAG changes shall be computed.
+
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.ShapeChange.Target.Diff.DiffTarget_
+
+[[Encoding_Rules]]
+=== Encoding Rules
+
+At present, no specific rules are defined for this target. 
+
+[[Parameters]]
+=== Parameters
+
+The parameters supported by this target are described in the following
+sections.
+
+
+[[aaaModel]]
+==== aaaModel
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Behavior: If equal to, ignoring case, 'true', then link:#AAA_specific_functionality[AAA specific functionality] is enabled.
+
+Applies to Rule(s): none - default behavior
+
+
+[[diffElementTypes]]
+==== diffElementTypes
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: String (with comma separated values) 
+
+Default Value: _all types of model differences supported by the target_
+
+Behavior: Identifies the model changes that shall be computed. The difference result will only provide information on these types of differences. 
+
+The following types of model differences are currently supported: SELF, NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, INITIALVALUE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, DATACAPTURESTATEMENT, EXAMPLE, LANGUAGE 
+
+Applies to Rule(s): none - default behavior
+
+
+[[includeModelData]]
+==== includeModelData
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Behavior: If equal to, ignoring case, the string 'true', the output will contain the full source and target models (encoded as SCXML). In addition, model difference elements contain the IDs of relevant model elements (e.g. source and target elements), so that these elements can be looked up in the models.
+
+Applies to Rule(s): none - default behavior
+
+[[outputDirectory]]
+==== outputDirectory
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _the current run directory_
+
+Behavior: The path to the folder in which the output file will be created.
+
+Applies to Rule(s): none - default behavior
+
+[[printModelElementPaths]]
+==== printModelElementPaths
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: true
+
+Behavior: If the value of this parameter is equal to, ignoring case, the string 'true', then a model difference element in the output will contain full paths of relevant schema elements. 
+
+NOTE: To be precise, the path is the full path within the schema to which the model element belongs. Model path segments above that schema package are ignored, which is especially useful for cases in which the schema is shared across / incorporated into different UML models - for example in cases where multiple modeling experts work on the schema in a collaborative fashion (e.g. with the schema stored in a version control repository).
+
+Applies to Rule(s): none - default behavior
+
+[[referenceModelFileNameOrConnectionString]]
+==== referenceModelFileNameOrConnectionString
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: required
+
+Type: String
+
+Default Value: none
+
+Behavior: The parameter either provides the path to the reference model file (works for all
+model types) or it provides the connection string to an EA repository
+(database server or Cloud Service) which contains that model. In order to create such a connection
+string, open EA and go to "Open Project...". There you will find a list
+of recently opened projects. Right-click the repository you wish to
+process with ShapeChange, then "Edit connection string", copy the value
+and set it as the parameter value.
+
+[NOTE]
+======
+If you are using an encrypted connection string, certain
+characters with special meaning in XML must be escaped in the string
+before setting it in the ShapeChange configuration:
+
+* ampersand (&) is escaped to \&amp;
+* double quotes (") are escaped to \&quot;
+** No need to escape double quotes if the quotes around the XML
+attribute value are single quotes.
+* single quotes (') are escaped to \&apos;
+** No need to escape single quotes if the quotes around the XML
+attribute value are double quotes.
+* less than (<) is escaped to \&lt;
+* greater than (>) is escaped to \&gt;
+======
+
+Applies to Rule(s): none - default behavior
+
+
+[[referenceModelUsername]]
+==== referenceModelUsername
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Behavior: If the target parameter link:#referenceModelFileNameOrConnectionString[referenceModelFileNameOrConnectionString] is set, and the connection requires a username and password, set the username with this target parameter.
+
+Applies to Rule(s): none - default behavior
+
+[[referenceModelPassword]]
+==== referenceModelPassword
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Behavior: If the target parameter link:#referenceModelFileNameOrConnectionString[referenceModelFileNameOrConnectionString] is set, and the connection requires a username and password, set the password with this target parameter. 
+
+Applies to Rule(s): none - default behavior
+
+[[referenceModelType]]
+==== referenceModelType
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: required
+
+Type: String
+
+Default Value: none
+
+Behavior: A string describing the format of the reference UML model. The current options are:
+
+* *EA7*: an Enterprise Architect project file, supported are versions
+7.5 and later
+* *SCXML*: a model in a ShapeChange specific XML format. The
+xref:../targets/Model_Export.adoc[Model Export target] can
+create SCXML from any model that was loaded by ShapeChange. Loading a
+model from (SC)XML is fast. It is significantly faster than reading the
+model from an EA repository.
+
+NOTE: It is also possible to provide the fully qualified
+name of a Java class that implements the Model interface (i.e.
+de.interactive_instruments.ShapeChange.Model.Model.java).
+
+Applies to Rule(s): none - default behavior
+
+[[relevanteModellarten]]
+==== relevanteModellarten
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: (comma-separated) list of strings
+
+Default Value: none
+
+Behavior: Only relevant for processing the GeoInfoDok, a model of the German Surveying Agencies. Identifies the 'Modellarten' that are of interest for computing model differences. See link:#AAA_specific_functionality[AAA_specific_functionality] for further details. Can be omitted to compute GeoInfoDok model differences for all 'Modellarten'.
+
+Applies to Rule(s): none - default behavior
+
+[[tagPattern]]
+==== tagPattern
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: String (with regular expression)
+
+Default Value: .*
+
+Behavior: A regular expression to identify the tags for which differences shall be computed. Only tags whose name matches the expression will be checked. 
+
+NOTE: This can also be used to exclude certain tags. For example, if sequenceNumber tags shall be ignored, use the following value for this parameter: (?!sequenceNumber).*
+
+Applies to Rule(s): none - default behavior
+
+[[tagsToSplit]]
+==== tagsToSplit
+
+(since v2.13.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: String (with regular expression)
+
+Default Value: none
+
+Behavior: A regular expression to identify the tags which shall be split (using the comma as separator), in cases where such tags contain a comma-separated list of values (rather than defining a tag with multiple values in the model). Tags whose name matches the expression will be split, and the resulting (trimmed) values added to a set before comparing them.
+
+NOTE: In case of link:#aaaModel[aaaModel] = true, it is advisable to set this parameter to the value: AAA:Modellart|AAA:Grunddatenbestand
+
+Applies to Rule(s): none - default behavior
+
+
+[[Map_Entries]]
+=== Map Entries
+
+<mapEntries> contain individual <MapEntry> elements, which for this
+target contain information for mapping the names or paths of model elements between source and target model.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<mapEntries>
+  <MapEntry type="Test Schema::Name_Test" targetType="Test Schema::NAME_TEST" rule="*"/>
+  <MapEntry type="NT_ENUMERation" targetType="nt_enumeration" rule="*"/>
+  <MapEntry type="NT_ENUMERation::enum1" targetType="nt_enumeration::ENUM1" rule="*"/>
+  <MapEntry type="NT_ENUMERation::enum2" targetType="nt_enumeration::ENUM2" rule="*"/>
+  <MapEntry type="NT_FEATURETYPE_ÄÖÜ" targetType="NT_Featuretype_äöü" rule="*"/>
+  <MapEntry type="NT_FEATURETYPE_ÄÖÜ::att" targetType="NT_Featuretype_äöü::ATT" rule="*"/>
+  <MapEntry type="NT_FEATURETYPE_ÄÖÜ::role" targetType="NT_Featuretype_äöü::ROLE" rule="*"/>
+</mapEntries>
+----------
+
+A <MapEntry> element contains the attributes described in the following
+sections.
+
+[[type]]
+==== type
+
+Required / Optional: Required
+
+Explanation: The source model element path or name to be mapped. Should be
+unique within the source model (if it is not unique, this can lead to
+unexpected results). A package is mapped by its full name within the schema the package belongs to. 
+A class is mapped by simply providing its name. A property is mapped by its class qualified name, i.e. pre-pending the class name, and using '::' as separator. 
+
+[[rule]]
+==== rule
+
+Required / Optional: Required
+
+Explanation: The encoding rule to which this mapping applies. For this target, simply use "*"
+to indicate that the mapping applies to all encoding rules.
+
+[[targetType]]
+==== targetType
+
+Required / Optional: Required
+
+Explanation: The path or name of the corresponding target model element. Should be
+unique within the target model (if it is not unique, this can lead to
+unexpected results). A package is mapped by its full name within the schema the package belongs to. 
+A class is mapped by simply providing its name. A property is mapped by its class qualified name, i.e. pre-pending the class name, and using '::' as separator. 
+
+[[param]]
+==== param
+
+Required / Optional: Optional
+
+Explanation: currently unused by this target
+
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Target
+  class="de.interactive_instruments.ShapeChange.Target.Diff.DiffTarget"
+  mode="enabled">
+  <targetParameter name="outputDirectory" value="testResults/diffTarget/aaa_relevanteModellarten/results" />
+  <targetParameter name="referenceModelType" value="EA7" />
+  <targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.eapx" />
+  <targetParameter name="tagsToSplit" value="AAA:Modellart|AAA:Grunddatenbestand" />
+  <targetParameter name="includeModelData" value="false" />
+  <targetParameter name="aaaModel" value="true" />
+  <targetParameter name="relevanteModellarten" value="Basis-DLM" />
+</Target>
+----------

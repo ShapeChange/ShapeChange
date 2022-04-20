@@ -166,6 +166,8 @@
 
 === xref:targets/ldproxy_Configuration.adoc[ldproxy configuration (old)]
 
+=== xref:targets/DiffTarget.adoc[Model diff]
+
 === xref:targets/Model_Export.adoc[Model export]
 
 === xref:targets/ontology/Ontology.adoc[Ontology]

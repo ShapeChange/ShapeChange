@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sc:ModelDiff xsi:schemaLocation="http://shapechange.net/model http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd" diffProducer="ShapeChange" diffProducerVersion="unittest" xmlns:sc="http://shapechange.net/model" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <sc:diffs>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::FeatureType1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::FeatureType1</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::FeatureType1::att1</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:targetSchemaPath>Test Schema::FeatureType1::att1</sc:targetSchemaPath>
+      <sc:change>INSERT</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::FeatureType2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::FeatureType2</sc:targetSchemaPath>
+      <sc:change>DELETE</sc:change>
+      <sc:elementChangeType>PROPERTY</sc:elementChangeType>
+      <sc:subElementSchemaPath>Test Schema::FeatureType2::role</sc:subElementSchemaPath>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::FeatureType2::attB</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::FeatureType2::attB</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>VALUETYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>CharacterString</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>Boolean</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::FeatureType2::role</sc:sourceSchemaPath>
+      <sc:change>DELETE</sc:change>
+      <sc:elementChangeType>SELF</sc:elementChangeType>
+    </sc:DiffElement>
+  </sc:diffs>
+</sc:ModelDiff>

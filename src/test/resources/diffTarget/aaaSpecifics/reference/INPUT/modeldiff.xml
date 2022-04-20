@@ -18,20 +18,40 @@
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType1</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType1</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>TAG</sc:elementChangeType>
-      <sc:tag>AAA:GueltigBis</sc:tag>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
       <sc:from>
-        <sc:Value></sc:Value>
+        <sc:Value>featuretype</sc:Value>
       </sc:from>
       <sc:to>
-        <sc:Value>7.1.0</sc:Value>
+        <sc:Value>featuretype</sc:Value>
+        <sc:Value>retired</sc:Value>
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType1</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType1</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>AAARETIRED</sc:elementChangeType>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>TAG</sc:elementChangeType>
+      <sc:tag>AAA:GueltigBis</sc:tag>
+      <sc:from>
+        <sc:Value></sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>7.1.0</sc:Value>
+      </sc:to>
+    </sc:DiffElement>
+    <sc:DiffElement>
+      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType2</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>featuretype</sc:Value>
+        <sc:Value>retired</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>featuretype</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType2</sc:sourceSchemaPath>
@@ -47,10 +67,16 @@
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType2</sc:targetSchemaPath>
-      <sc:change>DELETE</sc:change>
-      <sc:elementChangeType>AAARETIRED</sc:elementChangeType>
+      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att1</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value></sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>retired</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att1</sc:sourceSchemaPath>
@@ -66,10 +92,16 @@
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att1</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>AAARETIRED</sc:elementChangeType>
+      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att2</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att2</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value>retired</sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value></sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att2</sc:sourceSchemaPath>
@@ -85,10 +117,16 @@
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::att2</sc:targetSchemaPath>
-      <sc:change>DELETE</sc:change>
-      <sc:elementChangeType>AAARETIRED</sc:elementChangeType>
+      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::role1</sc:sourceSchemaPath>
+      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::role1</sc:targetSchemaPath>
+      <sc:change>CHANGE</sc:change>
+      <sc:elementChangeType>STEREOTYPE</sc:elementChangeType>
+      <sc:from>
+        <sc:Value></sc:Value>
+      </sc:from>
+      <sc:to>
+        <sc:Value>retired</sc:Value>
+      </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::role1</sc:sourceSchemaPath>
@@ -101,25 +139,6 @@
       </sc:from>
       <sc:to>
         <sc:Value>7.1.0</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::role1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test1 - retired und GueltigBis::T1_FeatureType3::role1</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>AAARETIRED</sc:elementChangeType>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAMODELLART</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>Alle</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLKM</sc:Value>
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
@@ -140,18 +159,6 @@
       <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att1</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att1</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAMODELLART</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>DLKM</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>Alle</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att1</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>TAG</sc:elementChangeType>
       <sc:tag>AAA:Modellart</sc:tag>
       <sc:from>
@@ -159,18 +166,6 @@
       </sc:from>
       <sc:to>
         <sc:Value></sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType1::att2</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAMODELLART</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>Alle</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>Basis-DLM</sc:Value>
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
@@ -190,18 +185,6 @@
       <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType2::role</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType2::role</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAMODELLART</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>Alle</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>DLKM</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType2::role</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test2 - Modellart::T2_FeatureType2::role</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>TAG</sc:elementChangeType>
       <sc:tag>AAA:Modellart</sc:tag>
       <sc:from>
@@ -209,23 +192,6 @@
       </sc:from>
       <sc:to>
         <sc:Value>DLKM</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att1</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att1</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAGRUNDDATENBESTAND</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLKM</sc:Value>
-        <sc:Value>DLM250</sc:Value>
-        <sc:Value>DLM50</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLM250</sc:Value>
-        <sc:Value>DLM50</sc:Value>
       </sc:to>
     </sc:DiffElement>
     <sc:DiffElement>
@@ -250,23 +216,6 @@
       <sc:sourceSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att2</sc:sourceSchemaPath>
       <sc:targetSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att2</sc:targetSchemaPath>
       <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAGRUNDDATENBESTAND</sc:elementChangeType>
-      <sc:from>
-        <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLM250</sc:Value>
-        <sc:Value>DLM50</sc:Value>
-      </sc:from>
-      <sc:to>
-        <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLKM</sc:Value>
-        <sc:Value>DLM250</sc:Value>
-        <sc:Value>DLM50</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType1::att2</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
       <sc:elementChangeType>TAG</sc:elementChangeType>
       <sc:tag>AAA:Grunddatenbestand</sc:tag>
       <sc:from>
@@ -276,20 +225,6 @@
       </sc:from>
       <sc:to>
         <sc:Value>Basis-DLM</sc:Value>
-        <sc:Value>DLKM</sc:Value>
-        <sc:Value>DLM250</sc:Value>
-        <sc:Value>DLM50</sc:Value>
-      </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType2</sc:sourceSchemaPath>
-      <sc:targetSchemaPath>Test Schema::Test3 - Grunddatenbestand::T3_FeatureType2</sc:targetSchemaPath>
-      <sc:change>CHANGE</sc:change>
-      <sc:elementChangeType>AAAGRUNDDATENBESTAND</sc:elementChangeType>
-      <sc:from>
-        <sc:Value></sc:Value>
-      </sc:from>
-      <sc:to>
         <sc:Value>DLKM</sc:Value>
         <sc:Value>DLM250</sc:Value>
         <sc:Value>DLM50</sc:Value>
@@ -317,16 +252,11 @@
       <sc:elementChangeType>TAG</sc:elementChangeType>
       <sc:tag>AAA:Landnutzung</sc:tag>
       <sc:from>
-        <sc:Value>true</sc:Value>
+        <sc:Value>True</sc:Value>
       </sc:from>
       <sc:to>
         <sc:Value></sc:Value>
       </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:sourceSchemaPath>Test Schema::Test4 - Landnutzung::T4_FeatureType2</sc:sourceSchemaPath>
-      <sc:change>DELETE</sc:change>
-      <sc:elementChangeType>AAALANDNUTZUNG</sc:elementChangeType>
     </sc:DiffElement>
     <sc:DiffElement>
       <sc:sourceSchemaPath>Test Schema::Test4 - Landnutzung::T4_FeatureType3</sc:sourceSchemaPath>
@@ -340,11 +270,6 @@
       <sc:to>
         <sc:Value>true</sc:Value>
       </sc:to>
-    </sc:DiffElement>
-    <sc:DiffElement>
-      <sc:targetSchemaPath>Test Schema::Test4 - Landnutzung::T4_FeatureType3</sc:targetSchemaPath>
-      <sc:change>INSERT</sc:change>
-      <sc:elementChangeType>AAALANDNUTZUNG</sc:elementChangeType>
     </sc:DiffElement>
   </sc:diffs>
 </sc:ModelDiff>

@@ -97,20 +97,24 @@ public class Differ2 {
     private diff_match_patch strDiffer = new diff_match_patch();
     private MapEntryParamInfos mapEntryParamInfos;
     private Pattern tagsToDiff;
+    private Pattern tagsToSplitPattern;
 
-    public Differ2(MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff) {
+    public Differ2(MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff, Pattern tagsToSplitPattern) {
 
 	this.aaaModel = false;
 	this.mapEntryParamInfos = mapEntryParamInfos;
 	this.tagsToDiff = tagsToDiff;
+	this.tagsToSplitPattern = tagsToSplitPattern;
     }
 
-    public Differ2(Set<String> relevanteModellarten, MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff) {
+    public Differ2(Set<String> relevanteModellarten, MapEntryParamInfos mapEntryParamInfos, Pattern tagsToDiff,
+	    Pattern tagsToSplitPattern) {
 
 	this.aaaModel = true;
 	this.relevanteModellarten = relevanteModellarten;
 	this.mapEntryParamInfos = mapEntryParamInfos;
 	this.tagsToDiff = tagsToDiff;
+	this.tagsToSplitPattern = tagsToSplitPattern;
     }
 
     private boolean matchingAaaModellart(Info i) {
@@ -327,24 +331,24 @@ public class Differ2 {
 
 	// DIFF SCHEMA CLASSES
 
-	SortedSet<ClassInfo> sourceClasses = sourceSchema.model().classes(sourceSchema).stream()
-		.filter(ci -> matchingAaaModellart(ci)).collect(Collectors.toCollection(TreeSet::new));
-	SortedSet<ClassInfo> targetClasses = targetSchema.model().classes(targetSchema).stream()
-		.filter(ci -> matchingAaaModellart(ci)).collect(Collectors.toCollection(TreeSet::new));
+	SortedSet<ClassInfo> sourceClasses = sourceSchema.model().classes(sourceSchema);
+	SortedSet<ClassInfo> targetClasses = targetSchema.model().classes(targetSchema);
 
 	Map<ClassInfo, ClassInfo> matchingTargetClsBySourceCls = new HashMap<>();
 	for (ClassInfo sourceCi : sourceClasses) {
 	    ClassInfo targetCi = findMatchingTargetClass(sourceCi, targetClasses);
-	    if (targetCi != null) {
+	    if (targetCi != null && (matchingAaaModellart(sourceCi) || matchingAaaModellart(targetCi))) {
 		matchingTargetClsBySourceCls.put(sourceCi, targetCi);
 	    }
 	}
 
-	SortedSet<ClassInfo> deletedSourceClasses = new TreeSet<>(sourceClasses);
-	deletedSourceClasses.removeAll(matchingTargetClsBySourceCls.keySet());
+	SortedSet<ClassInfo> deletedSourceClasses = new TreeSet<>(sourceClasses.stream()
+		.filter(ci -> !matchingTargetClsBySourceCls.containsKey(ci) && matchingAaaModellart(ci))
+		.collect(Collectors.toList()));
 
-	SortedSet<ClassInfo> insertedTargetClasses = new TreeSet<>(targetClasses);
-	insertedTargetClasses.removeAll(matchingTargetClsBySourceCls.values());
+	SortedSet<ClassInfo> insertedTargetClasses = new TreeSet<>(targetClasses.stream()
+		.filter(ci -> !matchingTargetClsBySourceCls.containsValue(ci) && matchingAaaModellart(ci))
+		.collect(Collectors.toList()));
 
 	for (ClassInfo ci : deletedSourceClasses) {
 	    DiffElement2 diff = new DiffElement2(Operation.DELETE, ElementChangeType.SELF, null, ci, null, null, null);
@@ -673,19 +677,6 @@ public class Differ2 {
 	stringDiff(diffs, ElementChangeType.STEREOTYPE, source, target, source.stereotypes().asArray(),
 		target.stereotypes().asArray());
 
-	// diff for retired in AAA
-	if (aaaModel) {
-	    boolean retiredTarget = target.stereotypes().contains("retired");
-	    boolean retiredSource = source.stereotypes().contains("retired");
-	    if (!retiredSource && retiredTarget) {
-		diffs.add(new DiffElement2(Operation.INSERT, ElementChangeType.AAARETIRED, null, source, target, null,
-			null));
-	    } else if (retiredSource && !retiredTarget) {
-		diffs.add(new DiffElement2(Operation.DELETE, ElementChangeType.AAARETIRED, null, source, target, null,
-			null));
-	    }
-	}
-
 	// perform diff for the tagged values
 
 	// get all tagged values in source and target
@@ -790,90 +781,6 @@ public class Differ2 {
 	DiffElement2 diff = new DiffElement2(Operation.CHANGE, ElementChangeType.TAG, valueDiffs, source, target, tag,
 		null);
 	diffs.add(diff);
-
-	/*
-	 * now compute the sets of deleted, inserted, and equal values again, in order
-	 * to cover specific tag cases
-	 */
-
-	SortedSet<String> deletedSourceVals = new TreeSet<>();
-	deletedSourceVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.DELETE)
-		.map(d -> d.text).collect(Collectors.toList()));
-
-	SortedSet<String> insertedTargetVals = new TreeSet<>();
-	insertedTargetVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.INSERT)
-		.map(d -> d.text).collect(Collectors.toList()));
-
-	SortedSet<String> matchingVals = new TreeSet<>();
-	matchingVals.addAll(valueDiffs.stream().filter(d -> d.operation == diff_match_patch.Operation.EQUAL)
-		.map(d -> d.text).collect(Collectors.toList()));
-
-	// add individual diff elements for special AAA-cases
-	if (aaaModel && tag.equalsIgnoreCase("AAA:Modellart")) {
-
-	    if (!deletedSourceVals.isEmpty()) {
-		if (insertedTargetVals.isEmpty() && matchingVals.isEmpty()) {
-		    /*
-		     * change from specific set (source) to empty AAA:Modellart, i.e. to 'Alle'
-		     * (target)
-		     */
-		    LinkedList<Diff> details = new LinkedList<>();
-		    for (String v : deletedSourceVals) {
-			details.add(new Diff(diff_match_patch.Operation.DELETE, v));
-		    }
-		    details.add(new Diff(diff_match_patch.Operation.INSERT, "Alle"));
-		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, details,
-			    source, target, null, null);
-		    diffs.add(diff2);
-
-		} else {
-		    // target tag AAA:Modellart is not blank
-		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, valueDiffs,
-			    source, target, null, null);
-		    diffs.add(diff2);
-		}
-	    }
-
-	    if (!insertedTargetVals.isEmpty()) {
-		if (deletedSourceVals.isEmpty() && matchingVals.isEmpty()) {
-		    /*
-		     * change from empty AAA:Modellart, i.e. from 'Alle' (source), to specific set
-		     * (target)
-		     */
-		    LinkedList<Diff> details = new LinkedList<>();
-		    for (String v : insertedTargetVals) {
-			details.add(new Diff(diff_match_patch.Operation.INSERT, v));
-		    }
-		    details.add(new Diff(diff_match_patch.Operation.DELETE, "Alle"));
-		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, details,
-			    source, target, null, null);
-		    diffs.add(diff2);
-
-		} else {
-		    // source tag AAA:Modellart was not blank
-		    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAMODELLART, valueDiffs,
-			    source, target, null, null);
-		    diffs.add(diff2);
-		}
-	    }
-
-	} else if (aaaModel && tag.equalsIgnoreCase("AAA:Grunddatenbestand")) {
-
-	    DiffElement2 diff2 = new DiffElement2(Operation.CHANGE, ElementChangeType.AAAGRUNDDATENBESTAND, valueDiffs,
-		    source, target, null, null);
-	    diffs.add(diff2);
-
-	} else if (aaaModel && tag.equalsIgnoreCase("AAA:Landnutzung") && matchingVals.size() != 1) {
-	    String valSource = deletedSourceVals.isEmpty() ? "false" : deletedSourceVals.first();
-	    String valTarget = insertedTargetVals.isEmpty() ? "false" : insertedTargetVals.first();
-	    if (valSource.equalsIgnoreCase("false") && valTarget.equalsIgnoreCase("true")) {
-		diffs.add(new DiffElement2(Operation.INSERT, ElementChangeType.AAALANDNUTZUNG, null, null, target, null,
-			null));
-	    } else if (valTarget.equalsIgnoreCase("false") && valSource.equalsIgnoreCase("true")) {
-		diffs.add(new DiffElement2(Operation.DELETE, ElementChangeType.AAALANDNUTZUNG, null, source, null, null,
-			null));
-	    }
-	}
     }
 
     private SortedSet<String> normalizeTagValues(String tag, String[] values) {
@@ -882,36 +789,28 @@ public class Differ2 {
 
 	for (String v : values) {
 	    if (StringUtils.isNotBlank(v)) {
-		/*
-		 * First check for special cases in which:
-		 * 
-		 * - the tag value itself is a list and thus needs to be split
-		 * 
-		 * - tag values must be filtered
-		 * 
-		 * - the tag value must be normalized (e.g. computing a comparable boolean
-		 * value)
-		 */
-		if (aaaModel
-			&& (tag.equalsIgnoreCase("AAA:Modellart") || tag.equalsIgnoreCase("AAA:Grunddatenbestand"))) {
-		    for (String s : v.split(",")) {
-			s = s.trim();
-//			if (relevanteModellarten.isEmpty() || relevanteModellarten.contains(s)) {
-			result.add(s);
-//			}
-		    }
-		} else if (aaaModel && tag.equalsIgnoreCase("AAA:Landnutzung")) {
-		    if ("true".equalsIgnoreCase(v)) {
-			result.add("true");
-		    } else {
-			result.add("false");
-		    }
+
+		if (tagsToSplitPattern != null && tagsToSplitPattern.matcher(tag).matches()) {
+		    List<String> splitResult = splitAndTrimListValue(v);
+		    result.addAll(splitResult);
 		} else {
 		    result.add(v.trim());
 		}
 	    }
 	}
 
+	return result;
+    }
+
+    private List<String> splitAndTrimListValue(String v) {
+	List<String> result = new ArrayList<>();
+	if (StringUtils.isNotBlank(v)) {
+	    for (String s : v.split(",")) {
+		if (StringUtils.isNotBlank(s)) {
+		    result.add(s.trim());
+		}
+	    }
+	}
 	return result;
     }
 

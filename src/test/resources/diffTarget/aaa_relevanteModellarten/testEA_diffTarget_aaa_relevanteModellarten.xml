@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/diffTarget/aaaSpecifics/test_diff_aaa.eapx" />
+			value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa.eapx" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -35,20 +35,22 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/diffTarget/aaaSpecifics/log.xml" />
+		<parameter name="logFile" value="testResults/diffTarget/aaa_relevanteModellarten/log.xml" />
 	</log>
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.Diff.DiffTarget"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/diffTarget/aaaSpecifics/results" />
+			<targetParameter name="outputDirectory" value="testResults/diffTarget/aaa_relevanteModellarten/results" />
 			<targetParameter name="referenceModelType" value="EA7" />
-			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaaSpecifics/test_diff_aaa_refModel.eapx" />
-			<targetParameter name="diffElementTypes" value="TAG, STEREOTYPE" />
-			<targetParameter name="tagPattern" value="(?!sequenceNumber).*" />
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.eapx" />
+			<targetParameter name="tagPattern" value="AAA:Modellart" />
 			<targetParameter name="tagsToSplit" value="AAA:Modellart|AAA:Grunddatenbestand" />
 			<targetParameter name="includeModelData" value="false" />
 			<targetParameter name="aaaModel" value="true" />
+			<targetParameter name="relevanteModellarten" value="Basis-DLM" />
+			<targetParameter name="diffElementTypes" value="SELF, CLASS, ENUM, MULTIPLICITY,
+	    PROPERTY, NAME, STEREOTYPE, SUPERTYPE, SUBPACKAGE, VALUETYPE"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

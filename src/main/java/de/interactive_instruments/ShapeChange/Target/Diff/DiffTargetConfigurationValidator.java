@@ -32,7 +32,6 @@
 package de.interactive_instruments.ShapeChange.Target.Diff;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
@@ -42,12 +41,9 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
-import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ModelDiff.DiffElement2.ElementChangeType;
 import shadow.org.apache.commons.lang3.StringUtils;
@@ -58,13 +54,14 @@ import shadow.org.apache.commons.lang3.StringUtils;
  */
 public class DiffTargetConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(DiffTargetConstants.PARAM_REFERENCE_MODEL_USER, DiffTargetConstants.PARAM_REFERENCE_MODEL_PWD,
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
+	    .of(DiffTargetConstants.PARAM_REFERENCE_MODEL_USER, DiffTargetConstants.PARAM_REFERENCE_MODEL_PWD,
 		    DiffTargetConstants.PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING,
 		    DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE, DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES,
 		    DiffTargetConstants.PARAM_TAG_PATTERN, DiffTargetConstants.PARAM_INCLUDE_MODEL_DATA,
 		    DiffTargetConstants.PARAM_PRINT_MODEL_ELEMENT_PATHS, DiffTargetConstants.PARAM_AAA_MODEL,
-		    DiffTargetConstants.PARAM_RELEVANTE_MODELLARTEN).collect(Collectors.toSet()));
+		    DiffTargetConstants.PARAM_RELEVANTE_MODELLARTEN, DiffTargetConstants.PARAM_TAGS_TO_SPLIT)
+	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -87,12 +84,22 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 	    }
 	}
 
+	// check tags to split pattern (optional parameter, with default value)
+	if (config.hasParameter(DiffTargetConstants.PARAM_TAGS_TO_SPLIT)) {
+	    try {
+		config.parameterAsRegexPattern(DiffTargetConstants.PARAM_TAGS_TO_SPLIT, null);
+	    } catch (PatternSyntaxException e) {
+		result.addError(this, 1, DiffTargetConstants.PARAM_TAGS_TO_SPLIT, e.getMessage());
+		isValid = false;
+	    }
+	}
+
 	/*
 	 * check diff element types parameter values (optional parameter, with default
 	 * value)
 	 */
 	List<String> diffElementTypeNames = config.parameterAsStringList(DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES,
-		DiffTargetConstants.DEFAULT_DIFF_ELEMENT_TYPES, true, true);
+		null, true, true);
 
 	if (config.hasParameter(DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES) && diffElementTypeNames.isEmpty()) {
 	    result.addError(this, 103, DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES);
@@ -100,13 +107,11 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 	} else {
 
 	    SortedSet<String> invalidValues = new TreeSet<>();
-	    SortedSet<ElementChangeType> relevantDiffElementTypes = new TreeSet<>();
 	    for (String detn : diffElementTypeNames) {
 
 		try {
 
-		    ElementChangeType ect = ElementChangeType.valueOf(detn.toUpperCase(Locale.ENGLISH));
-		    relevantDiffElementTypes.add(ect);
+		    ElementChangeType.valueOf(detn.toUpperCase(Locale.ENGLISH));
 
 		} catch (IllegalArgumentException e) {
 		    invalidValues.add(detn);
@@ -154,7 +159,6 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 	    }
 	}
 
-	// TODO update model export to use ModelWriter
 	return isValid;
     }
 

@@ -84,8 +84,10 @@ public class DiffTarget implements SingleTarget, MessageSource {
     protected static GenericModel refModel = null;
     protected static Set<ElementChangeType> relevantDiffElementTypes = new HashSet<>();
     protected static MapEntryParamInfos mapEntryParamInfos = null;
+    protected static List<ProcessMapEntry> mapEntries = null;
 
     protected static Pattern tagPattern = null;
+    protected static Pattern tagsToSplitPattern = null;
     protected static boolean includeModelData = false;
     protected static boolean printModelElementPaths = true;
     protected static boolean aaaModel = false;
@@ -117,6 +119,8 @@ public class DiffTarget implements SingleTarget, MessageSource {
 
 	    ProcessConfiguration config = options.getCurrentProcessConfig();
 
+	    mapEntries = config.getMapEntries();
+
 	    /*
 	     * identify map entries defined in the target configuration covering relocations
 	     * and name changes of packages, classes, and their properties in source and
@@ -142,6 +146,16 @@ public class DiffTarget implements SingleTarget, MessageSource {
 		 * should only occur if validation of the configuration was disabled
 		 */
 		result.addError(this, 9, DiffTargetConstants.PARAM_TAG_PATTERN, e.getMessage());
+	    }
+
+	    try {
+		tagsToSplitPattern = config.parameterAsRegexPattern(DiffTargetConstants.PARAM_TAGS_TO_SPLIT, null);
+	    } catch (PatternSyntaxException e) {
+		/*
+		 * the parameter is checked by the configuration validator, so this exception
+		 * should only occur if validation of the configuration was disabled
+		 */
+		result.addError(this, 9, DiffTargetConstants.PARAM_TAGS_TO_SPLIT, e.getMessage());
 	    }
 
 	    includeModelData = config.parameterAsBoolean(DiffTargetConstants.PARAM_INCLUDE_MODEL_DATA, false);
@@ -193,21 +207,27 @@ public class DiffTarget implements SingleTarget, MessageSource {
 	    }
 
 	    List<String> diffElementTypeNames = config.parameterAsStringList(
-		    DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES, DiffTargetConstants.DEFAULT_DIFF_ELEMENT_TYPES, true,
+		    DiffTargetConstants.PARAM_DIFF_ELEMENT_TYPES, null, true,
 		    true);
 
-	    for (String detn : diffElementTypeNames) {
-
-		try {
-
-		    ElementChangeType ect = ElementChangeType.valueOf(detn.toUpperCase(Locale.ENGLISH));
+	    if (diffElementTypeNames.isEmpty()) {
+		for(ElementChangeType ect : ElementChangeType.values()) {
 		    relevantDiffElementTypes.add(ect);
+		}
+	    } else {
+		for (String detn : diffElementTypeNames) {
 
-		} catch (IllegalArgumentException e) {
-		    /*
-		     * Reporting of illegal value elements is done by configuration validator; we
-		     * simply ignore illegal values here.
-		     */
+		    try {
+
+			ElementChangeType ect = ElementChangeType.valueOf(detn.toUpperCase(Locale.ENGLISH));
+			relevantDiffElementTypes.add(ect);
+
+		    } catch (IllegalArgumentException e) {
+			/*
+			 * Reporting of illegal value elements is done by configuration validator; we
+			 * simply ignore illegal values here.
+			 */
+		    }
 		}
 	    }
 
@@ -292,7 +312,31 @@ public class DiffTarget implements SingleTarget, MessageSource {
 
 	for (PackageInfo inputSchema : schemasToProcess) {
 
-	    SortedSet<PackageInfo> set = refModel.schemas(inputSchema.name());
+	    String nameForSchemaSearch = inputSchema.name();
+
+	    /*
+	     * A map entry may define a name change for the schema package, with @type = ref
+	     * model schema name, and @targetType = input model schema name. Since we
+	     * iterate over the schemas to process as defined in the input model, we search
+	     * for map entries by their @targetType - which would have to equal the name of
+	     * the schema from the input model.
+	     * 
+	     * NOTE: This does not take into account encoding rules - which are not defined
+	     * for this target yet, anyway.
+	     */
+	    for (ProcessMapEntry pme : mapEntries) {
+		if (StringUtils.isNotBlank(pme.getTargetType())
+			&& pme.getTargetType().trim().equals(inputSchema.name().trim())) {
+		    /*
+		     * Map entries have ref model names / paths in @type, and input model names /
+		     * paths in @targetType. Thus, in order to get the name for lookup in the ref
+		     * model, we take the value of @type.
+		     */
+		    nameForSchemaSearch = pme.getType().trim();
+		}
+	    }
+
+	    SortedSet<PackageInfo> set = refModel.schemas(nameForSchemaSearch);
 
 	    if (set.size() == 1) {
 
@@ -301,9 +345,9 @@ public class DiffTarget implements SingleTarget, MessageSource {
 		// compute diffs
 		Differ2 differ;
 		if (aaaModel) {
-		    differ = new Differ2(relevantModellarten, mapEntryParamInfos, tagPattern);
+		    differ = new Differ2(relevantModellarten, mapEntryParamInfos, tagPattern, tagsToSplitPattern);
 		} else {
-		    differ = new Differ2(mapEntryParamInfos, tagPattern);
+		    differ = new Differ2(mapEntryParamInfos, tagPattern, tagsToSplitPattern);
 		}
 		List<DiffElement2> diffs = differ.diffSchemas(refSchema, inputSchema);
 
@@ -317,9 +361,11 @@ public class DiffTarget implements SingleTarget, MessageSource {
 	    } else {
 		result.addWarning(this, 104, inputSchema.name());
 
-		// TODO - assume deleted?? ... check the other way as well, i.e packages in
-		// refModel which may fit the criteria for schema selection but have no
-		// equivalent in the input model?
+		/*
+		 * TBD - assume deleted? ... check the other way as well, i.e packages in
+		 * refModel which may fit the criteria for schema selection but have no
+		 * equivalent in the input model?
+		 */
 	    }
 	}
 
@@ -359,7 +405,9 @@ public class DiffTarget implements SingleTarget, MessageSource {
 	refModel = null;
 	relevantDiffElementTypes = new HashSet<ElementChangeType>();
 	mapEntryParamInfos = null;
+	mapEntries = null;
 	tagPattern = null;
+	tagsToSplitPattern = null;
 
 	includeModelData = false;
 	printModelElementPaths = true;

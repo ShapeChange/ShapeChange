@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.ModelDiff;
 import java.util.Comparator;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
@@ -51,89 +52,58 @@ public class DiffElement2Comparator implements Comparator<DiffElement2> {
 	    return 0;
 	}
 
-	if (o1.sourceInfo != null && o2.sourceInfo != null) {
-
-	    String packagePathThis = null;
-	    String packagePathOther = null;
-
-	    if (o1.sourceInfo instanceof PropertyInfo) {
-		packagePathThis = ((PropertyInfo) o1.sourceInfo).inClass().pkg().fullNameInSchema();
-	    } else if (o1.sourceInfo instanceof ClassInfo) {
-		packagePathThis = ((ClassInfo) o1.sourceInfo).pkg().fullNameInSchema();
-	    } else {
-		packagePathThis = o1.sourceInfo.fullNameInSchema();
-	    }
-
-	    if (o2.sourceInfo instanceof PropertyInfo) {
-		packagePathOther = ((PropertyInfo) o2.sourceInfo).inClass().pkg().fullNameInSchema();
-	    } else if (o2.sourceInfo instanceof ClassInfo) {
-		packagePathOther = ((ClassInfo) o2.sourceInfo).pkg().fullNameInSchema();
-	    } else {
-		packagePathOther = o2.sourceInfo.fullNameInSchema();
-	    }
-
-	    int comparePkgPath = compareSchemaPaths(packagePathThis, packagePathOther);
-	    if (comparePkgPath != 0) {
-		return comparePkgPath;
-	    }
-
-	    /*
-	     * If package path is equal, compare again using fullNameInSchema (to ensure
-	     * that package contents are ordered)
-	     */
-	    int compare = o1.sourceInfo.fullNameInSchema().compareTo(o2.sourceInfo.fullNameInSchema());
-	    if (compare != 0) {
-		return compare;
-	    }
-
+	Info o1Info = null;
+	if (o1.targetInfo != null) {
+	    o1Info = o1.targetInfo;
+	} else if (o1.sourceInfo != null) {
+	    o1Info = o1.sourceInfo;
 	}
-//	else if (o1.sourceInfo != null) {
-//	    return -1;
-//	} else if (o2.sourceInfo != null) {
-//	    return 1;
-//	}
 
-	if (o1.targetInfo != null && o2.targetInfo != null) {
+	Info o2Info = null;
+	if (o2.targetInfo != null) {
+	    o2Info = o2.targetInfo;
+	} else if (o2.sourceInfo != null) {
+	    o2Info = o2.sourceInfo;
+	}
 
-	    String packagePathThis = null;
-	    String packagePathOther = null;
+	String packagePathThis = "";
+	String packagePathOther = "";
 
-	    if (o1.targetInfo instanceof PropertyInfo) {
-		packagePathThis = ((PropertyInfo) o1.targetInfo).inClass().pkg().fullNameInSchema();
-	    } else if (o1.targetInfo instanceof ClassInfo) {
-		packagePathThis = ((ClassInfo) o1.targetInfo).pkg().fullNameInSchema();
+	if (o1Info != null) {
+
+	    if (o1Info instanceof PropertyInfo) {
+		packagePathThis = ((PropertyInfo) o1Info).inClass().pkg().fullNameInSchema();
+	    } else if (o1Info instanceof ClassInfo) {
+		packagePathThis = ((ClassInfo) o1Info).pkg().fullNameInSchema();
 	    } else {
-		packagePathThis = o1.targetInfo.fullNameInSchema();
+		packagePathThis = o1Info.fullNameInSchema();
 	    }
+	}
 
-	    if (o2.targetInfo instanceof PropertyInfo) {
-		packagePathOther = ((PropertyInfo) o2.targetInfo).inClass().pkg().fullNameInSchema();
-	    } else if (o2.targetInfo instanceof ClassInfo) {
-		packagePathOther = ((ClassInfo) o2.targetInfo).pkg().fullNameInSchema();
+	if (o2Info != null)
+	    if (o2Info instanceof PropertyInfo) {
+		packagePathOther = ((PropertyInfo) o2Info).inClass().pkg().fullNameInSchema();
+	    } else if (o2Info instanceof ClassInfo) {
+		packagePathOther = ((ClassInfo) o2Info).pkg().fullNameInSchema();
 	    } else {
-		packagePathOther = o2.targetInfo.fullNameInSchema();
+		packagePathOther = o2Info.fullNameInSchema();
 	    }
 
-	    int comparePkgPath = compareSchemaPaths(packagePathThis, packagePathOther);
-	    if (comparePkgPath != 0) {
-		return comparePkgPath;
-	    }
+	int comparePkgPath = compareSchemaPaths(packagePathThis, packagePathOther);
+	if (comparePkgPath != 0) {
+	    return comparePkgPath;
+	}
 
+	if (o1Info != null && o2Info != null) {
 	    /*
 	     * If package path is equal, compare again using fullNameInSchema (to ensure
 	     * that package contents are ordered)
 	     */
-	    int compare = o1.targetInfo.fullNameInSchema().compareTo(o2.targetInfo.fullNameInSchema());
+	    int compare = o1Info.fullNameInSchema().compareTo(o2Info.fullNameInSchema());
 	    if (compare != 0) {
 		return compare;
 	    }
-
-	} 
-//	else if (o1.targetInfo != null) {
-//	    return -1;
-//	} else if (o2.targetInfo != null) {
-//	    return 1;
-//	}
+	}
 
 	if (o1.change != o2.change) {
 	    return o1.change.toString().compareTo(o2.change.toString());

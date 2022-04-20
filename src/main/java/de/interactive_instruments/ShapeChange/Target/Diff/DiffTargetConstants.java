@@ -30,7 +30,7 @@ public class DiffTargetConstants {
 
     /**
      * Optional (default is the current run directory) - The path to the folder in
-     * which the resulting UML model will be created.
+     * which the resulting XML file will be created.
      */
     public static final String PARAM_OUTPUT_DIR = "outputDirectory";
 
@@ -95,32 +95,32 @@ public class DiffTargetConstants {
      * <p>
      * Type: String (with comma separated values)
      * <p>
-     * Default Value: SELF, CLASS, ENUM, MULTIPLICITY, PROPERTY, NAME, STEREOTYPE,
-     * SUPERTYPE, SUBPACKAGE, VALUETYPE
+     * Default Value: _all types of model differences supported by the target_
      * <p>
      * Explanation: Comma-separated list of names of diff element types. The diff
      * result will only provide information on these types of differences (in
      * addition to a possibly existing schema version difference).
      * <p>
      * The following diff element types are currently supported: SELF, NAME,
-     * DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE,
-     * PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE,
-     * GLOBALIDENTIFIER, LEGALBASIS, AAAMODELLART, AAAGRUNDDATENBESTAND
+     * DOCUMENTATION, MULTIPLICITY, VALUETYPE, INITIALVALUE, CLASS, SUPERTYPE,
+     * SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION,
+     * PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, DATACAPTURESTATEMENT, EXAMPLE,
+     * LANGUAGE
      * <p>
-     * Applies to Rule(s): {@value #RULE_DIFF_MODELS}
+     * Applies to Rule(s): none - default behavior
      */
     public static final String PARAM_DIFF_ELEMENT_TYPES = "diffElementTypes";
-    public static final String[] DEFAULT_DIFF_ELEMENT_TYPES = new String[] { "SELF", "CLASS", "ENUM", "MULTIPLICITY",
-	    "PROPERTY", "NAME", "STEREOTYPE", "SUPERTYPE", "SUBPACKAGE", "VALUETYPE" };
 
     public static final String PARAM_TAG_PATTERN = "tagPattern";
     public static final String DEFAULT_TAG_PATTERN = ".*";
 
     public static final String PARAM_INCLUDE_MODEL_DATA = "includeModelData";
-    
+
     public static final String PARAM_PRINT_MODEL_ELEMENT_PATHS = "printModelElementPaths";
-    
+
     public static final String PARAM_AAA_MODEL = "aaaModel";
-    
+
     public static final String PARAM_RELEVANTE_MODELLARTEN = "relevanteModellarten";
+
+    public static final String PARAM_TAGS_TO_SPLIT = "tagsToSplit";
 }

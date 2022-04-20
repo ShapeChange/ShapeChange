@@ -67,9 +67,10 @@ public class DiffElement2 {
 	PROPERTY("PROPERTY", false), ENUM("ENUM", false), STEREOTYPE("STEREOTYPE", true), TAG("TAG", true),
 	ALIAS("ALIAS", false), DEFINITION("DEFINITION", false), DESCRIPTION("DESCRIPTION", false),
 	PRIMARYCODE("PRIMARYCODE", false), GLOBALIDENTIFIER("GLOBALIDENTIFIER", false), LEGALBASIS("LEGALBASIS", false),
-	DATACAPTURESTATEMENT("DATACAPTURESTATEMENT", true), EXAMPLE("EXAMPLE", true), LANGUAGE("LANGUAGE", false),
-	AAAMODELLART("AAAMODELLART", true), AAAGRUNDDATENBESTAND("AAAGRUNDDATENBESTAND", true),
-	AAALANDNUTZUNG("AAALANDNUTZUNG", false), AAARETIRED("AAARETIRED", false);
+	DATACAPTURESTATEMENT("DATACAPTURESTATEMENT", true), EXAMPLE("EXAMPLE", true), LANGUAGE("LANGUAGE", false)
+//	, AAAMODELLART("AAAMODELLART", true), AAAGRUNDDATENBESTAND("AAAGRUNDDATENBESTAND", true),
+//	AAALANDNUTZUNG("AAALANDNUTZUNG", false), AAARETIRED("AAARETIRED", false)
+	;
 
 	private String name;
 	private boolean isDiffForPotentiallyMultipleStringValues;
@@ -82,7 +83,7 @@ public class DiffElement2 {
 	public String toString() {
 	    return this.name;
 	}
-	
+
 	public boolean isDiffForPotentiallyMultipleStringValues() {
 	    return this.isDiffForPotentiallyMultipleStringValues;
 	}
