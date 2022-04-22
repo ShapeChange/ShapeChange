@@ -205,11 +205,11 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		String tableName_o1;
 		String tableName_o2;
 		if (SqlConstants.STATEMENT_SORT_USES_SCHEMA_NAME) {
-		    tableName_o1 = ((CreateTable) o1).getTable().getFullName();
-		    tableName_o2 = ((CreateTable) o2).getTable().getFullName();
+		    tableName_o1 = ci1.getTable().getFullName();
+		    tableName_o2 = ci2.getTable().getFullName();
 		} else {
-		    tableName_o1 = ((CreateTable) o1).getTable().getName();
-		    tableName_o2 = ((CreateTable) o2).getTable().getName();
+		    tableName_o1 = ci1.getTable().getName();
+		    tableName_o2 = ci2.getTable().getName();
 		}
 		return tableName_o1.compareTo(tableName_o2);
 	    }
