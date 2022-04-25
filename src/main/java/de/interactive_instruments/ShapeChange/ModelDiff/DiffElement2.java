@@ -61,23 +61,24 @@ public class DiffElement2 {
 
     public enum ElementChangeType {
 
-	SELF("SELF", false), NAME("NAME", false), DOCUMENTATION("DOCUMENTATION", false),
-	MULTIPLICITY("MULTIPLICITY", false), VALUETYPE("VALUETYPE", false), INITIALVALUE("INITIALVALUE", false),
-	CLASS("CLASS", false), SUPERTYPE("SUPERTYPE", false), SUBPACKAGE("SUBPACKAGE", false),
-	PROPERTY("PROPERTY", false), ENUM("ENUM", false), STEREOTYPE("STEREOTYPE", true), TAG("TAG", true),
-	ALIAS("ALIAS", false), DEFINITION("DEFINITION", false), DESCRIPTION("DESCRIPTION", false),
-	PRIMARYCODE("PRIMARYCODE", false), GLOBALIDENTIFIER("GLOBALIDENTIFIER", false), LEGALBASIS("LEGALBASIS", false),
-	DATACAPTURESTATEMENT("DATACAPTURESTATEMENT", true), EXAMPLE("EXAMPLE", true), LANGUAGE("LANGUAGE", false)
-//	, AAAMODELLART("AAAMODELLART", true), AAAGRUNDDATENBESTAND("AAAGRUNDDATENBESTAND", true),
-//	AAALANDNUTZUNG("AAALANDNUTZUNG", false), AAARETIRED("AAARETIRED", false)
-	;
+	SELF("SELF", false, false), NAME("NAME", false, false), DOCUMENTATION("DOCUMENTATION", false, false),
+	MULTIPLICITY("MULTIPLICITY", false, false), VALUETYPE("VALUETYPE", false, false),
+	INITIALVALUE("INITIALVALUE", false, false), CLASS("CLASS", false, false), SUPERTYPE("SUPERTYPE", false, false),
+	SUBPACKAGE("SUBPACKAGE", false, false), PROPERTY("PROPERTY", false, false), ENUM("ENUM", false, false),
+	STEREOTYPE("STEREOTYPE", true, true), TAG("TAG", true, false), ALIAS("ALIAS", false, false),
+	DEFINITION("DEFINITION", false, false), DESCRIPTION("DESCRIPTION", false, false),
+	PRIMARYCODE("PRIMARYCODE", false, false), GLOBALIDENTIFIER("GLOBALIDENTIFIER", false, false),
+	LEGALBASIS("LEGALBASIS", false, false), DATACAPTURESTATEMENT("DATACAPTURESTATEMENT", true, false),
+	EXAMPLE("EXAMPLE", true, false), LANGUAGE("LANGUAGE", false, false);
 
 	private String name;
 	private boolean isDiffForPotentiallyMultipleStringValues;
+	private boolean isDiffIgnoringCase;
 
-	ElementChangeType(String name, boolean isDiffForPotentiallyMultipleStringValues) {
+	ElementChangeType(String name, boolean isDiffForPotentiallyMultipleStringValues, boolean isDiffIgnoringCase) {
 	    this.name = name;
 	    this.isDiffForPotentiallyMultipleStringValues = isDiffForPotentiallyMultipleStringValues;
+	    this.isDiffIgnoringCase = isDiffIgnoringCase;
 	}
 
 	public String toString() {
@@ -86,6 +87,10 @@ public class DiffElement2 {
 
 	public boolean isDiffForPotentiallyMultipleStringValues() {
 	    return this.isDiffForPotentiallyMultipleStringValues;
+	}
+	
+	public boolean isDiffIgnoringCase() {
+	    return this.isDiffIgnoringCase;
 	}
     }
 

@@ -79,7 +79,7 @@ The table columns are defined as follows:
 ** PRIMARYCODE: The value of the primaryCode xref:../get started/The_element_input.adoc#Descriptor_sources[descriptor] of the model element changed.
 ** PROPERTY: A property of a class - which is not an enumeration or code list - has been deleted or inserted.
 ** SELF: The model element itself was deleted or inserted.
-** STEREOTYPE: The set of stereotypes of a model element has changed.
+** STEREOTYPE: The set of stereotypes of a model element has changed. NOTE: When computing changes to the set of stereotypes, case of stereotype names is ignored! That is, 'somestereotype' and 'SomeStereotype' are considered equal.
 ** SUBPACKAGE: A sub-package of a package has been deleted or inserted.
 ** SUPERTYPE: A supertype of a class has been deleted or inserted.
 ** TAG: The set of values of a given tag has changed. Note that the target parameters link:#tagPattern[tagPattern] and link:#tagsToSplit[tagsToSplit] influence which tags are checked, and how they are parsed.

@@ -40,11 +40,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -504,8 +507,15 @@ public class Differ2 {
     protected void stringDiff(List<DiffElement2> diffs, ElementChangeType type, Info source, Info target,
 	    String sourceStringIn, String targetStringIn) {
 
+	boolean ignoreCase = type.isDiffIgnoringCase();
+
 	String sourceString = StringUtils.defaultIfBlank(sourceStringIn, "");
 	String targetString = StringUtils.defaultIfBlank(targetStringIn, "");
+
+	if (ignoreCase) {
+	    sourceString = sourceString.toLowerCase(Locale.ENGLISH);
+	    targetString = targetString.toLowerCase(Locale.ENGLISH);
+	}
 
 	LinkedList<Diff> strdiffs;
 
@@ -517,11 +527,31 @@ public class Differ2 {
 
 	strDiffer.diff_cleanupEfficiency(strdiffs);
 
-	if (strDiffer.diff_levenshtein(strdiffs) == 0)
-	    return;
+	if (strDiffer.diff_levenshtein(strdiffs) != 0) {
 
-	DiffElement2 diff = new DiffElement2(Operation.CHANGE, type, strdiffs, source, target, null, null);
-	diffs.add(diff);
+	    // so there is a textual difference
+
+	    if (ignoreCase) {
+		/*
+		 * There even was a difference when comparing the strings with case ignored. In
+		 * this case, we need to compute the diff again with the original strings.
+		 */
+		sourceString = StringUtils.defaultIfBlank(sourceStringIn, "");
+		targetString = StringUtils.defaultIfBlank(targetStringIn, "");
+		strdiffs.clear();
+
+		if (aaaModel && type == ElementChangeType.DOCUMENTATION) {
+		    strdiffs = aaaDocumentation(sourceString, targetString);
+		} else {
+		    strdiffs = strDiffer.diff_main(sourceString, targetString);
+		}
+
+		strDiffer.diff_cleanupEfficiency(strdiffs);
+	    }
+
+	    DiffElement2 diff = new DiffElement2(Operation.CHANGE, type, strdiffs, source, target, null, null);
+	    diffs.add(diff);
+	}
     }
 
     protected void infoDiffs(List<DiffElement2> diffs, Info source, Info target, ElementChangeType type,
@@ -714,7 +744,8 @@ public class Differ2 {
 	SortedSet<String> valsSource = new TreeSet<>(Arrays.asList(sourceValues));
 	SortedSet<String> valsTarget = new TreeSet<>(Arrays.asList(targetValues));
 
-	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget);
+	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget,
+		changeType.isDiffIgnoringCase());
 
 	if (valueDiffs.isEmpty()
 		|| valueDiffs.stream().allMatch(d -> d.operation == diff_match_patch.Operation.EQUAL)) {
@@ -726,31 +757,70 @@ public class Differ2 {
 	diffs.add(diff);
     }
 
-    private LinkedList<Diff> diffsForMultipleStringValues(SortedSet<String> valsSource, SortedSet<String> valsTarget) {
+    private LinkedList<Diff> diffsForMultipleStringValues(SortedSet<String> valsSourceIn,
+	    SortedSet<String> valsTargetIn, boolean ignoreCase) {
 
 	LinkedList<Diff> valueDiffs = new LinkedList<>();
 
-	SortedSet<String> matchingVals = new TreeSet<>(valsSource);
-	matchingVals.retainAll(valsTarget);
+	if (ignoreCase) {
 
-	SortedSet<String> deletedSourceVals = new TreeSet<>(valsSource);
-	deletedSourceVals.removeAll(matchingVals);
+	    SortedMap<String, String> vlasSourceInByLowerCase = new TreeMap<>();
+	    for (String vSource : valsSourceIn) {
+		vlasSourceInByLowerCase.put(vSource.toLowerCase(Locale.ENGLISH), vSource);
+	    }
 
-	SortedSet<String> insertedTargetVals = new TreeSet<>(valsTarget);
-	insertedTargetVals.removeAll(matchingVals);
+	    SortedMap<String, String> vlasTargetInByLowerCase = new TreeMap<>();
+	    for (String vTarget : valsTargetIn) {
+		vlasTargetInByLowerCase.put(vTarget.toLowerCase(Locale.ENGLISH), vTarget);
+	    }
 
-	for (String v : deletedSourceVals) {
-	    Diff d = new Diff(diff_match_patch.Operation.DELETE, v);
-	    valueDiffs.add(d);
+	    SortedSet<String> matchingVals = new TreeSet<>(vlasSourceInByLowerCase.keySet());
+	    matchingVals.retainAll(vlasTargetInByLowerCase.keySet());
+
+	    SortedSet<String> deletedSourceVals = new TreeSet<>(vlasSourceInByLowerCase.keySet());
+	    deletedSourceVals.removeAll(matchingVals);
+
+	    SortedSet<String> insertedTargetVals = new TreeSet<>(vlasTargetInByLowerCase.keySet());
+	    insertedTargetVals.removeAll(matchingVals);
+
+	    for (String v : deletedSourceVals) {
+		Diff d = new Diff(diff_match_patch.Operation.DELETE, vlasSourceInByLowerCase.get(v));
+		valueDiffs.add(d);
+	    }
+	    for (String v : insertedTargetVals) {
+		Diff d = new Diff(diff_match_patch.Operation.INSERT, vlasTargetInByLowerCase.get(v));
+		valueDiffs.add(d);
+	    }
+	    for (String v : matchingVals) {
+		Diff d = new Diff(diff_match_patch.Operation.EQUAL, vlasSourceInByLowerCase.get(v));
+		valueDiffs.add(d);
+	    }
+
+	} else {
+
+	    SortedSet<String> matchingVals = new TreeSet<>(valsSourceIn);
+	    matchingVals.retainAll(valsTargetIn);
+
+	    SortedSet<String> deletedSourceVals = new TreeSet<>(valsSourceIn);
+	    deletedSourceVals.removeAll(matchingVals);
+
+	    SortedSet<String> insertedTargetVals = new TreeSet<>(valsTargetIn);
+	    insertedTargetVals.removeAll(matchingVals);
+
+	    for (String v : deletedSourceVals) {
+		Diff d = new Diff(diff_match_patch.Operation.DELETE, v);
+		valueDiffs.add(d);
+	    }
+	    for (String v : insertedTargetVals) {
+		Diff d = new Diff(diff_match_patch.Operation.INSERT, v);
+		valueDiffs.add(d);
+	    }
+	    for (String v : matchingVals) {
+		Diff d = new Diff(diff_match_patch.Operation.EQUAL, v);
+		valueDiffs.add(d);
+	    }
 	}
-	for (String v : insertedTargetVals) {
-	    Diff d = new Diff(diff_match_patch.Operation.INSERT, v);
-	    valueDiffs.add(d);
-	}
-	for (String v : matchingVals) {
-	    Diff d = new Diff(diff_match_patch.Operation.EQUAL, v);
-	    valueDiffs.add(d);
-	}
+
 	valueDiffs.sort(new Comparator<Diff>() {
 	    @Override
 	    public int compare(Diff o1, Diff o2) {
@@ -761,6 +831,7 @@ public class Differ2 {
 		return o1.text.compareTo(o2.text);
 	    }
 	});
+
 	return valueDiffs;
     }
 
@@ -770,7 +841,8 @@ public class Differ2 {
 	SortedSet<String> valsSource = normalizeTagValues(tag, sourceTagValues);
 	SortedSet<String> valsTarget = normalizeTagValues(tag, targetTagValues);
 
-	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget);
+	LinkedList<Diff> valueDiffs = diffsForMultipleStringValues(valsSource, valsTarget,
+		ElementChangeType.TAG.isDiffIgnoringCase());
 
 	if (valueDiffs.isEmpty()
 		|| valueDiffs.stream().allMatch(d -> d.operation == diff_match_patch.Operation.EQUAL)) {
