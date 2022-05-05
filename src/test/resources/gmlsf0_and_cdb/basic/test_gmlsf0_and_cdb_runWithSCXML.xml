@@ -8,6 +8,7 @@
 		<parameter name="sortedOutput" value="true"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema|DoD/IC"/>
+		<parameter name="codeAbsenceInModelAllowed" value="true"/>
 		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	
 	
@@ -274,7 +275,7 @@
 					<rule name="rule-xsd-prop-targetElement"/>
 					<rule name="rule-xsd-prop-inlineOrByReference"/>
 					<rule name="req-xsd-cls-codelist-no-supertypes"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 					<rule name="rule-xsd-cls-enum-supertypes"/>
 					<rule name="rule-xsd-cls-enum-subtypes"/>
 					<rule name="rule-xsd-cls-local-enumeration"/>

@@ -60,21 +60,21 @@
 					<rule name="rule-xsd-prop-nillable" />
 					<rule name="rule-xsd-pkg-schematron" />
 					<rule name="rule-xsd-prop-metadata" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 				<EncodingRule name="myrule_gml33"
 					extends="gml33">
 					<rule name="rule-xsd-prop-nillable" />
 					<rule name="rule-xsd-pkg-schematron" />
 					<rule name="rule-xsd-prop-metadata" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 				<EncodingRule name="myrule_iso19139"
 					extends="iso19139_2007">
 					<rule name="rule-xsd-prop-nillable" />
 					<rule name="rule-xsd-pkg-schematron" />
 					<rule name="rule-xsd-prop-metadata" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 			</rules>
 			<xi:include

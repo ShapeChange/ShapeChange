@@ -1390,14 +1390,14 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		    }
 		}
 
-		/*
-		 * establish categories for all classes (since the SCXML does not contain that
-		 * information)
-		 */
-		for (GenericClassInfo genCi : this.genClassInfosById.values()) {
-
-		    genCi.establishCategory();
-		}
+//		/*
+//		 * establish categories for all classes (since the SCXML does not contain that
+//		 * information)
+//		 */
+//		for (GenericClassInfo genCi : this.genClassInfosById.values()) {
+//
+//		    genCi.establishCategory();
+//		}
 	    }
 	} catch (SAXException | ParserConfigurationException | IOException e) {
 	    result.addFatalError(this, 30803, e.getMessage());

@@ -1352,7 +1352,7 @@ r.addRuleSet(gml33Prs);
 	r.addRule("rule-xsd-cls-basictype-list");	
 	r.addRule("rule-xsd-cls-codelist-constraints");
 	r.addRule("rule-xsd-cls-codelist-constraints2");
-	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
+//	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 	r.addRule("rule-xsd-cls-codelist-gmlsf");
 	r.addRule("rule-xsd-cls-enum-subtypes");
 	r.addRule("rule-xsd-cls-enum-supertypes");

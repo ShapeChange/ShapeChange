@@ -843,34 +843,13 @@ public class OntologyModel implements MessageSource {
 	    OntClass c = this.ontClassByClassInfo.get(ci);
 
 	    // determine if this is a subclass of one or more specific types
-	    if ((ci.baseClass() != null || (ci.supertypes() != null && !ci.supertypes().isEmpty()))
+	    if ((ci.supertypes() != null && !ci.supertypes().isEmpty())
 		    && ci.matches(OWLISO19150.RULE_OWL_CLS_GENERALIZATION)) {
 
-		String baseClassId = null;
-
-		if (ci.baseClass() != null) {
-
-		    ClassInfo supertype = ci.baseClass();
-
-		    baseClassId = supertype.id();
-
-		    mapAndAddSuperClass(ci, c, supertype);
-		}
-
-		if (ci.supertypes() != null && !ci.supertypes().isEmpty()) {
-
 		    // for now create one subClassOf for each supertype
-		    for (String ciId : ci.supertypes()) {
-
-			if (baseClassId != null && baseClassId.equals(ciId)) {
-			    continue;
-			}
-
-			ClassInfo supertype = model.classById(ciId);
-
+		    for (ClassInfo supertype : ci.supertypeClasses()) {
 			mapAndAddSuperClass(ci, c, supertype);
-		    }
-		}
+		    }		
 	    }
 
 	    if (ci.subtypes() != null && !ci.subtypes().isEmpty() && ci.subtypes().size() > 1

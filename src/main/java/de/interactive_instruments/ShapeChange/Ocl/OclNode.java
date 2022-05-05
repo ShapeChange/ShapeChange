@@ -441,9 +441,12 @@ public abstract class OclNode {
 		if (umlClass == type.umlClass)
 		    return true;
 		// Check for common supertype ...
-		for (ClassInfo ci = umlClass; ci != null; ci = ci.baseClass())
-		    if (ci == type.umlClass)
-			return true;
+//		for (ClassInfo ci = umlClass; ci != null; ci = ci.baseClass())
+//		    if (ci == type.umlClass)
+//			return true;
+		if(umlClass.supertypesInCompleteHierarchy().contains(type.umlClass)) {
+		    return true;
+		}
 		// No, quit.
 		return false;
 	    }
@@ -495,6 +498,10 @@ public abstract class OclNode {
 		    return this;
 		ClassInfo sci = null;
 		// Check for common supertype ...
+		/*
+		 * 2022-04-29 JE: Not sure if we can replace search in base classes with 
+		 * search in set of all supertypes here, since a specific common type seems to be required.
+		 */
 		searchloops: for (ClassInfo ci1 = umlClass; ci1 != null; ci1 = ci1.baseClass()) {
 		    for (ClassInfo ci2 = type.umlClass; ci2 != null; ci2 = ci2.baseClass()) {
 			if (ci1 == ci2) {

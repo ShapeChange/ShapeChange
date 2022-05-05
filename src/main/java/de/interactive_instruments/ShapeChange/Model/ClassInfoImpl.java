@@ -90,60 +90,67 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     public ClassInfo baseClass() {
 	// Initialize
 	int stsize = 0; // # of proper base candidates
-	ClassInfo cir = null; // the base result
+	ClassInfo ciResult = null; // the base result
 	int cat = category(); // category of this class
+
 	// Check if the class has one of the acknowledged categories. If not
-	// no bases classes will be reported.
+	// no bases class will be reported.
 	if (cat == Options.FEATURE || cat == Options.OBJECT || cat == Options.DATATYPE || cat == Options.MIXIN
 		|| cat == Options.UNION) {
-	    // Get hold of the available base classes
-	    SortedSet<ClassInfo> baseCIs = supertypeClasses();
-	    // Loop over base classes and select the GML-relevant one
-	    if (baseCIs != null) {
-		for (ClassInfo baseCI : baseCIs) {
-		    // Get base class category
-		    int bcat = baseCI.category();
-		    // Needs to compatible and not a mixin. If not so,
-		    // we have an error
-		    if ((cat == bcat || bcat == Options.UNKNOWN) && bcat != Options.MIXIN) {
-			// Compatible select and count
-			stsize++;
-			cir = baseCI;
-		    } else if (bcat != Options.MIXIN) {
+	    // Loop over available supertypes and select the GML-relevant one
+	    for (ClassInfo supertype : supertypeClasses()) {
+		// Get supertype category
+		int scat = supertype.category();
+		/*
+		 * Needs to compatible and not a mixin. If not so, we have an error
+		 */
+		if ((cat == scat || scat == Options.UNKNOWN) && scat != Options.MIXIN) {
 
-			// Ignore, if we accept supertypes that are not mixins
-			// and we are a mixin
-			if (cat == Options.MIXIN && matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")) {
+		    // Compatible select and count
+		    stsize++;
+		    ciResult = supertype;
 
-			    // do nothing and ignore
+		} else if (scat != Options.MIXIN) {
 
-			    /*
-			     * FIXME 2017-09-12 JE: That we are matching on a specific target rule here is
-			     * an issue. Everything in the XxxImpl classes should not depend on specific
-			     * target rules, since transformations can produce models for multiple targets.
-			     * Rules such as the one above should be general rules that apply for the whole
-			     * processing chain.
-			     */
+		    /*
+		     * 2022-04-29 JE: TODO move this check for non-mixin but incompatible supertype
+		     * to somewhere else? Maybe introduce a mechanism for validating a given model,
+		     * with a set of validation rules.
+		     */
 
-			} else if (this.model().isInSelectedSchemas(this)) {
-			    // Not compatible and not mixin: An error
-			    MessageContext mc = result().addWarning(null, 108, name(), baseCI.name());
-			    if (mc != null)
-				mc.addDetail(null, 400, "Package", pkg().fullName());
-			    result().addDebug(null, 10003, name(), "" + cat, "!FALSE");
-			    result().addDebug(null, 10003, name(), "" + bcat, "!TRUE");
-			} else {
-			    /*
-			     * 2015-07-17 JE: So this is a class that violates multiple inheritance rules.
-			     * However, it is outside the selected schemas. We could log a debug, info, or
-			     * even warning message. However, we should not raise an error because creation
-			     * of a complete GenericModel that also copies ISO classes would raise an error
-			     * which would cause a unit test to fail.
-			     */
-			}
+		    // Ignore, if we accept supertypes that are not mixins
+		    // and we are a mixin
+		    if (cat == Options.MIXIN /*&& matches("rule-xsd-cls-mixin-classes-non-mixin-supertypes")*/) {
+
+			// do nothing and ignore
+
+			/*
+			 * FIXME 2017-09-12 JE: That we are matching on a specific target rule here is
+			 * an issue. Everything in the XxxImpl classes should not depend on specific
+			 * target rules, since transformations can produce models for multiple targets.
+			 * Rules such as the one above should be general rules that apply for the whole
+			 * processing chain.
+			 */
+
+		    } else if (this.model().isInSelectedSchemas(this)) {
+			// Not compatible and not mixin: An error
+			MessageContext mc = result().addWarning(null, 108, name(), supertype.name());
+			if (mc != null)
+			    mc.addDetail(null, 400, "Package", pkg().fullName());
+			result().addDebug(null, 10003, name(), "" + cat, "!FALSE");
+			result().addDebug(null, 10003, name(), "" + scat, "!TRUE");
+		    } else {
+			/*
+			 * 2015-07-17 JE: So this is a class that violates multiple inheritance rules.
+			 * However, it is outside the selected schemas. We could log a debug, info, or
+			 * even warning message. However, we should not raise an error because creation
+			 * of a complete GenericModel that also copies ISO classes would raise an error
+			 * which would cause a unit test to fail.
+			 */
 		    }
 		}
 	    }
+
 	    // Did we find more than one suitable base class? Which is
 	    // an error.
 	    if (stsize > 1) {
@@ -164,7 +171,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    }
 	}
 	// Return, what we found
-	return cir;
+	return ciResult;
     }
 
     /**
@@ -352,20 +359,20 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     }
 
     private boolean isMixin() {
-	if (matches("rule-xsd-cls-mixin-classes")) {
+//	if (matches("rule-xsd-cls-mixin-classes")) {
 	    String tv = taggedValue("gmlMixin");
 	    if (tv != null && tv.equalsIgnoreCase("true"))
 		return true;
-	}
+//	}
 	return false;
     }
 
     private boolean isGMLMixinSetToFalse() {
-	if (matches("rule-xsd-cls-mixin-classes")) {
+//	if (matches("rule-xsd-cls-mixin-classes")) {
 	    String tv = taggedValue("gmlMixin");
 	    if (tv != null && tv.equalsIgnoreCase("false"))
 		return true;
-	}
+//	}
 	return false;
     }
 
@@ -380,6 +387,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      * 
      * @throws ShapeChangeAbortException tbd
      */
+    @Override
     public void establishCategory() throws ShapeChangeAbortException {
 	if (stereotype("codelist")) {
 	    category = Options.CODELIST;
@@ -399,13 +407,13 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		category = Options.MIXIN;
 	} else if (stereotype("type")) {
 	    category = Options.OBJECT;
-	    if ((isMixin() || (isAbstract() && matches("rule-xsd-cls-mixin-classes")) && !isGMLMixinSetToFalse()))
+	    if ((isMixin() || (isAbstract() && hasSubtypeWithMultipleSupertypes() /*&& matches("rule-xsd-cls-mixin-classes")*/) && !isGMLMixinSetToFalse()))
 		category = Options.MIXIN;
-	} else if (stereotype("interface") && matches("rule-xsd-cls-mixin-classes")) {
+	} else if (stereotype("interface") /*&& matches("rule-xsd-cls-mixin-classes")*/) {
 	    category = Options.MIXIN;
-	} else if (stereotype("basictype") && matches("rule-xsd-cls-basictype")) {
+	} else if (stereotype("basictype") /*&& matches("rule-xsd-cls-basictype")*/) {
 	    category = Options.BASICTYPE;
-	} else if (stereotype("adeelement") && matches("rule-xsd-cls-adeelement")) {
+	} else if (stereotype("adeelement") /*&& matches("rule-xsd-cls-adeelement")*/) {
 	    category = Options.FEATURE;
 	} else if (stereotype("featureconcept")) {
 	    category = Options.FEATURECONCEPT;
@@ -415,9 +423,9 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    category = Options.ROLECONCEPT;
 	} else if (stereotype("valueconcept")) {
 	    category = Options.VALUECONCEPT;
-	} else if (stereotype("schluesseltabelle") && matches("rule-xsd-cls-okstra-schluesseltabelle")) {
+	} else if (stereotype("schluesseltabelle") /*&& matches("rule-xsd-cls-okstra-schluesseltabelle")*/) {
 	    category = Options.OKSTRAKEY;
-	} else if (stereotype("fachid") && matches("rule-xsd-cls-okstra-fid")) {
+	} else if (stereotype("fachid") /*&& matches("rule-xsd-cls-okstra-fid")*/) {
 	    category = Options.OKSTRAFID;
 	} else if (stereotype("aixmextension") && options().isAIXM()) {
 	    category = Options.AIXMEXTENSION;
@@ -435,6 +443,16 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 		    encodingRule("xsd"));
 	    category = Options.UNKNOWN;
 	}
+    }
+
+    private boolean hasSubtypeWithMultipleSupertypes() {
+	
+	for(ClassInfo subtype : subtypeClasses()) {
+	    if(subtype.supertypeClasses().size() > 1) {
+		return true;
+	    }
+	}
+	return false;
     }
 
     @Override
@@ -1005,7 +1023,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 				 */
 			    }
 			}
-		    } else if (cat == Options.MIXIN && matches("rule-xsd-cls-mixin-classes")) {
+		    } else if (cat == Options.MIXIN /* && matches("rule-xsd-cls-mixin-classes") */) {
 			// nothing to do
 		    } else {
 
@@ -1155,7 +1173,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 	return result;
     }
-    
+
     @Override
     public SortedSet<ClassInfo> subtypeClasses() {
 
@@ -1234,5 +1252,5 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	return null;
-    }    
+    }
 }

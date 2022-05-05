@@ -35,9 +35,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.ModelProvider;
 import de.interactive_instruments.ShapeChange.Model.Transformer;
+import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 
 /**
  * Default implementation for loading models. Recognized model types are EA7,
@@ -125,6 +127,10 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 				} else {
 					m.initialise(result, options,
 							repoFileNameOrConnectionString, user, pwd);
+				}
+				
+				for (ClassInfo ci : m.classes()) {
+				    ci.establishCategory();
 				}
 
 				m.loadInformationFromExternalSources(isLoadingInputModel);

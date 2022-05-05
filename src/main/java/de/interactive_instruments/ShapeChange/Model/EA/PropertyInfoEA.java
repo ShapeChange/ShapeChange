@@ -580,7 +580,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public boolean isAggregation() {
 	validateAggregationType();
 	if (aggregationTypeCache.equals("shared")
-		&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
+//		&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
+		&& !(inClass().stereotype("enumeration") || inClass().stereotype("codelist")))
 	    return true;
 	return false;
     } // isAggregation()
@@ -600,7 +601,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public boolean isComposition() {
 	validateAggregationType();
 	if (aggregationTypeCache.equals("composite")
-		&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
+//		&& !(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST))
+		&& !(inClass().stereotype("enumeration") || inClass().stereotype("codelist")))
 	    return true;
 	return false;
     } // isComposition()
@@ -636,7 +638,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public boolean isOrdered() {
 	if (isOrderedCache == null) {
 	    isOrderedCache = Boolean.FALSE;
-	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+//	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+	    if (!(inClass().stereotype("enumeration") || inClass().stereotype("codelist"))) {
 		if (eaAttribute != null) {
 		    // Inquire from Attribute
 		    isOrderedCache = eaAttribute.GetIsOrdered();
@@ -657,7 +660,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public boolean isUnique() {
 	if (isUniqueCache == null) {
 	    isUniqueCache = Boolean.TRUE;
-	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+//	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+	    if (!(inClass().stereotype("enumeration") || inClass().stereotype("codelist"))) {
 		if (eaAttribute != null) {
 		    // Inquire from Attribute
 		    isUniqueCache = !eaAttribute.GetAllowDuplicates();
@@ -676,7 +680,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public boolean isOwned() {
 	if (isOwnedCache == null) {
 	    isOwnedCache = Boolean.FALSE;
-	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+//	    if (!(inClass().category() == Options.ENUMERATION || inClass().category() == Options.CODELIST)) {
+	    if (!(inClass().stereotype("enumeration") || inClass().stereotype("codelist"))) {
 		if (!isAttribute()) {
 		    // Inquire from ConnectorEnd
 		    isOwnedCache = eaConnectorEnd.GetOwnedByClassifier();
@@ -871,7 +876,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// Get the name obtained from the model
 	if (eaName == null || eaName.equals("")) {
 	    if (classInfo == null
-		    || (classInfo.category() != Options.CODELIST && classInfo.category() != Options.ENUMERATION)) {
+//		    || (classInfo.category() != Options.CODELIST && classInfo.category() != Options.ENUMERATION)) {
+		    || (!classInfo.stereotype("codelist") && !classInfo.stereotype("enumeration"))) {
 		eaName = id();
 		MessageContext mc = document.result.addWarning(null, 100, "property", eaName);
 		if (mc != null)
@@ -1003,13 +1009,15 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 
 			    String cixNameLowerCase = cix.name().trim().toLowerCase(Locale.ENGLISH);
 
-			    if (classInfo.category() == Options.ENUMERATION && cix.stereotype("valueconcept")
+//			    if (classInfo.category() == Options.ENUMERATION && cix.stereotype("valueconcept")
+			    if (classInfo.stereotype("enumeration") && cix.stereotype("valueconcept")
 				    && (cixNameLowerCase.equals(thisNameLowerCase)
 					    || cixNameLowerCase.endsWith(thisNameLowerCaseForValueConcept))) {
 				s = cix.documentation();
 				break;
 
-			    } else if (classInfo.category() != Options.ENUMERATION
+//			    } else if (classInfo.category() != Options.ENUMERATION
+			    } else if (!classInfo.stereotype("enumeration")
 				    && (cix.stereotype("attributeconcept") || cix.stereotype("roleconcept"))
 				    && cixNameLowerCase.equals(thisNameLowerCase)) {
 				s = cix.documentation();

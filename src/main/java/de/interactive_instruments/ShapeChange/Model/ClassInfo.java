@@ -36,6 +36,8 @@ import java.io.File;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
+
+import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.StructuredNumber;
 import de.interactive_instruments.ShapeChange.Profile.Profiles;
 
@@ -387,4 +389,17 @@ public interface ClassInfo extends Info {
      *         <code>null</code>
      */
     public Profiles profiles();
+
+    /**
+     * Establish category. This auxiliary function determines the category of the
+     * class (being a FeatureType, a Codelist, a Union etc) from its stereotype. It
+     * is an error, if a class carries a stereotype not recognized by ShapeChange.
+     * <p>
+     * WARNING: This method is intended to be "final", but not actually declared as
+     * such. A depending project can thus extend the method, if absolutely
+     * necessary.
+     * 
+     * @throws ShapeChangeAbortException tbd
+     */
+    void establishCategory() throws ShapeChangeAbortException;
 }

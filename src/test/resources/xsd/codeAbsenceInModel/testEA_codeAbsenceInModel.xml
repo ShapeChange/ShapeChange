@@ -31,7 +31,7 @@
 				<EncodingRule name="testrule" extends="iso19136_2007">
 					<rule name="rule-xsd-pkg-schematron" />
 					<rule name="rule-xsd-cls-codelist-constraints" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" />
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" /> -->
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />

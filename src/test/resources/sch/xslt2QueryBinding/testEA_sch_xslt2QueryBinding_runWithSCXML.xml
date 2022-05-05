@@ -5,7 +5,7 @@
 		<parameter name="appSchemaNameRegex" value="Test Schema .*"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
 		<parameter name="extractSeparator" value="--"/>
-		<parameter name="codeAbsenceInModelAllowed" value="true"/>
+		<parameter name="codeAbsenceInModelAllowed" value="true"/>		
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes"/>
 			<DescriptorSource descriptor="alias" source="ea:alias"/>
@@ -55,19 +55,19 @@
 					<rule name="rule-xsd-prop-nillable"/>
 					<rule name="rule-xsd-pkg-schematron"/>
 					<rule name="rule-xsd-prop-metadata"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 				<EncodingRule extends="gml33" name="myrule_gml33">
 					<rule name="rule-xsd-prop-nillable"/>
 					<rule name="rule-xsd-pkg-schematron"/>
 					<rule name="rule-xsd-prop-metadata"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 				<EncodingRule extends="iso19139_2007" name="myrule_iso19139">
 					<rule name="rule-xsd-prop-nillable"/>
 					<rule name="rule-xsd-pkg-schematron"/>
 					<rule name="rule-xsd-prop-metadata"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 			</rules>
 			<xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude">

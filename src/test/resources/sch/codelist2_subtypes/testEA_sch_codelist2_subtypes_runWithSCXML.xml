@@ -6,6 +6,7 @@
 		<parameter name="appSchemaNameRegex" value="^.*(?&lt;!Schema3)$"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
 		<parameter name="extractSeparator" value="--"/>
+		<parameter name="codeAbsenceInModelAllowed" value="true"/>
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes"/>
 			<DescriptorSource descriptor="alias" source="ea:alias"/>
@@ -55,7 +56,7 @@
 					<rule name="rule-xsd-pkg-schematron"/>
 					
 					<rule name="rule-xsd-cls-codelist-constraints2"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 			</rules>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">

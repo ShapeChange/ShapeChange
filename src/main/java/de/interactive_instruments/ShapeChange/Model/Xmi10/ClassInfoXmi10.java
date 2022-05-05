@@ -243,11 +243,12 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 			}
 		} else if (cla.getNodeName().equals("Foundation.Core.Interface")) {
 			category = Options.MIXIN;
-		} else if (cla.getNodeName().equals("Foundation.Core.Class")) {
-			establishCategory();
-		} else {
-			establishCategory();
-		}
+		} 
+//		else if (cla.getNodeName().equals("Foundation.Core.Class")) {
+//			establishCategory();
+//		} else {
+//			establishCategory();
+//		}
 
 		properties = new TreeMap<StructuredNumber, PropertyInfo>();
 

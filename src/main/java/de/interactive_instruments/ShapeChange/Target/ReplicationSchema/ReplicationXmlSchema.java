@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -802,8 +803,8 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	 * beforehand). Thus inheritance structures are ignored by the replication
 	 * schema.
 	 */
-	if (ci.baseClass() != null) {
-	    result.addWarning(this, 15, ci.name(), ci.baseClass().name());
+	if (!ci.supertypeClasses().isEmpty()) {
+	    result.addWarning(this, 15, ci.name(), ci.supertypeClasses().stream().map(st -> st.name()).sorted().collect(Collectors.joining(", ")));
 	}
     }
 
@@ -1018,7 +1019,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	case 14:
 	    return "Number format exception while converting tagged value '$1$' on property '$2$' of class '$3$' to an integer. Exception message: $4$. Global size setting for target will be used if available.";
 	case 15:
-	    return "Class '$1$' has supertype '$2$'. Inheritance is not supported by this target. Apply "
+	    return "Class '$1$' has supertypes '$2$'. Inheritance is not supported by this target. Apply "
 		    + Flattener.RULE_TRF_CLS_FLATTEN_INHERITANCE
 		    + " of the Flattener transformer before executing this target.";
 

@@ -174,9 +174,15 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	isLeaf = eaClassElement.GetIsLeaf();
 
 	// Determine class category
-	establishCategory();
-	if (category == Options.UNKNOWN && elmt.GetType().equalsIgnoreCase("enumeration")) {
-	    category = Options.ENUMERATION;
+//	establishCategory();	
+//	if (category == Options.UNKNOWN && elmt.GetType().equalsIgnoreCase("enumeration")) {
+//	    category = Options.ENUMERATION;
+//	}
+	if (elmt.GetType().equalsIgnoreCase("enumeration")) {
+	    validateStereotypesCache();
+	    if(!this.stereotype("enumeration") && !this.stereotype("codelist")) {
+		this.stereotypesCache.add("enumeration");
+	    }
 	}
 
 	// Cache if realisations should not be treated as generalisations
@@ -254,8 +260,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 		    // we are seeing an interface.
 		    if (rea) {
 			cat = baseCI.category();
-			if (cat != Options.MIXIN)
-			    continue;
+//			if (cat != Options.MIXIN)
+//			    continue;
 		    }
 
 		    if (baseclassInfoSet == null) {
@@ -982,8 +988,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 		    // Check sequence number on duplicates
 		    PropertyInfo piTemp = propertiesCache.get(pi.sequenceNumber());
 		    if (piTemp != null) {
-			int cat = category();
-			if (cat != Options.ENUMERATION && cat != Options.CODELIST
+//			int cat = category();
+//			if (cat != Options.ENUMERATION && cat != Options.CODELIST
+			if(!stereotype("enumeration") && !stereotype("codelist")
 				&& !pi.sequenceNumber.equals(new StructuredNumber(Integer.MIN_VALUE))) {
 			    MessageContext mc = document.result.addError(null, 107, pi.name(), name(), piTemp.name());
 			    if (mc != null)

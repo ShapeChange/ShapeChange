@@ -331,17 +331,17 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    ci.establishAssociations();
 	}
 
-	if (options.constraintLoadingEnabled()) {
-	    StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_READCONSTARINTS);
-
-	    /** In a third go collect all constraints */
-	    for (ClassInfoEA ci : fClassById.values()) {
-		ci.constraints();
-		SortedMap<StructuredNumber, PropertyInfo> props = ci.properties();
-		for (PropertyInfo pi : props.values())
-		    pi.constraints();
-	    }
-	}
+//	if (options.constraintLoadingEnabled()) {
+//	    StatusBoard.getStatusBoard().statusChanged(STATUS_EADOCUMENT_READCONSTARINTS);
+//
+//	    /** In a third go collect all constraints */
+//	    for (ClassInfoEA ci : fClassById.values()) {
+//		ci.constraints();
+//		SortedMap<StructuredNumber, PropertyInfo> props = ci.properties();
+//		for (PropertyInfo pi : props.values())
+//		    pi.constraints();
+//	    }
+//	}
 
 	/**
 	 * Loop over all schemas (i.e packages with a target namespace) and store the

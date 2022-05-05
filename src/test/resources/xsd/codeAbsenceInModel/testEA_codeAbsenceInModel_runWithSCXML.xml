@@ -41,7 +41,7 @@
 				<EncodingRule extends="iso19136_2007" name="testrule">
 					<rule name="rule-xsd-pkg-schematron"/>
 					<rule name="rule-xsd-cls-codelist-constraints"/>
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/> -->
 				</EncodingRule>
 			</rules>
 			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">

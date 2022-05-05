@@ -2029,18 +2029,7 @@ public class Flattener implements Transformer, MessageSource {
 		 * specific copies of FT instead of FT
 		 */
 
-		// identify supertypes of genCi / the feature type
-		SortedSet<String> idsOfGenCiSupertypes = new TreeSet<String>();
-		SortedSet<String> genCiSupertypes = genCi.supertypes();
-		if (genCiSupertypes != null)
-		    idsOfGenCiSupertypes.addAll(genCiSupertypes);
-		if (genCi.baseClass() != null) {
-		    idsOfGenCiSupertypes.add(genCi.baseClass().id());
-		}
-
-		for (String idOfGenCiSupertype : idsOfGenCiSupertypes) {
-
-		    ClassInfo supertype = genModel.classById(idOfGenCiSupertype);
+		for (ClassInfo supertype : genCi.supertypeClasses()) {
 
 		    /*
 		     * for safety against shallow copies of the supertype set, we use

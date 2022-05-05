@@ -11,6 +11,7 @@
 		<parameter name="appSchemaNameRegex" value=".*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />
+		<parameter name="codeAbsenceInModelAllowed" value="true"/>
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes" />
 			<DescriptorSource descriptor="alias" source="ea:alias" />
@@ -48,7 +49,7 @@
 					<rule name="rule-xsd-pkg-schematron" />
 					<!-- checks on code list -->
 					<rule name="rule-xsd-cls-codelist-constraints2" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" />
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" /> -->
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
@@ -74,7 +75,7 @@
 					<rule name="rule-xsd-pkg-schematron" />
 					<!-- checks on code list -->
 					<rule name="rule-xsd-cls-codelist-constraints2" />
-					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" />
+<!-- 					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed" /> -->
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml" />

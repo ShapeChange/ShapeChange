@@ -966,10 +966,11 @@ abstract class TempNode {
 				ClassInfo qci = id.classFromQualification(p, model, quiet);
 				if (qci == null)
 					return null;
-				ClassInfo c;
-				for (c = ci; c != null && c != qci; c = c.baseClass())
-					;
-				if (c == null) {
+//				ClassInfo c;
+//				for (c = ci; c != null && c != qci; c = c.baseClass())
+//					;				
+//				if (c == null) {
+				if(ci != qci && !ci.supertypesInCompleteHierarchy().contains(qci)) {
 					// Not compatible. Complain.
 					if (!quiet) {
 						MessageCollection.Message mess = p
@@ -1487,8 +1488,9 @@ abstract class TempNode {
 			if (qualification != null && qualification instanceof Identifier) {
 				ClassInfo ci = classFromQualification(p, model, true);
 				if (ci != null) {
-					int cat = ci.category();
-					if (cat == Options.ENUMERATION || cat == Options.CODELIST) {
+//					int cat = ci.category();
+//					if (cat == Options.ENUMERATION || cat == Options.CODELIST) {
+				    if(ci.stereotype("enumeration") || ci.stereotype("codelist")) {
 						// So, this is indeed a construct of the form
 						// qualifier::idname, where qualifier designates
 						// a class of the UML model. From here onwards
@@ -1500,9 +1502,11 @@ abstract class TempNode {
 							return new OclNode.EnumerationLiteralExp(pi);
 						} else {
 							// Not found
-							if (ci.matches(
-									"rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed")
-									|| !ci.model().isInSelectedSchemas(ci) 
+							if (/*
+							     * ci.matches(
+							     * "rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed")
+							     * ||
+							     */!ci.model().isInSelectedSchemas(ci) 
 									|| ci.options().parameterAsBoolean(null, "codeAbsenceInModelAllowed", false)) {
 								return new OclNode.EnumerationLiteralExp(name,
 										ci);

@@ -288,6 +288,10 @@ public class Options {
      * Map of targets to generate from the input model. Keys are the names of the
      * Java classes which must implement the Target interface and values are the
      * requested processing modes.
+     * <p>
+     * NOTE: If a specific target occurs multiple times in the configuration, and at
+     * least one of them is enabled, then the map will contain ProcesMode.enabled
+     * for the target class name.
      * 
      * @see ProcessMode
      */
@@ -1082,8 +1086,7 @@ public class Options {
      * Adds a stereotype alias mapping.
      *
      * @param alias     - the stereotype alias (in lower case)
-     * @param wellknown - the wellknown stereotype to which the
-     *                  alias maps
+     * @param wellknown - the wellknown stereotype to which the alias maps
      */
     protected void addStereotypeAlias(String alias, String wellknown) {
 	fStereotypeAliases.put(alias.toLowerCase(), wellknown);
@@ -3086,7 +3089,7 @@ public class Options {
 
 		    // parse tagged values, if any are defined
 		    List<TaggedValueConfigurationEntry> taggedValues = parseTaggedValues(trfE);
-		    
+
 		    // get the transformer input - can be null, then set it to
 		    // global input element
 		    String trfConfigInput;
