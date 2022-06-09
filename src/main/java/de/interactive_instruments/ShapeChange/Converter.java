@@ -263,10 +263,12 @@ public class Converter implements MessageSource {
 	    this.executeDeferrableOutputWriters(options.getTargetConfigurations());
 
 	} catch (Exception e) {
-	    String m = e.getMessage();
-	    if (m != null) {
-		result.addProcessFlowError(m);
+
+	    MessageContext mc = result.addProcessFlowError(null, 6, e.getClass().getName());
+	    if (mc != null) {
+		mc.addDetail(StringUtils.defaultIfBlank(e.getMessage(), "<no exception message available>"));
 	    }
+
 	    Exception se = e;
 	    if (e instanceof SAXException) {
 		se = ((SAXException) e).getException();
@@ -320,10 +322,12 @@ public class Converter implements MessageSource {
 	    }
 
 	} catch (Exception e) {
-	    String m = e.getMessage();
-	    if (m != null) {
-		result.addProcessFlowError(m);
+
+	    MessageContext mc = result.addProcessFlowError(null, 6, e.getClass().getName());
+	    if (mc != null) {
+		mc.addDetail(StringUtils.defaultIfBlank(e.getMessage(), "<no exception message available>"));
 	    }
+
 	    Exception se = e;
 	    if (e instanceof SAXException) {
 		se = ((SAXException) e).getException();

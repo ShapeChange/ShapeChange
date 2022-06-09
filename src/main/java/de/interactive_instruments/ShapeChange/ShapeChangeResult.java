@@ -815,7 +815,8 @@ public class ShapeChangeResult {
 //	case 5:
 //	    return "Exactly only element <XMI> expected.";
 
-
+	case 6:
+	    return "$1$ encountered. Processing was interrupted unexpectedly.";
 //	case 8:
 //	    return "Exactly one element <XMI.metamodel> expected.";
 	case 9: // used by supertype class
