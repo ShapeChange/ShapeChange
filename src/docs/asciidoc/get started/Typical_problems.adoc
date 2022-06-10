@@ -59,7 +59,8 @@ Typically this is the reason for this error.
 SSJavaCOM.dll with the message: "no SSJavaCOM in java.library.path".
 |The SSJavaCOM.dll is not in a path known to the Java Virtual Machine
 you are executing, typically System32 or SysWOW64 depending on your
-operating system. Contact your system administrator, if you need help.
+operating system. Set system property java.library.path when invoking 
+ShapeChange, or contact your system administrator, if you need help.
 
 |An UnsatisfiedLinkError exception is raised when trying to load
 SSJavaCOM.dll with the message: "Can't load IA 32-bit .dll on a AMD
