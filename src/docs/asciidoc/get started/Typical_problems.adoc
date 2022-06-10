@@ -37,12 +37,12 @@ configuration files] is available. Download it and place the unzipped
 folder "resources" in the ShapeChange folder. Test your installation
 with (replacing 'x.y.z' with the version of ShapeChange you are using) +
 +
-__java -jar ShapeChange-x.y.z.jar -Dfile.encoding=UTF-8 -c
+__java -Dfile.encoding=UTF-8 -jar ShapeChange-x.y.z.jar -c
 resources/config/testXMI.xml__ +
 +
 and +
 +
-__java -jar ShapeChange-x.y.z.jar -Dfile.encoding=UTF-8 -c
+__java -Dfile.encoding=UTF-8 -jar ShapeChange-x.y.z.jar -c
 resources/config/testEA.xml__
 
 * Contact your system administrators and ask them for the settings to
