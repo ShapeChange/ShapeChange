@@ -64,6 +64,8 @@ public class Ldproxy2Constants {
     
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
     public static final String PARAM_CFG_TEMPLATE_PATH = "cfgTemplatePath";
+    public static final String PARAM_CODE_TARGET_TAG_NAME = "codeTargetTagName";
+    public static final String DEFAULT_CODE_TARGET_TAG_NAME_VALUE = "ldpCodeTargetValue";
     public static final String PARAM_DATE_FORMAT = "dateFormat";
     public static final String PARAM_DATE_TIME_FORMAT = "dateTimeFormat";
     public static final String PARAM_DESCRIPTION_TEMPLATE = "descriptionTemplate";
@@ -71,7 +73,8 @@ public class Ldproxy2Constants {
     public static final String PARAM_FORCE_AXIS_ORDER = "forceAxisOrder";
     public static final String PARAM_FK_COLUMN_SUFFIX = "foreignKeyColumnSuffix";
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
-    public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";
+    public static final String PARAM_FK_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
+    public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";    
     public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
@@ -85,6 +88,7 @@ public class Ldproxy2Constants {
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
+    public static final String RULE_CLS_CODELIST_BY_TABLE = "rule-ldp2-cls-codelist-byTable";
     public static final String RULE_CLS_CODELIST_DIRECT = "rule-ldp2-cls-codelist-direct";
     public static final String RULE_CLS_CODELIST_TARGETBYTV = "rule-ldp2-cls-codelist-targetbytaggedvalue";
     public static final String RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES = "rule-ldp2-cls-data-types-oneToMany-severalTables";

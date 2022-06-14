@@ -206,7 +206,7 @@ public class ProcessConfiguration {
 	 *                                            no valid parameter value was
 	 *                                            found; can be
 	 *                                            <code>null</code>
-	 * @param allowNonEmptyTrimmedStringValue
+	 * @param allowEmptyTrimmedStringValue
 	 *                                            <code>true</code> if the
 	 *                                            parameter value may be empty,
 	 *                                            if trimmed, else
@@ -221,13 +221,13 @@ public class ProcessConfiguration {
 	 *         criteria
 	 */
 	public String parameterAsString(String parameterName, String defaultValue,
-			boolean allowNonEmptyTrimmedStringValue, boolean trimValue) {
+			boolean allowEmptyTrimmedStringValue, boolean trimValue) {
 
 		String result = this.parameters == null ? null
 				: this.parameters.get(parameterName);
 
 		if (result == null || (result.trim().isEmpty()
-				&& !allowNonEmptyTrimmedStringValue)) {
+				&& !allowEmptyTrimmedStringValue)) {
 			result = defaultValue;
 		} else if (trimValue) {
 			result = result.trim();

@@ -63,10 +63,11 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
 	    Stream.of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_DATE_FORMAT, Ldproxy2Constants.PARAM_DATE_TIME_FORMAT,
-		    Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE, Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE,
-		    Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
+		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
+		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
+		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
+		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
+		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
 		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
@@ -115,6 +116,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkNonNegativeIntegerParameter(Ldproxy2Constants.PARAM_MAX_NAME_LENGTH);
 
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_DATE_FORMAT);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_DATE_TIME_FORMAT);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE);
