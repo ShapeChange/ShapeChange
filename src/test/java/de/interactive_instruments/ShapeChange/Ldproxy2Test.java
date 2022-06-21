@@ -44,4 +44,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/basic/results",
 			"src/test/resources/ldproxy2/basic/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_foreignKeyColumnSuffixCodelist() {
+		
+		multiTest("src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/foreignKeyColumnSuffixCodelist/results",
+			"src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/reference/results");
+	}
 }

@@ -461,7 +461,8 @@ The following information items are encoded within the YAML file:
 ** If _rule-ldp2-cls-codelist-direct_ applies, then the {code} value is the initial value, and the {target_value} is the enum / code name.
 *** NOTE: The ldproxy target will log a warning if a code/enum has no initial value, and proceed by using the enum / code name as {code} value.
 ** If _rule-ldp2-cls-codelist-targetbytaggedvalue_ applies, then the {code} value is the initial value, if defined, otherwise it is the enum / code name, and the {target_value} is given by tagged value _ldpCodeTargetValue_ on the enum / code attribute.
-*** NOTE: The ldproxy target will log a warning if a code/enum has a blank value for the tag _ldpCodeTargetValue_, and proceed by using the enum / code name as {target_value}.
+*** NOTE: The name of the tag can be configured using target parameter _codeTargetTagName_ (having default value _ldpCodeTargetValue_). If you choose a different tag name, and that name is not one of the well-known tag names (as listed xref:../application schemas/UML_profile.adoc#Tagged_Values[here]), make sure that you set input parameter xref:../get started/The_element_input.adoc#addTaggedValues[addTaggedValues] with either the tag name or value `*`. If the tag is used as alias in a xref:../get started/The_element_input.adoc#Tag_aliases[tag mapping], and thus mapped to a different tag name, either remove that mapping or choose a different tag.
+*** NOTE: The ldproxy target will log a warning if a code/enum has a blank value for the tag, and proceed by using the enum / code name as {target_value}.
 ** Otherwise, i.e. neither of the two conversion rules applies, the ldproxy target will encode both {code} and {target_value} with the name of the enum / code. So this will result in a one to one mapping of the enum / code.
 * fallback: The value is given by tagged value _ldpFallbackValue_ on the enumeration / code list. If the tagged value is blank (missing or empty), then the fallback is omitted. NOTE: The fallback value will be used (as-is) by ldproxy if a value stored in the database does not match any of the entries defined in the ldproxy code list (which can happen if a code list has evolved since the ldproxy code list has been created). An example for a fallback value would be 'unknown'.
 
@@ -556,9 +557,12 @@ Whenever a property from the application schema is encoded within an ldproxy pro
 The name is determined as follows:
 
 * Basically, the property name is used as column name.
-* A suffix can be added to the column name, depending upon the property value type. If the value type is not mapped to or implemented as an ldproxy simple or geometry type, and is a:
-** type with identity (i.e. feature or object type), then the value of target parameter _foreignKeyColumnSuffix_ (with default value being the empty string) is used as suffix
-** data type, then the value of target parameter _foreignKeyColumnSuffixDatatype_ (with default value being the empty string) is used as suffix
+
+* A suffix can be added to the column name, depending upon the property value type:
+** If the value type is not mapped to or implemented as an ldproxy simple or geometry type, and is a:
+*** type with identity (i.e. feature or object type), then the value of target parameter _foreignKeyColumnSuffix_ (with default value being the empty string) is used as suffix
+*** data type, then the value of target parameter _foreignKeyColumnSuffixDatatype_ (with default value being the empty string) is used as suffix
+** Otherwise, if the value type is a code list (which is typically mapped to or implemented as an ldproxy simple type), and the code list matches __rule-ldp2-cls-codelist-byTable__ (indicating that the code list is represented in the SQL database by a table), then the value of target parameter _foreignKeyColumnSuffixCodelist_ (with default value being the empty string) is used as suffix.
 * In addition, the column name established so far is converted to lower case (using the english locale).
 * Finally, the column name is restricted to a substring (starting at the beginning of the name) whose length does not exceed the value of target parameter _maxNameLength_ (whose default value is 63 [characters]).
 
@@ -578,13 +582,13 @@ In the future:
 
 Constructing the source path within a property definition for accessing the property value(s) must consider the type of relationship between the property and its value type, the category of the property value type, the representation of the property value(s) in the database, and type mappings defined in the configuration. 
 
-If the property value type is mapped to a simple type or a geometry type, or if the value type is an enumeration or code list, source paths are constructed as shown in <<img_ldproxy2_property_access_simpletypes_default>>.
+If the property value type is mapped to a simple type or a geometry type, or if the value type is an enumeration or code list (that does NOT match __rule-ldp2-cls-codelist-byTable__), source paths are constructed as shown in <<img_ldproxy2_property_access_simpletypes_default>>.
 
 [#img_ldproxy2_property_access_simpletypes_default,reftext='{figure-caption} {counter:figure-num}']
 .Default source path construction for value types that are mapped to simple and geometry types
 image::../images/ldp2_simple_types_default_source_path_encoding.png[align="center"]
 
-The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (as well as in <<img_ldproxy2_property_access_mapped_types_default>>, <<img_ldproxy2_property_access_datatypes_default>>, and <<img_ldproxy2_property_access_types_with_identity_default>>) thereby mean the following:
+The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (as well as in <<img_ldproxy2_property_access_codelist_bytable>>, <<img_ldproxy2_property_access_mapped_types_default>>, <<img_ldproxy2_property_access_datatypes_onetomany_severaltables>>,  <<img_ldproxy2_property_access_datatypes_default>>, and <<img_ldproxy2_property_access_types_with_identity_default>>) thereby mean the following:
 
 * `{pk_col_A}` - Primary key column in the table that represents type A. The primary key column is defined (in descending order of priority):
 ** via the \<<identifier>> property of type A (as described <<ldproxy2_schemaconversionrules_types_featureandobjecttype_identifier,here>>), or 
@@ -593,6 +597,12 @@ The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (
 * `{pX_col}` - The name of the column that represents the property pX, as defined in section <<ldproxy2_schemaconversionrules_properties_sourcepaths_columnname>>.
 
 NOTE: If defined at all, tag _associativeTable_ is typically found on an attribute or an association.
+
+Otherwise, if the property value type is a code list that does match __rule-ldp2-cls-codelist-byTable__, then the target assumes that the code list is represented in the SQL database by a table. In that case, source paths are constructed as shown in <<img_ldproxy2_property_access_codelist_bytable>>.
+
+[#img_ldproxy2_property_access_codelist_bytable,reftext='{figure-caption} {counter:figure-num}']
+.Source path construction for code list value types that match __rule-ldp2-cls-codelist-byTable__ 
+image::../images/ldp2_codelist_bytable_source_path_encoding.png[align="center"]
 
 Otherwise, if the property value type is mapped to LINK, the target assumes that the property representation in the database is an identifier, with which a reference to the actual object can be constructed. That reference will be encoded as a link-object (for further details, see section <<ldproxy2_schemaconversionrules_properties_propertytype>>). If the maximum multiplicity is greater than 1, the target assumes that an associative table exists in the database. Source paths are then constructed as shown in <<img_ldproxy2_property_access_mapped_types_default>>.
 

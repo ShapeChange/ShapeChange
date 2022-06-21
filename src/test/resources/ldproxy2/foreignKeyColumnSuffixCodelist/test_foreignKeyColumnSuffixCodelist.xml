@@ -8,23 +8,18 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/ldproxy2/basic/test_ldproxy2.eap" />
+			value="src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.eap" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
-		<parameter name="mainAppSchema" value="Test 1 - Basics" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
 		<parameter name="sortedSchemaOutput" value="true" />
-		<parameter name="addTaggedValues" value="*"/>
 		<xi:include
 			href="src/main/resources/config/StandardAliases.xml" />
-		<tagAliases>
-			<TagAlias wellknown="lesbarerName" alias="ldpCodeTargetValue"/>
-		</tagAliases>
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
 		<parameter name="logFile"
-			value="testResults/ldproxy2/basic/log.xml" />
+			value="testResults/ldproxy2/foreignKeyColumnSuffixCodelist/log.xml" />
 	</log>
 	<transformers>
 		<Transformer
@@ -65,9 +60,9 @@
 			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
 			mode="enabled" inputs="TRF_END">
 			<targetParameter name="outputDirectory"
-				value="testResults/ldproxy2/basic/results" />
+				value="testResults/ldproxy2/foreignKeyColumnSuffixCodelist/results" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="codeTargetTagName" value="lesbarerName"/>
+
 			<targetParameter name="associativeTableColumnSuffix"
 				value="_id" />
 			<targetParameter name="cfgTemplatePath"
@@ -82,6 +77,8 @@
 				value="_fk" />
 			<targetParameter
 				name="foreignKeyColumnSuffixDatatype" value="_fkdt" />
+			<targetParameter
+				name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
 			<!-- <targetParameter name="labelTemplate" value="[[alias]]"/> -->
 			<!-- <targetParameter name="maxNameLength" value="63"/> -->
 			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
@@ -104,6 +101,7 @@
 					<rule name="rule-ldp2-all-documentation" />
 					<rule name="rule-ldp2-all-schemas" />
 					<rule name="rule-ldp2-cls-codelist-direct" />
+					<rule name="rule-ldp2-cls-codelist-byTable" />
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint" />
 					<rule name="rule-ldp2-cls-identifierStereotype" />
 					<rule name="rule-ldp2-prop-readOnly" />
@@ -112,6 +110,7 @@
 					<rule name="rule-ldp2-all-documentation" />
 					<rule name="rule-ldp2-all-schemas" />
 					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue" />
+					<rule name="rule-ldp2-cls-codelist-byTable" />
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint" />
 					<rule name="rule-ldp2-cls-identifierStereotype" />
 					<rule name="rule-ldp2-prop-readOnly" />
@@ -119,6 +118,7 @@
 				<EncodingRule name="ldpNoCodelistRule">
 					<rule name="rule-ldp2-all-documentation" />
 					<rule name="rule-ldp2-all-schemas" />
+					<rule name="rule-ldp2-cls-codelist-byTable" />
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint" />
 					<rule name="rule-ldp2-cls-identifierStereotype" />
 					<rule name="rule-ldp2-prop-readOnly" />

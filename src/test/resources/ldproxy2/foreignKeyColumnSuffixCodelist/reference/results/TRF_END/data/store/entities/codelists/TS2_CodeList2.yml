@@ -1,0 +1,11 @@
+---
+id: TS2_CodeList2
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 1
+label: Alias TS2_Codelist2
+entries:
+  A: codeA
+  B: codeB
+sourceType: TEMPLATES
+fallback: unknown

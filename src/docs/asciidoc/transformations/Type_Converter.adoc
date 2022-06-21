@@ -120,12 +120,10 @@ the regular expression given via parameter
 xref:./Type_Converter.adoc#toCodelistExclusionRegex[toCodelistExclusionRegex]
 or if they have tagged value "toCodelist"='false'.
 
-NOTE: This rule converts all enumerations within the model to code
-lists. If a restriction is desired, for example to enumerations that
-belong to the schemas selected for processing, or to specifically
-identified application schemas (e.g. identified by name or target
-namespace regex), the implementation would need to be enhanced (for
-example through new parameters).
+NOTE: Up until ShapeChange v2.13.0, this rule converted all enumerations 
+within the model to code lists. Now, the typical behavior applies, i.e. only
+enumerations in the schemas selected for processing are changed by the
+transformation.
 
 Constraints are not updated.
 

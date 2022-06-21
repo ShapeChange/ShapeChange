@@ -789,7 +789,7 @@ public class TypeConverter implements Transformer, MessageSource {
 	/*
 	 * --- update class category ---
 	 */
-	for (GenericClassInfo genCi : genModel.getGenClasses().values()) {
+	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
 	    if (genCi.category() == Options.ENUMERATION
 		    && (exclusionRegex == null || !exclusionRegex.matcher(genCi.name()).matches())

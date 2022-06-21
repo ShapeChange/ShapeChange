@@ -115,6 +115,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     protected static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
     protected static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
+    protected static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
     protected static String dateFormat = null; // no default value
     protected static String dateTimeFormat = null; // no default value
     protected static String descriptionTemplate = "[[definition]]";
@@ -122,6 +123,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static Force forceAxisOrder = Force.NONE;
     protected static String foreignKeyColumnSuffix = "";
     protected static String foreignKeyColumnSuffixDatatype = "";
+    protected static String foreignKeyColumnSuffixCodelist = "";
     protected static String labelTemplate = "[[alias]]";
     protected static int maxNameLength = 63;
     protected static ZoneId nativeTimeZone = ZoneId.systemDefault();
@@ -227,6 +229,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
 		    "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml", false, true);
 
+	    codeTargetTagName = options.getCurrentProcessConfig().parameterAsString(
+		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE,
+		    false, true);
+
 	    dateFormat = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_DATE_FORMAT, null,
 		    false, true);
 
@@ -248,6 +254,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    foreignKeyColumnSuffixDatatype = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, "", false, true);
+
+	    foreignKeyColumnSuffixCodelist = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, "", false, true);
 
 	    labelTemplate = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    "[[alias]]", false, true);
@@ -1122,6 +1131,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    }
 
 		} else {
+
 		    // value type is a simple ldproxy type
 		    if (pi.cardinality().maxOccurs == 1) {
 			return Optional.of(databaseColumnName(pi));
@@ -1156,8 +1166,21 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
 
 		if (pi.cardinality().maxOccurs == 1) {
+
+		    /*
+		     * Note: Addition of code list foreign key suffix is handled in method
+		     * databaseColumnName(..).
+		     */
 		    return Optional.of(databaseColumnName(pi));
+
+		} else if (typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+
+		    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+			    + databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
+			    + databaseTableName(pi.inClass(), true) + "}/" + databaseTableName(typeCi, true));
+
 		} else {
+
 		    // FIXME ... presence of associative-table-specific sortKey may need to be made
 		    // configurable
 		    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
@@ -1570,14 +1593,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			code = pi.initialValue();
 		    }
 
-		    if (StringUtils.isBlank(pi.taggedValue("ldpCodeTargetValue"))) {
-			MessageContext mc = result.addWarning(this, 101, ci.name(), pi.name());
+		    if (StringUtils.isBlank(pi.taggedValue(codeTargetTagName))) {
+			MessageContext mc = result.addWarning(this, 101, ci.name(), pi.name(), codeTargetTagName);
 			if (mc != null) {
 			    mc.addDetail(this, 1, pi.fullNameInSchema());
 			}
 			targetValue = pi.name();
 		    } else {
-			targetValue = pi.taggedValue("ldpCodeTargetValue").trim();
+			targetValue = pi.taggedValue(codeTargetTagName).trim();
 		    }
 		} else {
 		    code = pi.name();
@@ -1630,6 +1653,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
 		result = result + foreignKeyColumnSuffixDatatype;
 	    }
+
+	} else if (pi.categoryOfValue() == Options.CODELIST
+		&& model.classByIdOrName(pi.typeInfo()).matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+
+	    // Support SqlDdl target parameter foreignKeyColumnSuffixCodelist
+	    result = result + foreignKeyColumnSuffixCodelist;
 	}
 
 	result = result.toLowerCase(Locale.ENGLISH);
@@ -1692,6 +1721,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
 	cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
+	codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
 	dateFormat = null; // no default value
 	dateTimeFormat = null; // no default value
 	descriptionTemplate = "[[definition]]";
@@ -1699,6 +1729,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	forceAxisOrder = Force.NONE;
 	foreignKeyColumnSuffix = "";
 	foreignKeyColumnSuffixDatatype = "";
+	foreignKeyColumnSuffixCodelist = "";
 	labelTemplate = "[[alias]]";
 	maxNameLength = 63;
 	nativeTimeZone = ZoneId.systemDefault();
@@ -1729,6 +1760,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
+	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES);
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
@@ -1797,7 +1829,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' has no initial value. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {code} in the enum/code mapping.";
 	case 101:
 	    return Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV
-		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag 'ldpCodeTargetValue'. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {target_value} in the enum/code mapping";
+		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag '$3$'. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {target_value} in the enum/code mapping";
 	case 102:
 	    return "Could not compute a label for codelist/enumeration '$1$'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.";
 	case 103:
