@@ -46,9 +46,19 @@
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>		
+        <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" input="INPUT" id="trf_reverseAssociation" mode="enabled">
+            <parameters>
+                <ProcessParameter name="directionToNewFeatureType" value="false" />
+            </parameters>
+            <rules>
+              <ProcessRuleSet name="flattener">
+                <rule name="rule-trf-cls-non-default-geometry-to-feature-type" />
+              </ProcessRuleSet>
+            </rules>
+        </Transformer>
 	</transformers>
 	<targets>
-		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="trf" mode="enabled">
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="trf trf_reverseAssociation" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/flattening/nonDefaultGeometryToFeatureType/xsd"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
