@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/sql/foreignKeyCheckingOptions/testEA_sql_foreignKeyCheckingOptions.xml" end="Wed Jun 22 12:33:29 CEST 2022" resultCode="0" start="Wed Jun 22 12:33:23 CEST 2022" version="2.12.1-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="Validating input parameters."/>
+    <Info message="Validation of input parameters completed."/>
+    <Info message="Validating log parameters."/>
+    <Info message="Validation of log parameters completed."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
+    <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '2', an additional value '20' exists and is ignored.">
+      <Detail message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType2::roleFT2B"/>
+    </Warning>
+    <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '1', an additional value '10' exists and is ignored.">
+      <Detail message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType2::roleFT2A"/>
+    </Warning>
+    <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '1', an additional value '10' exists and is ignored.">
+      <Detail message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType1::roleFT1A"/>
+    </Warning>
+    <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '3', an additional value '20' exists and is ignored.">
+      <Detail message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType1::roleFT1B"/>
+    </Warning>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'PostgreSQL'."/>
+    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'SQLServer'."/>
+    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'Oracle'."/>
+    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEAT0'"/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'SQLite'."/>
+    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/foreignKeyCheckingOptions/postgresql/INPUT/ddl_postgresql.sql" target="SQL DDL">ddl_postgresql.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/foreignKeyCheckingOptions/ddl_sqlserver/INPUT/ddl_sqlserver.sql" target="SQL DDL">ddl_sqlserver.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/foreignKeyCheckingOptions/ddl_oracle/INPUT/ddl_oracle.sql" target="SQL DDL">ddl_oracle.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/foreignKeyCheckingOptions/sqlite/INPUT/ddl_sqlite.sql" target="SQL DDL">ddl_sqlite.sql</Result>
+  </Results>
+</ShapeChangeResult>

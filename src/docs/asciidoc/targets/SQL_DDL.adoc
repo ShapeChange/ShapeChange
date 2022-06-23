@@ -313,22 +313,25 @@ Map entry examples for the Oracle database system:
 [[Foreign_Key_Constraint_Options]]
 === Foreign Key Constraint Options
 
+[[Referential_Actions]]
+==== Referential Actions
+
 (since v2.6.0)
 
-A foreign key option defines behaviour for a table with foreign key, in
-case that the primary key of the record that is referenced by the
+A foreign key referential action defines behaviour for a table with foreign key, 
+in case that the primary key of the record that is referenced by the
 foreign key has been updated or deleted. For further details, see the
 documentation of the relevant database system.
 
-ShapeChange supports defining these options for properties that
+ShapeChange supports defining these actions for properties that
 represent foreign keys. To define the behaviour for updates, set the
-tagged value 'sqlOnUpdate' to the desired option. The tagged value would
+tagged value 'sqlOnUpdate' to the desired action. The tagged value would
 be set on an attribute, an association role, or the association the role
 belongs to (if ShapeChange does not find a definition for a foreign key
-option on an association role, it tries to look a foreign key option up
+referential action on an association role, it tries to look it up
 in the association). Likewise, for deletions, set tagged value
 'sqlOnDelete'. In general, ShapeChange knows the following foreign key
-options:
+referential actions:
 
 * Cascade
 * No Action
@@ -342,7 +345,7 @@ whitespace is ignored. ShapeChange can parse, for example, the values
 'set null', 'setnull', 'Set Null', and '   set     Null   '. However,
 'se t null' would not be parsed.
 
-Which options are supported depends on the chosen database system, as
+Which referential actions are supported depends on the chosen database system, as
 well as the intended behaviour (delete or update). The following table
 gives an overview:
 
@@ -359,17 +362,86 @@ gives an overview:
 |*On Update* |x |x |x |x |x
 |===
 
-ShapeChange checks if the chosen database supports a given option. If
+ShapeChange checks if the chosen database supports a given action. If
 that is not the case, an info message is logged, informing the user that
-the option is ignored.
+the referential action is ignored.
 
-ShapeChange also validates the option. At the moment, there is only one
+ShapeChange also validates the action. At the moment, there is only one
 check (additional checks can be added in the future):
 
-* If the option is 'Set Null' then the foreign key field must not be
+* If the referential action is 'Set Null' then the foreign key field must not be
 defined as 'NOT NULL'.
 
-If the option is invalid, a warning is logged to inform the user.
+If the referential action is invalid, a warning is logged to inform the user.
+
+
+[[Checking_Foreign_Key_Constraints]]
+==== Checking Foreign Key Constraints
+
+(since v2.13.0)
+
+Regarding checking of constraints, the SQL standard states:
+
+[quote]
+____
+Every constraint is either _deferrable_ or __non-deferrable__. Within an SQL-transaction, every constraint has a
+constraint mode; if a constraint is __non-deferrable__, then its constraint mode is always _immediate_, otherwise it
+is either _immediate_ or _deferred_. Every constraint has an initial constraint mode that specifies the constraint
+mode for that constraint at the start of each SQL-transaction and immediately after definition of that constraint.
+If a constraint is _deferrable_, then its constraint mode may be changed (from _immediate_ to _deferred_, or from
+_deferred_ to _immediate_) by execution of a <set constraints mode statement>.
+
+The checking of a constraint depends on its constraint mode within the current SQL-transaction. If the constraint
+mode is _immediate_, then the constraint is effectively checked at the end of each SQL-statement.
+
+NOTE - This includes SQL-statements that are executed as a direct result or an indirect result of executing a different SQL-statement.
+
+If the constraint mode is _deferred_, then the constraint is effectively checked when the constraint mode is changed
+to _immediate_ either explicitly by execution of a <set constraints mode statement>, or implicitly at the end of
+the current SQL-transaction.
+
+When a constraint is checked other than at the end of an SQL-transaction, if it is not satisfied, then an exception
+condition is raised and the SQL-statement that caused the constraint to be checked has no effect other than
+entering the exception information into the first diagnostics area. When a <commit statement> is executed, all
+constraints are effectively checked and, if any constraint is not satisfied, then an exception condition is raised
+and the SQL-transaction is terminated by an implicit <rollback statement>.
+____
+
+ShapeChange supports defining if a foreign key is deferrable as well as its 
+initial constraint mode:
+
+* deferrable constraint: global configuration via target parameter 
+xref:./SQL_DDL.adoc#foreignKeyDeferrable[foreignKeyDeferrable], 
+local configuration via tagged value 'sqlDeferrable'; 
+the value is either 'false' (typically the default) or 'true'.
+* initial constraint mode: global configuration via target parameter 
+xref:./SQL_DDL.adoc#foreignKeyInitialConstraintMode[foreignKeyInitialConstraintMode], 
+local configuration via tagged value 'sqlInitialConstraintMode'; 
+the value is either 'immediate' (typically the default) or 'deferred'
+
+The tagged value would be set on an attribute, an association role, 
+or the association the role belongs to (if ShapeChange does not find the
+relevant definition on an association role, it tries to look it up in the association).
+Local configuration via tagged value has higher priority than global configuration
+via target parameter.
+
+NOTE: When parsing the tagged values 'sqlDeferrable' and 'sqlInitialConstraintMode',
+case as well as leading and trailing whitespace is ignored.
+
+The following list shows, which database systems support deferrable constraints, and which do not:
+
+* Oracle: supported - see the https://docs.oracle.com/database/121/SQLRF/clauses002.htm#SQLRF5218[Oracle 12.1 Database SQL Language Reference]
+* PostgreSQL: supported - see the https://www.postgresql.org/docs/current/sql-createtable.html[PostgreSQL documentation] 
+* SQL Server: not supported - see the https://docs.microsoft.com/en-us/openspecs/sql_standards/ms-tsqliso02/70d6050a-28c7-4fae-a205-200ccb363522[SQL Server Transact-SQL ISO/IEC 9075-2 Standards Support Document]
+* SQLite: supported - see the https://www.sqlite.org/foreignkeys.html#fk_deferred[SQLite documentation on deferred foreign key constraints].
+
+// https://stackoverflow.com/questions/5300307/not-deferrable-versus-deferrable-initially-immediate
+
+NOTE: According to the Enterprise Architect documentation for database modeling (v15.2), 
+specifically the pages on https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/constraints2.html[database table constraints / indexes] and 
+https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/foreignkeys.html[foreign keys], 
+EA database models do not contain constraint checking options.
+
 
 [[Naming]]
 === Naming
@@ -2161,6 +2233,46 @@ xref:./SQL_DDL.adoc#idColumnName[idColumnName]
 is appended.
 
 Applies to Rule(s): _none_ - default behavior
+
+
+[[foreignKeyDeferrable]]
+==== foreignKeyDeferrable
+
+(since v2.13.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: Defines if foreign key constraints shall be declared 
+as deferrable. For further details, see section 
+xref:./SQL_DDL.adoc#Checking_Foreign_Key_Constraints[Checking Foreign Key Constraints].
+
+Applies to Rule(s): _none_ - default behavior
+
+
+[[foreignKeyInitialConstraintMode]]
+==== foreignKeyInitialConstraintMode
+
+(since v2.13.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String - either 'immediate' or 'deferred'
+
+Default Value: immediate
+
+Explanation: Defines the initial mode of foreign key constraints. For further details, see section 
+xref:./SQL_DDL.adoc#Checking_Foreign_Key_Constraints[Checking Foreign Key Constraints].
+
+Applies to Rule(s): _none_ - default behavior
+
 
 [[geometryDimension]]
 ==== geometryDimension

@@ -2096,7 +2096,7 @@ public class SqlBuilder implements MessageSource {
 	return result;
     }
 
-    public List<Statement> process(List<ClassInfo> cisToProcess) throws SqlDdlException  {
+    public List<Statement> process(List<ClassInfo> cisToProcess) throws SqlDdlException {
 
 	checkRequirements(cisToProcess);
 
@@ -2327,7 +2327,7 @@ public class SqlBuilder implements MessageSource {
 		if (pi != null) {
 
 		    if (pi.matches(SqlConstants.RULE_TGT_SQL_PROP_UNIQUE_CONSTRAINTS)
-			    && "true".equalsIgnoreCase(pi.taggedValue("sqlUnique"))) {
+			    && "true".equalsIgnoreCase(pi.taggedValue(SqlConstants.TV_UNIQUE))) {
 
 			if (pi.cardinality().maxOccurs > 1) {
 			    result.addWarning(this, 33, col.getName(), table.getFullName());
@@ -3067,64 +3067,137 @@ public class SqlBuilder implements MessageSource {
 	PropertyInfo representedPi = column.getRepresentedProperty();
 	if (representedPi != null) {
 
-	    Info relevantInfo = representedPi;
-
-	    // first check tagged values on the property itself
-	    String tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
-	    String tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
+	    Info relevantInfoReferentialAction = representedPi;
 
 	    /*
-	     * if the property is an association role and does not define any option, check
-	     * if the association defines an option
+	     * === referential action ===
+	     */
+
+	    // first check tagged values on the property itself
+	    String tvOnDelete = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_DELETE);
+	    String tvOnUpdate = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_UPDATE);
+
+	    /*
+	     * if the property is an association role and does not define any referential
+	     * action, check if the association defines one
 	     */
 	    if (!representedPi.isAttribute() && StringUtils.isBlank(tvOnDelete) && StringUtils.isBlank(tvOnUpdate)) {
 
-		relevantInfo = representedPi.association();
-		tvOnDelete = relevantInfo.taggedValue("sqlOnDelete");
-		tvOnUpdate = relevantInfo.taggedValue("sqlOnUpdate");
+		relevantInfoReferentialAction = representedPi.association();
+		tvOnDelete = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_DELETE);
+		tvOnUpdate = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_UPDATE);
 	    }
 
-	    setForeignKeyOption(true, tvOnDelete, fkc, column, relevantInfo);
-	    setForeignKeyOption(false, tvOnUpdate, fkc, column, relevantInfo);
+	    setForeignKeyReferentialAction(true, tvOnDelete, fkc, column, relevantInfoReferentialAction);
+	    setForeignKeyReferentialAction(false, tvOnUpdate, fkc, column, relevantInfoReferentialAction);
+
+	    /*
+	     * === checking options ===
+	     */
+
+	    Info relevantInfoDeferrable = representedPi;
+	    Info relevantInfoInitialConstraintMode = representedPi;
+
+	    Boolean deferrable = null;
+	    Boolean immediate = null;
+
+	    // first check tagged values on the property itself
+	    String tvDeferrable = relevantInfoDeferrable.taggedValue(SqlConstants.TV_DEFERRABLE);
+	    String tvInitialConstraintMode = relevantInfoInitialConstraintMode
+		    .taggedValue(SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
+
+	    /*
+	     * if the property is an association role and does not define a checking
+	     * options, check if the association does so
+	     */
+
+	    if (!representedPi.isAttribute() && StringUtils.isBlank(tvDeferrable)) {
+		relevantInfoDeferrable = representedPi.association();
+		tvDeferrable = relevantInfoDeferrable.taggedValue(SqlConstants.TV_DEFERRABLE);
+	    }
+	    if (!representedPi.isAttribute() && StringUtils.isBlank(tvInitialConstraintMode)) {
+		relevantInfoInitialConstraintMode = representedPi.association();
+		tvInitialConstraintMode = relevantInfoInitialConstraintMode
+			.taggedValue(SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
+	    }
+
+	    /*
+	     * If no TV is set for a checking option, use the global configuration value (if
+	     * available).
+	     */
+
+	    if (StringUtils.isBlank(tvDeferrable)) {
+		deferrable = SqlDdl.foreignKeyDeferrable;
+	    } else {
+		if (!tvDeferrable.trim().matches("(?i)(true|false)")) {
+		    MessageContext mc = result.addError(this, 41, tvDeferrable.trim(), "deferrable",
+			    SqlConstants.TV_DEFERRABLE);
+		    if (relevantInfoDeferrable != null && mc != null) {
+			mc.addDetail(this, 102, column.getInTable().getFullName(), column.getName());
+			mc.addDetail(this, 42, relevantInfoDeferrable.fullNameInSchema());
+		    }
+		} else {
+		    deferrable = Boolean.parseBoolean(tvDeferrable.trim());
+		}
+	    }
+
+	    if (StringUtils.isBlank(tvInitialConstraintMode)) {
+		immediate = SqlDdl.foreignKeyImmediate;
+	    } else {
+		if (!tvInitialConstraintMode.trim().matches("(?i)(immediate|deferred)")) {
+		    MessageContext mc = result.addError(this, 41, tvInitialConstraintMode.trim(),
+			    "initial constraint mode", SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
+		    if (relevantInfoDeferrable != null && mc != null) {
+			mc.addDetail(this, 102, column.getInTable().getFullName(), column.getName());
+			mc.addDetail(this, 42, relevantInfoInitialConstraintMode.fullNameInSchema());
+		    }
+		} else {
+		    immediate = tvInitialConstraintMode.trim().equalsIgnoreCase("immediate");
+		}
+	    }
+
+	    setForeignKeyCheckingOptions(deferrable,immediate,fkc);
 	}
 
 	return alter;
     }
 
     /**
-     * @param isOnDelete   <code>true</code> if the option is for the 'ON DELETE'
-     *                     clause, <code>false</code> if it is for the 'ON UPDATE'
-     *                     clause.
-     * @param optionValue  String value for the option; can be <code>null</code>
-     *                     (then this method has no effect)
-     * @param fkc          the constraint on which the option would be set
+     * @param isOnDelete   <code>true</code> if the referential action is for the
+     *                     'ON DELETE' clause, <code>false</code> if it is for the
+     *                     'ON UPDATE' clause.
+     * @param actionValue  String value for the referential action; can be
+     *                     <code>null</code> (then this method has no effect)
+     * @param fkc          the constraint on which the referential action would be
+     *                     set
      * @param column       the column to which the constraint applies, relevant for
-     *                     validity checks on the option
-     * @param relevantInfo the model element that defines the option via tagged
-     *                     value, relevant for log messages
+     *                     validity checks
+     * @param relevantInfo the model element that defines the referential action via
+     *                     tagged value, relevant for log messages
      */
-    private void setForeignKeyOption(boolean isOnDelete, String optionValue, ForeignKeyConstraint fkc, Column column,
-	    Info relevantInfo) {
+    private void setForeignKeyReferentialAction(boolean isOnDelete, String actionValue, ForeignKeyConstraint fkc,
+	    Column column, Info relevantInfo) {
 
-	if (StringUtils.isNotBlank(optionValue)) {
+	if (StringUtils.isNotBlank(actionValue)) {
 
 	    Table table = column.getInTable();
 
 	    try {
 
-		ForeignKeyConstraint.Option o = ForeignKeyConstraint.Option.fromString(optionValue);
+		ForeignKeyConstraint.ReferentialAction o = ForeignKeyConstraint.ReferentialAction
+			.fromString(actionValue);
 
-		if ((isOnDelete && SqlDdl.databaseStrategy.isForeignKeyOnDeleteOptionSupported(o))
-			|| (!isOnDelete && SqlDdl.databaseStrategy.isForeignKeyOnUpdateOptionSupported(o))) {
+		if ((isOnDelete && SqlDdl.databaseStrategy.isForeignKeyOnDeleteSupported(o))
+			|| (!isOnDelete && SqlDdl.databaseStrategy.isForeignKeyOnUpdateSupported(o))) {
 
 		    /*
-		     * Check that the foreign key option is applicable to the given column. At the
-		     * moment, this includes checking that the option is not 'SET NULL' in case that
-		     * the column is 'NOT NULL'.
+		     * Check that the foreign key referential action is applicable to the given
+		     * column. At the moment, this includes checking that the action is not 'SET
+		     * NULL' in case that the column is 'NOT NULL'.
 		     */
 		    boolean isValid = true;
 
-		    if (o == ForeignKeyConstraint.Option.SET_NULL && column.isNotNull()) {
+		    if (o == ForeignKeyConstraint.ReferentialAction.SET_NULL && column.isNotNull()) {
 
 			isValid = false;
 
@@ -3153,7 +3226,7 @@ public class SqlBuilder implements MessageSource {
 		}
 
 	    } catch (IllegalArgumentException e) {
-		MessageContext mc = result.addError(this, 34, optionValue, isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
+		MessageContext mc = result.addError(this, 34, actionValue, isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
 		if (mc != null) {
 		    mc.addDetail(this, 102, table.getFullName(), column.getName());
 		    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
@@ -3161,6 +3234,31 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 
+    }
+
+    /**
+     * @param isDeferrable If not <code>null</code>, and if the database strategy
+     *                     supports checking options, the constraint shall
+     *                     explicitly be declared as deferrable (if value is
+     *                     <code>true</code>) or not deferrable (if value is
+     *                     <code>false</code>).
+     * @param isImmediate  If not <code>null</code>, and if the database strategy
+     *                     supports checking options and isDeferrable = true, the
+     *                     constraint shall explicitly be declared as INITIALLY
+     *                     IMMEDIATE (if value is <code>true</code>) or INITIALLY
+     *                     DEFERRED (if value is <code>false</code>).
+     * @param fkc          the constraint on which the referential action would be
+     *                     set
+     */
+    private void setForeignKeyCheckingOptions(Boolean isDeferrable, Boolean isImmediate, ForeignKeyConstraint fkc) {
+
+	if (SqlDdl.databaseStrategy.isForeignKeyCheckingOptionsSupported()) {
+
+	    fkc.setDeferrable(isDeferrable);
+	    fkc.setImmediate(isImmediate);
+	} else {
+	    // then we ignore the checking options
+	}
     }
 
     /**
@@ -3289,15 +3387,15 @@ public class SqlBuilder implements MessageSource {
 	case 33:
 	    return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
 	case 34:
-	    return "Foreign key constraint option '$1$' defined by tagged value '$2$' is unknown. The option is ignored.";
+	    return "Foreign key constraint referential action '$1$' defined by tagged value '$2$' is unknown. The referential action is ignored.";
 	case 35:
-	    return "Foreign key constraint option '$1$' is defined by tagged value '$2$'. The database system does not support this option for clause '$3$'. The option is ignored.";
+	    return "Foreign key constraint referential action '$1$' is defined by tagged value '$2$'. The database system does not support this action for clause '$3$'. The referential action is ignored.";
 	case 36:
 	    return "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
 	case 37:
-	    return "Foreign key option is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key option is ignored.";
+	    return "Foreign key referential action is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key referential action is ignored.";
 	case 38:
-	    return "Model element that defines the option: '$1$'";
+	    return "Model element that defines the referential action: '$1$'";
 	case 39:
 	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
 		    + SqlConstants.TV_SQLSCHEMA
@@ -3306,6 +3404,10 @@ public class SqlBuilder implements MessageSource {
 	    return "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
 		    + SqlConstants.TV_ASSOCIATIVETABLE
 		    + "' is ignored on this attribute, because a usage specific table must be created, which leads to table name: '$4$'.";
+	case 41:
+	    return "Value '$1$' for foreign key constraint checking option '$2$' defined by tag '$3$' is unknown. The checking option is ignored.";
+	case 42:
+	    return "Model element that defines the checking option: '$1$'";
 
 	case 100:
 	    return "Context: property '$1$'.";

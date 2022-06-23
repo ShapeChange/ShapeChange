@@ -61,6 +61,7 @@ import org.apache.xml.serializer.Serializer;
 import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -225,9 +226,13 @@ public class XsdDocument implements MessageSource {
      * @param value tbd
      */
     protected void addAttribute(Element e, String name, String value) {
-	Attr att = document.createAttribute(name);
-	att.setValue(value);
-	e.setAttributeNode(att);
+	try {
+	    Attr att = document.createAttribute(name);
+	    att.setValue(value);
+	    e.setAttributeNode(att);
+	} catch (DOMException ex) {
+	    result.addError(this, 181, name, value, StringUtils.isNotBlank(ex.getMessage()) ? ex.getMessage() : "<NA>");
+	}
     }
 
     /**
@@ -317,8 +322,7 @@ public class XsdDocument implements MessageSource {
 		String dgiwgComplianceLevel = pi.taggedValue("dgiwgComplianceLevel");
 		String dgiwgGMLProfileSchema = pi.taggedValue("dgiwgGMLProfileSchema");
 
-		if (StringUtils.isNotBlank(dgiwgComplianceLevel)
-			&& StringUtils.isNotBlank(dgiwgGMLProfileSchema)) {
+		if (StringUtils.isNotBlank(dgiwgComplianceLevel) && StringUtils.isNotBlank(dgiwgGMLProfileSchema)) {
 		    // if (e2==null)
 		    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 		    addAttribute(e2, "source", options.schemaLocationOfNamespace(DGIWGSP_NS));
@@ -405,7 +409,8 @@ public class XsdDocument implements MessageSource {
 
 			if (e2 == null)
 			    e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":targetCodeListURI");
+			Element e3 = document.createElementNS(Options.SCAI_NS,
+				Options.SCAI_NS_PREFIX + ":targetCodeListURI");
 			e2.appendChild(e3);
 			e3.appendChild(document.createTextNode(codeListURI));
 			addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
@@ -453,7 +458,8 @@ public class XsdDocument implements MessageSource {
 			if (v.trim().length() > 0) {
 			    if (e2 == null)
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
-			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":taggedValue");
+			    Element e3 = document.createElementNS(Options.SCAI_NS,
+				    Options.SCAI_NS_PREFIX + ":taggedValue");
 			    addAttribute(e3, "tag", tag);
 			    e3.appendChild(document.createTextNode(v));
 			    e2.appendChild(e3);
@@ -490,7 +496,8 @@ public class XsdDocument implements MessageSource {
 				e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
 			    }
 
-			    Element e3 = document.createElementNS(Options.SCAI_NS, Options.SCAI_NS_PREFIX + ":descriptor");
+			    Element e3 = document.createElementNS(Options.SCAI_NS,
+				    Options.SCAI_NS_PREFIX + ":descriptor");
 			    addAttribute(e3, "name", descToRep.getName());
 			    if (ls.hasLang()) {
 				addAttribute(e3, "lang", ls.getLang());
@@ -2166,7 +2173,8 @@ public class XsdDocument implements MessageSource {
 	     * config file. FIXME
 	     */
 	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (StringUtils.isNotBlank(pi.taggedValue("length"))
-		    || (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))))) {
+		    || (StringUtils.isNotBlank(pi.taggedValue("size"))
+			    && StringUtils.isNotBlank(pi.taggedValue("pattern"))))) {
 
 		Element simpleType = document.createElementNS(Options.W3C_XML_SCHEMA, "simpleType");
 		e1.appendChild(simpleType);
@@ -2182,7 +2190,8 @@ public class XsdDocument implements MessageSource {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "maxLength");
 		    addAttribute(concreteRestriction, "value", pi.taggedValue("length"));
 		    // pattern
-		} else if (StringUtils.isNotBlank(pi.taggedValue("size")) && StringUtils.isNotBlank(pi.taggedValue("pattern"))) {
+		} else if (StringUtils.isNotBlank(pi.taggedValue("size"))
+			&& StringUtils.isNotBlank(pi.taggedValue("pattern"))) {
 		    concreteRestriction = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 		    addAttribute(concreteRestriction, "value",
 			    pi.taggedValue("pattern") + "{" + pi.taggedValue("size") + "}");
@@ -2207,7 +2216,8 @@ public class XsdDocument implements MessageSource {
 		String max = pi.taggedValue("rangeMaximum");
 		String typecontent = "simple/simple";
 
-		if (StringUtils.isNotBlank(length) || StringUtils.isNotBlank(pattern) || StringUtils.isNotBlank(min) || StringUtils.isNotBlank(max)) {
+		if (StringUtils.isNotBlank(length) || StringUtils.isNotBlank(pattern) || StringUtils.isNotBlank(min)
+			|| StringUtils.isNotBlank(max)) {
 
 		    /*
 		     * baseType is the simple type that is the foundation of the restriction. It is
@@ -3018,9 +3028,8 @@ public class XsdDocument implements MessageSource {
 		     * 5. the property is soft-typed (SWE Common)
 		     */
 		    if (ci.matches("rule-xsd-cls-standard-swe-property-types"))
-			embedPropertyType = embedPropertyType
-				|| (propi.matches("rule-xsd-prop-soft-typed")
-					&& "true".equalsIgnoreCase(propi.taggedValue("soft-typed")));
+			embedPropertyType = embedPropertyType || (propi.matches("rule-xsd-prop-soft-typed")
+				&& "true".equalsIgnoreCase(propi.taggedValue("soft-typed")));
 		    /*
 		     * 6. the property has qualifiers
 		     */
@@ -4285,7 +4294,7 @@ public class XsdDocument implements MessageSource {
 	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 	    serializer.setWriter(outputXML);
 	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();		    
+	    outputXML.close();
 	} catch (IOException ioe) {
 	    result.addError(null, 171, name);
 	}
@@ -4388,6 +4397,9 @@ public class XsdDocument implements MessageSource {
 	    return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
 	case 180:
 	    return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+	case 181:
+	    return "Encountered DOMException, setting XML attribute '$1$' to value '$2$'. Exception message is: $3$";
+
 	case 1009:
 	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
 	case 1010:

@@ -238,14 +238,14 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public boolean isForeignKeyOnDeleteOptionSupported(
-			ForeignKeyConstraint.Option o) {
+	public boolean isForeignKeyOnDeleteSupported(
+			ForeignKeyConstraint.ReferentialAction o) {
 
 		// https://docs.oracle.com/cd/B28359_01/server.111/b28286/clauses002.htm
 
-		if (o == ForeignKeyConstraint.Option.CASCADE
-				|| o == ForeignKeyConstraint.Option.SET_NULL
-				|| o == ForeignKeyConstraint.Option.NO_ACTION) {
+		if (o == ForeignKeyConstraint.ReferentialAction.CASCADE
+				|| o == ForeignKeyConstraint.ReferentialAction.SET_NULL
+				|| o == ForeignKeyConstraint.ReferentialAction.NO_ACTION) {
 			return true;
 		} else {
 			return false;
@@ -253,8 +253,8 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public boolean isForeignKeyOnUpdateOptionSupported(
-			ForeignKeyConstraint.Option o) {
+	public boolean isForeignKeyOnUpdateSupported(
+			ForeignKeyConstraint.ReferentialAction o) {
 		// https://docs.oracle.com/cd/B28359_01/server.111/b28286/clauses002.htm
 		return false;
 	}
@@ -270,6 +270,12 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		return "Oracle";
 	}
 
+	@Override
+	public boolean isForeignKeyCheckingOptionsSupported() {
+	    // https://docs.oracle.com/database/121/SQLRF/clauses002.htm#SQLRF5218
+	    return true;
+	}
+	
 	@Override
 	public String message(int mnr) {
 		switch (mnr) {

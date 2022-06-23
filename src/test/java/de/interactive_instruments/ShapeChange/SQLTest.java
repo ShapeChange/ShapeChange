@@ -238,4 +238,12 @@ public class SQLTest extends BasicTestSCXML {
 		new String[] { "sql" }, "testResults/sql/orderAndUniqueness",
 		"src/test/resources/sql/orderAndUniqueness/reference");
     }
+    
+    @Test
+    public void testForeignKeyCheckingOptions() {
+
+	multiTest("src/test/resources/sql/foreignKeyCheckingOptions/testEA_sql_foreignKeyCheckingOptions.xml",
+		new String[] { "sql" }, "testResults/sql/foreignKeyCheckingOptions",
+		"src/test/resources/sql/foreignKeyCheckingOptions/reference");
+    }
 }

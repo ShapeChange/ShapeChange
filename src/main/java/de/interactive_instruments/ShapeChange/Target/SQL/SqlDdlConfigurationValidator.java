@@ -82,7 +82,8 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    SqlConstants.PARAM_FILE_DDL_TOP, SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE,
 	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE_ALIAS, SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
 	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST,
-	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE, SqlConstants.PARAM_GEOMETRY_DIMENSION,
+	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE, SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE,
+	    SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, SqlConstants.PARAM_GEOMETRY_DIMENSION,
 	    SqlConstants.PARAM_ID_COLUMN_NAME, SqlConstants.PARAM_IDENTIFIER_COLUMN_SUFFIX,
 	    SqlConstants.PARAM_LENGTH_QUALIFIER, SqlConstants.PARAM_MAX_NAME_LENGTH,
 	    SqlConstants.PARAM_NAME_CODESTATUS_CL_COLUMN, SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
@@ -188,6 +189,23 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 
 		isValid = false;
 		result.addError(this, 100, SqlConstants.PARAM_LENGTH_QUALIFIER, lengthQualifier);
+	    }
+	}
+	
+	
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE)) {    
+	    String foreignKeyDeferrable = config.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, null, false, true);
+	    if(!foreignKeyDeferrable.matches("(?i)(true|false)")) {
+		isValid = false;
+		result.addError(this, 100, SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, foreignKeyDeferrable);
+	    }
+	}
+	
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE)) {    
+	    String foreignKeyInitialConstraintMode = config.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, null, false, true);
+	    if(!foreignKeyInitialConstraintMode.matches("(?i)(immediate|deferred)")) {
+		isValid = false;
+		result.addError(this, 100, SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, foreignKeyInitialConstraintMode);
 	    }
 	}
 

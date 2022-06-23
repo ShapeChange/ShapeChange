@@ -158,6 +158,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static String foreignKeyColumnSuffixDatatype;
     protected static String foreignKeyColumnSuffixCodelist;
     protected static ColumnDataType foreignKeyColumnDataType;
+    protected static Boolean foreignKeyDeferrable = null;
+    protected static Boolean foreignKeyImmediate = null;
     protected static String primaryKeySpec;
     protected static String primaryKeySpecCodelist;
     protected static boolean separateSpatialIndexStatements;
@@ -490,6 +492,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		foreignKeyColumnDataType = databaseStrategy.primaryKeyDataType();
 	    } else {
 		foreignKeyColumnDataType = new ColumnDataType(foreignKeyColumnDataTypeFromConfig);
+	    }
+
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE)) {
+		foreignKeyDeferrable = options.getCurrentProcessConfig()
+			.parameterAsBoolean(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, false);
+	    }
+
+	    if (options.getCurrentProcessConfig()
+		    .hasParameter(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE)) {
+		String initialConstraintModeValue = options.getCurrentProcessConfig().parameterAsString(
+			SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, "immediate", false, true);
+		foreignKeyImmediate = initialConstraintModeValue.equalsIgnoreCase("immediate");
 	    }
 
 	    primaryKeySpec = options.parameterAsString(this.getClass().getName(), SqlConstants.PARAM_PRIMARYKEY_SPEC,
@@ -1136,6 +1150,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixDatatype = null;
 	foreignKeyColumnSuffixCodelist = null;
 	foreignKeyColumnDataType = null;
+	foreignKeyDeferrable = null;
+	foreignKeyImmediate = null;
 	primaryKeySpec = null;
 	primaryKeySpecCodelist = null;
 	separateSpatialIndexStatements = false;
@@ -1242,8 +1258,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-replicationSchema-optional");
 
 	// declare rule sets
-	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql","*",new TreeSet<>(Stream.of(
-		"rule-sql-cls-feature-types").collect(Collectors.toSet())));
+	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql", "*",
+		new TreeSet<>(Stream.of("rule-sql-cls-feature-types").collect(Collectors.toSet())));
 	r.addRuleSet(sqlPrs);
     }
 

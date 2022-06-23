@@ -524,11 +524,16 @@ xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype
 
 |soft-typed |property | | |Set to 'true' in order for the property to be encoded in XML with an additional 'name' attribute. Used in the SWE Common Data Model 2.0 encoding rule. |XML Schema target |xref:../targets/xml schema/SWE_Common_Data_Model_2.0_Encoding_Rule.adoc#rule-xsd-prop-soft-typed[rule-xsd-prop-soft-typed]
 
+|sqlDeferred |property, association | | |Defines if a foreign key constraint shall be declared 
+as deferrable. |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Checking_Foreign_Key_Constraints[Checking Foreign Key Constraints]
+
 |sqlEncodingRule |all | | |SQL encoding rule to apply. Default is '*'. |SQL target | 
 
-|sqlOnDelete |property, association | | |Define the foreign key option for the case of a deletion (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Foreign_Key_Constraint_Options[Foreign key constraint options] 
+|sqlInitialConstraintMode |property, association | | |Defines the initial mode of a foreign key constraint. |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Checking_Foreign_Key_Constraints[Checking Foreign Key Constraints]
 
-|sqlOnUpdate |property, association | | |Define the foreign key option for the case of an update (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Foreign_Key_Constraint_Options[Foreign key constraint options] 
+|sqlOnDelete |property, association | | |Define the foreign key referential action for the case of a deletion (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Referential_Actions[Foreign Key Referential Actions] 
+
+|sqlOnUpdate |property, association | | |Define the foreign key referential action for the case of an update (of the record that is referenced by the foreign key). |SQL target |SqlDdl target xref:../targets/SQL_DDL.adoc#Referential_Actions[Foreign Key Referential Actions] 
 
 |sqlSchema |package, association | | |Provides the name of the database schema to be used when encoding the model elements contained in the package, or the association, to database objects (especially tables). |SqlDdl target |xref:../targets/SQL_DDL.adoc#rule-sql-all-schemas[rule-sql-all-schemas] 
 

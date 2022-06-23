@@ -151,6 +151,9 @@ public class SqlConstants {
      */
     public static final String PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
 
+    public static final String PARAM_FOREIGN_KEY_DEFERRABLE = "foreignKeyDeferrable";
+    public static final String PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE = "foreignKeyInitialConstraintMode";
+    
     /**
      * Global definition of the dimension of geometry types, which is used by DBMSs
      * such as SQLite (more specifically, SQLite in combination with the spatial
@@ -684,6 +687,16 @@ public class SqlConstants {
     public static final String TV_NUMERIC_TYPE = "numericType";
 
     public static final String TV_SQLSCHEMA = "sqlSchema";
+    
+    public static final String TV_INITIAL_CONSTRAINT_MODE = "sqlInitialConstraintMode";
+    
+    public static final String TV_DEFERRABLE = "sqlDeferrable";
+    
+    public static final String TV_UNIQUE = "sqlUnique";
+    
+    public static final String TV_ON_UPDATE = "sqlOnUpdate";
+    
+    public static final String TV_ON_DELETE = "sqlOnDelete";
 
     /* -------------------- */
     /* --- other fields --- */
