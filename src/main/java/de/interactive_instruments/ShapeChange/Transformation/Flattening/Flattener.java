@@ -163,6 +163,14 @@ public class Flattener implements Transformer, MessageSource {
 
     public static final String PARAM_GEOMETRY_TYPE_REGEX = "geometryTypeRegex";
     public static final String DEFAULT_GEOMETRY_TYPE_REGEX = "^GM_.*";
+    
+    /**
+	 * Parameter that indicates whether the association is directed FROM the original feature TO the new
+	 * feature type.
+	 * <p>
+	 * Applies to {@value #RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE}.
+	 */
+    public static final String PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE = "directionToNewFeatureType";
 
     /**
      * If this parameter is set to <code>true</code> then execution of
@@ -859,6 +867,9 @@ public class Flattener implements Transformer, MessageSource {
 
 	Pattern geometryTypePattern = trfConfig.parameterAsRegexPattern(PARAM_GEOMETRY_TYPE_REGEX,
 		DEFAULT_GEOMETRY_TYPE_REGEX);
+	boolean associationDirectedToNewFeatureType = trfConfig.parameterAsBoolean(
+			PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE,
+			true);
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
@@ -901,39 +912,56 @@ public class Flattener implements Transformer, MessageSource {
 		// create directed association to new feature type (and register in model)
 		GenericAssociationInfo genAi = new GenericAssociationInfo();
 
-		// copy of genPi at navigable end, same multiplicity, but value type changed to
+		// copy of genPi at new feature type end, same multiplicity, but value type changed to
 		// new feature type
 		GenericPropertyInfo genPiCopy = genPi.createCopy(genPi.id() + "_copyForGeomCi");
 		genPiCopy.setTypeInfo(Type.from(geomCi));
 		genPiCopy.setAttribute(false);
 		genPiCopy.setAssociation(genAi);
+		if (associationDirectedToNewFeatureType) {
+			genPiCopy.setNavigable(true);
+			// add copy of genPi to genCi (and thus also the model)
+			genCi.addProperty(genPiCopy, PropertyCopyDuplicatBehaviorIndicator.ADD);
+		} else {
+			genPiCopy.setNavigable(false);
+			// add copy of genPi to the model
+			genModel.register(genPiCopy);
+		}
+		
+		// update properties of association
 		genAi.setOptions(options);
 		genAi.setResult(result);
 		genAi.setModel(genModel);
 		genAi.setId("association_" + genCi.name() + "_to_" + geomCi.name() + "_for_" + genPiCopy.name());
 		genAi.setEnd2(genPiCopy);
-
+		
 		// remove genPi in model and genCi
 		genModel.remove(genPi, false);
-		// add copy of genPi to genCi (and thus also the model)
-		genCi.addProperty(genPiCopy, PropertyCopyDuplicatBehaviorIndicator.ADD);
 
-		// new non-navigable property at other association end, with name of genCi as
+		// new property at other association end, with name of genCi as
 		// name (first character in lower case), and multiplicity 1
-		GenericPropertyInfo nonNavPi = new GenericPropertyInfo(genModel,
-			geomCi.id() + "_nonNavEnd_for_" + genPi.name(), StringUtils.uncapitalize(genCi.name()));
-		nonNavPi.setCardinality(new Multiplicity(1, 1));
-		nonNavPi.setInClass(geomCi);
+		GenericPropertyInfo reversePi = new GenericPropertyInfo(genModel,
+			geomCi.id() + "_reverseEnd_for_" + genPi.name(), StringUtils.uncapitalize(genCi.name()));
+		reversePi.setCardinality(new Multiplicity(1, 1));
+		reversePi.setInClass(geomCi);
 		StructuredNumber lastGeomCiProp = geomCi.properties().lastKey();
-		StructuredNumber nonNavPiSeqNbr = lastGeomCiProp.createCopy();
-		nonNavPiSeqNbr.components[0] = nonNavPiSeqNbr.components[0] + 1;
-		nonNavPi.setSequenceNumber(nonNavPiSeqNbr, true);
-		nonNavPi.setTypeInfo(Type.from(genCi));
-		nonNavPi.setAttribute(false);
-		nonNavPi.setAssociation(genAi);
-		genAi.setEnd1(nonNavPi);
-		genModel.register(nonNavPi);
-		nonNavPi.setNavigable(false);
+		StructuredNumber reversePiSeqNbr = lastGeomCiProp.createCopy();
+		reversePiSeqNbr.components[0] = reversePiSeqNbr.components[0] + 1;
+		reversePi.setSequenceNumber(reversePiSeqNbr, true);
+		reversePi.setTypeInfo(Type.from(genCi));
+		reversePi.setAttribute(false);
+		reversePi.setAssociation(genAi);
+		genAi.setEnd1(reversePi);
+		
+		if (associationDirectedToNewFeatureType) {
+			reversePi.setNavigable(false);
+			// add reverse of genPi to the model
+			genModel.register(reversePi);
+		} else {
+			reversePi.setNavigable(true);
+			// add reverse of genPi to geomCi (and thus also the model)
+			geomCi.addProperty(reversePi, PropertyCopyDuplicatBehaviorIndicator.ADD);
+		}
 
 		genModel.addAssociation(genAi);
 	    }
