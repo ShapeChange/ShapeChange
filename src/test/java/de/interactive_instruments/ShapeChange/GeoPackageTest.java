@@ -44,6 +44,13 @@ public class GeoPackageTest extends BasicTestSCXML {
 
 	/*
 	 * TODO: implement GeoPackage diff
+	 * 
+	 * Schema diff via https://www.schemacrawler.com/ ?
+	 * https://github.com/schemacrawler/SchemaCrawler/blob/master/schemacrawler-diff/src/test/java/schemacrawler/integration/test/DiffTest.java
+	 * 
+	 * Unclear if schema diff via schemacrawler would be complete
+	 * 
+	 * In addition, we'd need to diff the actual data, too
 	 */
 //	multiTest("src/test/resources/gpkg/basic/test_gpkg_basic.xml", new String[] { "gpkg" },
 //		"testResults/gpkg/basic/results", "src/test/resources/gpkg/basic/reference/results");

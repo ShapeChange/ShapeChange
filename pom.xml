@@ -28,6 +28,11 @@
 		</repository>		
 	</repositories>
 	<dependencies>
+		<!--<dependency>
+			<groupId>us.fatehi</groupId>
+			<artifactId>schemacrawler-diff</artifactId>
+			<version>16.16.18</version>
+		</dependency>-->
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
@@ -211,7 +216,7 @@
 		<dependency>
 			<groupId>mil.nga.geopackage</groupId>
 			<artifactId>geopackage</artifactId>
-			<version>3.5.0</version>
+			<version>6.3.1</version>
 		</dependency>
 	</dependencies>
 	<url>http://shapechange.net/</url>
