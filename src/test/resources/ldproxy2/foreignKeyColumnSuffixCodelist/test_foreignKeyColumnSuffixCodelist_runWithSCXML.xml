@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="SCXML"/>
-		<parameter name="inputFile" value="src/test/resources/ldproxy2/basic/test_ldproxy2.zip"/>
+		<parameter name="inputFile" value="src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.zip"/>
 		<parameter name="appSchemaNameRegex" value="Test.*"/>
-		<parameter name="mainAppSchema" value="Test 1 - Basics"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="disabled"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
-		<parameter name="addTaggedValues" value="*"/>
 		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
 	
 	
@@ -28,13 +26,10 @@
 	<StereotypeAlias alias="property" wellknown=""/>
 	<StereotypeAlias alias="enum" wellknown=""/>
 </stereotypeAliases>
-		<tagAliases>
-			<TagAlias alias="ldpCodeTargetValue" wellknown="lesbarerName"/>
-		</tagAliases>
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO"/>
-		<parameter name="logFile" value="testResults/ldproxy2/basic/log.xml"/>
+		<parameter name="logFile" value="testResults/ldproxy2/foreignKeyColumnSuffixCodelist/log.xml"/>
 	</log>
 	<transformers>
 		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="TRF_1" input="INPUT" mode="enabled">
@@ -61,9 +56,9 @@
 	</transformers>
 	<targets>
 		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" inputs="TRF_END" mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/ldproxy2/basic/results"/>
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/foreignKeyColumnSuffixCodelist/results"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="codeTargetTagName" value="lesbarerName"/>
+
 			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
 			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml"/>
 			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
@@ -73,6 +68,7 @@
 			<targetParameter name="forceAxisOrder" value="NONE"/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl"/>
 			
 			
 			
@@ -91,6 +87,7 @@
 					<rule name="rule-ldp2-all-documentation"/>
 					<rule name="rule-ldp2-all-schemas"/>
 					<rule name="rule-ldp2-cls-codelist-direct"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-cls-identifierStereotype"/>
 					<rule name="rule-ldp2-prop-readOnly"/>
@@ -99,6 +96,7 @@
 					<rule name="rule-ldp2-all-documentation"/>
 					<rule name="rule-ldp2-all-schemas"/>
 					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-cls-identifierStereotype"/>
 					<rule name="rule-ldp2-prop-readOnly"/>
@@ -106,6 +104,7 @@
 				<EncodingRule name="ldpNoCodelistRule">
 					<rule name="rule-ldp2-all-documentation"/>
 					<rule name="rule-ldp2-all-schemas"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-cls-identifierStereotype"/>
 					<rule name="rule-ldp2-prop-readOnly"/>

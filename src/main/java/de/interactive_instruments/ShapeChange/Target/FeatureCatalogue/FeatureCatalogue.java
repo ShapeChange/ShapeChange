@@ -162,7 +162,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * placeholder text belongs to will be replaced with the feature catalogue.
      */
     public static final String DOCX_PLACEHOLDER = "ShapeChangeFeatureCatalogue";
-    public static final String DOCX_TEMPLATE_URL = "http://shapechange.net/resources/templates/template.docx";
+    public static final String DOCX_TEMPLATE_URL = "https://shapechange.net/resources/templates/template.docx";
 
     /**
      * Can be used to only perform the deferrable output write if necessary.
@@ -292,7 +292,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     private static String xsldocxrelsfileName = "docx_rels.xsl";
     private static String xsldocxContentTypesFileName = "docx_contentTypes.xsl";
     private static String xslxmlfileName = "xml.xsl";
-    private static String xsltPath = "http://shapechange.net/resources/xslt";
+    private static String xsltPath = "https://shapechange.net/resources/xslt";
     // private static String xsltPath = "src/main/resources/xslt";
     private static String cssPath = xsltPath;
     private static String lang = "en";
@@ -404,7 +404,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	xslframeHtmlFileName = "frameHtml.xsl";
 	xslhtmlfileName = "html.xsl";
 	xslrtffileName = "rtf.xsl";
-	xsltPath = "http://shapechange.net/resources/xslt";
+	xsltPath = "https://shapechange.net/resources/xslt";
 	xslTransformerFactory = null;
 	xslxmlfileName = "xml.xsl";
 

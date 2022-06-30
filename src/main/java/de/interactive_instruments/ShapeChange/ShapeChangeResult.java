@@ -817,7 +817,8 @@ public class ShapeChangeResult {
 	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
 
-
+	case 6:
+	    return "$1$ encountered. Processing was interrupted unexpectedly.";
 //	case 8:
 //	    return "Exactly one element <XMI.metamodel> expected.";
 	case 9: // used by supertype class

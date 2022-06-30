@@ -454,10 +454,14 @@ fashion, if both the class and the property have a code value. The new
 type is placed into the package that also owns the class.
 . Add a geometry attribute to the new feature type, with multiplicity 1,
 and the same value type as the geometric property.
-. Create a directed association from the class to the new feature type,
-where the navigable role has the same name and multiplicity as the
-geometric property. The non-navigable role has the name of the class
-(uncapitalized), and multiplicity 1.
+. Create an association between the class and the new feature type, 
+where the role at the new feature type end has the same name and 
+multiplicity as the geometric property. The reverse role has the name 
+of the class (uncapitalized), and multiplicity 1. If parameter 
+xref:./Flattener.adoc#directionToNewFeatureType[directionToNewFeatureType] 
+is true (the default), the direction is from the class to the new 
+feature type. If that parameter is false, the direction is from the 
+new feature type to the existing class.
 
 NOTE: This rule can be useful to transform a model where types have
 multiple geometric properties (where one typically is identified as the
@@ -1351,6 +1355,25 @@ case, the existing name is kept for enumeration values).
 Applies to Rule(s)
 
 * rule-trf-all-flatten-name
+
+[[directionToNewFeatureType]]
+==== directionToNewFeatureType
+
+(since v2.13)
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: true
+
+Behavior: Indicates whether the new association is directed from the 
+original feature to the new feature type (true) or the other way round
+ (false).
+
+Applies to Rule(s)
+
+* xref:./Flattener.adoc#rule-trf-cls-non-default-geometry-to-feature-type[rule-trf-cls-non-default-geometry-to-feature-type]
 
 [[descriptorModification_geometryTypeAlias]]
 ==== descriptorModification_geometryTypeAlias

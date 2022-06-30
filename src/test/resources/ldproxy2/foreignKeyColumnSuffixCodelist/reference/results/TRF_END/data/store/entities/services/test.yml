@@ -1,0 +1,49 @@
+---
+id: test
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: label
+description: '...'
+enabled: true
+serviceType: OGC_API
+metadata:
+  keywords:
+  - keyword_A
+  - keyword_B
+  attribution: Your organization, company, or other entity
+api:
+- buildingBlock: COLLECTIONS
+  additionalLinks:
+  - rel: describedby
+    type: application/pdf
+    title: Some PDF with further details
+    href: https://example.org/mypdf
+    hreflang: de
+- buildingBlock: CRS
+  additionalCrs:
+  - code: 4326
+    forceAxisOrder: NONE
+collections:
+  ts2_featuretype1:
+    id: ts2_featuretype1
+    label: ts2_featuretype1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCode1:
+        - codelist: TS2_Codelist1
+        attDt.attCode2:
+        - codelist: TS2_CodeList2
+        attExtCodelist:
+        - codelist: Ext_Codelist
+  ts2_featuretype2:
+    id: ts2_featuretype2
+    label: ts2_featuretype2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCode3:
+        - codelist: TS2_Codelist3

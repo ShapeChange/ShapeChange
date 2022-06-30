@@ -2104,7 +2104,10 @@ Default Value: <the empty string>
 
 Explanation: Suffix to append to the name of columns that contain
 foreign keys (except if it references a table that represents a data
-type).
+type [for that case, see 
+xref:./SQL_DDL.adoc#foreignKeyColumnSuffixDatatype[foreignKeyColumnSuffixDatatype]]
+or a code list [see 
+xref:./SQL_DDL.adoc#foreignKeyColumnSuffixCodelist[foreignKeyColumnSuffixCodelist]]).
 
 NOTE: This parameter does not apply to columns (that contain foreign
 keys) in associative tables. There, the value of parameter
@@ -2875,9 +2878,9 @@ Characteristics:
 * representedCategory:
 ** Applies to database type: all
 ** Description: the value identifies the category of the conceptual type
-that is identified by the map entry. Recognized values are (currently
-there is only one):
+that is identified by the map entry. Recognized values are:
 *** datatype
+*** codelist
 
 [[Configuration_Examples]]
 == Configuration Examples

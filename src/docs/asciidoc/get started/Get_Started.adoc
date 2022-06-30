@@ -55,6 +55,8 @@ If you plan to process Enterprise Architect models, then the steps to do so depe
 
 NOTE: If you are searching for a 32bit JDK, take a look at the JDKs from https://adoptium.net/[Adoptium]. They provide 32bit OpenJDK for Java 8, 11, and later.
 
+NOTE: This step can be skipped if you set system property java.library.path every time you invoke ShapeChange: _java -Djava.library.path="<EA installation folder>\Java API" -jar ShapeChange-{project-version}.jar (options) modelfile_ This can be useful when you cannot copy the aforementioned dll files, e.g. because of missing administrator rights.
+
 The latest version of ShapeChange has been tested with the 64bit OpenJDK 11 from Adoptium (more precisely: its predecessor AdoptOpenJDK).
 
 |5 |If you plan to create
@@ -66,7 +68,7 @@ xref:../targets/Output_Targets.adoc#Apply_XSL_Transformation[XSL transformations
 
 To test the installation, open a shell / DOS box and make the unzipped folder your current directory. Execute
 
-_java -jar ShapeChange-{project-version}.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testXMI.xml_
+_java -Dfile.encoding=UTF-8 -jar ShapeChange-{project-version}.jar -c https://shapechange.net/resources/test/testXMI.xml_
 
 You should now see the following information message:
 
@@ -80,7 +82,7 @@ After the execution is complete, you will find
 
 To test the access to Enterprise Architect models (note that this test requires Enterprise Architect and can be executed only on Windows), execute
 
-_java -jar ShapeChange-{project-version}.jar -Dfile.encoding=UTF-8 -c https://shapechange.net/resources/test/testEA.xml_
+_java -Dfile.encoding=UTF-8 -jar ShapeChange-{project-version}.jar -c https://shapechange.net/resources/test/testEA.xml_
 
 You should see the same results as in the XMI test, except that the results are written into the folder _test/ea_.
 
