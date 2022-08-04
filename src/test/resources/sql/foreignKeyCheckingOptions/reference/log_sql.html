@@ -99,14 +99,14 @@ return true;
         <td>
           <p>Start time:</p>
         </td><td>
-          <p>Wed Jun 22 12:33:23 CEST 2022</p>
+          <p>Fri Jul 29 13:46:25 CEST 2022</p>
         </td>
       </tr>
       <tr>
         <td>
           <p>End time:</p>
         </td><td>
-          <p>Wed Jun 22 12:33:29 CEST 2022</p>
+          <p>Fri Jul 29 13:46:32 CEST 2022</p>
         </td>
       </tr>
       <tr>
@@ -252,46 +252,6 @@ return true;
           <p>Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP</p>
         </td>
       </tr>
-      <tr style="display:table-row" class="Warning">
-        <td>
-          <p>Warning</p>
-        </td><td>
-          <p>A single value was requested for tag 'sequenceNumber', but in addition to returned value '2', an additional value '20' exists and is ignored.</p>
-          <p>
-            <small>Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType2::roleFT2B</small>
-          </p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Warning">
-        <td>
-          <p>Warning</p>
-        </td><td>
-          <p>A single value was requested for tag 'sequenceNumber', but in addition to returned value '1', an additional value '10' exists and is ignored.</p>
-          <p>
-            <small>Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType2::roleFT2A</small>
-          </p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Warning">
-        <td>
-          <p>Warning</p>
-        </td><td>
-          <p>A single value was requested for tag 'sequenceNumber', but in addition to returned value '1', an additional value '10' exists and is ignored.</p>
-          <p>
-            <small>Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType1::roleFT1A</small>
-          </p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Warning">
-        <td>
-          <p>Warning</p>
-        </td><td>
-          <p>A single value was requested for tag 'sequenceNumber', but in addition to returned value '3', an additional value '20' exists and is ignored.</p>
-          <p>
-            <small>Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Test Model::Test Schema::FeatureType1::roleFT1B</small>
-          </p>
-        </td>
-      </tr>
       <tr style="display:table-row" class="Info">
         <td>
           <p>Info</p>
@@ -324,7 +284,42 @@ return true;
         <td>
           <p>Info</p>
         </td><td>
-          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'.</p>
+          <p>---------- Checking for reflexive relationships and cyles in data types ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No reflexive relationships detected.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No cycles found.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFt2ToFt1A') and FeatureType1 (context property 'roleFt1ToFt2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFt1ToFt2'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'att' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_att'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'cl' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_cl'.</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
@@ -360,7 +355,42 @@ return true;
         <td>
           <p>Info</p>
         </td><td>
-          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'.</p>
+          <p>---------- Checking for reflexive relationships and cyles in data types ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No reflexive relationships detected.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No cycles found.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFt2ToFt1A') and FeatureType1 (context property 'roleFt1ToFt2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFt1ToFt2'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'att' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_att'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'cl' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_cl'.</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
@@ -396,35 +426,154 @@ return true;
         <td>
           <p>Info</p>
         </td><td>
-          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'.</p>
+          <p>---------- Checking for reflexive relationships and cyles in data types ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No reflexive relationships detected.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No cycles found.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFt2ToFt1A') and FeatureType1 (context property 'roleFt1ToFt2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFt1ToFt2'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'att' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_att'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'cl' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_cl'.</p>
         </td>
       </tr>
       <tr style="display:table-row" class="Warning">
         <td>
           <p>Warning</p>
         </td><td>
-          <p>Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'</p>
+          <p>Name 'fk_FEATURETYPE1_DT_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_DT_FEATURETYPE'</p>
         </td>
       </tr>
       <tr style="display:table-row" class="Warning">
         <td>
           <p>Warning</p>
         </td><td>
-          <p>Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'</p>
+          <p>Name 'fk_FEATURETYPE1_DT_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_DT_FEATURETYPE'</p>
         </td>
       </tr>
       <tr style="display:table-row" class="Warning">
         <td>
           <p>Warning</p>
         </td><td>
-          <p>Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'</p>
+          <p>Name 'fk_FEATURETYPE1_ROLEFT1TOFT2_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1TOFT2_F'</p>
         </td>
       </tr>
       <tr style="display:table-row" class="Warning">
         <td>
           <p>Warning</p>
         </td><td>
-          <p>Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEAT0'</p>
+          <p>Name 'fk_FEATURETYPE1_ROLEFT1TOFT2_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1TOFT2_F'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE1_ROLEFT1TOFT2_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1TOFT2_F'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE1_ROLEFT1TOFT2_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1TOFT2_0'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_ROLEFT2TOFT1B_FK' is truncated to 'FK_FEATURETYPE2_ROLEFT2TOFT1B_'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_ROLEFT2TOFT1B_FK' for foreign key constraint is truncated to 'FK_FEATURETYPE2_ROLEFT2TOFT1B_'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_ATT_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE2_ATT_FEATURETYP'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_ATT_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE2_ATT_FEATURETYP'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_CL_CODELIST1_ID' is truncated to 'FK_FEATURETYPE2_CL_CODELIST1_I'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_CL_CODELIST1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE2_CL_CODELIST1_I'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_CL_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE2_CL_FEATURETYPE'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_CL_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE2_CL_FEATURETYPE'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_DT_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE2_DT_FEATURETYPE'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Warning">
+        <td>
+          <p>Warning</p>
+        </td><td>
+          <p>Name 'fk_FEATURETYPE2_DT_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE2_DT_FEATURETYPE'</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">
@@ -460,7 +609,42 @@ return true;
         <td>
           <p>Info</p>
         </td><td>
-          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'.</p>
+          <p>---------- Checking for reflexive relationships and cyles in data types ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No reflexive relationships detected.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>--- No cycles found.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent association between FeatureType2 (context property 'roleFt2ToFt1A') and FeatureType1 (context property 'roleFt1ToFt2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFt1ToFt2'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'att' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_att'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Creating associative table to represent attribute 'cl' in class 'FeatureType2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType2_cl'.</p>
         </td>
       </tr>
       <tr style="display:table-row" class="ProcessFlowInfo">

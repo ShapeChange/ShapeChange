@@ -52,4 +52,20 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/foreignKeyColumnSuffixCodelist/results",
 			"src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_associativeTablesWithSeparatePkField() {
+		
+		multiTest("src/test/resources/ldproxy2/associativeTablesWithSeparatePkField/test_associativeTablesWithSeparatePkField.xml",
+			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/associativeTablesWithSeparatePkField/results",
+			"src/test/resources/ldproxy2/associativeTablesWithSeparatePkField/reference/results");
+	}
+	
+	@Test
+	public void test_ldproxy2_reflexiveRelation() {
+		
+		multiTest("src/test/resources/ldproxy2/reflexiveRelation/test_reflexiveRelation.xml",
+			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/reflexiveRelation/results",
+			"src/test/resources/ldproxy2/reflexiveRelation/reference/results");
+	}
 }

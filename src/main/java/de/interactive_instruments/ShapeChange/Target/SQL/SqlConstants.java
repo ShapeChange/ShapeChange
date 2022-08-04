@@ -515,6 +515,8 @@ public class SqlConstants {
      */
     public static final String RULE_TGT_SQL_ALL_ASSOCIATIVETABLES = "rule-sql-all-associativetables";
 
+    public static final String RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-sql-all-associativeTablesWithSeparatePkField";
+    
     /**
      * If this rule is enabled derived properties will be ignored.
      */
@@ -555,6 +557,9 @@ public class SqlConstants {
      * </ul>
      */
     public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
+    
+    public static final String RULE_TGT_SQL_ALL_ENCODE_PK_REFERENCED_COLUMN_IN_FOREIGNKEYS = "rule-sql-all-explicitlyEncodePkReferencedColumnInForeignKeys";
+    
     /**
      * Under this rule, foreign key identifiers are generated as follows:
      * <p>
@@ -687,11 +692,7 @@ public class SqlConstants {
     public static final String TV_NUMERIC_TYPE = "numericType";
 
     public static final String TV_SQLSCHEMA = "sqlSchema";
-    
-    public static final String TV_INITIAL_CONSTRAINT_MODE = "sqlInitialConstraintMode";
-    
-    public static final String TV_DEFERRABLE = "sqlDeferrable";
-    
+        
     public static final String TV_UNIQUE = "sqlUnique";
     
     public static final String TV_ON_UPDATE = "sqlOnUpdate";

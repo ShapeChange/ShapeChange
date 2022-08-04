@@ -91,9 +91,8 @@ public class TaggedValueNormalizer {
      * the list of tagged values specified by the SqlDdl target
      */
     protected static final Set<String> sqlTags = Stream.of("sqlEncodingRule", SqlConstants.TV_ASSOCIATIVETABLE,
-	    SqlConstants.TV_DEFERRABLE, SqlConstants.TV_INITIAL_CONSTRAINT_MODE, SqlConstants.TV_NUMERIC_TYPE,
-	    SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME, SqlConstants.TV_SQLSCHEMA, SqlConstants.TV_ON_DELETE,
-	    SqlConstants.TV_ON_UPDATE, SqlConstants.TV_UNIQUE).collect(Collectors.toSet());
+	    SqlConstants.TV_NUMERIC_TYPE, SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME, SqlConstants.TV_SQLSCHEMA,
+	    SqlConstants.TV_ON_DELETE, SqlConstants.TV_ON_UPDATE, SqlConstants.TV_UNIQUE).collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the Ldproxy2 target

@@ -47,10 +47,18 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
 			<targetParameter name="foreignKeyColumnDatatype" value="bigint" />
 			<targetParameter name="dbOwner" value="public" />
-			<targetParameter name="foreignKeyInitialConstraintMode" value="immediate" />
+			
+			<!-- Since foreignKeyDeferrable=false, foreignKeyInitialConstraintMode won't have any effect -->
+			<targetParameter name="foreignKeyDeferrable" value="false"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
-					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -69,9 +77,18 @@
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
 			<targetParameter name="dbOwner" value="dbo" />
+			
+			<!-- WITHOUT EFFECT SINCE SQL SERVER DOES NOT SUPPORT THIS -->
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
-					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -92,10 +109,17 @@
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
 			<targetParameter name="dbOwner" value="dbo" />
-			<targetParameter name="foreignKeyInitialConstraintMode" value="immediate" />
+			
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="immediate"/>
+			
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
-					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -112,10 +136,17 @@
 			<targetParameter name="srid" value="4979" />
 			<targetParameter name="createReferences" value="true" />
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
-<!-- 			<targetParameter name="dbOwner" value="public" /> -->
+			
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
-					<rule name="rule-sql-all-associativetables" />
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include

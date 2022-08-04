@@ -84,6 +84,12 @@ public class ForeignKeyConstraint extends SqlConstraint {
     }
 
     private Table referenceTable = null;
+
+    /**
+     * Represents referenced columns, i.e. the relevant columns from the referenced
+     * table. If no value is present, that means that the primary key column of the
+     * referenced table is referenced.
+     */
     private List<Column> referenceColumns = new ArrayList<Column>();
 
     private ReferentialAction onDelete = null;
@@ -124,12 +130,21 @@ public class ForeignKeyConstraint extends SqlConstraint {
     }
 
     /**
-     * @param referenceColumns the referenceColumns to set
+     * 
+     * @param referenceColumns a list of referenced columns for this foreign key
+     *                         constraint, i.e. the relevant columns from the
+     *                         referenced table. If no value is present, that means
+     *                         that the primary key column of the referenced table
+     *                         is referenced.
      */
     public void setReferenceColumns(List<Column> referenceColumns) {
 	this.referenceColumns = referenceColumns;
     }
 
+    /**
+     * @param refColumn a 'referenced column' that shall be added to the definition
+     *                  of this foreign key constraint
+     */
     public void addReferenceColumn(Column refColumn) {
 	this.referenceColumns.add(refColumn);
     }
@@ -152,7 +167,7 @@ public class ForeignKeyConstraint extends SqlConstraint {
     public boolean hasOnUpdate() {
 	return onUpdate != null;
     }
-    
+
     /**
      * @return the referential action for ON UPDATE; can be <code>null</code>
      */
@@ -171,11 +186,11 @@ public class ForeignKeyConstraint extends SqlConstraint {
     public boolean hasDeferrable() {
 	return deferrable != null;
     }
-    
+
     public void setDeferrable(Boolean isDeferrable) {
 	this.deferrable = isDeferrable;
     }
-    
+
     public Boolean getImmediate() {
 	return immediate;
     }
@@ -183,7 +198,7 @@ public class ForeignKeyConstraint extends SqlConstraint {
     public boolean hasImmediate() {
 	return immediate != null;
     }
-        
+
     public void setImmediate(Boolean isImmediate) {
 	this.immediate = isImmediate;
     }
@@ -195,18 +210,18 @@ public class ForeignKeyConstraint extends SqlConstraint {
 		+ SqlUtil.getStringList(this.getColumns(), true, true) + " REFERENCES "
 		+ this.referenceTable.getFullName()
 		+ ((this.referenceColumns != null && !this.referenceColumns.isEmpty())
-			? SqlUtil.getStringList(referenceColumns, true, true)
+			? " " + SqlUtil.getStringList(referenceColumns, true, true)
 			: "")
 		+ (onDelete != null ? " ON DELETE " + onDelete.toString() : "")
 		+ (onUpdate != null ? " ON UPDATE " + onUpdate.toString() : "");
 
 	if (hasDeferrable()) {
-	    	    
-	    if(getDeferrable()) {
+
+	    if (getDeferrable()) {
 		s += " DEFERRABLE";
-		if(hasImmediate()) {
+		if (hasImmediate()) {
 		    s += " INITIALLY";
-		    if(getImmediate()) {
+		    if (getImmediate()) {
 			s += " IMMEDIATE";
 		    } else {
 			s += " DEFERRED";
@@ -216,7 +231,7 @@ public class ForeignKeyConstraint extends SqlConstraint {
 		s += " NOT DEFERRABLE";
 	    }
 	}
-	
+
 	return s;
     }
 }

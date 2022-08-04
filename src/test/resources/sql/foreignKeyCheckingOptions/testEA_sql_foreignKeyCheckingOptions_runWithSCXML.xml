@@ -53,10 +53,18 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
 			<targetParameter name="dbOwner" value="public"/>
-			<targetParameter name="foreignKeyInitialConstraintMode" value="immediate"/>
+			
+			
+			<targetParameter name="foreignKeyDeferrable" value="false"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule extends="sql" name="customRule">
 					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -100,9 +108,18 @@
 			<targetParameter name="createReferences" value="true"/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="dbOwner" value="dbo"/>
+			
+			
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule extends="sql" name="customRule">
 					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -150,10 +167,17 @@
 			<targetParameter name="createReferences" value="true"/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="dbOwner" value="dbo"/>
+			
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
 			<targetParameter name="foreignKeyInitialConstraintMode" value="immediate"/>
+			
 			<rules>
 				<EncodingRule extends="sql" name="customRule">
 					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
@@ -200,10 +224,17 @@
 			<targetParameter name="srid" value="4979"/>
 			<targetParameter name="createReferences" value="true"/>
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
-
+			
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			
 			<rules>
 				<EncodingRule extends="sql" name="customRule">
 					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">

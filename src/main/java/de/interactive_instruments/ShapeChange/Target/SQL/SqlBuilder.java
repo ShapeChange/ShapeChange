@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
@@ -182,7 +184,7 @@ public class SqlBuilder implements MessageSource {
 	table.setRepresentedProperty(pi);
 	// TBD: set table documentation?
 
-	List<Column> columns = new ArrayList<Column>();
+	LinkedList<Column> columns = new LinkedList<Column>();
 	table.setColumns(columns);
 
 	/*
@@ -254,7 +256,7 @@ public class SqlBuilder implements MessageSource {
 
 	columns.add(cdPi);
 
-	boolean createPrimaryKeyConstraint = true;
+	boolean createCombinedPrimaryKeyConstraint = true;
 
 	if (pi.matches(SqlConstants.RULE_TGT_SQL_PROP_MULT_ORDER_AND_UNIQUENESS)) {
 
@@ -270,11 +272,8 @@ public class SqlBuilder implements MessageSource {
 		if (pi.isUnique()) {
 
 		    // {ordered}
-		    List<Column> columnsForUniqueConstraint = new ArrayList<>();
-		    columnsForUniqueConstraint.add(cdInClassReference);
-		    columnsForUniqueConstraint.add(cdPi);
-		    UniqueConstraint uc = new UniqueConstraint(null, columnsForUniqueConstraint);
-		    table.addConstraint(uc);
+		    // add constraint to ensure unique values per object
+		    addUniqueConstraint(table, null, List.of(cdInClassReference, cdPi));
 
 		} else {
 
@@ -286,6 +285,15 @@ public class SqlBuilder implements MessageSource {
 
 		}
 
+		if (SqlDdl.associativeTablesWithSeparatePkField) {
+		    /*
+		     * Then we do not have a combined primary key that ensures unique sequence
+		     * numbers per object/value combination. Create another unique constraint
+		     * instead.
+		     */
+		    addUniqueConstraint(table, null, List.copyOf(columns));
+		}
+
 	    } else {
 
 		// non ordered
@@ -293,13 +301,21 @@ public class SqlBuilder implements MessageSource {
 		if (pi.isUnique()) {
 
 		    /*
-		     * set semantics - UML default, nothing specific to add here
+		     * set semantics - UML default
 		     */
+
+		    if (SqlDdl.associativeTablesWithSeparatePkField) {
+			/*
+			 * Then we do not have a combined primary key that ensures unique object/value
+			 * combinations. Create another unique constraint instead.
+			 */
+			addUniqueConstraint(table, null, List.copyOf(columns));
+		    }
 
 		} else {
 
 		    // {bag}
-		    createPrimaryKeyConstraint = false;
+		    createCombinedPrimaryKeyConstraint = false;
 
 		    // create simple index
 		    Index index = new Index("idx_" + table.getFullName());
@@ -315,13 +331,33 @@ public class SqlBuilder implements MessageSource {
 	    }
 	}
 
-	if (createPrimaryKeyConstraint) {
+	if (SqlDdl.associativeTablesWithSeparatePkField) {
+
+	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName + SqlDdl.identifierColumnSuffix,
+		    SqlDdl.databaseStrategy.primaryKeyDataType(), SqlDdl.primaryKeySpec, true, false);
+	    columns.addFirst(id_cd);
+	    id_cd.setObjectIdentifierColumn(true);
+
+	} else if (createCombinedPrimaryKeyConstraint) {
+
 	    PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
 	    pkc.setColumns(columns);
 	    table.addConstraint(pkc);
 	}
 
 	return table;
+    }
+
+    /**
+     * @param tableToAddTheConstraint    must not be <code>null</code>
+     * @param constraintName             can be <code>null</code>
+     * @param columnsForUniqueConstraint must not be <code>null</code> or empty
+     */
+    private void addUniqueConstraint(Table tableToAddTheConstraint, String constraintName,
+	    List<Column> columnsForUniqueConstraint) {
+
+	UniqueConstraint uc = new UniqueConstraint(null, columnsForUniqueConstraint);
+	tableToAddTheConstraint.addConstraint(uc);
     }
 
     private String determineForeignKeyColumnSuffix(PropertyInfo pi) {
@@ -692,14 +728,11 @@ public class SqlBuilder implements MessageSource {
 	    if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
 
 		// choose name based on alphabetical order
-		if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+		// take into account the case of a reflexive association
+		String tableNameEnd1 = tableNameEnd1InClass + "_" + ai.end1().name();
+		String tableNameEnd2 = tableNameEnd2InClass + "_" + ai.end2().name();
 
-		    tableName = tableNameEnd1InClass + "_" + ai.end1().name();
-
-		} else {
-
-		    tableName = tableNameEnd2InClass + "_" + ai.end2().name();
-		}
+		tableName = tableNameEnd1.compareTo(tableNameEnd2) <= 0 ? tableNameEnd1 : tableNameEnd2;
 
 	    } else if (ai.end1().isNavigable()) {
 
@@ -750,7 +783,7 @@ public class SqlBuilder implements MessageSource {
 	table.setRepresentedAssociation(ai);
 	// TBD: set table documentation?
 
-	List<Column> columns = new ArrayList<Column>();
+	LinkedList<Column> columns = new LinkedList<Column>();
 	table.setColumns(columns);
 
 	/*
@@ -795,9 +828,24 @@ public class SqlBuilder implements MessageSource {
 	cd2.setReferencedTable(map(pi2.inClass()));
 	columns.add(cd2);
 
-	PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
-	pkc.setColumns(columns);
-	table.addConstraint(pkc);
+	if (SqlDdl.associativeTablesWithSeparatePkField) {
+
+	    Column id_cd = createColumn(table, null, null, SqlDdl.idColumnName + SqlDdl.identifierColumnSuffix,
+		    SqlDdl.databaseStrategy.primaryKeyDataType(), SqlDdl.primaryKeySpec, true, false);
+	    columns.addFirst(id_cd);
+	    id_cd.setObjectIdentifierColumn(true);
+
+	    /*
+	     * TBD - for now, we do not create a unique constraint to ensure unique object
+	     * combinations
+	     */
+
+	} else {
+
+	    PrimaryKeyConstraint pkc = new PrimaryKeyConstraint();
+	    pkc.setColumns(columns);
+	    table.addConstraint(pkc);
+	}
 
 	return table;
     }
@@ -3063,8 +3111,18 @@ public class SqlBuilder implements MessageSource {
 
 	fkc.addColumn(column);
 
-	// set foreign key options if relevant
+	if (SqlDdl.explicitlyEncodePkReferenceColumnInForeignKeys) {
+	    fkc.setReferenceColumns(referenceTable.getColumns().stream().filter(c -> c.isPrimaryKeyColumn())
+		    .collect(Collectors.toList()));
+	}
+
 	PropertyInfo representedPi = column.getRepresentedProperty();
+
+	/*
+	 * TODO - For some foreign key columns, the representedProperty is not set (e.g.
+	 * the back-reference in a table that represents a datatype). Review if that
+	 * should be revised (essentially in all associative tables).
+	 */
 	if (representedPi != null) {
 
 	    Info relevantInfoReferentialAction = representedPi;
@@ -3091,73 +3149,9 @@ public class SqlBuilder implements MessageSource {
 	    setForeignKeyReferentialAction(true, tvOnDelete, fkc, column, relevantInfoReferentialAction);
 	    setForeignKeyReferentialAction(false, tvOnUpdate, fkc, column, relevantInfoReferentialAction);
 
-	    /*
-	     * === checking options ===
-	     */
-
-	    Info relevantInfoDeferrable = representedPi;
-	    Info relevantInfoInitialConstraintMode = representedPi;
-
-	    Boolean deferrable = null;
-	    Boolean immediate = null;
-
-	    // first check tagged values on the property itself
-	    String tvDeferrable = relevantInfoDeferrable.taggedValue(SqlConstants.TV_DEFERRABLE);
-	    String tvInitialConstraintMode = relevantInfoInitialConstraintMode
-		    .taggedValue(SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
-
-	    /*
-	     * if the property is an association role and does not define a checking
-	     * options, check if the association does so
-	     */
-
-	    if (!representedPi.isAttribute() && StringUtils.isBlank(tvDeferrable)) {
-		relevantInfoDeferrable = representedPi.association();
-		tvDeferrable = relevantInfoDeferrable.taggedValue(SqlConstants.TV_DEFERRABLE);
-	    }
-	    if (!representedPi.isAttribute() && StringUtils.isBlank(tvInitialConstraintMode)) {
-		relevantInfoInitialConstraintMode = representedPi.association();
-		tvInitialConstraintMode = relevantInfoInitialConstraintMode
-			.taggedValue(SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
-	    }
-
-	    /*
-	     * If no TV is set for a checking option, use the global configuration value (if
-	     * available).
-	     */
-
-	    if (StringUtils.isBlank(tvDeferrable)) {
-		deferrable = SqlDdl.foreignKeyDeferrable;
-	    } else {
-		if (!tvDeferrable.trim().matches("(?i)(true|false)")) {
-		    MessageContext mc = result.addError(this, 41, tvDeferrable.trim(), "deferrable",
-			    SqlConstants.TV_DEFERRABLE);
-		    if (relevantInfoDeferrable != null && mc != null) {
-			mc.addDetail(this, 102, column.getInTable().getFullName(), column.getName());
-			mc.addDetail(this, 42, relevantInfoDeferrable.fullNameInSchema());
-		    }
-		} else {
-		    deferrable = Boolean.parseBoolean(tvDeferrable.trim());
-		}
-	    }
-
-	    if (StringUtils.isBlank(tvInitialConstraintMode)) {
-		immediate = SqlDdl.foreignKeyImmediate;
-	    } else {
-		if (!tvInitialConstraintMode.trim().matches("(?i)(immediate|deferred)")) {
-		    MessageContext mc = result.addError(this, 41, tvInitialConstraintMode.trim(),
-			    "initial constraint mode", SqlConstants.TV_INITIAL_CONSTRAINT_MODE);
-		    if (relevantInfoDeferrable != null && mc != null) {
-			mc.addDetail(this, 102, column.getInTable().getFullName(), column.getName());
-			mc.addDetail(this, 42, relevantInfoInitialConstraintMode.fullNameInSchema());
-		    }
-		} else {
-		    immediate = tvInitialConstraintMode.trim().equalsIgnoreCase("immediate");
-		}
-	    }
-
-	    setForeignKeyCheckingOptions(deferrable,immediate,fkc);
 	}
+
+	setForeignKeyCheckingOptions(SqlDdl.foreignKeyDeferrable, SqlDdl.foreignKeyImmediate, fkc);
 
 	return alter;
     }
@@ -3404,10 +3398,6 @@ public class SqlBuilder implements MessageSource {
 	    return "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
 		    + SqlConstants.TV_ASSOCIATIVETABLE
 		    + "' is ignored on this attribute, because a usage specific table must be created, which leads to table name: '$4$'.";
-	case 41:
-	    return "Value '$1$' for foreign key constraint checking option '$2$' defined by tag '$3$' is unknown. The checking option is ignored.";
-	case 42:
-	    return "Model element that defines the checking option: '$1$'";
 
 	case 100:
 	    return "Context: property '$1$'.";
