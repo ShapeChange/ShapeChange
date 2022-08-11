@@ -213,6 +213,81 @@
               </restriction>
             </simpleType>
           </element>
+          <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="note_1.memorandum" type="string"/>
+          <element minOccurs="0" name="note_2.memorandum" type="string"/>
+          <element minOccurs="0" name="resourceConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="place.legalConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="place.note_1.memorandum" type="string"/>
+          <element minOccurs="0" name="place.note_2.memorandum" type="string"/>
+          <element minOccurs="0" name="place.resourceConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="place" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time_1.note_1.memorandum" type="string"/>
+          <element minOccurs="0" name="time_1.note_2.memorandum" type="string"/>
+          <element minOccurs="0" name="time_1.resourceConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time_2.note_1.memorandum" type="string"/>
+          <element minOccurs="0" name="time_2.note_2.memorandum" type="string"/>
+          <element minOccurs="0" name="time_2.resourceConstraints" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeOfficialName">
             <simpleType>
@@ -318,81 +393,6 @@
                 <enumeration value="activeJointCivMilHeli"/>
               </restriction>
             </simpleType>
-          </element>
-          <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="note_1.memorandum" type="string"/>
-          <element minOccurs="0" name="note_2.memorandum" type="string"/>
-          <element minOccurs="0" name="resourceConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="place.legalConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="place.note_1.memorandum" type="string"/>
-          <element minOccurs="0" name="place.note_2.memorandum" type="string"/>
-          <element minOccurs="0" name="place.resourceConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="place" type="gml:CurvePropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="time_1.note_1.memorandum" type="string"/>
-          <element minOccurs="0" name="time_1.note_2.memorandum" type="string"/>
-          <element minOccurs="0" name="time_1.resourceConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:LegalConstraints</targetElement>
-              </appinfo>
-            </annotation>
-          </element>
-          <element minOccurs="0" name="time_2.note_1.memorandum" type="string"/>
-          <element minOccurs="0" name="time_2.note_2.memorandum" type="string"/>
-          <element minOccurs="0" name="time_2.resourceConstraints" type="gml:ReferenceType">
-            <annotation>
-              <appinfo>
-                <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
-              </appinfo>
-            </annotation>
           </element>
         </sequence>
       </extension>
@@ -413,112 +413,6 @@
               </restriction>
             </simpleType>
           </element>
-          <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
-          <element minOccurs="0" name="aerodromeOfficialName">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="80"/>
-              </restriction>
-            </simpleType>
-          </element>
-          <element minOccurs="0" name="airfieldType">
-            <complexType>
-              <simpleContent>
-                <restriction base="gml:CodeType">
-                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/AirfieldType" name="codeSpace" type="anyURI"/>
-                </restriction>
-              </simpleContent>
-            </complexType>
-          </element>
-          <element minOccurs="0" name="area" type="gml:MeasureType"/>
-          <element minOccurs="0" name="facilityOperationalStatus">
-            <simpleType>
-              <restriction base="string">
-                <enumeration value="nonOperational"/>
-                <enumeration value="planned"/>
-                <enumeration value="notInOperation"/>
-                <enumeration value="temporarilyNonOperational"/>
-                <enumeration value="operational"/>
-                <enumeration value="partiallyOperational"/>
-              </restriction>
-            </simpleType>
-          </element>
-          <element minOccurs="0" name="highestElevation_1.value" type="gml:MeasureType"/>
-          <element minOccurs="0" name="highestElevation_1.verticalDatum">
-            <complexType>
-              <simpleContent>
-                <restriction base="gml:CodeType">
-                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/VerticalDatum" name="codeSpace" type="anyURI"/>
-                </restriction>
-              </simpleContent>
-            </complexType>
-          </element>
-          <element minOccurs="0" name="highestElevation_1.absoluteVertAccuracy90" type="gml:MeasureType"/>
-          <element minOccurs="0" name="highestElevation_2.value" type="gml:MeasureType"/>
-          <element minOccurs="0" name="highestElevation_2.verticalDatum">
-            <complexType>
-              <simpleContent>
-                <restriction base="gml:CodeType">
-                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/VerticalDatum" name="codeSpace" type="anyURI"/>
-                </restriction>
-              </simpleContent>
-            </complexType>
-          </element>
-          <element minOccurs="0" name="highestElevation_2.absoluteVertAccuracy90" type="gml:MeasureType"/>
-          <element minOccurs="0" name="icaoLocationIndicator">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="4"/>
-              </restriction>
-            </simpleType>
-          </element>
-          <element minOccurs="0" name="installationOperator" type="string"/>
-          <element minOccurs="0" name="length.lowerValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="length.upperValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="length.intervalClosureType">
-            <simpleType>
-              <restriction base="string">
-                <enumeration value="openInterval"/>
-                <enumeration value="gteToLtInterval"/>
-                <enumeration value="gtToLteInterval"/>
-                <enumeration value="closedInterval"/>
-                <enumeration value="gtSemiInterval"/>
-                <enumeration value="gteSemiInterval"/>
-                <enumeration value="ltSemiInterval"/>
-                <enumeration value="lteSemiInterval"/>
-              </restriction>
-            </simpleType>
-          </element>
-          <element minOccurs="0" name="magneticVariation" type="gml:MeasureType"/>
-          <element minOccurs="0" name="portOfEntry" type="boolean"/>
-          <element minOccurs="0" name="width.lowerValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="width.upperValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="width.intervalClosureType">
-            <simpleType>
-              <restriction base="string">
-                <enumeration value="openInterval"/>
-                <enumeration value="gteToLtInterval"/>
-                <enumeration value="gtToLteInterval"/>
-                <enumeration value="closedInterval"/>
-                <enumeration value="gtSemiInterval"/>
-                <enumeration value="gteSemiInterval"/>
-                <enumeration value="ltSemiInterval"/>
-                <enumeration value="lteSemiInterval"/>
-              </restriction>
-            </simpleType>
-          </element>
-          <element minOccurs="0" name="airfieldSymbolType">
-            <simpleType>
-              <restriction base="string">
-                <enumeration value="activeMilitaryHeliport"/>
-                <enumeration value="activeCivilHeliport"/>
-                <enumeration value="activeMilHeliLessMinFac"/>
-                <enumeration value="activeCivHeliLessMinFac"/>
-                <enumeration value="decoy"/>
-                <enumeration value="activeJointCivMilHeli"/>
-              </restriction>
-            </simpleType>
-          </element>
           <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -552,11 +446,6 @@
             </annotation>
           </element>
           <element minOccurs="0" name="place" type="gml:PointPropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -573,11 +462,11 @@
               </appinfo>
             </annotation>
           </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -594,25 +483,11 @@
               </appinfo>
             </annotation>
           </element>
-        </sequence>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="Heliport_S" substitutionGroup="gml:AbstractFeature" type="t:Heliport_SType"/>
-  <complexType name="Heliport_SType">
-    <complexContent>
-      <extension base="gml:AbstractFeatureType">
-        <sequence>
-          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
-          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
-          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
-          <element name="uniqueEntityIdentifier">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="254"/>
-              </restriction>
-            </simpleType>
-          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeOfficialName">
             <simpleType>
@@ -716,6 +591,25 @@
                 <enumeration value="activeCivHeliLessMinFac"/>
                 <enumeration value="decoy"/>
                 <enumeration value="activeJointCivMilHeli"/>
+              </restriction>
+            </simpleType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Heliport_S" substitutionGroup="gml:AbstractFeature" type="t:Heliport_SType"/>
+  <complexType name="Heliport_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
+          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
+          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
+          <element name="uniqueEntityIdentifier">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="254"/>
               </restriction>
             </simpleType>
           </element>
@@ -752,11 +646,6 @@
             </annotation>
           </element>
           <element minOccurs="0" name="place" type="gml:SurfacePropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -773,11 +662,11 @@
               </appinfo>
             </annotation>
           </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -794,25 +683,11 @@
               </appinfo>
             </annotation>
           </element>
-        </sequence>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="LandAerodrome_C" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_CType"/>
-  <complexType name="LandAerodrome_CType">
-    <complexContent>
-      <extension base="gml:AbstractFeatureType">
-        <sequence>
-          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
-          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
-          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
-          <element name="uniqueEntityIdentifier">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="254"/>
-              </restriction>
-            </simpleType>
-          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeOfficialName">
             <simpleType>
@@ -910,34 +785,33 @@
           <element minOccurs="0" name="airfieldSymbolType">
             <simpleType>
               <restriction base="string">
-                <enumeration value="activeCivilian"/>
-                <enumeration value="activeJointCivMil"/>
-                <enumeration value="activeMilitary"/>
-                <enumeration value="activeLessMinFac"/>
-                <enumeration value="abandonedClosedNotUsable"/>
-                <enumeration value="highwayStrip"/>
-                <enumeration value="unusableLandingOrTakeOff"/>
+                <enumeration value="activeMilitaryHeliport"/>
+                <enumeration value="activeCivilHeliport"/>
+                <enumeration value="activeMilHeliLessMinFac"/>
+                <enumeration value="activeCivHeliLessMinFac"/>
                 <enumeration value="decoy"/>
+                <enumeration value="activeJointCivMilHeli"/>
               </restriction>
             </simpleType>
           </element>
-          <element minOccurs="0" name="airfieldUse_1">
-            <complexType>
-              <simpleContent>
-                <restriction base="gml:CodeType">
-                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/LandAerodromeAirfieldUse" name="codeSpace" type="anyURI"/>
-                </restriction>
-              </simpleContent>
-            </complexType>
-          </element>
-          <element minOccurs="0" name="airfieldUse_2">
-            <complexType>
-              <simpleContent>
-                <restriction base="gml:CodeType">
-                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/LandAerodromeAirfieldUse" name="codeSpace" type="anyURI"/>
-                </restriction>
-              </simpleContent>
-            </complexType>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="LandAerodrome_C" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_CType"/>
+  <complexType name="LandAerodrome_CType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
+          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
+          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
+          <element name="uniqueEntityIdentifier">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="254"/>
+              </restriction>
+            </simpleType>
           </element>
           <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
             <annotation>
@@ -972,11 +846,6 @@
             </annotation>
           </element>
           <element minOccurs="0" name="place" type="gml:CurvePropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -993,11 +862,11 @@
               </appinfo>
             </annotation>
           </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1014,25 +883,11 @@
               </appinfo>
             </annotation>
           </element>
-        </sequence>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="LandAerodrome_P" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_PType"/>
-  <complexType name="LandAerodrome_PType">
-    <complexContent>
-      <extension base="gml:AbstractFeatureType">
-        <sequence>
-          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
-          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
-          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
-          <element name="uniqueEntityIdentifier">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="254"/>
-              </restriction>
-            </simpleType>
-          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeOfficialName">
             <simpleType>
@@ -1158,6 +1013,25 @@
                 </restriction>
               </simpleContent>
             </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="LandAerodrome_P" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_PType"/>
+  <complexType name="LandAerodrome_PType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
+          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
+          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
+          <element name="uniqueEntityIdentifier">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="254"/>
+              </restriction>
+            </simpleType>
           </element>
           <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
             <annotation>
@@ -1192,11 +1066,6 @@
             </annotation>
           </element>
           <element minOccurs="0" name="place" type="gml:PointPropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1213,11 +1082,11 @@
               </appinfo>
             </annotation>
           </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1234,25 +1103,11 @@
               </appinfo>
             </annotation>
           </element>
-        </sequence>
-      </extension>
-    </complexContent>
-  </complexType>
-  <element name="LandAerodrome_S" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_SType"/>
-  <complexType name="LandAerodrome_SType">
-    <complexContent>
-      <extension base="gml:AbstractFeatureType">
-        <sequence>
-          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
-          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
-          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
-          <element name="uniqueEntityIdentifier">
-            <simpleType>
-              <restriction base="string">
-                <maxLength value="254"/>
-              </restriction>
-            </simpleType>
-          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
           <element minOccurs="0" name="aerodromeOfficialName">
             <simpleType>
@@ -1379,6 +1234,25 @@
               </simpleContent>
             </complexType>
           </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="LandAerodrome_S" substitutionGroup="gml:AbstractFeature" type="t:LandAerodrome_SType"/>
+  <complexType name="LandAerodrome_SType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element minOccurs="0" name="externalEntityIdentifier_1" type="string"/>
+          <element minOccurs="0" name="externalEntityIdentifier_2" type="string"/>
+          <element minOccurs="0" name="specifiedDomainValues" type="string"/>
+          <element name="uniqueEntityIdentifier">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="254"/>
+              </restriction>
+            </simpleType>
+          </element>
           <element minOccurs="0" name="legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1412,11 +1286,6 @@
             </annotation>
           </element>
           <element minOccurs="0" name="place" type="gml:SurfacePropertyType"/>
-          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_1.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1433,11 +1302,11 @@
               </appinfo>
             </annotation>
           </element>
-          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
-          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_1.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
           <element minOccurs="0" name="time_2.legalConstraints" type="gml:ReferenceType">
             <annotation>
               <appinfo>
@@ -1453,6 +1322,137 @@
                 <targetElement xmlns="http://www.opengis.net/gml/3.2">t:ResourceConstraints</targetElement>
               </appinfo>
             </annotation>
+          </element>
+          <element minOccurs="0" name="time_2.timeDescription" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_1.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureIdentifier" type="string"/>
+          <element minOccurs="0" name="time_2.timeEvaluationQuality_2.qualityMeasureValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="aerodromeElevation" type="gml:MeasureType"/>
+          <element minOccurs="0" name="aerodromeOfficialName">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="80"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="airfieldType">
+            <complexType>
+              <simpleContent>
+                <restriction base="gml:CodeType">
+                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/AirfieldType" name="codeSpace" type="anyURI"/>
+                </restriction>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="area" type="gml:MeasureType"/>
+          <element minOccurs="0" name="facilityOperationalStatus">
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="nonOperational"/>
+                <enumeration value="planned"/>
+                <enumeration value="notInOperation"/>
+                <enumeration value="temporarilyNonOperational"/>
+                <enumeration value="operational"/>
+                <enumeration value="partiallyOperational"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="highestElevation_1.value" type="gml:MeasureType"/>
+          <element minOccurs="0" name="highestElevation_1.verticalDatum">
+            <complexType>
+              <simpleContent>
+                <restriction base="gml:CodeType">
+                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/VerticalDatum" name="codeSpace" type="anyURI"/>
+                </restriction>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="highestElevation_1.absoluteVertAccuracy90" type="gml:MeasureType"/>
+          <element minOccurs="0" name="highestElevation_2.value" type="gml:MeasureType"/>
+          <element minOccurs="0" name="highestElevation_2.verticalDatum">
+            <complexType>
+              <simpleContent>
+                <restriction base="gml:CodeType">
+                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/VerticalDatum" name="codeSpace" type="anyURI"/>
+                </restriction>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="highestElevation_2.absoluteVertAccuracy90" type="gml:MeasureType"/>
+          <element minOccurs="0" name="icaoLocationIndicator">
+            <simpleType>
+              <restriction base="string">
+                <maxLength value="4"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="installationOperator" type="string"/>
+          <element minOccurs="0" name="length.lowerValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="length.upperValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="length.intervalClosureType">
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="openInterval"/>
+                <enumeration value="gteToLtInterval"/>
+                <enumeration value="gtToLteInterval"/>
+                <enumeration value="closedInterval"/>
+                <enumeration value="gtSemiInterval"/>
+                <enumeration value="gteSemiInterval"/>
+                <enumeration value="ltSemiInterval"/>
+                <enumeration value="lteSemiInterval"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="magneticVariation" type="gml:MeasureType"/>
+          <element minOccurs="0" name="portOfEntry" type="boolean"/>
+          <element minOccurs="0" name="width.lowerValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="width.upperValue" type="gml:MeasureType"/>
+          <element minOccurs="0" name="width.intervalClosureType">
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="openInterval"/>
+                <enumeration value="gteToLtInterval"/>
+                <enumeration value="gtToLteInterval"/>
+                <enumeration value="closedInterval"/>
+                <enumeration value="gtSemiInterval"/>
+                <enumeration value="gteSemiInterval"/>
+                <enumeration value="ltSemiInterval"/>
+                <enumeration value="lteSemiInterval"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="airfieldSymbolType">
+            <simpleType>
+              <restriction base="string">
+                <enumeration value="activeCivilian"/>
+                <enumeration value="activeJointCivMil"/>
+                <enumeration value="activeMilitary"/>
+                <enumeration value="activeLessMinFac"/>
+                <enumeration value="abandonedClosedNotUsable"/>
+                <enumeration value="highwayStrip"/>
+                <enumeration value="unusableLandingOrTakeOff"/>
+                <enumeration value="decoy"/>
+              </restriction>
+            </simpleType>
+          </element>
+          <element minOccurs="0" name="airfieldUse_1">
+            <complexType>
+              <simpleContent>
+                <restriction base="gml:CodeType">
+                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/LandAerodromeAirfieldUse" name="codeSpace" type="anyURI"/>
+                </restriction>
+              </simpleContent>
+            </complexType>
+          </element>
+          <element minOccurs="0" name="airfieldUse_2">
+            <complexType>
+              <simpleContent>
+                <restriction base="gml:CodeType">
+                  <attribute fixed="http://api.nsgreg.nga.mil/codelist/LandAerodromeAirfieldUse" name="codeSpace" type="anyURI"/>
+                </restriction>
+              </simpleContent>
+            </complexType>
           </element>
         </sequence>
       </extension>

@@ -212,7 +212,8 @@ At first, the Flattener identifies all supertypes contained in the
 application schema(s) selected for processing.
 
 NOTE: The selection can be influenced via the parameter
-flattenInheritanceIncludeRegex. Only those supertypes where the name of
+xref:./Flattener.adoc#flattenInheritanceIncludeRegex[flattenInheritanceIncludeRegex]. 
+Only those supertypes where the name of
 the supertype itself or of one of its own supertypes (in the complete
 supertype hierarchy - but only searching within schema(s) selected for
 processing) matches the regular expression provided by this parameter
@@ -235,8 +236,8 @@ A union class is created for each of the selected supertypes (in the
 package of that supertype). It represents a choice between the supertype
 and its direct and indirect subtypes. Abstract types as well as mixins
 are ignored, though - resulting in a choice between instantiable types.
-The value type of each property whose value type is one of the selected
-supertypes is switched to the according union (unless the property is
+The value type of each attribute whose value type is one of the selected
+supertypes is switched to the according union (unless the attribute is
 part of the union itself).
 
 NOTE: Tagged value _representsFeatureTypeSet_ = true is added to the
@@ -262,10 +263,14 @@ loading the input model.
 
 ======
 
-Associations to, from, and between supertypes to which inheritance
-flattening applies are copied. To prevent ambiguities, copies of
+Associations to, from, and between supertypes, to which inheritance
+flattening applies, are copied. To prevent ambiguities, copies of
 association roles whose value type was a supertype to which inheritance
 flattening applied receive the name of their new value type as suffix.
+
+NOTE: Association classes are not handled by this transformation. Use the
+xref:./Association_Class_Mapper.adoc#[Association Class Mapper] to convert
+association classes before flattening inheritance.
 
 Finally, the Flattener removes all Xxx classes that 1) have subclasses
 and 2) are abstract and/or mixins from the model, and also removes all
@@ -280,9 +285,9 @@ Parameters:
 [cols=",",]
 |===
 |*_Parameter Name_* |*_Required / Optional (for Execution of Rule)_*
-|*flattenInheritanceIncludeRegex* | Optional
-|*separatorForPropertyFromUnion* | Optional
-|*codeByTaggedValue* | Optional
+|xref:./Flattener.adoc#flattenInheritanceIncludeRegex[flattenInheritanceIncludeRegex] | Optional
+|xref:./Flattener.adoc#separatorForPropertyFromUnion[separatorForPropertyFromUnion] | Optional
+|xref:./Flattener.adoc#codeByTaggedValue[codeByTaggedValue] | Optional
 |===
 
 [[rule-trf-cls-flatten-inheritance-add-attributes-at-bottom]]
@@ -290,8 +295,8 @@ Parameters:
 
 (since v2.3.0)
 
-Behavior: If this rule is enabled, then attributes copied from a
-supertype to a subtype during the execution of
+Behavior: If this rule is enabled, then attributes and - since v2.13.0 - also
+association roles that are copied from a supertype to a subtype during the execution of
 xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance]
 will be placed at the bottom of the sequence of existing properties,
 instead of at the top.

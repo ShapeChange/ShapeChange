@@ -38,8 +38,8 @@
         <sequence>
           <element name="attributeFT2" type="string"/>
           <element name="roleFT2" type="flat:FTXPropertyType"/>
-          <element name="roleFT1" type="flat:FTXPropertyType"/>
           <element name="attributeFT1" type="string"/>
+          <element name="roleFT1" type="flat:FTXPropertyType"/>
         </sequence>
       </extension>
     </complexContent>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:rep="http://test.org/schema/rep" elementFormDefault="qualified" targetNamespace="http://test.org/schema/rep" version="1">
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="T1_Class2" type="rep:T1_Class2Type">
     <annotation>
       <appinfo>EAID_9C7BDC0F_1F75_4c1a_A26B_206986D38DD1</appinfo>
@@ -47,14 +48,14 @@
           </restriction>
         </simpleType>
       </element>
-      <element minOccurs="0" name="p" type="string">
-        <annotation>
-          <appinfo>EAID_430BA134_5CF6_40aa_AB4C_94A251E3DC94</appinfo>
-        </annotation>
-      </element>
       <element maxOccurs="unbounded" minOccurs="0" name="p1_fko" type="string">
         <annotation>
           <appinfo>EAID_dst8E6931_457D_4bcb_BC1C_91872D4659B4</appinfo>
+        </annotation>
+      </element>
+      <element minOccurs="0" name="p" type="string">
+        <annotation>
+          <appinfo>EAID_430BA134_5CF6_40aa_AB4C_94A251E3DC94</appinfo>
         </annotation>
       </element>
     </sequence>

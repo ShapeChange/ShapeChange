@@ -121,6 +121,16 @@ public abstract class AssociationInfoImpl extends InfoImpl
 	public String fullNameInSchema() {
 		return name();
 	}
+	
+	@Override
+	public final boolean isReflexive() {
+	    return this.end1().inClass() == this.end2().inClass();
+	}
+	
+	@Override
+	public final boolean isBiDirectional() {
+	    return this.end1().isNavigable() && this.end2().isNavigable();
+	}
 
 	@Override
 	public void postprocessAfterLoadingAndValidate() {

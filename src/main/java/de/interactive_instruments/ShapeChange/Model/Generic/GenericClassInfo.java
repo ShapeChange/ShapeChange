@@ -807,9 +807,11 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		 */
 		int shift = maxMajorComponentNewProps - minMajorComponentExistingProps + 1;
 
-		for (StructuredNumber snOfExistingProp : properties.keySet()) {
-
-		    snOfExistingProp.components[0] = snOfExistingProp.components[0] + shift;
+		for (PropertyInfo existingProp : properties.values()) {		    
+		    GenericPropertyInfo genExProp = (GenericPropertyInfo)existingProp;
+		    StructuredNumber newSn = genExProp.sequenceNumber();
+		    newSn.components[0] = newSn.components[0] + shift;		    		    
+		    genExProp.setTaggedValue("sequenceNumber", newSn.getString(), false);
 		}
 	    }
 
@@ -1053,8 +1055,8 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		} else {
 
 		    StructuredNumber snNewProp = newProp.sequenceNumber();
-
-		    snNewProp.components[0] = maxMajorComponentExistingProps + 1;
+		    snNewProp.components[0] = maxMajorComponentExistingProps + 1;		    	    
+		    newProp.setTaggedValue("sequenceNumber", snNewProp.getString(), false);
 		}
 
 		this.addProperty(newProp, duplicateHandling);

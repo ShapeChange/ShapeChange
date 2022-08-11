@@ -39,9 +39,9 @@ CREATE TABLE f3_suffix (
    type text NOT NULL, -- Notes propertyType
    p1 boolean DEFAULT TRUE NOT NULL, -- Notes property1
    pafb_f1 bigserial, -- Notes propAFeatureB
+   pafb_f2 bigserial, -- Notes propAFeatureB
    p2_f2 bigserial, -- Notes property2 (MixinB)
-   p2_f4 bigserial, -- Notes property2 (MixinB)
-   pafb_f2 bigserial -- Notes propAFeatureB
+   p2_f4 bigserial -- Notes property2 (MixinB)
 );
 
 CREATE TABLE f4 (
@@ -50,9 +50,9 @@ CREATE TABLE f4 (
    geom geometry(GEOMETRY,31467) NOT NULL, -- Notes geometry (GM_Object)
    type text NOT NULL, -- Notes propertyType
    p1 boolean DEFAULT TRUE NOT NULL, -- Notes property1
-   pmix3 boolean, -- Notes propertyMix3
    pafb_f1 bigserial, -- Notes propAFeatureB
-   pafb_f2 bigserial -- Notes propAFeatureB
+   pafb_f2 bigserial, -- Notes propAFeatureB
+   pmix3 boolean -- Notes propertyMix3
 );
 
 

@@ -63,6 +63,12 @@ public class FlattenerTest extends BasicTestSCXML {
 	multiTest("src/test/resources/flattener/inheritance/testEA_Flattening_inheritance.xml", new String[] { "xsd" },
 		"testResults/flattening/inheritance/", "src/test/resources/flattener/inheritance/reference");
     }
+    
+    @Test
+    public void test_flatten_inheritance2() {
+	multiTest("src/test/resources/flattener/inheritance2/testEA_Flattening_inheritance2.xml", new String[] { "xsd", "xml" },
+		"testResults/flattening/inheritance2/results", "src/test/resources/flattener/inheritance2/reference/results");
+    }
 
     @Test
     public void test_flatten_removeInheritance() {
