@@ -116,22 +116,34 @@ public interface DatabaseStrategy {
     public Expression expressionForCheckConstraintToRestrictTimeOfDate(Column column);
 
     /**
-     * Determine if the database system supports the given 'ON DELETE' option for
-     * foreign keys.
+     * Determine if the database system supports the given 'ON DELETE' referential
+     * action for foreign keys.
      * 
      * @param o tbd
-     * @return <code>true</code> if the option is supported, else <code>false</code>
+     * @return <code>true</code> if the referential action is supported, else
+     *         <code>false</code>
      */
-    public boolean isForeignKeyOnDeleteOptionSupported(ForeignKeyConstraint.Option o);
+    public boolean isForeignKeyOnDeleteSupported(ForeignKeyConstraint.ReferentialAction o);
 
     /**
-     * Determine if the database system supports the given 'ON UPDATE' option for
-     * foreign keys.
+     * Determine if the database system supports the given 'ON UPDATE' referential
+     * action for foreign keys.
      * 
      * @param o tbd
-     * @return <code>true</code> if the option is supported, else <code>false</code>
+     * @return <code>true</code> if the referential action is supported, else
+     *         <code>false</code>
      */
-    public boolean isForeignKeyOnUpdateOptionSupported(ForeignKeyConstraint.Option o);
+    public boolean isForeignKeyOnUpdateSupported(ForeignKeyConstraint.ReferentialAction o);
+
+    /**
+     * Determine if the database system supports configuration of checking options
+     * for foreign keys, i.e. statements if such a constraint is deferrable and - if
+     * so - whether the initial constraint mode is immediate or deferred.
+     * 
+     * @return <code>true</code> if checking options are supported, else
+     *         <code>false</code>
+     */
+    public boolean isForeignKeyCheckingOptionsSupported();
 
     /**
      * @return A human readable name for the database strategy (e.g. to use in log

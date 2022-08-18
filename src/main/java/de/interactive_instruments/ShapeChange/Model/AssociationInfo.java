@@ -38,4 +38,8 @@ public interface AssociationInfo extends Info {
 	public PropertyInfo end2();
 
 	public ClassInfo assocClass();
+	
+	public boolean isReflexive();
+	
+	public boolean isBiDirectional();
 };

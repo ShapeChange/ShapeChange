@@ -81,7 +81,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.DropSchema;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.Option;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.ReferentialAction;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Index;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Insert;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.PostgreSQLAlterRole;
@@ -108,8 +108,7 @@ import de.interactive_instruments.ShapeChange.Util.ea.EASupportedDBMS;
 import de.interactive_instruments.ShapeChange.Util.ea.EATaggedValue;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
@@ -582,7 +581,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		    // also set tagged values
 		    List<EATaggedValue> methodTVs = new ArrayList<EATaggedValue>();
-		    String onDeleteValue = translateForeignKeyOption(fkCon.getOnDelete());
+		    String onDeleteValue = translateForeignKeyReferentialAction(fkCon.getOnDelete());
 		    EATaggedValue tvDelete = new EATaggedValue("Delete", onDeleteValue);
 		    methodTVs.add(tvDelete);
 
@@ -594,7 +593,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		    } else {
 
-			String onUpdateValue = translateForeignKeyOption(fkCon.getOnUpdate());
+			String onUpdateValue = translateForeignKeyReferentialAction(fkCon.getOnUpdate());
 			EATaggedValue tvUpdate = new EATaggedValue("Update", onUpdateValue);
 			methodTVs.add(tvUpdate);
 
@@ -602,6 +601,15 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 				"Delete " + onDeleteValue + "=1;Update " + onUpdateValue + "=1;");
 			methodTVs.add(tvProperty);
 		    }
+
+		    /*
+		     * NOTE: According to the documentation
+		     * (https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/
+		     * constraints2.html and
+		     * https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/
+		     * foreignkeys.html), EA database models do not reflect constraint checking
+		     * options (deferrable and initial constraint mode).
+		     */
 
 		    EAMethodUtil.setTaggedValues(m, methodTVs);
 
@@ -688,17 +696,18 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
     /**
      * @param o
      * @return The string used by EA to represent the given foreign key constraint
-     *         option. If the option is <code>null</code>, 'No Action' is returned.
+     *         referential action. If the action is <code>null</code>, 'No Action'
+     *         is returned.
      */
-    private String translateForeignKeyOption(ForeignKeyConstraint.Option o) {
+    private String translateForeignKeyReferentialAction(ForeignKeyConstraint.ReferentialAction o) {
 
-	if (o == Option.CASCADE) {
+	if (o == ReferentialAction.CASCADE) {
 	    return "Cascade";
-	} else if (o == Option.RESTRICT) {
+	} else if (o == ReferentialAction.RESTRICT) {
 	    return "Restrict";
-	} else if (o == Option.SET_DEFAULT) {
+	} else if (o == ReferentialAction.SET_DEFAULT) {
 	    return "Set Default";
-	} else if (o == Option.SET_NULL) {
+	} else if (o == ReferentialAction.SET_NULL) {
 	    return "Set Null";
 	} else {
 	    // also if o is null
@@ -732,7 +741,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	    }
 	}
     }
-    
+
     @Override
     public void visit(CreateSchema createSchema) {
 	// ignore
@@ -741,7 +750,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
     @Override
     public void visit(DropSchema dropSchema) {
 	// ignore
-	}
+    }
 
     @Override
     public void postprocess() {
@@ -861,10 +870,10 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
     public void visit(SQLitePragma sqLitePragma) {
 	// ignore
     }
-    
+
     @Override
     public void visit(PostgreSQLAlterRole postgreSQLAlterRole) {
-	// ignore	
+	// ignore
     }
 
     @Override

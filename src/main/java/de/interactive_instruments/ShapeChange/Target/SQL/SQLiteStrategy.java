@@ -45,7 +45,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.expressions.Expression;
 import de.interactive_instruments.ShapeChange.Target.SQL.expressions.SpatiaLiteCreateSpatialIndexExpression;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
-import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.Option;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint.ReferentialAction;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Select;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
@@ -180,7 +180,7 @@ public class SQLiteStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public boolean isForeignKeyOnDeleteOptionSupported(Option o) {
+	public boolean isForeignKeyOnDeleteSupported(ReferentialAction o) {
 
 		// all options are supported:
 		// https://www.sqlite.org/syntax/foreign-key-clause.html
@@ -188,7 +188,7 @@ public class SQLiteStrategy implements DatabaseStrategy, MessageSource {
 	}
 
 	@Override
-	public boolean isForeignKeyOnUpdateOptionSupported(Option o) {
+	public boolean isForeignKeyOnUpdateSupported(ReferentialAction o) {
 
 		// all options are supported:
 		// https://www.sqlite.org/syntax/foreign-key-clause.html
@@ -204,6 +204,12 @@ public class SQLiteStrategy implements DatabaseStrategy, MessageSource {
 	@Override
 	public String name() {
 		return "SQLite";
+	}
+	
+	@Override
+	public boolean isForeignKeyCheckingOptionsSupported() {
+	    // https://www.sqlite.org/foreignkeys.html#fk_deferred
+	    return true;
 	}
 
 	@Override

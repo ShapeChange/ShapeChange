@@ -40,6 +40,11 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
 
 public interface Model {
+    
+    public static final int STATUS_EADOCUMENT_INITSTART = 101;
+    public static final int STATUS_EADOCUMENT_READMODEL = 102;
+    public static final int STATUS_EADOCUMENT_ESTABLISHCLASSES = 103;
+    public static final int STATUS_EADOCUMENT_READCONSTARINTS = 104;
 
     public Options options();
 

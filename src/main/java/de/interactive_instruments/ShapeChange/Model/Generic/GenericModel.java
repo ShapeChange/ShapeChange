@@ -2973,7 +2973,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
     }
 
     /**
-     * @return a set with all associations that connect at least one class from the
+     * @return a (new) set with all associations that connect at least one class from the
      *         selected schemas; can be empty but not <code>null</code>.
      */
     public SortedSet<GenericAssociationInfo> selectedSchemaAssociations() {

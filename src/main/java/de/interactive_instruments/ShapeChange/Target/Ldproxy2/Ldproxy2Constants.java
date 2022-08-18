@@ -84,7 +84,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
 
-    
+    public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";   
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
