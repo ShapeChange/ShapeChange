@@ -68,4 +68,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/reflexiveRelation/results",
 			"src/test/resources/ldproxy2/reflexiveRelation/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_gmlOutput() {
+		
+		multiTest("src/test/resources/ldproxy2/gmlOutput/test_ldproxy2_gmlOutput.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/gmlOutput/results",
+			"src/test/resources/ldproxy2/gmlOutput/reference/results");
+	}
 }

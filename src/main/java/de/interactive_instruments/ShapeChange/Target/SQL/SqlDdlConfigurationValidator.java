@@ -53,6 +53,7 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -83,7 +84,8 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_DATA_TYPE_ALIAS, SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX,
 	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_CODELIST,
 	    SqlConstants.PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE, SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE,
-	    SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, SqlConstants.PARAM_GEOMETRY_DIMENSION,
+	    SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE,
+	    SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE, SqlConstants.PARAM_GEOMETRY_DIMENSION,
 	    SqlConstants.PARAM_ID_COLUMN_NAME, SqlConstants.PARAM_IDENTIFIER_COLUMN_SUFFIX,
 	    SqlConstants.PARAM_LENGTH_QUALIFIER, SqlConstants.PARAM_MAX_NAME_LENGTH,
 	    SqlConstants.PARAM_NAME_CODESTATUS_CL_COLUMN, SqlConstants.PARAM_NAME_CODESTATUSNOTES_COLUMN,
@@ -101,6 +103,8 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
     private ProcessConfiguration config = null;
     private Options options = null;
     private ShapeChangeResult result = null;
+    
+    private String effectiveDatabaseSystem = "PostgreSQL";
 
     @Override
     public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
@@ -124,18 +128,22 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	// general validation of map entry parameters
 	MapEntryParamInfos mepis = new MapEntryParamInfos(result, mapEntryByType.values());
 
-	isValid = isValid && mepis.isValid();
+	isValid = isValid & mepis.isValid();
 
 	DatabaseStrategy databaseStrategy;
 	String databaseSystem = config.getParameterValue(SqlConstants.PARAM_DATABASE_SYSTEM);
+	
 	if (databaseSystem == null || "postgresql".equalsIgnoreCase(databaseSystem)) {
 	    databaseStrategy = new PostgreSQLStrategy();
 	} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
 	    databaseStrategy = new OracleStrategy(result);
+	    effectiveDatabaseSystem = "Oracle";
 	} else if ("sqlserver".equalsIgnoreCase(databaseSystem)) {
 	    databaseStrategy = new SQLServerStrategy(result);
+	    effectiveDatabaseSystem = "SQLServer";
 	} else if ("sqlite".equalsIgnoreCase(databaseSystem)) {
-	    databaseStrategy = new SQLServerStrategy(result);
+	    databaseStrategy = new SQLiteStrategy(result);
+	    effectiveDatabaseSystem = "SQLite";
 	} else {
 	    databaseStrategy = new PostgreSQLStrategy();
 	    result.addError(this, 100, SqlConstants.PARAM_DATABASE_SYSTEM, databaseSystem);
@@ -149,18 +157,18 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	}
 
 	// validation of common sql map entry parameters
-	isValid = isValid && checkCommonMapEntryParameters(mepis);
+	isValid = isValid & checkCommonMapEntryParameters(mepis);
 
 	// validation of database strategy specific sql map entry parameters
-	isValid = isValid && databaseStrategy.validate(mapEntryByType, mepis);
+	isValid = isValid & databaseStrategy.validate(mapEntryByType, mepis);
 
 	// validation of length precision scale pattern
-	isValid = isValid && checkLengthPrecisionScalePattern(config.getMapEntries(), mepis);
+	isValid = isValid & checkLengthPrecisionScalePattern(config.getMapEntries(), mepis);
 
-	isValid = isValid && checkDescriptorsForCodeList(config, options, result);
+	isValid = isValid & checkDescriptorsForCodeList(config, options, result);
 
-	isValid = isValid && checkIntegerParameter(SqlConstants.PARAM_SIZE);
-	isValid = isValid && checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
+	isValid = isValid & checkIntegerParameter(SqlConstants.PARAM_SIZE);
+	isValid = isValid & checkIntegerParameter(SqlConstants.PARAM_CODE_NAME_SIZE);
 
 	// --------------------------
 	String fileDdlTop = config.parameterAsString(SqlConstants.PARAM_FILE_DDL_TOP, null, false, true);
@@ -191,25 +199,61 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 		result.addError(this, 100, SqlConstants.PARAM_LENGTH_QUALIFIER, lengthQualifier);
 	    }
 	}
-	
-	
-	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE)) {    
-	    String foreignKeyDeferrable = config.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, null, false, true);
-	    if(!foreignKeyDeferrable.matches("(?i)(true|false)")) {
+
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE)) {
+	    String foreignKeyDeferrable = config.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, null,
+		    false, true);
+	    if (!foreignKeyDeferrable.matches("(?i)(true|false)")) {
 		isValid = false;
 		result.addError(this, 100, SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, foreignKeyDeferrable);
 	    }
 	}
-	
-	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE)) {    
-	    String foreignKeyInitialConstraintMode = config.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, null, false, true);
-	    if(!foreignKeyInitialConstraintMode.matches("(?i)(immediate|deferred)")) {
+
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE)) {
+	    String foreignKeyInitialConstraintMode = config
+		    .parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, null, false, true);
+	    if (!foreignKeyInitialConstraintMode.matches("(?i)(immediate|deferred)")) {
 		isValid = false;
-		result.addError(this, 100, SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, foreignKeyInitialConstraintMode);
+		result.addError(this, 100, SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE,
+			foreignKeyInitialConstraintMode);
 	    }
 	}
 
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE)) {
+	    isValid = isValid
+		    & checkForeignKeyReferentialAction(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE, databaseStrategy);
+	}
+	
+	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE)) {
+	    isValid = isValid
+		    & checkForeignKeyReferentialAction(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE, databaseStrategy);
+	}
+
 	return isValid;
+    }
+
+    private boolean checkForeignKeyReferentialAction(String paramNameForeignKeyReferentialAction,
+	    DatabaseStrategy databaseStrategy) {
+
+	boolean isOnDelete = paramNameForeignKeyReferentialAction.equals(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE);
+	String actionValue = config.parameterAsString(paramNameForeignKeyReferentialAction, null, false, true);
+	try {
+
+	    ForeignKeyConstraint.ReferentialAction ra = ForeignKeyConstraint.ReferentialAction.fromString(actionValue);
+
+	    if ((isOnDelete && databaseStrategy.isForeignKeyOnDeleteSupported(ra))
+		    || (!isOnDelete && databaseStrategy.isForeignKeyOnUpdateSupported(ra))) {
+		return true;
+	    } else {
+		result.addError(this, 109, ra.toString(), paramNameForeignKeyReferentialAction,
+			isOnDelete ? "ON DELETE" : "ON UPDATE", effectiveDatabaseSystem);
+		return false;
+	    }
+
+	} catch (IllegalArgumentException e) {
+	    result.addError(this, 108, actionValue, paramNameForeignKeyReferentialAction);
+	    return false;
+	}
     }
 
     private boolean checkLengthPrecisionScalePattern(List<ProcessMapEntry> mapEntries,
@@ -460,6 +504,10 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	case 107:
 	    return SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS
 		    + " is currently only supported for the PostgreSQL database system. The database system is configured as '$1$'. Either change the database system to PostgreSQL or ensure that the conversion rule is not configured for this target.";
+	case 108:
+	    return "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109:
+	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system ($4$) does not support this action for clause '$3$'.";
 
 	default:
 	    return "(" + SqlDdlConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

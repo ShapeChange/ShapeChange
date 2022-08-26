@@ -164,13 +164,13 @@ public class Flattener implements Transformer, MessageSource {
 
     public static final String PARAM_GEOMETRY_TYPE_REGEX = "geometryTypeRegex";
     public static final String DEFAULT_GEOMETRY_TYPE_REGEX = "^GM_.*";
-    
+
     /**
-	 * Parameter that indicates whether the association is directed FROM the original feature TO the new
-	 * feature type.
-	 * <p>
-	 * Applies to {@value #RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE}.
-	 */
+     * Parameter that indicates whether the association is directed FROM the
+     * original feature TO the new feature type.
+     * <p>
+     * Applies to {@value #RULE_TRF_CLS_NON_DEFAULT_GEOMETRY_TO_FEATURE_TYPE}.
+     */
     public static final String PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE = "directionToNewFeatureType";
 
     /**
@@ -453,6 +453,10 @@ public class Flattener implements Transformer, MessageSource {
     // internal tagged values used while flattening inheritance
     public static final String TV_ORIGINAL_ASSOCIATION = "SC_ORIGINAL_ASSOCIATION";
     public static final String TV_ORIGINAL_ASSOCIATION_REFLEXIVE = "SC_ORIGINAL_ASSOCIATION_REFLEXIVE";
+
+    public static final String TV_ORIGINAL_PROPERTY_NAME = "originalPropertyName";
+    public static final String TV_ORIGINAL_INCLASS_NAME = "originalInClassName";
+    public static final String TV_ORIGINAL_SCHEMA_NAME = "originalSchemaName";
 
     // =============================
     /* internal */
@@ -874,8 +878,7 @@ public class Flattener implements Transformer, MessageSource {
 	Pattern geometryTypePattern = trfConfig.parameterAsRegexPattern(PARAM_GEOMETRY_TYPE_REGEX,
 		DEFAULT_GEOMETRY_TYPE_REGEX);
 	boolean associationDirectedToNewFeatureType = trfConfig.parameterAsBoolean(
-			PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE,
-			true);
+		PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE, true);
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
@@ -918,29 +921,31 @@ public class Flattener implements Transformer, MessageSource {
 		// create directed association to new feature type (and register in model)
 		GenericAssociationInfo genAi = new GenericAssociationInfo();
 
-		// copy of genPi at new feature type end, same multiplicity, but value type changed to
-		// new feature type
+		/*
+		 * copy of genPi at new feature type end, same multiplicity, but value type
+		 * changed to new feature type
+		 */
 		GenericPropertyInfo genPiCopy = genPi.createCopy(genPi.id() + "_copyForGeomCi");
 		genPiCopy.setTypeInfo(Type.from(geomCi));
 		genPiCopy.setAttribute(false);
 		genPiCopy.setAssociation(genAi);
 		if (associationDirectedToNewFeatureType) {
-			genPiCopy.setNavigable(true);
-			// add copy of genPi to genCi (and thus also the model)
-			genCi.addProperty(genPiCopy, PropertyCopyDuplicatBehaviorIndicator.ADD);
+		    genPiCopy.setNavigable(true);
+		    // add copy of genPi to genCi (and thus also the model)
+		    genCi.addProperty(genPiCopy, PropertyCopyDuplicatBehaviorIndicator.ADD);
 		} else {
-			genPiCopy.setNavigable(false);
-			// add copy of genPi to the model
-			genModel.register(genPiCopy);
+		    genPiCopy.setNavigable(false);
+		    // add copy of genPi to the model
+		    genModel.register(genPiCopy);
 		}
-		
+
 		// update properties of association
 		genAi.setOptions(options);
 		genAi.setResult(result);
 		genAi.setModel(genModel);
 		genAi.setId("association_" + genCi.name() + "_to_" + geomCi.name() + "_for_" + genPiCopy.name());
 		genAi.setEnd2(genPiCopy);
-		
+
 		// remove genPi in model and genCi
 		genModel.remove(genPi, false);
 
@@ -958,15 +963,15 @@ public class Flattener implements Transformer, MessageSource {
 		reversePi.setAttribute(false);
 		reversePi.setAssociation(genAi);
 		genAi.setEnd1(reversePi);
-		
+
 		if (associationDirectedToNewFeatureType) {
-			reversePi.setNavigable(false);
-			// add reverse of genPi to the model
-			genModel.register(reversePi);
+		    reversePi.setNavigable(false);
+		    // add reverse of genPi to the model
+		    genModel.register(reversePi);
 		} else {
-			reversePi.setNavigable(true);
-			// add reverse of genPi to geomCi (and thus also the model)
-			geomCi.addProperty(reversePi, PropertyCopyDuplicatBehaviorIndicator.ADD);
+		    reversePi.setNavigable(true);
+		    // add reverse of genPi to geomCi (and thus also the model)
+		    geomCi.addProperty(reversePi, PropertyCopyDuplicatBehaviorIndicator.ADD);
 		}
 
 		genModel.addAssociation(genAi);
@@ -3578,6 +3583,11 @@ public class Flattener implements Transformer, MessageSource {
 			    if (genPi.isDerived()) {
 				copy.setDerived(true);
 			    }
+			    
+			    if("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
+				    || "true".equals(typeToProcess.taggedValue("representsTypeSet"))) {
+				copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+			    }
 
 			    /*
 			     * ensure that the copy is not counted as an association role
@@ -5435,10 +5445,47 @@ public class Flattener implements Transformer, MessageSource {
 
 	    if (genSuperclass.category() == Options.FEATURE) {
 		genSuperclassUnion.setTaggedValue("representsFeatureTypeSet", "true", false);
+	    } else {
+		genSuperclassUnion.setTaggedValue("representsTypeSet", "true", false);
 	    }
 
 	    genSuperclassUnionsBySuperclassName.put(genSuperclass.name(), genSuperclassUnion);
 	    genModel.addClass(genSuperclassUnion);
+	}
+
+	/*
+	 * For subsequent ShapeChange processes (e.g. the ldproxy2 target with GML
+	 * output enabled), keep track of the original name, inClass, and schema of a
+	 * property, where relevant.
+	 */
+	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+	    /*
+	     * If the class that owns this property is a supertype, note the name of that
+	     * class as original owner, as well as the schema to which that class belongs.
+	     * When copies of this property are made for subtypes while flattening
+	     * inheritance, these tags will allow identifying the original owner of the
+	     * property (that will be copied down to all subtypes).
+	     */
+	    if (!genPi.inClass().subtypes().isEmpty()) {
+		genPi.setTaggedValue(TV_ORIGINAL_INCLASS_NAME, genPi.inClass().name(), false);
+		genPi.setTaggedValue(TV_ORIGINAL_SCHEMA_NAME, genPi.model().schemaPackage(genPi.inClass()).name(),
+			false);
+	    }
+
+	    /*
+	     * If the property is an association role, and the value type of the property is
+	     * a supertype, then that means that while inheritance is flattened,
+	     * subtype-specific copies of the association role will be created, where the
+	     * original role name is modified (the value type name is appended as suffix).
+	     * For such cases, not the original name of the association role, so that
+	     * subsequent ShapeChange processes can identify it for each value subtype
+	     * specific copy. Note that when attributes are copied down, no such name
+	     * changes occur.
+	     */
+	    if (!genPi.isAttribute() && !genPi.typeClass().subtypes().isEmpty()) {
+		genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+	    }
 	}
 
 	// ----------------------------------- //

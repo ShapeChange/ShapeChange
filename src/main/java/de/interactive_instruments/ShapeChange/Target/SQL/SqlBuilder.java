@@ -3116,24 +3116,30 @@ public class SqlBuilder implements MessageSource {
 		    .collect(Collectors.toList()));
 	}
 
+	/*
+	 * === referential action ===
+	 */
+
+	String onDeleteValue = SqlDdl.foreignKeyOnDelete;
+	String onUpdateValue = SqlDdl.foreignKeyOnDelete;
+
+	String tvOnDelete = null;
+	String tvOnUpdate = null;
+
 	PropertyInfo representedPi = column.getRepresentedProperty();
+	Info relevantInfoReferentialAction = null;
 
 	/*
-	 * TODO - For some foreign key columns, the representedProperty is not set (e.g.
-	 * the back-reference in a table that represents a datatype). Review if that
-	 * should be revised (essentially in all associative tables).
+	 * NOTE: For some foreign key columns, the representedProperty is not set (e.g.
+	 * the back-reference in a table that represents a datatype).
 	 */
 	if (representedPi != null) {
 
-	    Info relevantInfoReferentialAction = representedPi;
-
-	    /*
-	     * === referential action ===
-	     */
+	    relevantInfoReferentialAction = representedPi;
 
 	    // first check tagged values on the property itself
-	    String tvOnDelete = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_DELETE);
-	    String tvOnUpdate = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_UPDATE);
+	    tvOnDelete = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_DELETE);
+	    tvOnUpdate = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_UPDATE);
 
 	    /*
 	     * if the property is an association role and does not define any referential
@@ -3145,12 +3151,21 @@ public class SqlBuilder implements MessageSource {
 		tvOnDelete = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_DELETE);
 		tvOnUpdate = relevantInfoReferentialAction.taggedValue(SqlConstants.TV_ON_UPDATE);
 	    }
-
-	    setForeignKeyReferentialAction(true, tvOnDelete, fkc, column, relevantInfoReferentialAction);
-	    setForeignKeyReferentialAction(false, tvOnUpdate, fkc, column, relevantInfoReferentialAction);
-
 	}
 
+	if (StringUtils.isNotBlank(tvOnDelete)) {
+	    onDeleteValue = tvOnDelete;
+	}
+	if (StringUtils.isNotBlank(tvOnUpdate)) {
+	    onUpdateValue = tvOnUpdate;
+	}
+
+	setForeignKeyReferentialAction(true, onDeleteValue, fkc, column, relevantInfoReferentialAction);
+	setForeignKeyReferentialAction(false, onUpdateValue, fkc, column, relevantInfoReferentialAction);
+
+	/*
+	 * === checking options ===
+	 */
 	setForeignKeyCheckingOptions(SqlDdl.foreignKeyDeferrable, SqlDdl.foreignKeyImmediate, fkc);
 
 	return alter;
@@ -3167,7 +3182,8 @@ public class SqlBuilder implements MessageSource {
      * @param column       the column to which the constraint applies, relevant for
      *                     validity checks
      * @param relevantInfo the model element that defines the referential action via
-     *                     tagged value, relevant for log messages
+     *                     tagged value, relevant for log messages; can be
+     *                     <code>null</code>
      */
     private void setForeignKeyReferentialAction(boolean isOnDelete, String actionValue, ForeignKeyConstraint fkc,
 	    Column column, Info relevantInfo) {
@@ -3215,7 +3231,9 @@ public class SqlBuilder implements MessageSource {
 			    isOnDelete ? "sqlOnDelete" : "sqlOnUpdate", isOnDelete ? "ON DELETE" : "ON UPDATE");
 		    if (mc != null) {
 			mc.addDetail(this, 102, table.getFullName(), column.getName());
-			mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+			if (relevantInfo != null) {
+			    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+			}
 		    }
 		}
 
@@ -3223,7 +3241,9 @@ public class SqlBuilder implements MessageSource {
 		MessageContext mc = result.addError(this, 34, actionValue, isOnDelete ? "sqlOnDelete" : "sqlOnUpdate");
 		if (mc != null) {
 		    mc.addDetail(this, 102, table.getFullName(), column.getName());
-		    mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+		    if (relevantInfo != null) {
+			mc.addDetail(this, 38, relevantInfo.fullNameInSchema());
+		    }
 		}
 	    }
 	}

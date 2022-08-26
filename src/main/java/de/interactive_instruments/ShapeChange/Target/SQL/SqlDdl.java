@@ -106,6 +106,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNor
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameWithLimitedLengthNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
@@ -161,6 +162,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static ColumnDataType foreignKeyColumnDataType;
     protected static Boolean foreignKeyDeferrable = null;
     protected static Boolean foreignKeyImmediate = null;
+    protected static String foreignKeyOnDelete = null;
+    protected static String foreignKeyOnUpdate = null;
     protected static boolean explicitlyEncodePkReferenceColumnInForeignKeys = false;
     protected static String primaryKeySpec;
     protected static String primaryKeySpecCodelist;
@@ -317,8 +320,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
 		createAssociativeTables = true;
 	    }
-	    
-	    if(pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+
+	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
 		associativeTablesWithSeparatePkField = true;
 	    }
 
@@ -511,7 +514,45 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, "immediate", false, true);
 		foreignKeyImmediate = initialConstraintModeValue.equalsIgnoreCase("immediate");
 	    }
-	    
+
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE)) {
+
+		String actionValue = options.getCurrentProcessConfig()
+			.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE, null, false, true);
+		try {
+		    ForeignKeyConstraint.ReferentialAction ra = ForeignKeyConstraint.ReferentialAction
+			    .fromString(actionValue);
+
+		    if (databaseStrategy.isForeignKeyOnDeleteSupported(ra)) {
+			foreignKeyOnDelete = actionValue;
+		    } else {
+			result.addError(this, 109, ra.toString(), SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE,
+				"ON DELETE");
+		    }
+		} catch (IllegalArgumentException e) {
+		    result.addError(this, 108, actionValue, SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE);
+		}
+	    }
+
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE)) {
+
+		String actionValue = options.getCurrentProcessConfig()
+			.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE, null, false, true);
+		try {
+		    ForeignKeyConstraint.ReferentialAction ra = ForeignKeyConstraint.ReferentialAction
+			    .fromString(actionValue);
+
+		    if (databaseStrategy.isForeignKeyOnUpdateSupported(ra)) {
+			foreignKeyOnUpdate = actionValue;
+		    } else {
+			result.addError(this, 109, ra.toString(), SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE,
+				"ON UPDATE");
+		    }
+		} catch (IllegalArgumentException e) {
+		    result.addError(this, 108, actionValue, SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE);
+		}
+	    }
+
 	    primaryKeySpec = options.parameterAsString(this.getClass().getName(), SqlConstants.PARAM_PRIMARYKEY_SPEC,
 		    SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
 
@@ -588,7 +629,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
 		createDocumentation = false;
 	    }
-	    
+
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ENCODE_PK_REFERENCED_COLUMN_IN_FOREIGNKEYS)) {
 		explicitlyEncodePkReferenceColumnInForeignKeys = true;
 	    }
@@ -1150,7 +1191,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	outputFilename = null;
 
 	associativeTablesWithSeparatePkField = false;
-	
+
 	categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
 	codeStatusCLType = null;
 	codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
@@ -1164,6 +1205,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	foreignKeyColumnDataType = null;
 	foreignKeyDeferrable = null;
 	foreignKeyImmediate = null;
+	foreignKeyOnDelete = null;
+	foreignKeyOnUpdate = null;
 	explicitlyEncodePkReferenceColumnInForeignKeys = false;
 	primaryKeySpec = null;
 	primaryKeySpecCodelist = null;
@@ -1346,6 +1389,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    return "Using local EAP file '$1$' for creation of the data model.";
 	case 32:
 	    return "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
+
+	case 108:
+	    return "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109:
+	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

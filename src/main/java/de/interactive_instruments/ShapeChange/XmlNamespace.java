@@ -31,40 +31,57 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.util.Comparator;
+
+import shadow.org.apache.commons.lang3.StringUtils;
+
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class XmlNamespace {
 
-	private String ns;
-	private String location;
-	private String packageName;
+    public static final Comparator<XmlNamespace> comparator = Comparator
+	    .comparing(XmlNamespace::getNsabr, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(XmlNamespace::getNs, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(XmlNamespace::getLocation, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(XmlNamespace::getPackageName, Comparator.nullsFirst(Comparator.naturalOrder()));
 
-	private String nsabr;
+    private String ns;
+    private String location;
+    private String packageName;
 
-	public XmlNamespace(String nsabr, String ns, String location,
-			String packageName) {
-		super();
-		this.nsabr = nsabr;
-		this.ns = ns;
-		this.location = location;
-		this.packageName = packageName;
-	}
+    private String nsabr;
 
-	public String getNsabr() {
-		return nsabr;
-	}
+    public XmlNamespace(String nsabr, String ns, String location, String packageName) {
+	super();
+	this.nsabr = nsabr;
+	this.ns = ns;
+	this.location = location;
+	this.packageName = packageName;
+    }
 
-	public String getNs() {
-		return ns;
-	}
+    public String getNsabr() {
+	return nsabr;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public String getNs() {
+	return ns;
+    }
 
-	public String getPackageName() {
-		return packageName;
-	}
+    public String getLocation() {
+	return location;
+    }
+    
+    public boolean hasLocation() {
+	return StringUtils.isNotBlank(location);
+    }
+
+    public String getPackageName() {
+	return packageName;
+    }
+    
+    public boolean hasPackageName() {
+	return StringUtils.isNotBlank(packageName);
+    }
+
 }

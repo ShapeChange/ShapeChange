@@ -55,748 +55,719 @@ import de.interactive_instruments.ShapeChange.Profile.Profiles;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class GenericPropertyInfo extends PropertyInfoImpl
-		implements MessageSource {
+public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSource {
 
-	protected Options options = null;
-	protected ShapeChangeResult result = null;
-	protected GenericModel model = null;
+    protected Options options = null;
+    protected ShapeChangeResult result = null;
+    protected GenericModel model = null;
 
-	protected String id = null;
-	protected String name = null;
+    protected String id = null;
+    protected String name = null;
 
-	protected Multiplicity cardinality = null;
-	
-	/**
-	 * Default value is <code>true</code>.
+    protected Multiplicity cardinality = null;
+
+    /**
+     * Default value is <code>true</code>.
+     */
+    protected boolean isNavigable = true;
+
+    protected StructuredNumber sequenceNumber = null;
+    protected Type typeInfo = null;
+
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isDerived = false;
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isReadOnly = false;
+    /**
+     * Default value is <code>true</code>.
+     */
+    protected boolean isAttribute = true;
+
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isOrdered = false;
+    /**
+     * Default value is <code>true</code>.
+     */
+    protected boolean isUnique = true;
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isComposition = false;
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isAggregation = false;
+
+    /**
+     * Default value is <code>false</code>.
+     */
+    protected boolean isOwned = false;
+
+    protected String initialValue = null;
+    protected String inlineOrByReference = null;
+
+    protected AssociationInfo association = null;
+    protected List<Constraint> constraints = null;
+
+    protected ClassInfo inClass = null;
+
+    public GenericPropertyInfo() {
+
+    }
+
+    public GenericPropertyInfo(GenericModel model, String id, String name) {
+
+	this.model = model;
+	this.options = model.options();
+
+	this.result = model.result();
+	setId(id);
+	setName(name);
+
+	this.cardinality = new Multiplicity("1");
+    }
+
+    /**
+     * @param isAttribute the isAttribute to set
+     */
+    public void setAttribute(boolean isAttribute) {
+	this.isAttribute = isAttribute;
+    }
+
+    /**
+     * @param inClass the inClass to set
+     */
+    public void setInClass(ClassInfo inClass) {
+	this.inClass = inClass;
+    }
+
+    /**
+     * @param association the association to set
+     */
+    public void setAssociation(AssociationInfo association) {
+	this.association = association;
+    }
+
+    @Override
+    public boolean isDerived() {
+	return isDerived;
+    }
+
+    @Override
+    public boolean isAttribute() {
+	return isAttribute;
+    }
+
+    @Override
+    public Type typeInfo() {
+	return typeInfo;
+    }
+
+    @Override
+    public boolean isNavigable() {
+	return isNavigable;
+    }
+
+    @Override
+    public boolean isOrdered() {
+	return isOrdered;
+    }
+
+    @Override
+    public boolean isUnique() {
+	return isUnique;
+    }
+
+    @Override
+    public boolean isOwned() {
+	return isOwned;
+    }
+
+    public boolean hasConstraints() {
+
+	if (this.constraints == null || this.constraints.isEmpty()) {
+	    return false;
+	} else {
+	    return true;
+	}
+    }
+
+    @Override
+    public boolean isComposition() {
+	return isComposition;
+    }
+
+    @Override
+    public boolean isAggregation() {
+	return isAggregation;
+    }
+
+    @Override
+    public Multiplicity cardinality() {
+	return cardinality;
+    }
+
+    @Override
+    public String initialValue() {
+
+	/*
+	 * 2016-01-08 JE: returning null is relevant, for example for XSD encoding of an
+	 * enum
 	 */
-	protected boolean isNavigable = true;
-	
-	protected StructuredNumber sequenceNumber = null;
-	protected Type typeInfo = null;
+	return initialValue;
+    }
 
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isDerived = false;
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isReadOnly = false;
-	/**
-	 * Default value is <code>true</code>.
-	 */
-	protected boolean isAttribute = true;
+    @Override
+    public String inlineOrByReference() {
+	if (inlineOrByReference == null) {
+	    return "inlineOrByReference";
+	} else {
+	    return inlineOrByReference;
+	}
+    }
 
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isOrdered = false;
-	/**
-	 * Default value is <code>true</code>.
-	 */
-	protected boolean isUnique = true;
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isComposition = false;
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isAggregation = false;
-	
-	/**
-	 * Default value is <code>false</code>.
-	 */
-	protected boolean isOwned = false;
+    @Override
+    public ClassInfo inClass() {
+	return inClass;
+    }
 
-	protected String initialValue = null;
-	protected String inlineOrByReference = null;
+    @Override
+    public void inClass(ClassInfo ci) {
+	/*
+	 * NOTE for cast: the cast should be safe, at least once the GenericModel has
+	 * been created/parsed (because the constructor there ensures that inClass for
+	 * GenericPropertyInfos is set to the correct GenericClassInfos
+	 */
+	inClass = (GenericClassInfo) ci;
+    }
 
-	protected AssociationInfo association = null;
-	protected List<Constraint> constraints = null;
+    @Override
+    public StructuredNumber sequenceNumber() {
+	return sequenceNumber;
+    }
 
-	protected ClassInfo inClass = null;
+    @Override
+    public List<Constraint> constraints() {
 
-	public GenericPropertyInfo() {
+	if (this.constraints != null) {
+	    return constraints;
+	} else {
+	    return new ArrayList<Constraint>(1);
+	}
+    }
 
+    @Override
+    public AssociationInfo association() {
+	return association;
+    }
+
+    /**
+     * @param cardinality the cardinality to set
+     */
+    public void setCardinality(Multiplicity cardinality) {
+	this.cardinality = cardinality;
+    }
+
+    /**
+     * @param list the constraints to set; can be empty or <code>null</code>
+     */
+    public void setConstraints(List<Constraint> list) {
+
+	if (list != null && !list.isEmpty()) {
+	    this.constraints = list;
+	} else {
+	    this.constraints = null;
+	}
+    }
+
+    /**
+     * @param initialValue the initialValue to set
+     */
+    public void setInitialValue(String initialValue) {
+
+	if (initialValue != null) {
+	    this.initialValue = options.internalize(initialValue);
+	} else {
+	    this.initialValue = null;
+	}
+    }
+
+    /**
+     * @param inlineOrByReference the inlineOrByReference to set
+     */
+    public void setInlineOrByReference(String inlineOrByReference) {
+
+	if (inlineOrByReference != null && !inlineOrByReference.equalsIgnoreCase("inlineOrByReference")) {
+	    this.inlineOrByReference = options.internalize(inlineOrByReference);
+	} else {
+	    this.inlineOrByReference = null;
+	}
+    }
+
+    /**
+     * @param isAggregation the isAggregation to set
+     */
+    public void setAggregation(boolean isAggregation) {
+	this.isAggregation = isAggregation;
+    }
+
+    /**
+     * @param isComposition the isComposition to set
+     */
+    public void setComposition(boolean isComposition) {
+	this.isComposition = isComposition;
+    }
+
+    /**
+     * @param isDerived the isDerived to set
+     */
+    public void setDerived(boolean isDerived) {
+	this.isDerived = isDerived;
+    }
+
+    /**
+     * @param isNavigable the isNavigable to set
+     */
+    public void setNavigable(boolean isNavigable) {
+	this.isNavigable = isNavigable;
+    }
+
+    /**
+     * @param isOrdered the isOrdered to set
+     */
+    public void setOrdered(boolean isOrdered) {
+	this.isOrdered = isOrdered;
+    }
+
+    public void setQualifiers(Vector<Qualifier> qualifiers) {
+	this.qualifiers = qualifiers;
+    }
+
+    /**
+     * @param isUnique the isUnique to set
+     */
+    public void setUnique(boolean isUnique) {
+	this.isUnique = isUnique;
+    }
+
+    public void setOwned(boolean isOwned) {
+	this.isOwned = isOwned;
+    }
+
+    /**
+     * Sets the structured number to be used by this object. Also sets the
+     * "sequenceNumber" tagged value to this number if desired.
+     * 
+     * IMPORTANT: update the "sequenceNumber" tagged value whenever the new number
+     * is not reflected by the current value of the "sequenceNumber" tagged value!
+     * 
+     * One example where this would be the case is when the tagged value was
+     * undefined in the model and a sequence/structured number has automatically
+     * been assigned while loading the model. A GenericPropertyInfo copy of the
+     * original PropertyInfo (for example a PropertyInfoEA) should then store the
+     * automatically assigned number in the tagged value. The reason is that any
+     * subsequent update of fields within the GenericPropertyInfo based upon its
+     * tagged values would overwrite the structuredNumber field - setting it to '0'
+     * if the tagged value was undefined at that time (which can lead to multiple
+     * class properties having '0' as structured number, even if in the inClass'
+     * properties map the keys may still show the automatically assigned number).
+     * 
+     * @param sequenceNumber    the sequenceNumber to set
+     * @param updateTaggedValue <code>true</code> if the "sequenceNumber" tagged
+     *                          value shall be set to the given sequence number,
+     *                          else <code>false</code>
+     */
+    public void setSequenceNumber(StructuredNumber sequenceNumber, boolean updateTaggedValue) {
+
+	this.sequenceNumber = sequenceNumber;
+
+	if (updateTaggedValue) {
+
+	    this.setTaggedValue("sequenceNumber", this.sequenceNumber.getString(), false);
+	}
+    }
+
+    /**
+     * NOTE: sets the value of the typeInfo attribute of this GenericPropertyInfo
+     * object to reference the given one. Care needs to be taken to ensure that
+     * there are no side effects by sharing the Type object, and modifying it in
+     * different places. If in doubt, create a new Type object to set via this
+     * method, or use the copyTypeInfo method instead.
+     * 
+     * @param typeInfo the typeInfo to set
+     */
+    public void setTypeInfo(Type typeInfo) {
+	this.typeInfo = typeInfo;
+    }
+
+    /**
+     * Uses the id and name from the given Type object to initialise the fields of
+     * this object's typeInfo value (which is initialized first in case it is
+     * <code>null</code>). The typeInfo value of this object thus does not reference
+     * the given Type object (which could cause trouble).
+     * 
+     * @param typeInfo tbd
+     */
+    public void copyTypeInfo(Type typeInfo) {
+
+	if (this.typeInfo == null) {
+	    this.typeInfo = new Type();
+	}
+	this.typeInfo.id = typeInfo.id;
+	this.typeInfo.name = typeInfo.name;
+    }
+
+    public void setNilReasonAllowed(boolean nilReasonAllowed) {
+	this.nilReasonAllowed = nilReasonAllowed;
+    }
+
+    public void setRestriction(boolean isRestriction) {
+	this.restriction = isRestriction;
+    }
+
+    @Override
+    public String id() {
+	return id;
+    }
+
+    @Override
+    public GenericModel model() {
+	return model;
+    }
+
+    @Override
+    public String name() {
+	return name;
+    }
+
+    @Override
+    public Options options() {
+	return options;
+    }
+
+    @Override
+    public ShapeChangeResult result() {
+	return result;
+    }
+
+    public void setId(String id) {
+
+	this.id = options.internalize(id);
+    }
+
+    public void setModel(GenericModel model) {
+	this.model = model;
+
+    }
+
+    public void setName(String name) {
+
+	this.name = options.internalize(name);
+    }
+
+    public void setOptions(Options options) {
+	this.options = options;
+    }
+
+    public void setResult(ShapeChangeResult result) {
+	this.result = result;
+
+    }
+
+    /** Save the (normalized) stereotypes in the cache. */
+    public void validateStereotypesCache() {
+	// create cache, if necessary
+	if (stereotypesCache == null)
+	    stereotypesCache = options().stereotypesFactory();
+
+	// do nothing else, stereotypes have to be set explicitly using
+	// setStereotypes
+
+    } // validateStereotypesCache
+
+    public void setStereotypes(Stereotypes stereotypeSet) {
+	// reset cache
+	stereotypesCache = options().stereotypesFactory();
+	if (stereotypeSet != null && !stereotypeSet.isEmpty()) {
+	    for (String st : stereotypeSet.asArray()) {
+		stereotypesCache.add(options.internalize(options.normalizeStereotype(st)));
+	    }
+	}
+    }
+
+    public void setStereotype(String stereotype) {
+	// reset cache
+	stereotypesCache = options().stereotypesFactory();
+	if (stereotype != null) {
+	    stereotypesCache.add(options.internalize(options.normalizeStereotype(stereotype)));
+	}
+    }
+
+    public void validateTaggedValuesCache() {
+	// create cache, if necessary
+	if (taggedValuesCache == null)
+	    taggedValuesCache = options().taggedValueFactory();
+
+	// do nothing else, tagged values have to be set explicitly using
+	// setTaggedValues
+    }
+
+    /**
+     * @param taggedValues tbd
+     * @param updateFields true if class fields should be updated based upon
+     *                     information from given tagged values, else false
+     */
+    public void setTaggedValues(TaggedValues taggedValues, boolean updateFields) {
+
+	// clone tagged values
+	taggedValuesCache = options().taggedValueFactory(taggedValues);
+
+	// Now update fields, if they are affected by tagged values
+	if (updateFields && !taggedValuesCache.isEmpty()) {
+	    for (String key : taggedValues.keySet()) {
+		updateFieldsForTaggedValue(key, taggedValuesCache.getFirstValue(key)); // FIXME
+										       // first
+										       // only?
+	    }
+	}
+    }
+
+    public GenericPropertyInfo createCopy(String copyId) {
+
+	GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
+
+	copy.setDescriptors(this.descriptors().createCopy());
+	copy.setProfiles(this.profiles().createCopy());
+
+	this.validateTaggedValuesCache();
+	if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
+	    copy.setTaggedValues(taggedValuesCache, false);
 	}
 
-	public GenericPropertyInfo(GenericModel model, String id, String name) {
+	copy.setStereotypes(this.stereotypesCache);
 
-		this.model = model;
-		this.options = model.options();
+	copy.setDerived(isDerived);
+	copy.setReadOnly(isReadOnly);
+	copy.setAttribute(isAttribute);
+	copy.copyTypeInfo(this.typeInfo);
+	copy.setNavigable(isNavigable);
+	copy.setOrdered(isOrdered);
+	copy.setUnique(isUnique);
+	copy.setOwned(isOwned);
+	copy.setComposition(isComposition);
+	copy.setAggregation(isAggregation);
+	copy.setCardinality(new Multiplicity(cardinality.toString()));
+	copy.setInitialValue(initialValue);
+	copy.setInlineOrByReference(inlineOrByReference);
+	copy.setInClass(inClass);
 
-		this.result = model.result();
-		setId(id);
-		setName(name);
-
-		this.cardinality = new Multiplicity("1");
+	StringBuffer sb = new StringBuffer();
+	for (int i = 0; i < sequenceNumber.components.length - 1; i++) {
+	    sb.append(sequenceNumber.components[i] + ".");
 	}
+	sb.append(sequenceNumber.components[sequenceNumber.components.length - 1]);
+	StructuredNumber res = new StructuredNumber(sb.toString());
 
-	/**
-	 * @param isAttribute
-	 *                        the isAttribute to set
+	/*
+	 * Updating the "sequenceNumber" tagged value is not necessary because we didn't
+	 * change it here.
 	 */
-	public void setAttribute(boolean isAttribute) {
-		this.isAttribute = isAttribute;
-	}
+	copy.setSequenceNumber(res, false);
+	copy.setConstraints(constraints);
+	copy.setAssociation(association);
+	copy.setRestriction(restriction);
+	copy.setNilReasonAllowed(nilReasonAllowed);
 
-	/**
-	 * @param inClass
-	 *                    the inClass to set
-	 */
-	public void setInClass(ClassInfo inClass) {
-		this.inClass = inClass;
-	}
+	return copy;
+    }
 
-	/**
-	 * @param association
-	 *                        the association to set
-	 */
-	public void setAssociation(AssociationInfo association) {
-		this.association = association;
-	}
+    public String printAsString(String indent) {
 
-	@Override
-	public boolean isDerived() {
-		return isDerived;
-	}
+	StringBuffer sb = new StringBuffer();
 
-	@Override
-	public boolean isAttribute() {
-		return isAttribute;
+	sb.append(indent + name + "\n");
+	sb.append(indent + indent + "tagged values: ");
+	this.validateTaggedValuesCache();
+	if (taggedValuesCache == null || taggedValuesCache.isEmpty()) {
+	    sb.append("none");
+	} else {
+	    sb.append(taggedValuesCache.toString());
 	}
+	sb.append(System.getProperty("line.separator"));
 
-	@Override
-	public Type typeInfo() {
-		return typeInfo;
+	return sb.toString();
+    }
+
+    @Override
+    public boolean isReadOnly() {
+	return isReadOnly;
+    }
+
+    /**
+     * @param isReadOnly the isReadOnly to set
+     */
+    public void setReadOnly(boolean isReadOnly) {
+	this.isReadOnly = isReadOnly;
+    }
+
+    /**
+     * @param tvName       tbd
+     * @param tvValue      tbd
+     * @param updateFields true if property fields should be updated based upon
+     *                     information from given tagged value, else false
+     */
+    public void setTaggedValue(String tvName, String tvValue, boolean updateFields) {
+
+	validateTaggedValuesCache();
+
+	taggedValuesCache.put(tvName, tvValue);
+
+	if (updateFields) {
+	    updateFieldsForTaggedValue(tvName, tvValue);
 	}
+    }
 
-	@Override
-	public boolean isNavigable() {
-		return isNavigable;
-	}
+    /**
+     * Encapsulates the logic to update property fields based upon the value of a
+     * named tagged value. Updates 'nilReasonAllowed', 'inlineOrByReference', and
+     * 'sequenceNumber'.
+     * 
+     * @param tvName  tbd
+     * @param tvValue tbd
+     */
+    protected void updateFieldsForTaggedValue(String tvName, String tvValue) {
 
-	@Override
-	public boolean isOrdered() {
-		return isOrdered;
-	}
+	// TODO add more updates for relevant tagged values
 
-	@Override
-	public boolean isUnique() {
-		return isUnique;
-	}
-	
-	@Override
-	public boolean isOwned() {
-		return isOwned;
-	}
+	if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
 
-	public boolean hasConstraints() {
-
-		if (this.constraints == null || this.constraints.isEmpty()) {
-			return false;
-		} else {
-			return true;
+	    if (tvValue.equalsIgnoreCase("true")) {
+		this.setNilReasonAllowed(true);
+	    } else if (tvValue.equalsIgnoreCase("false")) {
+		this.setNilReasonAllowed(false);
+	    } else {
+		MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
+		if (mc != null) {
+		    mc.addDetail(this, 0, this.fullName());
 		}
-	}
+	    }
 
-	@Override
-	public boolean isComposition() {
-		return isComposition;
-	}
+	} else if (tvName.equalsIgnoreCase("inlineOrByReference")) {
 
-	@Override
-	public boolean isAggregation() {
-		return isAggregation;
-	}
-
-	@Override
-	public Multiplicity cardinality() {
-		return cardinality;
-	}
-
-	@Override
-	public String initialValue() {
-
-		/*
-		 * 2016-01-08 JE: returning null is relevant, for example for XSD
-		 * encoding of an enum
-		 */
-		return initialValue;
-	}
-
-	@Override
-	public String inlineOrByReference() {
-		if (inlineOrByReference == null) {
-			return "inlineOrByReference";
-		} else {
-			return inlineOrByReference;
+	    if (tvValue.equalsIgnoreCase("inline")) {
+		this.setInlineOrByReference("inline");
+	    } else if (tvValue.equalsIgnoreCase("byReference")) {
+		this.setInlineOrByReference("byreference");
+	    } else if (tvValue.equalsIgnoreCase("inlineOrByReference")) {
+		this.setInlineOrByReference("inlineOrByReference");
+	    } else {
+		MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
+		if (mc != null) {
+		    mc.addDetail(this, 0, this.fullName());
 		}
+	    }
+
+	} else if (tvName.equalsIgnoreCase("sequenceNumber")) {
+
+	    /*
+	     * Updating the "sequenceNumber" tagged value is not necessary because this
+	     * method is only called after setting a tagged value. However, we need to be
+	     * very careful not to create a new StructuredNumber object here (unless this
+	     * property does not have one yet), because for a navigable property the current
+	     * StructuredNumber object is used as key in the properties map of its inClass!
+	     */
+	    if (this.sequenceNumber() != null) {
+		this.sequenceNumber().with(tvValue);
+	    } else {
+		this.setSequenceNumber(new StructuredNumber(tvValue), false);
+	    }
+
+	} else if (tvName.equalsIgnoreCase("profiles")) {
+
+	    // unset existing profiles
+	    this.profiles = null;
+
+	    /*
+	     * invoke PropertyInfoImpl.profiles() method to parse profile info from TV
+	     * profiles
+	     */
+	    super.profiles();
 	}
 
-	@Override
-	public ClassInfo inClass() {
-		return inClass;
-	}
-
-	@Override
-	public void inClass(ClassInfo ci) {
-		/*
-		 * NOTE for cast: the cast should be safe, at least once the
-		 * GenericModel has been created/parsed (because the constructor there
-		 * ensures that inClass for GenericPropertyInfos is set to the correct
-		 * GenericClassInfos
-		 */
-		inClass = (GenericClassInfo) ci;
-	}
-
-	@Override
-	public StructuredNumber sequenceNumber() {
-		return sequenceNumber;
-	}
-
-	@Override
-	public List<Constraint> constraints() {
-
-		if (this.constraints != null) {
-			return constraints;
-		} else {
-			return new ArrayList<Constraint>(1);
-		}
-	}
-
-	@Override
-	public AssociationInfo association() {
-		return association;
-	}
-
-	/**
-	 * @param cardinality
-	 *                        the cardinality to set
+	/*
+	 * TBD: Descriptors should not be modified right away, since the descriptor
+	 * source might not be the tagged value
 	 */
-	public void setCardinality(Multiplicity cardinality) {
-		this.cardinality = cardinality;
+	// else if (tvName.equalsIgnoreCase("alias")) {
+	//
+	// LangString ls = LangString.parse(tvValue);
+	// this.descriptors.put(Descriptor.ALIAS, ls);
+	//
+	// // this.setAliasNameAll(
+	// // new Descriptors(options().internalize(tvValue)));
+	//
+	// } else if (tvName.equalsIgnoreCase("documentation")) {
+	//
+	// // we map this to the descriptor 'definition'
+	// LangString ls = LangString.parse(tvValue);
+	// this.descriptors.put(Descriptor.DEFINITION, ls);
+	// // this.setDefinitionAll(
+	// // new Descriptors(options().internalize(tvValue)));
+	//
+	// }
+    }
+
+    /**
+     * Adds the prefix to the 'id' of this class. Also updates the id of the
+     * 'typeInfo' (if not <code>null</code>). Does NOT update the 'globalId'.
+     * 
+     * NOTE: this method is used by the FeatureCatalogue target to ensure that IDs
+     * used in a reference model are unique to that model and do not get mixed up
+     * with the IDs of the input model.
+     * 
+     * @param prefix tbd
+     */
+    public void addPrefixToModelElementIDs(String prefix) {
+
+	this.id = prefix + id;
+
+	if (typeInfo.id != null) {
+	    typeInfo.id = prefix + typeInfo.id;
 	}
+    }
 
-	/**
-	 * @param list
-	 *                 the constraints to set; can be empty or <code>null</code>
-	 */
-	public void setConstraints(List<Constraint> list) {
+    /**
+     * @param profiles new set of profiles for this property; may be
+     *                 <code>null</code>
+     */
+    public void setProfiles(Profiles profiles) {
 
-		if (list != null && !list.isEmpty()) {
-			this.constraints = list;
-		} else {
-			this.constraints = null;
-		}
+	if (profiles == null) {
+	    this.profiles = new Profiles();
+	} else {
+	    this.profiles = profiles;
 	}
+    }
 
-	/**
-	 * @param initialValue
-	 *                         the initialValue to set
-	 */
-	public void setInitialValue(String initialValue) {
+    @Override
+    public String message(int mnr) {
 
-		if (initialValue != null) {
-			this.initialValue = options.internalize(initialValue);
-		} else {
-			this.initialValue = null;
-		}
+	switch (mnr) {
+	case 0:
+	    return "Context: property '$1$'.";
+	case 1:
+	    return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
+	case 2:
+	    return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
+
+	default:
+	    return "(" + GenericPropertyInfo.class.getName() + ") Unknown message with number: " + mnr;
 	}
-
-	/**
-	 * @param inlineOrByReference
-	 *                                the inlineOrByReference to set
-	 */
-	public void setInlineOrByReference(String inlineOrByReference) {
-
-		if (inlineOrByReference != null && !inlineOrByReference
-				.equalsIgnoreCase("inlineOrByReference")) {
-			this.inlineOrByReference = options.internalize(inlineOrByReference);
-		} else {
-			this.inlineOrByReference = null;
-		}
-	}
-
-	/**
-	 * @param isAggregation
-	 *                          the isAggregation to set
-	 */
-	public void setAggregation(boolean isAggregation) {
-		this.isAggregation = isAggregation;
-	}
-
-	/**
-	 * @param isComposition
-	 *                          the isComposition to set
-	 */
-	public void setComposition(boolean isComposition) {
-		this.isComposition = isComposition;
-	}
-
-	/**
-	 * @param isDerived
-	 *                      the isDerived to set
-	 */
-	public void setDerived(boolean isDerived) {
-		this.isDerived = isDerived;
-	}
-
-	/**
-	 * @param isNavigable
-	 *                        the isNavigable to set
-	 */
-	public void setNavigable(boolean isNavigable) {
-		this.isNavigable = isNavigable;
-	}
-
-	/**
-	 * @param isOrdered
-	 *                      the isOrdered to set
-	 */
-	public void setOrdered(boolean isOrdered) {
-		this.isOrdered = isOrdered;
-	}
-
-	public void setQualifiers(Vector<Qualifier> qualifiers) {
-		this.qualifiers = qualifiers;
-	}
-
-	/**
-	 * @param isUnique
-	 *                     the isUnique to set
-	 */
-	public void setUnique(boolean isUnique) {
-		this.isUnique = isUnique;
-	}
-	
-	public void setOwned(boolean isOwned) {
-		this.isOwned = isOwned;
-	}
-
-	/**
-	 * Sets the structured number to be used by this object. Also sets the
-	 * "sequenceNumber" tagged value to this number if desired.
-	 * 
-	 * IMPORTANT: update the "sequenceNumber" tagged value whenever the new
-	 * number is not reflected by the current value of the "sequenceNumber"
-	 * tagged value!
-	 * 
-	 * One example where this would be the case is when the tagged value was
-	 * undefined in the model and a sequence/structured number has automatically
-	 * been assigned while loading the model. A GenericPropertyInfo copy of the
-	 * original PropertyInfo (for example a PropertyInfoEA) should then store
-	 * the automatically assigned number in the tagged value. The reason is that
-	 * any subsequent update of fields within the GenericPropertyInfo based upon
-	 * its tagged values would overwrite the structuredNumber field - setting it
-	 * to '0' if the tagged value was undefined at that time (which can lead to
-	 * multiple class properties having '0' as structured number, even if in the
-	 * inClass' properties map the keys may still show the automatically
-	 * assigned number).
-	 * 
-	 * @param sequenceNumber
-	 *                              the sequenceNumber to set
-	 * @param updateTaggedValue
-	 *                              <code>true</code> if the "sequenceNumber"
-	 *                              tagged value shall be set to the given
-	 *                              sequence number, else <code>false</code>
-	 */
-	public void setSequenceNumber(StructuredNumber sequenceNumber,
-			boolean updateTaggedValue) {
-
-		this.sequenceNumber = sequenceNumber;
-
-		if (updateTaggedValue) {
-
-			this.setTaggedValue("sequenceNumber",
-					this.sequenceNumber.getString(), false);
-		}
-	}
-
-	/**
-	 * NOTE: sets the value of the typeInfo attribute of this
-	 * GenericPropertyInfo object to reference the given one. Care needs to be
-	 * taken to ensure that there are no side effects by sharing the Type
-	 * object, and modifying it in different places. If in doubt, create a new
-	 * Type object to set via this method, or use the copyTypeInfo method
-	 * instead.
-	 * 
-	 * @param typeInfo
-	 *                     the typeInfo to set
-	 */
-	public void setTypeInfo(Type typeInfo) {
-		this.typeInfo = typeInfo;
-	}
-
-	/**
-	 * Uses the id and name from the given Type object to initialise the fields
-	 * of this object's typeInfo value (which is initialized first in case it is
-	 * <code>null</code>). The typeInfo value of this object thus does not
-	 * reference the given Type object (which could cause trouble).
-	 * 
-	 * @param typeInfo tbd
-	 */
-	public void copyTypeInfo(Type typeInfo) {
-
-		if (this.typeInfo == null) {
-			this.typeInfo = new Type();
-		}
-		this.typeInfo.id = typeInfo.id;
-		this.typeInfo.name = typeInfo.name;
-	}
-
-	public void setNilReasonAllowed(boolean nilReasonAllowed) {
-		this.nilReasonAllowed = nilReasonAllowed;
-	}
-
-	public void setRestriction(boolean isRestriction) {
-		this.restriction = isRestriction;
-	}
-
-	@Override
-	public String id() {
-		return id;
-	}
-
-	@Override
-	public GenericModel model() {
-		return model;
-	}
-
-	@Override
-	public String name() {
-		return name;
-	}
-
-	@Override
-	public Options options() {
-		return options;
-	}
-
-	@Override
-	public ShapeChangeResult result() {
-		return result;
-	}
-
-	public void setId(String id) {
-
-		this.id = options.internalize(id);
-	}
-
-	public void setModel(GenericModel model) {
-		this.model = model;
-
-	}
-
-	public void setName(String name) {
-
-		this.name = options.internalize(name);
-	}
-
-	public void setOptions(Options options) {
-		this.options = options;
-	}
-
-	public void setResult(ShapeChangeResult result) {
-		this.result = result;
-
-	}
-
-	/** Save the (normalized) stereotypes in the cache. */
-	public void validateStereotypesCache() {
-		// create cache, if necessary
-		if (stereotypesCache == null)
-			stereotypesCache = options().stereotypesFactory();
-
-		// do nothing else, stereotypes have to be set explicitly using
-		// setStereotypes
-
-	} // validateStereotypesCache
-
-	public void setStereotypes(Stereotypes stereotypeSet) {
-		// reset cache
-		stereotypesCache = options().stereotypesFactory();
-		if (stereotypeSet != null && !stereotypeSet.isEmpty()) {
-			for (String st : stereotypeSet.asArray()) {
-				stereotypesCache.add(
-						options.internalize(options.normalizeStereotype(st)));
-			}
-		}
-	}
-
-	public void setStereotype(String stereotype) {
-		// reset cache
-		stereotypesCache = options().stereotypesFactory();
-		if (stereotype != null) {
-			stereotypesCache.add(options
-					.internalize(options.normalizeStereotype(stereotype)));
-		}
-	}
-
-	public void validateTaggedValuesCache() {
-		// create cache, if necessary
-		if (taggedValuesCache == null)
-			taggedValuesCache = options().taggedValueFactory();
-
-		// do nothing else, tagged values have to be set explicitly using
-		// setTaggedValues
-	}
-
-	/**
-	 * @param taggedValues tbd
-	 * @param updateFields
-	 *                         true if class fields should be updated based upon
-	 *                         information from given tagged values, else false
-	 */
-	public void setTaggedValues(TaggedValues taggedValues,
-			boolean updateFields) {
-
-		// clone tagged values
-		taggedValuesCache = options().taggedValueFactory(taggedValues);
-
-		// Now update fields, if they are affected by tagged values
-		if (updateFields && !taggedValuesCache.isEmpty()) {
-			for (String key : taggedValues.keySet()) {
-				updateFieldsForTaggedValue(key,
-						taggedValuesCache.getFirstValue(key)); // FIXME
-																// first
-																// only?
-			}
-		}
-	}
-
-	public GenericPropertyInfo createCopy(String copyId) {
-
-		GenericPropertyInfo copy = new GenericPropertyInfo(model, copyId, name);
-
-		copy.setDescriptors(this.descriptors().createCopy());
-		copy.setProfiles(this.profiles().createCopy());
-
-		this.validateTaggedValuesCache();
-		if (taggedValuesCache != null && !taggedValuesCache.isEmpty()) {
-			copy.setTaggedValues(taggedValuesCache, false);
-		}
-
-		copy.setStereotypes(this.stereotypesCache);
-
-		copy.setDerived(isDerived);
-		copy.setReadOnly(isReadOnly);
-		copy.setAttribute(isAttribute);
-		copy.copyTypeInfo(this.typeInfo);
-		copy.setNavigable(isNavigable);
-		copy.setOrdered(isOrdered);
-		copy.setUnique(isUnique);
-		copy.setOwned(isOwned);
-		copy.setComposition(isComposition);
-		copy.setAggregation(isAggregation);
-		copy.setCardinality(new Multiplicity(cardinality.toString()));
-		copy.setInitialValue(initialValue);
-		copy.setInlineOrByReference(inlineOrByReference);
-		copy.setInClass(inClass);
-
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < sequenceNumber.components.length - 1; i++) {
-			sb.append(sequenceNumber.components[i] + ".");
-		}
-		sb.append(sequenceNumber.components[sequenceNumber.components.length
-				- 1]);
-		StructuredNumber res = new StructuredNumber(sb.toString());
-
-		/*
-		 * Updating the "sequenceNumber" tagged value is not necessary because
-		 * we didn't change it here.
-		 */
-		copy.setSequenceNumber(res, false);
-		copy.setConstraints(constraints);
-		copy.setAssociation(association);
-		copy.setRestriction(restriction);
-		copy.setNilReasonAllowed(nilReasonAllowed);
-
-		return copy;
-	}
-
-	public String printAsString(String indent) {
-
-		StringBuffer sb = new StringBuffer();
-
-		sb.append(indent + name + "\n");
-		sb.append(indent + indent + "tagged values: ");
-		this.validateTaggedValuesCache();
-		if (taggedValuesCache == null || taggedValuesCache.isEmpty()) {
-			sb.append("none");
-		} else {
-			sb.append(taggedValuesCache.toString());
-		}
-		sb.append(System.getProperty("line.separator"));
-
-		return sb.toString();
-	}
-
-	@Override
-	public boolean isReadOnly() {
-		return isReadOnly;
-	}
-
-	/**
-	 * @param isReadOnly
-	 *                       the isReadOnly to set
-	 */
-	public void setReadOnly(boolean isReadOnly) {
-		this.isReadOnly = isReadOnly;
-	}
-
-	/**
-	 * @param tvName tbd
-	 * @param tvValue tbd
-	 * @param updateFields
-	 *                         true if property fields should be updated based
-	 *                         upon information from given tagged value, else
-	 *                         false
-	 */
-	public void setTaggedValue(String tvName, String tvValue,
-			boolean updateFields) {
-
-		validateTaggedValuesCache();
-
-		taggedValuesCache.put(tvName, tvValue);
-
-		if (updateFields) {
-			updateFieldsForTaggedValue(tvName, tvValue);
-		}
-	}
-
-	/**
-	 * Encapsulates the logic to update property fields based upon the value of
-	 * a named tagged value. Updates 'nilReasonAllowed', 'inlineOrByReference',
-	 * and 'sequenceNumber'.
-	 * 
-	 * @param tvName tbd
-	 * @param tvValue tbd
-	 */
-	protected void updateFieldsForTaggedValue(String tvName, String tvValue) {
-
-		// TODO add more updates for relevant tagged values
-
-		if (tvName.equalsIgnoreCase("nilReasonAllowed")) {
-
-			if (tvValue.equalsIgnoreCase("true")) {
-				this.setNilReasonAllowed(true);
-			} else if (tvValue.equalsIgnoreCase("false")) {
-				this.setNilReasonAllowed(false);
-			} else {
-				MessageContext mc = result.addWarning(this, 1, tvName, tvValue);
-				if (mc != null) {
-					mc.addDetail(this, 0, this.fullName());
-				}
-			}
-
-		} else if (tvName.equalsIgnoreCase("inlineOrByReference")) {
-
-			if (tvValue.equalsIgnoreCase("inline")) {
-				this.setInlineOrByReference("inline");
-			} else if (tvValue.equalsIgnoreCase("byReference")) {
-				this.setInlineOrByReference("byreference");
-			} else if (tvValue.equalsIgnoreCase("inlineOrByReference")) {
-				this.setInlineOrByReference("inlineOrByReference");
-			} else {
-				MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
-				if (mc != null) {
-					mc.addDetail(this, 0, this.fullName());
-				}
-			}
-
-		} else if (tvName.equalsIgnoreCase("sequenceNumber")) {
-
-			/*
-			 * Updating the "sequenceNumber" tagged value is not necessary
-			 * because this method is only called after setting a tagged value.
-			 */
-			this.setSequenceNumber(new StructuredNumber(tvValue), false);
-
-		} else if (tvName.equalsIgnoreCase("profiles")) {
-
-			// unset existing profiles
-			this.profiles = null;
-
-			/*
-			 * invoke PropertyInfoImpl.profiles() method to parse profile info
-			 * from TV profiles
-			 */
-			super.profiles();
-		}
-
-		/*
-		 * TBD: Descriptors should not be modified right away, since the
-		 * descriptor source might not be the tagged value
-		 */
-		// else if (tvName.equalsIgnoreCase("alias")) {
-		//
-		// LangString ls = LangString.parse(tvValue);
-		// this.descriptors.put(Descriptor.ALIAS, ls);
-		//
-		// // this.setAliasNameAll(
-		// // new Descriptors(options().internalize(tvValue)));
-		//
-		// } else if (tvName.equalsIgnoreCase("documentation")) {
-		//
-		// // we map this to the descriptor 'definition'
-		// LangString ls = LangString.parse(tvValue);
-		// this.descriptors.put(Descriptor.DEFINITION, ls);
-		// // this.setDefinitionAll(
-		// // new Descriptors(options().internalize(tvValue)));
-		//
-		// }
-	}
-
-	/**
-	 * Adds the prefix to the 'id' of this class. Also updates the id of the
-	 * 'typeInfo' (if not <code>null</code>). Does NOT update the 'globalId'.
-	 * 
-	 * NOTE: this method is used by the FeatureCatalogue target to ensure that
-	 * IDs used in a reference model are unique to that model and do not get
-	 * mixed up with the IDs of the input model.
-	 * 
-	 * @param prefix tbd
-	 */
-	public void addPrefixToModelElementIDs(String prefix) {
-
-		this.id = prefix + id;
-
-		if (typeInfo.id != null) {
-			typeInfo.id = prefix + typeInfo.id;
-		}
-	}
-
-	/**
-	 * @param profiles
-	 *                     new set of profiles for this property; may be
-	 *                     <code>null</code>
-	 */
-	public void setProfiles(Profiles profiles) {
-
-		if (profiles == null) {
-			this.profiles = new Profiles();
-		} else {
-			this.profiles = profiles;
-		}
-	}
-
-	@Override
-	public String message(int mnr) {
-
-		switch (mnr) {
-		case 0:
-			return "Context: property '$1$'.";
-		case 1:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
-		case 2:
-			return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
-
-		default:
-			return "(" + GenericPropertyInfo.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
-	}
+    }
 }

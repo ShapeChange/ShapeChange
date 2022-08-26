@@ -74,6 +74,12 @@ public class Ldproxy2Constants {
     public static final String PARAM_FK_COLUMN_SUFFIX = "foreignKeyColumnSuffix";
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
     public static final String PARAM_FK_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
+    public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
+    public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
+    public static final String PARAM_GML_SF_LEVEL = "gmlSfLevel";
+    public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
+    public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
+    public static final String PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS = "supportsStandardResponseParameters";
     public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";    
     public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
@@ -83,6 +89,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
+    public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
 
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";   
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
@@ -96,5 +103,4 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
    
-
 }

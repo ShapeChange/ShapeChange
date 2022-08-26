@@ -41,5 +41,8 @@
 	<MapEntry type="GM_Primitive" rule="*" targetType="GEOMETRY" param="geometryInfos{geometryType=ANY}"/>
 	<MapEntry type="GM_Aggregate" rule="*" targetType="GEOMETRY" param="geometryInfos{geometryType=GEOMETRY_COLLECTION}"/>
 	<MapEntry type="GM_Object" rule="*" targetType="GEOMETRY" param="geometryInfos{geometryType=ANY}"/>
+	
+	<MapEntry type="TM_Duration" rule="*" targetType="STRING" param=""/>
+	<MapEntry type="TM_PeriodDuration" rule="*" targetType="STRING" param=""/>
 	<!-- ... more to be added as required -->
 </mapEntries>

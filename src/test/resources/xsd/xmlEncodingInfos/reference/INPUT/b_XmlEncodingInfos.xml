@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><XmlEncodingInfos xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <modelElementEncodings>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema B" modelElementName="FeatureTypeB" xmlName="FeatureTypeB" xmlNamespace="http://shapechange.net/test/b"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema B" modelElementName="FeatureTypeB::att1" xmlAttribute="true" xmlName="att1" xmlNamespace="http://shapechange.net/test/b"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema B" modelElementName="FeatureTypeB::att2" xmlName="att2" xmlNamespace="http://shapechange.net/test/b"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema B" modelElementName="FeatureTypeB::att3" xmlName="att3" xmlNamespace="http://shapechange.net/test/b"/>
+  </modelElementEncodings>
+  <namespaces>
+    <XmlNamespace ns="http://shapechange.net/test/b" nsabr="b"/>
+  </namespaces>
+</XmlEncodingInfos>

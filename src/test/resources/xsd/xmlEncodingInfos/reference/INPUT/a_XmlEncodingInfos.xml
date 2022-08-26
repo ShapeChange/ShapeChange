@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><XmlEncodingInfos xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <modelElementEncodings>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="AbstractFeatureTypeA" xmlName="AbstractFeatureTypeA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="AbstractFeatureTypeA::attMeasure" xmlName="attMeasure" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="AbstractFeatureTypeA::attUnionA" xmlName="attUnionA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="AbstractFeatureTypeA::ftAtoTA" xmlName="ftAtoTA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="AbstractFeatureTypeA::geom" xmlName="geom" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="DataTypeA" xmlName="DataTypeA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="DataTypeA::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="DataTypeA::att2" xmlAttribute="true" xmlName="att2" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="TypeA" xmlName="TypeA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="TypeA::attCodelistA" xmlName="attCodelistA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="TypeASub" xmlName="TypeASub" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="TypeASub::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="UnionA" xmlName="UnionA" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="UnionA::opt1" xmlName="opt1" xmlNamespace="http://shapechange.net/test/a"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema A" modelElementName="UnionA::opt2" xmlName="opt2" xmlNamespace="http://shapechange.net/test/a"/>
+  </modelElementEncodings>
+  <namespaces>
+    <XmlNamespace ns="http://shapechange.net/test/a" nsabr="a"/>
+  </namespaces>
+</XmlEncodingInfos>

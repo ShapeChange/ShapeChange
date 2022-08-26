@@ -48,6 +48,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -814,7 +815,7 @@ public class ModelWriter extends AbstractModelWriter {
 
 	    if (zipOutput) {
 
-		File outputZipFile = new File(outputXmlFile.getParentFile(), outputXmlFile.getName() + ".zip");
+		File outputZipFile = new File(outputXmlFile.getParentFile(), FilenameUtils.getBaseName(outputXmlFile.getName()) + ".zip");
 		ZipHandler.zipFile(outputXmlFile, outputZipFile);
 	    }
 

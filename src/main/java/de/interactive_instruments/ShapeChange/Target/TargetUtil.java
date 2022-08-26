@@ -45,7 +45,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 
 public class TargetUtil {
 	
-	private static final String PARAM_MAIN_APP_SCHEMA = "mainAppSchema";
+	public static final String PARAM_MAIN_APP_SCHEMA = "mainAppSchema";
 
 	private TargetUtil() {}
 

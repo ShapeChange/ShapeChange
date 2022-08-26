@@ -8,7 +8,7 @@
 		<parameter name="inputModelType" value="EA7"/>
 		<parameter name="inputFile" value="src/test/resources/flattener/inheritance2/test_inheritance2.EAP"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema.*"/>
-		<parameter name="representTaggedValues" value="sequenceNumber,originalRoleName"/>
+		<parameter name="representTaggedValues" value="sequenceNumber,originalPropertyName,originalInClassName,originalSchemaName"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="disabled"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
@@ -40,7 +40,12 @@
 		  inputs="IDENTITY step1" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/flattening/inheritance2/results/xsd"/>
 			<targetParameter name="sortedOutput" value="true"/>
-			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+			<targetParameter name="defaultEncodingRule" value="myrule"/>
+			<rules>
+				<EncodingRule name="myrule" extends="iso19136_2007">
+					<rule name="rule-xsd-all-tagged-values" />
+				</EncodingRule>
+			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
 			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
 			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>

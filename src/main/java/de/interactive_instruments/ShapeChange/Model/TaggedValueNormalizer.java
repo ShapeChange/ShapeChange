@@ -123,7 +123,8 @@ public class TaggedValueNormalizer {
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
 	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
 	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType",
-	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType")
+	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType", 
+	    "representsFeatureTypeSet", "representsTypeSet")
 	    .collect(Collectors.toSet());
 
     /*

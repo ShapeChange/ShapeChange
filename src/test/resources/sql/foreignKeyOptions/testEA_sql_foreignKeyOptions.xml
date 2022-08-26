@@ -49,10 +49,15 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="foreignKeyOnUpdate" value="Cascade"/>
+			<targetParameter name="foreignKeyOnDelete" value="Cascade"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-databaseModel" />
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -74,10 +79,14 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="foreignKeyOnUpdate" value="Cascade"/>
+			<targetParameter name="foreignKeyOnDelete" value="Cascade"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-databaseModel" />
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -101,10 +110,13 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="foreignKeyOnDelete" value="Cascade"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-databaseModel" />
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include
@@ -126,10 +138,14 @@
 				value="true" />
 			<targetParameter name="dataModelPatternPath" value="src/main/resources/dataModelPatterns"/>
 			<targetParameter name="eaAuthor" value="Test Author"/>
+			<targetParameter name="foreignKeyOnUpdate" value="Cascade"/>
+			<targetParameter name="foreignKeyOnDelete" value="Cascade"/>
 			<rules>
 				<EncodingRule name="customRule" extends="sql">
 					<rule name="rule-sql-all-associativetables" />
 					<rule name="rule-sql-all-databaseModel" />
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
 				</EncodingRule>
 			</rules>
 			<xi:include

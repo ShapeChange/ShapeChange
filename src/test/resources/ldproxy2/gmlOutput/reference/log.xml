@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/test/resources/ldproxy2/gmlOutput/test_ldproxy2_gmlOutput.xml" end="Wed Aug 24 14:58:25 CEST 2022" resultCode="0" start="Wed Aug 24 14:58:17 CEST 2022" version="2.12.1-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="Validating input parameters."/>
+    <Info message="Validation of input parameters completed."/>
+    <Info message="Validating log parameters."/>
+    <Info message="Validation of log parameters completed."/>
+    <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\gmlOutput\test_ldproxy2GmlOutput.eap"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\gmlOutput\test_ldproxy2GmlOutput.eap"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\gmlOutput\test_ldproxy2GmlOutput.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\gmlOutput\test_ldproxy2GmlOutput.eap"/>
+    <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'INPUT'."/>
+    <ProcessFlowInfo message="========== processing phase =========="/>
+    <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+    <ProcessFlowInfo message="========== postprocessing phase =========="/>
+    <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema A', target namespace: 'http://shapechange.net/test/a'"/>
+    <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+    <Info message="Type 'AbstractFeatureTypeAUnion' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it."/>
+    <Info message="Type 'TypeAUnion' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it."/>
+    <Info message="Type 'UnionA' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it."/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema B', target namespace: 'http://shapechange.net/test/b'"/>
+    <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema C', target namespace: 'http://shapechange.net/test/c'"/>
+    <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+    <Info message="Type 'FeatureTypeC1Union' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it."/>
+    <Warning message="Could not compute a label for codelist/enumeration 'CodeListA'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.">
+      <Detail message="Context: property 'Cross Schema A::CodeListA'"/>
+    </Warning>
+    <Warning message="Could not compute a label for codelist/enumeration 'EnumerationA'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.">
+      <Detail message="Context: property 'Cross Schema A::EnumerationA'"/>
+    </Warning>
+    <Error message="The value type 'UnionA' of property 'attUnionA' (of class 'FeatureTypeC1') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transform (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.">
+      <Detail message="Context: property 'Cross Schema C::FeatureTypeC1::attUnionA'"/>
+    </Error>
+    <Error message="The value type 'UnionA' of property 'attUnionA' (of class 'FeatureTypeC2') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transform (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.">
+      <Detail message="Context: property 'Cross Schema C::FeatureTypeC2::attUnionA'"/>
+    </Error>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_END'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

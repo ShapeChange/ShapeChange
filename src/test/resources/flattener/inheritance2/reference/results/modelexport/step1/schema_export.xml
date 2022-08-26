@@ -150,6 +150,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -164,6 +176,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51455</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -573,6 +597,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -587,6 +623,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -686,6 +734,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -700,6 +760,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -727,6 +799,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -938,6 +1022,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -952,6 +1048,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -979,6 +1087,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T1_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -1086,6 +1206,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -1426,6 +1558,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -1450,6 +1594,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1_1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -1668,6 +1824,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -1786,6 +1954,12 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.1</sc:Value>
@@ -1811,6 +1985,12 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -1828,6 +2008,12 @@
                           <sc:name>pFT2_T2_FT1_1_1</sc:name>
                           <sc:id>Tas51456_copyForAssociationBetweenClasses_T2_FT1_1_1_and_T2_FT2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -1853,6 +2039,12 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -1919,6 +2111,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -1946,6 +2150,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T2_FT1_1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2</sc:Value>
@@ -1963,7 +2179,7 @@
                             <sc:TaggedValue>
                               <sc:name>inlineOrByReference</sc:name>
                               <sc:values>
-                                <sc:Value>inline</sc:Value>
+                                <sc:Value>inlineOrByReference</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -1982,8 +2198,7 @@
                           <sc:sequenceNumber>3</sc:sequenceNumber>
                           <sc:typeName>Integer</sc:typeName>
                           <sc:isComposition>true</sc:isComposition>
-                          <sc:inlineOrByReference>inline</sc:inlineOrByReference>
-                        </sc:Property>
+                          </sc:Property>
                       </sc:properties>
                     </sc:Class>
                   </sc:classes>
@@ -2054,6 +2269,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -2068,6 +2295,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51457_copyUniDirectional_ua2_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2408,6 +2647,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -2422,6 +2673,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51457_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T3_FT2_and_T3_FT1_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2521,6 +2784,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -2535,6 +2810,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51457_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T3_FT2_and_T3_FT1_2_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2562,6 +2849,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -2802,6 +3101,12 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.1</sc:Value>
@@ -2826,6 +3131,12 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2852,6 +3163,12 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -2869,6 +3186,12 @@
                           <sc:name>pFT2_T3_FT1_2_1</sc:name>
                           <sc:id>Sas51457_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T3_FT2_and_T3_FT1_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2935,6 +3258,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -2949,6 +3284,18 @@
                           <sc:name>pFT1</sc:name>
                           <sc:id>Tas51457_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T3_FT2_and_T3_FT1_2_copyForAssociationBetweenClasses_T3_FT2_and_T3_FT1_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -2976,6 +3323,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T3_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -3086,6 +3445,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -3107,6 +3478,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3133,6 +3522,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -3158,6 +3565,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -3175,6 +3600,24 @@
                           <sc:name>pFT1_T4_FT2_2_1</sc:name>
                           <sc:id>Sas51458_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T4_FT1_and_T4_FT2_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3516,6 +3959,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -3537,6 +3992,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3563,6 +4036,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -3588,6 +4079,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -3605,6 +4114,24 @@
                           <sc:name>pFT1_T4_FT2_2_1</sc:name>
                           <sc:id>Sas51458_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T4_FT1_and_T4_FT2_2_1_copyForAssociationBetweenClasses_T4_FT1_1_and_T4_FT2_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3705,6 +4232,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -3726,6 +4265,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3752,6 +4309,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -3777,6 +4352,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -3794,6 +4387,24 @@
                           <sc:name>pFT1_T4_FT2_2_1</sc:name>
                           <sc:id>Sas51458_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T4_FT1_and_T4_FT2_2_1_copyForAssociationBetweenClasses_T4_FT1_2_and_T4_FT2_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -3822,6 +4433,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -4040,6 +4663,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -4061,6 +4696,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4087,6 +4740,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -4112,6 +4783,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -4129,6 +4818,24 @@
                           <sc:name>pFT2_T4_FT1_2_1</sc:name>
                           <sc:id>Tas51458_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4470,6 +5177,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -4491,6 +5210,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4517,6 +5254,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -4542,6 +5297,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -4559,6 +5332,24 @@
                           <sc:name>pFT2_T4_FT1_2_1</sc:name>
                           <sc:id>Tas51458_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4659,6 +5450,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -4680,6 +5483,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4706,6 +5527,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -4731,6 +5570,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -4748,6 +5605,24 @@
                           <sc:name>pFT2_T4_FT1_2_1</sc:name>
                           <sc:id>Tas51458_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_2_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -4776,6 +5651,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -4987,6 +5874,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -5008,6 +5907,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5034,6 +5951,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -5059,6 +5994,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -5076,6 +6029,24 @@
                           <sc:name>pFT1_T4_FT2_2_1</sc:name>
                           <sc:id>Sas51458_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T4_FT1_and_T4_FT2_2_1_copyForAssociationBetweenClasses_T4_FT1_2_and_T4_FT2_2_1_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT1</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5104,6 +6075,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT1_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -5196,6 +6179,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -5217,6 +6212,24 @@
                             </sc:alias>
                           </sc:descriptors>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5243,6 +6256,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -5268,6 +6299,24 @@
                           </sc:descriptors>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.3</sc:Value>
@@ -5285,6 +6334,24 @@
                           <sc:name>pFT2_T4_FT1_2_1</sc:name>
                           <sc:id>Tas51458_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_2_copyForAssociationBetweenClasses_T4_FT1_2_1_and_T4_FT2_2_1_backToBiDirectional</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFT2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5313,6 +6380,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T4_FT2_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -5423,6 +6502,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -5437,6 +6528,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5456,6 +6565,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -5473,6 +6600,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT_2</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5492,6 +6637,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.4</sc:Value>
@@ -5509,6 +6672,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5528,6 +6709,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.2</sc:Value>
@@ -5545,6 +6744,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT_2</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5564,6 +6781,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.4</sc:Value>
@@ -5581,6 +6816,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5600,6 +6853,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.2</sc:Value>
@@ -5618,6 +6889,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.3</sc:Value>
@@ -5635,6 +6924,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT_2_1</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -5969,6 +7276,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -5983,6 +7302,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6002,6 +7339,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -6019,6 +7374,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT_2</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6038,6 +7411,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.4</sc:Value>
@@ -6055,6 +7446,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6074,6 +7483,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.2</sc:Value>
@@ -6091,6 +7518,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT_2</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6110,6 +7555,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.4</sc:Value>
@@ -6127,6 +7590,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6146,6 +7627,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.2</sc:Value>
@@ -6164,6 +7663,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.3</sc:Value>
@@ -6181,6 +7698,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT_2_1</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6274,6 +7809,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -6288,6 +7835,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6307,6 +7872,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -6324,6 +7907,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT_2</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6343,6 +7944,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.4</sc:Value>
@@ -6360,6 +7979,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6379,6 +8016,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.2</sc:Value>
@@ -6396,6 +8051,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT_2</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6415,6 +8088,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.4</sc:Value>
@@ -6432,6 +8123,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6451,6 +8160,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.2</sc:Value>
@@ -6469,6 +8196,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.3</sc:Value>
@@ -6486,6 +8231,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT_2_1</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6514,6 +8277,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -6725,6 +8500,18 @@
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>1</sc:Value>
@@ -6739,6 +8526,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6758,6 +8563,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.2</sc:Value>
@@ -6775,6 +8598,24 @@
                           <sc:name>pFTSelfSourceA_T5_FT_2</sc:name>
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6794,6 +8635,24 @@
                           <sc:id>Sas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfSourceA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>2.4</sc:Value>
@@ -6811,6 +8670,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6830,6 +8707,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.2</sc:Value>
@@ -6847,6 +8742,24 @@
                           <sc:name>pFTSelfTargetA_T5_FT_2</sc:name>
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6866,6 +8779,24 @@
                           <sc:id>Tas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetA</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>3.4</sc:Value>
@@ -6883,6 +8814,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6902,6 +8851,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.2</sc:Value>
@@ -6920,6 +8887,24 @@
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
                             <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
                                 <sc:Value>4.3</sc:Value>
@@ -6937,6 +8922,24 @@
                           <sc:name>pFTSelfTargetB_T5_FT_2_1</sc:name>
                           <sc:id>Tas51463_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_1</sc:id>
                           <sc:taggedValues>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalPropertyName</sc:name>
+                              <sc:values>
+                                <sc:Value>pFTSelfTargetB</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
                             <sc:TaggedValue>
                               <sc:name>sequenceNumber</sc:name>
                               <sc:values>
@@ -6965,6 +8968,18 @@
                               <sc:name>isMetadata</sc:name>
                               <sc:values>
                                 <sc:Value>false</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalInClassName</sc:name>
+                              <sc:values>
+                                <sc:Value>T5_FT_2</sc:Value>
+                              </sc:values>
+                            </sc:TaggedValue>
+                            <sc:TaggedValue>
+                              <sc:name>originalSchemaName</sc:name>
+                              <sc:values>
+                                <sc:Value>Test Schema</sc:Value>
                               </sc:values>
                             </sc:TaggedValue>
                             <sc:TaggedValue>
@@ -7633,6 +9648,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.2</sc:Value>
@@ -7659,6 +9692,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_1</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7687,6 +9738,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.2</sc:Value>
@@ -7713,6 +9782,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_1</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7741,6 +9828,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.4</sc:Value>
@@ -7767,6 +9872,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7795,6 +9918,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.4</sc:Value>
@@ -7821,6 +9962,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7849,6 +10008,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.3</sc:Value>
@@ -7875,6 +10052,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7903,6 +10098,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.3</sc:Value>
@@ -7929,6 +10142,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -7957,6 +10188,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.1</sc:Value>
@@ -7983,6 +10232,24 @@
           <sc:name>pFTSelfTargetA</sc:name>
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8011,6 +10278,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.1</sc:Value>
@@ -8038,6 +10323,24 @@
           <sc:id>Tas51462_copyUniDirectional_ua1_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfTargetA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>3.-1.1</sc:Value>
@@ -8063,6 +10366,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8091,6 +10412,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.2</sc:Value>
@@ -8117,6 +10456,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8145,6 +10502,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_1_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.2</sc:Value>
@@ -8171,6 +10546,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8199,6 +10592,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.4</sc:Value>
@@ -8225,6 +10636,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8253,6 +10682,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_1_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.4</sc:Value>
@@ -8279,6 +10726,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8307,6 +10772,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.3</sc:Value>
@@ -8333,6 +10816,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8361,6 +10862,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_2_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.3</sc:Value>
@@ -8387,6 +10906,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
@@ -8415,6 +10952,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_1</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.1</sc:Value>
@@ -8442,6 +10997,24 @@
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2</sc:id>
           <sc:taggedValues>
             <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
                 <sc:Value>2.-1.1</sc:Value>
@@ -8468,6 +11041,24 @@
           <sc:name>pFTSelfSourceA</sc:name>
           <sc:id>Sas51462_copyUniDirectional_ua2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_copyForAssociationBetweenClasses_T5_FT_and_T5_FT_2_1</sc:id>
           <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>originalInClassName</sc:name>
+              <sc:values>
+                <sc:Value>T5_FT</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalPropertyName</sc:name>
+              <sc:values>
+                <sc:Value>pFTSelfSourceA</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>originalSchemaName</sc:name>
+              <sc:values>
+                <sc:Value>Test Schema</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>

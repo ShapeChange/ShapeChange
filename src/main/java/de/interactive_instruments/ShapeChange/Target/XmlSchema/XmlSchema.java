@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,6 +69,7 @@ import de.interactive_instruments.ShapeChange.Model.OclConstraint;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 
 public class XmlSchema implements Target, MessageSource {
 
@@ -85,6 +87,8 @@ public class XmlSchema implements Target, MessageSource {
     private TargetXmlSchemaConfiguration config;
     protected String explicitSchematronQueryBinding;
     protected boolean schematronSegmentation = false;
+    protected boolean writeXmlEncodingInfos = false;
+    private SortedSet<ClassInfo> processedClasses = new TreeSet<>();
 
     public void initialise(PackageInfo p, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -124,6 +128,9 @@ public class XmlSchema implements Target, MessageSource {
 
 	schematronSegmentation = options.parameterAsBoolean(this.getClass().getName(),
 		XmlSchemaConstants.PARAM_SEGMENT_SCH, false);
+
+	writeXmlEncodingInfos = options.parameterAsBoolean(this.getClass().getName(),
+		XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS, false);
 
 	if (pi.matches("rule-xsd-pkg-schematron") && !schematronSegmentation) {
 
@@ -287,6 +294,8 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	}
 
+	processedClasses.add(ci);
+
 	// Object element
 	switch (cat) {
 	case Options.ENUMERATION:
@@ -412,7 +421,6 @@ public class XmlSchema implements Target, MessageSource {
 		xsd.pOKSTRAKEYPropertyType(ci);
 	    break;
 	}
-	;
 
 	// Separate content model
 	switch (cat) {
@@ -814,6 +822,62 @@ public class XmlSchema implements Target, MessageSource {
 	    }
 	}
 
+	// finall, write XmlEncodingInfos
+	if (writeXmlEncodingInfos) {
+
+	    File outputDirectoryFile = new File(outputDirectory);
+	    File outputFile = new File(outputDirectoryFile, pi.xmlns() + "_XmlEncodingInfos.xml");
+	    XmlEncodingInfos xeiAll = new XmlEncodingInfos();
+	    for (XsdDocument xsd : xsdMap.values()) {
+		xeiAll.merge(xsd.getXmlEncodingInfos());
+	    }
+
+	    /*
+	     * 2022-08-23 JE: The following code was written to debug and review the
+	     * generation of XML encoding infos. It logs messages for classes and navigable
+	     * properties that are not represented in the generated XML encoding infos
+	     * (ignoring a couple of cases where no such representation [currently] exists).
+	     * This is intended to help spot cases that may not be covered yet when
+	     * generating XML encoding infos.
+	     * 
+	     * In order to activate this code, set variable inspectXmlEncodingInfos to true.
+	     */
+	    boolean inspectXmlEncodingInfos = false;
+	    if (inspectXmlEncodingInfos) {
+		for (ClassInfo ci : processedClasses) {
+
+		    if (ci.category() == Options.ENUMERATION || ci.category() == Options.CODELIST) {
+			continue;
+		    } else if (ci.matches("rule-xsd-cls-suppress") && ci.suppressed()) {
+			continue;
+		    } else if (ci.category() == Options.BASICTYPE && ci.matches("rule-xsd-cls-basictype")
+			    && !ci.matches("rule-xsd-cls-local-basictype")) {
+			continue;
+		    }
+
+		    if (xeiAll.getXmlEncodingInfo(ci.model().schemaPackage(ci).name(), ci).isEmpty()) {
+
+			if (ci.matches("rule-xsd-cls-adeelement") && ci.stereotype("adeelement")) {
+			    // ignore - the class itself is not encoded then
+			} else if (ci.category() == Options.MIXIN && ci.matches("rule-xsd-cls-mixin-classes")) {
+			    // ignore - the mixin class itself is not encoded
+			} else {
+			    result.addWarning("No XML encoding info present for class " + ci.name());
+			}
+		    }
+
+		    for (PropertyInfo pi : ci.properties().values()) {
+			if (xeiAll.getXmlEncodingInfo(pi.model().schemaPackage(pi.inClass()).name(), pi).isEmpty()) {
+			    result.addWarning(
+				    "No XML encoding info present for property " + ci.name() + "::" + pi.name());
+			}
+		    }
+		}
+	    }
+
+	    xeiAll.toXml(outputFile, result);
+	}
+
 	printed = true;
     }
 
@@ -1168,25 +1232,14 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * Associate these with a core encoding rule
 	 */
-	ProcessRuleSet starPrs = new ProcessRuleSet("*",new TreeSet<>(Stream.of(
-		"req-xsd-pkg-xsdDocument-unique",
-		"req-xsd-cls-name-unique",
-		"req-xsd-cls-ncname",
-		"req-xsd-prop-data-type",
-		"req-xsd-prop-value-type-exists",
-		"req-xsd-prop-ncname",
-		"rule-xsd-pkg-contained-packages",
-		"rule-xsd-pkg-dependencies",
-		"rule-xsd-cls-unknown-as-object",
-		"rule-xsd-cls-object-element",
-		"rule-xsd-cls-type",
-		"rule-xsd-cls-property-type",
-		"rule-xsd-cls-local-properties",
-		"rule-xsd-cls-union-as-choice",
-		"rule-xsd-cls-sequence"
-		).collect(Collectors.toSet())));
+	ProcessRuleSet starPrs = new ProcessRuleSet("*",
+		new TreeSet<>(Stream.of("req-xsd-pkg-xsdDocument-unique", "req-xsd-cls-name-unique",
+			"req-xsd-cls-ncname", "req-xsd-prop-data-type", "req-xsd-prop-value-type-exists",
+			"req-xsd-prop-ncname", "rule-xsd-pkg-contained-packages", "rule-xsd-pkg-dependencies",
+			"rule-xsd-cls-unknown-as-object", "rule-xsd-cls-object-element", "rule-xsd-cls-type",
+			"rule-xsd-cls-property-type", "rule-xsd-cls-local-properties", "rule-xsd-cls-union-as-choice",
+			"rule-xsd-cls-sequence").collect(Collectors.toSet())));
 	r.addRuleSet(starPrs);
-
 
 	/*
 	 * GML 3.2 / ISO 19136:2007 rules
@@ -1206,20 +1259,15 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the iso19136_2007 encoding rule and extend the core encoding rule
 	 */
-	ProcessRuleSet iso19136_2007Prs = new ProcessRuleSet("iso19136_2007","*",new TreeSet<>(Stream.of(
-		"req-xsd-cls-generalization-consistent",
-		"rule-xsd-all-naming-gml",
-		"rule-xsd-cls-global-enumeration",
-		"rule-xsd-cls-codelist-asDictionary",
-		"rule-xsd-cls-standard-gml-property-types",
-		"rule-xsd-cls-noPropertyType",
-		"rule-xsd-cls-byValuePropertyType",
-		"rule-xsd-pkg-gmlProfileSchema",
-		"rule-xsd-prop-targetElement",
-		"rule-xsd-prop-reverseProperty",
-		"rule-xsd-prop-defaultCodeSpace",
-		"rule-xsd-prop-inlineOrByReference"
-		).collect(Collectors.toSet())));
+	ProcessRuleSet iso19136_2007Prs = new ProcessRuleSet("iso19136_2007", "*",
+		new TreeSet<>(Stream
+			.of("req-xsd-cls-generalization-consistent", "rule-xsd-all-naming-gml",
+				"rule-xsd-cls-global-enumeration", "rule-xsd-cls-codelist-asDictionary",
+				"rule-xsd-cls-standard-gml-property-types", "rule-xsd-cls-noPropertyType",
+				"rule-xsd-cls-byValuePropertyType", "rule-xsd-pkg-gmlProfileSchema",
+				"rule-xsd-prop-targetElement", "rule-xsd-prop-reverseProperty",
+				"rule-xsd-prop-defaultCodeSpace", "rule-xsd-prop-inlineOrByReference")
+			.collect(Collectors.toSet())));
 	r.addRuleSet(iso19136_2007Prs);
 
 	/*
@@ -1230,22 +1278,15 @@ public class XmlSchema implements Target, MessageSource {
 	/*
 	 * add the gml33 encoding rule and extend the core encoding rule
 	 */
-	ProcessRuleSet gml33Prs = new ProcessRuleSet("gml33","*",new TreeSet<>(Stream.of(
-		"req-xsd-cls-generalization-consistent",
-		"rule-xsd-all-naming-gml",
-		"rule-xsd-cls-global-enumeration",
-		"rule-xsd-cls-codelist-asDictionaryGml33",
-		"rule-xsd-cls-standard-gml-property-types",
-		"rule-xsd-cls-noPropertyType",
-		"rule-xsd-cls-byValuePropertyType",
-		"rule-xsd-pkg-gmlProfileSchema",
-		"rule-xsd-prop-targetElement",
-		"rule-xsd-prop-reverseProperty",
-		"rule-xsd-prop-defaultCodeSpace",
-		"rule-xsd-prop-inlineOrByReference",
-		"rule-xsd-rel-association-classes"
-		).collect(Collectors.toSet())));
-r.addRuleSet(gml33Prs);
+	ProcessRuleSet gml33Prs = new ProcessRuleSet("gml33", "*",
+		new TreeSet<>(Stream.of("req-xsd-cls-generalization-consistent", "rule-xsd-all-naming-gml",
+			"rule-xsd-cls-global-enumeration", "rule-xsd-cls-codelist-asDictionaryGml33",
+			"rule-xsd-cls-standard-gml-property-types", "rule-xsd-cls-noPropertyType",
+			"rule-xsd-cls-byValuePropertyType", "rule-xsd-pkg-gmlProfileSchema",
+			"rule-xsd-prop-targetElement", "rule-xsd-prop-reverseProperty",
+			"rule-xsd-prop-defaultCodeSpace", "rule-xsd-prop-inlineOrByReference",
+			"rule-xsd-rel-association-classes").collect(Collectors.toSet())));
+	r.addRuleSet(gml33Prs);
 
 	/*
 	 * ISO/TS 19139:2007 rules
@@ -1259,13 +1300,10 @@ r.addRuleSet(gml33Prs);
 	/*
 	 * add the iso19139_2007 encoding rule and extend the core encoding rule
 	 */
-	ProcessRuleSet iso19139_2007Prs = new ProcessRuleSet("iso19139_2007","*",new TreeSet<>(Stream.of(
-		"rule-xsd-cls-enum-object-element",
-		"rule-xsd-cls-enum-property-type",
-		"rule-xsd-cls-global-enumeration",
-		"rule-xsd-cls-standard-19139-property-types",
-		"rule-xsd-all-naming-19139"
-		).collect(Collectors.toSet())));
+	ProcessRuleSet iso19139_2007Prs = new ProcessRuleSet("iso19139_2007", "*",
+		new TreeSet<>(Stream.of("rule-xsd-cls-enum-object-element", "rule-xsd-cls-enum-property-type",
+			"rule-xsd-cls-global-enumeration", "rule-xsd-cls-standard-19139-property-types",
+			"rule-xsd-all-naming-19139").collect(Collectors.toSet())));
 	r.addRuleSet(iso19139_2007Prs);
 
 	/*
@@ -1280,26 +1318,18 @@ r.addRuleSet(gml33Prs);
 	/*
 	 * add the ogcSweCommon2 encoding rule and extend the core encoding rule
 	 */
-	ProcessRuleSet ogcSweCommon2Prs = new ProcessRuleSet("ogcSweCommon2","*",new TreeSet<>(Stream.of(
-		"req-xsd-cls-generalization-consistent",
-		"rule-xsd-all-naming-swe",
-		"rule-xsd-cls-global-enumeration",
-		"rule-xsd-cls-codelist-asDictionary",
-		"rule-xsd-cls-standard-swe-property-types",
-		"rule-xsd-cls-noPropertyType",
-		"rule-xsd-cls-byValuePropertyType",
-		"rule-xsd-pkg-gmlProfileSchema",
-		"rule-xsd-prop-targetElement",
-		"rule-xsd-prop-reverseProperty",
-		"rule-xsd-prop-defaultCodeSpace",
-		"rule-xsd-prop-inlineOrByReference",
-		"rule-xsd-prop-xsdAsAttribute",
-		"rule-xsd-prop-soft-typed",
-		"rule-xsd-cls-union-as-group-property-type",
-		"rule-xsd-prop-initialValue"
-		).collect(Collectors.toSet())));
+	ProcessRuleSet ogcSweCommon2Prs = new ProcessRuleSet("ogcSweCommon2", "*",
+		new TreeSet<>(Stream
+			.of("req-xsd-cls-generalization-consistent", "rule-xsd-all-naming-swe",
+				"rule-xsd-cls-global-enumeration", "rule-xsd-cls-codelist-asDictionary",
+				"rule-xsd-cls-standard-swe-property-types", "rule-xsd-cls-noPropertyType",
+				"rule-xsd-cls-byValuePropertyType", "rule-xsd-pkg-gmlProfileSchema",
+				"rule-xsd-prop-targetElement", "rule-xsd-prop-reverseProperty",
+				"rule-xsd-prop-defaultCodeSpace", "rule-xsd-prop-inlineOrByReference",
+				"rule-xsd-prop-xsdAsAttribute", "rule-xsd-prop-soft-typed",
+				"rule-xsd-cls-union-as-group-property-type", "rule-xsd-prop-initialValue")
+			.collect(Collectors.toSet())));
 	r.addRuleSet(ogcSweCommon2Prs);
-
 
 	/*
 	 * additional GML 2.1 rules
@@ -1309,10 +1339,8 @@ r.addRuleSet(gml33Prs);
 	/*
 	 * add the gml21 encoding rule and extend the core encoding rule
 	 */
-	ProcessRuleSet gml21Prs = new ProcessRuleSet("gml21","iso19136_2007",new TreeSet<>(Stream.of(
-		"rule-xsd-all-gml21",
-		"rule-xsd-cls-codelist-anonymous-xlink"
-		).collect(Collectors.toSet())));
+	ProcessRuleSet gml21Prs = new ProcessRuleSet("gml21", "iso19136_2007", new TreeSet<>(
+		Stream.of("rule-xsd-all-gml21", "rule-xsd-cls-codelist-anonymous-xlink").collect(Collectors.toSet())));
 	r.addRuleSet(gml21Prs);
 
 	/*
@@ -1349,7 +1377,7 @@ r.addRuleSet(gml33Prs);
 	r.addRule("rule-xsd-all-propertyAssertion-ignoreProhibited");
 	r.addRule("rule-xsd-cls-adeelement");
 	r.addRule("rule-xsd-cls-basictype");
-	r.addRule("rule-xsd-cls-basictype-list");	
+	r.addRule("rule-xsd-cls-basictype-list");
 	r.addRule("rule-xsd-cls-codelist-constraints");
 	r.addRule("rule-xsd-cls-codelist-constraints2");
 	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
@@ -1455,14 +1483,14 @@ r.addRuleSet(gml33Prs);
 	    return "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
 	case 2013:
 	    return "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
-	
+
 	case 10012:
 	    return "Generating XML Schema for application schema '$1$'.";
 	case 10016:
 	    return "Processing class '$1$', rule '$2$'.";
 	case 10017:
 	    return "Creating XSD document '$1$' for package '$2$'.";
-	
+
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
