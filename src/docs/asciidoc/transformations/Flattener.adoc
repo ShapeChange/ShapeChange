@@ -240,11 +240,32 @@ The value type of each attribute whose value type is one of the selected
 supertypes is switched to the according union (unless the attribute is
 part of the union itself).
 
-NOTE: Tagged value _representsFeatureTypeSet_ = true is added to the
-union. This allows for specific treatment of this kind of union, for
-example in
+[NOTE]
+======
+
+* Tagged value _representsFeatureTypeSet_ = true is added to the
+union, if the supertype that the union represents is a feature type. 
+This allows for specific treatment of this kind of union, for example in
 _rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets_
-and _rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets_.
+and _rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets_. If the 
+represented supertype is not a feature type, but an object, data, or - in 
+rare cases - a mixin type, then tagged value _representsTypeSet_ = true 
+is added to the union. This information can be useful in subsequent 
+processing, such as when the xref:../targets/ldproxy2.adoc[ldproxy2 target] 
+is set to generate configurations that support GML output.
+* Before inheritance structures are actually flattened, all properties that 
+belong to classes within the schemas selected for processing are analyzed:
+If the class that owns the property is a supertype, then the following tags 
+are set on the property: _originalSchemaName_ (with the name of the schema 
+to which the class that owns the property belongs), and _originalInClassName_ 
+(with the name of the class that owns the property). In addition, if the 
+property is an association role, and the value type of the role is a supertype, 
+then tag _originalPropertyName_ is set on the role (with the name of the role 
+as value). Again, these information items can be useful in subsequent 
+processing, such as when the xref:../targets/ldproxy2.adoc[ldproxy2 target] 
+is set to generate configurations that support GML output.
+
+======
 
 The properties of selected supertypes are then recursively copied to
 their subtypes, thereby retaining relevant information (property name,
@@ -959,6 +980,14 @@ are flattened are ignored.
 * Each property (P2) of type (A) is copied into type (B):
 ** The copy of (P2) receives the documentation and tagged values of
 (P1).
+** If type (A) has tagged value _representsFeatureTypeSet_ or 
+_representsTypeSet_ with value 'true' (NOTE: these tags are added 
+during xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[inheritance flattening], 
+when creating unions that represent 
+supertypes), then tag _originalPropertyName_ is added to the 
+property copy, with the name of property (P1) as value. That information 
+is used, for example, by the xref:../targets/ldproxy2.adoc[ldproxy2 target], 
+when creating configuration items for generating GML output.
 ** Name and descriptors of the copy are modified to reflect the
 flattening process:
 *** The names of (P1) and (P2) are concatenated with a separator. If (A)
