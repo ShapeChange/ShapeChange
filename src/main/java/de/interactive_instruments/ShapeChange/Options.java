@@ -160,6 +160,7 @@ public class Options {
      */
     public static final String PARAM_INPUT_EXCLUDED_PACKAGES = "excludedPackages";
 
+    public static final String PARAM_IGNORE_TAGGED_VALUES = "ignoreTaggedValues";
     /**
      * Defines the name of the input parameter that provides the location of an
      * excel file with constraints (currently only SBVR rules are supported) that
@@ -415,6 +416,8 @@ public class Options {
     protected String definitionSeparator = null;
     protected String descriptionSeparator = null;
     protected String nameSeparator = null;
+    
+    protected Set<String> tagsToIgnore = new HashSet<>();
 
     public String extractSeparator() {
 	if (extractSeparator == null)
@@ -1770,6 +1773,12 @@ public class Options {
 			}
 		    }
 		}
+	    }
+	    
+	    String ignoreTaggedValues = parameter(PARAM_IGNORE_TAGGED_VALUES);
+	    if(StringUtils.isNotBlank(ignoreTaggedValues)) {
+		String[] tagsToIgnoreArray = StringUtils.split(ignoreTaggedValues, ", ");
+		this.tagsToIgnore = new HashSet<>(Arrays.asList(tagsToIgnoreArray));
 	    }
 
 	    String language_value = inputConfig.getParameters().get(PARAM_LANGUAGE);
@@ -3580,10 +3589,14 @@ public class Options {
 
     public boolean allowAllStereotypes() {
 	return this.allowAllStereotypes;
-    }
+    }    
 
     public Set<String> addedStereotypes() {
 	return this.addedStereotypes;
+    }
+    
+    public Set<String> tagsToIgnore() {
+	return this.tagsToIgnore;
     }
 
     /**

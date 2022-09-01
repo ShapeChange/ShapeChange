@@ -250,6 +250,23 @@ Default Value: false
 Explanation: True, if xxxEncodingRule tagged values shall be ignored
 (because the model is wrong and needs cleanup), else false.
 
+[[ignoreTaggedValues]]
+=== ignoreTaggedValues
+
+(since v2.13.0)
+
+Type: String (of comma-separated values)
+
+Default Value: _none_
+
+Explanation: Define the names of tags (i.e., tagged values), which shall be 
+ignored (one could also say 'dropped') while loading a model. 
+
+NOTE: This mechanism is applied after tag renaming (e.g. due to
+application of <<Tag_aliases,tag aliases>>, and renaming of deprecated tags), 
+and application of input parameters <<addTaggedValues>> and <<representTaggedValues>>.
+
+
 [[inputFile]]
 === inputFile
 
