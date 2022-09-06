@@ -416,7 +416,7 @@ public class Options {
     protected String definitionSeparator = null;
     protected String descriptionSeparator = null;
     protected String nameSeparator = null;
-    
+
     protected Set<String> tagsToIgnore = new HashSet<>();
 
     public String extractSeparator() {
@@ -1085,8 +1085,7 @@ public class Options {
      * Adds a stereotype alias mapping.
      *
      * @param alias     - the stereotype alias (in lower case)
-     * @param wellknown - the wellknown stereotype to which the
-     *                  alias maps
+     * @param wellknown - the wellknown stereotype to which the alias maps
      */
     protected void addStereotypeAlias(String alias, String wellknown) {
 	fStereotypeAliases.put(alias.toLowerCase(), wellknown);
@@ -1774,12 +1773,6 @@ public class Options {
 		    }
 		}
 	    }
-	    
-	    String ignoreTaggedValues = parameter(PARAM_IGNORE_TAGGED_VALUES);
-	    if(StringUtils.isNotBlank(ignoreTaggedValues)) {
-		String[] tagsToIgnoreArray = StringUtils.split(ignoreTaggedValues, ", ");
-		this.tagsToIgnore = new HashSet<>(Arrays.asList(tagsToIgnoreArray));
-	    }
 
 	    String language_value = inputConfig.getParameters().get(PARAM_LANGUAGE);
 
@@ -1927,6 +1920,19 @@ public class Options {
 	// add all log parameters
 	for (String key : logParameters.keySet()) {
 	    setParameter(key, logParameters.get(key));
+	}
+
+	/*
+	 * 2022-09-01 JE: Update certain fields from input configuration. In rare cases,
+	 * the input configuration may be modified after loading (e.g. through some
+	 * ShapeChange [extension] dialog), and these changes should be taken into
+	 * account here.
+	 */
+	this.tagsToIgnore.clear();
+	String ignoreTaggedValues = parameter(PARAM_IGNORE_TAGGED_VALUES);
+	if (StringUtils.isNotBlank(ignoreTaggedValues)) {
+	    String[] tagsToIgnoreArray = StringUtils.split(ignoreTaggedValues, ", ");
+	    this.tagsToIgnore.addAll(Arrays.asList(tagsToIgnoreArray));
 	}
 
 	/*
@@ -3095,7 +3101,7 @@ public class Options {
 
 		    // parse tagged values, if any are defined
 		    List<TaggedValueConfigurationEntry> taggedValues = parseTaggedValues(trfE);
-		    
+
 		    // get the transformer input - can be null, then set it to
 		    // global input element
 		    String trfConfigInput;
@@ -3589,12 +3595,12 @@ public class Options {
 
     public boolean allowAllStereotypes() {
 	return this.allowAllStereotypes;
-    }    
+    }
 
     public Set<String> addedStereotypes() {
 	return this.addedStereotypes;
     }
-    
+
     public Set<String> tagsToIgnore() {
 	return this.tagsToIgnore;
     }
