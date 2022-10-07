@@ -221,6 +221,12 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 						+ String.format("%.2f",
 								ss.percentOfFeatureRelationships()));
 
+				writer.println(indent1 + "Number of attributes with complex data type from schema, and max mult 1, in schema: "
+					+ ss.getNumAttsWithSchemaDatatypeAndMaxMultOne());
+				
+				writer.println(indent1 + "Number of attributes with complex data type from schema, and max mult > 1, in schema: "
+					+ ss.getNumAttsWithSchemaDatatypeAndMaxMultMany());
+
 				writer.println("----------");
 
 				for (ClassStatistic cs : ss.getClassStatistics()) {
@@ -238,6 +244,12 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 							+ "Percent of relationships to features: "
 							+ String.format("%.2f",
 									cs.percentOfFeatureRelationships()));
+					
+					writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult 1: "
+						+ cs.getNumAttsWithSchemaDatatypeAndMaxMultOne());
+					
+					writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult > 1: "
+						+ cs.getNumAttsWithSchemaDatatypeAndMaxMultMany());
 				}
 			}
 			

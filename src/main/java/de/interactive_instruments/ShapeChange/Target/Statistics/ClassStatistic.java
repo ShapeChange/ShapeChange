@@ -46,6 +46,9 @@ public class ClassStatistic {
 	private int numProps;
 	private int numFeatureRels;
 	private double percentFeatureRelationships;
+	
+	private int numAttsWithSchemaDatatypeAndMaxMultOne;
+	private int numAttsWithSchemaDatatypeAndMaxMultMany;
 
 	public ClassStatistic(ClassInfo ci) {
 		this.ci = ci;
@@ -65,6 +68,15 @@ public class ClassStatistic {
 			for(PropertyInfo pi : ci.properties().values()) {
 				if(pi.categoryOfValue() == Options.FEATURE) {
 					numFeatureRels++;
+				}
+				ClassInfo typeCi = pi.typeClass();
+				if(typeCi != null && typeCi.category() == Options.DATATYPE && 
+					ci.model().isInSelectedSchemas(typeCi)) {
+				    if(pi.cardinality().maxOccurs == 1) {
+					numAttsWithSchemaDatatypeAndMaxMultOne++;
+				    } else {
+					numAttsWithSchemaDatatypeAndMaxMultMany++;
+				    }
 				}
 			}
 			percentFeatureRelationships = (double)numFeatureRels/numProps*100;
@@ -86,5 +98,13 @@ public class ClassStatistic {
 	
 	public int numberOfFeatureRelationships() {
 		return numFeatureRels;
+	}
+
+	public int getNumAttsWithSchemaDatatypeAndMaxMultOne() {
+	    return numAttsWithSchemaDatatypeAndMaxMultOne;
+	}
+
+	public int getNumAttsWithSchemaDatatypeAndMaxMultMany() {
+	    return numAttsWithSchemaDatatypeAndMaxMultMany;
 	}
 }
