@@ -5,7 +5,7 @@
 	<!-- ISO/TS 19103 -->
 	<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying" param="defaultValue{quoted=true}"/>
 	<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying" param="defaultValue{quoted=true}"/>
-	<MapEntry type="Boolean" rule="*" targetType="boolean" param="defaultValue{true=TRUE;false=FALSE}"/>
+	<MapEntry type="Boolean" rule="*" targetType="boolean" param="defaultValue{true=TRUE;false=FALSE;quoted=false}"/>
 	<MapEntry type="Integer" rule="*" targetType="integer" param=""/>
 	<MapEntry type="Decimal" rule="*" targetType="numeric" param=""/>
 	<MapEntry type="Number" rule="*" targetType="numeric" param=""/>

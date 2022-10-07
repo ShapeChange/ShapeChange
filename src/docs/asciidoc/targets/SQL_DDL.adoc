@@ -324,7 +324,7 @@ foreign key has been updated or deleted. For further details, see the
 documentation of the relevant database system.
 
 ShapeChange supports defining these actions, both globally using target parameters 
-xef:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
+xref:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
 xref:./SQL_DDL.adoc#foreignKeyOnDelete[foreignKeyOnDelete], as well as 
 locally, using tagged values 'sqlOnUpdate' and 'sqlOnDelete, for properties 
 that represent foreign keys. The tagged values are set on an attribute, 

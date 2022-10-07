@@ -106,9 +106,11 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNor
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameWithLimitedLengthNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
@@ -1056,6 +1058,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		    Collections.sort(stmtsForDdlCreation, stmtComparator);
 		}
 
+		/*
+		 * now we should have the final list of statements - all modifications (e.g.
+		 * fixes) should have been applied by now
+		 */
+
+		// create some (debug) infos
+		logDebugInfos(stmtsForDdlCreation);
+
 		if (separateSpatialIndexStatements) {
 
 		    String fileName = outputFilename + "_spatial.sql";
@@ -1101,6 +1111,88 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    e.printStackTrace(System.err);
 	}
+    }
+
+    private void logDebugInfos(List<Statement> stmtsForDdlCreation) {
+
+	int countTables = 0;
+
+	int countAssociativeTablesRepresentingAssociations = 0;
+	int countAssociativeTablesRepresentingAttributes = 0;
+	int countDataTypeUsageSpecificTables = 0;
+
+	int countTablesRepresentingFeatureTypes = 0;
+	int countTablesRepresentingTypes = 0;
+	int countTablesRepresentingDataTypes = 0;
+	int countTablesRepresentingCodelists = 0;
+	int countTablesRepresentingEnumerations = 0;
+	int countTablesRepresentingUnions = 0;
+
+	for (Statement stmt : stmtsForDdlCreation) {
+
+	    if (stmt instanceof CreateTable) {
+
+		countTables++;
+
+		CreateTable ct = (CreateTable) stmt;
+		Table t = ct.getTable();
+
+		if (t.isAssociativeTable()) {
+		    if (t.getRepresentedAssociation() != null) {
+			countAssociativeTablesRepresentingAssociations++;
+		    } else {
+			countAssociativeTablesRepresentingAttributes++;
+		    }
+		} else if (t.isUsageSpecificTable()) {
+		    countDataTypeUsageSpecificTables++;
+		} else {
+		    ClassInfo repCi = t.getRepresentedClass();
+		    if (repCi != null) {
+			switch (repCi.category()) {
+			case Options.FEATURE:
+			    countTablesRepresentingFeatureTypes++;
+			    break;
+			case Options.OBJECT:
+			    countTablesRepresentingTypes++;
+			    break;
+			case Options.DATATYPE:
+			    countTablesRepresentingDataTypes++;
+			    break;
+			case Options.UNION:
+			    countTablesRepresentingUnions++;
+			    break;
+			case Options.CODELIST:
+			    countTablesRepresentingCodelists++;
+			    break;
+			case Options.ENUMERATION:
+			    countTablesRepresentingEnumerations++;
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
+	    }
+	}
+
+	int sumTableCategories = countAssociativeTablesRepresentingAssociations
+		+ countAssociativeTablesRepresentingAttributes + countDataTypeUsageSpecificTables
+		+ countTablesRepresentingFeatureTypes + countTablesRepresentingTypes + countTablesRepresentingDataTypes
+		+ countTablesRepresentingCodelists + countTablesRepresentingEnumerations
+		+ countTablesRepresentingUnions;
+	
+	if(countTables != sumTableCategories) {
+	    result.addDebug(this,400,""+sumTableCategories,""+countTables);
+	}
+	result.addDebug(this, 401, ""+countAssociativeTablesRepresentingAssociations);
+	result.addDebug(this, 402, ""+countAssociativeTablesRepresentingAttributes);
+	result.addDebug(this, 403, ""+countDataTypeUsageSpecificTables);
+	result.addDebug(this, 404, ""+countTablesRepresentingFeatureTypes);
+	result.addDebug(this, 405, ""+countTablesRepresentingTypes);
+	result.addDebug(this, 406, ""+countTablesRepresentingDataTypes);
+	result.addDebug(this, 407, ""+countTablesRepresentingCodelists);
+	result.addDebug(this, 408, ""+countTablesRepresentingEnumerations);
+	result.addDebug(this, 409, ""+countTablesRepresentingUnions);
     }
 
     /**
@@ -1395,6 +1487,27 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	case 109:
 	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
 
+	case 400:
+	    return "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
+	case 401:
+	    return "Number of CREATE TABLE statements for associative tables representing associations: $1$";
+	case 402:
+	    return "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
+	case 403:
+	    return "Number of CREATE TABLE statements for datatype usage specific tables: $1$"; 
+	case 404:
+	    return "Number of CREATE TABLE statements for tables representing feature types: $1$";
+	case 405:
+	    return "Number of CREATE TABLE statements for tables representing (object) types: $1$";
+	case 406:
+	    return "Number of CREATE TABLE statements for tables representing data types: $1$";
+	case 407:
+	    return "Number of CREATE TABLE statements for tables representing code lists: $1$";
+	case 408:
+	    return "Number of CREATE TABLE statements for tables representing enumerations: $1$";
+	case 409:
+	    return "Number of CREATE TABLE statements for tables representing unions: $1$";
+	    
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504:
