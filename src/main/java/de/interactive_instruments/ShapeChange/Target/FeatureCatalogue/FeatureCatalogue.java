@@ -641,6 +641,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    if (StringUtils.isNotBlank(s)) {
 		writer.dataElement(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, PrepareToPrint(s));
 	    }
+	    
+	    if (representTaggedValues != null) {
+		PrintTaggedValues(pi, representTaggedValues, null, false);
+	    }
 
 	    writer.endElement("taggedValues");
 
@@ -944,6 +948,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		appendImageInfo(pix.getDiagrams());
 	    }
 
+	    writer.startElement("taggedValues");
+
+		if (representTaggedValues != null) {
+		    PrintTaggedValues(pix, representTaggedValues, null, false);
+		}
+
+	    writer.endElement("taggedValues");
+		
 	    writer.endElement("Package");
 	}
 

@@ -678,6 +678,9 @@
         </a>
        </p>
       </xsl:for-each>
+      <xsl:call-template name="entryTaggedValues">
+       <xsl:with-param name="tvs" select="$package/taggedValues/taggedValue"/>
+      </xsl:call-template>
       <tr>
        <xsl:choose>
         <xsl:when test="$catalog/FeatureType[not($includeCodelistsAndEnumerations = 'false') or not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $package/@id]">
