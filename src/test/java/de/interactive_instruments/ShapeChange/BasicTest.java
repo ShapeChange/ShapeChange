@@ -72,6 +72,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.jaxp13.Validator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
 
@@ -811,15 +812,18 @@ public abstract class BasicTest {
 	    }
 	}
     }
+    
+    @BeforeEach
+    public void initEach() {
+	System.setProperty("java.xml.transform.TransformerFactory", "");
+    }
 
     @BeforeAll
     public static void initialise() {
 	System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 		"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 	System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-	System.setProperty("javax.xml.transform.TransformerFactory",
-		"org.apache.xalan.processor.TransformerFactoryImpl");
-
+	System.setProperty("java.xml.transform.TransformerFactory", "");
 	System.setProperty("scunittesting", "true");
 
 	XMLUnit.setIgnoreComments(true);
@@ -829,5 +833,6 @@ public abstract class BasicTest {
     @AfterAll
     public static void tearDown() {
 	System.setProperty("scunittesting", "");
+	System.setProperty("java.xml.transform.TransformerFactory", "");
     }
 }

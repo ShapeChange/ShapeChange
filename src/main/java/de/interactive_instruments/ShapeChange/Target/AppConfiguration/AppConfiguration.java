@@ -32,18 +32,13 @@
 package de.interactive_instruments.ShapeChange.Target.AppConfiguration;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,6 +48,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -60,6 +56,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * Creates an application configuration file.
@@ -461,29 +458,18 @@ public class AppConfiguration implements Target, MessageSource {
 	    return;
 	}
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
 	try {
-
-	    FileWriter outputXML;
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 
 	    for (String className : documentMap.keySet()) {
 
 		Document doc = documentMap.get(className);
 
 		if (doc != null) {
-		    outputXML = new FileWriter(outputDirectory + "/" + className + ".xml");
-		    serializer.setWriter(outputXML);
-		    serializer.asDOMSerializer().serialize(doc);
-		    outputXML.close();
+		    XMLUtil.writeXml(doc, new File(outputDirectory, className+".xml"));
 		    result.addResult(getTargetName(), outputDirectory, className + ".xml", null);
 		}
 	    }
-	} catch (Exception e) {
+	} catch (ShapeChangeException e) {
 
 	    String m = e.getMessage();
 	    if (m != null) {

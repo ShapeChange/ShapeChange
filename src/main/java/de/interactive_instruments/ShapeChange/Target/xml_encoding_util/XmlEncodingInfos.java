@@ -31,15 +31,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.xml_encoding_util;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -50,13 +45,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.XmlNamespace;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -217,26 +210,10 @@ public class XmlEncodingInfos implements MessageSource {
 		    }
 		}
 	    }
+	    
+	    XMLUtil.writeXml(document, outputFile);
 
-	    Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	    outputFormat.setProperty("indent", "yes");
-	    outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	    outputFormat.setProperty("encoding", "UTF-8");
-
-	    /*
-	     * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	     * doc in Serializer.setWriter and FileWriter)
-	     */
-	    BufferedWriter writer = new BufferedWriter(
-		    new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"));
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(writer);
-	    serializer.asDOMSerializer().serialize(document);
-
-	    writer.close();
-
-	} catch (IOException | ParserConfigurationException e) {
+	} catch (ShapeChangeException | ParserConfigurationException e) {
 
 	    result.addError(this, 2, outputFile.getAbsolutePath(), e.getMessage());
 	}

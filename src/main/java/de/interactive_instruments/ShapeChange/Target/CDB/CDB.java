@@ -31,17 +31,13 @@
  */
 package de.interactive_instruments.ShapeChange.Target.CDB;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -54,9 +50,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,6 +64,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -922,29 +916,16 @@ public class CDB implements SingleTarget, MessageSource {
 
 	String outFileName = outputFilename + filenameSuffix;
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
-	/*
-	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	 * doc in Serializer.setWriter and FileWriter)
-	 */
-
 	File res = new File(outputDirectoryFile, outFileName);
 
-	try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(res), "UTF-8"))) {
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(writer);
-	    serializer.asDOMSerializer().serialize(document);
+	try {	    
+	    XMLUtil.writeXml(document, res);
 
 	    result.addResult(getTargetName(), outputDirectory, outFileName, null);
 
-	} catch (IOException ioe) {
+	} catch (ShapeChangeException e) {
 
-	    result.addError(this, 3, outFileName, ioe.getMessage());
+	    result.addError(this, 5, outFileName, e.getMessage());
 	}
     }
 
@@ -998,7 +979,8 @@ public class CDB implements SingleTarget, MessageSource {
 	    return "File '$1$' already exists. Attempting to delete it...";
 	case 4:
 	    return "File has been deleted.";
-
+	case 5:
+	    return "Exception occurred while writing document to file '$1$'. Exception message is: $2$"; 
 	case 6:
 	    return "Processing class '$1$'.";
 	case 7:

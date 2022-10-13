@@ -49,7 +49,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -774,16 +773,11 @@ public class XmlSchema implements Target, MessageSource {
 
 	} else {
 
-	    Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	    outputFormat.setProperty("indent", "yes");
-	    outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	    outputFormat.setProperty("encoding", "UTF-8");
-
 	    for (XsdDocument xsd : xsdMap.values()) {
 
 		if (!xsd.printed()) {
 		    try {
-			xsd.printFile(outputFormat);
+			xsd.printFile();
 			result.addResult(getTargetName(), outputDirectory, xsd.name, pi.targetNamespace());
 		    } catch (Exception e) {
 			String m = e.getMessage();

@@ -32,12 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Target.XmlSchema;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +42,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,8 +53,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
@@ -74,6 +66,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
@@ -92,6 +85,7 @@ import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 public class XsdDocument implements MessageSource {
 
@@ -4325,10 +4319,9 @@ public class XsdDocument implements MessageSource {
     /**
      * Dump XML Schema file
      * 
-     * @param outputFormat tbd
      * @throws Exception tbd
      */
-    public void printFile(Properties outputFormat) throws Exception {
+    public void printFile() throws Exception {
 	if (printed) {
 	    return;
 	}
@@ -4382,22 +4375,12 @@ public class XsdDocument implements MessageSource {
 	    throw new ShapeChangeAbortException();
 	}
 
-	/*
-	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	 * doc in Serializer.setWriter and FileWriter)
-	 */
 	try {
 	    String fname = outputDirectory + "/" + name;
 	    new File(fname).getCanonicalPath();
-	    OutputStream fout = new FileOutputStream(fname);
-	    OutputStream bout = new BufferedOutputStream(fout);
-	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, outputFormat.getProperty("encoding"));
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
-	} catch (IOException ioe) {
+	    
+	    XMLUtil.writeXml(document, new File(fname));
+	} catch (ShapeChangeException ioe) {
 	    result.addError(null, 171, name);
 	}
 

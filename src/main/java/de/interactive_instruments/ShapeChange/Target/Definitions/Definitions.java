@@ -33,10 +33,8 @@
 package de.interactive_instruments.ShapeChange.Target.Definitions;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.SortedSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,9 +42,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,12 +51,14 @@ import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 public class Definitions implements Target {
 
@@ -538,18 +535,9 @@ public class Definitions implements Target {
 	if (aborted)
 	    return;
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
 	try {
 	    File file = new File(outputDirectory + "/index." + pi.xmlns() + ".definitions.xml");
-	    FileWriter outputXML = new FileWriter(file);
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
+	    XMLUtil.writeXml(document, file);
 	    result.addResult(getTargetName(), outputDirectory, "index." + pi.xmlns() + ".definitions.xml",
 		    pi.targetNamespace());
 
@@ -558,15 +546,12 @@ public class Definitions implements Target {
 		    ClassInfo ci = i.next();
 		    Document cDocument = documentMap.get(ci.id());
 		    if (cDocument != null) {
-			outputXML = new FileWriter(outputDirectory + "/" + ci.name() + ".definitions.xml");
-			serializer.setWriter(outputXML);
-			serializer.asDOMSerializer().serialize(cDocument);
-			outputXML.close();
+			XMLUtil.writeXml(document, new File(outputDirectory, ci.name() + ".definitions.xml"));
 			result.addResult(getTargetName(), outputDirectory, ci.name() + ".definitions.xml", ci.qname());
 		    }
 		}
 	    }
-	} catch (Exception e) {
+	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
 		result.addError(m);

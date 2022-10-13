@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -58,9 +57,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -111,6 +107,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyCon
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
@@ -949,30 +946,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		visitor.visit(stmts);
 		visitor.postprocess();
 
-		Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-		outputFormat.setProperty("encoding", "UTF-8");
-
 		String fileName = outputFilename + ".xsd";
 
-		/*
-		 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-		 * doc in Serializer.setWriter and FileWriter)
-		 */
-
 		File repXsd = new File(outputDirectory, fileName);
+		    
+		XMLUtil.writeXml(visitor.getDocument(), repXsd);
 
-		try (BufferedWriter writer = new BufferedWriter(
-			new OutputStreamWriter(new FileOutputStream(repXsd), "UTF-8"))) {
-
-		    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-		    serializer.setWriter(writer);
-		    serializer.asDOMSerializer().serialize(visitor.getDocument());
-
-		    result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
-		}
-
+		result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
+		
 	    } else {
 
 		// --- Create database model

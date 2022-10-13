@@ -38,11 +38,6 @@ import java.lang.Runtime.Version;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.xml.transform.TransformerException;
-
-import org.apache.xpath.XPathAPI;
-import org.w3c.dom.NodeList;
-
 /**
  * Instance of ShapeChange to be used in test cases
  */
@@ -112,20 +107,10 @@ public class TestInstance {
     protected boolean noError() {
 
 	// if there is no result file, there is an error
-	if (result == null)
+	if (result == null) {
 	    return false;
-
-	try {
-	    NodeList nodes = XPathAPI.selectNodeList(result.document, "//r:Error|//r:FatalError",
-		    result.document.getDocumentElement());
-	    if (nodes.getLength() > 0)
-		return false;
-	} catch (TransformerException e) {
-	    fail("An error occured processing an Xpath expression on the log file.");
-	    e.printStackTrace();
-	    return false;
+	} else {	
+	    return !(result.isErrorReceived() || result.isFatalErrorReceived());
 	}
-
-	return true;
     }
 }

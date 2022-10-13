@@ -48,9 +48,9 @@
          <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
          <targetParameter name="outputFilename" value="export_full_omitProfilesTVs"/>
          <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="defaultEncodingRule" value="export1"/>
          <rules>
-            <EncodingRule name="export">
+            <EncodingRule name="export1">
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>
          </rules>
@@ -59,10 +59,10 @@
          <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
          <targetParameter name="outputFilename" value="export_restrictProfiles"/>
          <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="defaultEncodingRule" value="export2"/>
          <targetParameter name="profilesToExport" value="A,C"/>
          <rules>
-            <EncodingRule name="export">
+            <EncodingRule name="export2">
             	<rule name="rule-exp-all-restrictExistingProfiles"/>
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>
@@ -72,9 +72,9 @@
          <targetParameter name="outputDirectory" value="testResults/modelexport/explicitProfileSettings/scxml"/>
          <targetParameter name="outputFilename" value="export_omitProfiles_removeProfilesTV"/>
          <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="defaultEncodingRule" value="export"/>
+         <targetParameter name="defaultEncodingRule" value="export3"/>
          <rules>
-            <EncodingRule name="export">
+            <EncodingRule name="export3">
             	<rule name="rule-exp-all-omitExistingProfiles"/>
             	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
             </EncodingRule>

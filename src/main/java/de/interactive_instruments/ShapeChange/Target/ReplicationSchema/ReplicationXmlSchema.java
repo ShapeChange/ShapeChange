@@ -31,16 +31,12 @@
  */
 package de.interactive_instruments.ShapeChange.Target.ReplicationSchema;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -49,9 +45,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -64,6 +57,7 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
@@ -75,6 +69,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -908,29 +903,14 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	addImports();
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
-	/*
-	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	 * doc in Serializer.setWriter and FileWriter)
-	 */
 	try {
 	    File repXsd = new File(outputDirectoryFile, outputFilename);
-
-	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(repXsd), "UTF-8"));
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(writer);
-	    serializer.asDOMSerializer().serialize(document);
-
-	    writer.close();
+	    
+	    XMLUtil.writeXml(document, repXsd);
 
 	    result.addResult(getTargetName(), outputDirectory, outputFilename, schemaPi.targetNamespace());
 
-	} catch (IOException ioe) {
+	} catch (ShapeChangeException ioe) {
 
 	    result.addError(null, 171, outputFilename);
 	}

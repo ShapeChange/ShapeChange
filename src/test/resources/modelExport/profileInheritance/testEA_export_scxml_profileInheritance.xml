@@ -44,11 +44,11 @@
 				value="testResults/modelexport/profileInheritance/scxml" />
 			<targetParameter name="outputFilename" value="export_full_omitProfilesTVs" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="defaultEncodingRule" value="export1" />
 			<targetParameter name="profilesInModelSetExplicitly"
 				value="false" />
 			<rules>
-				<EncodingRule name="export">
+				<EncodingRule name="export1">
 					<rule name="rule-exp-pkg-allPackagesAreEditable"/>
 				</EncodingRule>
 			</rules>
@@ -63,14 +63,14 @@
 				value="testResults/modelexport/profileInheritance/scxml" />
 			<targetParameter name="outputFilename" value="export_restrictProfiles" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="defaultEncodingRule" value="export2" />
 			<targetParameter name="profilesInModelSetExplicitly"
 				value="false" />
 			<targetParameter
 				name="profilesForClassesWithoutExplicitProfileAssignments" value="A,C" />
 			<targetParameter name="profilesToExport" value="A,C" />
 			<rules>
-				<EncodingRule name="export">
+				<EncodingRule name="export2">
 					<rule name="rule-exp-all-restrictExistingProfiles" />
 					<rule name="rule-exp-pkg-allPackagesAreEditable"/>
 				</EncodingRule>
@@ -86,11 +86,11 @@
 			<targetParameter name="outputFilename"
 				value="export_omitProfiles_removeProfilesTV" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="defaultEncodingRule" value="export3" />
 			<targetParameter name="profilesInModelSetExplicitly"
 				value="false" />
 			<rules>
-				<EncodingRule name="export">
+				<EncodingRule name="export3">
 					<rule name="rule-exp-all-omitExistingProfiles" />
 					<rule name="rule-exp-pkg-allPackagesAreEditable"/>
 				</EncodingRule>

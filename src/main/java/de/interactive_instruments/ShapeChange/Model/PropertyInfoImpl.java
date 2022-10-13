@@ -35,7 +35,7 @@ package de.interactive_instruments.ShapeChange.Model;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.utils.XMLChar;
+import org.apache.xerces.util.XMLChar;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;

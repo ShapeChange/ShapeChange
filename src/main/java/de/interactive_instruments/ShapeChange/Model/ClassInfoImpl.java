@@ -44,7 +44,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.utils.XMLChar;
+import org.apache.xerces.util.XMLChar;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;

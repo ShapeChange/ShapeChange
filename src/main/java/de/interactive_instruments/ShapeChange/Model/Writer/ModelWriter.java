@@ -751,7 +751,7 @@ public class ModelWriter extends AbstractModelWriter {
 	    // We need to convert the profile definitions in the model
 	    SortedSet<String> profilesForClassesWithoutExplicitProfiles = null;
 
-	    if (defaultProfilesForClassesWithoutExplicitProfiles != null) {
+	    if (defaultProfilesForClassesWithoutExplicitProfiles != null && !defaultProfilesForClassesWithoutExplicitProfiles.isEmpty()) {
 
 		profilesForClassesWithoutExplicitProfiles = defaultProfilesForClassesWithoutExplicitProfiles;
 
