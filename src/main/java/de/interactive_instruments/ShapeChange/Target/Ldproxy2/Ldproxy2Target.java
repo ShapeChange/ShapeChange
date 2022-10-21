@@ -56,6 +56,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.ii.ldproxy.cfg.LdproxyCfg;
+import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
+import de.ii.ogcapi.features.core.domain.ImmutableFeaturesCollectionQueryables;
+import de.ii.ogcapi.features.core.domain.ImmutableFeaturesCoreConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
 import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
@@ -144,6 +147,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     protected static ZoneId nativeTimeZone = ZoneId.systemDefault();
     protected static String objectIdentifierName = "oid";
     protected static String primaryKeyColumn = "id";
+    protected static SortedSet<String> queryablesFromConfig = new TreeSet<>();
     protected static String serviceConfigTemplatePathString = null;
     protected static String serviceDescription = "FIXME";
     protected static String serviceLabel = "FIXME";
@@ -311,6 +315,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    primaryKeyColumn = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_PK_COLUMN,
 		    "id", false, true);
+
+	    List<String> queryables = options.parameterAsStringList(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_QUERYABLES, null, true, true);
+	    if (!queryables.isEmpty()) {
+		queryablesFromConfig.addAll(queryables);
+	    }
 
 	    /*
 	     * WARNING: Must only be set after parameter primaryKeyColumn has been set
@@ -671,6 +681,52 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		List<ExtensionConfiguration> extensionConfigurations = new ArrayList<>();
 
+		ImmutableFeaturesCoreConfiguration.Builder fcoreBuilder = null;
+
+		if (ci.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)) {
+
+		    SortedSet<String> queryables = new TreeSet<>(queryablesFromConfig);
+
+		    SortedSet<PropertyInfo> queryableProperties = new TreeSet<>();
+
+		    for (PropertyInfo pi : ci.propertiesAll()) {
+			/*
+			 * This would also be the place to check if the property itself has a tagged
+			 * value that marks the property as queryable
+			 */
+			if (queryables.contains(pi.name()) || queryables.contains(originalPropertyName(pi))) {
+			    queryableProperties.add(pi);
+			}
+		    }
+
+		    if (!queryableProperties.isEmpty()) {
+
+			fcoreBuilder = cfg.builder().ogcApiExtension().featuresCore();
+
+			ImmutableFeaturesCollectionQueryables.Builder ifcq = new ImmutableFeaturesCollectionQueryables.Builder();
+
+			for (PropertyInfo pi : queryableProperties) {
+
+			    String queryableName = pi.isAttribute() ? pi.name() : pi.name() + ".title";
+
+			    Type ldpType = ldproxyType(pi);
+			    if (ldpType == Type.GEOMETRY) {
+				ifcq.addSpatial(queryableName);
+			    } else if (ldpType == Type.DATE || ldpType == Type.DATETIME) {
+				ifcq.addTemporal(queryableName);
+			    } else {
+				ifcq.addOther(queryableName);
+			    }
+			}
+
+			fcoreBuilder.queryables(ifcq.build());
+		    }
+		}
+
+		if (fcoreBuilder != null) {
+		    extensionConfigurations.add(fcoreBuilder.build());
+		}
+
 		ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension()
 			.featuresHtml();
 		fhtmlBuilder.featureTitleTemplate(featureTitleTemplate(ci));
@@ -770,6 +826,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		gmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
 	    }
 
+	    ImmutableQueryablesConfiguration.Builder queryablesBuilder = null;
+	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)) {
+		queryablesBuilder = cfg.builder().ogcApiExtension().queryables();
+		queryablesBuilder.enabled(true);
+	    }
+
 	    /*
 	     * ================================
 	     * 
@@ -784,6 +846,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    }
 	    if (gmlBuilder != null) {
 		generalExtensionConfigurations.add(gmlBuilder.build());
+	    }
+	    if (queryablesBuilder != null) {
+		generalExtensionConfigurations.add(queryablesBuilder.build());
 	    }
 
 	    ImmutableOgcApiDataV2 serviceConfig = cfg.builder().entity().api().id(mainId).entityStorageVersion(2)
@@ -1083,18 +1148,24 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		// IMPORTANT: The object type must be 'Link', NOT 'LINK'!
 		propMemberDefBuilder.objectType("Link");
 
-		ignoreSourcePathOnPropertyLevel = pi.cardinality().maxOccurs == 1;
+		ignoreSourcePathOnPropertyLevel = omitSourcePathOnPropertyLevelForLinkObjectProperty(pi);
 
 		LinkedHashMap<String, FeatureSchema> linkPropertyDefs = new LinkedHashMap<>();
 
-		String sourcePathInLinkProps = sourcePathLinkLevel(pi);
+		ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
+			.label(pi.typeInfo().name + "-title").type(Type.STRING);// .addAllSourcePaths(sourcePathsLinkLevelTitle(pi));
+		List<String> titleSourcePaths = sourcePathsLinkLevelTitle(pi);
+		if (titleSourcePaths.size() == 1) {
+		    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
+		} else {
+		    titlePropBuilder = titlePropBuilder.sourcePaths(titleSourcePaths);
+		}
 
-		linkPropertyDefs.put("title", new ImmutableFeatureSchema.Builder().name("title")
-			.label(pi.typeInfo().name + "-ID").type(Type.STRING).sourcePath(sourcePathInLinkProps).build());
+		linkPropertyDefs.put("title", titlePropBuilder.build());
 
 		ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
 		linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			.sourcePath(sourcePathInLinkProps);
+			.sourcePath(sourcePathLinkLevelHref(pi));
 		linkPropHrefBuilder.addAllTransformationsBuilders(
 			new ImmutablePropertyTransformation.Builder().stringFormat(urlTemplateForValueType(pi)));
 		linkPropertyDefs.put("href", linkPropHrefBuilder.build());
@@ -1108,7 +1179,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
 		 * time being, we keep the approach with type flattening.
 		 */
-		
+
 		ClassInfo typeCi = pi.typeClass();
 
 		// detect circular dependency in the property path
@@ -1277,6 +1348,46 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	return propertyDefs;
+    }
+
+    /**
+     * @param pi
+     * @return <code>true</code>, if the maximum multiplicity of pi is 1 and either
+     *         the value type of pi is mapped to LINK or the value type does NOT
+     *         have a valid value for tag ldpTitleAttribute; otherwise
+     *         <code>false</code>
+     */
+    private boolean omitSourcePathOnPropertyLevelForLinkObjectProperty(PropertyInfo pi) {
+
+	return (pi.cardinality().maxOccurs == 1 && (isMappedToLink(pi) || !valueTypeHasValidLdpTitleAttributeTag(pi)));
+    }
+
+    private boolean valueTypeHasValidLdpTitleAttributeTag(PropertyInfo pi) {
+
+	ClassInfo typeCi = pi.typeClass();
+	if (typeCi == null) {
+	    return false;
+	} else {
+	    PropertyInfo titleAtt = getTitleAttribute(typeCi);
+	    return titleAtt != null;
+	}
+    }
+
+    /**
+     * @param ci - tbd
+     * @return the attribute of ci whose name is equal to the value of tag
+     *         ldpTitleAttribute on ci
+     */
+    private PropertyInfo getTitleAttribute(ClassInfo ci) {
+
+	PropertyInfo result = null;
+
+	String titleAttName = ci.taggedValue("ldpTitleAttribute");
+	if (StringUtils.isNotBlank(titleAttName)) {
+	    result = ci.property(titleAttName.trim());
+	}
+
+	return result;
     }
 
     private boolean gmlAsAttribute(PropertyInfo pi) {
@@ -1488,16 +1599,43 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return renameRequired;
     }
 
-    private String sourcePathLinkLevel(PropertyInfo pi) {
+    private List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
+
+	List<String> result = new ArrayList<>();
+
+	if (!isMappedToLink(pi) && valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+	    PropertyInfo titleAtt = getTitleAttribute(pi.typeClass());
+	    result.add(databaseColumnName(titleAtt));
+	    if (titleAtt.cardinality().minOccurs == 0) {
+		result.add(primaryKeyColumn);
+	    }
+
+	} else {
+
+	    if (pi.cardinality().maxOccurs == 1) {
+		result.add(databaseColumnName(pi));
+	    } else {
+		result.add(primaryKeyColumn);
+	    }
+	}
+
+	return result;
+    }
+
+    private String sourcePathLinkLevelHref(PropertyInfo pi) {
 
 	if (pi.cardinality().maxOccurs == 1) {
-	    // normal databaseColumnName-mechanic is fine on link level
-	    // also for the case of a reflexive property
-	    return databaseColumnName(pi);
+
+	    if (!isMappedToLink(pi) && valueTypeHasValidLdpTitleAttributeTag(pi)) {
+		return primaryKeyColumn;
+	    } else {
+		return databaseColumnName(pi);
+	    }
 	} else {
-	    // return name of PK column
 	    return primaryKeyColumn;
 	}
+
     }
 
     private void addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(ClassInfo topLevelClass,
@@ -2315,6 +2453,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	nativeTimeZone = ZoneId.systemDefault();
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
+	queryablesFromConfig = new TreeSet<>();
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
 	srid = 4326;
@@ -2348,6 +2487,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
+	r.addRule(Ldproxy2Constants.RULE_ALL_QUERYABLES);
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);

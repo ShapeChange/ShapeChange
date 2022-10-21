@@ -81,6 +81,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.flipkart.zjsonpatch.JsonDiff;
 import com.google.common.base.Joiner;
 
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
@@ -482,9 +483,13 @@ public abstract class BasicTest {
 	try {
 	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
 	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
-	    boolean equal = rootNodeResult.equals(rootNodeReference);
-	    assertTrue(equal, "JSON output differs from reference result. Result file: " + fileName
-		    + " - Reference file: " + referenceFileName);
+	    
+	    JsonNode patch = JsonDiff.asJson(rootNodeReference, rootNodeResult);
+	    if (!patch.isEmpty()) {
+		fail("JSON output differs from reference result.\r\n" + "Result file: " + fileName + "\r\n"
+			+ "Reference file: " + referenceFileName + "\r\n" + "JSON patch info is:\r\n"
+			+ "------------\r\n\r\n" + patch.toPrettyString());
+	    }
 	} catch (JsonParseException e) {
 	    fail("JSON Parse Exception: " + e.getMessage());
 	} catch (JsonMappingException e) {
@@ -501,9 +506,13 @@ public abstract class BasicTest {
 	try {
 	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
 	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
-	    boolean equal = rootNodeResult.equals(rootNodeReference);
-	    assertTrue(equal, "YAML output differs from reference result. Result file: " + fileName
-		    + " - Reference file: " + referenceFileName);
+	    
+	    JsonNode patch = JsonDiff.asJson(rootNodeReference, rootNodeResult);
+	    if (!patch.isEmpty()) {
+		fail("YAML output differs from reference result.\r\n" + "Result file: " + fileName + "\r\n"
+			+ "Reference file: " + referenceFileName + "\r\n" + "JSON patch info is:\r\n"
+			+ "------------\r\n\r\n" + patch.toPrettyString());
+	    }
 	} catch (JsonParseException e) {
 	    fail("Parse Exception: " + e.getMessage());
 	} catch (JsonMappingException e) {
@@ -812,7 +821,7 @@ public abstract class BasicTest {
 	    }
 	}
     }
-    
+
     @BeforeEach
     public void initEach() {
 	System.setProperty("java.xml.transform.TransformerFactory", "");

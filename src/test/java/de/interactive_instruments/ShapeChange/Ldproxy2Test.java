@@ -46,6 +46,22 @@ public class Ldproxy2Test extends BasicTestSCXML {
 	}
 	
 	@Test
+	public void test_ldproxy2_titleAttribute() {
+		
+		multiTest("src/test/resources/ldproxy2/titleAttribute/test_ldproxy2.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/titleAttribute/results",
+			"src/test/resources/ldproxy2/titleAttribute/reference/results");
+	}
+	
+	@Test
+	public void test_ldproxy2_queryables() {
+		
+		multiTest("src/test/resources/ldproxy2/queryables/test_ldproxy2.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/queryables/results",
+			"src/test/resources/ldproxy2/queryables/reference/results");
+	}
+	
+	@Test
 	public void test_ldproxy2_foreignKeyColumnSuffixCodelist() {
 		
 		multiTest("src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.xml",

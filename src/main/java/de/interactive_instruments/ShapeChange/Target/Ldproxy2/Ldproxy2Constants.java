@@ -85,6 +85,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
+    public static final String PARAM_QUERYABLES = "queryables";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
@@ -94,6 +95,7 @@ public class Ldproxy2Constants {
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";   
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
+    public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
     public static final String RULE_CLS_CODELIST_BY_TABLE = "rule-ldp2-cls-codelist-byTable";
     public static final String RULE_CLS_CODELIST_DIRECT = "rule-ldp2-cls-codelist-direct";

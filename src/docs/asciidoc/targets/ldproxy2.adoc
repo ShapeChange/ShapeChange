@@ -328,6 +328,57 @@ collections:
       - att2.att2
 ----------
 
+
+[[ldproxy2_queryables]]
+===== Queryables
+
+If the main application schema matches `rule-ldp2-all-queryables`, 
+the target creates a QUERYABLES building block in the service configuration. 
+It just contains the member `enabled: true`.
+
+For each collection, whose represented type matches `rule-ldp2-all-queryables`, 
+the target checks which, if any, of the properties have a name - current or original - equal 
+to one of the names provided by target parameter `queryables` (the parameter value is a 
+comma-separated list of property names; no default value is defined). If at least one such property 
+was found, the target creates a `queryables` member in the FEATURES_CORE building block 
+in the service configuration of the collection (adding that building block if necessary), with:
+
+* member `spatial` and an array of the names of all queryable properties that map to GEOMETRY;
+* member `temporal` and an array of the names of all queryable properties that either map to DATE or map to DATETIME; and
+* member `other` and an array of the names of all other queryable properties. By default, 
+`.title` is added to the names of all queryable association roles (meaning that queries will be 
+performed on the `title`-value of the link object that is encoded for an association role).
+
+NOTE: The differentiation between 'current' and 'original' property name is important when the 
+ldproxy target shall encode a model which has been flattened (flattening inheritance and/or complex types). When inheritance or complex types are flattened, property names can be modified. 
+When this happens (in the mentioned flattening cases), the original property name is documented in tagged value _originalPropertyName_. The ldproxy target checks this tag when matching
+properties of a value type against the configured list of queryables.
+
+NOTE: The definition of queryable properties using the global target configuration parameter
+`queryables` can be enhanced in the future. For example, it would be possible to introduce a
+specific tag, to be set on a type, which would provide the names of queryable properties of that type.
+
+Example (from one of the ShapeChange unit tests):
+
+[source,yml,linenumbers]
+----------
+collections:
+  featuretype:
+    id: featuretype
+    label: featuretype
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_CORE
+      queryables:
+        spatial:
+        - attPoint
+        temporal:
+        - attDate
+        other:
+        - attInt
+        - roleFTtoT.title
+----------
+
 [[ldproxy2_schemaconversionrules_types]]
 === Types
 
@@ -742,7 +793,7 @@ If the property value type is mapped to a simple type or a geometry type, or if 
 .Default source path construction for value types that are mapped to simple and geometry types
 image::../images/ldp2_simple_types_default_source_path_encoding.png[align="center"]
 
-The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (as well as in <<img_ldproxy2_property_access_codelist_bytable>>, <<img_ldproxy2_property_access_mapped_types_default>>, <<img_ldproxy2_property_access_datatypes_onetomany_severaltables>>,  <<img_ldproxy2_property_access_datatypes_default>>, <<img_ldproxy2_property_access_types_with_identity_default>>, and <<img_ldproxy2_property_access_reflexive_association_type_with_identity_default>>) thereby mean the following:
+The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (as well as in the following figures) thereby mean the following:
 
 * `{pk_col_A}` - Primary key column in the table that represents type A. The primary key column is defined (in descending order of priority):
 ** via the \<<identifier>> property of type A (as described <<ldproxy2_schemaconversionrules_types_featureandobjecttype_identifier,here>>), or 
@@ -793,7 +844,7 @@ image::../images/ldp2_data_types_source_path_encoding_onetomany_severaltables.pn
 .Default source path construction for value types that are data types
 image::../images/ldp2_data_types_default_source_path_encoding.png[align="center"]
 
-Otherwise, if the property value type is a type with identity, source paths are constructed as shown in <<img_ldproxy2_property_access_types_with_identity_default>> and <<img_ldproxy2_property_access_reflexive_association_type_with_identity_default>>.
+Otherwise, if the property value type is a type with identity, which are implemented as link objects, source paths are constructed as shown in <<img_ldproxy2_property_access_types_with_identity_default>> and <<img_ldproxy2_property_access_reflexive_association_type_with_identity_default>>.
 
 [#img_ldproxy2_property_access_types_with_identity_default,reftext='{figure-caption} {counter:figure-num}']
 .Default source path construction for value types that are types with identity
@@ -842,7 +893,7 @@ The `type` member of a property definition depends upon the value type of the pr
 * If the maximum multiplicity of the property is greater than 1, and:
 ** the value type is mapped to or implemented by a simple type, then the `type` is VALUE_ARRAY, and an additional `valueType` member is added, with the name of the simple type as value.
 *** NOTE: The ldproxy target does not support geometry properties with multiplicity greater than 1. Such cases should be modeled as property with max multiplicity 1 and a multi-geometry (e.g. GM_MultiPoint) or geometry collection (GM_Aggregate) as value type. If the ldproxy target encounters a geometry property with max multiplicity greater than 1, it will log an error and continue processing, assuming max multiplicity equal to 1 for the property.
-** the value type is mapped to or implemented as LINK, then the `type` is OBJECT_ARRAY, and a link object is created in the property definition as defined <<link_object,below>>.
+** the value type is mapped to LINK or implemented as a link object, then the `type` is OBJECT_ARRAY, and a link object is created in the property definition as defined <<link_object,below>>.
 * Otherwise, i.e. the maximum multiplicity of the property is equal to 1:
 ** If the value type is mapped to a simple ldproxy type, then `type` is the target type defined by the map entry.
 ** Otherwise, if the value type is mapped to a geometry type, then `type` is GEOMETRY and an additional `geometryType` member is added, with value as defined by the map entry (via the according characteristic of map entry parameter _geometryInfos_).
@@ -854,15 +905,19 @@ The `type` member of a property definition depends upon the value type of the pr
 The definition of a link object within a property definition is as follows:
 
 * `objectType: Link` 
-* `sourcePath`: As defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>); omitted if the maximum multiplicity of the property is (assumed to be) equal to 1.
+* `sourcePath`: As defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
 * `properties`:
 ** `title`: 
-*** `label`: {value_type_name}-ID
-*** `sourcePath`: As defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
+*** `label`: {value_type_name}-title
+*** `sourcePath`: as defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
+**** NOTE: If tag _ldpTitleAttribute_ on the value type has a valid value (i.e., it 
+contains the name of an attribute of the value type), and that attribute of the value type
+is optional (i.e., it has a minimum multiplicity of 0), then: a) `sourcePaths` is used instead of `sourcePath`, and b) the name of the primary key column for (the table representing the) value type is added as another source path value - to be used as fallback in case that the title attribute on the value type has no value.
+**** NOTE: If tag _ldpTitleAttribute_ is defined on a supertype, the ShapeChange workflow should include the xref:../transformations/Tagged_Value_Transformer.adoc[tagged value transformer], with xref:../transformations/Tagged_Value_Transformer.adoc#rule-trf-taggedValue-inheritance[rule-trf-taggedValue-inheritance] to ensure that tag _ldpTitleAttribute_ is copied to all subtypes. That will ensure that the ldproxy target can find the tag on all subtypes.
 *** `type`: STRING
 ** `href`:
 *** `label`: {value_type_name}-ID
-*** `sourcePath`: As defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
+*** `sourcePath`: as defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
 *** `type`: STRING
 *** `transformations`:
 **** `stringFormat`: Either the URL template from the map entry, if one is defined for the property value type, or '{{serviceUrl}}/collections/{value_type_name}/items/{{value}}', where value_type_name is the name of the value type, in lower case (and {{serviceUrl}} as well as {{value}} will automatically be replaced by ldproxy).

@@ -83,7 +83,7 @@ types:
           title:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-ID
+            label: TypeA-title
           href:
             sourcePath: ftatota_typea_fk
             type: STRING
@@ -97,7 +97,7 @@ types:
           title:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-ID
+            label: TypeASub-title
           href:
             sourcePath: ftatota_typeasub_fk
             type: STRING
@@ -119,7 +119,7 @@ types:
           title:
             sourcePath: ftc1toftb_fk
             type: STRING
-            label: FeatureTypeB-ID
+            label: FeatureTypeB-title
           href:
             sourcePath: ftc1toftb_fk
             type: STRING
@@ -149,7 +149,7 @@ types:
           title:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-ID
+            label: TypeA-title
           href:
             sourcePath: ftatota_typea_fk
             type: STRING
@@ -163,7 +163,7 @@ types:
           title:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-ID
+            label: TypeASub-title
           href:
             sourcePath: ftatota_typeasub_fk
             type: STRING
@@ -185,7 +185,7 @@ types:
           title:
             sourcePath: ftc1toftb_fk
             type: STRING
-            label: FeatureTypeB-ID
+            label: FeatureTypeB-title
           href:
             sourcePath: ftc1toftb_fk
             type: STRING
@@ -241,7 +241,7 @@ types:
               title:
                 sourcePath: dtc2toftc1_featuretypec1_fk
                 type: STRING
-                label: FeatureTypeC1-ID
+                label: FeatureTypeC1-title
               href:
                 sourcePath: dtc2toftc1_featuretypec1_fk
                 type: STRING
@@ -255,7 +255,7 @@ types:
               title:
                 sourcePath: dtc2toftc1_featuretypec2_fk
                 type: STRING
-                label: FeatureTypeC2-ID
+                label: FeatureTypeC2-title
               href:
                 sourcePath: dtc2toftc1_featuretypec2_fk
                 type: STRING
@@ -277,7 +277,7 @@ types:
               title:
                 sourcePath: dtc2toftc1_featuretypec1_fk
                 type: STRING
-                label: FeatureTypeC1-ID
+                label: FeatureTypeC1-title
               href:
                 sourcePath: dtc2toftc1_featuretypec1_fk
                 type: STRING
@@ -291,7 +291,7 @@ types:
               title:
                 sourcePath: dtc2toftc1_featuretypec2_fk
                 type: STRING
-                label: FeatureTypeC2-ID
+                label: FeatureTypeC2-title
               href:
                 sourcePath: dtc2toftc1_featuretypec2_fk
                 type: STRING
@@ -307,7 +307,7 @@ types:
               title:
                 sourcePath: dtc3toftc2_fk
                 type: STRING
-                label: FeatureTypeC2-ID
+                label: FeatureTypeC2-title
               href:
                 sourcePath: dtc3toftc2_fk
                 type: STRING

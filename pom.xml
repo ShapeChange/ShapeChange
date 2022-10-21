@@ -28,16 +28,16 @@
 <!-- 		</repository>		 -->
 	</repositories>
 	<dependencies>
-<!-- 	<dependency> -->
-<!--   <groupId>de.interactive_instruments</groupId> -->
-<!--   <artifactId>ldproxy-cfg</artifactId> -->
-<!--   <version>3.3.0-gltf3-20220817.123400-3</version> -->
-<!--   <type>pom</type> -->
-<!-- </dependency> -->
+	<!-- https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
+		<dependency>
+		  <groupId>com.flipkart.zjsonpatch</groupId>
+		  <artifactId>zjsonpatch</artifactId>
+		  <version>0.4.12</version>
+		  <scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
-<!-- 			<version>3.2.2</version> -->
 			<version>3.3.0-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.9</version>
+			<version>1.10.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -109,31 +109,35 @@
 			<version>5.5.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
-<dependency>
-    <groupId>org.xmlunit</groupId>
-    <artifactId>xmlunit-core</artifactId>
-    <version>2.9.0</version>
-    <scope>test</scope>
-</dependency>
-<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
-<dependency>
-    <groupId>org.xmlunit</groupId>
-    <artifactId>xmlunit-legacy</artifactId>
-    <version>2.9.0</version>
-    <scope>test</scope>
-</dependency>
-
-		
+		<dependency>
+		    <groupId>org.xmlunit</groupId>
+		    <artifactId>xmlunit-core</artifactId>
+		    <version>2.9.0</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
+		<dependency>
+		    <groupId>org.xmlunit</groupId>
+		    <artifactId>xmlunit-legacy</artifactId>
+		    <version>2.9.0</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.13.4</version>
+		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.13.2.1</version>
+			<version>2.13.4.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>2.13.1</version>
+			<version>2.13.4</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.saxon</groupId>

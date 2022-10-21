@@ -83,7 +83,7 @@ types:
           title:
             sourcePath: attextdt1_fkdt
             type: STRING
-            label: ExtDt-ID
+            label: ExtDt-title
           href:
             sourcePath: attextdt1_fkdt
             type: STRING
@@ -101,7 +101,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: ExtDt-ID
+            label: ExtDt-title
           href:
             sourcePath: idx
             type: STRING
@@ -118,7 +118,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: TS1_FeatureType2-ID
+            label: TS1_FeatureType2-title
           href:
             sourcePath: idx
             type: STRING
@@ -132,7 +132,7 @@ types:
           title:
             sourcePath: roletoft2_2_fk
             type: STRING
-            label: TS1_FeatureType2-ID
+            label: TS1_FeatureType2-title
           href:
             sourcePath: roletoft2_2_fk
             type: STRING
@@ -149,7 +149,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: TS1_FeatureType2-ID
+            label: TS1_FeatureType2-title
           href:
             sourcePath: idx
             type: STRING
@@ -163,7 +163,7 @@ types:
           title:
             sourcePath: roletoft2_4_fk
             type: STRING
-            label: TS1_FeatureType2-ID
+            label: TS1_FeatureType2-title
           href:
             sourcePath: roletoft2_4_fk
             type: STRING
@@ -177,7 +177,7 @@ types:
           title:
             sourcePath: roletoft2_5_fk
             type: STRING
-            label: TS1_FeatureType2-ID
+            label: TS1_FeatureType2-title
           href:
             sourcePath: roletoft2_5_fk
             type: STRING
@@ -203,7 +203,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: TS1_FeatureType1-ID
+            label: TS1_FeatureType1-title
           href:
             sourcePath: idx
             type: STRING
@@ -220,7 +220,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: TS1_FeatureType1-ID
+            label: TS1_FeatureType1-title
           href:
             sourcePath: idx
             type: STRING
@@ -234,7 +234,7 @@ types:
           title:
             sourcePath: roletoft1_5_fk
             type: STRING
-            label: TS1_FeatureType1-ID
+            label: TS1_FeatureType1-title
           href:
             sourcePath: roletoft1_5_fk
             type: STRING
@@ -250,7 +250,7 @@ types:
           title:
             sourcePath: roletomd1_fk
             type: STRING
-            label: MD_Metadata-ID
+            label: MD_Metadata-title
           href:
             sourcePath: roletomd1_fk
             type: STRING
@@ -267,7 +267,7 @@ types:
           title:
             sourcePath: idx
             type: STRING
-            label: MD_Metadata-ID
+            label: MD_Metadata-title
           href:
             sourcePath: idx
             type: STRING
@@ -393,7 +393,7 @@ types:
           title:
             sourcePath: role_fk
             type: STRING
-            label: TS3_Type1-ID
+            label: TS3_Type1-title
           href:
             sourcePath: role_fk
             type: STRING

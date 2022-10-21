@@ -1,0 +1,51 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: FIXME
+description: FIXME
+serviceType: OGC_API
+api:
+- buildingBlock: QUERYABLES
+  enabled: true
+collections:
+  featuretype:
+    id: featuretype
+    label: featuretype
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_CORE
+      queryables:
+        spatial:
+        - attPoint
+        temporal:
+        - attDate
+        other:
+        - attInt
+        - roleFTtoT_Subtype.title
+        - roleFTtoT_Type.title
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attDate:
+        - dateFormat: dd.MM.yyyy
+  subtype:
+    id: subtype
+    label: subtype
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_CORE
+      queryables:
+        other:
+        - attCharacter
+    - buildingBlock: FEATURES_HTML
+  type:
+    id: type
+    label: type
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_CORE
+      queryables:
+        other:
+        - attCharacter
+    - buildingBlock: FEATURES_HTML

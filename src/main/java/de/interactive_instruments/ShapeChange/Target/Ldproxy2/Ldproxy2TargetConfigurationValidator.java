@@ -76,11 +76,11 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
-		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
-		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
-		    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
-		    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
-		    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+		    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
+		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
+		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
@@ -181,7 +181,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
 		Map<String, ModelElementXmlEncoding> testMexeByKey = new HashMap<>();
 		Map<String, XmlNamespace> testXnsByNs = new HashMap<>();
-		
+
 		for (Element xeiElmt : xeiElmts) {
 
 		    XmlEncodingInfos xei = XmlEncodingInfos.fromXml(xeiElmt);
@@ -190,7 +190,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		     * Check if ModelElementXmlEncoding with same @applicationSchemaName
 		     * and @modelElementName but different @xmlName, @xmlNamespace,
 		     * and/or @xmlAttribute values exists.
-		     */		    
+		     */
 		    for (ModelElementXmlEncoding xeiMexe : xei.getModelElementEncodings()) {
 			String key = xeiMexe.getApplicationSchemaName() + "#" + xeiMexe.getModelElementName();
 			ModelElementXmlEncoding testMexe = testMexeByKey.get(key);
@@ -205,7 +205,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
 			} else {
 			    testMexeByKey.put(xeiMexe.getApplicationSchemaName() + "#" + xeiMexe.getModelElementName(),
-					xeiMexe);
+				    xeiMexe);
 			}
 		    }
 
