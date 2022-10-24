@@ -212,6 +212,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     public static final String PARAM_PACKAGE = "package";
     public static final String PARAM_FEATURE_TERM = "featureTerm";
     public static final String PARAM_INCLUDE_DIAGRAMS = "includeDiagrams";
+    public static final String PARAM_INCLUDE_DIAGRAM_DOCUMENTATION = "includeDiagramDocumentation";
     public static final String PARAM_INCLUDE_VOIDABLE = "includeVoidable";
     public static final String PARAM_INCLUDE_ALIAS = "includeAlias";
     public static final String PARAM_INCLUDE_TITLE = "includeTitle";
@@ -301,6 +302,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     private static String representTaggedValues = null;
 
     private static boolean includeDiagrams = false;
+    private static boolean includeDiagramDocumentation = false;
     private static int imgIntegerIdCounter = 0;
     private static int imgIntegerIdStepwidth = 2;
     private static List<ImageMetadata> imageList = new ArrayList<ImageMetadata>();
@@ -372,6 +374,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	includeCodelistsAndEnumerations = "false";
 	includeCodelistURI = true;
 	includeDiagrams = false;
+	includeDiagramDocumentation = false;
 	includeTitle = true;
 	includeVoidable = true;
 	inheritedConstraints = true;
@@ -741,7 +744,18 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    atts.addAttribute("", "width", "", "CDATA", "" + img.getWidth());
 	    atts.addAttribute("", "relPath", "", "CDATA", img.getRelPathToFile());
 
-	    writer.emptyElement("image", atts);
+	    // TODO extend with checks for additional child content
+	    boolean emptyElement = (img.getDocumentation() == null || !includeDiagramDocumentation);
+	    
+	    if(emptyElement) {
+		writer.emptyElement("image", atts);
+	    } else {
+		writer.startElement("image", atts);		
+		if(StringUtils.isNotBlank(img.getDocumentation()) && includeDiagramDocumentation) {
+		    writer.dataElement("documentation", img.getDocumentation());
+		}
+		writer.endElement("image");
+	    }
 
 	    // also keep track of the image metadata for later use
 	    imageList.add(img);
@@ -3000,6 +3014,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_DIAGRAMS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    includeDiagrams = true;
+	
+	includeDiagramDocumentation = options.parameterAsBoolean(this.getClass().getName(), PARAM_INCLUDE_DIAGRAM_DOCUMENTATION, false);
 
 	s = options.parameter(this.getClass().getName(), PARAM_DONT_TRANSFORM);
 	if (s != null && s.equalsIgnoreCase("true"))

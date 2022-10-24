@@ -32,7 +32,10 @@
 package de.interactive_instruments.ShapeChange.Target.FeatureCatalogue;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -52,7 +55,19 @@ import de.interactive_instruments.ShapeChange.Model.ImageMetadata;
  */
 public class ImageMetadataContentHandler implements ContentHandler {
 
+    private static final Set<String> IMAGE_METADATA_ELEMENTS = new HashSet<String>(
+		Arrays.asList(new String[] { "documentation" }));
+    
     private SortedMap<String, ImageMetadata> images = new TreeMap<>();
+    
+    protected StringBuffer sb = null;
+    
+    private String id = null;
+    private String name = null;
+    private String documentation = null;
+    private String relPathToFile = null;
+    private int width = 0;
+    private int height = 0;
 
     public ImageMetadataContentHandler() {
 	super();
@@ -87,33 +102,60 @@ public class ImageMetadataContentHandler implements ContentHandler {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
 	if (localName.equalsIgnoreCase("image")) {
+	    
+	    // reset fields
+	    this.id = null;
+	    this.name = null;
+	    this.documentation = null;
+	    this.relPathToFile = null;
+	    this.width = 0;
+	    this.height = 0;
+	    
+	    this.sb = null;
 
-	    String id = atts.getValue("id");
+	    id = atts.getValue("id");
 
 	    if (!images.containsKey(id)) {
-		String name = atts.getValue("name");
-		/*
-		 * 2021-12-06 JE: file not needed by FC, afaics.
-		 */
-		File file = null;
-		String relPathToFile = atts.getValue("relPath");
-		int width = Integer.parseInt(atts.getValue("width"));
-		int height = Integer.parseInt(atts.getValue("height"));
+		name = atts.getValue("name");
+		
+		relPathToFile = atts.getValue("relPath");
+		width = Integer.parseInt(atts.getValue("width"));
+		height = Integer.parseInt(atts.getValue("height"));
 
-		ImageMetadata img = new ImageMetadata(id, name, file, relPathToFile, width, height);
-		this.images.put(id, img);
+		
 	    }
+	    
+	} else if(IMAGE_METADATA_ELEMENTS.contains(localName)) {
+	    
+	    sb = new StringBuffer();
 	}
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-	// ignore for this simple SAX content handler
+
+	if (localName.equalsIgnoreCase("image")) {
+	    
+	    if (!images.containsKey(id)) {
+		/*
+		 * 2021-12-06 JE: file not needed by FC, afaics.
+		 */
+		File file = null;
+		ImageMetadata img = new ImageMetadata(id, name, documentation, file, relPathToFile, width, height);
+		this.images.put(id, img);
+		
+	    }
+	    
+	} else if (localName.equalsIgnoreCase("documentation")) {
+	    this.documentation = sb.toString();
+	}
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-	// irrelevant
+	if (sb != null) {
+		sb.append(ch, start, length);
+	}
     }
 
     @Override

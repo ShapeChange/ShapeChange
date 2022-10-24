@@ -52,6 +52,11 @@ public class FeatureCatalogueTest extends BasicTestSCXML {
 //	 new String[] { "test_featurecatalog_with_images" },
 //	 "testResults/featureCatalogue/umlDiagrams/myInputId",
 //	 "src/test/resources/featureCatalogue/umlDiagrams/reference");
+//	 
+//	 multiTest("src/test/resources/featureCatalogue/umlDiagrams/testEA_HtmlFrame_with_images.xml",
+//		 new String[] { "test_featurecatalog_with_images" },
+//		 "testResults/featureCatalogue/htmlframe_with_images/IDENTITY",
+//		 "src/test/resources/featureCatalogue/umlDiagrams/reference");
 //	 }
 
     @Test

@@ -38,16 +38,18 @@ public class ImageMetadata {
 
 	private String id;
 	private String name;
+	private String documentation;
 	private File file;
 	private String relPathToFile;
 	private int width;
 	private int height;
 
-	public ImageMetadata(String id, String name, File file,
+	public ImageMetadata(String id, String name, String documentation, File file,
 			String relPathToFile, int width, int height) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.documentation = documentation;
 		this.file = file;
 		this.relPathToFile = relPathToFile;
 		this.width = width;
@@ -75,6 +77,8 @@ public class ImageMetadata {
 	public String getName() {
 		return name;
 	}
+	
+	
 
 	/**
 	 * @param name
@@ -143,6 +147,8 @@ public class ImageMetadata {
 		sb.append(height);
 		sb.append("; relPathToFile: ");
 		sb.append(relPathToFile);
+		sb.append("; img documentation: ");
+		sb.append(documentation);
 
 		return sb.toString();
 	}
@@ -160,5 +166,19 @@ public class ImageMetadata {
 	 */
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	/**
+	 * @return the documentation
+	 */
+	public String getDocumentation() {
+	    return documentation;
+	}
+
+	/**
+	 * @param documentation the documentation to set; can be <code>null</code>
+	 */
+	public void setDocumentation(String documentation) {
+	    this.documentation = documentation;
 	}
 }

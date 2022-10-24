@@ -21,7 +21,7 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/html/frame_with_images/log.xml" />
+		<parameter name="logFile" value="testResults/featureCatalogue/htmlframe_with_images/log.xml" />
 	</log>
 	<transformers>
 	    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" 
@@ -39,6 +39,7 @@
 			<targetParameter name="inheritedProperties" value="false" />
 			<targetParameter name="outputFormat" value="FRAMEHTML" />
 			<targetParameter name="includeDiagrams" value="true" />
+			<targetParameter name="includeDiagramDocumentation" value="true" />
 			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>			
 			<targetParameter name="xslTransformerFactory"
 				value="net.sf.saxon.TransformerFactoryImpl" />
