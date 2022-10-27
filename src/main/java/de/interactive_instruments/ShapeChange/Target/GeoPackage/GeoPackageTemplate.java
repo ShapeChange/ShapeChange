@@ -412,6 +412,16 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    boolean createSpatialIndexes = options.parameterAsBoolean(this.getClass().getName(),
 		    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, false);
 
+		/*
+		 * NOTE: Schema extension is automatically registered by
+		 * geoPackage.createDataColumnConstraintsTable() (not by
+		 * createDataColumnsTable()).
+		 */
+		// create gpkg_data_columns_constraints
+		geoPackage.createDataColumnConstraintsTable();
+		// create gpkg_data_columns table
+		geoPackage.createDataColumnsTable();
+
 	    /*
 	     * Create data column constraints for enumerations.
 	     */
@@ -427,9 +437,6 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    }
 
 	    boolean geometryColumnsTableCreated = false;
-
-	    // create gpkg_data_columns table
-	    geoPackage.createDataColumnsTable();
 
 	    // create tables
 	    for (ClassInfo ci : cisToProcess) {
@@ -766,9 +773,6 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     }
 
     protected void createEnumColumnConstraints(GeoPackage geoPackage, ClassInfo ci) {
-
-	// create/update data columns constraints table
-	geoPackage.createDataColumnConstraintsTable();
 
 	DataColumnConstraintsDao dataColumnConstraintsDao = geoPackage.getDataColumnConstraintsDao();
 
