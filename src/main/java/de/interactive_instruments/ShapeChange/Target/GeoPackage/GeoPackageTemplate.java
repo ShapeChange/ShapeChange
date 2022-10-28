@@ -67,24 +67,25 @@ import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.attributes.AttributesColumn;
 import mil.nga.geopackage.attributes.AttributesTable;
-import mil.nga.geopackage.core.contents.Contents;
-import mil.nga.geopackage.core.contents.ContentsDao;
-import mil.nga.geopackage.core.contents.ContentsDataType;
-import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
-import mil.nga.geopackage.core.srs.SpatialReferenceSystemDao;
+import mil.nga.geopackage.contents.Contents;
+import mil.nga.geopackage.contents.ContentsDao;
+import mil.nga.geopackage.contents.ContentsDataType;
+import mil.nga.geopackage.srs.SpatialReferenceSystem;
+import mil.nga.geopackage.srs.SpatialReferenceSystemDao;
 import mil.nga.geopackage.db.GeoPackageDataType;
 import mil.nga.geopackage.extension.CrsWktExtension;
-import mil.nga.geopackage.extension.RTreeIndexExtension;
+import mil.nga.geopackage.extension.rtree.RTreeIndexExtension;
 import mil.nga.geopackage.features.columns.GeometryColumns;
 import mil.nga.geopackage.features.columns.GeometryColumnsDao;
 import mil.nga.geopackage.features.user.FeatureColumn;
 import mil.nga.geopackage.features.user.FeatureTable;
-import mil.nga.geopackage.manager.GeoPackageManager;
-import mil.nga.geopackage.schema.columns.DataColumns;
-import mil.nga.geopackage.schema.columns.DataColumnsDao;
-import mil.nga.geopackage.schema.constraints.DataColumnConstraintType;
-import mil.nga.geopackage.schema.constraints.DataColumnConstraints;
-import mil.nga.geopackage.schema.constraints.DataColumnConstraintsDao;
+import mil.nga.geopackage.GeoPackageManager;
+import mil.nga.geopackage.extension.schema.SchemaExtension;
+import mil.nga.geopackage.extension.schema.columns.DataColumns;
+import mil.nga.geopackage.extension.schema.columns.DataColumnsDao;
+import mil.nga.geopackage.extension.schema.constraints.DataColumnConstraintType;
+import mil.nga.geopackage.extension.schema.constraints.DataColumnConstraints;
+import mil.nga.geopackage.extension.schema.constraints.DataColumnConstraintsDao;
 import mil.nga.sf.GeometryType;
 
 /**
@@ -96,7 +97,7 @@ import mil.nga.sf.GeometryType;
 public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     protected static Model model = null;
-    
+
     protected static boolean isUnitTest = false;
 
     protected static boolean initialised = false;
@@ -133,6 +134,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     protected PackageInfo schema = null;
     protected boolean schemaNotEncoded = false;
 
+    // initialised and used during writeAll
+    protected SchemaExtension schemaExtension = null;
+
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -155,7 +159,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	if (!initialised) {
 	    initialised = true;
-	    
+
 	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
 	    outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
@@ -364,9 +368,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	r.addRule("rule-gpkg-cls-identifierStereotype");
 	r.addRule("rule-gpkg-cls-objecttype");
 
-	// now declare rule sets	
-	ProcessRuleSet geopackagePrs = new ProcessRuleSet("geopackage","*",new TreeSet<>(Stream.of(
-		"rule-gpkg-cls-objecttype").collect(Collectors.toSet())));
+	// now declare rule sets
+	ProcessRuleSet geopackagePrs = new ProcessRuleSet("geopackage", "*",
+		new TreeSet<>(Stream.of("rule-gpkg-cls-objecttype").collect(Collectors.toSet())));
 	r.addRuleSet(geopackagePrs);
 
     }
@@ -417,15 +421,12 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    boolean createSpatialIndexes = options.parameterAsBoolean(this.getClass().getName(),
 		    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, false);
 
-		/*
-		 * NOTE: Schema extension is automatically registered by
-		 * geoPackage.createDataColumnConstraintsTable() (not by
-		 * createDataColumnsTable()).
-		 */
-		// create gpkg_data_columns_constraints
-		geoPackage.createDataColumnConstraintsTable();
-		// create gpkg_data_columns table
-		geoPackage.createDataColumnsTable();
+	    // create gpkg_data_columns table
+	    schemaExtension = new SchemaExtension(geoPackage);
+	    // create gpkg_data_columns_constraints
+	    schemaExtension.createDataColumnConstraintsTable();
+	    // create gpkg_data_columns table
+	    schemaExtension.createDataColumnsTable();
 
 	    /*
 	     * Create data column constraints for enumerations.
@@ -530,7 +531,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 		    contents.setSrs(srs);
 		    contents.setDataType(ContentsDataType.FEATURES);
-		    if(isUnitTest) {
+		    if (isUnitTest) {
 			contents.setLastChange(new Date(0));
 		    }
 
@@ -754,7 +755,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	if (pi.categoryOfValue() == Options.ENUMERATION) {
 	    dc.setConstraintName(normalize(pi.typeInfo().name));
 	}
-	DataColumnsDao dataColumnsDao = geoPackage.getDataColumnsDao();
+	DataColumnsDao dataColumnsDao = schemaExtension.getDataColumnsDao();
 	try {
 	    dataColumnsDao.create(dc);
 	} catch (SQLException e) {
@@ -782,7 +783,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     protected void createEnumColumnConstraints(GeoPackage geoPackage, ClassInfo ci) {
 
-	DataColumnConstraintsDao dataColumnConstraintsDao = geoPackage.getDataColumnConstraintsDao();
+	DataColumnConstraintsDao dataColumnConstraintsDao = schemaExtension.getDataColumnConstraintsDao();
 
 	String constraintName = normalize(ci.name());
 
@@ -907,7 +908,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     public void reset() {
 
 	model = null;
-	
+
 	isUnitTest = false;
 
 	initialised = false;
