@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -95,6 +96,8 @@ import mil.nga.sf.GeometryType;
 public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     protected static Model model = null;
+    
+    protected static boolean isUnitTest = false;
 
     protected static boolean initialised = false;
     protected static boolean diagnosticsOnly = false;
@@ -152,6 +155,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	if (!initialised) {
 	    initialised = true;
+	    
+	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
 	    outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
 	    if (outputDirectory == null)
@@ -525,6 +530,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 		    contents.setSrs(srs);
 		    contents.setDataType(ContentsDataType.FEATURES);
+		    if(isUnitTest) {
+			contents.setLastChange(new Date(0));
+		    }
 
 		    List<FeatureColumn> columns = new ArrayList<>();
 
@@ -899,6 +907,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     public void reset() {
 
 	model = null;
+	
+	isUnitTest = false;
 
 	initialised = false;
 	diagnosticsOnly = false;

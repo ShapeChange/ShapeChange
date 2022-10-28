@@ -56,11 +56,11 @@ import mil.nga.geopackage.core.srs.SpatialReferenceSystem;
  */
 public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(GeoPackageConstants.PARAM_DOCUMENTATION_NOVALUE, GeoPackageConstants.PARAM_DOCUMENTATION_TEMPLATE,
-		    GeoPackageConstants.PARAM_GPKGM, GeoPackageConstants.PARAM_GPKGZ,
-		    GeoPackageConstants.PARAM_ID_COLUMN_NAME, GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID,
-		    GeoPackageConstants.PARAM_SRS_ORGANIZATION, GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES).collect(Collectors.toSet()));
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    GeoPackageConstants.PARAM_DOCUMENTATION_NOVALUE, GeoPackageConstants.PARAM_DOCUMENTATION_TEMPLATE,
+	    GeoPackageConstants.PARAM_GPKGM, GeoPackageConstants.PARAM_GPKGZ, GeoPackageConstants.PARAM_ID_COLUMN_NAME,
+	    GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID, GeoPackageConstants.PARAM_SRS_ORGANIZATION,
+	    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, "_unitTestOverride").collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
@@ -79,7 +79,7 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	inputs = StringUtils.join(config.getInputIds(), ", ");
 
 	boolean isValid = true;
-	
+
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;

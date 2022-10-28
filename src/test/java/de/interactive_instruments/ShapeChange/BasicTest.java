@@ -61,6 +61,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
@@ -82,6 +83,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Joiner;
 
+import de.interactive_instruments.ShapeChange.Util.ExternalCallException;
+import de.interactive_instruments.ShapeChange.Util.ExternalCallUtil;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
 import de.interactive_instruments.ShapeChange.Util.ea.EAModelDiff;
 
@@ -245,6 +248,9 @@ public abstract class BasicTest {
 			    || (fresExtension.equals("yml") && fileFormatsToCheck.contains("yml"))) {
 			similarYaml(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
+		    } else if (fresExtension.equals("gpkg") && fileFormatsToCheck.contains("gpkg")) {
+			similarGpkg(dirResults + File.separator + fres.getName(),
+				dirReference + File.separator + fres.getName());
 		    } else {
 			// TBD add more similarity tests for further file
 			// formats, or add them to one of the above
@@ -258,6 +264,93 @@ public abstract class BasicTest {
 		fail("No corresponding result files found for the following reference files (in directory "
 			+ refDir.getAbsolutePath() + "): " + unmatchedReferenceFiles);
 	    }
+	}
+    }
+
+    private void similarGpkg(String gpkgFileName, String referenceGpkgFileName) {
+
+	File gpkgFile = new File(gpkgFileName);
+	File refGpkgFile = new File(referenceGpkgFileName);
+
+	/*
+	 * Use sqlite sqldiff tool to detect changes between the two files.
+	 * 
+	 * NOTE and TODO: The documentation of sqldiff says that it
+	 * "does not (currently) display differences in TRIGGERs or VIEWs." source:
+	 * https://www.sqlite.org/sqldiff.html (28.10.2022)
+	 */
+	String sqlDiffOutput = sqliteDiff(refGpkgFile, gpkgFile);
+
+	if (StringUtils.isNotBlank(sqlDiffOutput)) {
+
+	    // differences detected -> fail
+
+	    // dump both schema and data of both files
+
+	    File tmpFolder = new File(gpkgFile.getParentFile(), "unittesttmp");
+	    if (tmpFolder.exists()) {
+		FileUtils.deleteQuietly(tmpFolder);
+	    }
+
+	    try {
+
+		FileUtils.forceMkdir(tmpFolder);
+
+		storeSqliteDump(refGpkgFile, tmpFolder, "reference_");
+		storeSqliteDump(gpkgFile, tmpFolder, "result_");
+
+		fail("Differences detected between GeoPackages " + gpkgFile.getAbsolutePath() + " and "
+			+ refGpkgFile.getAbsolutePath() + "\n" + "Dumps of both files have been stored in "
+			+ tmpFolder.getAbsolutePath() + "\n"
+			+ "sqldiff results (from reference file to result file):\n\n" + sqlDiffOutput);
+
+	    } catch (IOException e) {
+
+		fail("Differences detected between GeoPackages " + gpkgFile.getAbsolutePath() + " and "
+			+ refGpkgFile.getAbsolutePath() + "\n"
+			+ "Exception occurred while creating folder for storing the dumps for both files in "
+			+ tmpFolder.getAbsolutePath() + " (exception message is: " + e.getMessage() + ")\n"
+			+ "Here are the sqldiff results (from reference file to result file):\n\n" + sqlDiffOutput);
+	    }
+	}
+    }
+
+    private String sqliteDiff(File refGpkgFile, File gpkgFile) {
+
+	List<String> cmds = new ArrayList<String>();
+	cmds.add("sqldiff");
+	cmds.add("--primarykey");
+	cmds.add(refGpkgFile.getAbsolutePath());
+	cmds.add(gpkgFile.getAbsolutePath());
+
+	String sqlDiffOutput = "";
+	try {
+	    sqlDiffOutput = ExternalCallUtil.call(cmds);
+	} catch (ExternalCallException e) {
+	    fail("Exception occurred while performing sqldiff  of " + refGpkgFile.getAbsolutePath() + " and "
+		    + gpkgFile.getAbsolutePath() + ". Exception message is: " + e.getMessage());
+	}
+
+	return sqlDiffOutput;
+    }
+
+    private void storeSqliteDump(File gpkgFile, File tmpFolder, String dumpFileNamePrefix) {
+
+	File targetFile = new File(tmpFolder, dumpFileNamePrefix + gpkgFile.getName() + ".dump");
+
+	List<String> cmds = new ArrayList<String>();
+	cmds.add("sqlite3");
+	cmds.add(gpkgFile.getAbsolutePath());
+	cmds.add(".dump");
+
+	try {
+	    String dumpOutput = ExternalCallUtil.call(cmds);
+
+	    FileUtils.writeStringToFile(targetFile, dumpOutput, "UTF-8");
+
+	} catch (ExternalCallException | IOException e) {
+	    fail("Exception occurred while storing the dump of " + gpkgFile.getAbsolutePath() + " in "
+		    + targetFile.getAbsolutePath() + ". Exception message is: " + e.getMessage());
 	}
     }
 

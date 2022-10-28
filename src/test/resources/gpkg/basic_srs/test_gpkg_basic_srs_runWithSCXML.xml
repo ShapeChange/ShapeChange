@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
  <input>
   <parameter name="inputModelType" value="SCXML"/>
-  <parameter name="inputFile" value="src/test/resources/gpkg/basic/test.zip"/>
+  <parameter name="inputFile" value="src/test/resources/gpkg/basic_srs/test.zip"/>
   <parameter name="appSchemaNameRegex" value=".*"/>
   <parameter name="mainAppSchema" value="Test Schema"/>
   <parameter name="publicOnly" value="true"/>
@@ -11,7 +11,7 @@
  </input>
  <log>
   <parameter name="reportLevel" value="INFO"/>
-  <parameter name="logFile" value="testResults/gpkg/basic_2srs/log.xml"/>
+  <parameter name="logFile" value="testResults/gpkg/basic_srs/log.xml"/>
  </log>
  <transformers>
   <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="flattener" mode="enabled">
@@ -59,7 +59,7 @@
      </srsDefinition>
     </GeoPackageSrsDefinitions>
    </advancedProcessConfigurations>
-   <targetParameter name="outputDirectory" value="testResults/gpkg/basic_2srs/results"/>
+   <targetParameter name="outputDirectory" value="testResults/gpkg/basic_srs/results"/>
    <targetParameter name="sortedOutput" value="true"/>
    <targetParameter name="defaultEncodingRule" value="my_gpkg_rule"/>
    
@@ -67,6 +67,7 @@
    <targetParameter name="organizationCoordSysId" value="31467"/>
    <targetParameter name="gpkgM" value="1"/>
    <targetParameter name="gpkgZ" value="1"/>
+   <targetParameter name="_unitTestOverride" value="true"/>
    <rules>
     <EncodingRule extends="geopackage" name="my_gpkg_rule">
      
