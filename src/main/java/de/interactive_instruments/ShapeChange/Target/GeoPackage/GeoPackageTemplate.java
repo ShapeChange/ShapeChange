@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -97,6 +98,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     protected static Model model = null;
 
+    protected static boolean isUnitTest = false;
+
     protected static boolean initialised = false;
     protected static boolean diagnosticsOnly = false;
     protected static int numberOfEncodedSchemas = 0;
@@ -133,7 +136,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     // initialised and used during writeAll
     protected SchemaExtension schemaExtension = null;
-    
+
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -156,6 +159,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	if (!initialised) {
 	    initialised = true;
+
+	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
 	    outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
 	    if (outputDirectory == null)
@@ -363,9 +368,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	r.addRule("rule-gpkg-cls-identifierStereotype");
 	r.addRule("rule-gpkg-cls-objecttype");
 
-	// now declare rule sets	
-	ProcessRuleSet geopackagePrs = new ProcessRuleSet("geopackage","*",new TreeSet<>(Stream.of(
-		"rule-gpkg-cls-objecttype").collect(Collectors.toSet())));
+	// now declare rule sets
+	ProcessRuleSet geopackagePrs = new ProcessRuleSet("geopackage", "*",
+		new TreeSet<>(Stream.of("rule-gpkg-cls-objecttype").collect(Collectors.toSet())));
 	r.addRuleSet(geopackagePrs);
 
     }
@@ -418,8 +423,11 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 	    // create gpkg_data_columns table
 	    schemaExtension = new SchemaExtension(geoPackage);
+	    // create gpkg_data_columns_constraints
+	    schemaExtension.createDataColumnConstraintsTable();
+	    // create gpkg_data_columns table
 	    schemaExtension.createDataColumnsTable();
-	    
+
 	    /*
 	     * Create data column constraints for enumerations.
 	     */
@@ -523,6 +531,9 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
 		    contents.setSrs(srs);
 		    contents.setDataType(ContentsDataType.FEATURES);
+		    if (isUnitTest) {
+			contents.setLastChange(new Date(0));
+		    }
 
 		    List<FeatureColumn> columns = new ArrayList<>();
 
@@ -772,9 +783,6 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 
     protected void createEnumColumnConstraints(GeoPackage geoPackage, ClassInfo ci) {
 
-	// create/update data columns constraints table
-	schemaExtension.createDataColumnConstraintsTable();
-
 	DataColumnConstraintsDao dataColumnConstraintsDao = schemaExtension.getDataColumnConstraintsDao();
 
 	String constraintName = normalize(ci.name());
@@ -900,6 +908,8 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     public void reset() {
 
 	model = null;
+
+	isUnitTest = false;
 
 	initialised = false;
 	diagnosticsOnly = false;

@@ -76,11 +76,6 @@ import de.interactive_instruments.ShapeChange.Util.ea.EAElementUtil;
 
 public class EADocument extends ModelImpl implements Model, MessageSource {
 
-    public static final int STATUS_EADOCUMENT_INITSTART = 101;
-    public static final int STATUS_EADOCUMENT_READMODEL = 102;
-    public static final int STATUS_EADOCUMENT_ESTABLISHCLASSES = 103;
-    public static final int STATUS_EADOCUMENT_READCONSTARINTS = 104;
-
     public Options options = null;
     public ShapeChangeResult result = null;
 

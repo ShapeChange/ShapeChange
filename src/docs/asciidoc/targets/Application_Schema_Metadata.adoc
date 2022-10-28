@@ -84,7 +84,7 @@ Default Value: _none_
 Behavior:
 
 The identifier of the default encoding rule governing the derivation of
-the replication schema.
+the application schema metadata.
 
 Applies to Rule(s):
 

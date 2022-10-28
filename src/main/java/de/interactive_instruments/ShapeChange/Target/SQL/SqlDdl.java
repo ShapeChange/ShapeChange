@@ -147,6 +147,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
     private static String outputDirectory = null;
     private static String outputFilename = null;
 
+    protected static boolean associativeTablesWithSeparatePkField = false;
     protected static SortedSet<String> categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
     protected static String codeStatusCLType;
     protected static int codeStatusCLLength;
@@ -158,6 +159,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static String foreignKeyColumnSuffixDatatype;
     protected static String foreignKeyColumnSuffixCodelist;
     protected static ColumnDataType foreignKeyColumnDataType;
+    protected static Boolean foreignKeyDeferrable = null;
+    protected static Boolean foreignKeyImmediate = null;
+    protected static boolean explicitlyEncodePkReferenceColumnInForeignKeys = false;
     protected static String primaryKeySpec;
     protected static String primaryKeySpecCodelist;
     protected static boolean separateSpatialIndexStatements;
@@ -312,6 +316,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
 		createAssociativeTables = true;
+	    }
+	    
+	    if(pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+		associativeTablesWithSeparatePkField = true;
 	    }
 
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_CONSTRAINTNAMEUSINGSHORTNAME)) {
@@ -492,6 +500,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		foreignKeyColumnDataType = new ColumnDataType(foreignKeyColumnDataTypeFromConfig);
 	    }
 
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE)) {
+		foreignKeyDeferrable = options.getCurrentProcessConfig()
+			.parameterAsBoolean(SqlConstants.PARAM_FOREIGN_KEY_DEFERRABLE, false);
+	    }
+
+	    if (options.getCurrentProcessConfig()
+		    .hasParameter(SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE)) {
+		String initialConstraintModeValue = options.getCurrentProcessConfig().parameterAsString(
+			SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, "immediate", false, true);
+		foreignKeyImmediate = initialConstraintModeValue.equalsIgnoreCase("immediate");
+	    }
+	    
 	    primaryKeySpec = options.parameterAsString(this.getClass().getName(), SqlConstants.PARAM_PRIMARYKEY_SPEC,
 		    SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
 
@@ -567,6 +587,10 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	     */
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
 		createDocumentation = false;
+	    }
+	    
+	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ENCODE_PK_REFERENCED_COLUMN_IN_FOREIGNKEYS)) {
+		explicitlyEncodePkReferenceColumnInForeignKeys = true;
 	    }
 
 	    // change the default documentation template?
@@ -1125,6 +1149,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	outputDirectory = null;
 	outputFilename = null;
 
+	associativeTablesWithSeparatePkField = false;
+	
 	categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
 	codeStatusCLType = null;
 	codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
@@ -1136,6 +1162,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixDatatype = null;
 	foreignKeyColumnSuffixCodelist = null;
 	foreignKeyColumnDataType = null;
+	foreignKeyDeferrable = null;
+	foreignKeyImmediate = null;
+	explicitlyEncodePkReferenceColumnInForeignKeys = false;
 	primaryKeySpec = null;
 	primaryKeySpecCodelist = null;
 	separateSpatialIndexStatements = false;
@@ -1192,6 +1221,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	 */
 
 	r.addRule("rule-sql-all-associativetables");
+	r.addRule("rule-sql-all-associativeTablesWithSeparatePkField");
 	r.addRule("rule-sql-all-check-constraint-naming-oracle-default");
 	r.addRule("rule-sql-all-check-constraint-naming-pearsonhash");
 	r.addRule("rule-sql-all-check-constraint-naming-postgresql-default");
@@ -1203,6 +1233,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-all-foreign-key-oracle-naming-style");
 	r.addRule("rule-sql-all-foreign-key-pearsonhash-naming");
 	r.addRule("rule-sql-all-foreign-key-default-naming");
+	r.addRule("rule-sql-all-explicitlyEncodePkReferencedColumnInForeignKeys");
 	r.addRule("rule-sql-all-indexNameUsingShortName");
 	r.addRule("rule-sql-all-normalizing-ignore-case");
 	r.addRule("rule-sql-all-normalizing-lower-case");
@@ -1242,8 +1273,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	r.addRule("rule-sql-prop-replicationSchema-optional");
 
 	// declare rule sets
-	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql","*",new TreeSet<>(Stream.of(
-		"rule-sql-cls-feature-types").collect(Collectors.toSet())));
+	ProcessRuleSet sqlPrs = new ProcessRuleSet("sql", "*",
+		new TreeSet<>(Stream.of("rule-sql-cls-feature-types").collect(Collectors.toSet())));
 	r.addRuleSet(sqlPrs);
     }
 

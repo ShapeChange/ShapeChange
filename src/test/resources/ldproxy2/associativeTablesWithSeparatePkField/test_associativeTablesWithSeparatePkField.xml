@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/test/resources/ldproxy2/associativeTablesWithSeparatePkField/test_associativeTablesWithSeparatePkField.eapx" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include
+			href="src/main/resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/ldproxy2/associativeTablesWithSeparatePkField/log.xml" />
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" mode="enabled" id="IDENTITY"/>
+	</transformers>
+	<targets>
+		<Target
+			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+			mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/associativeTablesWithSeparatePkField/results/ldp" />
+			<targetParameter name="sortedOutput" value="true" />
+
+			<targetParameter name="associativeTableColumnSuffix" value="_id" />
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml" />
+			<targetParameter name="dateFormat" value="dd.MM.yyyy" />
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss" />
+			<targetParameter name="forceAxisOrder" value="NONE" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt" />
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="label" />
+            <targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" />
+			<targetParameter name="srid" value="4326" />
+			<targetParameter name="_unitTestOverride" value="true" />
+			<targetParameter name="defaultEncodingRule" value="ldpCodelistByTable" />
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<rules>
+				<EncodingRule name="ldpCodelistByTable">
+					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-ldp2-all-schemas" />
+					<rule name="rule-ldp2-cls-codelist-direct" />
+					<rule name="rule-ldp2-cls-codelist-byTable" />
+				</EncodingRule>
+				<EncodingRule name="ldpCodelistNotByTable">
+				  <rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+				  <rule name="rule-ldp2-all-schemas" />
+				  <rule name="rule-ldp2-cls-codelist-direct" />					
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
+		</Target>
+		  <Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/associativeTablesWithSeparatePkField/results/postgres" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4326" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="sqlCodelistByTable"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl"/>				
+			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
+			<targetParameter name="codeNameColumnName" value="code"/>
+			<targetParameter name="descriptorsForCodelist" value="name,documentation,description"/>
+			
+			<rules>
+				<EncodingRule extends="sql" name="sqlCodelistByTable">
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-sql-cls-code-lists"/>
+				</EncodingRule>
+				<EncodingRule extends="sql" name="sqlCodelistNotByTable">
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-all-associativeTablesWithSeparatePkField"/>
+				</EncodingRule>
+			</rules>			
+			<xi:include href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

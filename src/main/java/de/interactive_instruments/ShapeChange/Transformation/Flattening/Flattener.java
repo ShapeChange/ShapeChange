@@ -55,6 +55,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -448,6 +449,11 @@ public class Flattener implements Transformer, MessageSource {
     public static final String TAGGED_VALUE_IS_FLAT_TARGET = "isFlatTarget";
 
     public static final String UNION_SET_TAG_NAME = "SC_UNION_SET";
+
+    // internal tagged values used while flattening inheritance
+    public static final String TV_ORIGINAL_ASSOCIATION = "SC_ORIGINAL_ASSOCIATION";
+    public static final String TV_ORIGINAL_ASSOCIATION_REFLEXIVE = "SC_ORIGINAL_ASSOCIATION_REFLEXIVE";
+
     // =============================
     /* internal */
     // =============================
@@ -1282,6 +1288,9 @@ public class Flattener implements Transformer, MessageSource {
      * @param trfConfig
      */
     private void applyRuleDissolveMixins(GenericModel genModel, TransformerConfiguration trfConfig) {
+
+	// TODO - use same logic as in flatten-inheritance ... just provide the set of
+	// classes to process
 
 	Set<GenericClassInfo> mixinsToRemove = new HashSet<GenericClassInfo>();
 
@@ -4988,18 +4997,16 @@ public class Flattener implements Transformer, MessageSource {
 	 * (through addition of suffixes) or changing of multiplicites (by setting min
 	 * card to 0 when copying up).
 	 */
-	Map<PropertyInfo,String> propKeyByProp = new HashMap<>();
+	Map<PropertyInfo, String> propKeyByProp = new HashMap<>();
 	for (GenericClassInfo genRootclass : genRootclassesById.values()) {
-	    for(PropertyInfo pi : genRootclass.properties().values()) {
-		String piKey = pi.name() + "#" + pi.typeInfo().name + "#"
-			    + pi.cardinality().toString();
+	    for (PropertyInfo pi : genRootclass.properties().values()) {
+		String piKey = pi.name() + "#" + pi.typeInfo().name + "#" + pi.cardinality().toString();
 		propKeyByProp.put(pi, piKey);
 	    }
 	}
 	for (ClassInfo subClass : rootClassBySubtype.keySet()) {
-	    for(PropertyInfo pi : subClass.properties().values()) {
-		String piKey = pi.name() + "#" + pi.typeInfo().name + "#"
-			    + pi.cardinality().toString();
+	    for (PropertyInfo pi : subClass.properties().values()) {
+		String piKey = pi.name() + "#" + pi.typeInfo().name + "#" + pi.cardinality().toString();
 		propKeyByProp.put(pi, piKey);
 	    }
 	}
@@ -5342,87 +5349,6 @@ public class Flattener implements Transformer, MessageSource {
 	    }
 	}
 
-	Set<String> idsOfUnprocessedSupertypes = new HashSet<String>();
-	for (String superclassId : genSuperclassesById.keySet()) {
-	    idsOfUnprocessedSupertypes.add(superclassId);
-	}
-
-	/*
-	 * We want to copy the content of all selected supertypes down to their
-	 * subtypes, starting at the top of the inheritance tree.
-	 */
-	while (!idsOfUnprocessedSupertypes.isEmpty()) {
-
-	    /*
-	     * We need to iterate through a separate collection because we remove elements
-	     * from idsOfUnprocessedSupertypes, which would otherwise cause an issue with
-	     * the iterator.
-	     */
-	    for (String idOfgenSuperclass : genSuperclassesById.keySet()) {
-
-		/* We do not want to process the same superclass twice. */
-		if (!idsOfUnprocessedSupertypes.contains(idOfgenSuperclass)) {
-		    continue;
-		}
-
-		GenericClassInfo superclass = genSuperclassesById.get(idOfgenSuperclass);
-
-		// get ids of the supertypes of this superclass
-		SortedSet<String> supertypesOfSuperclass = superclass.supertypes();
-
-		if (supertypesOfSuperclass == null || supertypesOfSuperclass.size() == 0) {
-
-		    // copy relevant contents down to subtypes
-		    if (addAttributesAtBottom) {
-			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
-		    } else {
-			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
-		    }
-
-		    if (trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
-			mergeLinkedDocumentsInSubtypes(superclass, trfConfig);
-		    }
-
-		    idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
-
-		} else {
-
-		    // determine if the supertypes of the current superclass are
-		    // not contained in the application schema or if they have
-		    // already been processed
-		    boolean noRelevantSupertypes = true;
-		    for (String supertypeId : supertypesOfSuperclass) {
-			if (genModel.isInAppSchema(genModel.classById(supertypeId))
-				&& idsOfUnprocessedSupertypes.contains(supertypeId)) {
-			    noRelevantSupertypes = false;
-			    break;
-			}
-		    }
-		    if (noRelevantSupertypes) {
-
-			/*
-			 * copy relevant contents down to subtypes
-			 *
-			 * NOTE: does not copy associations - they are specifically handled later on
-			 */
-			if (addAttributesAtBottom) {
-			    copyContentToSubtypes(genModel, superclass,
-				    PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
-			} else {
-			    copyContentToSubtypes(genModel, superclass,
-				    PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
-			}
-
-			if (trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
-			    mergeLinkedDocumentsInSubtypes(superclass, trfConfig);
-			}
-
-			idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
-		    }
-		}
-	    }
-	}
-
 	/*
 	 * mapping of superclass to list of its subclasses key: superclass; value: list
 	 * of all its subclasses (sorted by subclass name)
@@ -5444,7 +5370,7 @@ public class Flattener implements Transformer, MessageSource {
 	    });
 
 	    /*
-	     * keep track of subclass list for later use (when associations are moved down
+	     * keep track of subclass list for later use
 	     */
 	    allSubclassesByTheirSuperclass.put(genSuperclass, subclassesList);
 	}
@@ -5515,6 +5441,88 @@ public class Flattener implements Transformer, MessageSource {
 	    genModel.addClass(genSuperclassUnion);
 	}
 
+	// ----------------------------------- //
+	// --- START handling inheritance --- //
+
+	/*
+	 * Step 1: For each bi-directional association where one or both ends have
+	 * subtypes AND is a supertype to which inheritance flattening shall be applied:
+	 * split the association, i.e. create two uni-directional associations, and set
+	 * special TVs on them so that they can be correlated later on (when necessary).
+	 * 
+	 * Step 2: For each (resulting and pre-existing) uni-directional association
+	 * (UA1) where the navigable end has subtypes AND is a supertype to which
+	 * inheritance flattening shall be applied: create type- and subtype-specific
+	 * copies of the association UAx (where the navigable role name receives the
+	 * type name as suffix). Remove the uni-directional association UA1 from the
+	 * model (since it has been replaced by a set of type-specific copies UAx).
+	 */
+	preProcessAssociationsWhenFlatteningInheritance(genModel, genSuperclassesById.keySet());
+
+	// now on to copying the contents of supertypes down to their subtypes
+
+	Set<String> idsOfUnprocessedSupertypes = new HashSet<String>();
+	for (String superclassId : genSuperclassesById.keySet()) {
+	    idsOfUnprocessedSupertypes.add(superclassId);
+	}
+
+	/*
+	 * We want to copy the content of all selected supertypes down to their
+	 * subtypes, starting at the top of the inheritance tree.
+	 */
+	while (!idsOfUnprocessedSupertypes.isEmpty()) {
+
+	    /*
+	     * We need to iterate through a separate collection because we remove elements
+	     * from idsOfUnprocessedSupertypes, which would otherwise cause an issue with
+	     * the iterator.
+	     */
+	    for (String idOfgenSuperclass : genSuperclassesById.keySet()) {
+
+		/* We do not want to process the same superclass twice. */
+		if (!idsOfUnprocessedSupertypes.contains(idOfgenSuperclass)) {
+		    continue;
+		}
+
+		GenericClassInfo superclass = genSuperclassesById.get(idOfgenSuperclass);
+
+		// get ids of the supertypes of this superclass
+		SortedSet<String> supertypesOfSuperclass = superclass.supertypes();
+
+		/*
+		 * Determine if the supertypes of the current superclass are not contained in
+		 * the application schema or if they have already been processed
+		 */
+		boolean noRelevantSupertypes = true;
+		for (String supertypeId : supertypesOfSuperclass) {
+		    if (genModel.isInAppSchema(genModel.classById(supertypeId))
+			    && idsOfUnprocessedSupertypes.contains(supertypeId)) {
+			noRelevantSupertypes = false;
+			break;
+		    }
+		}
+
+		if (supertypesOfSuperclass.isEmpty() || noRelevantSupertypes) {
+
+		    /*
+		     * copy relevant contents (attributes and (navigable) associations) down to
+		     * subtypes
+		     */
+		    if (addAttributesAtBottom) {
+			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
+		    } else {
+			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
+		    }
+
+		    if (trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS)) {
+			mergeLinkedDocumentsInSubtypes(superclass, trfConfig);
+		    }
+
+		    idsOfUnprocessedSupertypes.remove(idOfgenSuperclass);
+		}
+	    }
+	}
+
 	/*
 	 * Change the type of all attributes in the model that use one of the
 	 * superclasses to the corresponding union, with the exception of the property
@@ -5527,7 +5535,7 @@ public class Flattener implements Transformer, MessageSource {
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-	    // ignore association roles - they will be handled later on
+	    // ignore association roles here - they are treated differently
 	    if (!genPi.isAttribute())
 		continue;
 
@@ -5549,415 +5557,19 @@ public class Flattener implements Transformer, MessageSource {
 	    }
 	}
 
-	// ------------------------------------- //
-	// --- START of association handling --- //
-
 	/*
-	 * create copies of associations that belong to supertype classes (i.e. classes
-	 * that have subclasses), one for each subclass
+	 * Post-process associations:
+	 * 
+	 * Now that the inheritance hierarchy has been flattened, merge uni-directional
+	 * associations again (based upon the value of an internal SC tagged value),
+	 * i.e. for a combination of two classes, convert two corresponding
+	 * uni-directional associations into a single bi-directional one; do NOT attempt
+	 * this for reflexive associations (there, we must keep uni-directional
+	 * associations)
 	 */
+	postProcessAssociationsWhenFlatteningInheritance(genModel);
 
-	Set<GenericAssociationInfo> genAisToAdd = new HashSet<GenericAssociationInfo>();
-
-	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
-
-	    PropertyInfo pi1 = genAi.end1();
-	    PropertyInfo pi2 = genAi.end2();
-
-	    String namePi1InClass = pi1.inClass().name();
-	    String namePi2InClass = pi2.inClass().name();
-
-	    /*
-	     * check that at least one end of the association belongs to a superclass
-	     */
-	    if (!(allSubclassesByTheirSuperclass.containsKey(pi1.inClass())
-		    || allSubclassesByTheirSuperclass.containsKey(pi2.inClass()))) {
-
-		continue;
-	    }
-
-	    /*
-	     * check that both association ends and their inClasses are part of the selected
-	     * schema
-	     */
-	    if (!(pi1 instanceof GenericPropertyInfo && pi1.inClass() instanceof GenericClassInfo
-		    && pi2 instanceof GenericPropertyInfo && pi2.inClass() instanceof GenericClassInfo)) {
-
-		/*
-		 * log warning, ensuring that class names to describe the association are in
-		 * lexicographical order so that the warning is not logged twice (log message
-		 * has prefix '??' to prevent duplicate messages) which is relevant in case
-		 * there are multiple associations between the two classes
-		 */
-		if (!(pi1 instanceof GenericPropertyInfo && pi1.inClass() instanceof GenericClassInfo)) {
-
-		    result.addWarning(this, 20336,
-			    (namePi1InClass.compareTo(namePi2InClass) <= 0) ? namePi1InClass : namePi2InClass,
-			    (namePi1InClass.compareTo(namePi2InClass) <= 0) ? namePi2InClass : namePi1InClass,
-			    namePi1InClass);
-
-		} else {
-
-		    // pi2 is not an instance of GenericPropertyInfo
-		    result.addWarning(this, 20336,
-			    (namePi1InClass.compareTo(namePi2InClass) <= 0) ? namePi1InClass : namePi2InClass,
-			    (namePi1InClass.compareTo(namePi2InClass) <= 0) ? namePi2InClass : namePi1InClass,
-			    namePi2InClass);
-		}
-
-		continue;
-	    }
-
-	    // ================================================================
-	    // fine, we need to create copies of the association
-
-	    String separator = separatorForPropertyFromUnion;
-
-	    /*
-	     * Note on cast: safe because the ends of a GenericAssociationInfo should be of
-	     * type GenericPropertyInfo
-	     */
-	    GenericPropertyInfo genPi1Orig = (GenericPropertyInfo) pi1;
-	    GenericPropertyInfo genPi2Orig = (GenericPropertyInfo) pi2;
-
-	    /*
-	     * Note on cast: should be safe because we checked before that the inClasses of
-	     * pi1 and pi2 are instances of GenericClassInfo
-	     */
-	    GenericClassInfo genPi1InClass = (GenericClassInfo) pi1.inClass();
-	    GenericClassInfo genPi2InClass = (GenericClassInfo) pi2.inClass();
-
-	    /*
-	     * compute new names and aliases for genPi1Orig and genPi2Orig (WARNING: NOT for
-	     * the subtype specific property copies) which will be set later on, depending
-	     * on the actual case
-	     */
-
-	    String newGenPi1OrigName = computeAssociationRoleNameForFlattenInheritance(pi1, pi2.inClass(), separator);
-	    String newGenPi2OrigName = computeAssociationRoleNameForFlattenInheritance(pi2, pi1.inClass(), separator);
-
-	    String codePi1 = hasCode(pi1) ? getCode(pi1) : pi1.name();
-	    String codePi2 = hasCode(pi2) ? getCode(pi2) : pi2.name();
-	    String codePi1InClass = hasCode(genPi1InClass) ? getCode(genPi1InClass) : genPi1InClass.name();
-	    String codePi2InClass = hasCode(genPi2InClass) ? getCode(genPi2InClass) : genPi2InClass.name();
-
-	    String newAliasPi1Orig = (hasCode(pi1) || hasCode(genPi2InClass)) ? codePi1 + separator + codePi2InClass
-		    : null;
-	    String newAliasPi2Orig = (hasCode(pi2) || hasCode(genPi1InClass)) ? codePi2 + separator + codePi1InClass
-		    : null;
-
-	    /*
-	     * now create the new associations; first handle case of subtypes on both ends,
-	     * then for subtypes on one end only
-	     */
-	    if (allSubclassesByTheirSuperclass.containsKey(pi1.inClass())
-		    && allSubclassesByTheirSuperclass.containsKey(pi2.inClass())) {
-
-		// subclasses exist for both ends
-
-		// NOTE: the lists have been sorted by name before
-		List<GenericClassInfo> subclassesPi1InClass = allSubclassesByTheirSuperclass.get(pi1.inClass());
-		List<GenericClassInfo> subclassesPi2InClass = allSubclassesByTheirSuperclass.get(pi2.inClass());
-
-		// check that the maps are not empty
-		boolean checkFailed = false;
-		if (subclassesPi1InClass == null || subclassesPi1InClass.isEmpty()) {
-		    checkFailed = true;
-		    result.addError(this, 20337, pi1.inClass().name());
-		}
-		if (subclassesPi2InClass == null || subclassesPi2InClass.isEmpty()) {
-		    checkFailed = true;
-		    result.addError(this, 20337, pi2.inClass().name());
-		}
-		if (checkFailed) {
-		    continue;
-		}
-
-		Multiplicity mPi1 = new Multiplicity(pi1.cardinality().toString());
-		mPi1.minOccurs = 0;
-
-		Multiplicity mPi2 = new Multiplicity(pi2.cardinality().toString());
-		mPi2.minOccurs = 0;
-
-		// create association copies for subclasses
-
-		/*
-		 * both lists with subclasses have been sorted - when we iterate through these
-		 * lists, it is fine to have an overall index for the sequence number suffix;
-		 * each association copy that is created will then be placed in a well-defined
-		 * order that is defined by the order of elements in the lists
-		 */
-		int sequenceNumberIndex = 1;
-		for (GenericClassInfo subclassPi1InClass : subclassesPi1InClass) {
-
-		    for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
-
-			// compute new name and code/alias
-			String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(pi1, subclassPi2InClass,
-				separator);
-			String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(pi2, subclassPi1InClass,
-				separator);
-
-			String codesubclassPi1InClass = hasCode(subclassPi1InClass) ? getCode(subclassPi1InClass)
-				: subclassPi1InClass.name();
-			String codesubclassPi2InClass = hasCode(subclassPi2InClass) ? getCode(subclassPi2InClass)
-				: subclassPi2InClass.name();
-
-			String newAliasPi1 = (hasCode(pi1) || hasCode(subclassPi2InClass))
-				? codePi1 + separator + codesubclassPi2InClass
-				: null;
-			String newAliasPi2 = (hasCode(pi2) || hasCode(subclassPi1InClass))
-				? codePi2 + separator + codesubclassPi1InClass
-				: null;
-
-			StructuredNumber newSnPi1 = pi1.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			StructuredNumber newSnPi2 = pi2.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			sequenceNumberIndex++;
-
-			// create association copy
-			GenericAssociationInfo aiCopy = createCopyAndSetEnds(genModel, genAi, newNamePi1, newAliasPi1,
-				null, subclassPi1InClass, mPi1, newSnPi1, newNamePi2, newAliasPi2, null,
-				subclassPi2InClass, mPi2, newSnPi2, false);
-
-			genAisToAdd.add(aiCopy);
-		    }
-		}
-
-		/*
-		 * if a superclass is neither abstract nor a mixin, establish associations to
-		 * subclasses of the other superclass
-		 */
-
-		if (!(pi1.inClass().isAbstract() || pi1.inClass().category() == Options.MIXIN)) {
-
-		    /*
-		     * to be one the safe side, append a suffix to the sequence numbers of the ends
-		     * in each association copy that is created
-		     */
-		    sequenceNumberIndex = 1;
-		    for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
-
-			// compute new name and code/alias
-			String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(pi1, subclassPi2InClass,
-				separator);
-			String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(pi2, genPi1InClass,
-				separator);
-
-			String codesubclassPi2InClass = hasCode(subclassPi2InClass) ? getCode(subclassPi2InClass)
-				: subclassPi2InClass.name();
-
-			String newAliasPi1 = (hasCode(pi1) || hasCode(subclassPi2InClass))
-				? codePi1 + separator + codesubclassPi2InClass
-				: null;
-			String newAliasPi2 = (hasCode(pi2) || hasCode(genPi1InClass))
-				? codePi2 + separator + codePi1InClass
-				: null;
-
-			StructuredNumber newSnPi1 = pi1.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			/*
-			 * the value type of pi2 is always pi1.inClass() - by appending the suffix '0'
-			 * we ensure that the property is listed first in all subclasses of pi2.inClass
-			 * (and also that the property does not overwrite one that points to a subclass
-			 * of pi1.inClass [established before] because it has the same sequence number)
-			 */
-			StructuredNumber newSnPi2 = pi2.sequenceNumber().createCopyWithSuffix(0);
-			sequenceNumberIndex++;
-
-			// create association copy
-			GenericAssociationInfo aiCopy = createCopyAndSetEnds(genModel, genAi, newNamePi1, newAliasPi1,
-				null, genPi1InClass, mPi1, newSnPi1, newNamePi2, newAliasPi2, null, subclassPi2InClass,
-				mPi2, newSnPi2, false);
-
-			genAisToAdd.add(aiCopy);
-		    }
-		}
-
-		if (!(pi2.inClass().isAbstract() || pi2.inClass().category() == Options.MIXIN)) {
-
-		    /*
-		     * to be one the safe side, append a suffix to the sequence numbers of the ends
-		     * in each association copy that is created
-		     */
-		    sequenceNumberIndex = 1;
-		    for (GenericClassInfo subclassPi1InClass : subclassesPi1InClass) {
-
-			// compute new name and code/alias
-			String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(pi1, genPi2InClass,
-				separator);
-			String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(pi2, subclassPi1InClass,
-				separator);
-
-			String codesubclassPi1InClass = hasCode(subclassPi1InClass) ? getCode(subclassPi1InClass)
-				: subclassPi1InClass.name();
-
-			String newAliasPi1 = (hasCode(pi1) || hasCode(genPi2InClass))
-				? codePi1 + separator + codePi2InClass
-				: null;
-			String newAliasPi2 = (hasCode(pi2) || hasCode(subclassPi1InClass))
-				? codePi2 + separator + codesubclassPi1InClass
-				: null;
-
-			/*
-			 * the value type of pi1 is always pi2.inClass() - by appending the suffix '0'
-			 * we ensure that the property is listed first in all subclasses of pi1.inClass
-			 * (and also that the property does not overwrite one that points to a subclass
-			 * of pi2.inClass [established before] because it has the same sequence number)
-			 */
-			StructuredNumber newSnPi1 = pi1.sequenceNumber().createCopyWithSuffix(0);
-			StructuredNumber newSnPi2 = pi2.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			sequenceNumberIndex++;
-
-			// create association copy
-			GenericAssociationInfo aiCopy = createCopyAndSetEnds(genModel, genAi, newNamePi1, newAliasPi1,
-				null, subclassPi1InClass, mPi1, newSnPi1, newNamePi2, newAliasPi2, null, genPi2InClass,
-				mPi2, newSnPi2, false);
-
-			genAisToAdd.add(aiCopy);
-		    }
-		}
-
-		// also update roles of original association
-		genPi1Orig.setName(newGenPi1OrigName);
-		genPi2Orig.setName(newGenPi2OrigName);
-
-		setCode(genPi1Orig, newAliasPi1Orig);
-		setCode(genPi2Orig, newAliasPi2Orig);
-
-		genPi1Orig.setCardinality(mPi1);
-		genPi2Orig.setCardinality(mPi2);
-
-	    } else {
-
-		// only one end has been split
-
-		if (allSubclassesByTheirSuperclass.containsKey(pi1.inClass())) {
-
-		    List<GenericClassInfo> subclassesPi1InClass = allSubclassesByTheirSuperclass.get(pi1.inClass());
-
-		    if (subclassesPi1InClass == null || subclassesPi1InClass.isEmpty()) {
-
-			result.addError(this, 20337, pi1.inClass().name());
-
-		    } else {
-
-			/*
-			 * to be one the safe side, append a suffix to the sequence numbers of the ends
-			 * in each association copy that is created
-			 */
-			int sequenceNumberIndex = 1;
-			for (GenericClassInfo subclassPi1InClass : subclassesPi1InClass) {
-
-			    Multiplicity mPi2 = new Multiplicity(pi2.cardinality().toString());
-			    mPi2.minOccurs = 0;
-
-			    // compute new name and code/alias
-			    String newNamePi2 = computeAssociationRoleNameForFlattenInheritance(pi2, subclassPi1InClass,
-				    separator);
-
-			    String codesubclassPi1InClass = hasCode(subclassPi1InClass) ? getCode(subclassPi1InClass)
-				    : subclassPi1InClass.name();
-
-			    String newAliasPi2 = (hasCode(pi2) || hasCode(subclassPi1InClass))
-				    ? codePi2 + separator + codesubclassPi1InClass
-				    : null;
-
-			    /*
-			     * the value type of pi1 is always pi2.inClass() - by appending the suffix '0'
-			     * we ensure that the property is listed first in all subclasses of pi1.inClass
-			     * (and also that the property does not overwrite one that points to a subclass
-			     * of pi2.inClass [established before] because it has the same sequence number)
-			     */
-			    StructuredNumber newSnPi1 = pi1.sequenceNumber().createCopyWithSuffix(0);
-			    StructuredNumber newSnPi2 = pi2.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			    sequenceNumberIndex++;
-
-			    // create association copy
-			    GenericAssociationInfo aiCopy = createCopyAndSetEnds(genModel, genAi, null, null, null,
-				    subclassPi1InClass, null, newSnPi1, newNamePi2, newAliasPi2, null, genPi2InClass,
-				    mPi2, newSnPi2, false);
-
-			    genAisToAdd.add(aiCopy);
-			}
-
-			// also update role of original association
-			genPi2Orig.setName(newGenPi2OrigName);
-
-			setCode(genPi2Orig, newAliasPi2Orig);
-
-			Multiplicity mPi2 = new Multiplicity(pi2.cardinality().toString());
-			mPi2.minOccurs = 0;
-
-			genPi2Orig.setCardinality(mPi2);
-		    }
-
-		} else {
-
-		    List<GenericClassInfo> subclassesPi2InClass = allSubclassesByTheirSuperclass.get(pi2.inClass());
-
-		    if (subclassesPi2InClass == null || subclassesPi2InClass.isEmpty()) {
-
-			result.addError(this, 20337, pi2.inClass().name());
-
-		    } else {
-
-			/*
-			 * to be one the safe side, append a suffix to the sequence numbers of the ends
-			 * in each association copy that is created
-			 */
-			int sequenceNumberIndex = 1;
-			for (GenericClassInfo subclassPi2InClass : subclassesPi2InClass) {
-
-			    Multiplicity mPi1 = new Multiplicity(pi1.cardinality().toString());
-			    mPi1.minOccurs = 0;
-
-			    // compute new name and code/alias
-			    String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(pi1, subclassPi2InClass,
-				    separator);
-
-			    String codesubclassPi2InClass = hasCode(subclassPi2InClass) ? getCode(subclassPi2InClass)
-				    : subclassPi2InClass.name();
-
-			    String newAliasPi1 = (hasCode(pi1) || hasCode(subclassPi2InClass))
-				    ? codePi1 + separator + codesubclassPi2InClass
-				    : null;
-
-			    StructuredNumber newSnPi1 = pi1.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
-			    /*
-			     * the value type of pi2 is always pi1.inClass() - by appending the suffix '0'
-			     * we ensure that the property is listed first in all subclasses of pi2.inClass
-			     * (and also that the property does not overwrite one that points to a subclass
-			     * of pi1.inClass [established before] because it has the same sequence number)
-			     */
-			    StructuredNumber newSnPi2 = pi2.sequenceNumber().createCopyWithSuffix(0);
-			    sequenceNumberIndex++;
-
-			    // create association copy
-			    GenericAssociationInfo aiCopy = createCopyAndSetEnds(genModel, genAi, newNamePi1,
-				    newAliasPi1, null, genPi1InClass, mPi1, newSnPi1, null, null, null,
-				    subclassPi2InClass, null, newSnPi2, false);
-
-			    genAisToAdd.add(aiCopy);
-			}
-
-			// also update roles of original association
-			genPi1Orig.setName(newGenPi1OrigName);
-
-			setCode(genPi1Orig, newAliasPi1Orig);
-
-			Multiplicity mPi1 = new Multiplicity(pi1.cardinality().toString());
-			mPi1.minOccurs = 0;
-
-			genPi1Orig.setCardinality(mPi1);
-		    }
-		}
-	    }
-	}
-
-	// add association copies to the model
-	for (GenericAssociationInfo aiCopy : genAisToAdd) {
-	    genModel.addAssociation(aiCopy);
-	}
-	// --- END of association handling --- //
+	// --- END of handling inheritance --- //
 	// ----------------------------------- //
 
 	/*
@@ -5998,6 +5610,392 @@ public class Flattener implements Transformer, MessageSource {
 		superclass.setSupertypes(null);
 		superclass.setSubtypes(null);
 	    }
+	}
+    }
+
+    private void postProcessAssociationsWhenFlatteningInheritance(GenericModel genModel) {
+
+	/*
+	 * After the inheritance hierarchy has been flattened, merge uni-directional
+	 * associations again (based upon the value of an internal SC tagged value),
+	 * i.e. for a combination of two classes, convert two corresponding
+	 * uni-directional associations into a single bi-directional one; do NOT attempt
+	 * this for reflexive associations (there, we must keep uni-directional
+	 * associations, because processing a reflexive association [for a class with
+	 * subtypes] during pre-processing of associations while flattening inheritance
+	 * can [and likely will] result in more than two uni-directional associations,
+	 * which cannot uniquely be correlated to each other)
+	 */
+
+	// First, identify all relevant classes
+	SortedSet<ClassInfo> cis = new TreeSet<>();
+	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+	    cis.add(genAi.end1().inClass());
+	    cis.add(genAi.end2().inClass());
+	}
+
+	// Keep track of visited combinations of classes
+	Set<String> visitedCombos = new HashSet<>();
+
+	for (ClassInfo ci_a : cis) {
+	    for (ClassInfo ci_b : cis) {
+
+		if (ci_a == ci_b) {
+		    /*
+		     * Ignore reflexive cases. NOTE: There can be other cases that were originally
+		     * reflexive (subtype-specific copies of a reflexive association, which
+		     * reference these subtypes and thus other classes).
+		     */
+		    continue;
+		}
+
+		ClassInfo ci1 = ci_a.name().compareTo(ci_b.name()) <= 0 ? ci_a : ci_b;
+		ClassInfo ci2 = ci_a.name().compareTo(ci_b.name()) <= 0 ? ci_b : ci_a;
+
+		String comboKey = ci1.name() + "#" + ci2.name();
+
+		if (visitedCombos.contains(comboKey)) {
+		    continue;
+		} else {
+		    visitedCombos.add(comboKey);
+		}
+
+		GenericClassInfo genCi1 = (GenericClassInfo) ci1;
+		GenericClassInfo genCi2 = (GenericClassInfo) ci2;
+
+		// list of all uni-directional associations navigable from ci1
+		List<AssociationInfo> uniDirectionalAssociationsCi1 = genCi1.properties().values().stream()
+			.filter(pi -> !pi.isAttribute() && !pi.association().isBiDirectional())
+			.map(pi -> pi.association()).collect(Collectors.toList());
+		// list of all uni-directional associations navigable from ci2
+		List<AssociationInfo> uniDirectionalAssociationsCi2 = genCi2.properties().values().stream()
+			.filter(pi -> !pi.isAttribute() && !pi.association().isBiDirectional())
+			.map(pi -> pi.association()).collect(Collectors.toList());
+
+		for (AssociationInfo aiCi1 : uniDirectionalAssociationsCi1) {
+		    for (AssociationInfo aiCi2 : uniDirectionalAssociationsCi2) {
+
+			/*
+			 * Ignore associations to other types than the two classes that are currently
+			 * under investigation.
+			 */
+			if (!((aiCi1.end1().inClass() == genCi2 || aiCi1.end2().inClass() == genCi2)
+				&& (aiCi2.end1().inClass() == genCi1 || aiCi2.end2().inClass() == genCi1))) {
+			    continue;
+			}
+
+			String originalAssociationAiCi1 = aiCi1.taggedValue(TV_ORIGINAL_ASSOCIATION);
+			String originalAssociationAiCi2 = aiCi2.taggedValue(TV_ORIGINAL_ASSOCIATION);
+
+			if (StringUtils.isNotBlank(originalAssociationAiCi1)
+				&& StringUtils.isNotBlank(originalAssociationAiCi2)
+				&& originalAssociationAiCi1.equals(originalAssociationAiCi2)) {
+
+			    /*
+			     * Also ignore cases of uni-directional associations where the original
+			     * association was a reflexive one. We want to keep the uni-directional
+			     * associations that resulted from pre-processing associations during
+			     * inheritance flattening. Later on, remove the special TVs on these
+			     * associations.
+			     */
+			    if ("true".equalsIgnoreCase(aiCi1.taggedValue(TV_ORIGINAL_ASSOCIATION_REFLEXIVE))) {
+				/*
+				 * Then that TV is also true on the other association, since both originate from
+				 * the same reflexive association.
+				 */
+				continue;
+			    }
+
+			    genModel.remove(aiCi1);
+			    genModel.remove(aiCi2);
+
+			    PropertyInfo navPiAiCi1 = aiCi1.end1().isNavigable() ? aiCi1.end1() : aiCi1.end2();
+			    PropertyInfo navPiAiCi2 = aiCi2.end1().isNavigable() ? aiCi2.end1() : aiCi2.end2();
+			    boolean navPiAiCi1IsEnd1 = aiCi1.end1() == navPiAiCi1;
+
+			    /*
+			     * merge into a single, new, bi-directional association (without the special TV)
+			     */
+
+			    String newId = aiCi1.id() + "_backToBiDirectional";
+
+			    GenericAssociationInfo aiCopy = genModel.createCopy(aiCi1, newId);
+			    genModel.addAssociation(aiCopy);
+
+			    // remove special TV on copy
+			    aiCopy.removeTaggedValue(TV_ORIGINAL_ASSOCIATION);
+
+			    // create copies of relevant properties (the navigable ones)
+			    GenericPropertyInfo genPi1 = genModel.createCopy(navPiAiCi1,
+				    navPiAiCi1.id() + "_backToBiDirectional");
+			    GenericPropertyInfo genPi2 = genModel.createCopy(navPiAiCi2,
+				    navPiAiCi2.id() + "_backToBiDirectional");
+
+			    genPi1.setAssociation(aiCopy);
+			    genPi2.setAssociation(aiCopy);
+
+			    if (navPiAiCi1IsEnd1) {
+				aiCopy.setEnd1(genPi1);
+				aiCopy.setEnd2(genPi2);
+			    } else {
+				aiCopy.setEnd1(genPi2);
+				aiCopy.setEnd2(genPi1);
+			    }
+
+			    /*
+			     * The inClasses of the two property copies should be ok, same for their
+			     * sequenceNumbers.
+			     */
+
+			    // register new properties in model maps
+			    genModel.getGenProperties().put(genPi1.id(), genPi1);
+			    genModel.getGenProperties().put(genPi2.id(), genPi2);
+
+			    /*
+			     * Register copies of navigable association roles as properties of their
+			     * inClasses (the uni-directional associations have been removed beforehand).
+			     */
+			    ((GenericClassInfo) genPi1.inClass()).addProperty(genPi1,
+				    PropertyCopyDuplicatBehaviorIndicator.ADD);
+			    ((GenericClassInfo) genPi2.inClass()).addProperty(genPi2,
+				    PropertyCopyDuplicatBehaviorIndicator.ADD);
+			}
+		    }
+		}
+	    }
+	}
+
+	/*
+	 * Finally, remove the special TVs set during inheritance flattening on all
+	 * associations (especially the uni-directional ones whose original associations
+	 * were reflexive).
+	 */
+	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+	    genAi.removeTaggedValue(TV_ORIGINAL_ASSOCIATION);
+	    genAi.removeTaggedValue(TV_ORIGINAL_ASSOCIATION_REFLEXIVE);
+	}
+    }
+
+    private void preProcessAssociationsWhenFlatteningInheritance(GenericModel genModel,
+	    Set<String> idsOfRelevantSupertypeClasses) {
+
+	/*
+	 * Step 1: For each bi-directional association where one or both ends have
+	 * subtypes AND is a supertype to which inheritance flattening shall be applied:
+	 * split the association, i.e. create two uni-directional associations, and set
+	 * special TVs on them so that they can be correlated later on (when necessary).
+	 */
+
+	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+
+	    if (!(idsOfRelevantSupertypeClasses.contains(genAi.end1().inClass().id())
+		    || idsOfRelevantSupertypeClasses.contains(genAi.end2().inClass().id()))) {
+		/*
+		 * Ignore this association because neither end is a supertype to which
+		 * inheritance flattening shall be applied.
+		 */
+		continue;
+	    }
+
+	    if (genAi.isBiDirectional()
+		    && (!genAi.end1().inClass().subtypes().isEmpty() || !genAi.end2().inClass().subtypes().isEmpty())) {
+
+		String newId1 = genAi.id() + "_copyUniDirectional1";
+		String newId2 = genAi.id() + "_copyUniDirectional2";
+
+		GenericAssociationInfo aiCopy_ua1 = genModel.createCopy(genAi, newId1);
+		GenericAssociationInfo aiCopy_ua2 = genModel.createCopy(genAi, newId2);
+
+		/*
+		 * Set special TVs (to identify the original association, and to identify if
+		 * that association was reflexive)
+		 */
+		aiCopy_ua1.setTaggedValue(TV_ORIGINAL_ASSOCIATION, genAi.id());
+		aiCopy_ua2.setTaggedValue(TV_ORIGINAL_ASSOCIATION, genAi.id());
+		if (genAi.isReflexive()) {
+		    aiCopy_ua1.setTaggedValue(TV_ORIGINAL_ASSOCIATION_REFLEXIVE, "true");
+		    aiCopy_ua2.setTaggedValue(TV_ORIGINAL_ASSOCIATION_REFLEXIVE, "true");
+		}
+
+		// create property copies
+		GenericPropertyInfo genPi1_ua1 = genModel.createCopy(genAi.end1(),
+			genAi.end1().id() + "_copyUniDirectional_ua1");
+		GenericPropertyInfo genPi2_ua1 = genModel.createCopy(genAi.end2(),
+			genAi.end2().id() + "_copyUniDirectional_ua1");
+
+		GenericPropertyInfo genPi1_ua2 = genModel.createCopy(genAi.end1(),
+			genAi.end1().id() + "_copyUniDirectional_ua2");
+		GenericPropertyInfo genPi2_ua2 = genModel.createCopy(genAi.end2(),
+			genAi.end2().id() + "_copyUniDirectional_ua2");
+
+		genPi1_ua1.setAssociation(aiCopy_ua1);
+		genPi2_ua1.setAssociation(aiCopy_ua1);
+
+		genPi1_ua2.setAssociation(aiCopy_ua2);
+		genPi2_ua2.setAssociation(aiCopy_ua2);
+
+		aiCopy_ua1.setEnd1(genPi1_ua1);
+		aiCopy_ua1.setEnd2(genPi2_ua1);
+
+		aiCopy_ua2.setEnd1(genPi1_ua2);
+		aiCopy_ua2.setEnd2(genPi2_ua2);
+
+		// register new properties in model maps
+		genModel.getGenProperties().put(genPi1_ua1.id(), genPi1_ua1);
+		genModel.getGenProperties().put(genPi2_ua1.id(), genPi2_ua1);
+		genModel.getGenProperties().put(genPi1_ua2.id(), genPi1_ua2);
+		genModel.getGenProperties().put(genPi2_ua2.id(), genPi2_ua2);
+
+		genModel.remove(genAi);
+
+		genModel.addAssociation(aiCopy_ua1);
+		genModel.addAssociation(aiCopy_ua2);
+
+		/*
+		 * The two new associations shall be uni-directional, so adjust navigability.
+		 * 
+		 * Also ensure that "sequenceNumber" tagged value is also updated for
+		 * non-navigable ends. Leave sequenceNumber of navigable ends untouched.
+		 */
+		genPi2_ua1.setNavigable(false);
+		genPi2_ua1.setSequenceNumber(genAi.end2().sequenceNumber().createCopyWithSuffix(-1), true);
+
+		genPi1_ua2.setNavigable(false);
+		genPi1_ua2.setSequenceNumber(genAi.end1().sequenceNumber().createCopyWithSuffix(-1), true);
+
+		// register new navigable association roles as properties of their inClasses
+		((GenericClassInfo) genPi1_ua1.inClass()).addProperty(genPi1_ua1,
+			PropertyCopyDuplicatBehaviorIndicator.ADD);
+		((GenericClassInfo) genPi2_ua2.inClass()).addProperty(genPi2_ua2,
+			PropertyCopyDuplicatBehaviorIndicator.ADD);
+	    }
+	}
+
+	/*
+	 * Step 2: For each (resulting and pre-existing) uni-directional association
+	 * (UA1) where the navigable end has subtypes AND is a supertype to which
+	 * inheritance flattening shall be applied: create type- and subtype-specific
+	 * copies of the association UAx (where the navigable role name receives the
+	 * type name as suffix). Remove the uni-directional association UA1 from the
+	 * model (since it has been replaced by a set of type-specific copies UAx).
+	 */
+
+	Set<GenericAssociationInfo> step2_genAisToRemove = new HashSet<GenericAssociationInfo>();
+	Set<GenericAssociationInfo> step2_genAisToAdd = new HashSet<GenericAssociationInfo>();
+
+	String separator = separatorForPropertyFromUnion;
+
+	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
+
+	    if (!(idsOfRelevantSupertypeClasses.contains(genAi.end1().inClass().id())
+		    || idsOfRelevantSupertypeClasses.contains(genAi.end2().inClass().id()))) {
+		/*
+		 * Ignore this association because neither end is a supertype to which
+		 * inheritance flattening shall be applied.
+		 */
+		continue;
+	    }
+
+	    // ignore bi-directional associations where both ends do not have subtypes
+	    if (genAi.end1().inClass().subtypes().isEmpty() && genAi.end2().inClass().subtypes().isEmpty())
+		continue;
+
+	    if (genAi.isBiDirectional()) {
+		result.addDebug("Unexpected bi-directional association where "
+			+ "at least one end type has subtypes. Such associations should "
+			+ "have been converted to uni-directional associations in the previous processing step.");
+	    }
+
+	    // determine navigable end
+	    PropertyInfo navPi = genAi.end1().isNavigable() ? genAi.end1() : genAi.end2();
+	    PropertyInfo revPi = navPi.reverseProperty();
+
+	    boolean reverseDirection = genAi.end1() == revPi;
+
+	    /*
+	     * Collect all subtypes of the other type, and add the other type as well, then
+	     * sort the collection by class name
+	     */
+	    List<GenericClassInfo> otherTypeAndSubtypes = revPi.inClass().subtypesInCompleteHierarchy().stream()
+		    .map(ci -> (GenericClassInfo) ci).collect(Collectors.toList());
+	    otherTypeAndSubtypes.add((GenericClassInfo) revPi.inClass());
+
+	    Collections.sort(otherTypeAndSubtypes, new Comparator<GenericClassInfo>() {
+		public int compare(GenericClassInfo f1, GenericClassInfo f2) {
+		    return f1.name().compareTo(f2.name());
+		}
+	    });
+
+	    if (otherTypeAndSubtypes.size() == 1) {
+
+		/*
+		 * Then the class at the other association end does not have subtypes. We can
+		 * leave the association as-is.
+		 */
+
+	    } else {
+
+		// we need to create type and subtype specific copies
+
+		/*
+		 * the "original" association will no longer be needed, since it is replaced by
+		 * a copy
+		 */
+		step2_genAisToRemove.add(genAi);
+
+		String codeNavPi = hasCode(navPi) ? getCode(navPi) : navPi.name();
+
+		/*
+		 * The set of other types is sorted - when we iterate through it, it is fine to
+		 * have an overall index for the sequence number suffix; each association copy
+		 * that is created will then be placed in a well-defined order that is defined
+		 * by the order of elements in the set.
+		 */
+		int sequenceNumberIndex = 1;
+
+		for (GenericClassInfo otherType : otherTypeAndSubtypes) {
+
+		    Multiplicity mPi1 = new Multiplicity(navPi.cardinality().toString());
+		    mPi1.minOccurs = 0;
+
+		    Multiplicity mPi2 = new Multiplicity(revPi.cardinality().toString());
+		    mPi2.minOccurs = 0;
+
+		    // compute new name and code/alias
+		    String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(navPi, otherType, separator);
+
+		    String codeotherType = hasCode(otherType) ? getCode(otherType) : otherType.name();
+
+		    String newAliasPi1 = (hasCode(navPi) || hasCode(otherType)) ? codeNavPi + separator + codeotherType
+			    : null;
+
+		    StructuredNumber newSnPi1 = navPi.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
+		    StructuredNumber newSnPi2 = revPi.sequenceNumber().createCopyWithSuffix(sequenceNumberIndex);
+		    sequenceNumberIndex++;
+
+		    // create association copy
+		    GenericAssociationInfo aiCopy;
+
+		    if (reverseDirection) {
+			aiCopy = createCopyAndSetEnds(genModel, genAi, revPi.name(), revPi.aliasName(), null, otherType,
+				mPi2, newSnPi2, newNamePi1, newAliasPi1, null, (GenericClassInfo) navPi.inClass(), mPi1,
+				newSnPi1, false);
+		    } else {
+			aiCopy = createCopyAndSetEnds(genModel, genAi, newNamePi1, newAliasPi1, null,
+				(GenericClassInfo) navPi.inClass(), mPi1, newSnPi1, revPi.name(), revPi.aliasName(),
+				null, otherType, mPi2, newSnPi2, false);
+		    }
+
+		    step2_genAisToAdd.add(aiCopy);
+		}
+	    }
+	}
+
+	for (GenericAssociationInfo aiToRemove : step2_genAisToRemove) {
+	    genModel.remove(aiToRemove);
+	}
+	for (GenericAssociationInfo aiToAdd : step2_genAisToAdd) {
+	    genModel.addAssociation(aiToAdd);
 	}
     }
 
@@ -6330,8 +6328,10 @@ public class Flattener implements Transformer, MessageSource {
 		    (name1.compareTo(name2) <= 0) ? name2 : name1);
 	}
 
-	GenericAssociationInfo aiCopy = genModel.createCopy(genAi, genAi.id() + "_copyBetweenClasses_" + name1 + "_and_"
-		+ name2 + "_for_roles_" + nameRoleEnd1 + "_and_" + nameRoleEnd2);
+	String newId = genAi.id() + "_copyBetweenClasses_" + name1 + "_and_" + name2 + "_for_roles_" + nameRoleEnd1
+		+ "_and_" + nameRoleEnd2;
+
+	GenericAssociationInfo aiCopy = genModel.createCopy(genAi, newId);
 
 	// create property copies
 	GenericPropertyInfo genPi1 = genModel.createCopy(genAi.end1(),
@@ -6474,23 +6474,156 @@ public class Flattener implements Transformer, MessageSource {
 	if (subtypeIds == null || subtypeIds.isEmpty())
 	    return;
 
+	PropertyCopyDuplicatBehaviorIndicator duplicateHandling = PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT;
+
 	for (String subtypeId : subtypeIds) {
 
 	    ClassInfo subtype = genCi.model().classById(subtypeId);
 
-	    if (subtype instanceof GenericClassInfo) {
-
-		GenericClassInfo genSubtype = (GenericClassInfo) subtype;
-
-		genModel.copyClassContent(genCi, genSubtype, pcpi,
-			PropertyCopyDuplicatBehaviorIndicator.IGNORE_UNRESTRICT);
-	    } else {
-
+	    if (!(subtype instanceof GenericClassInfo)) {
 		result.addInfo(this, 20319, subtype.name(), genCi.name());
+		continue;
 	    }
 
-	}
+	    GenericClassInfo genSubtype = (GenericClassInfo) subtype;
 
+	    // add property copies to genSubtype
+	    SortedMap<StructuredNumber, PropertyInfo> properties = genCi.properties();
+
+	    // check that genCi has properties before copying them
+	    if (!properties.isEmpty()) {
+
+		List<GenericPropertyInfo> copiedProps = new ArrayList<GenericPropertyInfo>();
+
+		for (PropertyInfo propi : properties.values()) {
+
+		    if (propi.isAttribute()) {
+
+			// create property copy
+			/*
+			 * NOTE for cast: the cast should be safe, because propI belongs to fromClass,
+			 * which is a GenericClassInfo
+			 */
+			GenericPropertyInfo genProp = (GenericPropertyInfo) propi;
+
+			String copyId = genProp.id() + "_copyFrom" + genCi.name() + "To" + genSubtype.name();
+
+			GenericPropertyInfo copy = genProp.createCopy(copyId);
+
+			copy.setInClass(genSubtype);
+
+			copiedProps.add(copy);
+
+			/*
+			 * Property copy is NOT added to the property map in the model because whether
+			 * or not the copy is really added to the class depends on duplicate handling
+			 * behavior (if a duplicate is ignored, the copy should not be registered in the
+			 * model).
+			 */
+		    } else {
+
+			// propi is an association role!
+
+			/*
+			 * NOTE: This simply copies the association, using genSubtype instead of genCi
+			 * as one end. SequenceNumbers etc. are not updated, only relevant type info and
+			 * inClass. The logic for correctly setting sequenceNumbers and correctly
+			 * handling bi-directional associations is in flattening inheritance
+			 */
+
+			GenericAssociationInfo genAi = (GenericAssociationInfo) propi.association();
+			PropertyInfo pi1 = genAi.end1() == propi ? propi : propi.reverseProperty();
+			PropertyInfo pi2 = genAi.end2() == propi ? propi : propi.reverseProperty();
+
+			GenericClassInfo pi1InClass = genAi.end1() == propi ? genSubtype
+				: (GenericClassInfo) propi.reverseProperty().inClass();
+			GenericClassInfo pi2InClass = genAi.end2() == propi ? genSubtype
+				: (GenericClassInfo) propi.reverseProperty().inClass();
+
+			String name1 = pi1InClass.name();
+			String name2 = pi2InClass.name();
+
+			String nameRoleEnd1 = pi1.name();
+			String nameRoleEnd2 = pi2.name();
+
+			/*
+			 * Future work: create copy of potentially existing association class; for now,
+			 * log warning if an association class exists (ensure that class names to
+			 * describe the association are in lexicographical order so that the warning is
+			 * not logged twice [log message has prefix '??' to prevent duplicate messages]
+			 * which is relevant in case there are multiple such associations between the
+			 * two classes)
+			 */
+			if (genAi.assocClass() != null) {
+
+			    result.addWarning(this, 20334, (name1.compareTo(name2) <= 0) ? name1 : name2,
+				    (name1.compareTo(name2) <= 0) ? name2 : name1);
+			}
+
+			GenericAssociationInfo aiCopy = genModel.createCopy(genAi, genAi.id() + "_copyBetweenClasses_"
+				+ name1 + "_and_" + name2 + "_for_roles_" + nameRoleEnd1 + "_and_" + nameRoleEnd2);
+
+			// create property copies
+			GenericPropertyInfo genPi1 = genModel.createCopy(pi1,
+				pi1.id() + "_copyForAssociationBetweenClasses_" + name1 + "_and_" + name2);
+
+			genPi1.setInClass(pi1InClass);
+			genPi1.setAssociation(aiCopy);
+
+			GenericPropertyInfo genPi2 = genModel.createCopy(pi2,
+				pi2.id() + "_copyForAssociationBetweenClasses_" + name1 + "_and_" + name2);
+
+			/*
+			 * NOTE: Does NOT update "sequenceNumber" tagged value - this must be handled
+			 * outside of this method, when flattening inheritance
+			 */
+
+			genPi2.setInClass(pi2InClass);
+			genPi2.setAssociation(aiCopy);
+
+			aiCopy.setEnd1(genPi1);
+			aiCopy.setEnd2(genPi2);
+
+			// register new properties in model maps
+			genModel.getGenProperties().put(genPi1.id(), genPi1);
+			genModel.getGenProperties().put(genPi2.id(), genPi2);
+
+			genModel.getGenAssociations().put(aiCopy.id(), aiCopy);
+
+			GenericPropertyInfo propiRepresentative = pi1 == propi ? genPi1 : genPi2;
+			GenericPropertyInfo propiReverseRepresentative = pi1 == propi ? genPi2 : genPi1;
+
+			// type of propiReverseRepresentative changed to genSubtype, thus we need to
+			// update the type info
+			Type tiOfPropiReverseRepresentative = propiReverseRepresentative.typeInfo();
+			tiOfPropiReverseRepresentative.id = propiRepresentative.inClass().id();
+			tiOfPropiReverseRepresentative.name = propiRepresentative.inClass().name();
+
+			// register new association roles as properties of their inClasses
+			if (propiRepresentative.isNavigable()) {
+			    copiedProps.add(propiRepresentative);
+			}
+
+			if (propiReverseRepresentative.isNavigable()) {
+			    ((GenericClassInfo) propiReverseRepresentative.inClass())
+				    .addProperty(propiReverseRepresentative, PropertyCopyDuplicatBehaviorIndicator.ADD);
+			}
+		    }
+		}
+
+		switch (pcpi) {
+		case PROPERTY_COPY_TOP:
+		    genSubtype.addPropertiesAtTop(copiedProps, duplicateHandling);
+		    break;
+		case PROPERTY_COPY_INSEQUENCE:
+		    genSubtype.addPropertiesInSequence(copiedProps, duplicateHandling);
+		    break;
+		case PROPERTY_COPY_BOTTOM:
+		    genSubtype.addPropertiesAtBottom(copiedProps, duplicateHandling);
+		    break;
+		}
+	    }
+	}
     }
 
     /**

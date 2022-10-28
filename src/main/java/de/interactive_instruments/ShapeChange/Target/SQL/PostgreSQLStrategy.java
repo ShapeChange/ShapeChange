@@ -113,14 +113,14 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
     }
 
     @Override
-    public boolean isForeignKeyOnDeleteOptionSupported(ForeignKeyConstraint.Option o) {
+    public boolean isForeignKeyOnDeleteSupported(ForeignKeyConstraint.ReferentialAction o) {
 	// all options are supported
 	// https://www.postgresql.org/docs/10/static/sql-createtable.html
 	return true;
     }
 
     @Override
-    public boolean isForeignKeyOnUpdateOptionSupported(ForeignKeyConstraint.Option o) {
+    public boolean isForeignKeyOnUpdateSupported(ForeignKeyConstraint.ReferentialAction o) {
 	// all options are supported
 	// https://www.postgresql.org/docs/10/static/sql-createtable.html
 	return true;
@@ -159,6 +159,12 @@ public class PostgreSQLStrategy implements DatabaseStrategy {
     @Override
     public String name() {
 	return "PostgreSQL";
+    }
+
+    @Override
+    public boolean isForeignKeyCheckingOptionsSupported() {
+	// https://www.postgresql.org/docs/current/sql-createtable.html
+	return true;
     }
 
 }

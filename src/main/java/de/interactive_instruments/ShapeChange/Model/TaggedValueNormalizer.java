@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.Target.SQL.SqlConstants;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -89,8 +90,9 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the SqlDdl target
      */
-    protected static final Set<String> sqlTags = Stream
-	    .of("sqlEncodingRule", "sqlUnique", "sqlOnUpdate", "sqlOnDelete", "sqlSchema").collect(Collectors.toSet());
+    protected static final Set<String> sqlTags = Stream.of("sqlEncodingRule", SqlConstants.TV_ASSOCIATIVETABLE,
+	    SqlConstants.TV_NUMERIC_TYPE, SqlConstants.TV_ONE_TO_MANY_REF_COLUMN_NAME, SqlConstants.TV_SQLSCHEMA,
+	    SqlConstants.TV_ON_DELETE, SqlConstants.TV_ON_UPDATE, SqlConstants.TV_UNIQUE).collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the Ldproxy2 target
@@ -115,7 +117,7 @@ public class TaggedValueNormalizer {
 	    "example", "dataCaptureStatement", "legalBasis", "profiles", "name", "infoURL", "broaderListedValue",
 	    "skosConceptSchemeSubclassName", "size", "omitWhenFlattened", "maxOccurs", "isFlatTarget", "Title",
 	    "formrows", "formcols", "validate", "Reiter", "generationDateTime", "ontologyName", "alwaysVoid",
-	    "neverVoid", "appliesTo", "vocabulary", "associativeTable", "jsonEncodingRule", "status", "geometry",
+	    "neverVoid", "appliesTo", "vocabulary", "jsonEncodingRule", "status", "geometry",
 	    "oneToManyReferenceColumnName", "dissolveAssociation", "precision", "scale", "numericType", "toFeatureType",
 	    "toCodelist", "codelistType", "shortName", "codeListSource", "codeListSourceCharset",
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",

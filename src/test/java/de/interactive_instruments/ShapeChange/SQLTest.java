@@ -70,6 +70,13 @@ public class SQLTest extends BasicTestSCXML {
 	multiTest("src/test/resources/sql/associativeTables/testEA_sqlAssociativeTables.xml", new String[] { "sql" },
 		"testResults/sql/associativeTables", "src/test/resources/sql/associativeTables/reference");
     }
+    
+    @Test
+    public void testAssociativeTablesWithSeparatePkFields() {
+
+	multiTest("src/test/resources/sql/associativeTablesWithSeparatePkFields/testEA_sql_associativeTablesWithSeparatePkFields.xml", new String[] { "sql" },
+		"testResults/sql/associativeTablesWithSeparatePkFields", "src/test/resources/sql/associativeTablesWithSeparatePkFields/reference");
+    }
 
     @Test
     public void testRuleSqlAllForeignKeyOracleNamingStyle() {
@@ -237,5 +244,21 @@ public class SQLTest extends BasicTestSCXML {
 	multiTest("src/test/resources/sql/orderAndUniqueness/testEA_sql_orderAndUniqueness.xml",
 		new String[] { "sql" }, "testResults/sql/orderAndUniqueness",
 		"src/test/resources/sql/orderAndUniqueness/reference");
+    }
+    
+    @Test
+    public void testForeignKeyCheckingOptions() {
+
+	multiTest("src/test/resources/sql/foreignKeyCheckingOptions/testEA_sql_foreignKeyCheckingOptions.xml",
+		new String[] { "sql" }, "testResults/sql/foreignKeyCheckingOptions",
+		"src/test/resources/sql/foreignKeyCheckingOptions/reference");
+    }
+    
+    @Test
+    public void testExplicitlyEncodePkReferencedColumnInForeignKeys() {
+
+	multiTest("src/test/resources/sql/explicitlyEncodePkReferencedColumnInForeignKeys/testEA_sql_explicitlyEncodePkReferencedColumnInForeignKeys.xml",
+		new String[] { "sql" }, "testResults/sql/explicitlyEncodePkReferencedColumnInForeignKeys",
+		"src/test/resources/sql/explicitlyEncodePkReferencedColumnInForeignKeys/reference");
     }
 }

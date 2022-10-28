@@ -40,27 +40,15 @@ public class GeoPackageTest extends BasicTestSCXML {
     @Test
     public void test_GeoPackage_basic() {
 
-	executeScxml("src/test/resources/gpkg/basic/test_gpkg_basic.xml");
-
-	/*
-	 * TODO: implement GeoPackage diff
-	 * 
-	 * Schema diff via https://www.schemacrawler.com/ ?
-	 * https://github.com/schemacrawler/SchemaCrawler/blob/master/schemacrawler-diff/src/test/java/schemacrawler/integration/test/DiffTest.java
-	 * 
-	 * Unclear if schema diff via schemacrawler would be complete
-	 * 
-	 * In addition, we'd need to diff the actual data, too
-	 */
-//	multiTest("src/test/resources/gpkg/basic/test_gpkg_basic.xml", new String[] { "gpkg" },
-//		"testResults/gpkg/basic/results", "src/test/resources/gpkg/basic/reference/results");
+	multiTest("src/test/resources/gpkg/basic/test_gpkg_basic.xml", new String[] { "gpkg" },
+		"testResults/gpkg/basic/results", "src/test/resources/gpkg/basic/reference/results");
     }
-    
+
     @Test
-    public void test_GeoPackage_basic_2srs() {
+    public void test_GeoPackage_basic_srs() {
 
-	executeScxml("src/test/resources/gpkg/basic/test_gpkg_basic_2srs.xml");
-
+	multiTest("src/test/resources/gpkg/basic_srs/test_gpkg_basic_srs.xml", new String[] { "gpkg" },
+		"testResults/gpkg/basic_srs/results", "src/test/resources/gpkg/basic_srs/reference/results");
     }
 
 }

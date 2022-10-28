@@ -57,6 +57,7 @@
    <targetParameter name="organizationCoordSysId" value="31467"/>
    <targetParameter name="gpkgM" value="1"/>
    <targetParameter name="gpkgZ" value="1"/>
+   <targetParameter name="_unitTestOverride" value="true"/>
    <rules>
     <EncodingRule extends="geopackage" name="my_gpkg_rule">
      

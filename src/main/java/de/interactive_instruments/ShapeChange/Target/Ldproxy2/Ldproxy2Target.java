@@ -1047,6 +1047,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private String sourcePathLinkLevel(PropertyInfo pi) {
 
 	if (pi.cardinality().maxOccurs == 1) {
+	    // normal databaseColumnName-mechanic is fine on link level
+	    // also for the case of a reflexive property
 	    return databaseColumnName(pi);
 	} else {
 	    // return name of PK column
@@ -1134,13 +1136,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		    // value type is a simple ldproxy type
 		    if (pi.cardinality().maxOccurs == 1) {
+
 			return Optional.of(databaseColumnName(pi));
+
 		    } else {
-			// FIXME ... presence of associative-table-specific sortKey may need to be made
-			// configurable
-			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
-				+ databaseTableName(pi.inClass(), true) + "}/" + databaseColumnName(pi));
+
+			String sortKeyAddition = "{sortKey=" + databaseTableName(pi.inClass(), true) + "}";
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+			    sortKeyAddition = "";
+			}
+			return Optional.of(
+				"[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
+					+ associativeTableName(pi) + sortKeyAddition + "/" + databaseColumnName(pi));
 		    }
 		}
 
@@ -1173,19 +1180,25 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		     */
 		    return Optional.of(databaseColumnName(pi));
 
-		} else if (typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-
-		    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-			    + databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
-			    + databaseTableName(pi.inClass(), true) + "}/" + databaseTableName(typeCi, true));
-
 		} else {
 
-		    // FIXME ... presence of associative-table-specific sortKey may need to be made
-		    // configurable
-		    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-			    + databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi) + "{sortKey="
-			    + databaseTableName(pi.inClass(), true) + "}/" + databaseColumnName(pi));
+		    String sortKeyAddition = "{sortKey=" + databaseTableName(pi.inClass(), true) + "}";
+		    if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+			sortKeyAddition = "";
+		    }
+
+		    if (typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+
+			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi)
+				+ sortKeyAddition + "/" + databaseTableName(typeCi, true));
+
+		    } else {
+
+			return Optional.of(
+				"[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
+					+ associativeTableName(pi) + sortKeyAddition + "/" + databaseColumnName(pi));
+		    }
 		}
 
 	    } else if (typeCi.category() == Options.DATATYPE) {
@@ -1219,33 +1232,84 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    } else {
 
+		boolean reflexive = pi.inClass().id().equals(pi.typeInfo().id);
+
 		if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
 
 		    // bi-directional association
 		    if (pi.cardinality().maxOccurs > 1 && pi.reverseProperty().cardinality().maxOccurs > 1) {
 
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
-					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+			// n:m
+
+			if (reflexive) {
+
+			    return Optional.of(
+				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
+					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
+					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, false)
+					    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
+
+			} else {
+
+			    return Optional.of(
+				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true)
+					    + "=" + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+			}
 
 		    } else if (pi.cardinality().maxOccurs > 1) {
 
-			// case pB from ppt image
-			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseColumnName(pi.reverseProperty()) + "]" + databaseTableName(typeCi, false));
+			// n:1
+
+			if (reflexive) {
+
+			    // no need for a table join in this case
+			    // case p2 from ppt image (n:1 for bi-directional reflexive association)
+			    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				    + databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
+				    + databaseTableName(typeCi, false));
+
+			} else {
+
+			    // case pB from ppt image (n:1 for bi-directional association)
+			    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				    + databaseColumnName(pi.reverseProperty()) + "]"
+				    + databaseTableName(typeCi, false));
+			}
 
 		    } else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
 
-			// case pA from ppt image
-			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				+ databaseTableName(typeCi, false));
+			// n:1
+
+			if (reflexive) {
+
+			    // no need for a table join in this case
+			    // case p1 from ppt image (n:1 for bi-directional reflexive association)
+			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+
+			} else {
+
+			    // case pA from ppt image (n:1 for bi-directional association)
+			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
+				    + databaseTableName(typeCi, false));
+			}
 
 		    } else {
 
-			// max mult = 1 on both ends
-			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				+ databaseTableName(typeCi, false));
+			// 1:1
+
+			if (reflexive) {
+
+			    // no need for a table join in this case
+			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+
+			} else {
+
+			    // max mult = 1 on both ends
+			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
+				    + databaseTableName(typeCi, false));
+			}
 		    }
 
 		} else {
@@ -1253,15 +1317,39 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    // attribute or uni-directional association
 		    if (pi.cardinality().maxOccurs == 1) {
 
-			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				+ databaseTableName(typeCi, false));
+			// n:1
+
+			if (reflexive) {
+
+			    // no need for a table join in this case
+			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+
+			} else {
+
+			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
+				    + databaseTableName(typeCi, false));
+			}
 
 		    } else {
 
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
-					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+			// n:m
+
+			if (reflexive) {
+
+			    return Optional.of(
+				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
+					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
+					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, false)
+					    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
+
+			} else {
+
+			    return Optional.of(
+				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true)
+					    + "=" + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+			}
 		    }
 		}
 
@@ -1291,19 +1379,34 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return pi.association().taggedValue("associativeTable");
 	}
 
+	// tag associativeTable not set or without value -> proceed
+
+	String tableNamePi = determineTableName(pi);
+
+	if (pi.isAttribute() || pi.reverseProperty() == null || !pi.reverseProperty().isNavigable()) {
+
+	    return tableNamePi;
+
+	} else {
+
+	    // both pi and its reverseProperty are navigable
+	    
+	    // choose name based on alphabetical order
+	    // take into account the case of a reflexive association
+	    String tableNameRevPi = determineTableName(pi.reverseProperty());
+
+	    if (tableNamePi.compareTo(tableNameRevPi) <= 0) {
+		return tableNamePi;
+	    } else {
+		return tableNameRevPi;
+	    }
+	}
+    }
+
+    private String determineTableName(PropertyInfo pi) {
+
 	String tableName = pi.inClass().name();
 	String propertyName = pi.name();
-
-	if (pi.association() != null && pi.reverseProperty().isNavigable()
-		&& pi.inClass().name().compareTo(pi.reverseProperty().inClass().name()) > 0) {
-	    /*
-	     * Name of class that owns the reverse property comes before name of
-	     * pi.inClass() (in alphabetical order).
-	     */
-	    tableName = pi.reverseProperty().inClass().name();
-	    propertyName = pi.reverseProperty().name();
-	}
-
 	String res = tableName + "_" + propertyName;
 	return res;
     }
@@ -1625,11 +1728,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return icd;
     }
 
-    private String databaseTableName(ClassInfo ci, boolean isAssociativeTableContext) {
+    private String databaseTableName(ClassInfo ci,
+	    boolean isAssociativeTableContextAndNotReflexiveRelationshipContext) {
 
 	String result = ci.name();
 
-	if (isAssociativeTableContext) {
+	if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
 	    result = result + associativeTableColumnSuffix;
 	}
 
@@ -1640,26 +1744,54 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return result;
     }
 
+    private String databaseColumnNameReflexiveProperty(PropertyInfo pi, boolean inAssociativeTable) {
+
+	String suffix = "";
+
+	if (valueTypeIsTypeWithIdentity(pi)) {
+
+	    if (inAssociativeTable) {
+		suffix = suffix + associativeTableColumnSuffix;
+	    } else {
+		suffix = suffix + foreignKeyColumnSuffix;
+	    }
+
+	} else if (pi.categoryOfValue() == Options.DATATYPE) {
+	    suffix = suffix + foreignKeyColumnSuffixDatatype;
+	}
+
+	return databaseColumnName(pi, suffix);
+    }
+
     private String databaseColumnName(PropertyInfo pi) {
 
-	String result = pi.name();
+	String suffix = "";
 
 	Type t = ldproxyType(pi);
 
 	if (!(isLdproxySimpleType(t) || isLdproxyGeometryType(t))) {
 
 	    if (valueTypeIsTypeWithIdentity(pi)) {
-		result = result + foreignKeyColumnSuffix;
+		suffix = suffix + foreignKeyColumnSuffix;
 	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
-		result = result + foreignKeyColumnSuffixDatatype;
+		suffix = suffix + foreignKeyColumnSuffixDatatype;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.CODELIST
 		&& model.classByIdOrName(pi.typeInfo()).matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
 
 	    // Support SqlDdl target parameter foreignKeyColumnSuffixCodelist
-	    result = result + foreignKeyColumnSuffixCodelist;
+	    suffix = suffix + foreignKeyColumnSuffixCodelist;
 	}
+
+	return databaseColumnName(pi, suffix);
+    }
+
+    private String databaseColumnName(PropertyInfo pi, String suffix) {
+
+	String result = pi.name();
+
+	result = result + suffix;
 
 	result = result.toLowerCase(Locale.ENGLISH);
 
@@ -1755,6 +1887,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
+	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);

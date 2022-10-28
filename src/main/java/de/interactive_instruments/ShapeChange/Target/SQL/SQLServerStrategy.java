@@ -50,159 +50,153 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
 
-	public static final String IDX_PARAM_USING = "USING";
-	public static final String IDX_PARAM_BOUNDING_BOX = "BOUNDING_BOX";
+    public static final String IDX_PARAM_USING = "USING";
+    public static final String IDX_PARAM_BOUNDING_BOX = "BOUNDING_BOX";
 
-	private ShapeChangeResult result;
+    private ShapeChangeResult result;
 
-	public SQLServerStrategy(ShapeChangeResult result) {
-		this.result = result;
-	}
+    public SQLServerStrategy(ShapeChangeResult result) {
+	this.result = result;
+    }
 
-	@Override
-	public ColumnDataType primaryKeyDataType() {
-		return new ColumnDataType("bigint");
-	}
+    @Override
+    public ColumnDataType primaryKeyDataType() {
+	return new ColumnDataType("bigint");
+    }
 
-	@Override
-	public String geometryDataType(ProcessMapEntry me, int srid) {
-		// srid is ignored here
-		return me.getTargetType();
-	}
+    @Override
+    public String geometryDataType(ProcessMapEntry me, int srid) {
+	// srid is ignored here
+	return me.getTargetType();
+    }
 
-	@Override
-	public ColumnDataType unlimitedLengthCharacterDataType() {
-		return new ColumnDataType("nvarchar(max)", null, null, null, null);
-	}
+    @Override
+    public ColumnDataType unlimitedLengthCharacterDataType() {
+	return new ColumnDataType("nvarchar(max)", null, null, null, null);
+    }
 
-	@Override
-	public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier) {
+    @Override
+    public ColumnDataType limitedLengthCharacterDataType(int size, String lengthQualifier) {
 
-		/*
-		 * Apparently there is a restriction how long a limited nvarchar can be
-		 * (4000). Source:
-		 * https://msdn.microsoft.com/de-de/library/ms186939.aspx
-		 */
-
-		if (size > 4000) {
-			// TODO: log warning?
-			return new ColumnDataType("nvarchar(max)", null, null, null, null);
-		} else {
-			return new ColumnDataType("nvarchar", null, null, size, null);
-		}
-	}
-
-	@Override
-	public Statement geometryIndexColumnPart(String indexName, Table table,
-			Column column, Map<String, String> geometryCharacteristics) {
-
-		Index index = new Index(indexName);
-		index.setType("SPATIAL");
-
-		index.addColumn(column);
-
-		// TBD: declaration of tesselation
-		if (geometryCharacteristics.containsKey(IDX_PARAM_USING)) {
-			index.addSpec(
-					"USING " + geometryCharacteristics.get(IDX_PARAM_USING));
-		}
-
-		if (geometryCharacteristics.containsKey(IDX_PARAM_BOUNDING_BOX)) {
-			index.addSpec("WITH (BOUNDING_BOX = "
-					+ geometryCharacteristics.get(IDX_PARAM_BOUNDING_BOX)
-					+ ")");
-		}
-
-		CreateIndex cIndex = new CreateIndex();
-		cIndex.setIndex(index);
-		cIndex.setTable(table);
-
-		return cIndex;
-	}
-
-	@Override
-	public Statement geometryMetadataUpdateStatement(Table tableWithColumn,
-			Column columForGeometryTypedProperty, int srid) {
-
-		// TBD: should we constrain the SRID as follows?
-		// ALTER TABLE xyz ADD CONSTRAINT cname CHECK (column.STSrid = srid)
-		return null;
-	}
-
-	@Override
-	public boolean validate(Map<String, ProcessMapEntry> mapEntryByType,
-			MapEntryParamInfos mepp) {
-
-		// TODO implement specific checks
-
-		// BOUNDING_BOX must contain four numbers, etc.
-		return true;
-	}
-
-	/**
-	 * TBD - not implemented yet
+	/*
+	 * Apparently there is a restriction how long a limited nvarchar can be (4000).
+	 * Source: https://msdn.microsoft.com/de-de/library/ms186939.aspx
 	 */
-	@Override
-	public Expression expressionForCheckConstraintToRestrictTimeOfDate(
-			Column columnForPi) {
-		return null;
+
+	if (size > 4000) {
+	    // TODO: log warning?
+	    return new ColumnDataType("nvarchar(max)", null, null, null, null);
+	} else {
+	    return new ColumnDataType("nvarchar", null, null, size, null);
+	}
+    }
+
+    @Override
+    public Statement geometryIndexColumnPart(String indexName, Table table, Column column,
+	    Map<String, String> geometryCharacteristics) {
+
+	Index index = new Index(indexName);
+	index.setType("SPATIAL");
+
+	index.addColumn(column);
+
+	// TBD: declaration of tesselation
+	if (geometryCharacteristics.containsKey(IDX_PARAM_USING)) {
+	    index.addSpec("USING " + geometryCharacteristics.get(IDX_PARAM_USING));
 	}
 
-	@Override
-	public boolean isForeignKeyOnDeleteOptionSupported(
-			ForeignKeyConstraint.Option o) {
-
-		// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
-		if (o == ForeignKeyConstraint.Option.CASCADE
-				|| o == ForeignKeyConstraint.Option.SET_NULL
-				|| o == ForeignKeyConstraint.Option.NO_ACTION
-				|| o == ForeignKeyConstraint.Option.SET_DEFAULT) {
-			return true;
-		} else {
-			return false;
-		}
+	if (geometryCharacteristics.containsKey(IDX_PARAM_BOUNDING_BOX)) {
+	    index.addSpec("WITH (BOUNDING_BOX = " + geometryCharacteristics.get(IDX_PARAM_BOUNDING_BOX) + ")");
 	}
 
-	@Override
-	public boolean isForeignKeyOnUpdateOptionSupported(
-			ForeignKeyConstraint.Option o) {
+	CreateIndex cIndex = new CreateIndex();
+	cIndex.setIndex(index);
+	cIndex.setTable(table);
 
-		// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
-		if (o == ForeignKeyConstraint.Option.CASCADE
-				|| o == ForeignKeyConstraint.Option.SET_NULL
-				|| o == ForeignKeyConstraint.Option.NO_ACTION
-				|| o == ForeignKeyConstraint.Option.SET_DEFAULT) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public List<Statement> schemaInitializationStatements(SortedSet<String> schemaNames) {
-	    // database schema creation currently not supported for SQLServer db strategy
-	    return new ArrayList<>();
-	}
+	return cIndex;
+    }
 
-	@Override
-	public String name() {
-		return "SQLServer";
-	}
+    @Override
+    public Statement geometryMetadataUpdateStatement(Table tableWithColumn, Column columForGeometryTypedProperty,
+	    int srid) {
 
-	@Override
-	public String message(int mnr) {
-		switch (mnr) {
-		case 0:
-			return "Context: class SQLServerStrategy";
-		default:
-			return "(" + SQLServerStrategy.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		}
+	// TBD: should we constrain the SRID as follows?
+	// ALTER TABLE xyz ADD CONSTRAINT cname CHECK (column.STSrid = srid)
+	return null;
+    }
+
+    @Override
+    public boolean validate(Map<String, ProcessMapEntry> mapEntryByType, MapEntryParamInfos mepp) {
+
+	// TODO implement specific checks
+
+	// BOUNDING_BOX must contain four numbers, etc.
+	return true;
+    }
+
+    /**
+     * TBD - not implemented yet
+     */
+    @Override
+    public Expression expressionForCheckConstraintToRestrictTimeOfDate(Column columnForPi) {
+	return null;
+    }
+
+    @Override
+    public boolean isForeignKeyOnDeleteSupported(ForeignKeyConstraint.ReferentialAction o) {
+
+	// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
+	if (o == ForeignKeyConstraint.ReferentialAction.CASCADE || o == ForeignKeyConstraint.ReferentialAction.SET_NULL
+		|| o == ForeignKeyConstraint.ReferentialAction.NO_ACTION
+		|| o == ForeignKeyConstraint.ReferentialAction.SET_DEFAULT) {
+	    return true;
+	} else {
+	    return false;
 	}
+    }
+
+    @Override
+    public boolean isForeignKeyOnUpdateSupported(ForeignKeyConstraint.ReferentialAction o) {
+
+	// https://msdn.microsoft.com/en-us/library/ms188066(v=sql.110).aspx
+	if (o == ForeignKeyConstraint.ReferentialAction.CASCADE || o == ForeignKeyConstraint.ReferentialAction.SET_NULL
+		|| o == ForeignKeyConstraint.ReferentialAction.NO_ACTION
+		|| o == ForeignKeyConstraint.ReferentialAction.SET_DEFAULT) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    @Override
+    public List<Statement> schemaInitializationStatements(SortedSet<String> schemaNames) {
+	// database schema creation currently not supported for SQLServer db strategy
+	return new ArrayList<>();
+    }
+
+    @Override
+    public String name() {
+	return "SQLServer";
+    }
+
+    @Override
+    public boolean isForeignKeyCheckingOptionsSupported() {
+	// https://docs.microsoft.com/en-us/openspecs/sql_standards/ms-tsqliso02/70d6050a-28c7-4fae-a205-200ccb363522
+	return false;
+    }
+    
+    @Override
+    public String message(int mnr) {
+	switch (mnr) {
+	case 0:
+	    return "Context: class SQLServerStrategy";
+	default:
+	    return "(" + SQLServerStrategy.class.getName() + ") Unknown message with number: " + mnr;
+	}
+    }
 }

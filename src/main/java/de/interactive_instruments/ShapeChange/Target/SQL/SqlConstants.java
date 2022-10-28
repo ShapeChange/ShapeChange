@@ -151,6 +151,9 @@ public class SqlConstants {
      */
     public static final String PARAM_FOREIGN_KEY_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
 
+    public static final String PARAM_FOREIGN_KEY_DEFERRABLE = "foreignKeyDeferrable";
+    public static final String PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE = "foreignKeyInitialConstraintMode";
+    
     /**
      * Global definition of the dimension of geometry types, which is used by DBMSs
      * such as SQLite (more specifically, SQLite in combination with the spatial
@@ -512,6 +515,8 @@ public class SqlConstants {
      */
     public static final String RULE_TGT_SQL_ALL_ASSOCIATIVETABLES = "rule-sql-all-associativetables";
 
+    public static final String RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-sql-all-associativeTablesWithSeparatePkField";
+    
     /**
      * If this rule is enabled derived properties will be ignored.
      */
@@ -552,6 +557,9 @@ public class SqlConstants {
      * </ul>
      */
     public static final String RULE_TGT_SQL_ALL_FOREIGNKEY_ORACLE_NAMING_STYLE = "rule-sql-all-foreign-key-oracle-naming-style";
+    
+    public static final String RULE_TGT_SQL_ALL_ENCODE_PK_REFERENCED_COLUMN_IN_FOREIGNKEYS = "rule-sql-all-explicitlyEncodePkReferencedColumnInForeignKeys";
+    
     /**
      * Under this rule, foreign key identifiers are generated as follows:
      * <p>
@@ -684,6 +692,12 @@ public class SqlConstants {
     public static final String TV_NUMERIC_TYPE = "numericType";
 
     public static final String TV_SQLSCHEMA = "sqlSchema";
+        
+    public static final String TV_UNIQUE = "sqlUnique";
+    
+    public static final String TV_ON_UPDATE = "sqlOnUpdate";
+    
+    public static final String TV_ON_DELETE = "sqlOnDelete";
 
     /* -------------------- */
     /* --- other fields --- */

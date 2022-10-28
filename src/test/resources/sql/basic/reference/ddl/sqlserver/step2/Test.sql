@@ -39,9 +39,9 @@ CREATE TABLE F3_SUFFIX (
    type nvarchar(max) NOT NULL, -- Notes propertyType
    p1 bit DEFAULT 1 NOT NULL, -- Notes property1
    pAFB_F1 bigint, -- Notes propAFeatureB
+   pAFB_F2 bigint, -- Notes propAFeatureB
    p2_f2 bigint, -- Notes property2 (MixinB)
-   p2_f4 bigint, -- Notes property2 (MixinB)
-   pAFB_F2 bigint -- Notes propAFeatureB
+   p2_f4 bigint -- Notes property2 (MixinB)
 );
 
 CREATE TABLE F4 (
@@ -50,9 +50,9 @@ CREATE TABLE F4 (
    geom geometry NOT NULL, -- Notes geometry (GM_Object)
    type nvarchar(max) NOT NULL, -- Notes propertyType
    p1 bit DEFAULT 1 NOT NULL, -- Notes property1
-   pMix3 bit, -- Notes propertyMix3
    pAFB_F1 bigint, -- Notes propAFeatureB
-   pAFB_F2 bigint -- Notes propAFeatureB
+   pAFB_F2 bigint, -- Notes propAFeatureB
+   pMix3 bit -- Notes propertyMix3
 );
 
 
