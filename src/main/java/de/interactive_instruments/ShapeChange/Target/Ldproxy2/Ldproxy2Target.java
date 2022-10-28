@@ -1153,7 +1153,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		LinkedHashMap<String, FeatureSchema> linkPropertyDefs = new LinkedHashMap<>();
 
 		ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
-			.label(pi.typeInfo().name + "-title").type(Type.STRING);// .addAllSourcePaths(sourcePathsLinkLevelTitle(pi));
+			.label(pi.typeInfo().name + "-title").type(Type.STRING);
 		List<String> titleSourcePaths = sourcePathsLinkLevelTitle(pi);
 		if (titleSourcePaths.size() == 1) {
 		    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
@@ -1606,10 +1606,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	if (!isMappedToLink(pi) && valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
 	    PropertyInfo titleAtt = getTitleAttribute(pi.typeClass());
-	    result.add(databaseColumnName(titleAtt));
 	    if (titleAtt.cardinality().minOccurs == 0) {
+		/*
+		 * PK field shall be listed first, since the last listed sourcePaths "wins", and
+		 * that should be the title attribute, if it exists
+		 */
 		result.add(primaryKeyColumn);
 	    }
+	    result.add(databaseColumnName(titleAtt));
 
 	} else {
 

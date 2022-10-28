@@ -246,8 +246,8 @@ types:
             type: STRING
             label: TS1_FeatureType2-title
             sourcePaths:
-            - name
             - idx
+            - name
           href:
             sourcePath: idx
             type: STRING
@@ -263,8 +263,8 @@ types:
             type: STRING
             label: TS1_FeatureType2-title
             sourcePaths:
-            - name
             - idx
+            - name
           href:
             sourcePath: idx
             type: STRING
@@ -282,8 +282,8 @@ types:
             type: STRING
             label: TS1_FeatureType2-title
             sourcePaths:
-            - name
             - idx
+            - name
           href:
             sourcePath: idx
             type: STRING
@@ -299,8 +299,8 @@ types:
             type: STRING
             label: TS1_FeatureType2-title
             sourcePaths:
-            - name
             - idx
+            - name
           href:
             sourcePath: idx
             type: STRING
@@ -316,8 +316,8 @@ types:
             type: STRING
             label: TS1_FeatureType2-title
             sourcePaths:
-            - name
             - idx
+            - name
           href:
             sourcePath: idx
             type: STRING
