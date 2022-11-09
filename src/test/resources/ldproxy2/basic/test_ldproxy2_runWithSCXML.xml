@@ -91,6 +91,7 @@
 					<rule name="rule-ldp2-all-documentation"/>
 					<rule name="rule-ldp2-all-schemas"/>
 					<rule name="rule-ldp2-cls-codelist-direct"/>
+					<rule name="rule-ldp2-cls-codelist-append-code" />
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-cls-identifierStereotype"/>
 					<rule name="rule-ldp2-prop-readOnly"/>

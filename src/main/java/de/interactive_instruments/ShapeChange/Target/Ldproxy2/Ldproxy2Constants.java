@@ -97,6 +97,7 @@ public class Ldproxy2Constants {
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
+    public static final String RULE_CLS_CODELIST_APPEND_CODE = "rule-ldp2-cls-codelist-append-code";
     public static final String RULE_CLS_CODELIST_BY_TABLE = "rule-ldp2-cls-codelist-byTable";
     public static final String RULE_CLS_CODELIST_DIRECT = "rule-ldp2-cls-codelist-direct";
     public static final String RULE_CLS_CODELIST_TARGETBYTV = "rule-ldp2-cls-codelist-targetbytaggedvalue";

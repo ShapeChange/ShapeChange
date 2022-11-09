@@ -2299,6 +2299,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    code = pi.name();
 		    targetValue = pi.name();
 		}
+		
+		if(ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_APPEND_CODE)) {
+		    targetValue = targetValue + " ("+code+")";
+		}
 
 		entries.put(code, targetValue);
 	    }
@@ -2495,6 +2499,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV);
+	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_APPEND_CODE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES);
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);

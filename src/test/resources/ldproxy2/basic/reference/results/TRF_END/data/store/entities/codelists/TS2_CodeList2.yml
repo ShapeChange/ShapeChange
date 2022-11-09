@@ -5,7 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 1
 label: Alias TS2_Codelist2
 entries:
-  A: codeA
-  B: codeB
+  A: codeA (A)
+  B: codeB (B)
 sourceType: TEMPLATES
 fallback: unknown
