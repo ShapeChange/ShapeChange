@@ -60,7 +60,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(FeatureCatalogue.PARAM_CSS_PATH, FeatureCatalogue.PARAM_DELETE_XML_FILE, FeatureCatalogue.PARAM_DOCX_STYLE,
 		FeatureCatalogue.PARAM_DOCX_TEMPLATE_FILE_PATH, FeatureCatalogue.PARAM_DONT_TRANSFORM, FeatureCatalogue.PARAM_FEATURE_TERM, FeatureCatalogue.PARAM_INCLUDE_ALIAS,
-		FeatureCatalogue.PARAM_INCLUDE_CODELIST_URI, FeatureCatalogue.PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS, FeatureCatalogue.PARAM_INCLUDE_DIAGRAMS,
+		FeatureCatalogue.PARAM_INCLUDE_CODELIST_URI, FeatureCatalogue.PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS, FeatureCatalogue.PARAM_INCLUDE_DIAGRAMS, FeatureCatalogue.PARAM_INCLUDE_DIAGRAM_DOCUMENTATION,
 		FeatureCatalogue.PARAM_INCLUDE_TITLE, FeatureCatalogue.PARAM_INCLUDE_VOIDABLE, FeatureCatalogue.PARAM_INHERITED_CONSTRAINTS, FeatureCatalogue.PARAM_INHERITED_PROPERTIES,
 		FeatureCatalogue.PARAM_JAVA_EXE_PATH, FeatureCatalogue.PARAM_JAVA_OPTIONS, FeatureCatalogue.PARAM_LANG, FeatureCatalogue.PARAM_LOCALIZATION_MESSAGES_URI,
 		FeatureCatalogue.PARAM_LOGO_FILE_PATH, FeatureCatalogue.PARAM_NAME, FeatureCatalogue.PARAM_NO_ALPHABETIC_SORT_OF_PROPS, FeatureCatalogue.PARAM_OUTPUT_FORMAT, FeatureCatalogue.PARAM_PACKAGE,
@@ -101,6 +101,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	isValid &= checkIsBooleanValueIfSet("includeAlias");
 	isValid &= checkIsBooleanValueIfSet("includeCodelistURI");
 	isValid &= checkIsBooleanValueIfSet("includeDiagrams");
+	isValid &= checkIsBooleanValueIfSet("includeDiagramDocumentation");
 	isValid &= checkIsBooleanValueIfSet("includeTitle");
 	isValid &= checkIsBooleanValueIfSet("includeVoidable");
 	isValid &= checkIsBooleanValueIfSet("inheritedConstraints");

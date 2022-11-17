@@ -38,7 +38,7 @@ types:
           title:
             sourcePath: refrel1target_fk
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: refrel1target_fk
             type: STRING
@@ -55,7 +55,7 @@ types:
           title:
             sourcePath: _id
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: _id
             type: STRING
@@ -72,7 +72,7 @@ types:
           title:
             sourcePath: _id
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: _id
             type: STRING
@@ -89,7 +89,7 @@ types:
           title:
             sourcePath: _id
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: _id
             type: STRING
@@ -105,7 +105,7 @@ types:
           title:
             sourcePath: refrel4source_fk
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: refrel4source_fk
             type: STRING
@@ -121,7 +121,7 @@ types:
           title:
             sourcePath: refrel4target_fk
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: refrel4target_fk
             type: STRING
@@ -138,7 +138,7 @@ types:
           title:
             sourcePath: _id
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: _id
             type: STRING
@@ -154,7 +154,7 @@ types:
           title:
             sourcePath: relref5target_fk
             type: STRING
-            label: FeatureType-ID
+            label: FeatureType-title
           href:
             sourcePath: relref5target_fk
             type: STRING

@@ -58,7 +58,7 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 
 	private static final Set<String> IMAGE_METADATA_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "id", "name", "relPathToFile", "width",
-					"height" }));
+					"height", "documentation" }));
 
 	private static final Set<String> DEPRECATED_FIELDS = new HashSet<String>(
 			Arrays.asList(new String[] { "file" }));
@@ -69,6 +69,7 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 
 	private String id = null;
 	private String name = null;
+	private String documentation = null;
 	private String relPathToFile = null;
 	private String width = null;
 	private String height = null;
@@ -92,6 +93,7 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 			// reset fields
 			this.id = null;
 			this.name = null;
+			this.documentation = null;
 			this.relPathToFile = null;
 			this.width = null;
 			this.height = null;
@@ -120,6 +122,10 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 
 			this.name = sb.toString();
 
+		} else if (localName.equals("documentation")) {
+
+			this.documentation = sb.toString();
+
 		} else if (DEPRECATED_FIELDS.contains(localName)) {
 
 			// ignore
@@ -144,8 +150,8 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 				int w = Integer.parseInt(width);
 				int h = Integer.parseInt(height);
 
-				ImageMetadata im = new ImageMetadata(id, name, f, relPathToFile,
-						w, h);
+				ImageMetadata im = new ImageMetadata(id, name, documentation, f, 
+					relPathToFile, w, h);
 				this.diagrams.add(im);
 
 			} catch (NumberFormatException e) {

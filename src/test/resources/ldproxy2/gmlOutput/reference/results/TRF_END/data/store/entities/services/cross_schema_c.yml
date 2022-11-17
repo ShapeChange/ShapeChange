@@ -1,0 +1,123 @@
+---
+id: cross_schema_c
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: label
+description: '...'
+serviceType: OGC_API
+api:
+- buildingBlock: RESOURCES
+  enabled: true
+- buildingBlock: GML
+  enabled: true
+  applicationNamespaces:
+    a: http://shapechange.net/test/a
+    b: http://shapechange.net/test/b
+    c: http://shapechange.net/test/c
+  defaultNamespace: c
+  schemaLocations:
+    c: '{{serviceUrl}}/resources/c.xsd'
+  objectTypeNamespaces:
+    DataTypeA: a
+    FeatureTypeB: b
+    TypeA: a
+    TypeASub: a
+  featureCollectionElementName: wfs:FeatureCollection
+  featureMemberElementName: wfs:member
+  supportsStandardResponseParameters: true
+  gmlIdPrefix: _
+collections:
+  featuretypeb:
+    id: featuretypeb
+    label: featuretypeb
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        att3:
+        - codelist: EnumerationA
+    - buildingBlock: GML
+      transformations:
+        att2.att1:
+        - rename: a:att1
+        att2.att2:
+        - rename: a:att2
+      conformance: NONE
+      xmlAttributes:
+      - att1
+      - att2.att2
+  featuretypec1:
+    id: featuretypec1
+    label: featuretypec1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      transformations:
+        attMeasure:
+        - rename: a:attMeasure
+        ftAtoTA_TypeA:
+        - rename: a:ftAtoTA
+        ftAtoTA_TypeASub:
+        - rename: a:ftAtoTA
+        geom:
+        - rename: a:geom
+      conformance: NONE
+  featuretypec2:
+    id: featuretypec2
+    label: featuretypec2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      transformations:
+        att1.attDataTypeA.att1:
+        - rename: a:att1
+        att1.attDataTypeA.att2:
+        - rename: a:att2
+        att2_dataTypeC2:
+        - rename: att2
+        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC1: 
+        - rename: dtC2toFTC1
+        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC2:
+        - rename: dtC2toFTC1
+        att2_dataTypeC3: 
+        - rename: att2
+        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC1:
+        - rename: dtC2toFTC1
+        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC2: 
+        - rename: dtC2toFTC1
+        attMeasure:
+        - rename: a:attMeasure
+        ftAtoTA_TypeA:
+        - rename: a:ftAtoTA
+        ftAtoTA_TypeASub:
+        - rename: a:ftAtoTA
+        geom:
+        - rename: a:geom
+      conformance: NONE
+      xmlAttributes:
+      - att1.attDataTypeA.att2
+  typea:
+    id: typea
+    label: typea
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCodelistA:
+        - codelist: CodeListA
+    - buildingBlock: GML
+      conformance: NONE
+  typeasub:
+    id: typeasub
+    label: typeasub
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attCodelistA:
+        - codelist: CodeListA
+    - buildingBlock: GML
+      conformance: NONE

@@ -89,7 +89,8 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml",
-				new String[] { "sql", "eap" },
+			new String[] {
+				"sql", "eap" },
 				"testResults/sql/foreignKeyOptions",
 				"src/test/resources/sql/foreignKeyOptions/reference");
 	}

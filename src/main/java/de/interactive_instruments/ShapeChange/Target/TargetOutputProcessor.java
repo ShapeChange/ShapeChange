@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -69,7 +68,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -434,11 +432,6 @@ public class TargetOutputProcessor implements MessageSource {
 
 	    Element root = doc.getDocumentElement();
 	    root.insertBefore(com, root.getFirstChild());
-
-	    Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	    outputFormat.setProperty("indent", "yes");
-	    outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	    outputFormat.setProperty("encoding", "UTF-8");
 
 	    Transformer transformer = TransformerFactory.newInstance().newTransformer();
 	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");

@@ -93,6 +93,10 @@ public class InputConfiguration {
     public Map<String, String> getParameters() {
 	return parametersByName;
     }
+    
+    public void setParameter(String parameterName, String value) {
+	this.parametersByName.put(parameterName, value);
+    }
 
     public boolean hasParameter(String paramName) {
 	if (parametersByName != null && parametersByName.containsKey(paramName)) {

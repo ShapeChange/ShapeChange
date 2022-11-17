@@ -23,13 +23,10 @@
  */
 package de.interactive_instruments.ShapeChange.Target.XmlSchema;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +35,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,6 +42,7 @@ import org.w3c.dom.Text;
 
 import de.interactive_instruments.ShapeChange.MapEntry;
 import de.interactive_instruments.ShapeChange.Options;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
 import de.interactive_instruments.ShapeChange.XsdPropertyMapEntry;
@@ -55,6 +50,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * Common class for Schematron Schema creation.
@@ -598,22 +594,13 @@ public abstract class AbstractSchematronSchema implements SchematronSchema {
 	    root.insertBefore(e, pattern);
 	}
 
-	// Choose serialization parameters
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	// outputFormat.setProperty("encoding", model.characterEncoding());
-	outputFormat.setProperty("encoding", "UTF-8");
-
 	// Do the actual writing
 	try {
-	    OutputStream fout = new FileOutputStream(outputDirectory + "/" + this.schematronFilename);
-	    OutputStreamWriter outputXML = new OutputStreamWriter(fout, outputFormat.getProperty("encoding"));
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
-	} catch (Exception e) {
+	    
+	    File fout = new File(outputDirectory,this.schematronFilename);
+	    XMLUtil.writeXml(document, fout);
+	    
+	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
 		result.addError(m);

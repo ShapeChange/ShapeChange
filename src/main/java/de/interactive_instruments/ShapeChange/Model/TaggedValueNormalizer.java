@@ -99,7 +99,7 @@ public class TaggedValueNormalizer {
      */
     protected static final Set<String> ldp2Tags = Stream
 	    .of("ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate",
-		    "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove")
+		    "ldpTitleAttribute", "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove")
 	    .collect(Collectors.toSet());
 
     /*
@@ -123,8 +123,8 @@ public class TaggedValueNormalizer {
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
 	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
 	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType",
-	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType")
-	    .collect(Collectors.toSet());
+	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType",
+	    "representsFeatureTypeSet", "representsTypeSet").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values
@@ -183,22 +183,43 @@ public class TaggedValueNormalizer {
 	// Now check tag aliases provided in the configuration
 	tag = options.normalizeTag(tag);
 
+	String tagToReturn = tag;
+	boolean returnTag = false;
+
 	// Now allow for some deprecated stuff
-	if (tag.equals("xmlNamespace"))
-	    return "targetNamespace";
-	if (tag.equals("xmlNamespaceAbbreviation"))
-	    return "xmlns";
-	if (tag.equals("xsdName"))
-	    return "xsdDocument";
-	if (tag.equals("asGroup"))
-	    return "gmlAsGroup";
-	if (tag.equals("implementedByNilReason"))
-	    return "gmlImplementedByNilReason";
+	if (tag.equals("xmlNamespace")) {
+	    tagToReturn = "targetNamespace";
+	    returnTag = true;
+	}
+	if (tag.equals("xmlNamespaceAbbreviation")) {
+	    tagToReturn = "xmlns";
+	    returnTag = true;
+	}
+	if (tag.equals("xsdName")) {
+	    tagToReturn = "xsdDocument";
+	    returnTag = true;
+	}
+	if (tag.equals("asGroup")) {
+	    tagToReturn = "gmlAsGroup";
+	    returnTag = true;
+	}
+	if (tag.equals("implementedByNilReason")) {
+	    tagToReturn = "gmlImplementedByNilReason";
+	    returnTag = true;
+	}
+	if (options.allowAllTags() || allowedTags.contains(tag)) {
+	    tagToReturn = tag;
+	    returnTag = true;
+	}
 
-	if (options.allowAllTags() || allowedTags.contains(tag))
-	    return tag;
+	if (options.tagsToIgnore().contains(tagToReturn)) {
+	    returnTag = false;
+	}
 
-	// None of these, return null
-	return null;
+	if (returnTag) {
+	    return tagToReturn;
+	} else {
+	    return null;
+	}
     }
 }

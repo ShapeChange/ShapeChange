@@ -33,10 +33,12 @@ package de.interactive_instruments.ShapeChange.Transformation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -59,6 +61,7 @@ import de.interactive_instruments.ShapeChange.TaggedValueConfigurationEntry;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Model.AssociationInfo;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
@@ -78,9 +81,10 @@ public class TransformationManager implements MessageSource {
 
     public static final String REQ_ALL_TYPES_IDENTIFY_FEATURE_AND_OBJECT_ASSOCIATIONS = "req-trf-all-identify-feature-and-object-associations";
     public static final String RULE_SKIP_CONSTRAINT_VALIDATION = "rule-trf-all-postprocess-skip-constraint-validation";
-    
+
     // 2021-11-08 JE - currently unused:
-    //public static final String RULE_VALIDATE_PROFILES = "rule-trf-all-postprocess-validate-profiles";
+    // public static final String RULE_VALIDATE_PROFILES =
+    // "rule-trf-all-postprocess-validate-profiles";
 
     private Options options = null;
     private ShapeChangeResult result = null;
@@ -100,7 +104,8 @@ public class TransformationManager implements MessageSource {
 		    .newInstance();
 	} catch (Exception e) {
 	    throw new ShapeChangeAbortException("Could not load transformer class '" + trfConfig.getClassName()
-		    + " for transformer ID '" + trfConfig.getId() + "'. Exception message is: " + StringUtils.defaultString(e.getMessage(),"<null>"));
+		    + " for transformer ID '" + trfConfig.getId() + "'. Exception message is: "
+		    + StringUtils.defaultString(e.getMessage(), "<null>"));
 	}
 
 	/*
@@ -355,136 +360,180 @@ public class TransformationManager implements MessageSource {
 
 	    GenericPackageInfo genPackage = (GenericPackageInfo) pi;
 
-	    TaggedValues genPaTVs = genPackage.taggedValuesAll();
+	    TaggedValues genPaTVsToSet = determineTaggedValuesToSet(genPackage, taggedValues);
 
-	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-		if (tvce.getModelElementSelectionInfo().matches(genPackage)) {
-
-		    if (genPaTVs.containsKey(tvce.getName())) {
-			// tagged value already exists on model element
-
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the existing value(s)
-			 */
-			if (tvce.hasValue()) {
-			    genPaTVs.put(tvce.getName(), tvce.getValue());
-			}
-
-		    } else {
-			// tagged value does not exist on model element
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the empty string
-			 */
-			genPaTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
-		    }
-		}
-	    }
-
-	    genPackage.setTaggedValues(genPaTVs, true);
+	    genPackage.setTaggedValues(genPaTVsToSet, true);
 	}
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-
-	    TaggedValues genCiTVs = genCi.taggedValuesAll();
-
-	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-		if (tvce.getModelElementSelectionInfo().matches(genCi)) {
-
-		    if (genCiTVs.containsKey(tvce.getName())) {
-			// tagged value already exists on model element
-
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise keep the existing value(s)
-			 */
-			if (tvce.hasValue()) {
-			    genCiTVs.put(tvce.getName(), tvce.getValue());
-			}
-
-		    } else {
-			// tagged value does not exist on model element
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the empty string
-			 */
-			genCiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
-		    }
-		}
-	    }
-
-	    genCi.setTaggedValues(genCiTVs, true);
+	    
+	    TaggedValues genCiTVsToSet = determineTaggedValuesToSet(genCi, taggedValues);
+	    
+	    genCi.setTaggedValues(genCiTVsToSet, true);
+	    
+//	    TaggedValues genCiTVs = genCi.taggedValuesAll();
+//
+//	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+//
+//		if (tvce.getModelElementSelectionInfo().matches(genCi)) {
+//
+//		    if (genCiTVs.containsKey(tvce.getName())) {
+//			// tagged value already exists on model element
+//
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise keep the existing value(s)
+//			 */
+//			if (tvce.hasValue()) {
+//			    genCiTVs.put(tvce.getName(), tvce.getValue());
+//			}
+//
+//		    } else {
+//			// tagged value does not exist on model element
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise use the empty string
+//			 */
+//			genCiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+//		    }
+//		}
+//	    }
+//
+//	    genCi.setTaggedValues(genCiTVs, true);
 	}
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-	    TaggedValues genPiTVs = genPi.taggedValuesAll();
-
-	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-		if (tvce.getModelElementSelectionInfo().matches(genPi)) {
-
-		    if (genPiTVs.containsKey(tvce.getName())) {
-			// tagged value already exists on model element
-
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the existing value(s)
-			 */
-			if (tvce.hasValue()) {
-			    genPiTVs.put(tvce.getName(), tvce.getValue());
-			}
-
-		    } else {
-			// tagged value does not exist on model element
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the empty string
-			 */
-			genPiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
-		    }
-		}
-	    }
-
-	    genPi.setTaggedValues(genPiTVs, true);
+	    TaggedValues genPiTVsToSet = determineTaggedValuesToSet(genPi, taggedValues);
+	    
+	    genPi.setTaggedValues(genPiTVsToSet, true);
+	    
+//	    TaggedValues genPiTVs = genPi.taggedValuesAll();
+//
+//	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+//
+//		if (tvce.getModelElementSelectionInfo().matches(genPi)) {
+//
+//		    if (genPiTVs.containsKey(tvce.getName())) {
+//			// tagged value already exists on model element
+//
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise use the existing value(s)
+//			 */
+//			if (tvce.hasValue()) {
+//			    genPiTVs.put(tvce.getName(), tvce.getValue());
+//			}
+//
+//		    } else {
+//			// tagged value does not exist on model element
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise use the empty string
+//			 */
+//			genPiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+//		    }
+//		}
+//	    }
+//
+//	    genPi.setTaggedValues(genPiTVs, true);
 	}
 
 	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
 
-	    TaggedValues genAiTVs = genAi.taggedValuesAll();
-
-	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
-
-		if (tvce.getModelElementSelectionInfo().matches(genAi)) {
-
-		    if (genAiTVs.containsKey(tvce.getName())) {
-			// tagged value already exists on model element
-
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the existing value(s)
-			 */
-			if (tvce.hasValue()) {
-			    genAiTVs.put(tvce.getName(), tvce.getValue());
-			}
-
-		    } else {
-			// tagged value does not exist on model element
-			/*
-			 * if the tagged value configuration contains an actual value, use it -
-			 * otherwise use the empty string
-			 */
-			genAiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
-		    }
-		}
-	    }
-
-	    genAi.setTaggedValues(genAiTVs, true);
+	    TaggedValues genAiTVsToSet = determineTaggedValuesToSet(genAi, taggedValues);
+	    
+	    genAi.setTaggedValues(genAiTVsToSet, true);
+	    
+//	    TaggedValues genAiTVs = genAi.taggedValuesAll();
+//
+//	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
+//
+//		if (tvce.getModelElementSelectionInfo().matches(genAi)) {
+//
+//		    if (genAiTVs.containsKey(tvce.getName())) {
+//			// tagged value already exists on model element
+//
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise use the existing value(s)
+//			 */
+//			if (tvce.hasValue()) {
+//			    genAiTVs.put(tvce.getName(), tvce.getValue());
+//			}
+//
+//		    } else {
+//			// tagged value does not exist on model element
+//			/*
+//			 * if the tagged value configuration contains an actual value, use it -
+//			 * otherwise use the empty string
+//			 */
+//			genAiTVs.put(tvce.getName(), tvce.hasValue() ? tvce.getValue() : "");
+//		    }
+//		}
+//	    }
+//
+//	    genAi.setTaggedValues(genAiTVs, true);
 	}
 
+    }
+
+    private TaggedValues determineTaggedValuesToSet(Info infoObject,
+	    List<TaggedValueConfigurationEntry> taggedValueConfigurationEntries) {
+
+	TaggedValues tvsCopy = infoObject.taggedValuesAll();
+
+	SortedMap<String, SortedSet<String>> tvsToSet = new TreeMap<>();
+
+	for (TaggedValueConfigurationEntry tvce : taggedValueConfigurationEntries) {
+
+	    if (tvce.getModelElementSelectionInfo().matches(infoObject)) {
+
+		String tvName = tvce.getName();
+		String tvValue;
+
+		if (tvsCopy.containsKey(tvName)) {
+		    // tagged value already exists on model element
+
+		    /*
+		     * if the tagged value configuration does NOT contain an actual value, ignore it
+		     * - use the existing value(s) instead
+		     */
+		    if (!tvce.hasValue()) {
+			continue;
+		    } else {
+			tvValue = tvce.getValue();
+		    }
+		} else {
+		    // tagged value does not exist on model element
+		    /*
+		     * if the tagged value configuration contains an actual value, use it -
+		     * otherwise use the empty string
+		     */
+		    tvValue = tvce.hasValue() ? tvce.getValue() : "";
+		}
+
+		SortedSet<String> valueSet;
+
+		if (tvsToSet.containsKey(tvName)) {
+		    valueSet = tvsToSet.get(tvName);
+		} else {
+		    valueSet = new TreeSet<>();
+		    tvsToSet.put(tvName, valueSet);
+		}
+		valueSet.add(tvValue);
+	    }
+	}
+
+	for (Entry<String, SortedSet<String>> e : tvsToSet.entrySet()) {
+
+	    String tvName = e.getKey();
+	    SortedSet<String> tvValues = e.getValue();
+
+	    tvsCopy.put(tvName, new ArrayList<String>(tvValues));
+	}
+
+	return tvsCopy;
     }
 
     /**

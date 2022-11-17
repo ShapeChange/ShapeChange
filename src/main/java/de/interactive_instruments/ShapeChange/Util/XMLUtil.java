@@ -31,12 +31,14 @@
  */
 package de.interactive_instruments.ShapeChange.Util;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,10 +50,12 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -61,6 +65,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeErrorHandler;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -254,23 +259,31 @@ public class XMLUtil {
 	}
     }
 
-    public static void writeXml(Document doc, File destination) throws Exception {
+    public static void writeXml(Document doc, File destination) throws ShapeChangeException {
+		
+	try (BufferedWriter writer = new BufferedWriter(
+		new OutputStreamWriter(new FileOutputStream(destination), "UTF-8"))) {
 
-	try {
+	    File parentFile = destination.getParentFile();
+	    if (parentFile != null && !parentFile.exists()) {
+		FileUtils.forceMkdir(parentFile);
+	    }
+	    	    
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	    Transformer transformer = transformerFactory.newTransformer();
+	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 	    DOMSource source = new DOMSource(doc);
 
-	    FileWriter writer = new FileWriter(destination);
 	    StreamResult result = new StreamResult(writer);
 
 	    transformer.transform(source, result);
-	} catch (Exception e) {
-	    throw new Exception("Error while writing XML file. Exception message is: " + e.getMessage(), e);
+
+	} catch (IOException | TransformerException e) {
+	    throw new ShapeChangeException("Error while writing XML file. Exception message is: " + e.getMessage(), e);
 	}
     }
 

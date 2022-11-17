@@ -678,7 +678,10 @@ public class ModelWriter extends AbstractModelWriter {
 		writer.dataElement(NS, "name", im.getName());
 		writer.dataElement(NS, "relPathToFile", im.getRelPathToFile());
 		writer.dataElement(NS, "width", "" + im.getWidth());
-		writer.dataElement(NS, "height", "" + im.getHeight());
+		writer.dataElement(NS, "height", "" + im.getHeight());		
+		if(im.getDocumentation() != null) {
+		    writer.dataElement(NS,"documentation",im.getDocumentation());
+		}
 		writer.endElement(NS, "ImageMetadata");
 	    }
 
@@ -751,7 +754,7 @@ public class ModelWriter extends AbstractModelWriter {
 	    // We need to convert the profile definitions in the model
 	    SortedSet<String> profilesForClassesWithoutExplicitProfiles = null;
 
-	    if (defaultProfilesForClassesWithoutExplicitProfiles != null) {
+	    if (defaultProfilesForClassesWithoutExplicitProfiles != null && !defaultProfilesForClassesWithoutExplicitProfiles.isEmpty()) {
 
 		profilesForClassesWithoutExplicitProfiles = defaultProfilesForClassesWithoutExplicitProfiles;
 

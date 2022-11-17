@@ -54,6 +54,7 @@ import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sparx.Collection;
 import org.sparx.Diagram;
+import org.sparx.DiagramObject;
 import org.sparx.Element;
 import org.sparx.Project;
 import org.sparx.Repository;
@@ -558,6 +559,24 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	    }
 
 	    repository.OpenDiagram(d.GetDiagramID());
+	    
+	    String diagramNotes = d.GetNotes();
+	    String imgDocumentation = StringUtils.isNotBlank(diagramNotes) ? diagramNotes.trim() : null;
+	    
+//	    Collection<DiagramObject> dObjects = d.GetDiagramObjects();
+//	    System.out.println("Diagram objects on diagram '"+d.GetName()+"':");
+//	    for(short k=0; k<dObjects.GetCount(); k++) {
+//		DiagramObject dObj = dObjects.GetAt(k);
+//		int top = dObj.GetTop();
+//		int bottom = dObj.GetBottom();
+//		int left = dObj.GetLeft();
+//		int right = dObj.GetRight();
+//		int elementId = dObj.GetElementID();
+//		Element elmt = repository.GetElementByID(elementId);
+//		String elmtName = elmt.GetName();
+//		System.out.println("- Diagram object for element '"+elmtName+"': "+top+" (top), "+bottom+" (bottom), "+left+" (left), "+right+" (right).");
+//	    }
+	    
 	    projectInterface.SaveDiagramImageToFile(img.getAbsolutePath());
 	    String lastError = projectInterface.GetLastError();
 	    if (StringUtils.isNotBlank(lastError)) {
@@ -582,7 +601,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		continue;
 	    }
 
-	    ImageMetadata imgMeta = new ImageMetadata(imgId, imgName, img, relPathToFile, width, height);
+	    ImageMetadata imgMeta = new ImageMetadata(imgId, imgName, imgDocumentation, img, relPathToFile, width, height);
 
 	    if (type.equalsIgnoreCase("Package")) {
 

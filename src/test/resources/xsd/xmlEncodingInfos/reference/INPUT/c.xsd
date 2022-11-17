@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:a="http://shapechange.net/test/a" xmlns:b="http://shapechange.net/test/b" xmlns:c="http://shapechange.net/test/c" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/c" version="1.0">
+  <import namespace="http://shapechange.net/test/a"/>
+  <import namespace="http://shapechange.net/test/b"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="DataTypeC" substitutionGroup="gml:AbstractObject" type="c:DataTypeCType"/>
+  <complexType name="DataTypeCType">
+    <sequence>
+      <element name="att1" type="boolean"/>
+      <element name="attDataTypeA" type="a:DataTypeAPropertyType"/>
+    </sequence>
+    <attribute name="att2" type="integer" use="required"/>
+  </complexType>
+  <complexType name="DataTypeCPropertyType">
+    <sequence>
+      <element ref="c:DataTypeC"/>
+    </sequence>
+  </complexType>
+  <element name="FeatureTypeC1" substitutionGroup="a:AbstractFeatureTypeA" type="c:FeatureTypeC1Type"/>
+  <complexType name="FeatureTypeC1Type">
+    <complexContent>
+      <extension base="a:AbstractFeatureTypeAType">
+        <sequence>
+          <element name="ftC1toFTB" type="b:FeatureTypeBPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeC1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="c:FeatureTypeC1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeC2" substitutionGroup="c:FeatureTypeC1" type="c:FeatureTypeC2Type"/>
+  <complexType name="FeatureTypeC2Type">
+    <complexContent>
+      <extension base="c:FeatureTypeC1Type">
+        <sequence>
+          <element name="att1" type="c:DataTypeCPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeC2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="c:FeatureTypeC2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

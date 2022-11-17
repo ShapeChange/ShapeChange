@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:a="http://shapechange.net/test/a" xmlns:b="http://shapechange.net/test/b" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/b" version="1.0">
+  <import namespace="http://shapechange.net/test/a"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureTypeB" substitutionGroup="gml:AbstractFeature" type="b:FeatureTypeBType"/>
+  <complexType name="FeatureTypeBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="att2" type="a:DataTypeAPropertyType"/>
+          <element name="att3" type="a:EnumerationAType"/>
+        </sequence>
+        <attribute name="att1" type="string" use="required"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="b:FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

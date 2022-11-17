@@ -349,4 +349,14 @@ public class XMLSchemaTest extends BasicTestSCXML {
 				"testResults/xsd/basicTypeList",
 				"src/test/resources/xsd/basicTypeList/reference");
 	}
+	
+	@Test
+	public void test_xmlEncodingInfos() {
+		
+		multiTest(
+				"src/test/resources/xsd/xmlEncodingInfos/test_xmlEncodingInfos.xml",
+				new String[] { "xsd", "xml" },
+				"testResults/xsd/xmlEncodingInfos/INPUT",
+				"src/test/resources/xsd/xmlEncodingInfos/reference/INPUT");
+	}
 }

@@ -1,0 +1,142 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+providerType: FEATURE
+featureProviderType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+nativeTimeZone: Europe/Berlin
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attDate:
+        sourcePath: attdate
+        type: DATE
+        role: PRIMARY_INSTANT
+        constraints:
+          required: true
+      attInt:
+        sourcePath: attint
+        type: INTEGER
+        constraints:
+          required: true
+      attOther:
+        sourcePath: attother
+        type: FLOAT
+        constraints:
+          required: true
+      attPoint:
+        sourcePath: attpoint
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      roleFTtoT_Subtype:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: rolefttot_subtype_fk
+            type: STRING
+            label: Subtype-title
+          href:
+            sourcePath: rolefttot_subtype_fk
+            type: STRING
+            label: Subtype-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/subtype/items/{{value}}'
+      roleFTtoT_Type:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: rolefttot_type_fk
+            type: STRING
+            label: Type-title
+          href:
+            sourcePath: rolefttot_type_fk
+            type: STRING
+            label: Type-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/type/items/{{value}}'
+  subtype:
+    sourcePath: /subtype
+    type: OBJECT
+    objectType: Subtype
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCharacter:
+        sourcePath: attcharacter
+        type: STRING
+        constraints:
+          required: true
+      roleTtoFT:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: rolettoft_fk
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: rolettoft_fk
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+  type:
+    sourcePath: /type
+    type: OBJECT
+    objectType: Type
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCharacter:
+        sourcePath: attcharacter
+        type: STRING
+        constraints:
+          required: true
+      roleTtoFT:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: rolettoft_fk
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: rolettoft_fk
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'

@@ -318,20 +318,39 @@ Map entry examples for the Oracle database system:
 
 (since v2.6.0)
 
-A foreign key referential action defines behaviour for a table with foreign key, 
+A foreign key referential action defines behavior for a table with foreign key, 
 in case that the primary key of the record that is referenced by the
 foreign key has been updated or deleted. For further details, see the
 documentation of the relevant database system.
 
-ShapeChange supports defining these actions for properties that
-represent foreign keys. To define the behaviour for updates, set the
-tagged value 'sqlOnUpdate' to the desired action. The tagged value would
-be set on an attribute, an association role, or the association the role
-belongs to (if ShapeChange does not find a definition for a foreign key
-referential action on an association role, it tries to look it up
-in the association). Likewise, for deletions, set tagged value
-'sqlOnDelete'. In general, ShapeChange knows the following foreign key
-referential actions:
+ShapeChange supports defining these actions, both globally using target parameters 
+xref:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
+xref:./SQL_DDL.adoc#foreignKeyOnDelete[foreignKeyOnDelete], as well as 
+locally, using tagged values 'sqlOnUpdate' and 'sqlOnDelete, for properties 
+that represent foreign keys. The tagged values are set on an attribute, 
+an association role, or the association the role belongs to (if 
+ShapeChange does not find a definition for a foreign key referential 
+action on an association role, it tries to look it up in the association).
+A local definition thereby is given priority over the global definition. 
+In other words, if a referential action is defined via target parameter AND 
+locally for a property that will be represented by a foreign key, then the 
+definition on the property will win in that case.
+
+NOTE: Local definition using tagged values in the model is not supported in 
+every case. That is because there can be multiple ways in which a model 
+element can be represented in SQL. For example, the SqlDdl target has multiple 
+rules for converting data types. In some of these rules, no property-specific 
+tables are created. With such rules, setting tagged values for referential actions on these 
+properties would have no effect. Instead, one would have to set the tagged values 
+on the data type itself. If a different conversion rule for data types was then applied, 
+the tagged values would have to be updated again. These circumstances can make 
+it difficult (if not impossible) for a modeling expert to add tagged values 
+for controlling referential actions in the right places - at least for certain cases 
+(like data type valued properties). Furthermore, if the conversion rules would change 
+at a later point in time, the modeling expert might have to revise the tagged values 
+again.
+
+In general, ShapeChange knows the following foreign key referential actions:
 
 * Cascade
 * No Action
@@ -339,7 +358,10 @@ referential actions:
 * Set Default
 * Set Null
 
-NOTE: When parsing the tagged value 'sqlOnDelete' and 'sqlOnUpdate',
+NOTE: When parsing the tagged value 'sqlOnDelete' and 'sqlOnUpdate', 
+as well as the target parameters 
+xef:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
+xref:./SQL_DDL.adoc#foreignKeyOnDelete[foreignKeyOnDelete], 
 case as well as leading, trailing, and intermediate (i.e. between words)
 whitespace is ignored. ShapeChange can parse, for example, the values
 'set null', 'setnull', 'Set Null', and '   set     Null   '. However,
@@ -2316,6 +2338,43 @@ xref:./SQL_DDL.adoc#Checking_Foreign_Key_Constraints[Checking Foreign Key Constr
 
 Applies to Rule(s): _none_ - default behavior
 
+[[foreignKeyOnDelete]]
+==== foreignKeyOnDelete
+
+(since v2.13.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String - either 'Cascade', 'No Action', 'Restrict', 'Set Default', or 'Set Null'
+
+Default Value: _none_
+
+Explanation: Defines the global behavior for foreign key constraint 
+referential actions in case of a delete. For further details, see section 
+xref:./SQL_DDL.adoc#Referential_Actions[Referential Actions].
+
+Applies to Rule(s): _none_ - default behavior
+
+[[foreignKeyOnUpdate]]
+==== foreignKeyOnUpdate
+
+(since v2.13.0)
+
+Alias: _none_
+
+Required / Optional: optional
+
+Type: String - either 'Cascade', 'No Action', 'Restrict', 'Set Default', or 'Set Null'
+
+Default Value: _none_
+
+Explanation: Defines the global behavior for foreign key constraint 
+referential actions in case of an update. For further details, see section 
+xref:./SQL_DDL.adoc#Referential_Actions[Referential Actions].
+
+Applies to Rule(s): _none_ - default behavior
 
 [[geometryDimension]]
 ==== geometryDimension

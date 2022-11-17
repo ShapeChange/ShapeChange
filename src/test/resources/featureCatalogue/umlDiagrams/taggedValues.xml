@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taggedValues xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <TaggedValue name="TagX" value="some value" modelElementName="Package1" modelElementType="Package" applicationSchemaName="Test Schema"/>
+  <TaggedValue name="TagY" value="some other value" modelElementName="FeatureType2" modelElementType="Class" applicationSchemaName="Test Schema"/>
+  <TaggedValue name="TagZ" value="first value" modelElementName="integer" modelElementType="Attribute" modelElementOwnerName="FeatureType1" applicationSchemaName="Test Schema"/>
+  <TaggedValue name="TagZ" value=" second value " modelElementName="integer" modelElementType="Attribute" modelElementOwnerName="FeatureType1" applicationSchemaName="Test Schema"/>
+</taggedValues>

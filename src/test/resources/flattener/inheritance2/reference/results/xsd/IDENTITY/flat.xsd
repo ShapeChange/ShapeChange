@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://shapechange.net/test/flattening/inheritance2" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/inheritance2" version="FIXME">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://shapechange.net/test/flattening/inheritance2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/inheritance2" version="FIXME">
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="T1_FT1" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT1Type"/>
@@ -6,8 +7,20 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft1" type="string"/>
-          <element name="pFT1" type="flat:T1_FT2PropertyType"/>
+          <element name="attT1Ft1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT1" type="flat:T1_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -24,7 +37,13 @@
     <complexContent>
       <extension base="flat:T1_FT1Type">
         <sequence>
-          <element name="attT1Ft11" type="string"/>
+          <element name="attT1Ft11" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -41,7 +60,13 @@
     <complexContent>
       <extension base="flat:T1_FT1Type">
         <sequence>
-          <element name="attT1Ft12" type="string"/>
+          <element name="attT1Ft12" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -58,7 +83,13 @@
     <complexContent>
       <extension base="flat:T1_FT1_2Type">
         <sequence>
-          <element name="attT1FT121" type="string"/>
+          <element name="attT1FT121" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -75,7 +106,13 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft2" type="string"/>
+          <element name="attT1Ft2" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -92,7 +129,13 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -109,7 +152,13 @@
     <complexContent>
       <extension base="flat:T2_FT1Type">
         <sequence>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt11" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -126,7 +175,13 @@
     <complexContent>
       <extension base="flat:T2_FT1_1Type">
         <sequence>
-          <element name="attFt111" type="integer"/>
+          <element name="attFt111" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -143,7 +198,13 @@
     <complexContent>
       <extension base="flat:T2_FT1Type">
         <sequence>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt12" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -160,8 +221,20 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
-          <element name="pFT2" type="flat:T2_FT1PropertyType"/>
+          <element name="attFt2" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT2" type="flat:T2_FT1PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -178,11 +251,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T3_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -202,7 +282,13 @@
     <complexContent>
       <extension base="flat:T3_FT1Type">
         <sequence>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt11" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -219,7 +305,13 @@
     <complexContent>
       <extension base="flat:T3_FT1Type">
         <sequence>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt12" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -236,7 +328,13 @@
     <complexContent>
       <extension base="flat:T3_FT1_2Type">
         <sequence>
-          <element name="attFt121" type="integer"/>
+          <element name="attFt121" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -253,11 +351,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT2" type="flat:T3_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -277,11 +382,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T4_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -301,7 +413,13 @@
     <complexContent>
       <extension base="flat:T4_FT1Type">
         <sequence>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt11" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -318,7 +436,13 @@
     <complexContent>
       <extension base="flat:T4_FT1Type">
         <sequence>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt12" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -335,7 +459,13 @@
     <complexContent>
       <extension base="flat:T4_FT1_2Type">
         <sequence>
-          <element name="attFt121" type="integer"/>
+          <element name="attFt121" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -352,11 +482,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT2" type="flat:T4_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -376,7 +513,13 @@
     <complexContent>
       <extension base="flat:T4_FT2Type">
         <sequence>
-          <element name="attFt21" type="integer"/>
+          <element name="attFt21" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -393,7 +536,13 @@
     <complexContent>
       <extension base="flat:T4_FT2Type">
         <sequence>
-          <element name="attFt22" type="integer"/>
+          <element name="attFt22" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -410,7 +559,13 @@
     <complexContent>
       <extension base="flat:T4_FT2_2Type">
         <sequence>
-          <element name="attFt221" type="integer"/>
+          <element name="attFt221" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -427,11 +582,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt" type="integer"/>
+          <element name="attFt" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFTSelfSourceA" type="flat:T5_FTPropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFTSelfTargetA</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -439,10 +601,17 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFTSelfSourceA</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="pFTSelfTargetB" type="flat:T5_FTPropertyType"/>
+          <element name="pFTSelfTargetB" type="flat:T5_FTPropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -459,7 +628,13 @@
     <complexContent>
       <extension base="flat:T5_FTType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -476,7 +651,13 @@
     <complexContent>
       <extension base="flat:T5_FTType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -493,7 +674,13 @@
     <complexContent>
       <extension base="flat:T5_FT_2Type">
         <sequence>
-          <element name="attFt21" type="integer"/>
+          <element name="attFt21" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -510,15 +697,28 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1toFt2BiDirectional" type="flat:T6_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt2toFt1BiDirectional</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="pFt1toFt2UniDirectional" type="flat:T6_FT2PropertyType"/>
+          <element name="pFt1toFt2UniDirectional" type="flat:T6_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -535,11 +735,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFt2toFt1BiDirectional" type="flat:T6_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1toFt2BiDirectional</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -559,11 +766,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt3" type="integer"/>
+          <element name="attFt3" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFt3TargetBiDirectional" type="flat:T6_FT3PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt3SelfSourceBiDirectional</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -571,10 +785,17 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt3TargetBiDirectional</reversePropertyName>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="pFt3SelfTargetUniDirectional" type="flat:T6_FT3PropertyType"/>
+          <element name="pFt3SelfTargetUniDirectional" type="flat:T6_FT3PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>

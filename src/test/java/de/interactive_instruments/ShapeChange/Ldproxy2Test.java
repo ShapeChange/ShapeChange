@@ -46,6 +46,22 @@ public class Ldproxy2Test extends BasicTestSCXML {
 	}
 	
 	@Test
+	public void test_ldproxy2_titleAttribute() {
+		
+		multiTest("src/test/resources/ldproxy2/titleAttribute/test_ldproxy2.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/titleAttribute/results",
+			"src/test/resources/ldproxy2/titleAttribute/reference/results");
+	}
+	
+	@Test
+	public void test_ldproxy2_queryables() {
+		
+		multiTest("src/test/resources/ldproxy2/queryables/test_ldproxy2.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/queryables/results",
+			"src/test/resources/ldproxy2/queryables/reference/results");
+	}
+	
+	@Test
 	public void test_ldproxy2_foreignKeyColumnSuffixCodelist() {
 		
 		multiTest("src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.xml",
@@ -67,5 +83,13 @@ public class Ldproxy2Test extends BasicTestSCXML {
 		multiTest("src/test/resources/ldproxy2/reflexiveRelation/test_reflexiveRelation.xml",
 			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/reflexiveRelation/results",
 			"src/test/resources/ldproxy2/reflexiveRelation/reference/results");
+	}
+	
+	@Test
+	public void test_ldproxy2_gmlOutput() {
+		
+		multiTest("src/test/resources/ldproxy2/gmlOutput/test_ldproxy2_gmlOutput.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/gmlOutput/results",
+			"src/test/resources/ldproxy2/gmlOutput/reference/results");
 	}
 }

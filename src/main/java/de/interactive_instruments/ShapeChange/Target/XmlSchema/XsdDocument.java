@@ -32,12 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Target.XmlSchema;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,18 +42,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
@@ -72,6 +66,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetXmlSchemaConfiguration;
@@ -89,6 +84,8 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Qualifier;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
+import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 public class XsdDocument implements MessageSource {
 
@@ -110,6 +107,7 @@ public class XsdDocument implements MessageSource {
     protected Vector<String> imports = new Vector<String>();
     protected boolean printed = false;
     protected String targetNamespace = null;
+    protected String targetNamespaceAbbreviation = null;
     protected String outputDirectory;
     protected String documentationTemplate = null;
     protected String documentationNoValue = null;
@@ -121,6 +119,9 @@ public class XsdDocument implements MessageSource {
     protected String codeListRepresentationTVFallback;
     protected EnumSet<Descriptor> descriptorsToRepresent = EnumSet.noneOf(Descriptor.class);
     protected SchematronSchema schDoc;
+
+    protected boolean writeXmlEncodingInfos = false;
+    protected XmlEncodingInfos encodingInfos = new XmlEncodingInfos();
 
     public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r, TargetXmlSchemaConfiguration c,
 	    String n, SchematronSchema schDoc) throws ShapeChangeAbortException, ParserConfigurationException {
@@ -183,6 +184,9 @@ public class XsdDocument implements MessageSource {
 	else
 	    okstra = "false";
 
+	writeXmlEncodingInfos = options.getCurrentProcessConfig()
+		.parameterAsBoolean(XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS, false);
+
 	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	dbf.setNamespaceAware(true);
 	dbf.setValidating(true);
@@ -198,6 +202,7 @@ public class XsdDocument implements MessageSource {
 
 	addAttribute(root, "version", pi.version());
 	targetNamespace = pi.targetNamespace();
+	targetNamespaceAbbreviation = pi.xmlns();
 	addAttribute(root, "targetNamespace", targetNamespace);
 	addAttribute(root, "xmlns:" + pi.xmlns(), targetNamespace);
 
@@ -207,6 +212,7 @@ public class XsdDocument implements MessageSource {
 		true) == null) {
 	    addCreationComment(root);
 	}
+
     }
 
     /**
@@ -773,6 +779,31 @@ public class XsdDocument implements MessageSource {
 	return null;
     }
 
+    public XmlEncodingInfos getXmlEncodingInfos() {
+
+	String targetNamespaceLocation = options.schemaLocationOfNamespace(targetNamespace);
+	this.encodingInfos.addNamespace(targetNamespaceAbbreviation, targetNamespace, targetNamespaceLocation);
+
+	Set<String> usedXmlNamespaces = this.encodingInfos.getModelElementEncodings().stream()
+		.map(mexe -> mexe.getXmlNamespace()).collect(Collectors.toSet());
+
+	for (String namespace : usedXmlNamespaces) {
+	    if (namespace.equals(targetNamespace)) {
+		continue;
+	    }
+	    String location = options.schemaLocationOfNamespace(namespace);
+	    String nsabr = options.nsabrForNamespace(namespace);
+	    this.encodingInfos.addNamespace(nsabr, namespace, location);
+	}
+//	for (String namespace : this.imports) {
+//	    String location = options.schemaLocationOfNamespace(namespace);
+//	    String nsabr = options.nsabrForNamespace(namespace);
+//	    this.encodingInfos.addNamespace(nsabr, namespace, location);
+//	}
+
+	return this.encodingInfos;
+    }
+
     /**
      * Create global element for an object / data type instance
      * 
@@ -792,6 +823,10 @@ public class XsdDocument implements MessageSource {
 	document.getDocumentElement().appendChild(e4);
 	addAttribute(e4, "name", elementName(ci, false));
 	addAttribute(e4, "type", typeName(ci, true));
+
+	if (writeXmlEncodingInfos) {
+	    encodingInfos.add(ci, elementName(ci, false), this.targetNamespace);
+	}
 
 	if (ci.isAbstract())
 	    addAttribute(e4, "abstract", "true");
@@ -1939,6 +1974,10 @@ public class XsdDocument implements MessageSource {
 	    addAttribute(e4, "name", elementName);
 	    addAttribute(e4, "type", "anyType");
 	    addAttribute(e4, "abstract", "true");
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(ci, elementName, this.targetNamespace);
+	    }
 	}
 
 	return res == 1;
@@ -1989,6 +2028,28 @@ public class XsdDocument implements MessageSource {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "ref", addImport(pme.getTargetElement()));
+
+	    if (writeXmlEncodingInfos) {
+
+		String targetQName = pme.getTargetElement().trim();
+		if (targetQName.contains(":")) {
+		    String[] parts = targetQName.split(":");
+		    String nsabr = parts[0];
+		    String localName = parts[1];
+		    String xmlNamespace = options.fullNamespace(nsabr);
+		    if (xmlNamespace == null) {
+			if (nsabr.equals(targetNamespaceAbbreviation)) {
+			    xmlNamespace = targetNamespace;
+			} else {
+			    xmlNamespace = "FIXME";
+			}
+		    }
+		    encodingInfos.add(pi, localName, xmlNamespace, false);
+		} else {
+		    encodingInfos.add(pi, targetQName, this.targetNamespace, false);
+		}
+	    }
+
 	    addMinMaxOccurs(e1, pi.cardinality());
 	    return e1;
 	}
@@ -1999,19 +2060,19 @@ public class XsdDocument implements MessageSource {
 	    inAssocClass = false;
 	}
 
-	ClassInfo ci = model.classById(pi.typeInfo().id);
+	ClassInfo typeCi = model.classById(pi.typeInfo().id);
 
 	String asAtt = pi.taggedValue("xsdAsAttribute");
 	if (StringUtils.isBlank(asAtt))
 	    asAtt = pi.taggedValue("asXMLAttribute");
 	String asAttRef = "";
 	String asAttGroupRef = "";
-	if (ci != null) {
-	    MapEntry me = options.attributeMapEntry(ci.name(), cibase.encodingRule("xsd"));
+	if (typeCi != null) {
+	    MapEntry me = options.attributeMapEntry(typeCi.name(), cibase.encodingRule("xsd"));
 	    if (me != null) {
 		asAttRef = me.rule;
 	    }
-	    me = options.attributeGroupMapEntry(ci.name(), cibase.encodingRule("xsd"));
+	    me = options.attributeGroupMapEntry(typeCi.name(), cibase.encodingRule("xsd"));
 	    if (me != null) {
 		asAttGroupRef = me.rule;
 	    }
@@ -2019,16 +2080,17 @@ public class XsdDocument implements MessageSource {
 
 	// First take care of the special cases
 
-	if (ci != null && ci.category() == Options.UNION && ci.asGroup() && ci.matches("rule-xsd-cls-union-asGroup")) {
+	if (typeCi != null && typeCi.category() == Options.UNION && typeCi.asGroup()
+		&& typeCi.matches("rule-xsd-cls-union-asGroup")) {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "group");
 	    addStandardAnnotation(e1, pi);
-	    if (ci.pkg() == null || ci.pkg().xmlns() == null) {
-		MessageContext mc = result.addError(null, 132, ci.name());
+	    if (typeCi.pkg() == null || typeCi.pkg().xmlns() == null) {
+		MessageContext mc = result.addError(null, 132, typeCi.name());
 		if (mc != null)
-		    mc.addDetail(null, 400, "Class", ci.fullName());
+		    mc.addDetail(null, 400, "Class", typeCi.fullName());
 	    } else {
-		addAttribute(e1, "ref", ci.qname() + "Group");
-		addImport(ci.pkg().xmlns(), ci.pkg().targetNamespace());
+		addAttribute(e1, "ref", typeCi.qname() + "Group");
+		addImport(typeCi.pkg().xmlns(), typeCi.pkg().targetNamespace());
 	    }
 	    addMinMaxOccurs(e1, m);
 	} else if (!asAttRef.equals("")) {
@@ -2037,7 +2099,16 @@ public class XsdDocument implements MessageSource {
 	    int idx = asAttRef.indexOf(":");
 	    if (idx > 0) {
 		String nsabr = asAttRef.substring(0, idx);
-		addImport(nsabr, options.fullNamespace(nsabr));
+		String attName = asAttRef.substring(idx + 1);
+		String ns = options.fullNamespace(nsabr);
+		addImport(nsabr, ns);
+		if (writeXmlEncodingInfos) {
+		    encodingInfos.add(pi, attName, ns, true);
+		}
+	    } else {
+		if (writeXmlEncodingInfos) {
+		    encodingInfos.add(pi, asAttRef, this.targetNamespace, true);
+		}
 	    }
 	    if (m.minOccurs == 1)
 		addAttribute(e1, "use", "required");
@@ -2049,11 +2120,18 @@ public class XsdDocument implements MessageSource {
 		String nsabr = asAttGroupRef.substring(0, idx);
 		addImport(nsabr, options.fullNamespace(nsabr));
 	    }
+	    // TODO JE - If encoding infos shall be written, Warn that we could not define
+	    // specific infos for pi
 	} else if (pi.matches("rule-xsd-prop-xsdAsAttribute") && "true".equalsIgnoreCase(asAtt)
 		&& (m.maxOccurs == 1 || asList(pi)) && !inAssocClass) {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "attribute");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "name", pi.name());
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(pi, pi.name(), this.targetNamespace, true);
+	    }
+
 	    if (m.minOccurs == 1)
 		addAttribute(e1, "use", "required");
 	    mapPropertyType(cibase, pi, e1, false, schDoc);
@@ -2075,7 +2153,12 @@ public class XsdDocument implements MessageSource {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "name", pi.name());
-	    if (ci != null && ci.asCharacterString())
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(pi, pi.name(), this.targetNamespace, false);
+	    }
+
+	    if (typeCi != null && typeCi.asCharacterString())
 		addAttribute(e1, "type", "string");
 	    else
 		mapPropertyType(cibase, pi, e1, inAssocClass, schDoc);
@@ -2093,11 +2176,16 @@ public class XsdDocument implements MessageSource {
 		    mc.addDetail(null, 400, "Class", cibase.fullName());
 	    }
 
-	} else if (ci != null && ci.category() == Options.CODELIST && ci.matches("rule-xsd-cls-codelist-gmlsf")) {
+	} else if (typeCi != null && typeCi.category() == Options.CODELIST
+		&& typeCi.matches("rule-xsd-cls-codelist-gmlsf")) {
 
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "name", pi.name());
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(pi, pi.name(), this.targetNamespace, false);
+	    }
 
 	    Element e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 	    e1.appendChild(e2);
@@ -2109,9 +2197,9 @@ public class XsdDocument implements MessageSource {
 	    addAttribute(restriction, "base", "gml:CodeType");
 	    simpleContent.appendChild(restriction);
 
-	    String codeListUri = ci.taggedValue("codeList");
+	    String codeListUri = typeCi.taggedValue("codeList");
 	    if (StringUtils.isBlank(codeListUri)) {
-		codeListUri = ci.taggedValue("vocabulary");
+		codeListUri = typeCi.taggedValue("vocabulary");
 	    }
 
 	    if (StringUtils.isNotBlank(codeListUri)) {
@@ -2130,6 +2218,11 @@ public class XsdDocument implements MessageSource {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "name", pi.name());
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(pi, pi.name(), this.targetNamespace, false);
+	    }
+
 	    addAttribute(e1, "type", "gml:ReferenceType");
 	    addMinMaxOccurs(e1, m);
 	    addImport("gml", options.fullNamespace("gml"));
@@ -2139,6 +2232,10 @@ public class XsdDocument implements MessageSource {
 	    e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "element");
 	    addStandardAnnotation(e1, pi);
 	    addAttribute(e1, "name", pi.name());
+
+	    if (writeXmlEncodingInfos) {
+		encodingInfos.add(pi, pi.name(), this.targetNamespace, false);
+	    }
 
 	    if ((pi.nilReasonAllowed() && pi.matches("rule-xsd-prop-nilReasonAllowed"))
 		    || (pi.voidable() && pi.matches("rule-xsd-prop-nillable"))) {
@@ -2154,13 +2251,14 @@ public class XsdDocument implements MessageSource {
 	    }
 
 	    boolean multiplicityAlreadySet = false;
-	    if (ci != null && ci.asCharacterString() && ci.matches("rule-xsd-cls-union-asCharacterString"))
+	    if (typeCi != null && typeCi.asCharacterString() && typeCi.matches("rule-xsd-cls-union-asCharacterString"))
 		addAttribute(e1, "type", "string");
 	    else
 		multiplicityAlreadySet = mapPropertyType(cibase, pi, e1, inAssocClass, schDoc);
 
 	    if (!multiplicityAlreadySet) {
-		if (ci != null && ci.isKindOf("historisches_Objekt") && ci.matches("rule-xsd-cls-okstra-lifecycle")) {
+		if (typeCi != null && typeCi.isKindOf("historisches_Objekt")
+			&& typeCi.matches("rule-xsd-cls-okstra-lifecycle")) {
 		    m.maxOccurs = Integer.MAX_VALUE;
 		}
 		addMinMaxOccurs(e1, m);
@@ -2168,9 +2266,7 @@ public class XsdDocument implements MessageSource {
 
 	    /*
 	     * 20120702 [js] Add restrictions given in the EA model using TaggedValues
-	     * 'length' and 'size' / 'pattern' Note: TaggedValues 'size' and 'pattern' have
-	     * to be added within the 'addTaggedValues' input parameter of the ShapeChange
-	     * config file. FIXME
+	     * 'length' and 'size' / 'pattern'
 	     */
 	    if (pi.matches("rule-xsd-prop-length-size-pattern") && (StringUtils.isNotBlank(pi.taggedValue("length"))
 		    || (StringUtils.isNotBlank(pi.taggedValue("size"))
@@ -2238,19 +2334,19 @@ public class XsdDocument implements MessageSource {
 			baseType = me.p1;
 			typecontent = me.p2;
 		    }
-		    if (base == null && ci != null) {
-			base = ci.qname() + "Type";
+		    if (base == null && typeCi != null) {
+			base = typeCi.qname() + "Type";
 		    }
 
-		    if (ci != null) {
+		    if (typeCi != null) {
 
 			/*
 			 * Identify base type of value type that has xmlTypeType="simple" (otherwise
 			 * ="complex") and xmlTypeContent="simple"
 			 */
-			MapEntry me2 = findBaseMapEntryInSupertypes(ci, pi.encodingRule("xsd"), "simple", "simple");
+			MapEntry me2 = findBaseMapEntryInSupertypes(typeCi, pi.encodingRule("xsd"), "simple", "simple");
 			if (me2 == null) {
-			    me2 = findBaseMapEntryInSupertypes(ci, pi.encodingRule("xsd"), "complex", "simple");
+			    me2 = findBaseMapEntryInSupertypes(typeCi, pi.encodingRule("xsd"), "complex", "simple");
 			}
 			if (me2 != null) {
 			    baseType = me2.p1;
@@ -2322,7 +2418,7 @@ public class XsdDocument implements MessageSource {
 
 		    } else {
 
-			MessageContext mc = result.addError(this, 180, ci.name(), pi.name());
+			MessageContext mc = result.addError(this, 180, typeCi.name(), pi.name());
 			if (mc != null)
 			    mc.addDetail(null, 400, "Property", pi.fullName());
 		    }
@@ -4223,10 +4319,9 @@ public class XsdDocument implements MessageSource {
     /**
      * Dump XML Schema file
      * 
-     * @param outputFormat tbd
      * @throws Exception tbd
      */
-    public void printFile(Properties outputFormat) throws Exception {
+    public void printFile() throws Exception {
 	if (printed) {
 	    return;
 	}
@@ -4280,22 +4375,12 @@ public class XsdDocument implements MessageSource {
 	    throw new ShapeChangeAbortException();
 	}
 
-	/*
-	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	 * doc in Serializer.setWriter and FileWriter)
-	 */
 	try {
 	    String fname = outputDirectory + "/" + name;
 	    new File(fname).getCanonicalPath();
-	    OutputStream fout = new FileOutputStream(fname);
-	    OutputStream bout = new BufferedOutputStream(fout);
-	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, outputFormat.getProperty("encoding"));
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
-	} catch (IOException ioe) {
+	    
+	    XMLUtil.writeXml(document, new File(fname));
+	} catch (ShapeChangeException ioe) {
 	    result.addError(null, 171, name);
 	}
 

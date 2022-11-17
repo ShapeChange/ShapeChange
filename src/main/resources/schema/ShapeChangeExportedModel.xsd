@@ -810,6 +810,11 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
      <documentation>The name of the UML diagram.</documentation>
     </annotation>
    </element>
+   <element minOccurs="0" name="documentation" type="string">
+    <annotation>
+     <documentation>The documentation of the UML diagram.</documentation>
+    </annotation>
+   </element>
    <element name="relPathToFile" type="string">
     <annotation>
      <documentation>Path to the image, relative to a directory that contains the images of all UML diagrams. For ShapeChange, that is directory 'images', which is a subdirectory of the directory that is identified via the ShapeChange input parameter 'tmpDirectory'. Example: package_1/package_2/Model element X.jpg</documentation>

@@ -242,7 +242,7 @@ public class Converter implements MessageSource {
 
 		} catch (Exception e) {
 
-		    result.addProcessFlowWarning(this, 508, pConfig.getClassName(), e.getMessage());
+		    result.addProcessFlowWarning(this, 508, pConfig.getClassName(), StringUtils.defaultIfBlank(e.getMessage(), "<not available>"));
 		}
 	    }
 	}

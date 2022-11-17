@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:a="http://shapechange.net/test/a" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gmlexr="http://www.opengis.net/gml/3.3/exr" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/a" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.3/exr" schemaLocation="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element abstract="true" name="AbstractFeatureTypeA" substitutionGroup="gml:AbstractFeature" type="a:AbstractFeatureTypeAType"/>
+  <complexType abstract="true" name="AbstractFeatureTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="attUnionA" type="a:UnionAPropertyType"/>
+          <element name="geom" type="gml:PointPropertyType"/>
+          <element name="ftAtoTA" type="a:TypeAPropertyType"/>
+          <element name="attMeasure" type="gml:MeasureType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="AbstractFeatureTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="a:AbstractFeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="DataTypeA" substitutionGroup="gml:AbstractObject" type="a:DataTypeAType"/>
+  <complexType name="DataTypeAType">
+    <sequence>
+      <element name="att1" type="string"/>
+    </sequence>
+    <attribute name="att2" type="double" use="required"/>
+  </complexType>
+  <complexType name="DataTypeAPropertyType">
+    <sequence>
+      <element ref="a:DataTypeA"/>
+    </sequence>
+  </complexType>
+  <simpleType name="EnumerationAType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+    </restriction>
+  </simpleType>
+  <element name="TypeA" substitutionGroup="gml:AbstractGML" type="a:TypeAType"/>
+  <complexType name="TypeAType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="attCodelistA" type="gml:ReferenceType">
+            <annotation>
+              <appinfo>
+                <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeListA</targetCodeList>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="a:TypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="TypeASub" substitutionGroup="a:TypeA" type="a:TypeASubType"/>
+  <complexType name="TypeASubType">
+    <complexContent>
+      <extension base="a:TypeAType">
+        <sequence>
+          <element name="att1" type="boolean"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypeASubPropertyType">
+    <sequence minOccurs="0">
+      <element ref="a:TypeASub"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="UnionA" substitutionGroup="gml:AbstractObject" type="a:UnionAType"/>
+  <complexType name="UnionAType">
+    <choice>
+      <element name="opt1" type="integer"/>
+      <element name="opt2" type="double"/>
+    </choice>
+  </complexType>
+  <complexType name="UnionAPropertyType">
+    <sequence>
+      <element ref="a:UnionA"/>
+    </sequence>
+  </complexType>
+</schema>

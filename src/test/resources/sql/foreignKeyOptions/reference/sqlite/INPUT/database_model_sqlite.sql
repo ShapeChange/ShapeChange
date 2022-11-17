@@ -24,3 +24,17 @@ CREATE TABLE featuretype2 (
    CONSTRAINT fk_featuretype2_roleft2b_fk FOREIGN KEY (roleft2b_fk) REFERENCES featuretype1 ON UPDATE RESTRICT
 );
 
+CREATE TABLE featuretype3 (
+
+   _id INTEGER NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE featuretype3_attdatatype (
+
+   _id INTEGER NOT NULL PRIMARY KEY,
+   att1 INTEGER NOT NULL,
+   att2 TEXT NOT NULL,
+   featuretype3_id INTEGER NOT NULL,
+   CONSTRAINT fk_featuretype3_attdatatype_featuretype3_id FOREIGN KEY (featuretype3_id) REFERENCES featuretype3 ON DELETE CASCADE ON UPDATE CASCADE
+);
+

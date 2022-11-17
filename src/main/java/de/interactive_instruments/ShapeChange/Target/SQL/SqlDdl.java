@@ -48,7 +48,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -58,9 +57,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.sparx.Repository;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -106,8 +102,12 @@ import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameNor
 import de.interactive_instruments.ShapeChange.Target.SQL.naming.UpperCaseNameWithLimitedLengthNormalizer;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CodeByCategoryInsertStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateTable;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyConstraint;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
 
@@ -161,6 +161,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static ColumnDataType foreignKeyColumnDataType;
     protected static Boolean foreignKeyDeferrable = null;
     protected static Boolean foreignKeyImmediate = null;
+    protected static String foreignKeyOnDelete = null;
+    protected static String foreignKeyOnUpdate = null;
     protected static boolean explicitlyEncodePkReferenceColumnInForeignKeys = false;
     protected static String primaryKeySpec;
     protected static String primaryKeySpecCodelist;
@@ -317,8 +319,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES)) {
 		createAssociativeTables = true;
 	    }
-	    
-	    if(pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+
+	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
 		associativeTablesWithSeparatePkField = true;
 	    }
 
@@ -511,7 +513,45 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			SqlConstants.PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE, "immediate", false, true);
 		foreignKeyImmediate = initialConstraintModeValue.equalsIgnoreCase("immediate");
 	    }
-	    
+
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE)) {
+
+		String actionValue = options.getCurrentProcessConfig()
+			.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE, null, false, true);
+		try {
+		    ForeignKeyConstraint.ReferentialAction ra = ForeignKeyConstraint.ReferentialAction
+			    .fromString(actionValue);
+
+		    if (databaseStrategy.isForeignKeyOnDeleteSupported(ra)) {
+			foreignKeyOnDelete = actionValue;
+		    } else {
+			result.addError(this, 109, ra.toString(), SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE,
+				"ON DELETE");
+		    }
+		} catch (IllegalArgumentException e) {
+		    result.addError(this, 108, actionValue, SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE);
+		}
+	    }
+
+	    if (options.getCurrentProcessConfig().hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE)) {
+
+		String actionValue = options.getCurrentProcessConfig()
+			.parameterAsString(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE, null, false, true);
+		try {
+		    ForeignKeyConstraint.ReferentialAction ra = ForeignKeyConstraint.ReferentialAction
+			    .fromString(actionValue);
+
+		    if (databaseStrategy.isForeignKeyOnUpdateSupported(ra)) {
+			foreignKeyOnUpdate = actionValue;
+		    } else {
+			result.addError(this, 109, ra.toString(), SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE,
+				"ON UPDATE");
+		    }
+		} catch (IllegalArgumentException e) {
+		    result.addError(this, 108, actionValue, SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE);
+		}
+	    }
+
 	    primaryKeySpec = options.parameterAsString(this.getClass().getName(), SqlConstants.PARAM_PRIMARYKEY_SPEC,
 		    SqlConstants.DEFAULT_PRIMARYKEY_SPEC, true, true);
 
@@ -588,7 +628,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_SUPPRESS_INLINE_DOCUMENTATION)) {
 		createDocumentation = false;
 	    }
-	    
+
 	    if (pi.matches(SqlConstants.RULE_TGT_SQL_ALL_ENCODE_PK_REFERENCED_COLUMN_IN_FOREIGNKEYS)) {
 		explicitlyEncodePkReferenceColumnInForeignKeys = true;
 	    }
@@ -906,30 +946,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		visitor.visit(stmts);
 		visitor.postprocess();
 
-		Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-		outputFormat.setProperty("encoding", "UTF-8");
-
 		String fileName = outputFilename + ".xsd";
 
-		/*
-		 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-		 * doc in Serializer.setWriter and FileWriter)
-		 */
-
 		File repXsd = new File(outputDirectory, fileName);
+		    
+		XMLUtil.writeXml(visitor.getDocument(), repXsd);
 
-		try (BufferedWriter writer = new BufferedWriter(
-			new OutputStreamWriter(new FileOutputStream(repXsd), "UTF-8"))) {
-
-		    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-		    serializer.setWriter(writer);
-		    serializer.asDOMSerializer().serialize(visitor.getDocument());
-
-		    result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
-		}
-
+		result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
+		
 	    } else {
 
 		// --- Create database model
@@ -1015,6 +1039,14 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		    Collections.sort(stmtsForDdlCreation, stmtComparator);
 		}
 
+		/*
+		 * now we should have the final list of statements - all modifications (e.g.
+		 * fixes) should have been applied by now
+		 */
+
+		// create some (debug) infos
+		logDebugInfos(stmtsForDdlCreation);
+
 		if (separateSpatialIndexStatements) {
 
 		    String fileName = outputFilename + "_spatial.sql";
@@ -1060,6 +1092,88 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    e.printStackTrace(System.err);
 	}
+    }
+
+    private void logDebugInfos(List<Statement> stmtsForDdlCreation) {
+
+	int countTables = 0;
+
+	int countAssociativeTablesRepresentingAssociations = 0;
+	int countAssociativeTablesRepresentingAttributes = 0;
+	int countDataTypeUsageSpecificTables = 0;
+
+	int countTablesRepresentingFeatureTypes = 0;
+	int countTablesRepresentingTypes = 0;
+	int countTablesRepresentingDataTypes = 0;
+	int countTablesRepresentingCodelists = 0;
+	int countTablesRepresentingEnumerations = 0;
+	int countTablesRepresentingUnions = 0;
+
+	for (Statement stmt : stmtsForDdlCreation) {
+
+	    if (stmt instanceof CreateTable) {
+
+		countTables++;
+
+		CreateTable ct = (CreateTable) stmt;
+		Table t = ct.getTable();
+
+		if (t.isAssociativeTable()) {
+		    if (t.getRepresentedAssociation() != null) {
+			countAssociativeTablesRepresentingAssociations++;
+		    } else {
+			countAssociativeTablesRepresentingAttributes++;
+		    }
+		} else if (t.isUsageSpecificTable()) {
+		    countDataTypeUsageSpecificTables++;
+		} else {
+		    ClassInfo repCi = t.getRepresentedClass();
+		    if (repCi != null) {
+			switch (repCi.category()) {
+			case Options.FEATURE:
+			    countTablesRepresentingFeatureTypes++;
+			    break;
+			case Options.OBJECT:
+			    countTablesRepresentingTypes++;
+			    break;
+			case Options.DATATYPE:
+			    countTablesRepresentingDataTypes++;
+			    break;
+			case Options.UNION:
+			    countTablesRepresentingUnions++;
+			    break;
+			case Options.CODELIST:
+			    countTablesRepresentingCodelists++;
+			    break;
+			case Options.ENUMERATION:
+			    countTablesRepresentingEnumerations++;
+			    break;
+			default:
+			    break;
+			}
+		    }
+		}
+	    }
+	}
+
+	int sumTableCategories = countAssociativeTablesRepresentingAssociations
+		+ countAssociativeTablesRepresentingAttributes + countDataTypeUsageSpecificTables
+		+ countTablesRepresentingFeatureTypes + countTablesRepresentingTypes + countTablesRepresentingDataTypes
+		+ countTablesRepresentingCodelists + countTablesRepresentingEnumerations
+		+ countTablesRepresentingUnions;
+	
+	if(countTables != sumTableCategories) {
+	    result.addDebug(this,400,""+sumTableCategories,""+countTables);
+	}
+	result.addDebug(this, 401, ""+countAssociativeTablesRepresentingAssociations);
+	result.addDebug(this, 402, ""+countAssociativeTablesRepresentingAttributes);
+	result.addDebug(this, 403, ""+countDataTypeUsageSpecificTables);
+	result.addDebug(this, 404, ""+countTablesRepresentingFeatureTypes);
+	result.addDebug(this, 405, ""+countTablesRepresentingTypes);
+	result.addDebug(this, 406, ""+countTablesRepresentingDataTypes);
+	result.addDebug(this, 407, ""+countTablesRepresentingCodelists);
+	result.addDebug(this, 408, ""+countTablesRepresentingEnumerations);
+	result.addDebug(this, 409, ""+countTablesRepresentingUnions);
     }
 
     /**
@@ -1150,7 +1264,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	outputFilename = null;
 
 	associativeTablesWithSeparatePkField = false;
-	
+
 	categoriesForSeparatingCodeInsertStatements = new TreeSet<String>();
 	codeStatusCLType = null;
 	codeStatusCLLength = SqlConstants.DEFAULT_CODESTATUSCL_LENGTH;
@@ -1164,6 +1278,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	foreignKeyColumnDataType = null;
 	foreignKeyDeferrable = null;
 	foreignKeyImmediate = null;
+	foreignKeyOnDelete = null;
+	foreignKeyOnUpdate = null;
 	explicitlyEncodePkReferenceColumnInForeignKeys = false;
 	primaryKeySpec = null;
 	primaryKeySpecCodelist = null;
@@ -1347,6 +1463,32 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	case 32:
 	    return "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
 
+	case 108:
+	    return "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109:
+	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
+
+	case 400:
+	    return "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
+	case 401:
+	    return "Number of CREATE TABLE statements for associative tables representing associations: $1$";
+	case 402:
+	    return "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
+	case 403:
+	    return "Number of CREATE TABLE statements for datatype usage specific tables: $1$"; 
+	case 404:
+	    return "Number of CREATE TABLE statements for tables representing feature types: $1$";
+	case 405:
+	    return "Number of CREATE TABLE statements for tables representing (object) types: $1$";
+	case 406:
+	    return "Number of CREATE TABLE statements for tables representing data types: $1$";
+	case 407:
+	    return "Number of CREATE TABLE statements for tables representing code lists: $1$";
+	case 408:
+	    return "Number of CREATE TABLE statements for tables representing enumerations: $1$";
+	case 409:
+	    return "Number of CREATE TABLE statements for tables representing unions: $1$";
+	    
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504:

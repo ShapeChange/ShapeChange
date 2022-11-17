@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/testCatalogue_frameHtml.eap" />
+			value="src/test/resources/featureCatalogue/umlDiagrams/testCatalogue_frameHtml.eap" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -16,23 +16,30 @@
 		<parameter name="loadDiagrams" value="true" />
 		<parameter name="packageDiagramRegex" value="[\w|\W]*NAME[\w|\W]*" />
 		<parameter name="classDiagramRegex" value="Context: NAME[\w|\W]*" />
-
+		<parameter name="representTaggedValues" value="TagX,TagY,TagZ"/>
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/html/frame_with_images/log.xml" />
+		<parameter name="logFile" value="testResults/featureCatalogue/htmlframe_with_images/log.xml" />
 	</log>
+	<transformers>
+	    <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" 
+	    mode="enabled" id="IDENTITY">
+	    <xi:include href="src/test/resources/featureCatalogue/umlDiagrams/taggedValues.xml" />
+	    </Transformer>
+	</transformers>
 	<targets>
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue"
-			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/html/frame_with_images" />
+			mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/featureCatalogue/htmlframe_with_images" />
 			<targetParameter name="outputFilename" value="test" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="inheritedProperties" value="false" />
 			<targetParameter name="outputFormat" value="FRAMEHTML" />
 			<targetParameter name="includeDiagrams" value="true" />
+			<targetParameter name="includeDiagramDocumentation" value="true" />
 			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>			
 			<targetParameter name="xslTransformerFactory"
 				value="net.sf.saxon.TransformerFactoryImpl" />

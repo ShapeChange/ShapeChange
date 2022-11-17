@@ -33,14 +33,10 @@
 package de.interactive_instruments.ShapeChange.Target.Codelists;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -49,9 +45,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,6 +53,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Descriptor;
@@ -69,6 +63,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * 
@@ -698,12 +693,6 @@ public class CodelistDictionariesML implements Target, MessageSource {
 	}
 
 	try {
-	    Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	    outputFormat.setProperty("indent", "yes");
-	    outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	    outputFormat.setProperty("encoding", "UTF-8");
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
 	    for (Iterator<ClassInfo> i = model.classes(pi).iterator(); i.hasNext();) {
 		ClassInfo ci = i.next();
 		Document cDocument = documentMap.get(ci.id());
@@ -718,20 +707,12 @@ public class CodelistDictionariesML implements Target, MessageSource {
 		    if (!outDir.exists())
 			outDir.mkdirs();
 
-		    /*
-		     * SO: Used OutputStreamWriter instead of FileWriter to set character encoding
-		     * (see doc in Serializer.setWriter and FileWriter)
-		     */
-		    OutputStream fout = new FileOutputStream(dir + "/" + ci.name() + ".xml");
-		    OutputStreamWriter outputXML = new OutputStreamWriter(fout, outputFormat.getProperty("encoding"));
-		    serializer.setWriter(outputXML);
-		    serializer.asDOMSerializer().serialize(cDocument);
-		    outputXML.close();
+		    XMLUtil.writeXml(cDocument, new File(dir, ci.name() + ".xml"));
 		    result.addResult(getTargetName(), dir, ci.name() + ".xml", ci.qname());
 
 		}
 	    }
-	} catch (Exception e) {
+	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
 		result.addError(m);

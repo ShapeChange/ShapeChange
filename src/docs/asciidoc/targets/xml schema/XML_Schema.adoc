@@ -535,6 +535,22 @@ with other models).
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
+[[writeXmlEncodingInfos]]
+==== writeXmlEncodingInfos
+
+(since v2.13.0)
+
++++Type:+++ Boolean (true or false)
+
++++Default Value:+++ false
+
++++Explanation:+++ If "true", the target will also output 
+xref:./XML_Encoding_Infos.adoc[XML encoding infos],
+one file for each schema it has processed. These information items can be used
+by other ShapeChange targets, for example the xref:../ldproxy2.adoc[ldproxy2 target].
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
 [[Encoding_Rules]]
 === Encoding Rules
 

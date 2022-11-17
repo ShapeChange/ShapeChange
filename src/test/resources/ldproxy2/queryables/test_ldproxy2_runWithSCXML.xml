@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:xi="http://www.w3.org/2001/XInclude"
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+   <input id="INPUT">
+      <parameter name="inputModelType" value="SCXML"/>
+      <parameter name="inputFile"
+                 value="src/test/resources/ldproxy2/queryables/test_ldproxy2_queryables.zip"/>
+      <parameter name="appSchemaNameRegex" value="Test.*"/>
+      <parameter name="publicOnly" value="true"/>
+      <parameter name="checkingConstraints" value="disabled"/>
+      <parameter name="sortedSchemaOutput" value="true"/>
+      <parameter name="addTaggedValues" value="*"/>
+      <stereotypeAliases>
+         <StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+         <StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+         <StereotypeAlias alias="bundle" wellknown=""/>
+         <StereotypeAlias alias="leaf" wellknown=""/>
+         <StereotypeAlias alias="abstract" wellknown=""/>
+         <StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+         <StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+         <StereotypeAlias alias="request" wellknown="DataType"/>
+         <StereotypeAlias alias="response" wellknown="DataType"/>
+         <StereotypeAlias alias="feature" wellknown="FeatureType"/>
+         <StereotypeAlias alias="interface" wellknown="Type"/>
+         <StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+         <StereotypeAlias alias="property" wellknown=""/>
+         <StereotypeAlias alias="enum" wellknown=""/>
+      </stereotypeAliases>
+   </input>
+   <log>
+      <parameter name="reportLevel" value="INFO"/>
+      <parameter name="logFile" value="testResults/ldproxy2/queryables/log.xml"/>
+   </log>
+   <transformers>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+                   id="TRF_flattenInheritance"
+                   input="INPUT"
+                   mode="enabled">
+         <parameters>
+            <ProcessParameter name="separatorForPropertyFromUnion" value="_"/>
+         </parameters>
+         <rules>
+            <ProcessRuleSet name="flattener">
+               <rule name="rule-trf-cls-flatten-inheritance"/>
+            </ProcessRuleSet>
+         </rules>
+      </Transformer>
+   </transformers>
+   <targets>
+      <Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+              inputs="TRF_flattenInheritance"
+              mode="enabled">
+         <targetParameter name="outputDirectory" value="testResults/ldproxy2/queryables/results"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="queryables"
+                          value="attDate,attInt,attPoint,attCharacter,roleFTtoT"/>
+         <targetParameter name="associativeTableColumnSuffix" value="_id"/>
+         <targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+         <targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+         <targetParameter name="forceAxisOrder" value="NONE"/>
+         <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+         <targetParameter name="primaryKeyColumn" value="idx"/>
+         <targetParameter name="srid" value="4326"/>
+         <targetParameter name="_unitTestOverride" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="ldptest"/>
+         <rules>
+            <EncodingRule name="ldptest">
+               <rule name="rule-ldp2-all-queryables"/>
+               <rule name="rule-ldp2-all-schemas"/>
+            </EncodingRule>
+         </rules>
+         <rules>
+            <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
+               <rule name="req-all-all-documentation"/>
+               <rule name="req-xsd-pkg-targetNamespace"/>
+               <rule name="req-xsd-pkg-xmlns"/>
+               <rule name="req-xsd-pkg-namespace-schema-only"/>
+               <rule name="rec-xsd-pkg-version"/>
+               <rule name="req-xsd-pkg-xsdDocument"/>
+               <rule name="req-xsd-pkg-dependencies"/>
+               <rule name="req-xsd-cls-codelist-asDictionary-true"/>
+               <rule name="req-xsd-cls-codelist-extensibility-values"/>
+               <rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
+               <rule name="req-xsd-cls-datatype-noPropertyType"/>
+               <rule name="req-xsd-cls-objecttype-noPropertyType"/>
+               <rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
+               <rule name="req-xsd-cls-enum-no-supertypes"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-nillable"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="okstra">
+               <rule name="rule-xsd-cls-no-base-class"/>
+               <rule name="rule-xsd-cls-no-abstract-classes"/>
+               <rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
+               <rule name="rule-xsd-cls-okstra-lifecycle"/>
+               <rule name="rule-xsd-cls-okstra-fid"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="gml21">
+               <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
+               <rule name="rule-xsd-all-gml21"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="notEncoded">
+               <rule name="rule-xsd-all-notEncoded"/>
+               <rule name="rule-json-all-notEncoded"/>
+               <rule name="rule-sql-all-notEncoded"/>
+               <rule name="rule-cdb-all-notEncoded"/>
+               <rule name="rule-gpkg-all-notEncoded"/>
+               <rule name="rule-ldp2-all-notEncoded"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="citygml-ade">
+               <rule name="req-xsd-cls-suppress-supertype"/>
+               <rule name="req-xsd-cls-suppress-subtype"/>
+               <rule name="req-xsd-cls-suppress-no-properties"/>
+               <rule name="rule-xsd-cls-suppress"/>
+               <rule name="rule-xsd-cls-adeelement"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-initialValue"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19139_2007" name="metadata-profile">
+               <rule name="rule-xsd-cls-standard-19139-isoType"/>
+               <rule name="req-xsd-cls-suppress-supertype"/>
+               <rule name="req-xsd-cls-suppress-subtype"/>
+               <rule name="req-xsd-cls-suppress-no-properties"/>
+               <rule name="rule-xsd-cls-suppress"/>
+               <rule name="rule-xsd-pkg-schematron"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
+               <rule name="req-xsd-cls-mixin-supertypes"/>
+               <rule name="req-xsd-cls-codelist-no-supertypes"/>
+               <rule name="rule-xsd-cls-union-asCharacterString"/>
+               <rule name="rule-xsd-cls-union-asGroup"/>
+               <rule name="rule-xsd-cls-enum-supertypes"/>
+               <rule name="rule-xsd-cls-enum-subtypes"/>
+               <rule name="rule-xsd-cls-basictype"/>
+               <rule name="rule-xsd-cls-union-direct"/>
+               <rule name="rule-xsd-cls-codelist-constraints"/>
+               <rule name="rule-xsd-cls-mixin-classes-as-group"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-exclude-derived"/>
+               <rule name="rule-xsd-prop-length-size-pattern"/>
+               <rule name="rule-xsd-prop-xsdAsAttribute"/>
+               <rule name="rule-xsd-prop-nillable"/>
+               <rule name="rule-xsd-prop-nilReasonAllowed"/>
+               <rule name="rule-xsd-prop-initialValue"/>
+               <rule name="rule-xsd-prop-att-map-entry"/>
+               <rule name="rule-xsd-pkg-schematron"/>
+               <rule name="rule-xsd-all-tagged-values"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="external">
+               <rule name="rule-xsd-all-notEncoded"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
+               <rule name="rule-xsd-cls-no-gml-types"/>
+               <rule name="rule-xsd-all-naming-gml"/>
+               <rule name="rule-xsd-cls-global-enumeration"/>
+               <rule name="rule-xsd-cls-standard-gml-property-types"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="STRING" type="Character"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="CharacterString"/>
+            <MapEntry param="initialValueEncoding{true=true;false=false}"
+                      rule="*"
+                      targetType="BOOLEAN"
+                      type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="INTEGER" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Number"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Real"/>
+            <MapEntry param="" rule="*" targetType="DATE" type="Date"/>
+            <MapEntry param="" rule="*" targetType="DATETIME" type="DateTime"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="Time"/>
+            <MapEntry param="" rule="*" targetType="INTEGER" type="Year"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="URI"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Distance"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Length"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Angle"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Speed"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Velocity"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Area"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Volume"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Weight"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Height"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Pressure"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Percentage"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Temperature"/>
+            <MapEntry param="" rule="*" targetType="FLOAT" type="Bearing"/>
+            <MapEntry param="geometryInfos{geometryType=POLYGON}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Envelope"/>
+            <MapEntry param="geometryInfos{geometryType=POINT}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="DirectPosition"/>
+            <MapEntry param="geometryInfos{geometryType=POINT}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Point"/>
+            <MapEntry param="geometryInfos{geometryType=MULTI_POINT}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometryInfos{geometryType=LINE_STRING}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Curve"/>
+            <MapEntry param="geometryInfos{geometryType=LINE_STRING}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_LineString"/>
+            <MapEntry param="geometryInfos{geometryType=LINE_STRING}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_CompositeCurve"/>
+            <MapEntry param="geometryInfos{geometryType=MULTI_LINE_STRING}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometryInfos{geometryType=POLYGON}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Surface"/>
+            <MapEntry param="geometryInfos{geometryType=POLYGON}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Polygon"/>
+            <MapEntry param="geometryInfos{geometryType=POLYGON}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_CompositeSurface"/>
+            <MapEntry param="geometryInfos{geometryType=MULTI_POLYGON}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometryInfos{geometryType=ANY}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Primitive"/>
+            <MapEntry param="geometryInfos{geometryType=GEOMETRY_COLLECTION}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Aggregate"/>
+            <MapEntry param="geometryInfos{geometryType=ANY}"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Object"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="TM_Duration"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="TM_PeriodDuration"/>
+         </mapEntries>
+      </Target>
+   </targets>
+</ShapeChangeConfiguration>

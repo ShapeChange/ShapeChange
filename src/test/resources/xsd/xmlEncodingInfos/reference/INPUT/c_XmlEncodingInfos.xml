@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><XmlEncodingInfos xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <modelElementEncodings>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC" xmlName="DataTypeC" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::att2" xmlAttribute="true" xmlName="att2" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::attDataTypeA" xmlName="attDataTypeA" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC1" xmlName="FeatureTypeC1" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC1::ftC1toFTB" xmlName="ftC1toFTB" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC2" xmlName="FeatureTypeC2" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC2::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/c"/>
+  </modelElementEncodings>
+  <namespaces>
+    <XmlNamespace ns="http://shapechange.net/test/c" nsabr="c"/>
+  </namespaces>
+</XmlEncodingInfos>

@@ -506,7 +506,7 @@ public class XMLWriter extends XMLFilterImpl {
      * @param uri       The Namespace URI, or the empty string if none is available.
      * @param localName The element's local (unprefixed) name (required).
      * @param qName     The element's qualified (prefixed) name, or the empty string
-     *                  is none is available. This method will use the qName as a
+     *                  if none is available. This method will use the qName as a
      *                  template for generating a prefix if necessary, but it is not
      *                  guaranteed to use the same qName.
      * @param atts      The element's attribute list (must not be null).
@@ -834,6 +834,10 @@ public class XMLWriter extends XMLFilterImpl {
      */
     public void startElement(String localName) throws SAXException {
 	startElement("", localName, "", EMPTY_ATTS);
+    }
+    
+    public void startElement(String localName, Attributes atts) throws SAXException {
+	startElement("", localName, "", atts);
     }
 
     /**

@@ -154,6 +154,9 @@ public class SqlConstants {
     public static final String PARAM_FOREIGN_KEY_DEFERRABLE = "foreignKeyDeferrable";
     public static final String PARAM_FOREIGN_KEY_INITIAL_CONSTRAINT_MODE = "foreignKeyInitialConstraintMode";
     
+    public static final String PARAM_FOREIGN_KEY_ON_DELETE = "foreignKeyOnDelete";
+    public static final String PARAM_FOREIGN_KEY_ON_UPDATE = "foreignKeyOnUpdate";
+    
     /**
      * Global definition of the dimension of geometry types, which is used by DBMSs
      * such as SQLite (more specifically, SQLite in combination with the spatial

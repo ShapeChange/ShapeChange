@@ -33,10 +33,8 @@
 package de.interactive_instruments.ShapeChange.Target.KML;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.SortedSet;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,10 +43,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
-import org.apache.xpath.XPathAPI;
+import org.docx4j.org.apache.xpath.XPathAPI;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -60,12 +55,14 @@ import org.w3c.dom.NodeList;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Target;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 public class XSLT implements Target {
 
@@ -832,12 +829,12 @@ public class XSLT implements Target {
 	if (ruledoc != null) {
 	    e4 = null;
 	    String def = null;
-	    try {
+	    try {		
 		NodeList styles = XPathAPI.selectNodeList(ruledoc,
 			"/*/se:FeatureTypeStyle[se:FeatureTypeName=\"" + ci.qname() + "\"]/se:Rule",
 			ruledoc.getDocumentElement());
 		for (int i = styles.getLength() - 1; i >= 0; i--) {
-		    Node style = styles.item(i);
+		    Node style = styles.item(i);		    
 		    NodeList filters = XPathAPI.selectNodeList(style, "ogc:Filter", ruledoc.getDocumentElement());
 		    if (filters.getLength() > 0) {
 			Node filter = filters.item(0);
@@ -853,7 +850,7 @@ public class XSLT implements Target {
 			}
 			e5 = document.createElementNS(NS_XSL, "when");
 			e4.appendChild(e5);
-			addAttribute(document, e5, "test", test);
+			addAttribute(document, e5, "test", test);			
 			NodeList symbols = XPathAPI.selectNodeList(style, "se:OnlineResource/@xlink:href",
 				ruledoc.getDocumentElement());
 			if (symbols.getLength() > 0) {
@@ -864,7 +861,7 @@ public class XSLT implements Target {
 			    e6.appendChild(document.createTextNode(sym.replace("&", "%26")
 				    + "%26Encoding=application/vnd.google-earth.kml+xml#" + id));
 			}
-		    } else {
+		    } else {			
 			NodeList symbols = XPathAPI.selectNodeList(style, "se:OnlineResource/@xlink:href",
 				ruledoc.getDocumentElement());
 			if (symbols.getLength() > 0) {
@@ -1615,28 +1612,15 @@ public class XSLT implements Target {
 	    }
 	}
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
 	try {
 	    File file = new File(outputDirectory + "/" + pi.name() + "_gml2kml.xsl");
-	    FileWriter outputXML = new FileWriter(file);
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
+	    XMLUtil.writeXml(document, file);
 	    result.addResult(getTargetName(), outputDirectory, pi.name() + "_gml2kml.xsl", pi.targetNamespace());
 
 	    file = new File(outputDirectory + "/" + pi.name() + "_root.kml");
-	    outputXML = new FileWriter(file);
-	    serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(kmlDocument);
-	    outputXML.close();
+	    XMLUtil.writeXml(document, file);	    
 	    result.addResult(getTargetName(), outputDirectory, pi.name() + "_root.kml", pi.targetNamespace());
-	} catch (Exception e) {
+	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
 		result.addError(m);

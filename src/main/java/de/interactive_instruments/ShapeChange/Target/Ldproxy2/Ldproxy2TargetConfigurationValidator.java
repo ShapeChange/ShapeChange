@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
@@ -53,7 +55,11 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.ModelElementXmlEncoding;
+import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
+import de.interactive_instruments.ShapeChange.XmlNamespace;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -61,8 +67,8 @@ import de.interactive_instruments.ShapeChange.TargetConfiguration;
  */
 public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
+	    .of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
 		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
 		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
@@ -70,9 +76,14 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
-		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
-		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
-		    "_unitTestOverride").collect(Collectors.toSet()));
+		    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
+		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
+		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
+		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
+	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
@@ -129,6 +140,16 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_LABEL);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH);
 
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_ID_PREFIX);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_OUTPUT);
+	isValid = isValid & checkNonNegativeIntegerParameter(Ldproxy2Constants.PARAM_GML_SF_LEVEL);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_UOM_TV_NAME);
+	isValid = isValid
+		& checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME);
+	isValid = isValid
+		& checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS);
+
 	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER))) {
 	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER);
 	    try {
@@ -137,6 +158,77 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		MessageContext mc = result.addError(this, 107, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, paramValue);
 		mc.addDetail(this, 0, targetConfigInputs);
 		isValid = false;
+	    }
+	}
+
+	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_GML_SF_LEVEL))) {
+	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_GML_SF_LEVEL);
+	    if (!("0".equals(paramValue) || "1".equals(paramValue) || "2".equals(paramValue))) {
+		MessageContext mc = result.addError(this, 110, Ldproxy2Constants.PARAM_GML_SF_LEVEL, paramValue);
+		mc.addDetail(this, 0, targetConfigInputs);
+		isValid = false;
+	    }
+	}
+
+	// check XML encoding infos, if any are present
+	if (targetConfig.hasAdvancedProcessConfigurations()) {
+
+	    Element advancedProcessConfigElmt = targetConfig.getAdvancedProcessConfigurations();
+
+	    List<Element> xeiElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "XmlEncodingInfos");
+
+	    if (!xeiElmts.isEmpty()) {
+
+		Map<String, ModelElementXmlEncoding> testMexeByKey = new HashMap<>();
+		Map<String, XmlNamespace> testXnsByNs = new HashMap<>();
+
+		for (Element xeiElmt : xeiElmts) {
+
+		    XmlEncodingInfos xei = XmlEncodingInfos.fromXml(xeiElmt);
+
+		    /*
+		     * Check if ModelElementXmlEncoding with same @applicationSchemaName
+		     * and @modelElementName but different @xmlName, @xmlNamespace,
+		     * and/or @xmlAttribute values exists.
+		     */
+		    for (ModelElementXmlEncoding xeiMexe : xei.getModelElementEncodings()) {
+			String key = xeiMexe.getApplicationSchemaName() + "#" + xeiMexe.getModelElementName();
+			ModelElementXmlEncoding testMexe = testMexeByKey.get(key);
+			if (testMexe != null && (StringUtils.compare(testMexe.getXmlName(), xeiMexe.getXmlName()) != 0
+				|| StringUtils.compare(testMexe.getXmlNamespace(), xeiMexe.getXmlNamespace()) != 0
+				|| Boolean.compare(testMexe.isXmlAttribute(), xeiMexe.isXmlAttribute()) != 0)) {
+
+			    MessageContext mc = result.addError(this, 111, testMexe.getApplicationSchemaName(),
+				    testMexe.getModelElementName());
+			    mc.addDetail(this, 0, targetConfigInputs);
+			    isValid = false;
+
+			} else {
+			    testMexeByKey.put(xeiMexe.getApplicationSchemaName() + "#" + xeiMexe.getModelElementName(),
+				    xeiMexe);
+			}
+		    }
+
+		    /*
+		     * Now check if XmlNamespace with same @ns but different @nsabr, @location,
+		     * and/or @packageName values exists.
+		     */
+		    for (XmlNamespace xeiXns : xei.getXmlNamespaces()) {
+
+			XmlNamespace testXns = testXnsByNs.get(xeiXns.getNs());
+			if (testXns != null && (StringUtils.compare(testXns.getNsabr(), xeiXns.getNsabr()) != 0
+				|| StringUtils.compare(testXns.getLocation(), xeiXns.getLocation()) != 0
+				|| StringUtils.compare(testXns.getPackageName(), xeiXns.getPackageName()) != 0)) {
+
+			    MessageContext mc = result.addError(this, 112, testXns.getNs());
+			    mc.addDetail(this, 0, targetConfigInputs);
+			    isValid = false;
+
+			} else {
+			    testXnsByNs.put(xeiXns.getNs(), xeiXns);
+			}
+		    }
+		}
 	    }
 	}
 
@@ -408,6 +500,12 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "Invalid map entry for type '$1$': the target type is undefined.";
 	case 109:
 	    return "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
+	case 110:
+	    return "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
+	case 111:
+	    return "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
+	case 112:
+	    return "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
 
 	default:
 	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

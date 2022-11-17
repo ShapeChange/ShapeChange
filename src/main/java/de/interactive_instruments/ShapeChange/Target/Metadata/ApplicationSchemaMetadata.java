@@ -31,17 +31,13 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Metadata;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -56,9 +52,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -70,6 +63,7 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -82,6 +76,7 @@ import de.interactive_instruments.ShapeChange.Profile.Profiles;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -289,16 +284,16 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	// create elements documenting the application schema
-	Element e_name = document.createElement("name");
+	Element e_name = document.createElementNS(NS,"name");
 	e_name.setTextContent(schemaPi.name());
-	Element e_tns = document.createElement("targetNamespace");
+	Element e_tns = document.createElementNS(NS,"targetNamespace");
 	e_tns.setTextContent(schemaPi.targetNamespace());
 
-	Element e_as = document.createElement("ApplicationSchema");
+	Element e_as = document.createElementNS(NS, "ApplicationSchema");
 	e_as.appendChild(e_name);
 	e_as.appendChild(e_tns);
 
-	Element e_schema = document.createElement("schema");
+	Element e_schema = document.createElementNS(NS, "schema");
 	e_schema.appendChild(e_as);
 
 	root.appendChild(e_schema);
@@ -363,14 +358,14 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 	boolean inheritedProperties = config.parameterAsBoolean(PARAM_INHERITED_PROPERTIES, false);
 
-	Element e_pwstv = document.createElement("PropertiesWithSpecificTaggedValues");
+	Element e_pwstv = document.createElementNS(NS, "PropertiesWithSpecificTaggedValues");
 	appSchemaElement.appendChild(e_pwstv);
 
 	SortedSet<ClassInfo> schemaClasses = model.classes(schemaPi);
 
 	for (ClassInfo ci : schemaClasses) {
 
-	    Element e_class = document.createElement("Class");
+	    Element e_class = document.createElementNS(NS, "Class");
 	    e_class.setAttribute("name", ci.name());
 
 	    e_pwstv.appendChild(e_class);
@@ -414,7 +409,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 		if (!matchingTvs.isEmpty()) {
 
-		    Element e_prop = document.createElement("Property");
+		    Element e_prop = document.createElementNS(NS, "Property");
 		    e_prop.setAttribute("name", pi.name());
 
 		    e_class.appendChild(e_prop);
@@ -424,7 +419,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			String tag = entry.getKey();
 			List<String> values = entry.getValue();
 
-			Element e_tag = document.createElement("Tag");
+			Element e_tag = document.createElementNS(NS, "Tag");
 			e_tag.setAttribute("name", tag);
 
 			e_prop.appendChild(e_tag);
@@ -432,7 +427,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 			if (values != null && !values.isEmpty()) {
 
 			    for (String value : values) {
-				Element e_val = document.createElement("Value");
+				Element e_val = document.createElementNS(NS, "Value");
 				e_val.setTextContent(value);
 
 				e_tag.appendChild(e_val);
@@ -488,7 +483,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	    }
 
 	    // now create the ProfilesMetadata XML element
-	    Element e_tum = document.createElement("TypesUsageMetadata");
+	    Element e_tum = document.createElementNS(NS, "TypesUsageMetadata");
 
 	    if (resultMap.isEmpty()) {
 
@@ -513,7 +508,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 
 			String classes = String.join(", ", classesUsingType);
 			result.addInfo(this, 202, type, classes);
-			Element e_tu = document.createElement("typeUsage");
+			Element e_tu = document.createElementNS(NS, "typeUsage");
 			e_tu.setAttribute("type", type);
 			e_tu.setAttribute("directlyOrIndirectlyUsedBy", classes);
 			e_tum.appendChild(e_tu);
@@ -521,7 +516,7 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 		}
 	    }
 
-	    Element e_m = document.createElement("metadata");
+	    Element e_m = document.createElementNS(NS, "metadata");
 
 	    e_m.appendChild(e_tum);
 
@@ -594,15 +589,15 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	// now create the ProfilesMetadata XML element
-	Element e_pm = document.createElement("ProfilesMetadata");
+	Element e_pm = document.createElementNS(NS, "ProfilesMetadata");
 
 	for (String name : profileNames) {
-	    Element e_cp = document.createElement("containedProfile");
+	    Element e_cp = document.createElementNS(NS, "containedProfile");
 	    e_cp.setTextContent(name);
 	    e_pm.appendChild(e_cp);
 	}
 
-	Element e_m = document.createElement("metadata");
+	Element e_m = document.createElementNS(NS, "metadata");
 
 	e_m.appendChild(e_pm);
 
@@ -653,29 +648,14 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", "UTF-8");
-
-	/*
-	 * Uses OutputStreamWriter instead of FileWriter to set character encoding (see
-	 * doc in Serializer.setWriter and FileWriter)
-	 */
 	try {
 	    File repXsd = new File(outputDirectoryFile, outputFilename);
-
-	    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(repXsd), "UTF-8"));
-
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(writer);
-	    serializer.asDOMSerializer().serialize(document);
-
-	    writer.close();
+	    
+	    XMLUtil.writeXml(document, repXsd);
 
 	    r.addResult(getTargetName(), outputDirectory, outputFilename, schemaTargetNamespace);
 
-	} catch (IOException ioe) {
+	} catch (ShapeChangeException ioe) {
 
 	    r.addError(this, 3, outputFilename, ioe.getMessage());
 	}

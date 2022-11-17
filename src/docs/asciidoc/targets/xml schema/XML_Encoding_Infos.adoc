@@ -1,0 +1,75 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+
+[[XML_Encoding_Infos]]
+= XML Encoding Infos
+
+(since v2.13.0)
+
+The xref:./XML_Schema.adoc[XmlSchema target] produces XML schema 
+files for a given application schema. The encoding of XML schema
+elements depends on the chosen XML encoding rule, and can 
+be influenced by tagged values, set on model elements, as well.
+
+Sometimes, it is necessary to know how a certain model element is
+ultimately represented in XML, for example when trying to map another
+representation of the model element - e.g. database records - to the XML
+encoding defined by the XML schema. That information is typically not
+contained in the XML schema itself. The XmlSchema target produces
+an XML file with the required information items, if target parameter
+xref:./XML_Schema.adoc#writeXmlEncodingInfos[writeXmlEncodingInfos]
+is set to 'true'.
+
+The encoding infos are contained in XML element `XmlEncodingInfos`. Its 
+structure is defined in the 
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange Configuration XML Schema]. 
+The two main components are `ModelElementXmlEncoding` and `XmlNamespace` elements. 
+The structure of the latter is the same as the one used for the configuration 
+of the XmlSchema target (and documented xref:./XML_Schema.adoc#Namespace_Identifiers[here]).
+
+A `ModelElementXmlEncoding` element has the following XML attributes:
+
+* applicationSchemaName (optional): Name of the application schema 
+to which the model element belongs.
+* modelElementName (required): Class name or class-qualified property name.
+* xmlName (required): The name of the element or attribute via which 
+the model element is represented in XML. Expected to be given as 
+plain name, i.e. without namespace prefix.
+* xmlNamespace (required): The XML namespace to which the XML element 
+or attribute belongs.
+* xmlAttribute (optional): true, if the model element is encoded as 
+an XML attribute, false (the default) if it is encoded as an XML element.
+
+[[Example]]
+== Example
+
+[source,xml,linenumbers]
+----------
+<XmlEncodingInfos xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <modelElementEncodings>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC" xmlName="DataTypeC" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::att2" xmlAttribute="true" xmlName="att2" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="DataTypeC::attDataTypeA" xmlName="attDataTypeA" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC1" xmlName="FeatureTypeC1" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC1::ftC1toFTB" xmlName="ftC1toFTB" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC2" xmlName="FeatureTypeC2" xmlNamespace="http://shapechange.net/test/c"/>
+    <ModelElementXmlEncoding applicationSchemaName="Cross Schema C" modelElementName="FeatureTypeC2::att1" xmlName="att1" xmlNamespace="http://shapechange.net/test/c"/>
+  </modelElementEncodings>
+  <namespaces>
+    <XmlNamespace ns="http://shapechange.net/test/c" nsabr="c"/>
+  </namespaces>
+</XmlEncodingInfos>
+----------

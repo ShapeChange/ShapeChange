@@ -66,7 +66,8 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	    XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION,
 	    XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION, XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION,
 	    XmlSchemaConstants.PARAM_ENUM_STYLE, XmlSchemaConstants.PARAM_BASIC_TYPE_STYLE, 
-	    XmlSchemaConstants.PARAM_SCHEMATRON, XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES)
+	    XmlSchemaConstants.PARAM_SCHEMATRON, XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES,
+	    XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS)
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream
 	    .of(Pattern.compile("^schematronExtension\\.(\\w+?)\\.function|schematronExtension\\.(\\w+?)\\.namespace$"))
@@ -164,7 +165,7 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 		isValid = false;
 	    }
 	}
-
+	
 	return isValid;
     }
 

@@ -678,6 +678,9 @@
         </a>
        </p>
       </xsl:for-each>
+      <xsl:call-template name="entryTaggedValues">
+       <xsl:with-param name="tvs" select="$package/taggedValues/taggedValue"/>
+      </xsl:call-template>
       <tr>
        <xsl:choose>
         <xsl:when test="$catalog/FeatureType[not($includeCodelistsAndEnumerations = 'false') or not(type = 'Code List Type' or type = 'Enumeration Type')]/package[@idref = $package/@id]">
@@ -1938,6 +1941,11 @@
       <xsl:text>:</xsl:text>
      </h3>
     </p>
+    <xsl:if test="./documentation">
+     <p>
+      <xsl:value-of disable-output-escaping="yes" select="./documentation/text()"/>
+     </p>
+    </xsl:if>
     <p>
      <!-- NOTE: omitted width and height to avoid issues with changed img size during unit tests. 
                Image size depends on EA settings of the user that is executing the unit test. -->

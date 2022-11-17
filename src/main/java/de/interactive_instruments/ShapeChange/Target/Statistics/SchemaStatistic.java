@@ -51,6 +51,9 @@ public class SchemaStatistic {
 	private int numFeatureRels;
 	private double percentFeatureRelationships;
 	
+	private int numAttsWithSchemaDatatypeAndMaxMultOne;
+	private int numAttsWithSchemaDatatypeAndMaxMultMany;
+	
 	private List<ClassStatistic> classStats = new ArrayList<ClassStatistic>();
 
 	public SchemaStatistic(String schemaName, PackageInfo schemaPackage) {
@@ -75,6 +78,9 @@ public class SchemaStatistic {
 		for(ClassStatistic cs : classStats) {
 			numProps = numProps + cs.numberOfProperties();
 			numFeatureRels = numFeatureRels + cs.numberOfFeatureRelationships();
+			
+			numAttsWithSchemaDatatypeAndMaxMultOne += cs.getNumAttsWithSchemaDatatypeAndMaxMultOne();
+			numAttsWithSchemaDatatypeAndMaxMultMany += cs.getNumAttsWithSchemaDatatypeAndMaxMultMany();
 		}
 		
 		/*
@@ -95,5 +101,13 @@ public class SchemaStatistic {
 	
 	public int numberOfFeatureRelationships() {
 		return numFeatureRels;
+	}
+	
+	public int getNumAttsWithSchemaDatatypeAndMaxMultOne() {
+	    return numAttsWithSchemaDatatypeAndMaxMultOne;
+	}
+
+	public int getNumAttsWithSchemaDatatypeAndMaxMultMany() {
+	    return numAttsWithSchemaDatatypeAndMaxMultMany;
 	}
 }

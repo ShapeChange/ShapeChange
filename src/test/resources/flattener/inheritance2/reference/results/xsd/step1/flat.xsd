@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://shapechange.net/test/flattening/inheritance2" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/inheritance2" version="FIXME">
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://shapechange.net/test/flattening/inheritance2" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" elementFormDefault="qualified" targetNamespace="http://shapechange.net/test/flattening/inheritance2" version="FIXME">
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
   <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
   <element name="T1_FT1" substitutionGroup="gml:AbstractFeature" type="flat:T1_FT1Type"/>
@@ -6,8 +7,24 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft1" type="string"/>
-          <element name="pFT1" type="flat:T1_FT2PropertyType"/>
+          <element name="attT1Ft1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT1" type="flat:T1_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -22,10 +39,34 @@
   <element name="T1_FT1Union" substitutionGroup="gml:AbstractObject" type="flat:T1_FT1UnionType"/>
   <complexType name="T1_FT1UnionType">
     <choice>
-      <element name="t1_FT1" type="flat:T1_FT1PropertyType"/>
-      <element name="t1_FT1_1" type="flat:T1_FT1_1PropertyType"/>
-      <element name="t1_FT1_2" type="flat:T1_FT1_2PropertyType"/>
-      <element name="t1_FT1_2_1" type="flat:T1_FT1_2_1PropertyType"/>
+      <element name="t1_FT1" type="flat:T1_FT1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t1_FT1_1" type="flat:T1_FT1_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t1_FT1_2" type="flat:T1_FT1_2PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t1_FT1_2_1" type="flat:T1_FT1_2_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T1_FT1UnionPropertyType">
@@ -38,9 +79,31 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft1" type="string"/>
-          <element name="pFT1" type="flat:T1_FT2PropertyType"/>
-          <element name="attT1Ft11" type="string"/>
+          <element name="attT1Ft1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT1" type="flat:T1_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attT1Ft11" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -57,9 +120,33 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft1" type="string"/>
-          <element name="pFT1" type="flat:T1_FT2PropertyType"/>
-          <element name="attT1Ft12" type="string"/>
+          <element name="attT1Ft1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT1" type="flat:T1_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attT1Ft12" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -74,8 +161,20 @@
   <element name="T1_FT1_2Union" substitutionGroup="gml:AbstractObject" type="flat:T1_FT1_2UnionType"/>
   <complexType name="T1_FT1_2UnionType">
     <choice>
-      <element name="t1_FT1_2" type="flat:T1_FT1_2PropertyType"/>
-      <element name="t1_FT1_2_1" type="flat:T1_FT1_2_1PropertyType"/>
+      <element name="t1_FT1_2" type="flat:T1_FT1_2PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t1_FT1_2_1" type="flat:T1_FT1_2_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T1_FT1_2UnionPropertyType">
@@ -88,10 +187,40 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft1" type="string"/>
-          <element name="pFT1" type="flat:T1_FT2PropertyType"/>
-          <element name="attT1Ft12" type="string"/>
-          <element name="attT1FT121" type="string"/>
+          <element name="attT1Ft1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="pFT1" type="flat:T1_FT2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attT1Ft12" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T1_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attT1FT121" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -108,7 +237,13 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attT1Ft2" type="string"/>
+          <element name="attT1Ft2" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -125,7 +260,15 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -140,10 +283,34 @@
   <element name="T2_FT1Union" substitutionGroup="gml:AbstractObject" type="flat:T2_FT1UnionType"/>
   <complexType name="T2_FT1UnionType">
     <choice>
-      <element name="t2_FT1" type="flat:T2_FT1PropertyType"/>
-      <element name="t2_FT1_1" type="flat:T2_FT1_1PropertyType"/>
-      <element name="t2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType"/>
-      <element name="t2_FT1_2" type="flat:T2_FT1_2PropertyType"/>
+      <element name="t2_FT1" type="flat:T2_FT1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t2_FT1_1" type="flat:T2_FT1_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t2_FT1_2" type="flat:T2_FT1_2PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T2_FT1UnionPropertyType">
@@ -156,8 +323,24 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt11" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1_1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -172,8 +355,20 @@
   <element name="T2_FT1_1Union" substitutionGroup="gml:AbstractObject" type="flat:T2_FT1_1UnionType"/>
   <complexType name="T2_FT1_1UnionType">
     <choice>
-      <element name="t2_FT1_1" type="flat:T2_FT1_1PropertyType"/>
-      <element name="t2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType"/>
+      <element name="t2_FT1_1" type="flat:T2_FT1_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType">
+        <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T2_FT1_1UnionPropertyType">
@@ -186,9 +381,31 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
-          <element name="attFt11" type="integer"/>
-          <element name="attFt111" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt11" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1_1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt111" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -205,8 +422,22 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt1" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T2_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt12" type="integer">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -223,12 +454,46 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
-          <element minOccurs="0" name="pFT2_T2_FT1" type="flat:T2_FT1PropertyType"/>
-          <element minOccurs="0" name="pFT2_T2_FT1_1" type="flat:T2_FT1_1PropertyType"/>
-          <element minOccurs="0" name="pFT2_T2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType"/>
-          <element minOccurs="0" name="pFT2_T2_FT1_2" type="flat:T2_FT1_2PropertyType"/>
-          </sequence>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2_T2_FT1" type="flat:T2_FT1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2_T2_FT1_1" type="flat:T2_FT1_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2_T2_FT1_1_1" type="flat:T2_FT1_1_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFT2_T2_FT1_2" type="flat:T2_FT1_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
       </extension>
     </complexContent>
   </complexType>
@@ -244,11 +509,22 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T3_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T3_FT1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -266,10 +542,34 @@
   <element name="T3_FT1Union" substitutionGroup="gml:AbstractObject" type="flat:T3_FT1UnionType"/>
   <complexType name="T3_FT1UnionType">
     <choice>
-      <element name="t3_FT1" type="flat:T3_FT1PropertyType"/>
-      <element name="t3_FT1_1" type="flat:T3_FT1_1PropertyType"/>
-      <element name="t3_FT1_2" type="flat:T3_FT1_2PropertyType"/>
-      <element name="t3_FT1_2_1" type="flat:T3_FT1_2_1PropertyType"/>
+      <element name="t3_FT1" type="flat:T3_FT1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t3_FT1_1" type="flat:T3_FT1_1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t3_FT1_2" type="flat:T3_FT1_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t3_FT1_2_1" type="flat:T3_FT1_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T3_FT1UnionPropertyType">
@@ -282,15 +582,32 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T3_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T3_FT1_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt11" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -307,15 +624,34 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T3_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T3_FT1_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt12" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -330,8 +666,20 @@
   <element name="T3_FT1_2Union" substitutionGroup="gml:AbstractObject" type="flat:T3_FT1_2UnionType"/>
   <complexType name="T3_FT1_2UnionType">
     <choice>
-      <element name="t3_FT1_2" type="flat:T3_FT1_2PropertyType"/>
-      <element name="t3_FT1_2_1" type="flat:T3_FT1_2_1PropertyType"/>
+      <element name="t3_FT1_2" type="flat:T3_FT1_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t3_FT1_2_1" type="flat:T3_FT1_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T3_FT1_2UnionPropertyType">
@@ -344,16 +692,41 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1" type="flat:T3_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T3_FT1_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T3_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt12" type="integer"/>
-          <element name="attFt121" type="integer"/>
+          <element name="attFt12" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T3_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt121" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -370,11 +743,19 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT2_T3_FT1" type="flat:T3_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+              <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -382,6 +763,8 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+              <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -389,6 +772,8 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+              <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -396,6 +781,8 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1</reversePropertyName>
+              <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -415,11 +802,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT1_T4_FT2" type="flat:T4_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -427,6 +826,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -434,6 +837,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -441,6 +848,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -458,10 +869,34 @@
   <element name="T4_FT1Union" substitutionGroup="gml:AbstractObject" type="flat:T4_FT1UnionType"/>
   <complexType name="T4_FT1UnionType">
     <choice>
-      <element name="t4_FT1" type="flat:T4_FT1PropertyType"/>
-      <element name="t4_FT1_1" type="flat:T4_FT1_1PropertyType"/>
-      <element name="t4_FT1_2" type="flat:T4_FT1_2PropertyType"/>
-      <element name="t4_FT1_2_1" type="flat:T4_FT1_2_1PropertyType"/>
+      <element name="t4_FT1" type="flat:T4_FT1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT1_1" type="flat:T4_FT1_1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT1_2" type="flat:T4_FT1_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT1_2_1" type="flat:T4_FT1_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T4_FT1UnionPropertyType">
@@ -474,11 +909,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT1_T4_FT2" type="flat:T4_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -486,6 +933,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -493,6 +944,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -500,10 +955,20 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt11" type="integer"/>
+          <element name="attFt11" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -520,11 +985,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT1_T4_FT2" type="flat:T4_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -532,6 +1009,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -539,6 +1020,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -546,10 +1031,22 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt12" type="integer"/>
+          <element name="attFt12" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -564,8 +1061,20 @@
   <element name="T4_FT1_2Union" substitutionGroup="gml:AbstractObject" type="flat:T4_FT1_2UnionType"/>
   <complexType name="T4_FT1_2UnionType">
     <choice>
-      <element name="t4_FT1_2" type="flat:T4_FT1_2PropertyType"/>
-      <element name="t4_FT1_2_1" type="flat:T4_FT1_2_1PropertyType"/>
+      <element name="t4_FT1_2" type="flat:T4_FT1_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT1_2_1" type="flat:T4_FT1_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T4_FT1_2UnionPropertyType">
@@ -578,11 +1087,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT1_T4_FT2" type="flat:T4_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -590,6 +1111,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -597,6 +1122,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -604,11 +1133,29 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT2_T4_FT1_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT1</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT1</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt12" type="integer"/>
-          <element name="attFt121" type="integer"/>
+          <element name="attFt12" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT1_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt121" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -625,11 +1172,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT2_T4_FT1" type="flat:T4_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -637,6 +1196,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -644,6 +1207,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -651,6 +1218,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -668,10 +1239,34 @@
   <element name="T4_FT2Union" substitutionGroup="gml:AbstractObject" type="flat:T4_FT2UnionType"/>
   <complexType name="T4_FT2UnionType">
     <choice>
-      <element name="t4_FT2" type="flat:T4_FT2PropertyType"/>
-      <element name="t4_FT2_1" type="flat:T4_FT2_1PropertyType"/>
-      <element name="t4_FT2_2" type="flat:T4_FT2_2PropertyType"/>
-      <element name="t4_FT2_2_1" type="flat:T4_FT2_2_1PropertyType"/>
+      <element name="t4_FT2" type="flat:T4_FT2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT2_1" type="flat:T4_FT2_1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT2_2" type="flat:T4_FT2_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT2_2_1" type="flat:T4_FT2_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T4_FT2UnionPropertyType">
@@ -684,11 +1279,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT2_T4_FT1" type="flat:T4_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -696,6 +1303,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -703,6 +1314,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -710,10 +1325,20 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt21" type="integer"/>
+          <element name="attFt21" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -730,11 +1355,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT2_T4_FT1" type="flat:T4_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -742,6 +1379,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -749,6 +1390,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -756,10 +1401,22 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt22" type="integer"/>
+          <element name="attFt22" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -774,8 +1431,20 @@
   <element name="T4_FT2_2Union" substitutionGroup="gml:AbstractObject" type="flat:T4_FT2_2UnionType"/>
   <complexType name="T4_FT2_2UnionType">
     <choice>
-      <element name="t4_FT2_2" type="flat:T4_FT2_2PropertyType"/>
-      <element name="t4_FT2_2_1" type="flat:T4_FT2_2_1PropertyType"/>
+      <element name="t4_FT2_2" type="flat:T4_FT2_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t4_FT2_2_1" type="flat:T4_FT2_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T4_FT2_2UnionPropertyType">
@@ -788,11 +1457,23 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element minOccurs="0" name="pFT2_T4_FT1" type="flat:T4_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -800,6 +1481,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -807,6 +1492,10 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -814,11 +1503,29 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1_T4_FT2_2_1</reversePropertyName>
+              <sc:taggedValue tag="originalInClassName">T4_FT2</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFT2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="attFt22" type="integer"/>
-          <element name="attFt221" type="integer"/>
+          <element name="attFt22" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T4_FT2_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt221" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -835,19 +1542,135 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt" type="integer"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
+          <element name="attFt" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -862,10 +1685,34 @@
   <element name="T5_FTUnion" substitutionGroup="gml:AbstractObject" type="flat:T5_FTUnionType"/>
   <complexType name="T5_FTUnionType">
     <choice>
-      <element name="t5_FT" type="flat:T5_FTPropertyType"/>
-      <element name="t5_FT_1" type="flat:T5_FT_1PropertyType"/>
-      <element name="t5_FT_2" type="flat:T5_FT_2PropertyType"/>
-      <element name="t5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
+      <element name="t5_FT" type="flat:T5_FTPropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t5_FT_1" type="flat:T5_FT_1PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t5_FT_2" type="flat:T5_FT_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T5_FTUnionPropertyType">
@@ -878,20 +1725,142 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt" type="integer"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt1" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">5</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -908,20 +1877,144 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt" type="integer"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt2" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">5</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -936,8 +2029,20 @@
   <element name="T5_FT_2Union" substitutionGroup="gml:AbstractObject" type="flat:T5_FT_2UnionType"/>
   <complexType name="T5_FT_2UnionType">
     <choice>
-      <element name="t5_FT_2" type="flat:T5_FT_2PropertyType"/>
-      <element name="t5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
+      <element name="t5_FT_2" type="flat:T5_FT_2PropertyType">
+      <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
+      <element name="t5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+    <annotation>
+          <appinfo>
+            <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
+          </appinfo>
+        </annotation>
+      </element>
     </choice>
   </complexType>
   <complexType name="T5_FT_2UnionPropertyType">
@@ -950,21 +2055,151 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt" type="integer"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType"/>
-          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType"/>
-          <element name="attFt2" type="integer"/>
-          <element name="attFt21" type="integer"/>
+          <element name="attFt" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfSourceA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfSourceA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">2.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetA_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetA</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">3.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT" type="flat:T5_FTPropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_1" type="flat:T5_FT_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.2</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2" type="flat:T5_FT_2PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="pFTSelfTargetB_T5_FT_2_1" type="flat:T5_FT_2_1PropertyType">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT</sc:taggedValue>
+                <sc:taggedValue tag="originalPropertyName">pFTSelfTargetB</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">4.4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="originalInClassName">T5_FT_2</sc:taggedValue>
+                <sc:taggedValue tag="originalSchemaName">Test Schema</sc:taggedValue>
+                <sc:taggedValue tag="sequenceNumber">5</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="attFt21" type="integer">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">6</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -981,15 +2216,28 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt1" type="integer"/>
+          <element name="attFt1" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFT1toFt2BiDirectional" type="flat:T6_FT2PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt2toFt1BiDirectional</reversePropertyName>
+              <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="pFt1toFt2UniDirectional" type="flat:T6_FT2PropertyType"/>
+          <element name="pFt1toFt2UniDirectional" type="flat:T6_FT2PropertyType">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>
@@ -1006,11 +2254,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt2" type="integer"/>
+          <element name="attFt2" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFt2toFt1BiDirectional" type="flat:T6_FT1PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFT1toFt2BiDirectional</reversePropertyName>
+              <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -1030,11 +2285,18 @@
     <complexContent>
       <extension base="gml:AbstractFeatureType">
         <sequence>
-          <element name="attFt3" type="integer"/>
+          <element name="attFt3" type="integer">
+          <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">1</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
           <element name="pFt3TargetBiDirectional" type="flat:T6_FT3PropertyType">
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt3SelfSourceBiDirectional</reversePropertyName>
+              <sc:taggedValue tag="sequenceNumber">2</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
@@ -1042,10 +2304,17 @@
             <annotation>
               <appinfo>
                 <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">flat:pFt3TargetBiDirectional</reversePropertyName>
+              <sc:taggedValue tag="sequenceNumber">3</sc:taggedValue>
               </appinfo>
             </annotation>
           </element>
-          <element name="pFt3SelfTargetUniDirectional" type="flat:T6_FT3PropertyType"/>
+          <element name="pFt3SelfTargetUniDirectional" type="flat:T6_FT3PropertyType">
+        <annotation>
+              <appinfo>
+                <sc:taggedValue tag="sequenceNumber">4</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
         </sequence>
       </extension>
     </complexContent>

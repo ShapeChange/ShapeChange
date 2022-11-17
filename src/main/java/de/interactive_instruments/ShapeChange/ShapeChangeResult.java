@@ -35,6 +35,7 @@ package de.interactive_instruments.ShapeChange;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -55,17 +56,16 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /** The result is xxx as an XML file. */
 public class ShapeChangeResult {
@@ -78,9 +78,9 @@ public class ShapeChangeResult {
     protected Element messages = null;
     protected Element resultFiles = null;
     protected Set<Element> resultElements = new HashSet<Element>();
-    protected Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
     protected Options options = null;
     protected boolean fatalErrorReceived = false;
+    protected boolean errorReceived = false;
 
     protected HashSet<String> duplicateMessageCheck;
 
@@ -201,10 +201,6 @@ public class ShapeChangeResult {
 	    e.printStackTrace(System.err);
 	    System.exit(1);
 	}
-
-	outputFormat.setProperty("encoding", "UTF-8");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
     }
 
     public void init() {
@@ -213,6 +209,10 @@ public class ShapeChangeResult {
 
     public boolean isFatalErrorReceived() {
 	return fatalErrorReceived;
+    }
+    
+    public boolean isErrorReceived() {
+	return errorReceived;
     }
 
     private String safe(String s) {
@@ -482,6 +482,9 @@ public class ShapeChangeResult {
     };
 
     public MessageContext addError(String m) {
+	
+	errorReceived = true;
+	
 	if (document == null) {
 	    return null;
 	}
@@ -526,6 +529,9 @@ public class ShapeChangeResult {
     };
 
     public MessageContext addProcessFlowError(String m) {
+	
+	errorReceived = true;
+	
 	if (document == null) {
 	    return null;
 	}
@@ -718,19 +724,8 @@ public class ShapeChangeResult {
 	    root.setAttribute("config", options.configFile);
 	    root.setAttribute("end", (new Date()).toString());
 
-	    // check that directory exists and create it if necessary
-	    File f = new File(filename);
-	    f = f.getParentFile();
-	    if (f != null && !f.exists()) {
-		FileUtils.forceMkdir(f);
-	    }
-
-	    BufferedWriter outputXML = new BufferedWriter(
-		    new OutputStreamWriter(new FileOutputStream(filename), "UTF-8"));
-	    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-	    serializer.setWriter(outputXML);
-	    serializer.asDOMSerializer().serialize(document);
-	    outputXML.close();
+	    File logFile = new File(filename);
+	    XMLUtil.writeXml(document, logFile);
 
 	    String xsltfileName = options.parameter("xsltFile");
 	    if (xsltfileName != null && !xsltfileName.isEmpty()) {
@@ -747,7 +742,7 @@ public class ShapeChangeResult {
 			// get it from the file system
 			File xsltFile = new File(xsltfileName);
 			if (!xsltFile.canRead()) {
-			    throw new Exception("Cannot read " + xsltFile.getName());
+			    throw new IOException("Cannot read " + xsltFile.getName());
 			}
 			xsltSource = new StreamSource(xsltFile);
 		    } else {
@@ -761,8 +756,7 @@ public class ShapeChangeResult {
 		    outHTML.delete();
 		BufferedWriter outputHTML = new BufferedWriter(
 			new OutputStreamWriter(new FileOutputStream(outHTML), "UTF-8"));
-		;
-
+		
 		if (xsltSource != null) {
 		    Source xmlSource = new DOMSource(document);
 		    Result res = new StreamResult(outputHTML);
@@ -784,7 +778,7 @@ public class ShapeChangeResult {
 		}
 	    }
 
-	} catch (Exception e) {
+	} catch (ShapeChangeException | TransformerException | IOException e) {
 	    System.err.println("Error: " + e.getMessage());
 	}
     }

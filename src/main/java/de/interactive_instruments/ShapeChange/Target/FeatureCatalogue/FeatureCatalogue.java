@@ -49,13 +49,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -85,9 +81,6 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.xml.serializer.OutputPropertiesFactory;
-import org.apache.xml.serializer.Serializer;
-import org.apache.xml.serializer.SerializerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,6 +94,7 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
@@ -125,6 +119,7 @@ import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Transformation.TransformationConstants;
 import de.interactive_instruments.ShapeChange.UI.StatusBoard;
+import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import de.interactive_instruments.ShapeChange.Util.XMLWriter;
 import de.interactive_instruments.ShapeChange.Util.XsltWriter;
 import de.interactive_instruments.ShapeChange.Util.ZipHandler;
@@ -217,6 +212,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     public static final String PARAM_PACKAGE = "package";
     public static final String PARAM_FEATURE_TERM = "featureTerm";
     public static final String PARAM_INCLUDE_DIAGRAMS = "includeDiagrams";
+    public static final String PARAM_INCLUDE_DIAGRAM_DOCUMENTATION = "includeDiagramDocumentation";
     public static final String PARAM_INCLUDE_VOIDABLE = "includeVoidable";
     public static final String PARAM_INCLUDE_ALIAS = "includeAlias";
     public static final String PARAM_INCLUDE_TITLE = "includeTitle";
@@ -266,7 +262,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * 
      * value: a class from the input schema
      */
-    private static Map<String, ClassInfo> inputSchemaClassesByFullNameInSchema = null;
+    private static SortedMap<String, ClassInfo> inputSchemaClassesByFullNameInSchema = null;
 
     private static boolean inheritedConstraints = true;
     private static boolean inheritedProperties = false;
@@ -306,6 +302,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     private static String representTaggedValues = null;
 
     private static boolean includeDiagrams = false;
+    private static boolean includeDiagramDocumentation = false;
     private static int imgIntegerIdCounter = 0;
     private static int imgIntegerIdStepwidth = 2;
     private static List<ImageMetadata> imageList = new ArrayList<ImageMetadata>();
@@ -325,7 +322,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * accordingly [adding "(integer_value)"]). This is used to ensure that
      * application schema with the same name are disambiguated during print.
      */
-    private static Map<String, Integer> encounteredAppSchemasByName = null;
+    private static SortedMap<String, Integer> encounteredAppSchemasByName = null;
 
     private TreeMap<String, String> transformationParameters = new TreeMap<String, String>();
 
@@ -377,6 +374,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	includeCodelistsAndEnumerations = "false";
 	includeCodelistURI = true;
 	includeDiagrams = false;
+	includeDiagramDocumentation = false;
 	includeTitle = true;
 	includeVoidable = true;
 	inheritedConstraints = true;
@@ -551,7 +549,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		     * later we can look them up by their full name (within the schema, not in the
 		     * model).
 		     */
-		    inputSchemaClassesByFullNameInSchema = new HashMap<String, ClassInfo>();
+		    inputSchemaClassesByFullNameInSchema = new TreeMap<String, ClassInfo>();
 		    for (ClassInfo ci : model.classes(pi)) {
 			inputSchemaClassesByFullNameInSchema.put(ci.fullNameInSchema().toLowerCase(Locale.ENGLISH), ci);
 		    }
@@ -641,6 +639,10 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    if (StringUtils.isNotBlank(s)) {
 		writer.dataElement(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, PrepareToPrint(s));
 	    }
+	    
+	    if (representTaggedValues != null) {
+		PrintTaggedValues(pi, representTaggedValues, null, false);
+	    }
 
 	    writer.endElement("taggedValues");
 
@@ -657,7 +659,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	    if (hasDiff(pi, ElementType.SUBPACKAGE, Operation.DELETE)) {
 
-		Set<DiffElement> pkgdiffs = getDiffs(pi, ElementType.SUBPACKAGE, Operation.DELETE);
+		SortedSet<DiffElement> pkgdiffs = getDiffs(pi, ElementType.SUBPACKAGE, Operation.DELETE);
 
 		for (DiffElement diff : pkgdiffs) {
 
@@ -696,7 +698,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	if (hasDiff(pix, ElementType.CLASS, Operation.DELETE)) {
 
-	    Set<DiffElement> classdiffs = getDiffs(pix, ElementType.CLASS, Operation.DELETE);
+	    SortedSet<DiffElement> classdiffs = getDiffs(pix, ElementType.CLASS, Operation.DELETE);
 
 	    for (DiffElement diff : classdiffs) {
 
@@ -742,7 +744,18 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    atts.addAttribute("", "width", "", "CDATA", "" + img.getWidth());
 	    atts.addAttribute("", "relPath", "", "CDATA", img.getRelPathToFile());
 
-	    writer.emptyElement("image", atts);
+	    // TODO extend with checks for additional child content
+	    boolean emptyElement = (img.getDocumentation() == null || !includeDiagramDocumentation);
+	    
+	    if(emptyElement) {
+		writer.emptyElement("image", atts);
+	    } else {
+		writer.startElement("image", atts);		
+		if(StringUtils.isNotBlank(img.getDocumentation()) && includeDiagramDocumentation) {
+		    writer.dataElement("documentation", img.getDocumentation());
+		}
+		writer.endElement("image");
+	    }
 
 	    // also keep track of the image metadata for later use
 	    imageList.add(img);
@@ -767,7 +780,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	if (hasDiff(i, ElementType.ALIAS)) {
 
 	    // get the diff
-	    Set<DiffElement> diffs = getDiffs(i, ElementType.ALIAS);
+	    SortedSet<DiffElement> diffs = getDiffs(i, ElementType.ALIAS);
 	    // there can only be one change to the alias
 	    s = differ.diff_toString(diffs.iterator().next().diff);
 
@@ -944,6 +957,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		appendImageInfo(pix.getDiagrams());
 	    }
 
+	    writer.startElement("taggedValues");
+
+		if (representTaggedValues != null) {
+		    PrintTaggedValues(pix, representTaggedValues, null, false);
+		}
+
+	    writer.endElement("taggedValues");
+		
 	    writer.endElement("Package");
 	}
 
@@ -973,7 +994,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    // check if subpackages of pix have been deleted
 	    if (hasDiff(pix, ElementType.SUBPACKAGE, Operation.DELETE)) {
 
-		Set<DiffElement> pkgdiffs = getDiffs(pix, ElementType.SUBPACKAGE, Operation.DELETE);
+		SortedSet<DiffElement> pkgdiffs = getDiffs(pix, ElementType.SUBPACKAGE, Operation.DELETE);
 
 		for (DiffElement diff : pkgdiffs) {
 
@@ -2388,25 +2409,11 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		    imgInfoRoot.appendChild(e1);
 		}
 
-		Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-		outputFormat.setProperty("indent", "yes");
-		outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-		if (encoding != null)
-		    outputFormat.setProperty("encoding", encoding);
-
 		File relsFile = new File(tmpDir, "docx_relationships.tmp.xml");
 
 		try {
-
-		    OutputStream fout = new FileOutputStream(relsFile);
-		    OutputStream bout = new BufferedOutputStream(fout);
-		    OutputStreamWriter outputXML = new OutputStreamWriter(bout, outputFormat.getProperty("encoding"));
-
-		    Serializer serializer = SerializerFactory.getSerializer(outputFormat);
-		    serializer.setWriter(outputXML);
-		    serializer.asDOMSerializer().serialize(imgInfoDoc);
-		    outputXML.close();
-		} catch (Exception e) {
+		    XMLUtil.writeXml(imgInfoDoc, relsFile);
+		} catch (ShapeChangeException e) {
 		    String m = e.getMessage();
 		    if (m != null) {
 			result.addError(m);
@@ -2548,10 +2555,6 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     }
 
     private void fopWrite(String xmlName, String xslfofileName, String outfileName, String outputMimetype) {
-	Properties outputFormat = OutputPropertiesFactory.getDefaultMethodProperties("xml");
-	outputFormat.setProperty("indent", "yes");
-	outputFormat.setProperty("{http://xml.apache.org/xalan}indent-amount", "2");
-	outputFormat.setProperty("encoding", encoding);
 
 	// redirect FOP-logging to our system, Level 'Warning' by default
 	Logger fl = Logger.getLogger("org.apache.fop");
@@ -3011,6 +3014,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_DIAGRAMS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    includeDiagrams = true;
+	
+	includeDiagramDocumentation = options.parameterAsBoolean(this.getClass().getName(), PARAM_INCLUDE_DIAGRAM_DOCUMENTATION, false);
 
 	s = options.parameter(this.getClass().getName(), PARAM_DONT_TRANSFORM);
 	if (s != null && s.equalsIgnoreCase("true"))

@@ -257,6 +257,24 @@ xref:./Feature_Catalogue.adoc#Inclusion_of_UML_Diagrams[more information]).
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
+[[includeDiagramDocumentation]]
+==== includeDiagramDocumentation
+
+(since v2.13.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: Indicates if the documentation of a diagram shall be included (
+xref:./Feature_Catalogue.adoc#Inclusion_of_UML_Diagrams[more information]).
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
 [[includeVoidable]]
 ==== includeVoidable
 
@@ -1003,4 +1021,7 @@ resolution
 * For DOCX feature catalogues, you can update the numbering of the
 figures in the resulting document by first pressing Ctrl+A (to select
 everything) and then F9 (to update everything).
+* For frame HTML catalogues, the documentation of a diagram (e.g., set
+in Enterprise Architect in the diagram notes), can be included, by 
+setting target parameter *includeDiagramDocumentation* to 'true'.
 ======
