@@ -1,5 +1,57 @@
 # Changelog
 
+## [Unreleased](https://github.com/ShapeChange/ShapeChange/tree/HEAD)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.13.0...HEAD)
+
+**Closed issues:**
+
+- Library with vulnerability: Commons Text [\#325](https://github.com/ShapeChange/ShapeChange/issues/325)
+- GPKG: schema extension is not registered when model does not contain enumerations [\#322](https://github.com/ShapeChange/ShapeChange/issues/322)
+
+## [2.13.0](https://github.com/ShapeChange/ShapeChange/tree/2.13.0) (2022-11-17)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.12.0...2.13.0)
+
+**Implemented enhancements:**
+
+- ldproxy target - link object title using a property value of the referenced object [\#321](https://github.com/ShapeChange/ShapeChange/issues/321)
+- ldproxy target - support configuration and encoding of queryables [\#320](https://github.com/ShapeChange/ShapeChange/issues/320)
+- FeatureCatalogue target - Support inclusion of diagram documentation [\#318](https://github.com/ShapeChange/ShapeChange/issues/318)
+- General - add input configuration parameter to ignore certain tagged values in the model [\#316](https://github.com/ShapeChange/ShapeChange/issues/316)
+- SqlDdl target - support target parameter to globally define foreign key constraint referential actions \(currently known as FK constraint options\) [\#314](https://github.com/ShapeChange/ShapeChange/issues/314)
+- ldproxy target - support generation of configuration items relevant for GML output [\#312](https://github.com/ShapeChange/ShapeChange/issues/312)
+- ldproxy2 target - support reflexive associations [\#309](https://github.com/ShapeChange/ShapeChange/issues/309)
+- SqlDdl target - Add conversion rule to create separate PK field in all associative tables [\#308](https://github.com/ShapeChange/ShapeChange/issues/308)
+- SqlDdl target - Add conversion rule to explicitly encode primary key reference column\(s\) in a foreign key constraint [\#307](https://github.com/ShapeChange/ShapeChange/issues/307)
+- SqlDdl target - support definition of foreign key checking options [\#303](https://github.com/ShapeChange/ShapeChange/issues/303)
+- ldproxy2 target - support parameter similar to foreignKeyColumnSuffixCodelist from the SqlDdl target [\#301](https://github.com/ShapeChange/ShapeChange/issues/301)
+
+**Fixed bugs:**
+
+- Transformations - support setting multiple values for the same tag [\#317](https://github.com/ShapeChange/ShapeChange/issues/317)
+- Fix updating fields while setting \(directly or indirectly\) sequenceNumber tagged values in transformations [\#315](https://github.com/ShapeChange/ShapeChange/issues/315)
+- Flattener transformation - Fix property order when flattening inheritance [\#310](https://github.com/ShapeChange/ShapeChange/issues/310)
+- -Dfile.encoding=UTF-8 in the documentation [\#300](https://github.com/ShapeChange/ShapeChange/issues/300)
+- SqlDdl target - Casting error in statement sort [\#296](https://github.com/ShapeChange/ShapeChange/issues/296)
+
+**Closed issues:**
+
+- Premature end of file [\#313](https://github.com/ShapeChange/ShapeChange/issues/313)
+- SqlServer explicit comments via sp\_addextendedproperty [\#306](https://github.com/ShapeChange/ShapeChange/issues/306)
+
+**Merged pull requests:**
+
+- Update GeoPackage API [\#324](https://github.com/ShapeChange/ShapeChange/pull/324) ([jechterhoff](https://github.com/jechterhoff))
+- Update the creation of the tables of the GPKG Schema extension [\#323](https://github.com/ShapeChange/ShapeChange/pull/323) ([heidivanparys](https://github.com/heidivanparys))
+- Merge recent changes to SqlDdl target, Flattener, and ldproxy2 target [\#311](https://github.com/ShapeChange/ShapeChange/pull/311) ([jechterhoff](https://github.com/jechterhoff))
+- Bump poi from 4.1.0 to 4.1.1 [\#305](https://github.com/ShapeChange/ShapeChange/pull/305) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add parameter directionToNewFeatureType [\#304](https://github.com/ShapeChange/ShapeChange/pull/304) ([heidivanparys](https://github.com/heidivanparys))
+- ldproxy2: foreignKeyColumnSuffixCodelist, rule-ldp2-cls-codelist-byTable [\#302](https://github.com/ShapeChange/ShapeChange/pull/302) ([jechterhoff](https://github.com/jechterhoff))
+- Describe use of java.library.path [\#299](https://github.com/ShapeChange/ShapeChange/pull/299) ([heidivanparys](https://github.com/heidivanparys))
+- Bump gson from 2.8.6 to 2.8.9 [\#298](https://github.com/ShapeChange/ShapeChange/pull/298) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jackson-databind from 2.13.1 to 2.13.2.1 [\#297](https://github.com/ShapeChange/ShapeChange/pull/297) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [2.12.0](https://github.com/ShapeChange/ShapeChange/tree/2.12.0) (2022-02-25)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.11.0...2.12.0)
