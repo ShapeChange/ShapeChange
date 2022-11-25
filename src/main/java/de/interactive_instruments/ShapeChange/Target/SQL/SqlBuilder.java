@@ -465,7 +465,8 @@ public class SqlBuilder implements MessageSource {
 
 		    if (SqlDdl.createAssociativeTables
 			    && options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql")) == null
-			    && typeCi != null && typeCi.category() == Options.DATATYPE
+			    && typeCi != null && model.isInSelectedSchemas(typeCi)
+			    && typeCi.category() == Options.DATATYPE
 			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
 			    && ((typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
 				    && typeCi.matches(
@@ -3337,7 +3338,7 @@ public class SqlBuilder implements MessageSource {
 		    + SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES
 		    + "). Because the rule is not included, the relationship will be ignored.";
 	case 9:
-	    return "Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
+	    return "??Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES
 		    + " is not enabled. Please ensure that map entries are defined for external types used in the schema - or allow referencing of external types in general by enabling "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES

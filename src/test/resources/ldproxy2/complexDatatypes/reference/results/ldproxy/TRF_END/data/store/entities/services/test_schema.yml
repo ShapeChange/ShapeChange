@@ -1,0 +1,64 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: label
+description: '...'
+serviceType: OGC_API
+collections:
+  featuretype:
+    id: featuretype
+    label: featuretype
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attDT1Multi.attCodeListMulti:
+        - codelist: CodeList
+        attDT1Multi.attCodeListSingle:
+        - codelist: CodeList
+        attDT1Multi.attDataType2Multi.attDT2CodeListMulti:
+        - codelist: CodeList
+        attDT1Multi.attDataType2Multi.attDT2CodeListSingle:
+        - codelist: CodeList
+        attDT1Multi.attDataType2Multi.attDT2EnumerationMulti:
+        - codelist: Enumeration
+        attDT1Multi.attDataType2Multi.attDT2EnumerationSingle:
+        - codelist: Enumeration
+        attDT1Multi.attDataType2Single.attDT2CodeListMulti:
+        - codelist: CodeList
+        attDT1Multi.attDataType2Single.attDT2CodeListSingle:
+        - codelist: CodeList
+        attDT1Multi.attDataType2Single.attDT2EnumerationMulti:
+        - codelist: Enumeration
+        attDT1Multi.attDataType2Single.attDT2EnumerationSingle:
+        - codelist: Enumeration
+        attDT1Multi.attEnumerationMulti:
+        - codelist: Enumeration
+        attDT1Multi.attEnumerationSingle:
+        - codelist: Enumeration
+        attDT1Single.attCodeListMulti:
+        - codelist: CodeList
+        attDT1Single.attCodeListSingle:
+        - codelist: CodeList
+        attDT1Single.attDataType2Multi.attDT2CodeListMulti:
+        - codelist: CodeList
+        attDT1Single.attDataType2Multi.attDT2CodeListSingle:
+        - codelist: CodeList
+        attDT1Single.attDataType2Multi.attDT2EnumerationMulti:
+        - codelist: Enumeration
+        attDT1Single.attDataType2Multi.attDT2EnumerationSingle:
+        - codelist: Enumeration
+        attDT1Single.attDataType2Single.attDT2CodeListMulti:
+        - codelist: CodeList
+        attDT1Single.attDataType2Single.attDT2CodeListSingle:
+        - codelist: CodeList
+        attDT1Single.attDataType2Single.attDT2EnumerationMulti:
+        - codelist: Enumeration
+        attDT1Single.attDataType2Single.attDT2EnumerationSingle:
+        - codelist: Enumeration
+        attDT1Single.attEnumerationMulti:
+        - codelist: Enumeration
+        attDT1Single.attEnumerationSingle:
+        - codelist: Enumeration

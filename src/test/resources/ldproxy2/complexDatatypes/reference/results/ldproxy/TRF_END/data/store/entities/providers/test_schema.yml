@@ -1,0 +1,352 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+providerType: FEATURE
+featureProviderType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+nativeTimeZone: Europe/Berlin
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: _id
+  sortKey: _id
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      attDT1Multi:
+        sourcePath: '[_id=featuretype_id]FeatureType_attDT1Multi'
+        type: OBJECT_ARRAY
+        objectType: DataType1
+        constraints:
+          required: true
+          minOccurrence: 1
+        properties:
+          attCodeListMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attCodeListMulti{sortKey=datatype1_id}/codelist_id'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              codelist: CodeList
+              required: true
+              minOccurrence: 1
+          attCodeListSingle:
+            sourcePath: attcodelistsingle_fkcl
+            type: STRING
+            constraints:
+              codelist: CodeList
+              required: true
+          attDataType2Multi:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Multi'
+            type: OBJECT_ARRAY
+            objectType: DataType2
+            constraints:
+              required: true
+              minOccurrence: 1
+            properties:
+              attDT2CodeListMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+                  minOccurrence: 1
+              attDT2CodeListSingle:
+                sourcePath: attdt2codelistsingle_fkcl
+                type: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+              attDT2EnumerationMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2EnumerationMult{sortKey=datatype2_id}/attdt2enumerationmulti'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+                  minOccurrence: 1
+              attDT2EnumerationSingle:
+                sourcePath: attdt2enumerationsingle
+                type: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+              attDT2SimpleMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                type: VALUE_ARRAY
+                valueType: INTEGER
+                constraints:
+                  required: true
+                  minOccurrence: 1
+              attDT2SimpleSingle:
+                sourcePath: attdt2simplesingle
+                type: INTEGER
+                constraints:
+                  required: true
+          attDataType2Single:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Single'
+            type: OBJECT
+            objectType: DataType2
+            constraints:
+              required: true
+            properties:
+              attDT2CodeListMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+                  minOccurrence: 1
+              attDT2CodeListSingle:
+                sourcePath: attdt2codelistsingle_fkcl
+                type: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+              attDT2EnumerationMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+                  minOccurrence: 1
+              attDT2EnumerationSingle:
+                sourcePath: attdt2enumerationsingle
+                type: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+              attDT2SimpleMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                type: VALUE_ARRAY
+                valueType: INTEGER
+                constraints:
+                  required: true
+                  minOccurrence: 1
+              attDT2SimpleSingle:
+                sourcePath: attdt2simplesingle
+                type: INTEGER
+                constraints:
+                  required: true
+          attEnumerationMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              codelist: Enumeration
+              enum:
+              - enum1
+              - enum2
+              required: true
+              minOccurrence: 1
+          attEnumerationSingle:
+            sourcePath: attenumerationsingle
+            type: STRING
+            constraints:
+              codelist: Enumeration
+              enum:
+              - enum1
+              - enum2
+              required: true
+          attSimpleMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti'
+            type: VALUE_ARRAY
+            valueType: INTEGER
+            constraints:
+              required: true
+              minOccurrence: 1
+          attSimpleSingle:
+            sourcePath: attsimplesingle
+            type: INTEGER
+            constraints:
+              required: true
+      attDT1Single:
+        sourcePath: '[_id=featuretype_id]FeatureType_attDT1Single'
+        type: OBJECT
+        objectType: DataType1
+        constraints:
+          required: true
+        properties:
+          attCodeListMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attCodeListMulti{sortKey=datatype1_id}/codelist_id'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              codelist: CodeList
+              required: true
+              minOccurrence: 1
+          attCodeListSingle:
+            sourcePath: attcodelistsingle_fkcl
+            type: STRING
+            constraints:
+              codelist: CodeList
+              required: true
+          attDataType2Multi:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Multi'
+            type: OBJECT_ARRAY
+            objectType: DataType2
+            constraints:
+              required: true
+              minOccurrence: 1
+            properties:
+              attDT2CodeListMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+                  minOccurrence: 1
+              attDT2CodeListSingle:
+                sourcePath: attdt2codelistsingle_fkcl
+                type: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+              attDT2EnumerationMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+                  minOccurrence: 1
+              attDT2EnumerationSingle:
+                sourcePath: attdt2enumerationsingle
+                type: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+              attDT2SimpleMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                type: VALUE_ARRAY
+                valueType: INTEGER
+                constraints:
+                  required: true
+                  minOccurrence: 1
+              attDT2SimpleSingle:
+                sourcePath: attdt2simplesingle
+                type: INTEGER
+                constraints:
+                  required: true
+          attDataType2Single:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Single'
+            type: OBJECT
+            objectType: DataType2
+            constraints:
+              required: true
+            properties:
+              attDT2CodeListMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+                  minOccurrence: 1
+              attDT2CodeListSingle:
+                sourcePath: attdt2codelistsingle_fkcl
+                type: STRING
+                constraints:
+                  codelist: CodeList
+                  required: true
+              attDT2EnumerationMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2EnumerationMu{sortKey=datatype2_id}/attdt2enumerationmulti'
+                type: VALUE_ARRAY
+                valueType: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+                  minOccurrence: 1
+              attDT2EnumerationSingle:
+                sourcePath: attdt2enumerationsingle
+                type: STRING
+                constraints:
+                  codelist: Enumeration
+                  enum:
+                  - enum1
+                  - enum2
+                  required: true
+              attDT2SimpleMulti:
+                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                type: VALUE_ARRAY
+                valueType: INTEGER
+                constraints:
+                  required: true
+                  minOccurrence: 1
+              attDT2SimpleSingle:
+                sourcePath: attdt2simplesingle
+                type: INTEGER
+                constraints:
+                  required: true
+          attEnumerationMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti'
+            type: VALUE_ARRAY
+            valueType: STRING
+            constraints:
+              codelist: Enumeration
+              enum:
+              - enum1
+              - enum2
+              required: true
+              minOccurrence: 1
+          attEnumerationSingle:
+            sourcePath: attenumerationsingle
+            type: STRING
+            constraints:
+              codelist: Enumeration
+              enum:
+              - enum1
+              - enum2
+              required: true
+          attSimpleMulti:
+            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti'
+            type: VALUE_ARRAY
+            valueType: INTEGER
+            constraints:
+              required: true
+              minOccurrence: 1
+          attSimpleSingle:
+            sourcePath: attsimplesingle
+            type: INTEGER
+            constraints:
+              required: true

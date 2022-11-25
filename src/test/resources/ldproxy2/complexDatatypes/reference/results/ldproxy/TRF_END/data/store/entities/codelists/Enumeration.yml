@@ -1,0 +1,10 @@
+---
+id: Enumeration
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 1
+label: Enumeration
+entries:
+  enum1: enum1
+  enum2: enum2
+sourceType: TEMPLATES
