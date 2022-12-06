@@ -399,9 +399,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	JsonSchemaDocument jsd;
 	String jsDoc = jsonDocumentName(pi);
 
+	String rootSchemaId = determineRootSchemaId(pi, jsDoc, jsonBaseUri, jsonSubdirectory);
+
 	if (StringUtils.isNotBlank(jsDoc)) {
 	    result.addDebug(this, 102, jsDoc, pi.name());
-	    jsd = new JsonSchemaDocument(pi, model, options, result, jsDoc, this, jsonBaseUri, jsonSubdirectory,
+	    jsd = new JsonSchemaDocument(pi, model, options, result, this, rootSchemaId,
 		    new File(subDirectoryFile, jsDoc), mapEntryParamInfos);
 	    res = true;
 
@@ -412,7 +414,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		result.addWarning(this, 103, pi.name(), jsDoc);
 
 		result.addDebug(this, 102, jsDoc, pi.name());
-		jsd = new JsonSchemaDocument(pi, model, options, result, jsDoc, this, jsonBaseUri, jsonSubdirectory,
+		jsd = new JsonSchemaDocument(pi, model, options, result, this, rootSchemaId,
 			new File(subDirectoryFile, jsDoc), mapEntryParamInfos);
 		res = true;
 	    }
@@ -427,6 +429,22 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	return res;
+    }
+
+    private String determineRootSchemaId(PackageInfo someAppSchemaPackage, String docName, String jsonBaseUri,
+	    String jsonSubdirectory) {
+
+	PackageInfo schemaPi = model.schemaPackage(someAppSchemaPackage);
+
+	String result;
+	if (schemaPi != null && StringUtils.isNotBlank(schemaPi.taggedValue("jsonId"))) {
+	    result = schemaPi.taggedValue("jsonId").trim();
+	} else {
+	    result = StringUtils.join(new String[] { StringUtils.removeEnd(jsonBaseUri, "/"),
+		    StringUtils.removeEnd(jsonSubdirectory, "/"), docName }, "/");
+	}
+
+	return result;
     }
 
     public static boolean isEncoded(Info i) {
@@ -1002,27 +1020,19 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-prop-initialValueAsDefault");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-voidable");
-	
-	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson","*",new TreeSet<>(Stream.of(
-		"rule-json-cls-defaultGeometry-singleGeometryProperty",
-		"rule-json-cls-ignoreIdentifier",
-		"rule-json-cls-name-as-anchor",
-		"rule-json-cls-nestedProperties",
-		"rule-json-cls-virtualGeneralization",
-		"rule-json-prop-derivedAsReadOnly",
-		"rule-json-prop-initialValueAsDefault",
-		"rule-json-prop-readOnly",
-		"rule-json-prop-voidable"		
-		).collect(Collectors.toSet())));
+
+	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson", "*", new TreeSet<>(Stream
+		.of("rule-json-cls-defaultGeometry-singleGeometryProperty", "rule-json-cls-ignoreIdentifier",
+			"rule-json-cls-name-as-anchor", "rule-json-cls-nestedProperties",
+			"rule-json-cls-virtualGeneralization", "rule-json-prop-derivedAsReadOnly",
+			"rule-json-prop-initialValueAsDefault", "rule-json-prop-readOnly", "rule-json-prop-voidable")
+		.collect(Collectors.toSet())));
 	r.addRuleSet(defaultGeoJsonPrs);
-	
-	ProcessRuleSet defaultPlainJsonPrs = new ProcessRuleSet("defaultPlainJson","*",new TreeSet<>(Stream.of(
-		"rule-json-cls-name-as-anchor",
-		"rule-json-prop-derivedAsReadOnly",
-		"rule-json-prop-initialValueAsDefault",
-		"rule-json-prop-readOnly",
-		"rule-json-prop-voidable"
-		).collect(Collectors.toSet())));
+
+	ProcessRuleSet defaultPlainJsonPrs = new ProcessRuleSet("defaultPlainJson", "*",
+		new TreeSet<>(Stream.of("rule-json-cls-name-as-anchor", "rule-json-prop-derivedAsReadOnly",
+			"rule-json-prop-initialValueAsDefault", "rule-json-prop-readOnly", "rule-json-prop-voidable")
+			.collect(Collectors.toSet())));
 	r.addRuleSet(defaultPlainJsonPrs);
     }
 

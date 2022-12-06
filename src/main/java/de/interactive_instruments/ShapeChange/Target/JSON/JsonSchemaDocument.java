@@ -89,8 +89,6 @@ public class JsonSchemaDocument implements MessageSource {
     protected JsonSchemaTarget jsonSchemaTarget;
     protected String docName;
     protected PackageInfo representedPackage;
-    protected String jsonBaseUri;
-    protected String jsonSubdirectory;
     protected String rootSchemaId;
     protected File jsonSchemaOutputFile;
     protected MapEntryParamInfos mapEntryParamInfos;
@@ -102,7 +100,7 @@ public class JsonSchemaDocument implements MessageSource {
     protected JsonSchema rootSchema = new JsonSchema();
 
     public JsonSchemaDocument(PackageInfo representedPackage, Model model, Options options, ShapeChangeResult result,
-	    String docName, JsonSchemaTarget jsonSchemaTarget, String jsonBaseUri, String jsonSubdirectory,
+	    JsonSchemaTarget jsonSchemaTarget, String rootSchemaId,
 	    File jsonSchemaOutputFile, MapEntryParamInfos mapEntryParamInfos) {
 
 	this.representedPackage = representedPackage;
@@ -110,14 +108,9 @@ public class JsonSchemaDocument implements MessageSource {
 	this.result = result;
 	this.model = model;
 	this.jsonSchemaTarget = jsonSchemaTarget;
-	this.docName = docName;
-	this.jsonBaseUri = jsonBaseUri;
-	this.jsonSubdirectory = jsonSubdirectory;
+	this.rootSchemaId = rootSchemaId;
 	this.jsonSchemaOutputFile = jsonSchemaOutputFile;
 	this.mapEntryParamInfos = mapEntryParamInfos;
-
-	rootSchemaId = StringUtils.join(new String[] { StringUtils.removeEnd(jsonBaseUri, "/"),
-		StringUtils.removeEnd(jsonSubdirectory, "/"), docName }, "/");
 
 	jsonSchemaVersion = jsonSchemaTarget.getJsonSchemaVersion();
 

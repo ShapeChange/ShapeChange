@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Parses information from the 'param' attribute of a map entry and provides
@@ -50,8 +51,11 @@ public class MapEntryParamInfos implements MessageSource {
 
     /**
      * Regular expression
-     * ((\w+)(\{(([^;=\}]+)=?((?&lt;==)[^;=\}]+)?[\s;]*)+\})?[\s,]*)+ to match valid
-     * values of the 'param' attribute in a map entry.
+     * ((\w+)(\{(?&gt;(([^;=\}]+)=?((?&lt;==)[^;=\}]+(=|==)?)?[\s;]*))+(=|==)?\})?[\s,]*)+
+     * to match valid values of the 'param' attribute in a map entry.
+     * 
+     * Base64-encoded characteristics - which may have '=' or '==' at the end, is
+     * handled.
      * 
      * Parameters are separated by comma, characteristics are separated by
      * semicolon.
@@ -65,7 +69,7 @@ public class MapEntryParamInfos implements MessageSource {
      * <li>paramX{a=xyz},paramY{d=(80.2,20.4)},paramZ{d}</li>
      * </ul>
      */
-    public static final String PARAM_VALIDATION_PATTERN = "((\\w+)(\\{(([^;=\\}]+)=?((?<==)[^;=\\}]+)?[\\s;]*)+\\})?[\\s,]*)+";
+    public static final String PARAM_VALIDATION_PATTERN = "((\\w+)(\\{(?>(([^;=\\}]+)=?((?<==)[^;=\\}]+(=|==)?)?[\\s;]*))+(=|==)?\\})?[\\s,]*)+";
 
     /**
      * Regular expression (\w+)\{?((?&lt;=\{)[^\}]+(?=\}))?\}?[\s;]* to find
@@ -159,8 +163,8 @@ public class MapEntryParamInfos implements MessageSource {
 			    while (pim.find()) {
 
 				String parameterName = pim.group(1);
-				
-				if(charactByParameterName.containsKey(parameterName)) {
+
+				if (charactByParameterName.containsKey(parameterName)) {
 				    MessageContext mc = result.addWarning(this, 5, parameterName);
 				    mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
 				    continue;
@@ -173,24 +177,50 @@ public class MapEntryParamInfos implements MessageSource {
 
 				if (parameterValue != null) {
 
-				    /*
-				     * Find and add all individual characteristics.
-				     */
-				    Matcher cim = charactIdentPattern.matcher(parameterValue);
+				    String[] paramCharacteristics = parameterValue.split(";");
 
-				    while (cim.find()) {
+				    for (String characteristic : paramCharacteristics) {
 
-					String characteristicId = cim.group(1);
-					
-					if(characteristics.containsKey(characteristicId)) {
-					    MessageContext mc = result.addWarning(this, 6, characteristicId, parameterName);
-					    mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
-					    continue;
+					/*
+					 * 2022-12-02 JE: Workaround to support base64 encoded parameters, where the
+					 * encoded string may have '=' or '==' at the end - which the regular expression
+					 * cannot handle.
+					 */
+					String valueToMatch = characteristic;
+					String suffixToAppend = "";
+
+					if (characteristic.endsWith("==")) {
+					    valueToMatch = StringUtils.removeEnd(characteristic, "==");
+					    suffixToAppend = "==";
+					} else if (characteristic.endsWith("=")) {
+					    valueToMatch = StringUtils.removeEnd(characteristic, "=");
+					    suffixToAppend = "=";
 					}
-					
-					String characteristicValue = cim.group(2);
 
-					characteristics.put(characteristicId, characteristicValue);
+					Matcher cim = charactIdentPattern.matcher(valueToMatch);
+
+					if (cim.find()) {
+
+					    String characteristicId = cim.group(1);
+
+					    String characteristicValue = cim.group(2);
+
+					    if (characteristicValue == null) {
+						characteristicId += suffixToAppend;
+					    } else {
+						characteristicValue += suffixToAppend;
+					    }
+
+					    if (characteristics.containsKey(characteristicId)) {
+						MessageContext mc = result.addWarning(this, 6, characteristicId,
+							parameterName);
+						mc.addDetail(this, 1, pme.getType(), pme.getRule(), param);
+						continue;
+					    }
+
+					    characteristics.put(characteristicId, characteristicValue);
+					}
+
 				    }
 				}
 			    }
@@ -370,7 +400,7 @@ public class MapEntryParamInfos implements MessageSource {
 	    return "Found duplicate parameter name '$1$' in map entry 'param'. Only the first occurrence of the parameter will be used. If you intended to define multiple characteristics for this parameter, note that multiple characteristics of a parameter are encoded as key-value pairs within a semicolon delimited list (example: theParameter{characteristicA=xyz;characteristicB=42;characteristicC}).";
 	case 6:
 	    return "Found duplicate characteristic id '$1$' for parameter with name '$2$' in map entry 'param'. Only the first occurrence of the characteristic will be used. Note that it depends on the actual characteristic whether it is multi-valued or not. See the documentation of the according characteristic for further details.";
-	    
+
 	default:
 	    return "(" + MapEntryParamInfos.class.getName() + ") Unknown message with number: " + mnr;
 	}

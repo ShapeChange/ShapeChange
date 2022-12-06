@@ -69,7 +69,7 @@ public class TaggedValueNormalizer {
      * NOTE: defaultGeometry is also used by the ldproxy2 target.
      */
     protected static final Set<String> jsonTags = Stream.of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
-	    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern").collect(Collectors.toSet());
+	    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern", "jsonId").collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the ArcGIS encoding rule
