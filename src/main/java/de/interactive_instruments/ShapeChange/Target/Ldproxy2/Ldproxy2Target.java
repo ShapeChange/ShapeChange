@@ -882,7 +882,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    .forceAxisOrder(forceAxisOrder).build();
 
 	    ImmutableFeatureProviderSqlData providerConfig = cfg.builder().entity().provider().id(mainId)
-		    .providerType("FEATURE").entityStorageVersion(2).providerType("FEATURE").featureProviderType("SQL")
 		    .connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
 		    .queryGeneration(queryGeneration).nativeCrs(nativeCrs).nativeTimeZone(nativeTimeZone)
 		    .types(providerTypeDefinitions).build();
