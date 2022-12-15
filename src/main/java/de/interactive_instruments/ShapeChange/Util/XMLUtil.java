@@ -260,15 +260,20 @@ public class XMLUtil {
     }
 
     public static void writeXml(Document doc, File destination) throws ShapeChangeException {
-		
+
+	File parentFile = destination.getParentFile();
+	if (parentFile != null && !parentFile.exists()) {
+	    try {
+		FileUtils.forceMkdir(parentFile);
+	    } catch (IOException e) {
+		throw new ShapeChangeException("Error while creating folder structure for XML file (for destination: "
+			+ destination + "). Exception message is: " + e.getMessage(), e);
+	    }
+	}
+
 	try (BufferedWriter writer = new BufferedWriter(
 		new OutputStreamWriter(new FileOutputStream(destination), "UTF-8"))) {
 
-	    File parentFile = destination.getParentFile();
-	    if (parentFile != null && !parentFile.exists()) {
-		FileUtils.forceMkdir(parentFile);
-	    }
-	    	    
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
 	    Transformer transformer = transformerFactory.newTransformer();

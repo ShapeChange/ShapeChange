@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/test/resources/ldproxy2/complexDatatypes/test_ldproxy2_complexDatatypes.xml"
+                   end="Fri Nov 25 10:59:35 CET 2022"
+                   resultCode="0"
+                   start="Fri Nov 25 10:59:28 CET 2022"
+                   version="2.13.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_1' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_1' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'TRF_1'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-prop-flatten-types ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'TRF_1'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+      <Info message="Could not compute a label for codelist/enumeration 'CodeList'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.">
+         <Detail xmlns="" message="Context: property 'Test Schema::CodeList'"/>
+      </Info>
+      <Info message="Could not compute a label for codelist/enumeration 'Enumeration'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.">
+         <Detail xmlns="" message="Context: property 'Test Schema::Enumeration'"/>
+      </Info>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'TRF_END'."/>
+      <Info message="Determined database system is 'PostgreSQL'."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Creating associative table to represent attribute 'attCodeListMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attCodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attEnumerationMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attEnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attSimpleMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attSimpleMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2CodeListMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Multi_attDT2CodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2EnumerationMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Multi_attDT2EnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2SimpleMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Multi_attDT2SimpleMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2CodeListMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Single_attDT2CodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2EnumerationMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Single_attDT2EnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2SimpleMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Multi_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Multi_attDataType2Single_attDT2SimpleMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attCodeListMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attCodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attEnumerationMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attEnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attSimpleMulti' in class 'DataType1' for referenced table 'FeatureType_attDT1Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attSimpleMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2CodeListMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Multi_attDT2CodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2EnumerationMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Multi_attDT2EnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2SimpleMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Multi'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Multi_attDT2SimpleMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2CodeListMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Single_attDT2CodeListMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2EnumerationMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Single_attDT2EnumerationMulti'."/>
+      <Info message="Creating associative table to represent attribute 'attDT2SimpleMulti' in class 'DataType2' for referenced table 'FeatureType_attDT1Single_attDataType2Single'. Tagged value 'associativeTable' is ignored on this attribute, because a usage specific table must be created, which leads to table name: 'FeatureType_attDT1Single_attDataType2Single_attDT2SimpleMulti'."/>
+      <Warning message="Name 'featuretype_attdt1multi_attenumerationmulti_attenumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1multi_attenumerationmulti_attenumerationmulti'"/>
+      <Warning message="Name 'featuretype_attdt1multi_attdatatype2multi_attdt2enumerationmult_attdt2enumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1multi_attdatatype2multi_attdt2enumerationmult'"/>
+      <Warning message="Name 'featuretype_attdt1multi_attdatatype2multi_attdt2enumerationsingle_chk' for check constraint is truncated to 'featuretype_attdt1multi_attdatatype2multi_attdt2enumerationsing'"/>
+      <Warning message="Name 'featuretype_attdt1multi_attdatatype2single_attdt2enumerationmul_attdt2enumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1multi_attdatatype2single_attdt2enumerationmul'"/>
+      <Warning message="Name 'featuretype_attdt1multi_attdatatype2single_attdt2enumerationsingle_chk' for check constraint is truncated to 'featuretype_attdt1multi_attdatatype2single_attdt2enumerationsin'"/>
+      <Warning message="Name 'featuretype_attdt1single_attenumerationmulti_attenumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1single_attenumerationmulti_attenumerationmult'"/>
+      <Warning message="Name 'featuretype_attdt1single_attdatatype2multi_attdt2enumerationmul_attdt2enumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1single_attdatatype2multi_attdt2enumerationmul'"/>
+      <Warning message="Name 'featuretype_attdt1single_attdatatype2multi_attdt2enumerationsingle_chk' for check constraint is truncated to 'featuretype_attdt1single_attdatatype2multi_attdt2enumerationsin'"/>
+      <Warning message="Name 'featuretype_attdt1single_attdatatype2single_attdt2enumerationmu_attdt2enumerationmulti_chk' for check constraint is truncated to 'featuretype_attdt1single_attdatatype2single_attdt2enumerationmu'"/>
+      <Warning message="Name 'featuretype_attdt1single_attdatatype2single_attdt2enumerationsingle_chk' for check constraint is truncated to 'featuretype_attdt1single_attdatatype2single_attdt2enumerationsi'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistsingle_fkcl' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistsing'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistmulti_codelist_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistmult'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistmulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2codelistmul0'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2enumerationmult_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2enumerationm'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2simplemulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2multi_attdt2simplemulti_'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistsingle_fkcl' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistsin'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistmulti_codelist_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistmul'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistmulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2single_attdt2codelistmu0'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2single_attdt2enumerationmul_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2single_attdt2enumeration'"/>
+      <Warning message="Name 'fk_featuretype_attdt1multi_attdatatype2single_attdt2simplemulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1multi_attdatatype2single_attdt2simplemulti'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistsingle_fkcl' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistsin'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistmulti_codelist_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistmul'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistmulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2multi_attdt2codelistmu0'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2multi_attdt2enumerationmul_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2multi_attdt2enumeration'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2multi_attdt2simplemulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2multi_attdt2simplemulti'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistsingle_fkcl' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistsi'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistmulti_codelist_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistmu'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistmulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2single_attdt2codelistm0'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2single_attdt2enumerationmu_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2single_attdt2enumeratio'"/>
+      <Warning message="Name 'fk_featuretype_attdt1single_attdatatype2single_attdt2simplemulti_datatype2_id' for foreign key constraint is truncated to 'fk_featuretype_attdt1single_attdatatype2single_attdt2simplemult'"/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/ldproxy2/complexDatatypes/postgres/TRF_END/Test_Schema.sql"
+              target="SQL DDL">Test_Schema.sql</Result>
+   </Results>
+</ShapeChangeResult>

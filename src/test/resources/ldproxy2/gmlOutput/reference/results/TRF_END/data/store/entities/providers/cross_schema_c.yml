@@ -4,7 +4,7 @@ createdAt: 1000000000000
 lastModified: 1000000000000
 entityStorageVersion: 2
 providerType: FEATURE
-featureProviderType: SQL
+providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
@@ -35,7 +35,7 @@ types:
         constraints:
           required: true
       att2:
-        sourcePath: '[att2_fkdt=idx]datatypea'
+        sourcePath: '[idx=featuretypeb_id]FeatureTypeB_att2'
         type: OBJECT
         objectType: DataTypeA
         constraints:
@@ -193,7 +193,7 @@ types:
             transformations:
             - stringFormat: '{{serviceUrl}}/collections/featuretypeb/items/{{value}}'
       att1:
-        sourcePath: '[att1_fkdt=idx]datatypec1'
+        sourcePath: '[idx=featuretypec2_id]FeatureTypeC2_att1'
         type: OBJECT
         objectType: DataTypeC1
         constraints:
@@ -210,7 +210,7 @@ types:
             constraints:
               required: true
           attDataTypeA:
-            sourcePath: '[attdatatypea_fkdt=idx]datatypea'
+            sourcePath: '[idx=datatypec1_id]FeatureTypeC2_att1_attDataTypeA'
             type: OBJECT
             objectType: DataTypeA
             constraints:

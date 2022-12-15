@@ -4,7 +4,7 @@ createdAt: 1000000000000
 lastModified: 1000000000000
 entityStorageVersion: 2
 providerType: FEATURE
-featureProviderType: SQL
+providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
