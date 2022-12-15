@@ -1137,7 +1137,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    }
 	    propMemberDefBuilder.role(propRole);
 
-	    Optional<String> sourcePathProperty = sourcePathPropertyLevel(pi);
+	    Optional<String> sourcePathProperty = sourcePathPropertyLevel(pi, alreadyVisitedPiList);
 
 	    boolean ignoreSourcePathOnPropertyLevel = false;
 
@@ -1695,7 +1695,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
-    private Optional<String> sourcePathPropertyLevel(PropertyInfo pi) {
+    /**
+     * @param pi                   the property for which to construct the source
+     *                             path on property level
+     * @param alreadyVisitedPiList information about previous steps in the source
+     *                             path; can be analyzed to detect special cases
+     *                             (e.g. lists of data type valued properties)
+     * @return
+     */
+    private Optional<String> sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList) {
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
@@ -1717,8 +1725,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    if (pi.cardinality().maxOccurs == 1) {
 			return Optional.empty();
 		    } else {
-			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi));
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi, alreadyVisitedPiList));
 		    }
 
 		} else {
@@ -1734,9 +1743,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
 			    sortKeyAddition = "";
 			}
-			return Optional.of(
-				"[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
-					+ associativeTableName(pi) + sortKeyAddition + "/" + databaseColumnName(pi));
+			return Optional
+				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+					+ "]" + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/"
+					+ databaseColumnName(pi));
 		    }
 		}
 
@@ -1776,33 +1786,27 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			sortKeyAddition = "";
 		    }
 
-		    if (typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-
-			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi)
-				+ sortKeyAddition + "/" + databaseTableName(typeCi, true));
-
+		    String path1 = "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
+			    + "]" + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/";
+		    String path2;
+		    if (typeCi.category() == Options.CODELIST
+			    && typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+			path2 = databaseTableName(typeCi, true);
 		    } else {
-
-			return Optional.of(
-				"[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
-					+ associativeTableName(pi) + sortKeyAddition + "/" + databaseColumnName(pi));
+			path2 = databaseColumnName(pi);
 		    }
+
+		    String path = path1 + path2;
+		    return Optional.of(path);
 		}
 
 	    } else if (typeCi.category() == Options.DATATYPE) {
 
 		if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
 
-		    if (pi.cardinality().maxOccurs == 1) {
-
-			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				+ databaseTableName(typeCi, false));
-		    } else {
-
-			return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ databaseTableName(pi.inClass(), true) + "]" + associativeTableName(pi));
-		    }
+		    return Optional
+			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
+				    + associativeTableName(pi, alreadyVisitedPiList));
 
 		} else {
 
@@ -1814,8 +1818,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 			return Optional
 				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true) + "="
-					+ primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+					+ "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
+					+ databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+					+ databaseTableName(typeCi, false));
 		    }
 		}
 
@@ -1835,16 +1840,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    return Optional.of(
 				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
 					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
-					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, false)
-					    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
+					    + databaseTableName(typeCi, false) + "_"
+					    + databaseColumnNameReflexiveProperty(pi, true) + "="
 					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
 
 			} else {
 
 			    return Optional.of(
 				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true)
-					    + "=" + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
+					    + databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+					    + databaseTableName(typeCi, false));
 			}
 
 		    } else if (pi.cardinality().maxOccurs > 1) {
@@ -1928,20 +1935,21 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    return Optional.of(
 				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
 					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
-					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, false)
-					    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
+					    + databaseTableName(typeCi, false) + "_"
+					    + databaseColumnNameReflexiveProperty(pi, true) + "="
 					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
 
 			} else {
 
 			    return Optional.of(
 				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					    + "]" + associativeTableName(pi) + "/[" + databaseTableName(typeCi, true)
-					    + "=" + primaryKeyColumn(typeCi) + "]" + databaseTableName(typeCi, false));
+					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
+					    + databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
+					    + databaseTableName(typeCi, false));
 			}
 		    }
 		}
-
 	    }
 	}
     }
@@ -1959,37 +1967,94 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return primaryKeyColumn;
     }
 
-    private String associativeTableName(PropertyInfo pi) {
+    private String associativeTableName(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList) {
 
-	if (StringUtils.isNotBlank(pi.taggedValue("associativeTable"))) {
-	    return pi.taggedValue("associativeTable");
-	} else if (pi.association() != null
-		&& StringUtils.isNotBlank(pi.association().taggedValue("associativeTable"))) {
-	    return pi.association().taggedValue("associativeTable");
-	}
+	String result = null;
 
-	// tag associativeTable not set or without value -> proceed
+	/*
+	 * Check case of usage specific data type table first. We need to create table
+	 * names as are created by the SqlDdl target for
+	 * rule-sql-cls-data-types-oneToMany-severalTables. That is the case if the
+	 * owner of pi is a data type that matches that rule.
+	 */
+	ClassInfo piOwnerCi = pi.inClass();
+	if (piOwnerCi != null && piOwnerCi.category() == Options.DATATYPE && model.isInSelectedSchemas(piOwnerCi)
+		&& mapEntry(piOwnerCi).isEmpty()
+		&& piOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
 
-	String tableNamePi = determineTableName(pi);
+	    /*
+	     * We need to follow the list of already visited properties from the end along
+	     * all properties owned by complex data types in order to construct the table
+	     * name.
+	     */
+	    String suffix = "_" + pi.name();
+	    String tableName = null;
 
-	if (pi.isAttribute() || pi.reverseProperty() == null || !pi.reverseProperty().isNavigable()) {
+	    for (int i = alreadyVisitedPiList.size() - 1; i >= 0; i--) {
 
-	    return tableNamePi;
+		PropertyInfo previousPi = alreadyVisitedPiList.get(i);
+		ClassInfo prevPiOwnerCi = previousPi.inClass();
+
+		/*
+		 * We also gather the name of the first property (looked at from the end of the
+		 * list of already visited properties) which is not owned by a complex data
+		 * type. That is why the suffix modification is not part of the following
+		 * if-else-test.
+		 */
+		suffix = "_" + previousPi.name() + suffix;
+
+		if (prevPiOwnerCi != null && prevPiOwnerCi.category() == Options.DATATYPE
+			&& model.isInSelectedSchemas(prevPiOwnerCi) && mapEntry(prevPiOwnerCi).isEmpty()
+			&& prevPiOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
+		    /*
+		     * As long as the owner of the currently visited property is a complex data type
+		     * that matches the criteria for creation of several tables, we continue
+		     * iterating through the list of previous properties.
+		     */
+		} else {
+		    tableName = previousPi.inClass().name();
+		    break;
+		}
+	    }
+
+	    result = tableName + suffix;
 
 	} else {
 
-	    // both pi and its reverseProperty are navigable
-
-	    // choose name based on alphabetical order
-	    // take into account the case of a reflexive association
-	    String tableNameRevPi = determineTableName(pi.reverseProperty());
-
-	    if (tableNamePi.compareTo(tableNameRevPi) <= 0) {
-		return tableNamePi;
+	    if (StringUtils.isNotBlank(pi.taggedValue("associativeTable"))) {
+		result = pi.taggedValue("associativeTable");
+	    } else if (pi.association() != null
+		    && StringUtils.isNotBlank(pi.association().taggedValue("associativeTable"))) {
+		result = pi.association().taggedValue("associativeTable");
 	    } else {
-		return tableNameRevPi;
+
+		// tag associativeTable not set or without value -> proceed
+
+		String tableNamePi = determineTableName(pi);
+
+		if (pi.isAttribute() || pi.reverseProperty() == null || !pi.reverseProperty().isNavigable()) {
+
+		    result = tableNamePi;
+
+		} else {
+
+		    // both pi and its reverseProperty are navigable
+
+		    // choose name based on alphabetical order
+		    // take into account the case of a reflexive association
+		    String tableNameRevPi = determineTableName(pi.reverseProperty());
+
+		    if (tableNamePi.compareTo(tableNameRevPi) <= 0) {
+			result = tableNamePi;
+		    } else {
+			result = tableNameRevPi;
+		    }
+		}
 	    }
 	}
+
+	result = StringUtils.substring(result, 0, maxNameLength);
+	return result;
     }
 
     private String determineTableName(PropertyInfo pi) {
@@ -2298,9 +2363,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    code = pi.name();
 		    targetValue = pi.name();
 		}
-		
-		if(ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_APPEND_CODE)) {
-		    targetValue = targetValue + " ("+code+")";
+
+		if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_APPEND_CODE)) {
+		    targetValue = targetValue + " (" + code + ")";
 		}
 
 		entries.put(code, targetValue);

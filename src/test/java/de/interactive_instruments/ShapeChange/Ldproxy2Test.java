@@ -92,4 +92,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/gmlOutput/results",
 			"src/test/resources/ldproxy2/gmlOutput/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_complexDatatypes() {
+		
+		multiTest("src/test/resources/ldproxy2/complexDatatypes/test_ldproxy2_complexDatatypes.xml",
+			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/complexDatatypes",
+			"src/test/resources/ldproxy2/complexDatatypes/reference/results");
+	}
 }
