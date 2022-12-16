@@ -298,14 +298,18 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	String schemaBaseName = schema.name().trim().replaceAll("\\W", "_");
 
-	File gfsFile = new File(outputDirectoryFile, schemaBaseName + ".gfs");
-	File registryFile = new File(outputDirectoryFile, schemaBaseName + "_gml_registry.xml");
+	String gfsFileName = schemaBaseName + ".gfs";
+	File gfsFile = new File(outputDirectoryFile, gfsFileName);
+	String registryFileName = schemaBaseName + "_gml_registry.xml";
+	File registryFile = new File(outputDirectoryFile, registryFileName);
 
 	// write both the .gfs and the gml_registry.xml files
 	GfsWriter writer = new GfsWriter();
 	try {
 	    writer.write(gfsFile, gmlFeatureClasses, srsName);
+	    result.addResult(getTargetName(), outputDirectory, gfsFileName, null);
 	    writer.writeGmlRegistry(registryFile, gfsFile, schema.xmlns(), schema.targetNamespace(), gmlFeatureClasses);
+	    result.addResult(getTargetName(), outputDirectory, registryFileName, null);
 	} catch (ShapeChangeException e) {
 	    result.addError(this, 101, e.getMessage());
 	    result.addDebug(this, 9, ExceptionUtils.getStackTrace(e));

@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <GMLFeatureClassList>
    <GMLFeatureClass>
       <Name>FeatureType1</Name>
-      <ElementPath>FeatureType1</ElementPath>
+      <ElementPath>FeatureType1</ElementPath> 
       <GeomPropertyDefn>
          <Name>attGeom</Name>
          <ElementPath>attGeom</ElementPath>
@@ -59,6 +58,11 @@
          <Name>att3</Name>
          <ElementPath>att3</ElementPath>
          <Type>Point</Type>
+      </GeomPropertyDefn>
+      <GeomPropertyDefn>
+         <Name>att5</Name>
+         <ElementPath>att5</ElementPath>
+         <Type>Curve</Type>
       </GeomPropertyDefn>
       <PropertyDefn>
          <Name>att1</Name>

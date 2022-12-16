@@ -54,6 +54,23 @@ Reasons for why gfs templates are not produced by the XML Schema target:
 
 ////
 
+[[gfstemplate_testing]]
+== Testing gfs files
+
+A gfs template file produced by this target can be tested with GML data as follows:
+
+* Open a command line, where the command `ogrinfo` is available (for example, open the OSGeo4W Shell). 
+** The documentation of `ogrinfo` is available at https://gdal.org/programs/ogrinfo.html
+* In the command line, navigate to the directory in which the test instance and the gfs file are located.
+** It actually works to have the gfs file in a different directory. In that case, provide an absolute or relative path to the gfs file in the command.
+* Execute the following command: `ogrinfo -ro -al -oo WRITE_GFS=NO -oo GFS_TEMPLATE={gfs file} {GML file}`
+** Example: `ogrinfo -ro -al -oo WRITE_GFS=NO -oo GFS_TEMPLATE=test.gfs data.gml`
+** The GML file may have .gml or .xml as file extension.
+
+NOTE: The GML data must have at least one wrapper element around the feature elements. The GDAL GML driver appears to reject files that contain only a single feature as-is, i.e., encoded as the root of the document. That wrapper can be a FeatureCollection element, but also any other XML element.
+
+NOTE: The features contained in the GML data should have a value for XML attribute `gml:id`. Otherwise, the GML driver will not be able to assign a value for field gml_id.
+
 
 [[gfstemplate_schemaconversionrules]]
 == Schema Conversion Rules
@@ -77,6 +94,11 @@ Schema packages have the stereotype \<<applicationSchema>>, \<<schema>>, or an a
 The gfs template target is a normal "ShapeChange Target". It converts all xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schemas selected for processing] separately, rather than handling all of them in one go. The target creates one gfs template file per schema. The name of a template file is the schema name, in all lower case, and non-word characters replaced by '\_'. The target also creates a registry file with a namespace entry for the processed schemas. The namespace uri value is the value of the target namespace assigned to the schema, typically via tagged value __targetNamespace__ on the schema package. The name of the registry file is `{base name of the gfs file}_gml_registry.xml`. The content of that registry file can be added to the gml_registry file used by the application, such as GDAL (for further details, see https://gdal.org/drivers/vector/gml.html#registry-for-gml-application-schemas) and QGIS. 
 
 The gfs template file has root element `<GMLFeatureClassList>`. The child element `<SequentialLayers>` is not encoded, meaning that the default value 'false' for this element applies. Child elements `<GMLFeatureClass>` will be added to the root element, as defined in section <<gfstemplate_schemaconversionrules_types_featureandobjecttype>>. The feature classes are sorted by their `<Name>`.
+
+NOTE: The XML declaration is omitted in the gfs template file on purpose. Otherwise, the GML driver appears to not recognize the file correctly as gfs file. Note that the encoding of the file is UTF-8.
+
+// https://www.w3.org/TR/xml/#sec-prolog-dtd
+// https://stackoverflow.com/questions/7007427/does-a-valid-xml-file-require-an-xml-declaration
 
 NOTE: With extra information about the encoding of GML data for a particular schema, that the features belonging to different feature types are [.underline]#always# encoded in the order of `<GMLFeatureClass>` elements defined by the gfs file, `<SequentialLayers>` could be set to 'true'. For further details about that element, see the https://gdal.org/drivers/vector/gml.html#performance-issues-with-large-multi-layer-gml-files[GDAL GML driver documentation]. Setting `<SequentialLayers>` could be achieved with an additional target parameter. However, choosing the default value is the safest approach to start with. Furthermore, for particular setups, where layers are encoded sequentially, the gfs templates can also be edited manually to add SequentialLayers = true.
 
@@ -401,7 +423,7 @@ NOTE: OCL constraints can be used to enrich a conceptual model with requirements
 [[gfstemplate_schemaconversionrules_additionalrules]]
 === Additional rules
 
-If __rule-gfs-all-notEncoded__ applies to an element of the application schema, then that element and all its components are not encoded.
+If __rule-gfs-all-notEncoded__ applies to an element of the application schema, then that element and all its components are not encoded. This can be useful to suppress the encoding of classes that are primarily meant as feature collections, i.e., containers for objects defined in the application schema as types with identity.
 
 NOTE: How to define the encoding rule that applies to an application schema element is documented in more detail <<gfstemplate_encodingrules,here>>. The https://shapechange.net/resources/config/StandardRules.xml[ShapeChange configuration file StandardRules.xml] defines an encoding rule named "notEncoded", which includes __rule-gfs-all-notEncoded__. When StandardRules.xml is included in the configuration of the gfs template target (typically using an xinclude XML element), then by setting tagged value _gfsEncodingRule_ to "notEncoded", one would achieve that that model element is not encoded in the gfs template files.
 

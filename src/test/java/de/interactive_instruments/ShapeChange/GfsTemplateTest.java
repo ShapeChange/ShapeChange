@@ -40,14 +40,14 @@ public class GfsTemplateTest extends BasicTestSCXML {
 	@Test
 	public void testBasic() {
 		multiTest("src/test/resources/gfs/basic/test_gfs_basic.xml",
-				new String[] { "xml","gfs" }, "testResults/gfs/basic/results",
+				new String[] { "xsd", "xml","gfs" }, "testResults/gfs/basic/results",
 				"src/test/resources/gfs/basic/reference/results");
 	}
 	
 	@Test
 	public void testCodelistGml33() {
 		multiTest("src/test/resources/gfs/codelistGml33/test_gfs_codelistGml33.xml",
-				new String[] { "xml","gfs" }, "testResults/gfs/codelistGml33/results",
+				new String[] { "xsd", "xml","gfs" }, "testResults/gfs/codelistGml33/results",
 				"src/test/resources/gfs/codelistGml33/reference/results");
 	}
 }

@@ -57,6 +57,7 @@ public class GfsWriter {
 	try {
 	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder db = dbf.newDocumentBuilder();
+
 	    Document document = db.newDocument();
 
 	    Element root = document.createElement("GMLFeatureClassList");
@@ -118,7 +119,11 @@ public class GfsWriter {
 		}
 	    }
 
-	    XMLUtil.writeXml(document, gfsTemplateFile);
+	    /*
+	     * IMPORTANT: The GDAL driver does not recognize the gfs file if it has an xml
+	     * declaration. That is why we have to omit it in the output file.
+	     */
+	    XMLUtil.writeXml(document, gfsTemplateFile, true);
 
 	} catch (ParserConfigurationException e) {
 	    throw new ShapeChangeException(

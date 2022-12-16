@@ -259,7 +259,28 @@ public class XMLUtil {
 	}
     }
 
+    /**
+     * Writes the document to the destination, with XML declaration
+     * 
+     * @param doc         tbd
+     * @param destination tbd
+     * @throws ShapeChangeException tbd
+     */
     public static void writeXml(Document doc, File destination) throws ShapeChangeException {
+	writeXml(doc, destination, false);
+    }
+
+    /**
+     * Writes the document to the destination
+     * 
+     * @param doc                tbd
+     * @param destination        tbd
+     * @param omitXmlDeclaration <code>true</code>, if the XML declaration shall be
+     *                           omitted, <code>false</code> if it shall be created
+     * @throws ShapeChangeException tbd
+     */
+    public static void writeXml(Document doc, File destination, boolean omitXmlDeclaration)
+	    throws ShapeChangeException {
 
 	File parentFile = destination.getParentFile();
 	if (parentFile != null && !parentFile.exists()) {
@@ -279,6 +300,9 @@ public class XMLUtil {
 	    Transformer transformer = transformerFactory.newTransformer();
 	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	    if (omitXmlDeclaration) {
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+	    }
 	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
 	    DOMSource source = new DOMSource(doc);
