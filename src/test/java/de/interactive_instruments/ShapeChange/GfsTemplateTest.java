@@ -50,4 +50,11 @@ public class GfsTemplateTest extends BasicTestSCXML {
 				new String[] { "xsd", "xml","gfs" }, "testResults/gfs/codelistGml33/results",
 				"src/test/resources/gfs/codelistGml33/reference/results");
 	}
+	
+	@Test
+	public void testDataTypeSubtypePropsWithSameName() {
+		multiTest("src/test/resources/gfs/dataTypeSubtypePropsWithSameName/test_gfs_dataTypeSubtypePropsWithSameName.xml",
+				new String[] { "xsd", "xml","gfs" }, "testResults/gfs/dataTypeSubtypePropsWithSameName/results",
+				"src/test/resources/gfs/dataTypeSubtypePropsWithSameName/reference/results");
+	}
 }

@@ -36,8 +36,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -564,11 +566,13 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	    if (pi.inClass().category() == Options.DATATYPE || pi.inClass().category() == Options.UNION) {
 
-		if (!pi.inClass().subtypes().isEmpty()) {
+		if (!pi.inClass().subtypes().isEmpty() || multipleOccurrencesOfPropertyInInheritanceHierarchy(pi)) {
 
 		    /*
 		     * need to fan out according to names of non-abstract classes in inheritance
-		     * hierarchy of the inClass (including that class)
+		     * hierarchy of the inClass, including that class (especially for the inClass is
+		     * not a superclass but an encoded property with same name occurs in another
+		     * class of the inheritance hierarchy)
 		     */
 		    List<String> nonAbstractClassNames = new ArrayList<>();
 		    if (!pi.inClass().isAbstract()) {
@@ -627,6 +631,36 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	}
     }
 
+    /**
+     * @param pi
+     * @return <code>true</code>, if a property with same name as pi occurs in the
+     *         inheritance hierarchy of pi's inClass, and is encoded, else
+     *         <code>false</code>
+     */
+    private boolean multipleOccurrencesOfPropertyInInheritanceHierarchy(PropertyInfo pi) {
+
+	Optional<ClassInfo> topSupertypeOpt = pi.inClass().supertypesInCompleteHierarchy().stream()
+		.filter(superCi -> superCi.supertypes().isEmpty()).findAny();
+
+	if (topSupertypeOpt.isEmpty()) {
+	    return false;
+	} else {
+	    int countPropsWithPiName = 0;
+	    ClassInfo topSupertype = topSupertypeOpt.get();
+	    Set<ClassInfo> allClasses = new HashSet<>();
+	    allClasses.addAll(topSupertype.subtypesInCompleteHierarchy());
+	    allClasses.add(topSupertype);
+	    for (ClassInfo ci : allClasses) {
+		for (PropertyInfo pix : ci.properties().values()) {
+		    if (pix.name().equals(pi.name())) {
+			countPropsWithPiName++;
+		    }
+		}
+	    }
+	    return countPropsWithPiName > 1;
+	}
+    }
+
     private void setXmlAttributeFieldValues(PropertyDefinition pd, GfsPropertyType propertyType) {
 
 	pd.setType(propertyType);
@@ -670,19 +704,19 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	    throw new IllegalArgumentException(
 		    "Wrong use of method identifyPropertyPaths(..) - argument propListUpToIncludingPi does not contain argument pi as last element");
 	}
-	
+
 	if (!isEncoded(pi)) {
 	    return;
 	}
-	
+
 	// ensure that the value type of pi is encoded
-	if(pi.typeClass() != null && !isEncoded(pi.typeClass())) {
-	    MessageContext mc = result.addWarning(this, 100, pi.typeInfo().name,pi.name());
-	    if(mc != null) {
+	if (pi.typeClass() != null && !isEncoded(pi.typeClass())) {
+	    MessageContext mc = result.addWarning(this, 100, pi.typeInfo().name, pi.name());
+	    if (mc != null) {
 		mc.addDetail(this, 1, pi.fullNameInSchema());
 	    }
 	}
-	
+
 	if (valueTypeIsMapped(pi) || pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT
 		|| pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST) {
 
