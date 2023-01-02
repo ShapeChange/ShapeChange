@@ -242,7 +242,7 @@ If target parameter _srsName_ has a value, it is set as value of the `<SRSName>`
 
 If a `<GMLFeatureClass>` is encoded without any `<GeomPropertyDefn>`, then `<GeometryType>None</GeometryType>` is added to that `<GMLFeatureClass>`, indicating that the class represents a feature without geometry.
 
-`<GeomPropertyDefn>` and `<PropertyDefn>` child elements are added for the UML properties of the type with identity, as described in the <<gfstemplate_schemaconversionrules_properties>> section. The property definition elements are sorted by their `<Name>`.
+`<GeomPropertyDefn>` and `<PropertyDefn>` child elements are added for the UML properties of the type with identity, as described in the <<gfstemplate_schemaconversionrules_properties>> section. If target parameter _sortPropertiesByName_ is set to 'true' (case is ignored; default value is 'false'), then the property definition elements are sorted by their `<Name>`.
 
 
 [[gfstemplate_schemaconversionrules_types_mixin]]

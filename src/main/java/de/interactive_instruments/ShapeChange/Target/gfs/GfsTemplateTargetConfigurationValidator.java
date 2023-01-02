@@ -65,7 +65,8 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 	    .of(GfsTemplateConstants.PARAM_ALWAYS_ENCODE_DATA_TYPE_NAME,
 		    GfsTemplateConstants.PARAM_CHOICE_FOR_INLINE_OR_BY_REFERENCE,
 		    GfsTemplateConstants.PARAM_GML_CODE_LIST_ENCODING_VERSION,
-		    GfsTemplateConstants.PARAM_PROPERTY_NAME_SEPARATOR, GfsTemplateConstants.PARAM_SRS_NAME,
+		    GfsTemplateConstants.PARAM_PROPERTY_NAME_SEPARATOR,
+		    GfsTemplateConstants.PARAM_SORT_PROPERTIES_BY_NAME, GfsTemplateConstants.PARAM_SRS_NAME,
 		    GfsTemplateConstants.PARAM_XML_ATTRIBUTE_NAME_SEPARATOR,
 		    GfsTemplateConstants.PARAM_XML_ATTRIBUTES_TO_ENCODE, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
@@ -114,6 +115,7 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 	isValid = isValid
 		& checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_GML_CODE_LIST_ENCODING_VERSION);
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_PROPERTY_NAME_SEPARATOR);
+	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_SORT_PROPERTIES_BY_NAME);	
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_SRS_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_XML_ATTRIBUTE_NAME_SEPARATOR);
 

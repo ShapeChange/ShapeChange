@@ -48,6 +48,7 @@ public class GfsTemplateConstants {
     public static final String PARAM_CHOICE_FOR_INLINE_OR_BY_REFERENCE = "choiceForInlineOrByReference";
     public static final String PARAM_GML_CODE_LIST_ENCODING_VERSION = "gmlCodeListEncodingVersion";
     public static final String PARAM_PROPERTY_NAME_SEPARATOR = "propertyNameSeparator";
+    public static final String PARAM_SORT_PROPERTIES_BY_NAME = "sortPropertiesByName";    
     public static final String PARAM_SRS_NAME = "srsName";
     public static final String PARAM_XML_ATTRIBUTE_NAME_SEPARATOR = "xmlAttributeNameSeparator";
     public static final String PARAM_XML_ATTRIBUTES_TO_ENCODE = "xmlAttributesToEncode";

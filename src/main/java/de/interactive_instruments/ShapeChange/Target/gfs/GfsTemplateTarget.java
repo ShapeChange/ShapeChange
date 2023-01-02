@@ -37,10 +37,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -77,6 +80,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
     protected String choiceForInlineOrByReference = "byReference";
     protected String gmlCodeListEncodingVersion = "3.2";
     protected String propertyNameSeparator = "_";
+    protected boolean sortPropertiesByName = false;
     protected String srsName = null;
     protected String xmlAttributeNameSeparator = "_"; // default: value of propertyNameSeparator parameter
     protected SortedSet<String> xmlAttributesToEncode = new TreeSet<>();
@@ -139,6 +143,9 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	    propertyNameSeparator = options.parameterAsString(this.getClass().getName(),
 		    GfsTemplateConstants.PARAM_PROPERTY_NAME_SEPARATOR, "_", false, true);
+
+	    sortPropertiesByName = options.parameterAsBoolean(this.getClass().getName(),
+		    GfsTemplateConstants.PARAM_SORT_PROPERTIES_BY_NAME, false);
 
 	    srsName = options.parameterAsString(this.getClass().getName(), GfsTemplateConstants.PARAM_SRS_NAME, null,
 		    false, true);
@@ -291,9 +298,11 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		return o1.getName().compareTo(o2.getName());
 	    }
 	});
-	for (GmlFeatureClass gfc : gmlFeatureClasses) {
-	    Collections.sort(gfc.getGeometryPropertyDefinitions(), AbstractPropertyDefinition.PROP_NAME_COMPARATOR);
-	    Collections.sort(gfc.getPropertyDefinitions(), AbstractPropertyDefinition.PROP_NAME_COMPARATOR);
+	if (sortPropertiesByName) {
+	    for (GmlFeatureClass gfc : gmlFeatureClasses) {
+		Collections.sort(gfc.getGeometryPropertyDefinitions(), AbstractPropertyDefinition.PROP_NAME_COMPARATOR);
+		Collections.sort(gfc.getPropertyDefinitions(), AbstractPropertyDefinition.PROP_NAME_COMPARATOR);
+	    }
 	}
 
 	File outputDirectoryFile = new File(outputDirectory);
@@ -344,11 +353,57 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	return gfc;
     }
 
+    /**
+     * @param ci - class to get the properties from
+     * @return A set containing all navigable properties (attributes and association
+     *         roles) that belong to the given class or one of the types in its
+     *         supertype hierarchy - excluding overridden properties. The set can be
+     *         empty but not <code>null</code>. Properties are ordered according to
+     *         their sequence numbers, properties from supertypes (NOTE: the
+     *         supertypes are visited in order of their class name) are listed
+     *         before subtype properties.
+     */
+    public List<PropertyInfo> propertiesAllInOrder(ClassInfo ci) {
+
+	List<PropertyInfo> propsFromCi = new ArrayList<>();
+
+	for (PropertyInfo pi : ci.properties().values()) {
+	    propsFromCi.add(pi);
+	}
+
+	SortedSet<ClassInfo> supertypeClassesSet = ci.supertypeClasses();
+	List<ClassInfo> supertypeClassesSortedByName = new ArrayList<>(supertypeClassesSet);
+	supertypeClassesSortedByName.sort(new Comparator<ClassInfo>() {
+	    @Override
+	    public int compare(ClassInfo o1, ClassInfo o2) {
+		return o1.name().compareTo(o2.name());
+	    }
+	});
+	
+	List<PropertyInfo> result = new ArrayList<>();
+
+	for (ClassInfo supertype : supertypeClassesSortedByName) {
+	    for (PropertyInfo supertypeProp : propertiesAllInOrder(supertype)) {
+		/*
+		 * ensure that direct property of the class is not overridden by supertype
+		 * property
+		 */
+		if (!propsFromCi.stream().anyMatch(resPi -> resPi.name().equals(supertypeProp.name()))) {
+		    result.add(supertypeProp);
+		}
+	    }
+	}
+	
+	result.addAll(propsFromCi);
+	
+	return result;
+    }
+
     private List<AbstractPropertyDefinition> createPropertyDefinitions(ClassInfo ci) {
 
 	// identify property paths
 	List<List<PropertyInfo>> pathsToEndProperties = new ArrayList<>();
-	for (PropertyInfo pi : ci.propertiesAll()) {
+	for (PropertyInfo pi : propertiesAllInOrder(ci)) {
 	    if (!isEncoded(pi)) {
 		continue;
 	    }
@@ -356,6 +411,14 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	    propList.add(pi);
 	    identifyPropertyPaths(pi, propList, pathsToEndProperties);
 	}
+	
+	// for debugging the property paths (especially property order), uncomment the following:
+	/*
+	 * System.out.println(ci.name()+":"); for(List<PropertyInfo> path :
+	 * pathsToEndProperties) {
+	 * System.out.println(StringUtils.join(path.stream().map(pi ->
+	 * pi.name()).collect(Collectors.toList()),"->")); } System.out.println();
+	 */
 
 	// create property definition(s) for each path
 	List<AbstractPropertyDefinition> res = new ArrayList<>();
@@ -489,9 +552,10 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		    if (endPi.matches(GfsTemplateConstants.RULE_PROP_INLINE_ENCODING_USES_HREF_SUFFIX)) {
 			/*
 			 * the values are encoded inline, and rule-gfs-prop-inlineEncodingUsesHrefSuffix
-			 * applies - so add the '_href' suffix to the name
+			 * applies - so add the '_href' suffix to the name (using
+			 * xmlAttributeNameSeparator)
 			 */
-			def.setName(defName + "_href");
+			def.setName(defName + xmlAttributeNameSeparator + "href");
 		    }
 
 		    resForBaseDef.add(def);
@@ -505,7 +569,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		     */
 		    if (xmlAttributesToEncode.contains("href")) {
 
-			def.setName(defName + "_href");
+			def.setName(defName + xmlAttributeNameSeparator + "href");
 			def.setElementPath(defElementPath + "@href");
 			PropertyDefinition propDef = (PropertyDefinition) def;
 			setXmlAttributeFieldValues(propDef, propDef.getType());
@@ -583,6 +647,8 @@ public class GfsTemplateTarget implements Target, MessageSource {
 			    nonAbstractClassNames.add(subtype.name());
 			}
 		    }
+		    
+		    Collections.sort(nonAbstractClassNames);
 
 		    for (String className : nonAbstractClassNames) {
 

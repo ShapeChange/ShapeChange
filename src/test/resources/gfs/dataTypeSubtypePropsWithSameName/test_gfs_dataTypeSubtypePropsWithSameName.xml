@@ -25,6 +25,7 @@
 			<targetParameter name="_unitTestOverride" value="true"/>
 			<targetParameter name="outputDirectory" value="testResults/gfs/dataTypeSubtypePropsWithSameName/results/gfs"/>
 			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="sortPropertiesByName" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="gfstest"/>
 			<rules>
 				<EncodingRule name="gfstest">
