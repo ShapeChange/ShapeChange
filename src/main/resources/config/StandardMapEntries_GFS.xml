@@ -33,17 +33,17 @@
 	<MapEntry type="DirectPosition" rule="*" targetType="Point" param=""/>
 	<MapEntry type="GM_Point" rule="*" targetType="Point" param=""/>
 	<MapEntry type="GM_MultiPoint" rule="*" targetType="MultiPoint" param=""/>
-	<MapEntry type="GM_Curve" rule="*" targetType="Curve" param=""/>
+	<MapEntry type="GM_Curve" rule="*" targetType="CompoundCurve" param=""/>
 	<MapEntry type="GM_LineString" rule="*" targetType="LineString" param=""/>
 	<MapEntry type="GM_CompositeCurve" rule="*" targetType="MultiCurve" param=""/>
 	<MapEntry type="GM_MultiCurve" rule="*" targetType="MultiCurve" param=""/>
-	<MapEntry type="GM_Surface" rule="*" targetType="Surface" param=""/>
+	<MapEntry type="GM_Surface" rule="*" targetType="CurvePolygon" param=""/>
 	<MapEntry type="GM_Polygon" rule="*" targetType="Polygon" param=""/>
 	<MapEntry type="GM_CompositeSurface" rule="*" targetType="MultiSurface" param=""/>
 	<MapEntry type="GM_MultiSurface" rule="*" targetType="MultiSurface" param=""/>
-	<MapEntry type="GM_Primitive" rule="*" targetType="1" param=""/>
+	<MapEntry type="GM_Primitive" rule="*" targetType="0" param=""/>
 	<MapEntry type="GM_Aggregate" rule="*" targetType="GeometryCollection" param=""/>
-	<MapEntry type="GM_Object" rule="*" targetType="1" param=""/>
+	<MapEntry type="GM_Object" rule="*" targetType="0" param=""/>
 	
 	<!-- NOTE: Except for XML elements that represent geometries or features, 
 	     the GML driver does not support complex XML structures as property values. 
