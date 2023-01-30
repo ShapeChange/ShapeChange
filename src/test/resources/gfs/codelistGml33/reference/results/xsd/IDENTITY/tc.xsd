@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:gmlexr="http://www.opengis.net/gml/3.3/exr"
+        xmlns:tc="http://example.org/shapechange/schema/test/codelist"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test/codelist"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.3/exr"
+           schemaLocation="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <simpleType name="CodeList2Type">
+      <union memberTypes="tc:CodeList2EnumerationType tc:CodeList2OtherType"/>
+   </simpleType>
+   <simpleType name="CodeList2EnumerationType">
+      <restriction base="string"/>
+   </simpleType>
+   <simpleType name="CodeList2OtherType">
+      <restriction base="string">
+         <pattern value="other: \w{2,}"/>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType"
+            substitutionGroup="gml:AbstractFeature"
+            type="tc:FeatureTypeType"/>
+   <complexType name="FeatureTypeType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attCl1" type="gml:ReferenceType">
+                  <annotation>
+                     <appinfo>
+                        <targetCodeList xmlns="http://www.opengis.net/gml/3.3/exr">CodeList1</targetCodeList>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="attCl2" type="tc:CodeList2Type"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureTypePropertyType">
+      <sequence minOccurs="0">
+         <element ref="tc:FeatureType"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

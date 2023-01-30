@@ -275,7 +275,7 @@ public class ModelProfileValidator implements MessageSource {
 
 					/*
 					 * If the property is mandatory (and does not belong to an
-					 * enumeration or codelist), check that the profile sets of
+					 * enumeration, codelist, or union), check that the profile sets of
 					 * the property and its inClass() are equal.
 					 * 
 					 * NOTE: This check is not covered by the previous check
@@ -284,7 +284,8 @@ public class ModelProfileValidator implements MessageSource {
 
 					if (pi.cardinality().minOccurs > 0
 							&& ci.category() != Options.ENUMERATION
-							&& ci.category() != Options.CODELIST) {
+							&& ci.category() != Options.CODELIST
+							&& ci.category() != Options.UNION) {
 
 						if (ci.profiles().isEmpty()
 								&& pi.profiles().isEmpty()) {

@@ -1,0 +1,17 @@
+<GMLFeatureClassList>
+  <GMLFeatureClass>
+    <Name>FeatureType</Name>
+    <ElementPath>FeatureType</ElementPath>
+    <GeometryType>None</GeometryType>
+    <PropertyDefn>
+      <Name>attCl1</Name>
+      <ElementPath>attCl1@href</ElementPath>
+      <Type>String</Type>
+    </PropertyDefn>
+    <PropertyDefn>
+      <Name>attCl2</Name>
+      <ElementPath>attCl2</ElementPath>
+      <Type>String</Type>
+    </PropertyDefn>
+  </GMLFeatureClass>
+</GMLFeatureClassList>

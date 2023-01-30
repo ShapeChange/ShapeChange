@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gml_registry>
+   <namespace prefix="t" uri="http://example.org/shapechange/schema/test">
+      <featureType elementName="FeatureType" gfsSchemaLocation="Test_Schema.gfs"/>
+   </namespace>
+</gml_registry>

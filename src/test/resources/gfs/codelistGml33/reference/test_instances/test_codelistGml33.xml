@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST INSTRUCTIONS: Open a command line, where the command 'ogrinfo' is available (e.g. OSGeo4W Shell). Then navigate to the directory in which the test instance is located. Then execute the following command:
+
+ogrinfo -ro -al -oo WRITE_GFS=NO -oo GFS_TEMPLATE=../results/gfs/IDENTITY/Test_Schema___Codelist.gfs test_codelistGml33.xml
+
+-->
+<ex:Test xmlns:ex="https://example.org/test" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:tc="http://example.org/shapechange/schema/test/codelist" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- xsi:schemaLocation="http://example.org/shapechange/schema/test/codelist ../results/xsd/IDENTITY/tc.xsd" -->
+  <tc:FeatureType gml:id="FT1">
+    <tc:attCl1 xlink:href="https://example.org/test/code"/>
+    <tc:attCl2>test</tc:attCl2>
+  </tc:FeatureType>
+  <tc:FeatureType gml:id="FT2">
+    <tc:attCl1 xlink:href="https://example.org/test/code2"/>
+    <tc:attCl2>test2</tc:attCl2>
+  </tc:FeatureType>
+</ex:Test>

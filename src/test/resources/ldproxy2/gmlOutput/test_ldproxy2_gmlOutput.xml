@@ -152,5 +152,35 @@
 			<xi:include href="src/main/resources/config/StandardRules.xml" />
 			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl" inputs="TRF_END" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/gmlOutput/results_postgres" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="25832" />
+			<targetParameter name="createReferences" value="true"/>
+			<targetParameter name="createDocumentation" value="true"/>			
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />		
+			<targetParameter name="defaultEncodingRule" value="mysql_postgres"/>
+			<targetParameter name="foreignKeyDeferrable" value="true"/>
+			<targetParameter name="foreignKeyInitialConstraintMode" value="deferred"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl"/>
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>	
+			<targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
+			<targetParameter name="codeNameColumnName" value="code"/>
+			<targetParameter name="descriptorsForCodelist" value="name,documentation,description"/>			
+			<rules>
+				<EncodingRule extends="sql" name="mysql_postgres">
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-prop-exclude-derived"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+					<rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
+					</EncodingRule>
+			</rules>			
+			<xi:include href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

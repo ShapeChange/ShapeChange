@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element abstract="true"
+            name="AbstractFeatureType1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:AbstractFeatureType1Type"/>
+   <complexType abstract="true" name="AbstractFeatureType1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attGeom" type="gml:GeometryPropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractFeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:AbstractFeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="AbstractFeatureType2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:AbstractFeatureType2Type"/>
+   <complexType abstract="true" name="AbstractFeatureType2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="att1" type="string"/>
+               <element minOccurs="0" name="att2" type="boolean"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractFeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:AbstractFeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="CollectionNotEncodedInGfs"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:CollectionNotEncodedInGfsType"/>
+   <complexType name="CollectionNotEncodedInGfsType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="ft1"
+                        type="t:FeatureType1PropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="ft2"
+                        type="t:FeatureType2PropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="ot1"
+                        type="t:ObjectType1PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="CollectionNotEncodedInGfsPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:CollectionNotEncodedInGfs"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="DataType"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DataTypeType"/>
+   <complexType name="DataTypeType">
+      <sequence>
+         <element maxOccurs="unbounded" name="dtAtt1" type="string"/>
+         <element name="dtAtt2" type="double"/>
+      </sequence>
+   </complexType>
+   <complexType name="DataTypePropertyType">
+      <sequence>
+         <element ref="t:DataType"/>
+      </sequence>
+   </complexType>
+   <element name="DataTypeSub1"
+            substitutionGroup="t:DataTypeSupertype"
+            type="t:DataTypeSub1Type"/>
+   <complexType name="DataTypeSub1Type">
+      <complexContent>
+         <extension base="t:DataTypeSupertypeType">
+            <sequence>
+               <element name="attSub1" type="gml:LengthType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DataTypeSub1PropertyType">
+      <sequence>
+         <element ref="t:DataTypeSub1"/>
+      </sequence>
+   </complexType>
+   <element name="DataTypeSub2"
+            substitutionGroup="t:DataTypeSubAbstract"
+            type="t:DataTypeSub2Type"/>
+   <complexType name="DataTypeSub2Type">
+      <complexContent>
+         <extension base="t:DataTypeSubAbstractType">
+            <sequence>
+               <element name="attSub2" type="t:UnionPropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DataTypeSub2PropertyType">
+      <sequence>
+         <element ref="t:DataTypeSub2"/>
+      </sequence>
+   </complexType>
+   <element abstract="true"
+            name="DataTypeSubAbstract"
+            substitutionGroup="t:DataTypeSupertype"
+            type="t:DataTypeSubAbstractType"/>
+   <complexType abstract="true" name="DataTypeSubAbstractType">
+      <complexContent>
+         <extension base="t:DataTypeSupertypeType">
+            <sequence>
+               <element name="attSubAbstract" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DataTypeSubAbstractPropertyType">
+      <sequence>
+         <element ref="t:DataTypeSubAbstract"/>
+      </sequence>
+   </complexType>
+   <element name="DataTypeSupertype"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DataTypeSupertypeType"/>
+   <complexType name="DataTypeSupertypeType">
+      <sequence>
+         <element name="attSuper1" type="gml:GeometryPropertyType"/>
+         <element maxOccurs="unbounded" name="attSuper2" type="string"/>
+         <element maxOccurs="unbounded" name="attSuper3" type="gml:MeasureType"/>
+      </sequence>
+   </complexType>
+   <complexType name="DataTypeSupertypePropertyType">
+      <sequence>
+         <element ref="t:DataTypeSupertype"/>
+      </sequence>
+   </complexType>
+   <simpleType name="EnumerationType">
+      <restriction base="string">
+         <enumeration value="enum1"/>
+         <enumeration value="enum2"/>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType1"
+            substitutionGroup="t:AbstractFeatureType1"
+            type="t:FeatureType1Type"/>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="t:AbstractFeatureType1Type">
+            <sequence>
+               <element name="attDt" type="t:DataTypePropertyType"/>
+               <element minOccurs="0" name="attU" type="t:UnionPropertyType"/>
+               <element name="attCl" type="gml:CodeType"/>
+               <element maxOccurs="unbounded" minOccurs="0" name="roleOt1">
+                  <complexType>
+                     <sequence>
+                        <element ref="t:ObjectType1"/>
+                     </sequence>
+                     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+                  </complexType>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="roleFt2"
+                        type="t:FeatureType2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType2"
+            substitutionGroup="t:AbstractFeatureType2"
+            type="t:FeatureType2Type"/>
+   <complexType name="FeatureType2Type">
+      <complexContent>
+         <extension base="t:AbstractFeatureType2Type">
+            <sequence>
+               <element name="att3" type="gml:PointPropertyType"/>
+               <element maxOccurs="unbounded" name="att4" type="integer"/>
+               <element name="att5" type="gml:CurvePropertyType"/>
+               <element name="roleFt1" type="gml:ReferenceType">
+                  <annotation>
+                     <appinfo>
+                        <targetElement xmlns="http://www.opengis.net/gml/3.2">t:FeatureType1</targetElement>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:FeatureType2"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="ObjectType1"
+            substitutionGroup="gml:AbstractGML"
+            type="t:ObjectType1Type"/>
+   <complexType name="ObjectType1Type">
+      <complexContent>
+         <extension base="gml:AbstractGMLType">
+            <sequence>
+               <element name="attE" type="t:EnumerationType"/>
+               <element name="attDtSupertype" type="t:DataTypeSupertypePropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="ObjectType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:ObjectType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Union"
+            substitutionGroup="gml:AbstractObject"
+            type="t:UnionType"/>
+   <complexType name="UnionType">
+      <choice>
+         <element minOccurs="0" name="option1" type="integer"/>
+         <element maxOccurs="unbounded"
+                  minOccurs="0"
+                  name="option2"
+                  type="t:DataTypePropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="UnionPropertyType">
+      <sequence>
+         <element ref="t:Union"/>
+      </sequence>
+   </complexType>
+</schema>
