@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri_from_config/t/subpackage.json",
+  "title": "test sub-package",
+  "description": "Definition: subpackage Def  Description: subpackage Desc",
+  "$defs": {
+    "FT3": {
+      "$anchor": "FT3",
+      "description": "Definition: FT3 Def  Description: FT3 Desc",
+      "deprecated": false,
+      "code": 3000,
+      "isDefinedBy": "http://example.org/view?i\u003dFT3",
+      "allOf": [
+        {
+          "$ref": "https://example.org/baseuri_from_config/t/main.json#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attDep": {
+              "title": "attribute dep",
+              "description": "Definition: attDep Def  Description: attDep Desc",
+              "deprecated": true,
+              "code": 0,
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}

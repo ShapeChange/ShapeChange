@@ -999,7 +999,6 @@
   </sequence>
   <attribute name="name" type="string" use="required"/>
  </complexType>
-
  <element name="rdfGeneralProperties">
   <complexType>
    <sequence>
@@ -1290,5 +1289,82 @@
     <documentation>true, if the model element is encoded as an XML attribute, false (the default) if it is encoded as an XML element.</documentation>
    </annotation>
   </attribute>
+ </complexType>
+ <element name="JsonSchemaAnnotations" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:JsonSchemaAnnotationsType"/>
+ <complexType name="JsonSchemaAnnotationsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="1" name="annotations">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:AbstractJsonSchemaAnnotation"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element abstract="true" name="AbstractJsonSchemaAnnotation" type="sc:AbstractJsonSchemaAnnotationType"/>
+ <complexType name="AbstractJsonSchemaAnnotationType">
+  <attribute name="annotation" type="string" use="required"> </attribute>
+  <attribute default="all" name="appliesTo">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="all"/>
+     <enumeration value="class"/>
+     <enumeration value="package"/>
+     <enumeration value="property"/>
+     <enumeration value="attribute"/>
+     <enumeration value="role"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute default="false" name="arrayValue" type="boolean"> </attribute>
+  <attribute default="ignore" name="noValueBehavior">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="ignore"/>
+     <enumeration value="populateOnce"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute default="" name="noValueValue" type="string"> </attribute>
+ </complexType>
+ <element abstract="false" name="SimpleAnnotation" substitutionGroup="sc:AbstractJsonSchemaAnnotation" type="sc:SimpleAnnotationType"/>
+ <complexType name="SimpleAnnotationType">
+  <complexContent>
+   <extension base="sc:AbstractJsonSchemaAnnotationType">
+    <attribute name="descriptorOrTaggedValue" type="string" use="required"> </attribute>
+    <attribute default="string" name="type">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="string"/>
+       <enumeration value="integer"/>
+       <enumeration value="boolean"/>
+       <enumeration value="number"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="TemplateAnnotation" substitutionGroup="sc:AbstractJsonSchemaAnnotation" type="sc:TemplateAnnotationType"/>
+ <complexType name="TemplateAnnotationType">
+  <complexContent>
+   <extension base="sc:AbstractJsonSchemaAnnotationType">
+    <attribute name="valueTemplate" type="string" use="required"> </attribute>
+    <attribute default="connectInSingleAnnotationValue" name="multiValueBehavior">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="connectInSingleAnnotationValue"/>
+       <enumeration value="createMultipleAnnotationValues"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+    <attribute default=" " name="multiValueConnectorToken" type="string"> </attribute>
+   </extension>
+  </complexContent>
  </complexType>
 </schema>

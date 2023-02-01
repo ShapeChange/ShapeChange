@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -66,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.MapEntries;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
@@ -137,6 +139,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
+
+    protected static List<AbstractJsonSchemaAnnotationElement> annotationElements = new ArrayList<>();
 
     /* ------ */
     /*
@@ -264,6 +268,21 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		 * Parse all parameter information
 		 */
 		mapEntryParamInfos = new MapEntryParamInfos(result, mapEntries);
+	    }
+
+	    if (options.getCurrentProcessConfig().getAdvancedProcessConfigurations() == null) {
+
+		result.addDebug(this, 12);
+
+	    } else {
+
+		Element advancedProcessConfigElmt = options.getCurrentProcessConfig()
+			.getAdvancedProcessConfigurations();
+
+		// identify annotation elements
+		List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator.parseJsonSchemaAnnotationElements(
+			advancedProcessConfigElmt);
+		annotationElements = annotationElmts;
 	    }
 
 	    File outputDirectoryFile = new File(outputDirectory);
@@ -511,6 +530,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public JsonSchemaType[] objectIdentifierType() {
 	return objectIdentifierType;
+    }
+    
+    public List<AbstractJsonSchemaAnnotationElement> getAnnotationElements() {
+	return annotationElements;
     }
 
     @Override
@@ -990,6 +1013,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	mapEntryParamInfos = null;
 	mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
 	entityTypeMemberPathByCi = new HashMap<>();
+	annotationElements = new ArrayList<>();
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();
@@ -1066,7 +1090,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	case 10:
 	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-
+	case 12:
+	    return "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
+	
 	case 15:
 	    return "No map entries provided via the configuration.";
 //		case 16:

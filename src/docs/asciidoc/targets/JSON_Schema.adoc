@@ -8,6 +8,7 @@
 :toc-position: left
 
 :appendix-caption: Annex
+:listing-caption: Listing
 
 :numbered:
 :sectanchors:
@@ -85,6 +86,63 @@ future - a xref:../application schemas/UML_profile.adoc[requirement
 or recommendation] to be tested before the conversion process.
 
 This target supports the rules defined in the following subsections.
+
+
+[[rule-json-all-documentation]]
+==== rule-json-all-documentation
+
+With __rule-json-all-documentation__, descriptive information of application schema elements (packages, classes, and properties) can be encoded via JSON Schema _annotations_.
+
+[NOTE]
+======
+_Annotations_ represent one category of JSON Schema keywords. _Annotations_ attach information that applications may use as they see fit. The other categories are _assertions_, which validate that a JSON instance satisfies constraints, and _applicators_, which apply subschemas to parts of the instance and combine their results.
+
+======
+
+Descriptive information of a model element in ShapeChange, i.e., properties (attributes and association roles), classes, and packages, includes the pieces of information, called _descriptors_, that are documented in <<table_descriptors>>.
+
+NOTE: A model element can have all, a subset, or none of these descriptors.
+
+[#table_descriptors,reftext='{table-caption} {counter:table-num}']
+.Well-known descriptors
+[cols="1,3a",options="header"]
+|====================
+| Descriptor Name +
+(and ID) | Explanation
+| Name +
+(name) | The name of the model element (as named in the source UML, i.e., using upper and lower camel case).
+| Alias +
+(alias) | An alternative, human-readable name for the model element.
+| Definition +
+(definition) | The normative specification of the model element.
+| Description +
+(description) | Additional information about the model element.
+| Documentation +
+(documentation) | The overall documentation of the model element. May be structured, containing other descriptors (such as definition and description).
+| Example(s) +
+(example) | Example(s) illustrating the model element.
+| Global identifier +
+(globalIdentifier) | The globally unique identifier of the model element; that is, unique across models.
+| Legal basis +
+(legalBasis) | The legal basis for the model element.
+| Data capture statement(s) +
+(dataCaptureStatement) | Statement(s) describing how to capture instances of this model element from the real world.
+| Primary code +
+(primaryCode) | The primary code for this model element. +
+
+NOTE: The main code for a model element should be assigned to this descriptor. The primary code may be the only one. Optional additional tagged values may be added for other codes.
+|====================
+
+NOTE: The descriptor ID is used in ShapeChange configuration elements that define JSON Schema annotations.
+
+Typically, a community has a preferred way to model and encode this information. For example, one community may want to encode the description of a model element via the "description" annotation, while another may prefer to encode the values of multiple descriptors of a model element within a single "description" annotation.
+
+ShapeChange can support this type of diversity through _JSON Schema annotation_ elements. An annotation element specifies how the content of a specific JSON Schema annotation (that shall be generated while converting a model element) shall be constructed. The annotation element takes into account that a UML model element may not have an actual value for a descriptor, and that some descriptors can have multiple values, e.g., the descriptor _example_.
+
+In addition to the well-known descriptors (see <<table_descriptors,previous table>>), additional descriptive information can be incorporated through UML tagged values from the application schema.
+
+For details about configuring JSON Schema annotation elements, see <<Annotations>>.
+
 
 [[rule-json-all-notEncoded]]
 ==== rule-json-all-notEncoded
@@ -921,6 +979,152 @@ mapped as defined by the map entry.
 
 Characteristics: _no specific characteristics are defined for this
 parameter_
+
+
+[[Annotations]]
+== JSON Schema Annotations
+
+The target supports two types of configuration elements for defining JSON Schema annotations.
+
+* SimpleAnnotation - For annotations with a simple JSON value, or an array thereof.
+* TemplateAnnotation - For annotations with a JSON string as value, or an array thereof, defined via a template that can include multiple descriptors and tagged values.
+
+NOTE: Annotations are only created for a model element if <<rule-json-all-documentation>> is part of the applicable encoding rule.
+
+NOTE: The JSON Schema annotation "examples" is an example for an annotation that has a JSON array as value, with the type of array items being unrestricted. In other words, the array can contain mixed value types. The "examples" annotation can thus have an array of strings (e.g., ["abc","xyz"]), numbers (e.g., [4,2]), booleans (e.g., [true, true]), and a mix thereof (e.g., ["abc", 2, true]) as value.
+
+NOTE: ShapeChange JSON Schema annotation elements are not designed to support the creation of annotations with complex JSON arrays or objects as value. Only simple values, or an array thereof, can be created. So far, no use cases have been identified that require a more complex annotation value. In the future, if such use cases were identified, ShapeChange could be extended to support them.
+
+The following two tables document the structure of the two ShapeChange JSON Schema annotation elements. <<example_shapechange_jsonschema_annotation_elements>>, <<example_shapechange_advancedprocessconfigurations_with_xinclude>>, and <<example_shapechange_myJsonSchemaAnnotations>> provide configuration examples.
+
+[#table_jsonschema_annotation_element1,reftext='{table-caption} {counter:table-num}']
+.SimpleAnnotation
+[cols="1,1,1,1,6a",options="header"]
+|===
+| Configuration Information Item | Datatype & Structure | Required / Optional | Default Value | Description
+| annotation | string | Required | _not applicable_ | Name of the JSON Schema annotation keyword that shall be added to the JSON Schema element which represents the UML model element.
+| appliesTo | enum: _all_, _package_, _class_, _property_, _attribute_, _role_ | Optional | _all_ | Identifies the type of model element to which the annotation applies.
+| arrayValue | boolean | Optional | _false_ | If true, then the annotation value will always be encoded as an array, even if only a single value is present. Otherwise, the default behavior is to only encode multiple values within a JSON array.
+| descriptorOr TaggedValue | string | Required | _not applicable_ | Either a _descriptor-ID_, identifying one of the <<table_descriptors,well-known descriptors>>, or a string identifying a tagged value.
+
+In order to identify a tagged value, add prefix "TV:" to the name of the tagged value. If a tagged value is known to contain a list of values, combined in a string using a specific separator, and these values shall be used as individual values, rather than using the whole string as value, use the prefix "TV(_separator_):," followed by the tag name. ShapeChange will then split the tagged value around matches of the given separator (which is treated as a literal).
+| noValueBehavior | enum: _ignore_ or _populateOnce_ | Optional | _ignore_ | Determines the behavior in case that no value is available for the descriptor or tagged value.
+
+* _ignore_: No annotation is created.
+* _populateOnce_: A single annotation is created, with the _noValueValue_ being used as value.
+| noValueValue | string | Optional | _the empty string_ | If the descriptor or tagged value has no value, then this information item provides the value to use instead (e.g., 0, or true).
+| type | enum: _string_, _integer_, _number_, _boolean_ | Optional | _string_ | Defines how ShapeChange will encode the values of the descriptor / tagged value.
+
+* type = string: each value will be quoted
+* type = integer: each value will be parsed as an integer (invalid values will be ignored, and a warning logged); values will not be quoted
+* type = number: each value will be parsed as a double (invalid values will be ignored, and a warning logged); values will not be quoted
+* type = boolean: if the value is "true" (ignoring case") or 1, the value will be encoded as the JSON value __true__; otherwise, it will be encoded as the JSON value __false__.
+
+|===
+
+[#table_jsonschema_annotation_element2,reftext='{table-caption} {counter:table-num}']
+.TemplateAnnotation
+[cols="1,1,1,1,6a",options="header"]
+|===
+| Information Item | Datatype & Structure | Required / Optional | Default Value | Description
+| annotation 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
+| appliesTo 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
+| arrayValue 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
+| valueTemplate | string | Required | _not applicable_ | Textual template where an occurrence of the field "[[_descriptor-ID_]]" is replaced with the value(s) of that descriptor. The IDs of supported descriptors are listed in <<table_descriptors>>.
+
+An occurrence of the field "\[[TV:name]]" is replaced with the value(s) of the UML tagged value with the given name from the input schema.
+
+The content of a tagged value can also be split into multiple parts. In that case, use field "[[TV(_separator_):name]]." The tagged value will be split around matches of the given separator (which is treated as a literal).
+
+| noValueBehavior | enum: _ignore_ or _populateOnce_ | Optional | _ignore_ | Determines the behavior in case that no value is available for any of the fields (tagged values and descriptors) contained in the template.
+
+* _ignore_: No annotation is created.
+* _populateOnce_: A single annotation is created, with the _noValueValue_ being used for all fields.
+| noValueValue | string | Optional | _the empty string_ | If a descriptor used in a template has no value, then this information item provides the value to use instead (e.g., "N/A" or "FIXME").
+| multiValueBehavior | enum: either _connectInSingle_ +
+_AnnotationValue_ or _createMultiple_ +
+_AnnotationValues_ (note that the two enums are only split in this table cell for presentation purposes) | Optional | _connectInSingle_ +
+_AnnotationValue_ | Specifies how a case where one or more of the descriptors and tagged values contained in the template have multiple values, shall be encoded.
+
+* _connectInSingleAnnotationValue_: Multiple values of a descriptor or tagged value contained in the template are combined in a single string value, using the _multiValueConnectorToken_ to connect them.
+* _createMultipleAnnotationValues_: Multiple values for one or more descriptor or tagged value result in an array of annotation values, with one value for each combination of multi-valued descriptors / tagged values (resulting in a permutation of the values of each descriptor / tagged value contained in the template).
+| multiValue ConnectorToken | string | Optional | _a single space character_ | If a descriptor or tagged value used in the _valueTemplate_ has multiple values, and the _multiValueBehavior_ is set to _connectInSingleAnnotationValue_, then the values are concatenated to a single string value using this token as connector between two values.
+|===
+
+NOTE: Conversion rules exist to populate the annotations "default" and "readOnly" (see <<rule-json-prop-initialValueAsDefault>>, <<rule-json-prop-derivedAsReadOnly>>, and <<rule-json-prop-readOnly>>).
+
+The annotation elements are configured within the `<advancedProcessConfigurations>` element of the JSON Schema target, as shown in <<#example_shapechange_jsonschema_annotation_elements>>.
+
+[#example_shapechange_jsonschema_annotation_elements,reftext='{listing-caption} {counter:listing-num}']
+.Configuration example for JSON Schema annotation elements
+[source,xml,linenumbers]
+----
+<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="model">
+  <advancedProcessConfigurations>
+    <JsonSchemaAnnotations>
+      <annotations>
+        <SimpleAnnotation annotation="title" descriptorOrTaggedValue="alias" noValueBehavior="ignore"/>
+        <TemplateAnnotation annotation="description" valueTemplate="Definition: [[definition]]  Description: [[description]]" noValueValue="[None Specified]" noValueBehavior="populateOnce"/>
+        <SimpleAnnotation annotation="unit" descriptorOrTaggedValue="TV:unit" noValueBehavior="ignore"/>
+        <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
+        <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
+        <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
+        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
+        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="property"/>
+        <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues"/>
+        <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
+      </annotations>
+    </JsonSchemaAnnotations>
+  </advancedProcessConfigurations>
+  <targetParameter name="outputDirectory" value="testResults/json/documentation/json_schemas/plainjson"/>
+  <targetParameter name="sortedOutput" value="true"/>
+  <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+  <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+  <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+  <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
+  <rules>
+    <EncodingRule name="myPlainJson" extends="defaultPlainJson">
+      <rule name="rule-json-all-documentation"/>
+    </EncodingRule>
+  </rules>
+  <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+</Target>
+
+----
+
+The `<advancedProcessConfigurations>` element can also reference another XML file that contains the annotation definitions via an include element. That can be useful, in case that multiple JSON Schema target configurations use the same set of annotations.
+
+[#example_shapechange_advancedprocessconfigurations_with_xinclude,reftext='{listing-caption} {counter:listing-num}']
+.Example of advancedProcessConfigurations element with include statement
+[source,xml,linenumbers]
+----
+<advancedProcessConfigurations>
+  <xi:include href="./config/myJsonSchemaAnnotations.xml"/>
+</advancedProcessConfigurations>
+
+----
+
+[#example_shapechange_myJsonSchemaAnnotations,reftext='{listing-caption} {counter:listing-num}']
+.Example of included XML file with JSON Schema annotation elements
+[source,xml,linenumbers]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<JsonSchemaAnnotations xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <annotations>
+    <SimpleAnnotation annotation="title" descriptorOrTaggedValue="alias" noValueBehavior="ignore"/>
+    <TemplateAnnotation annotation="description" valueTemplate="Definition: [[definition]]  Description: [[description]]" noValueValue="[None Specified]" noValueBehavior="populateOnce"/>
+    <SimpleAnnotation annotation="unit" descriptorOrTaggedValue="TV:unit" noValueBehavior="ignore"/>
+    <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
+    <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
+    <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="property"/>    
+    <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues" />
+    <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
+  </annotations>
+</JsonSchemaAnnotations>
+
+----
 
 [[Configuration_Example]]
 == Configuration Example

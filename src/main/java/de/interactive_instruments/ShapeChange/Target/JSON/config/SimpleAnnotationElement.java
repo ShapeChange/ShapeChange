@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,40 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.JSON.json;
+package de.interactive_instruments.ShapeChange.Target.JSON.config;
 
-import com.google.gson.JsonElement;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public interface JsonValue {
+public class SimpleAnnotationElement extends AbstractJsonSchemaAnnotationElement {
+
+    private String descriptorOrTaggedValue;
     
-    public JsonElement toGson();    
+    private JsonSchemaType type = JsonSchemaType.STRING;
+    
+    public SimpleAnnotationElement(String annotation, String descriptorOrTaggedValue, JsonSchemaType simpleType) {
+	super(annotation);
+	
+	this.descriptorOrTaggedValue = descriptorOrTaggedValue;
+	this.type = simpleType;
+    }
+
+    /**
+     * @return the descriptorOrTaggedValue
+     */
+    public String getDescriptorOrTaggedValue() {
+        return descriptorOrTaggedValue;
+    }
+
+    /**
+     * @return the type
+     */
+    public JsonSchemaType getType() {
+        return type;
+    }
+    
+    
 }

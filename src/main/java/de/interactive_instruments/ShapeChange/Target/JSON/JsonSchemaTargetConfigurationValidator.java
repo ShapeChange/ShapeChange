@@ -40,11 +40,13 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.AbstractConfigurationValidator;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
@@ -54,6 +56,9 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
+import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
+import de.interactive_instruments.ShapeChange.Target.JSON.config.SimpleAnnotationElement;
+import de.interactive_instruments.ShapeChange.Target.JSON.config.TemplateAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 
 /**
@@ -121,6 +126,50 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 
 	    isValid = false;
 	    result.addError(this, 100, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, inlineOrByRefDefault);
+	}
+
+	// ===== JSON Schema annotations =====
+
+	Pattern taggedValuePattern = Pattern.compile("TV(\\(.+?\\))?:(.+)");
+	Pattern templatePattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
+
+	if (config.getAdvancedProcessConfigurations() != null) {
+
+	    Element advancedProcessConfigElmt = config.getAdvancedProcessConfigurations();
+
+	    // identify annotation elements
+	    List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
+		    .parseJsonSchemaAnnotationElements(advancedProcessConfigElmt);
+
+	    for (AbstractJsonSchemaAnnotationElement annElmt : annotationElmts) {
+
+		if (annElmt instanceof SimpleAnnotationElement) {
+		    SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
+		    String desc = ann.getDescriptorOrTaggedValue();
+		    if (desc.startsWith("TV")) {
+			Matcher m = taggedValuePattern.matcher(desc);
+			if (!m.matches()) {
+			    result.addError(this, 109, desc, ann.getAnnotation());
+			    isValid = false;
+			}
+		    }
+		} else {
+		    TemplateAnnotationElement ann = (TemplateAnnotationElement) annElmt;
+
+		    /* Check valueTemplate */
+		    Matcher matcher = templatePattern.matcher(ann.getValueTemplate());
+		    while (matcher.find()) {
+			String desc = matcher.group(1).trim();
+			if (desc.startsWith("TV")) {
+			    Matcher m = taggedValuePattern.matcher(desc);
+			    if (!m.matches()) {
+				result.addError(this, 110, desc, ann.getAnnotation());
+				isValid = false;
+			    }
+			}
+		    }
+		}
+	    }
 	}
 
 	return isValid;
@@ -334,6 +383,10 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
 	case 108:
 	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as integer (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
+	case 109:
+	    return "Value '$1$' in @descriptorOrTaggedValue of SimpleAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 110:
+	    return "Value of field [[$1$]] in @valueTemplate of TemplateAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
 
 	default:
 	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "

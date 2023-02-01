@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.JSON.json;
-
-import com.google.gson.JsonElement;
+package de.interactive_instruments.ShapeChange.Target.JSON.config;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public interface JsonValue {
-    
-    public JsonElement toGson();    
+public enum NoValueBehavior {
+
+    IGNORE, POPULATE_ONCE
 }

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,10 +98,12 @@ public class JsonSchemaDocument implements MessageSource {
     protected Map<ClassInfo, JsonSchemaTypeInfo> basicTypeInfoByClass = new HashMap<>();
 
     protected JsonSchema rootSchema = new JsonSchema();
+    
+    protected AnnotationGenerator annotationGenerator;
 
     public JsonSchemaDocument(PackageInfo representedPackage, Model model, Options options, ShapeChangeResult result,
-	    JsonSchemaTarget jsonSchemaTarget, String rootSchemaId,
-	    File jsonSchemaOutputFile, MapEntryParamInfos mapEntryParamInfos) {
+	    JsonSchemaTarget jsonSchemaTarget, String rootSchemaId, File jsonSchemaOutputFile,
+	    MapEntryParamInfos mapEntryParamInfos) {
 
 	this.representedPackage = representedPackage;
 	this.options = options;
@@ -123,6 +125,12 @@ public class JsonSchemaDocument implements MessageSource {
 	rootSchema.id(rootSchemaId);
 
 	// TODO add schema comment?
+	
+	this.annotationGenerator = new AnnotationGenerator(this.jsonSchemaTarget.getAnnotationElements(), options.language(), result);
+
+	if (representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
+	    this.annotationGenerator.applyAnnotations(rootSchema, representedPackage);
+	}
     }
 
     public void addClass(ClassInfo ci) {
@@ -133,7 +141,7 @@ public class JsonSchemaDocument implements MessageSource {
 	classesByName.put(ci.name(), ci);
 	basicTypeInfoByClass.put(ci, simpleJsTypeInfo);
     }
-    
+
     public boolean isBasicType(ClassInfo ci) {
 	return basicTypeInfoByClass.containsKey(ci);
     }
@@ -155,6 +163,10 @@ public class JsonSchemaDocument implements MessageSource {
     public JsonSchemaVersion getSchemaVersion() {
 	return this.jsonSchemaVersion;
     }
+
+    
+
+
 
     public void createDefinitions() {
 
@@ -184,12 +196,12 @@ public class JsonSchemaDocument implements MessageSource {
 	     * (because it would not be supported in an OpenAPI 3.0 schema).
 	     */
 	    String jsDefinitionReference;
-	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09) {
-		rootSchema.def(ci.name(), js);
-		jsDefinitionReference = rootSchemaId + "#/$defs/" + ci.name();
-	    } else {
+	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
 		rootSchema.definition(ci.name(), js);
 		jsDefinitionReference = rootSchemaId + "#/definitions/" + ci.name();
+	    } else {
+		rootSchema.def(ci.name(), js);
+		jsDefinitionReference = rootSchemaId + "#/$defs/" + ci.name();
 	    }
 
 	    // create map entry
@@ -234,10 +246,11 @@ public class JsonSchemaDocument implements MessageSource {
 	} else {
 
 	    // use a JSON Pointer to reference the definition of the class
-	    if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_2019_09) {
-		return schemaId + "#/$defs/" + ci.name();
-	    } else {
+	    if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_07
+		    || jsd.getSchemaVersion() == JsonSchemaVersion.OPENAPI_30) {
 		return schemaId + "#/definitions/" + ci.name();
+	    } else {
+		return schemaId + "#/$defs/" + ci.name();
 	    }
 	}
     }
@@ -545,11 +558,15 @@ public class JsonSchemaDocument implements MessageSource {
 	if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
 
-	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09) {
-		jsClass.anchor(ci.name());
-	    } else {
+	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07) {
 		jsClass.id("#" + ci.name());
+	    } else {
+		jsClass.anchor(ci.name());
 	    }
+	}
+
+	if (ci.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
+	    this.annotationGenerator.applyAnnotations(jsClass, ci);
 	}
     }
 
@@ -1153,7 +1170,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    boolean byReferenceOnly = false;
 
-	    if ((pi.categoryOfValue() == Options.FEATURE || (pi.categoryOfValue() == Options.OBJECT && !valueTypeIsBasicType(pi)))
+	    if ((pi.categoryOfValue() == Options.FEATURE
+		    || (pi.categoryOfValue() == Options.OBJECT && !valueTypeIsBasicType(pi)))
 		    && !typeInfo.isSimpleType()) {
 
 		boolean addByReferenceOption = false;
@@ -1200,6 +1218,10 @@ public class JsonSchemaDocument implements MessageSource {
 	 */
 
 	JsonSchema jsProp = new JsonSchema();
+
+	if (pi.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
+	    this.annotationGenerator.applyAnnotations(jsProp, pi);
+	}
 
 	JsonSchema parentForTypeSchema = jsProp;
 
@@ -1283,10 +1305,10 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    if (pi.isAttribute() && StringUtils.isNotBlank(pi.initialValue())
 		    && pi.matches(JsonSchemaConstants.RULE_PROP_INITIAL_VALUE_AS_DEFAULT)) {
-		
+
 		JsonSchemaTypeInfo actualTypeInfo = typeInfo;
-		
-		if(valueTypeIsBasicType(pi)) {
+
+		if (valueTypeIsBasicType(pi)) {
 		    actualTypeInfo = getBasicValueTypeDefinition(pi).get();
 		}
 
@@ -1334,45 +1356,45 @@ public class JsonSchemaDocument implements MessageSource {
     }
 
     private boolean valueTypeIsBasicType(PropertyInfo pi) {
-	
+
 	ClassInfo tci = model.classByIdOrName(pi.typeInfo());
-	
-	if(tci == null) {
+
+	if (tci == null) {
 	    return false;
 	} else {
 	    Optional<JsonSchemaDocument> jsdOpt = jsonSchemaTarget.jsonSchemaDocument(tci);
-	    if(jsdOpt.isEmpty()) {
+	    if (jsdOpt.isEmpty()) {
 		return false;
 	    } else {
 		return jsdOpt.get().hasBasicTypeDefinition(tci);
 	    }
-	}	
+	}
     }
-    
+
     private Optional<JsonSchemaTypeInfo> getBasicValueTypeDefinition(PropertyInfo pi) {
-	
+
 	ClassInfo tci = model.classByIdOrName(pi.typeInfo());
-	
+
 	JsonSchemaTypeInfo result;
-	
-	if(tci == null) {
+
+	if (tci == null) {
 	    result = null;
 	} else {
 	    Optional<JsonSchemaDocument> jsdOpt = jsonSchemaTarget.jsonSchemaDocument(tci);
-	    if(jsdOpt.isEmpty()) {
+	    if (jsdOpt.isEmpty()) {
 		result = null;
 	    } else {
 		result = jsdOpt.get().getBasicTypeDefinition(tci);
 	    }
-	}	
-	
+	}
+
 	return Optional.of(result);
     }
-    
+
     public boolean hasBasicTypeDefinition(ClassInfo ci) {
 	return this.basicTypeInfoByClass.containsKey(ci);
     }
-    
+
     public JsonSchemaTypeInfo getBasicTypeDefinition(ClassInfo ci) {
 	return this.basicTypeInfoByClass.get(ci);
     }
@@ -1854,10 +1876,11 @@ public class JsonSchemaDocument implements MessageSource {
 		    } else {
 
 			// use a JSON Pointer to reference the definition of the value type
-			if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_2019_09) {
-			    jsTypeInfo.setRef(schemaId + "#/$defs/" + typeName);
-			} else {
+			if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_07
+				|| jsd.getSchemaVersion() == JsonSchemaVersion.OPENAPI_30) {
 			    jsTypeInfo.setRef(schemaId + "#/definitions/" + typeName);
+			} else {
+			    jsTypeInfo.setRef(schemaId + "#/$defs/" + typeName);
 			}
 		    }
 		}
@@ -1908,6 +1931,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Context: class '$1$'";
 	case 1:
 	    return "Context: property '$1$'";
+	case 2:
+	    return "Context: $1$";
 	case 9:
 	    return "??Property '$1$' of class '$2$' is not encoded.";
 
@@ -1957,6 +1982,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??No target type is defined in map entry for type '$1$'. This is valid if, in the JSON encoding, the type does not require a specific type restriction.";
 	case 122:
 	    return "??No entity type member path found for specific type option '$1$'. Using '$2$' instead.";
+	case 123:
+	    return "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
+	case 124:
+	    return "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
 
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;

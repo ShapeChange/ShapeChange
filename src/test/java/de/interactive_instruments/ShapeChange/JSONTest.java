@@ -50,4 +50,11 @@ public class JSONTest extends BasicTestSCXML {
 	multiTest("src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.xml", new String[] { "json", "xml" },
 		"testResults/json/valueTypeOptions/json_schemas", "src/test/resources/json/valueTypeOptions/reference/json_schemas");
     }
+    
+    @Test
+    public void testJson_documentation() {
+
+	multiTest("src/test/resources/json/documentation/test_json_schema_documentation.xml", new String[] { "json" },
+		"testResults/json/documentation/json_schemas", "src/test/resources/json/documentation/reference/json_schemas");
+    }
 }

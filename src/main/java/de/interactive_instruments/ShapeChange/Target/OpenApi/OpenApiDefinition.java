@@ -340,8 +340,12 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	String fileName = identifyJsonDocumentName(ci.pkg());
 
-	String definitionsReference = jsonSchemaVersion == JsonSchemaVersion.DRAFT_2019_09 ? "#/$defs/"
-		: "#/definitions/";
+	String definitionsReference;
+	if(jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+	    definitionsReference = "#/definitions/";
+	} else {
+	    definitionsReference = "#/$defs/";	    
+	}
 
 	String jsonSchemaDefinitionPath = jsonSchemasBaseLocation + jsonDirectory + jsonSchemasPathSeparator + fileName
 		+ definitionsReference + ci.name();
