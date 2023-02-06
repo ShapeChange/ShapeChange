@@ -67,18 +67,21 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaT
  */
 public class JsonSchemaTargetConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES,
-		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES,
-		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES,
-		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION,
-		    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
-		    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT,
-		    JsonSchemaConstants.PARAM_JSON_BASE_URI, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION,
-		    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME,
-		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
-		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE, JsonSchemaConstants.PARAM_PRETTY_PRINT,
-		    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES,
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS,
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES,
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS,
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES,
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS,
+	    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION,
+	    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
+	    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS,
+	    JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, JsonSchemaConstants.PARAM_JSON_BASE_URI,
+	    JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, JsonSchemaConstants.PARAM_LINK_OBJECT_URI,
+	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
+	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE, JsonSchemaConstants.PARAM_PRETTY_PRINT,
+	    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
@@ -128,6 +131,16 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    result.addError(this, 100, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, inlineOrByRefDefault);
 	}
 
+	isValid = isValid && checkEncodingInfosParameter(
+		JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS);
+	isValid = isValid && checkEncodingInfosParameter(
+		JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS);
+	isValid = isValid && checkEncodingInfosParameter(
+		JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS);
+
+	isValid = isValid
+		&& checkEncodingRestrictionsParameter(JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS);
+
 	// ===== JSON Schema annotations =====
 
 	Pattern taggedValuePattern = Pattern.compile("TV(\\(.+?\\))?:(.+)");
@@ -173,6 +186,42 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	}
 
 	return isValid;
+    }
+
+    private boolean checkEncodingInfosParameter(String parameterName) {
+
+	if (targetConfig.hasParameter(parameterName)) {
+
+	    String paramValue = targetConfig.parameterAsString(parameterName, null, false, true);
+
+	    try {
+		EncodingInfos.from(paramValue);
+	    } catch (IllegalArgumentException e) {
+
+		result.addError(this, 111, parameterName, paramValue, e.getMessage());
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    private boolean checkEncodingRestrictionsParameter(String parameterName) {
+
+	if (targetConfig.hasParameter(parameterName)) {
+
+	    String paramValue = targetConfig.parameterAsString(parameterName, null, false, true);
+
+	    try {
+		EncodingRestrictions.from(paramValue);
+	    } catch (IllegalArgumentException e) {
+
+		result.addError(this, 111, parameterName, paramValue, e.getMessage());
+		return false;
+	    }
+	}
+
+	return true;
     }
 
     private boolean checkMapEntryParameters(MapEntryParamInfos mepp) {
@@ -349,6 +398,19 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 			}
 		    }
 		}
+
+	    } else if (characteristicsByParameter.containsKey(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS)) {
+
+		try {
+		    EncodingInfos.from(characteristicsByParameter.get(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS));
+		} catch (IllegalArgumentException e) {
+		    isValid = false;
+		    MessageContext mc = result.addError(this, 105, JsonSchemaConstants.ME_PARAM_ENCODING_INFOS,
+			    e.getMessage());
+		    if (mc != null) {
+			mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
+		    }
+		}
 	    }
 	}
 
@@ -376,7 +438,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	case 104:
 	    return "Invalid map entry: parameter '$1$' with characteristic '$2$' is set, but the value of the characteristic is not a non-negative number (found: '$3$') (which is required for that characteristic).";
 	case 105:
-	    return "";
+	    return "Invalid map entry: parameter '$1$' is invalid. Details: $2$";
 	case 106:
 	    return "Invalid map entry: parameter '$1$' has characteristic '$2$', which is not supported for the target type of the map entry (which is '$3$').";
 	case 107:
@@ -387,6 +449,8 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    return "Value '$1$' in @descriptorOrTaggedValue of SimpleAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
 	case 110:
 	    return "Value of field [[$1$]] in @valueTemplate of TemplateAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 111:
+	    return "Parameter '$1$' is set to '$2$'. This is not a valid value. Details: $3$";
 
 	default:
 	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts7/ts7/test7.json#/$defs/TS7_CodelistLinkObject"
+             type="TS7_CodelistLinkObject"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts7/ts7/test7.json#/$defs/TS7_CodelistNumeric"
+             type="TS7_CodelistNumeric"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts7/ts7/test7.json#/$defs/TS7_CodelistString"
+             type="TS7_CodelistString"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts7/ts7/test7.json#/$defs/TS7_CodelistUriFormat"
+             type="TS7_CodelistUriFormat"/>
+</mapEntries>

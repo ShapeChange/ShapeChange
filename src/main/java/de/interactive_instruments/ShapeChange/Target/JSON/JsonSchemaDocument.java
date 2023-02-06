@@ -36,16 +36,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +61,7 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Type;
@@ -65,16 +69,23 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonBoolean;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonInteger;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.AdditionalPropertiesKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.FormatKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchema;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSerializationContext;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MaxPropertiesKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinPropertiesKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PropertiesKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.RequiredKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.TypeKeyword;
 import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
 
 /**
@@ -95,10 +106,12 @@ public class JsonSchemaDocument implements MessageSource {
     protected JsonSchemaVersion jsonSchemaVersion;
 
     protected SortedMap<String, ClassInfo> classesByName = new TreeMap<>();
+    protected SortedMap<ClassInfo, JsonSchema> defSchemaByClass = new TreeMap<>();
+    protected SortedMap<ClassInfo, JsonSchema> allOfSchemaByClass = new TreeMap<>();
     protected Map<ClassInfo, JsonSchemaTypeInfo> basicTypeInfoByClass = new HashMap<>();
 
     protected JsonSchema rootSchema = new JsonSchema();
-    
+
     protected AnnotationGenerator annotationGenerator;
 
     public JsonSchemaDocument(PackageInfo representedPackage, Model model, Options options, ShapeChangeResult result,
@@ -114,6 +127,11 @@ public class JsonSchemaDocument implements MessageSource {
 	this.jsonSchemaOutputFile = jsonSchemaOutputFile;
 	this.mapEntryParamInfos = mapEntryParamInfos;
 
+	if (options.getCurrentProcessConfig().parameterAsString(TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
+		true) == null) {
+	    rootSchema.comment("JSON Schema document created by ShapeChange - http://shapechange.net/");
+	}
+	
 	jsonSchemaVersion = jsonSchemaTarget.getJsonSchemaVersion();
 
 	// add JSON Schema version, if a URI is defined for the schema version
@@ -124,9 +142,8 @@ public class JsonSchemaDocument implements MessageSource {
 	// add schema identifier
 	rootSchema.id(rootSchemaId);
 
-	// TODO add schema comment?
-	
-	this.annotationGenerator = new AnnotationGenerator(this.jsonSchemaTarget.getAnnotationElements(), options.language(), result);
+	this.annotationGenerator = new AnnotationGenerator(this.jsonSchemaTarget.getAnnotationElements(),
+		options.language(), result);
 
 	if (representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
 	    this.annotationGenerator.applyAnnotations(rootSchema, representedPackage);
@@ -164,12 +181,11 @@ public class JsonSchemaDocument implements MessageSource {
 	return this.jsonSchemaVersion;
     }
 
-    
-
-
-
     public void createDefinitions() {
 
+	/*
+	 * Generate the definitions schema
+	 */
 	for (ClassInfo ci : this.classesByName.values()) {
 
 	    JsonSchema js;
@@ -191,16 +207,402 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    // add schema definition to root schema
+	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+		rootSchema.definition(ci.name(), js);
+	    } else {
+		rootSchema.def(ci.name(), js);
+	    }
+
+	    defSchemaByClass.put(ci, js);
+	}
+    }
+
+    public void computeEncodingInfos() {
+
+	for (ClassInfo ci : this.classesByName.values()) {
+
 	    /*
-	     * Also compute the URL to the schema definition, ignoring the anchor capability
+	     * entity type member infos have already been computed.
+	     * 
+	     * id member infos may need to be computed. Thus far, the encoding infos for a
+	     * class only contain information about the id member if such a member has been
+	     * generated for that class, and in the JSON Schema of that class. Subtypes need
+	     * to get this information as well. Also, id member infos from relevant external
+	     * schemas (base schema or mapping of a supertype) need to be taken into
+	     * account.
+	     * 
+	     * Note that restrictions of the entity type and id members are not handled in
+	     * this processing step.
+	     */
+
+	    EncodingInfos encInfo = JsonSchemaTarget.encodingInfosByCi.get(ci);
+
+	    // can be null, for example for enumerations and code lists - ignore those
+	    if (encInfo != null) {
+
+		// also ignore cases where the id member path already exists
+		if (encInfo.getIdMemberPath().isEmpty()) {
+
+		    // look up information in all supertypes
+		    EncodingInfos tmpEncInfo = identifyIdMemberInfosFromSupertypesAndBaseSchema(ci);
+
+		    if (tmpEncInfo != null) {
+
+			encInfo.setIdMemberPath(tmpEncInfo.getIdMemberPath().get());
+			if (tmpEncInfo.getIdMemberRequired().isPresent()) {
+			    encInfo.setIdMemberRequired(tmpEncInfo.getIdMemberRequired().get());
+			}
+			encInfo.setIdMemberFormats(tmpEncInfo.getIdMemberFormats());
+			encInfo.setIdMemberTypes(tmpEncInfo.getIdMemberTypes());
+		    }
+		}
+	    }
+	}
+    }
+
+    public void applyMemberRestrictions() {
+
+	Optional<EncodingRestrictions> encRestrictsOpt = JsonSchemaTarget.idMemberEncodingRestrictions;
+
+	for (ClassInfo ci : this.classesByName.values()) {
+
+	    EncodingInfos encInfo = JsonSchemaTarget.encodingInfosByCi.get(ci);
+
+	    // can be null, for example for enumerations and code lists - ignore those
+	    if (encInfo != null) {
+
+		EncodingInfos extEncInfos = directExternalSchemaEncodingInfos(ci);
+
+		/*
+		 * only if encoding infos from an external schema directly apply to the JSON
+		 * Schema definition of ci are restrictions handled in this processing step
+		 */
+		if (extEncInfos != null) {
+
+		    /*
+		     * So there are some encoding infos from one or more external schemas that
+		     * directly apply to ci - via base class for ci, via mapping for a supertype of
+		     * ci, or both.
+		     */
+
+		    boolean entityTypeMemberAlreadyPresentAndRequired = encInfo.getEntityTypeMemberPath().isPresent()
+			    && encInfo.getEntityTypeMemberRequired().isPresent()
+			    && encInfo.getEntityTypeMemberRequired().get();
+		    boolean extEntityTypeMemberNotRequired = extEncInfos.getEntityTypeMemberRequired().isEmpty()
+			    || !extEncInfos.getEntityTypeMemberRequired().get();
+
+		    boolean createEntityTypeMemberRestriction = ci
+			    .matches(JsonSchemaConstants.RULE_CLS_RESTRICT_EXT_ENTITY_TYPE_MEMBER)
+			    && extEncInfos.getEntityTypeMemberPath().isPresent()
+			    && !entityTypeMemberAlreadyPresentAndRequired && extEntityTypeMemberNotRequired;
+
+		    boolean idMemberAlreadyPresentAndRequired = encInfo.getIdMemberPath().isPresent()
+			    && encInfo.getIdMemberRequired().isPresent() && encInfo.getIdMemberRequired().get();
+		    boolean extIdMemberNotRequired = extEncInfos.getIdMemberRequired().isEmpty()
+			    || !extEncInfos.getIdMemberRequired().get();
+		    boolean createIdMemberRestriction_required = encRestrictsOpt.isPresent()
+			    && ci.matches(JsonSchemaConstants.RULE_CLS_RESTRICT_EXT_ID_MEMBER)
+			    && extEncInfos.getIdMemberPath().isPresent() && encRestrictsOpt.get().isMemberRequired()
+			    && !idMemberAlreadyPresentAndRequired && extIdMemberNotRequired;
+
+		    /*
+		     * We need to identify the type restrictions that would need to be set, and
+		     * avoid superfluous restrictions.
+		     */
+		    final SortedSet<String> newTypeRestrictions = new TreeSet<>();
+		    if (encRestrictsOpt.isPresent()) {
+			for (String s : encRestrictsOpt.get().getMemberTypeRestrictions()) {
+			    if ((extEncInfos.getIdMemberTypes().isEmpty() || extEncInfos.getIdMemberTypes().contains(s))
+				    && (encInfo.getIdMemberTypes().isEmpty()
+					    || encInfo.getIdMemberTypes().contains(s))) {
+				newTypeRestrictions.add(s);
+			    }
+			}
+		    }
+		    if (newTypeRestrictions.equals(extEncInfos.getIdMemberTypes())
+			    || newTypeRestrictions.equals(encInfo.getIdMemberTypes())) {
+			newTypeRestrictions.clear();
+		    }
+
+		    boolean createIdMemberRestriction_types = encRestrictsOpt.isPresent()
+			    && ci.matches(JsonSchemaConstants.RULE_CLS_RESTRICT_EXT_ID_MEMBER)
+			    && extEncInfos.getIdMemberPath().isPresent() && !newTypeRestrictions.isEmpty();
+
+		    SortedSet<String> establishedFormatRestrictions = new TreeSet<>();
+		    establishedFormatRestrictions.addAll(encInfo.getIdMemberFormats());
+		    establishedFormatRestrictions.addAll(extEncInfos.getIdMemberFormats());
+		    SortedSet<String> newFormatRestrictions = new TreeSet<>();
+		    if (encRestrictsOpt.isPresent()) {
+			newFormatRestrictions.addAll(encRestrictsOpt.get().getMemberFormatRestrictions());
+		    }
+		    newFormatRestrictions.removeAll(establishedFormatRestrictions);
+
+		    boolean createIdMemberRestriction_formats = encRestrictsOpt.isPresent()
+			    && ci.matches(JsonSchemaConstants.RULE_CLS_RESTRICT_EXT_ID_MEMBER)
+			    && extEncInfos.getIdMemberPath().isPresent() && !newFormatRestrictions.isEmpty();
+
+		    if (createEntityTypeMemberRestriction || createIdMemberRestriction_required
+			    || createIdMemberRestriction_types || createIdMemberRestriction_formats) {
+
+			JsonSchema ciJs = this.defSchemaByClass.get(ci);
+
+			if (ciJs.allOf().isEmpty()) {
+
+			    /*
+			     * The definitions schema thus far does not contain an allOf member. Now it gets
+			     * tricky: We need to modify the definitions schema in a way that leaves the
+			     * keywords relevant for the definitions schema ($anchor, $id, other generated
+			     * 'annotations') on the definitions schema level, and pushes the keywords that
+			     * define the structure to a new JSON Schema that is placed beneath a new allOf
+			     * keyword. The latter should encompass keywords 'type', 'properties',
+			     * 'required', 'additionalProperties', 'minProperties', 'maxProperties' (for
+			     * each, if it exists in the original definitions schema). If 'type' is anything
+			     * other than 'object', that would not make sense. However, that should not
+			     * happen. Encoding infos are only created for feature, object, mixin, and data
+			     * types - as well as for unions with property choice encoding. All of them have
+			     * type=object.
+			     */
+
+			    JsonSchema newCiJs = new JsonSchema();
+			    ciJs.allOf(newCiJs);
+
+			    Optional<TypeKeyword> typeKeywordOpt = ciJs.removeTypeKeyword();
+			    if (typeKeywordOpt.isPresent()) {
+				newCiJs.type(
+					typeKeywordOpt.get().toArray(new JsonSchemaType[typeKeywordOpt.get().size()]));
+			    }
+
+			    Optional<PropertiesKeyword> propertiesKeywordOpt = ciJs.removePropertiesKeyword();
+			    if (propertiesKeywordOpt.isPresent()) {
+				PropertiesKeyword propertiesKeyword = propertiesKeywordOpt.get();
+				for (Entry<String, JsonSchema> entry : propertiesKeyword.entrySet()) {
+				    newCiJs.property(entry.getKey(), entry.getValue());
+				}
+			    }
+
+			    Optional<RequiredKeyword> reqKeywordOpt = ciJs.removeRequiredKeyword();
+			    if (reqKeywordOpt.isPresent()) {
+				newCiJs.required(reqKeywordOpt.get().toArray(new String[reqKeywordOpt.get().size()]));
+			    }
+
+			    Optional<AdditionalPropertiesKeyword> additionalPropertiesKeywordOpt = ciJs
+				    .removeAdditionalPropertiesKeyword();
+			    if (additionalPropertiesKeywordOpt.isPresent()) {
+				newCiJs.additionalProperties(additionalPropertiesKeywordOpt.get().value());
+			    }
+
+			    Optional<MinPropertiesKeyword> minPropertiesKeywordOpt = ciJs.removeMinPropertiesKeyword();
+			    if (minPropertiesKeywordOpt.isPresent()) {
+				newCiJs.minProperties(minPropertiesKeywordOpt.get().value());
+			    }
+
+			    Optional<MaxPropertiesKeyword> maxPropertiesKeywordOpt = ciJs.removeMaxPropertiesKeyword();
+			    if (maxPropertiesKeywordOpt.isPresent()) {
+				newCiJs.maxProperties(maxPropertiesKeywordOpt.get().value());
+			    }
+			}
+
+			/*
+			 * Create another schema with the necessary restrictions.
+			 */
+			JsonSchema restrictionSchema = new JsonSchema();
+			ciJs.allOf(restrictionSchema);
+
+//			restrictionSchema.comment("Restriction(s) of entity type and / or id member");
+
+			if (createEntityTypeMemberRestriction) {
+			    String[] etmPathComponents = extEncInfos.getEntityTypeMemberPath().get().split("/");
+			    String etPropName = etmPathComponents[etmPathComponents.length - 1];
+			    JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
+				    Arrays.copyOfRange(etmPathComponents, 0, etmPathComponents.length - 1));
+			    schemaForRestriction.required(etPropName);
+			    // update encoding infos
+			    encInfo.setEntityTypeMemberRequired(true);
+			    encodingInfosOfSubtypesInCompleteHierarchy(ci).stream()
+				    .forEach(ei -> ei.setEntityTypeMemberRequired(true));
+			}
+
+			if (createIdMemberRestriction_required || createIdMemberRestriction_types
+				|| createIdMemberRestriction_formats) {
+
+			    String[] idmPathComponents = extEncInfos.getIdMemberPath().get().split("/");
+			    String idPropName = idmPathComponents[idmPathComponents.length - 1];
+
+			    if (createIdMemberRestriction_required) {
+				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length - 1));
+				schemaForRestriction.required(idPropName);
+				// update encoding infos
+				encInfo.setIdMemberRequired(true);
+				encodingInfosOfSubtypesInCompleteHierarchy(ci).stream()
+					.forEach(ei -> ei.setIdMemberRequired(true));
+			    }
+
+			    if (createIdMemberRestriction_types) {
+				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length));
+
+				List<JsonSchemaType> types = new ArrayList<>();
+				for (String tr : newTypeRestrictions) {
+				    Optional<JsonSchemaType> tOpt = JsonSchemaType.fromString(tr);
+				    if (tOpt.isPresent()) {
+					types.add(tOpt.get());
+				    }
+				}
+				schemaForRestriction.type(types.toArray(new JsonSchemaType[types.size()]));
+
+				// update encoding infos
+				encInfo.setIdMemberTypes(newTypeRestrictions);
+				encodingInfosOfSubtypesInCompleteHierarchy(ci).stream()
+					.forEach(ei -> ei.setIdMemberTypes(newTypeRestrictions));
+			    }
+
+			    if (createIdMemberRestriction_formats) {
+				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length));
+
+				for (String fr : newFormatRestrictions) {
+				    schemaForRestriction.format(fr);
+				}
+
+				// update encoding infos
+				final SortedSet<String> allFormatRestrictions = new TreeSet<>();
+				allFormatRestrictions.addAll(establishedFormatRestrictions);
+				allFormatRestrictions.addAll(newFormatRestrictions);
+				encInfo.setIdMemberFormats(allFormatRestrictions);
+				encodingInfosOfSubtypesInCompleteHierarchy(ci).stream()
+					.forEach(ei -> ei.setIdMemberFormats(allFormatRestrictions));
+			    }
+			}
+		    }
+		}
+	    }
+	}
+    }
+
+    private List<EncodingInfos> encodingInfosOfSubtypesInCompleteHierarchy(ClassInfo ci) {
+	List<EncodingInfos> resEis = new ArrayList<>();
+	for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
+	    EncodingInfos ei = JsonSchemaTarget.encodingInfosByCi.get(subtype);
+	    if (ei != null) {
+		resEis.add(ei);
+	    }
+	}
+	return resEis;
+    }
+
+    private JsonSchema getOrCreatePropertyPath(JsonSchema startSchema, String[] pathSegments) {
+
+	JsonSchema schema = startSchema;
+
+	for (int i = 0; i < pathSegments.length; i++) {
+
+	    String propName = pathSegments[i];
+
+	    Optional<JsonSchema> propSchema = schema.property(propName);
+
+	    if (propSchema.isPresent()) {
+		schema = propSchema.get();
+	    } else {
+		JsonSchema newSchema = new JsonSchema();
+		schema.property(pathSegments[i], newSchema);
+		schema = newSchema;
+	    }
+	}
+
+	return schema;
+    }
+
+    /**
+     * NOTE: This method should only be called once the schema definitions for all
+     * classes have been created.
+     * 
+     * @param ci the class for which to search for id member encoding infos in its
+     *           supertype encodings and the applicable base schema
+     * @return encoding infos for the identifier JSON member, available in one of
+     *         the supertype encodings of ci or a base class; can be
+     *         <code>null</code> if no such member is available in the supertypes
+     *         (especially, of course, if ci does not have any superclass) or the
+     *         applicable base schema
+     */
+    private EncodingInfos identifyIdMemberInfosFromSupertypesAndBaseSchema(ClassInfo ci) {
+
+	// first, check for id member encoding infos from base schema
+	EncodingInfos encodingInfosFromBaseJsonSchemaDefinition = encodingInfosFromBaseJsonSchemaDefinition(ci);
+	if (encodingInfosFromBaseJsonSchemaDefinition != null
+		&& encodingInfosFromBaseJsonSchemaDefinition.getIdMemberPath().isPresent()) {
+
+	    return encodingInfosFromBaseJsonSchemaDefinition;
+
+	} else {
+
+	    /*
+	     * If an id member path is defined in the map entry of a supertype, use that
+	     * path. Otherwise, check if an id member path is defined in the already
+	     * existing encoding infos of the supertype. If so, use the according info. If
+	     * an id member path can be determined for a supertype of one of the supertypes,
+	     * use that path.
+	     */
+
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+
+		// check for map entry first
+		Optional<ProcessMapEntry> supertypePmeOpt = jsonSchemaTarget.mapEntry(supertype);
+		if (supertypePmeOpt.isPresent()) {
+		    /*
+		     * So a map entry is defined for the supertype; let us see if it contains
+		     * encoding information for the id member.
+		     */
+
+		    Map<String, String> supertypeEncodingInfoCharacteristics = mapEntryParamInfos.getCharacteristics(
+			    supertype.name(), supertype.encodingRule(JsonSchemaConstants.PLATFORM),
+			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
+
+		    if (supertypeEncodingInfoCharacteristics != null) {
+			EncodingInfos encInfos = EncodingInfos.from(supertypeEncodingInfoCharacteristics);
+			if (encInfos.getIdMemberPath().isPresent()) {
+			    return encInfos;
+			}
+		    }
+
+		} else {
+
+		    // check existing encoding infos
+		    EncodingInfos encInfoOfSupertype = JsonSchemaTarget.encodingInfosByCi.get(supertype);
+		    if (encInfoOfSupertype != null && encInfoOfSupertype.getIdMemberPath().isPresent()) {
+			return encInfoOfSupertype;
+		    } else {
+
+			EncodingInfos idInfosFromSupertypesOfSupertype = identifyIdMemberInfosFromSupertypesAndBaseSchema(
+				supertype);
+			if (idInfosFromSupertypesOfSupertype != null) {
+
+			    /*
+			     * fine - we found encoding infos for the id member in the supertypes of the
+			     * supertype
+			     */
+			    return idInfosFromSupertypesOfSupertype;
+			}
+		    }
+		}
+	    }
+	}
+
+	return null;
+    }
+
+    public void createMapEntries() {
+
+	for (ClassInfo ci : this.classesByName.values()) {
+
+	    /*
+	     * Compute the URL to the schema definition, ignoring the anchor capability
 	     * (because it would not be supported in an OpenAPI 3.0 schema).
 	     */
 	    String jsDefinitionReference;
 	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
-		rootSchema.definition(ci.name(), js);
 		jsDefinitionReference = rootSchemaId + "#/definitions/" + ci.name();
 	    } else {
-		rootSchema.def(ci.name(), js);
 		jsDefinitionReference = rootSchemaId + "#/$defs/" + ci.name();
 	    }
 
@@ -211,13 +613,12 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    /*
 	     * Determine if the map entry must have a parameter - e.g. to convey the entity
-	     * type member path.
+	     * type member path. Currently, we only consider the 'encodingInfos' parameter.
 	     */
-	    if (JsonSchemaTarget.entityTypeMemberPathByCi.containsKey(ci)) {
-		String entityTypeMemberPath = JsonSchemaTarget.entityTypeMemberPathByCi.get(ci);
+	    if (JsonSchemaTarget.encodingInfosByCi.containsKey(ci)
+		    && !JsonSchemaTarget.encodingInfosByCi.get(ci).isEmpty()) {
 		String paramValue = JsonSchemaConstants.ME_PARAM_ENCODING_INFOS + "{"
-			+ JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH + "="
-			+ entityTypeMemberPath + "}";
+			+ JsonSchemaTarget.encodingInfosByCi.get(ci).toParamValue() + "}";
 		pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference, paramValue);
 	    } else {
 		pme = new ProcessMapEntry(ci.name(), rule, jsDefinitionReference);
@@ -580,41 +981,39 @@ public class JsonSchemaDocument implements MessageSource {
 
 	JsonSchema jsClassContents = jsClass;
 
+	EncodingInfos encInfo = jsonSchemaTarget.getOrCreateEncodingInfos(ci);
+
 	List<JsonSchema> allOfMembers = new ArrayList<>();
 
 	SortedSet<ClassInfo> supertypes = ci.supertypeClasses();
 
 	handleVirtualGeneralization(ci, supertypes, allOfMembers);
 
-	if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.DATATYPE
-		|| ci.category() == Options.MIXIN) {
+	// convert generalization
+	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.DATATYPE
+		|| ci.category() == Options.MIXIN) && !supertypes.isEmpty()) {
 
-	    // convert generalization
-	    if (!supertypes.isEmpty()) {
+	    // add schema definitions for all supertypes
+	    for (ClassInfo supertype : supertypes) {
+		Optional<JsonSchemaTypeInfo> typeInfo = identifyJsonSchemaTypeForSupertype(supertype,
+			ci.encodingRule(JsonSchemaConstants.PLATFORM));
 
-		// add schema definitions for all supertypes
-		for (ClassInfo supertype : supertypes) {
-		    Optional<JsonSchemaTypeInfo> typeInfo = identifyJsonSchemaTypeForSupertype(supertype,
-			    ci.encodingRule(JsonSchemaConstants.PLATFORM));
+		if (typeInfo.isPresent()) {
 
-		    if (typeInfo.isPresent()) {
+		    if (typeInfo.get().isSimpleType()) {
 
-			if (typeInfo.get().isSimpleType()) {
-
-			    MessageContext mc = result.addError(this, 108, supertype.name(), ci.name(),
-				    typeInfo.get().getSimpleType().getName());
-			    if (mc != null) {
-				mc.addDetail(this, 0, ci.fullName());
-			    }
-
-			} else {
-
-			    allOfMembers.add(new JsonSchema().ref(typeInfo.get().getRef()));
+			MessageContext mc = result.addError(this, 108, supertype.name(), ci.name(),
+				typeInfo.get().getSimpleType().getName());
+			if (mc != null) {
+			    mc.addDetail(this, 0, ci.fullName());
 			}
 
 		    } else {
-			// ignore; error message has already been logged
+			allOfMembers.add(new JsonSchema().ref(typeInfo.get().getRef()));
 		    }
+
+		} else {
+		    // ignore; error message has already been logged
 		}
 	    }
 	}
@@ -627,7 +1026,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    allOfMembers.add(jsClassContents);
 
 	    // create the "allOf"
-	    jsClass.allOf(allOfMembers.toArray(new JsonSchema[allOfMembers.size()]));
+	    JsonSchema allOfSchema = jsClass.allOf(allOfMembers.toArray(new JsonSchema[allOfMembers.size()]));
+	    this.allOfSchemaByClass.put(ci, allOfSchema);
 	}
 
 	jsClassContents.type(JsonSchemaType.OBJECT);
@@ -718,15 +1118,15 @@ public class JsonSchemaDocument implements MessageSource {
 
 	/*
 	 * Check if an entity type member is available in the encodings of ci's
-	 * supertypes. If so, simply keep track of it (for map entry creation, and
-	 * potentially also type specific checks). Otherwise, check if such a member
-	 * shall be added to the encoding of ci. If so, do it, and also keep track of
-	 * the member path.
+	 * supertypes or its base class. If so, simply keep track of relevant infos for
+	 * it (for map entry creation, and potentially also type specific checks).
+	 * Otherwise, check if such a member shall be added to the encoding of ci. If
+	 * so, do it, and also keep track of relevant member infos.
 	 */
-	String entityTypeMemberPathFromSupertypes = identifyEntityTypeMemberPathFromSupertypes(ci);
-	String entityTypeMemberPath = null;
+	EncodingInfos entityTypeMemberInfosFromSupertypesAndBaseSchema = identifyEntityTypeMemberInfosFromSupertypesAndBaseSchema(
+		ci);
 
-	if (entityTypeMemberPathFromSupertypes == null) {
+	if (entityTypeMemberInfosFromSupertypesAndBaseSchema == null) {
 
 	    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
 		    || ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
@@ -735,18 +1135,22 @@ public class JsonSchemaDocument implements MessageSource {
 		jsProperties.property(entityTypeMemberName, new JsonSchema().type(JsonSchemaType.STRING))
 			.required(entityTypeMemberName);
 
-		entityTypeMemberPath = (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
-			+ entityTypeMemberName;
+		String entityTypeMemberPath = (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)
+			? "properties/"
+			: "") + entityTypeMemberName;
+		encInfo.setEntityTypeMemberPath(entityTypeMemberPath);
+		encInfo.setEntityTypeMemberRequired(true);
 	    }
-	} else {
-	    entityTypeMemberPath = entityTypeMemberPathFromSupertypes;
-	}
 
-	if (entityTypeMemberPath != null) {
-	    /*
-	     * keep track of new entity type member path for creation of map entry for ci
-	     */
-	    JsonSchemaTarget.entityTypeMemberPathByCi.put(ci, entityTypeMemberPath);
+	} else {
+
+	    // keep track of the infos for map entry creation
+	    encInfo.setEntityTypeMemberPath(
+		    entityTypeMemberInfosFromSupertypesAndBaseSchema.getEntityTypeMemberPath().get());
+	    if (entityTypeMemberInfosFromSupertypesAndBaseSchema.getEntityTypeMemberRequired().isPresent()) {
+		encInfo.setEntityTypeMemberRequired(
+			entityTypeMemberInfosFromSupertypesAndBaseSchema.getEntityTypeMemberRequired().get());
+	    }
 	}
 
 	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT)
@@ -767,12 +1171,26 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    if (!supertypeMatch) {
-		JsonSchema objectIdentifierTypeSchema = new JsonSchema();
-		createTypeDefinition(jsonSchemaTarget.objectIdentifierType(), objectIdentifierTypeSchema);
-		jsProperties.property(jsonSchemaTarget.objectIdentifierName(), objectIdentifierTypeSchema);
 
-		if (jsonSchemaTarget.objectIdentifierRequired()) {
+		String identifierName = jsonSchemaTarget.objectIdentifierName();
+		JsonSchemaType[] identifierTypes = jsonSchemaTarget.objectIdentifierType();
+		boolean identifierRequired = jsonSchemaTarget.objectIdentifierRequired();
+
+		JsonSchema objectIdentifierTypeSchema = new JsonSchema();
+		createTypeDefinition(identifierTypes, objectIdentifierTypeSchema);
+		jsProperties.property(identifierName, objectIdentifierTypeSchema);
+
+		if (identifierRequired) {
 		    jsProperties.required(jsonSchemaTarget.objectIdentifierName());
+		}
+
+		// also keep track of encoding infos for the generated id member
+		String idMemberPath = (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
+			+ identifierName;
+		encInfo.setIdMemberPath(idMemberPath);
+		encInfo.setIdMemberRequired(identifierRequired);
+		for (JsonSchemaType type : identifierTypes) {
+		    encInfo.addIdMemberType(type.getName());
 		}
 	    }
 	}
@@ -804,6 +1222,29 @@ public class JsonSchemaDocument implements MessageSource {
 		    MessageContext mc = result.addError(this, 113, pi.name(), ci.name());
 		    if (mc != null) {
 			mc.addDetail(this, 1, pi.fullName());
+		    }
+		}
+
+		/*
+		 * Now that it has been determined that the identifier property is encoded, keep
+		 * track of encoding infos for it.
+		 */
+		String idMemberPath = (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
+			+ pi.name();
+		encInfo.setIdMemberPath(idMemberPath);
+		encInfo.setIdMemberRequired(pi.cardinality().minOccurs > 0);
+		Optional<JsonSchemaTypeInfo> piTypeOpt = identifyJsonSchemaType(pi);
+		if (piTypeOpt.isPresent()) {
+		    JsonSchemaTypeInfo ti = piTypeOpt.get();
+		    if (ti.isSimpleType()) {
+			encInfo.addIdMemberType(ti.getSimpleType().getName());
+		    }
+		    if (ti.hasKeywords()) {
+			Optional<FormatKeyword> fkOpt = ti.getKeywords().stream()
+				.filter(kw -> kw instanceof FormatKeyword).map(kw -> (FormatKeyword) kw).findFirst();
+			if (fkOpt.isPresent()) {
+			    encInfo.addIdMemberFormat(fkOpt.get().value());
+			}
 		    }
 		}
 	    }
@@ -984,14 +1425,16 @@ public class JsonSchemaDocument implements MessageSource {
      */
     private String identifyEntityTypeMemberPath(ClassInfo ci) {
 
-	if (JsonSchemaTarget.entityTypeMemberPathByCi.containsKey(ci)) {
-	    return JsonSchemaTarget.entityTypeMemberPathByCi.get(ci);
+	if (JsonSchemaTarget.encodingInfosByCi.containsKey(ci)
+		&& JsonSchemaTarget.encodingInfosByCi.get(ci).getEntityTypeMemberPath().isPresent()) {
+	    return JsonSchemaTarget.encodingInfosByCi.get(ci).getEntityTypeMemberPath().get();
 	} else {
 
-	    // check supertypes
-	    String entityTypeMemberPathFromSupertypes = identifyEntityTypeMemberPathFromSupertypes(ci);
-	    if (entityTypeMemberPathFromSupertypes != null) {
-		return entityTypeMemberPathFromSupertypes;
+	    // check supertypes and base schema
+	    EncodingInfos entityTypeMemberInfosFromSupertypes = identifyEntityTypeMemberInfosFromSupertypesAndBaseSchema(
+		    ci);
+	    if (entityTypeMemberInfosFromSupertypes != null) {
+		return entityTypeMemberInfosFromSupertypes.getEntityTypeMemberPath().get();
 	    } else {
 
 		// check if the entity type member is added to the type itself
@@ -1007,83 +1450,97 @@ public class JsonSchemaDocument implements MessageSource {
     }
 
     /**
-     * @param ci the class for which to search an entity type member in its
-     *           supertype encodings
-     * @return the path of the JSON member available in one of the supertype
-     *         encodings of ci, that is used to encode the type of the class; can be
+     * @param ci the class for which to search for entity type member encoding infos
+     *           in its supertype encodings and the applicable base schema
+     * @return encoding infos for the entity type JSON member, available in one of
+     *         the supertype encodings of ci or a base class; can be
      *         <code>null</code> if no such member is available in the supertypes
-     *         (especially, of course, if ci does not have any superclass)
+     *         (especially, of course, if ci does not have any superclass) or the
+     *         applicable base schema
      */
-    private String identifyEntityTypeMemberPathFromSupertypes(ClassInfo ci) {
+    private EncodingInfos identifyEntityTypeMemberInfosFromSupertypesAndBaseSchema(ClassInfo ci) {
 
-	/*
-	 * If an entity type member path is defined in the map entry of a supertype, use
-	 * that path. Otherwise, if an entity type member path can be determined for a
-	 * supertype of one of the supertypes, use that path. If that also did not
-	 * succeed, check if the supertype itself would receive an entity type member,
-	 * and if so, use the path of that member.
-	 */
-	String resultFromMapEntries = null;
-	String resultFromSuperSupertypes = null;
-	String resultFromSupertypes = null;
+	// first, check for entity type member encoding infos from base schema
+	EncodingInfos encodingInfosFromBaseJsonSchemaDefinition = encodingInfosFromBaseJsonSchemaDefinition(ci);
+	if (encodingInfosFromBaseJsonSchemaDefinition != null
+		&& encodingInfosFromBaseJsonSchemaDefinition.getEntityTypeMemberPath().isPresent()) {
 
-	for (ClassInfo supertype : ci.supertypeClasses()) {
+	    return encodingInfosFromBaseJsonSchemaDefinition;
 
-	    // check for map entry first
-	    Optional<ProcessMapEntry> supertypePmeOpt = jsonSchemaTarget.mapEntry(supertype);
-	    if (supertypePmeOpt.isPresent()) {
-		/*
-		 * So a map entry is defined for the supertype; it is the definitive source of
-		 * information for the entity type member path.
-		 */
-		if (mapEntryParamInfos.hasCharacteristic(supertype.name(),
-			supertype.encodingRule(JsonSchemaConstants.PLATFORM),
-			JsonSchemaConstants.ME_PARAM_ENCODING_INFOS,
-			JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH)) {
+	} else {
 
-		    resultFromMapEntries = mapEntryParamInfos.getCharacteristic(supertype.name(),
-			    supertype.encodingRule(JsonSchemaConstants.PLATFORM),
-			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS,
-			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH);
+	    /*
+	     * If an entity type member path is defined in the map entry of a supertype, use
+	     * that path. Otherwise, if an entity type member path can be determined for a
+	     * supertype of one of the supertypes, use that path. If that also did not
+	     * succeed, check if the supertype itself would receive an entity type member,
+	     * and if so, use the path of that member.
+	     */
 
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+
+		// check for map entry first
+		Optional<ProcessMapEntry> supertypePmeOpt = jsonSchemaTarget.mapEntry(supertype);
+		if (supertypePmeOpt.isPresent()) {
 		    /*
-		     * since member path from map entry has highest priority, we can skip the
-		     * supertype checks now
+		     * So a map entry is defined for the supertype; let us see if it contains
+		     * encoding information for the entity type member.
 		     */
-		    break;
 
-		}
-	    } else {
+		    Map<String, String> supertypeEncodingInfoCharacteristics = mapEntryParamInfos.getCharacteristics(
+			    supertype.name(), supertype.encodingRule(JsonSchemaConstants.PLATFORM),
+			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
 
-		String entityMemberPathFromSupertypesOfSupertype = identifyEntityTypeMemberPathFromSupertypes(
-			supertype);
-		if (entityMemberPathFromSupertypesOfSupertype != null) {
-		    resultFromSuperSupertypes = entityMemberPathFromSupertypesOfSupertype;
+		    if (supertypeEncodingInfoCharacteristics != null) {
+			EncodingInfos encInfos = EncodingInfos.from(supertypeEncodingInfoCharacteristics);
+			if (encInfos.getEntityTypeMemberPath().isPresent()) {
+			    return encInfos;
+			}
+		    }
+
 		} else {
 
-		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
-			    && (supertype.category() != Options.UNION
-				    || supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+		    EncodingInfos entityMemberInfosFromSupertypesOfSupertype = identifyEntityTypeMemberInfosFromSupertypesAndBaseSchema(
+			    supertype);
+		    if (entityMemberInfosFromSupertypesOfSupertype != null) {
 
-			resultFromSupertypes = (supertype.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)
-				? "properties/"
-				: "") + jsonSchemaTarget.getEntityTypeName();
+			/*
+			 * fine - we found encoding infos for the entity type member in the supertypes
+			 * of the supertype
+			 */
+			return entityMemberInfosFromSupertypesOfSupertype;
+
+		    } else {
+
+			if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
+				&& (supertype.category() != Options.UNION
+					|| supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+
+			    EncodingInfos entityTypeEncInfos = new EncodingInfos();
+
+			    String entityTypeMemberPathForSupertype = (supertype
+				    .matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
+				    + jsonSchemaTarget.getEntityTypeName();
+
+			    entityTypeEncInfos.setEntityTypeMemberPath(entityTypeMemberPathForSupertype);
+			    entityTypeEncInfos.setEntityTypeMemberRequired(true);
+
+			    return entityTypeEncInfos;
+			}
 		    }
 		}
 	    }
 	}
 
-	if (resultFromMapEntries != null) {
-	    return resultFromMapEntries;
-	} else if (resultFromSuperSupertypes != null) {
-	    return resultFromSuperSupertypes;
-	} else if (resultFromSupertypes != null) {
-	    return resultFromSupertypes;
-	} else {
-	    return null;
-	}
+	return null;
     }
 
+    /**
+     * @param ci           the class that is being converted
+     * @param supertypes   set of ci supertypes
+     * @param allOfMembers collection of JSON Schemas to add the base schema
+     *                     reference to, if applicable
+     */
     private void handleVirtualGeneralization(ClassInfo ci, SortedSet<ClassInfo> supertypes,
 	    List<JsonSchema> allOfMembers) {
 
@@ -1117,6 +1574,108 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 	}
+    }
+
+    /**
+     * @param ci the class for which to identify the encoding infos for external
+     *           JSON Schema definitions that directly apply to the JSON Schema
+     *           definition of the class
+     * @return encoding infos regarding any external schemas that directly apply to
+     *         the JSON Schema encoding of the given class, and if available; else
+     *         <code>null</code>
+     */
+    private EncodingInfos directExternalSchemaEncodingInfos(ClassInfo ci) {
+
+	EncodingInfos externalSchemaEncodingInfos = encodingInfosFromBaseJsonSchemaDefinition(ci);
+
+	SortedSet<ClassInfo> supertypes = ci.supertypeClasses();
+
+	// handle generalization
+	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.DATATYPE
+		|| ci.category() == Options.MIXIN) && !supertypes.isEmpty()) {
+
+	    for (ClassInfo supertype : supertypes) {
+
+		Optional<JsonSchemaTypeInfo> typeInfo = identifyJsonSchemaTypeForSupertype(supertype,
+			ci.encodingRule(JsonSchemaConstants.PLATFORM));
+
+		if (typeInfo.isPresent() && !typeInfo.get().isSimpleType()) {
+
+		    /*
+		     * The schema will be added via allOf to the definition of ci.
+		     * 
+		     * Check if a map entry applies to the supertype, with encoding infos regarding
+		     * specific JSON members. If so, keep track of these infos.
+		     */
+		    Map<String, String> supertypeEncodingInfoCharacteristics = mapEntryParamInfos.getCharacteristics(
+			    supertype.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
+			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
+
+		    if (supertypeEncodingInfoCharacteristics != null) {
+
+			EncodingInfos supertypeExternalSchemaEncodingInfos = EncodingInfos
+				.from(supertypeEncodingInfoCharacteristics);
+
+			if (externalSchemaEncodingInfos == null) {
+			    externalSchemaEncodingInfos = supertypeExternalSchemaEncodingInfos;
+			} else {
+			    try {
+				EncodingInfos mergedExternalSchemaEncInfo = EncodingInfos
+					.merge(externalSchemaEncodingInfos, supertypeExternalSchemaEncodingInfos);
+				externalSchemaEncodingInfos = mergedExternalSchemaEncInfo;
+			    } catch (ShapeChangeException e) {
+				MessageContext mc = result.addError(this, 125, ci.name(), supertype.name(),
+					e.getMessage());
+				if (mc != null) {
+				    mc.addDetail(this, 0, ci.fullNameInSchema());
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+
+	return externalSchemaEncodingInfos;
+    }
+
+    private EncodingInfos encodingInfosFromBaseJsonSchemaDefinition(ClassInfo ci) {
+
+	if (ci.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)) {
+
+	    String baseJsonSchemaDef = null;
+	    EncodingInfos baseEncInfo = null;
+
+	    if (ci.category() == Options.FEATURE) {
+		baseJsonSchemaDef = jsonSchemaTarget.baseJsonSchemaDefinitionForFeatureTypes();
+		baseEncInfo = JsonSchemaTarget.baseJsonSchemaDefinitionForFeatureTypes_encodingInfos;
+	    } else if (ci.category() == Options.OBJECT) {
+		baseJsonSchemaDef = jsonSchemaTarget.baseJsonSchemaDefinitionForObjectTypes();
+		baseEncInfo = JsonSchemaTarget.baseJsonSchemaDefinitionForObjectTypes_encodingInfos;
+	    } else if (ci.category() == Options.DATATYPE) {
+		baseJsonSchemaDef = jsonSchemaTarget.baseJsonSchemaDefinitionForDataTypes();
+		baseEncInfo = JsonSchemaTarget.baseJsonSchemaDefinitionForDataTypes_encodingInfos;
+	    }
+
+	    if (baseJsonSchemaDef != null) {
+
+		boolean applyVirtualGeneralization = true;
+
+		for (ClassInfo supertype : ci.supertypeClasses()) {
+		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)) {
+			applyVirtualGeneralization = false;
+			break;
+		    }
+		}
+
+		if (applyVirtualGeneralization) {
+		    // note that the baseEncInfo may well be null, if no such info was configured
+		    return baseEncInfo;
+		}
+	    }
+	}
+
+	return null;
     }
 
     private String inlineOrByReference(PropertyInfo pi) {
@@ -1986,10 +2545,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
 	case 124:
 	    return "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
-
+	case 125:
+	    return "??Class '$1$' gets constraints from two external schemas, one from a base schema or supertype mapping, one from the mapping of supertype '$2$'. The encodings of these two schemas both define an $3$ member, but in different ways, which leads to ambiguity. The encoding infos from supertype '$2$' are ignored in the computation of encoding infos for class '$1$'.";
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}
     }
-
 }

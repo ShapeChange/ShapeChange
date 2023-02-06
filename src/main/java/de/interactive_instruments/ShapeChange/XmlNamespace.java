@@ -33,7 +33,7 @@ package de.interactive_instruments.ShapeChange;
 
 import java.util.Comparator;
 
-import shadow.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)

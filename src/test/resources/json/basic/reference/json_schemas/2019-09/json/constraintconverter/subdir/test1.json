@@ -1,4 +1,5 @@
 {
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri/ts1/subdir/test1.json",
   "$defs": {

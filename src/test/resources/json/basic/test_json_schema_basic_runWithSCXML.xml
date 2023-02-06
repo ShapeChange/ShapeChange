@@ -65,14 +65,16 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    
    <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
 
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
 
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
    <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
-   
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
 
    <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
    
@@ -204,6 +206,7 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
    <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>

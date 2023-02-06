@@ -300,7 +300,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 
 	return this;
     }
-    
+
     public JsonSchema minLength(int minLength) {
 	this.add(new MinLengthKeyword(minLength));
 
@@ -321,7 +321,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	this.add(new MinimumKeyword(minimum));
 	return this;
     }
-    
+
     public JsonSchema multipleOf(double multipleOf) {
 	this.add(new MultipleOfKeyword(multipleOf));
 	return this;
@@ -359,6 +359,20 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	keyword.addAll(Arrays.asList(definition));
 
 	return this;
+    }
+
+    /**
+     * @param name name of a key within the "properties" member
+     * @return the JSON Schema of the property, if already defined
+     */
+    public Optional<JsonSchema> property(String name) {
+
+	Optional<LinkedHashMap<String, JsonSchema>> props = properties();
+	if (props.isPresent() && props.get().containsKey(name)) {
+	    return Optional.of(props.get().get(name));
+	} else {
+	    return Optional.empty();
+	}
     }
 
     public JsonSchema property(String name, JsonSchema propertySchema) {
@@ -460,8 +474,8 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 
     public JsonSchema type(JsonSchemaType... type) {
 
-	Optional<JsonSchemaKeyword> lookup = this.stream().filter(keyword -> keyword instanceof TypeKeyword)
-		.findFirst();
+	Optional<TypeKeyword> lookup = this.stream().filter(keyword -> keyword instanceof TypeKeyword)
+		.map(kw -> (TypeKeyword) kw).findFirst();
 
 	TypeKeyword keyword;
 
@@ -469,7 +483,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	    keyword = new TypeKeyword();
 	    this.add(keyword);
 	} else {
-	    keyword = (TypeKeyword) lookup.get();
+	    keyword = lookup.get();
 	}
 
 	keyword.addAll(Arrays.asList(type));
@@ -477,16 +491,25 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this;
     }
 
-    public Optional<List<JsonSchemaType>> type() {
-	return this.stream().filter(keyword -> keyword instanceof TypeKeyword)
-		.map(keyword -> ((List<JsonSchemaType>) ((TypeKeyword) keyword))).findFirst();
+    public Optional<TypeKeyword> type() {
+	return this.stream().filter(keyword -> keyword instanceof TypeKeyword).map(keyword -> (TypeKeyword) keyword)
+		.findFirst();
+    }
+
+    public Optional<TypeKeyword> removeTypeKeyword() {
+	Optional<TypeKeyword> lookup = this.stream().filter(keyword -> keyword instanceof TypeKeyword)
+		.map(kw -> (TypeKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
     }
 
     public JsonSchema uniqueItems(boolean unique) {
 	this.add(new UniqueItemsKeyword(unique));
 	return this;
     }
-    
+
     public JsonSchema nullable(boolean nullable) {
 	this.add(new NullableKeyword(nullable));
 	return this;
@@ -495,6 +518,16 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
     public Optional<JsonSchema> additionalProperties() {
 	return this.stream().filter(keyword -> keyword instanceof AdditionalPropertiesKeyword)
 		.map(keyword -> ((AdditionalPropertiesKeyword) keyword).value()).findFirst();
+    }
+
+    public Optional<AdditionalPropertiesKeyword> removeAdditionalPropertiesKeyword() {
+	Optional<AdditionalPropertiesKeyword> lookup = this.stream()
+		.filter(keyword -> keyword instanceof AdditionalPropertiesKeyword)
+		.map(kw -> (AdditionalPropertiesKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
     }
 
     public Optional<List<JsonSchema>> allOf() {
@@ -596,7 +629,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this.stream().filter(keyword -> keyword instanceof MaxLengthKeyword)
 		.map(keyword -> ((MaxLengthKeyword) keyword).value()).findFirst();
     }
-    
+
     public Optional<Integer> minLength() {
 	return this.stream().filter(keyword -> keyword instanceof MinLengthKeyword)
 		.map(keyword -> ((MinLengthKeyword) keyword).value()).findFirst();
@@ -612,15 +645,24 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 		.map(keyword -> ((MaxPropertiesKeyword) keyword).value()).findFirst();
     }
 
+    public Optional<MaxPropertiesKeyword> removeMaxPropertiesKeyword() {
+	Optional<MaxPropertiesKeyword> lookup = this.stream().filter(keyword -> keyword instanceof MaxPropertiesKeyword)
+		.map(kw -> (MaxPropertiesKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
+    }
+
     public Optional<Double> minimum() {
 	return this.stream().filter(keyword -> keyword instanceof MinimumKeyword)
 		.map(keyword -> ((MinimumKeyword) keyword).value()).findFirst();
     }
-    
+
     public Optional<Double> multipleOf() {
-   	return this.stream().filter(keyword -> keyword instanceof MultipleOfKeyword)
-   		.map(keyword -> ((MultipleOfKeyword) keyword).value()).findFirst();
-       }
+	return this.stream().filter(keyword -> keyword instanceof MultipleOfKeyword)
+		.map(keyword -> ((MultipleOfKeyword) keyword).value()).findFirst();
+    }
 
     public Optional<Integer> minItems() {
 	return this.stream().filter(keyword -> keyword instanceof MinItemsKeyword)
@@ -630,6 +672,15 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
     public Optional<Integer> minProperties() {
 	return this.stream().filter(keyword -> keyword instanceof MinPropertiesKeyword)
 		.map(keyword -> ((MinPropertiesKeyword) keyword).value()).findFirst();
+    }
+
+    public Optional<MinPropertiesKeyword> removeMinPropertiesKeyword() {
+	Optional<MinPropertiesKeyword> lookup = this.stream().filter(keyword -> keyword instanceof MinPropertiesKeyword)
+		.map(kw -> (MinPropertiesKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
     }
 
     public Optional<JsonSchema> not() {
@@ -647,6 +698,15 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 		.map(keyword -> ((LinkedHashMap<String, JsonSchema>) ((PropertiesKeyword) keyword))).findFirst();
     }
 
+    public Optional<PropertiesKeyword> removePropertiesKeyword() {
+	Optional<PropertiesKeyword> lookup = this.stream().filter(keyword -> keyword instanceof PropertiesKeyword)
+		.map(kw -> (PropertiesKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
+    }
+
     public Optional<Boolean> readOnly() {
 	return this.stream().filter(keyword -> keyword instanceof ReadOnlyKeyword)
 		.map(keyword -> ((ReadOnlyKeyword) keyword).value()).findFirst();
@@ -660,6 +720,15 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
     public Optional<SortedSet<String>> required() {
 	return this.stream().filter(keyword -> keyword instanceof RequiredKeyword)
 		.map(keyword -> ((SortedSet<String>) ((RequiredKeyword) keyword))).findFirst();
+    }
+
+    public Optional<RequiredKeyword> removeRequiredKeyword() {
+	Optional<RequiredKeyword> lookup = this.stream().filter(keyword -> keyword instanceof RequiredKeyword)
+		.map(kw -> (RequiredKeyword) kw).findFirst();
+	if (lookup.isPresent()) {
+	    this.remove(lookup.get());
+	}
+	return lookup;
     }
 
     public Optional<String> schema() {
@@ -681,7 +750,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this.stream().filter(keyword -> keyword instanceof UniqueItemsKeyword)
 		.map(keyword -> ((UniqueItemsKeyword) keyword).value()).findFirst();
     }
-    
+
     public Optional<Boolean> nullable() {
 	return this.stream().filter(keyword -> keyword instanceof NullableKeyword)
 		.map(keyword -> ((NullableKeyword) keyword).value()).findFirst();

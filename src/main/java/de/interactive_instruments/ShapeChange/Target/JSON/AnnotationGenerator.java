@@ -338,6 +338,13 @@ public class AnnotationGenerator implements MessageSource {
 		values.add(s);
 	    }
 
+	} else if (desc.equalsIgnoreCase("documentation")) {
+
+	    String s = i.documentation();
+	    if (s != null && !s.trim().isEmpty()) {
+		values.add(s);
+	    }
+
 	} else if (desc.equalsIgnoreCase("definition")) {
 
 	    String s = i.definition();

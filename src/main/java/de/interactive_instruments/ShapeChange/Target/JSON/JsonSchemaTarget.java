@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,6 +125,12 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static String baseJsonSchemaDefinitionForObjectTypes = null;
     protected static String baseJsonSchemaDefinitionForDataTypes = null;
 
+    protected static EncodingInfos baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
+    protected static EncodingInfos baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
+    protected static EncodingInfos baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+    protected static Optional<EncodingRestrictions> idMemberEncodingRestrictions = Optional.empty();
+
     protected static String objectIdentifierName = "id";
     protected static JsonSchemaType[] objectIdentifierType = new JsonSchemaType[] { JsonSchemaType.STRING };
     protected static boolean objectIdentifierRequired = false;
@@ -135,7 +141,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
     protected static SortedMap<PackageInfo, List<ProcessMapEntry>> mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-    protected static Map<ClassInfo, String> entityTypeMemberPathByCi = new HashMap<>();
+    protected static Map<ClassInfo, EncodingInfos> encodingInfosByCi = new HashMap<>();
 
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
@@ -208,10 +214,45 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    baseJsonSchemaDefinitionForFeatureTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForFeatureTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = EncodingInfos
+			.from(options.parameterAsString(this.getClass().getName(),
+				JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS, null,
+				false, true));
+	    }
+
 	    baseJsonSchemaDefinitionForObjectTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForObjectTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForObjectTypes_encodingInfos = EncodingInfos.from(options.parameterAsString(
+			this.getClass().getName(),
+			JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS, null, false, true));
+	    }
+
 	    baseJsonSchemaDefinitionForDataTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForDataTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForDataTypes_encodingInfos = EncodingInfos.from(options.parameterAsString(
+			this.getClass().getName(),
+			JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS, null, false, true));
+	    }
+
+	    if (options.hasParameter(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS)) {
+		// format already checked by validation of the configuration
+		idMemberEncodingRestrictions = Optional.of(EncodingRestrictions
+			.from(options.parameterAsString(this.getClass().getName(),
+				JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS, null, false, true)));
+	    }
 
 	    objectIdentifierName = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, "id", false, true);
@@ -280,8 +321,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			.getAdvancedProcessConfigurations();
 
 		// identify annotation elements
-		List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator.parseJsonSchemaAnnotationElements(
-			advancedProcessConfigElmt);
+		List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
+			.parseJsonSchemaAnnotationElements(advancedProcessConfigElmt);
 		annotationElements = annotationElmts;
 	    }
 
@@ -531,7 +572,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public JsonSchemaType[] objectIdentifierType() {
 	return objectIdentifierType;
     }
-    
+
     public List<AbstractJsonSchemaAnnotationElement> getAnnotationElements() {
 	return annotationElements;
     }
@@ -914,9 +955,34 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	Set<JsonSchemaDocument> jsdocs = jsDocsByPkg.values().stream().filter(jsd -> jsd.hasClasses())
 		.collect(Collectors.toCollection(HashSet::new));
 
-	// create the actual JSON Schema definitions
+	/*
+	 * 1. create the actual JSON Schema definitions
+	 */
 	for (JsonSchemaDocument jsdoc : jsdocs) {
 	    jsdoc.createDefinitions();
+	}
+
+	/*
+	 * 2. compute encoding infos (requires JSON Schema definitions to be created)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.computeEncodingInfos();
+	}
+
+	/*
+	 * 3. apply member restrictions (requires basic encoding infos to be computed
+	 * for all relevant classes)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.applyMemberRestrictions();
+	}
+
+	/*
+	 * 4. create map entries (requires encoding infos to be computed, and
+	 * restrictions to be applied)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.createMapEntries();
 	}
 
 	if (!diagnosticsOnly) {
@@ -982,6 +1048,17 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	mapEntries.add(me);
     }
 
+    public EncodingInfos getOrCreateEncodingInfos(ClassInfo ci) {
+
+	if (encodingInfosByCi.containsKey(ci)) {
+	    return encodingInfosByCi.get(ci);
+	} else {
+	    EncodingInfos encInfo = new EncodingInfos();
+	    encodingInfosByCi.put(ci, encInfo);
+	    return encInfo;
+	}
+    }
+
     @Override
     public void reset() {
 
@@ -1006,13 +1083,19 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	baseJsonSchemaDefinitionForObjectTypes = null;
 	baseJsonSchemaDefinitionForDataTypes = null;
 
+	baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
+	baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
+	baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+	idMemberEncodingRestrictions = Optional.empty();
+
 	objectIdentifierName = "id";
 	objectIdentifierType = new JsonSchemaType[] { JsonSchemaType.STRING };
 	objectIdentifierRequired = false;
 
 	mapEntryParamInfos = null;
 	mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-	entityTypeMemberPathByCi = new HashMap<>();
+	encodingInfosByCi = new HashMap<>();
 	annotationElements = new ArrayList<>();
 
 	jsDocsByPkg = new TreeMap<>();
@@ -1036,6 +1119,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-name-as-entityType");
 	r.addRule("rule-json-cls-name-as-entityType-union");
 	r.addRule("rule-json-cls-nestedProperties");
+	r.addRule("rule-json-cls-restrictExternalEntityTypeMember");
+	r.addRule("rule-json-cls-restrictExternalIdentifierMember");
 	r.addRule("rule-json-cls-union-propertyCount");
 	r.addRule("rule-json-cls-union-typeDiscriminator");
 	r.addRule("rule-json-cls-valueTypeOptions");
@@ -1092,7 +1177,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
 	case 12:
 	    return "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
-	
+
 	case 15:
 	    return "No map entries provided via the configuration.";
 //		case 16:
@@ -1150,4 +1235,5 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public JsonSchemaVersion getJsonSchemaVersion() {
 	return jsonSchemaVersion;
     }
+
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/CurvePositionSpecification"
+             type="CurvePositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/FeaturePlaceRelationship"
+             type="FeaturePlaceRelationship"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/LocationSpecification"
+             type="LocationSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/PlaceSpecification"
+             type="PlaceSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/PointPositionSpecification"
+             type="PointPositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/PositionSpecification"
+             type="PositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/SurfacePositionSpecification"
+             type="SurfacePositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/TS10_FT1"
+             type="TS10_FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/$defs/TS10_FT2"
+             type="TS10_FT2"/>
+</mapEntries>

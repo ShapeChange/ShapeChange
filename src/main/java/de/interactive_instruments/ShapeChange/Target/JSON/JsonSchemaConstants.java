@@ -45,6 +45,11 @@ public class JsonSchemaConstants {
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
     public static final String ME_PARAM_ENCODING_INFOS = "encodingInfos";
     public static final String ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH = "entityTypeMemberPath";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_REQUIRED = "entityTypeMemberRequired";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_PATH = "idMemberPath";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_REQUIRED = "idMemberRequired";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_TYPES = "idMemberTypes";
+    public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_FORMATS = "idMemberFormats";
     
     
     /**
@@ -78,10 +83,16 @@ public class JsonSchemaConstants {
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES = "baseJsonSchemaDefinitionForObjectTypes";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES = "baseJsonSchemaDefinitionForDataTypes";
 
+    public static final String PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForFeatureTypes_encodingInfos";
+    public static final String PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForObjectTypes_encodingInfos";
+    public static final String PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForDataTypes_encodingInfos";
+    
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_OBJECT_IDENTIFIER_TYPE = "objectIdentifierType";
     public static final String PARAM_OBJECT_IDENTIFIER_REQUIRED = "objectIdentifierRequired";
 
+    public static final String PARAM_ID_MEMBER_ENCODING_RESTRICTIONS = "idMemberEncodingRestrictions";
+    
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";
     
     public static final String PARAM_LINK_OBJECT_URI = "linkObjectUri";
@@ -112,5 +123,7 @@ public class JsonSchemaConstants {
     public static final String RULE_PROP_INITIAL_VALUE_AS_DEFAULT = "rule-json-prop-initialValueAsDefault";
 
     public static final String RULE_CLS_VALUE_TYPE_OPTIONS = "rule-json-cls-valueTypeOptions";
+    public static final String RULE_CLS_RESTRICT_EXT_ENTITY_TYPE_MEMBER = "rule-json-cls-restrictExternalEntityTypeMember";
+    public static final String RULE_CLS_RESTRICT_EXT_ID_MEMBER = "rule-json-cls-restrictExternalIdentifierMember";
 
 }

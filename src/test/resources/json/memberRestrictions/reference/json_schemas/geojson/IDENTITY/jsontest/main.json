@@ -1,0 +1,181 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schema/jsonfg",
+  "title": "test application schema",
+  "description": "Definition: main package Def  Description: main package Desc",
+  "$defs": {
+    "CL": {
+      "$anchor": "CL",
+      "description": "Definition: CL Def  Description: CL Desc",
+      "type": "string"
+    },
+    "E": {
+      "$anchor": "E",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "type": "string",
+      "enum": [
+        "e1",
+        "e2"
+      ]
+    },
+    "ExtFTSubtype": {
+      "$anchor": "ExtFTSubtype",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "https://example.org/external/schema/definitions.json#ExtFeatureType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attExtFTSubtype": {
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "attExtFTSubtype"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        },
+        {
+          "properties": {
+            "properties": {
+              "required": [
+                "@type"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "title": "Feature type one",
+      "description": "Definition: FT1 Def  Description: FT1 Desc",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "@type": {
+                  "type": "string"
+                },
+                "att1": {
+                  "title": "attribute one",
+                  "description": "Definition: att1 Def  Description: att1 Desc",
+                  "type": "string"
+                },
+                "att2": {
+                  "title": "attribute two",
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "@type",
+                "att1",
+                "att2"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        },
+        {
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "@type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "@type"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        },
+        {
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      ]
+    },
+    "T": {
+      "$anchor": "T",
+      "description": "Definition: T Def  Description: T Desc",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "@type"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "U": {
+      "$anchor": "U",
+      "description": "Definition: U Def  Description: U Desc",
+      "type": [
+        "integer",
+        "boolean"
+      ]
+    }
+  }
+}

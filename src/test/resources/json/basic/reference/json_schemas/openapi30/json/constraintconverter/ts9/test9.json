@@ -1,4 +1,5 @@
 {
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
   "$id": "https://example.org/baseuri/ts9/ts9/test9.json",
   "definitions": {
     "TS9_FT1": {

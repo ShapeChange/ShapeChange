@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?><mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType}" rule="*" targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/AssociationClass" type="AssociationClass"/>
-  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType}" rule="*" targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT1" type="FT1"/>
-  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType}" rule="*" targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT3" type="FT3"/>
-  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType}" rule="*" targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT4" type="FT4"/>
-  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType}" rule="*" targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT5" type="FT5"/>
+  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/AssociationClass"
+             type="AssociationClass"/>
+  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT1"
+             type="FT1"/>
+  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT3"
+             type="FT3"/>
+  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT4"
+             type="FT4"/>
+  <MapEntry param="encodingInfos{entityTypeMemberPath=properties/entityType;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts/subdir/test.json#/$defs/FT5"
+             type="FT5"/>
 </mapEntries>
