@@ -73,6 +73,8 @@ public class ModelElementSelectionInfo implements MessageSource {
     private Pattern modelElementOwnerStereotypePattern = null;
     private String propertyValueTypeStereotype = null;
     private Pattern propertyValueTypeStereotypePattern = null;
+    private String propertyValueTypeName = null;
+    private Pattern propertyValueTypeNamePattern = null;
     private String applicationSchemaName = null;
     private Pattern applicationSchemaNamePattern = null;
 
@@ -87,7 +89,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 
     public ModelElementSelectionInfo(ModelElementType modelElementType, String modelElementStereotype,
 	    String modelElementName, String modelElementOwnerName, String modelElementOwnerStereotype,
-	    String propertyValueTypeStereotype, String applicationSchemaName) {
+	    String propertyValueTypeStereotype, String propertyValueTypeName, String applicationSchemaName) {
 
 	super();
 	this.modelElementType = modelElementType;
@@ -96,6 +98,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	this.modelElementOwnerName = modelElementOwnerName;
 	this.modelElementOwnerStereotype = modelElementOwnerStereotype;
 	this.propertyValueTypeStereotype = propertyValueTypeStereotype;
+	this.propertyValueTypeName = propertyValueTypeName;
 	this.applicationSchemaName = applicationSchemaName;
     }
 
@@ -146,6 +149,15 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    } catch (PatternSyntaxException e) {
 		compileErrors.add("@propertyValueTypeStereotype - invalid value (" + propertyValueTypeStereotype + "): "
 			+ e.getMessage());
+	    }
+	}
+
+	if (this.propertyValueTypeName != null) {
+	    try {
+		propertyValueTypeNamePattern = Pattern.compile(propertyValueTypeName);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add(
+			"@propertyValueTypeName - invalid value (" + propertyValueTypeName + "): " + e.getMessage());
 	    }
 	}
 
@@ -310,6 +322,16 @@ public class ModelElementSelectionInfo implements MessageSource {
 
     /**
      * @return <code>true</code> if this configuration entry has a value for the
+     *         propertyValueTypeName attribute, else <code>false</code>
+     */
+    public boolean hasPropertyValueTypeNamePattern() {
+	if (!validated)
+	    raiseNotValidatedIllegalStateException();
+	return propertyValueTypeNamePattern != null;
+    }
+
+    /**
+     * @return <code>true</code> if this configuration entry has a value for the
      *         applicationSchemaName attribute, else <code>false</code>
      */
     public boolean hasApplicationSchemaNamePattern() {
@@ -346,6 +368,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	boolean modelElementStereotypeMatch = true;
 	boolean propertyValueTypeStereotypeMatch = true;
+	boolean propertyValueTypeNameMatch = true;
 	boolean modelElementNameMatch = true;
 	boolean modelElementOwnerNameMatch = true;
 	boolean modelElementOwnerStereotypeMatch = true;
@@ -510,6 +533,25 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
+	if (hasPropertyValueTypeNamePattern() && infoType instanceof PropertyInfo) {
+
+	    PropertyInfo pi = (PropertyInfo) infoType;
+
+	    if (StringUtils.isNotBlank(pi.typeInfo().name)) {
+
+		propertyValueTypeNameMatch = false;
+
+		Matcher matcher = propertyValueTypeNamePattern.matcher(pi.typeInfo().name);
+
+		if (matcher.matches()) {
+		    propertyValueTypeNameMatch = true;
+		    result.addDebug(this, 100, pi.typeInfo().name, propertyValueTypeNamePattern.pattern());
+		} else {
+		    result.addDebug(this, 101, pi.typeInfo().name, propertyValueTypeNamePattern.pattern());
+		}
+	    }
+	}
+
 	if (hasModelElementNamePattern()) {
 
 	    modelElementNameMatch = false;
@@ -580,8 +622,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 	}
 
 	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
-		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && modelElementTypeMatch
-		&& applicationSchemaNameMatch;
+		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && propertyValueTypeNameMatch
+		&& modelElementTypeMatch && applicationSchemaNameMatch;
     }
 
     public static ModelElementSelectionInfo parse(Element element) {
@@ -597,7 +639,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	if (element.hasAttribute("modelElementOwnerName")) {
 	    modelElementOwnerName = element.getAttribute("modelElementOwnerName");
 	}
-	
+
 	String modelElementOwnerStereotype = null;
 
 	if (element.hasAttribute("modelElementOwnerStereotype")) {
@@ -614,6 +656,12 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	if (element.hasAttribute("propertyValueTypeStereotype")) {
 	    propertyValueTypeStereotype = element.getAttribute("propertyValueTypeStereotype");
+	}
+
+	String propertyValueTypeName = null;
+
+	if (element.hasAttribute("propertyValueTypeName")) {
+	    propertyValueTypeName = element.getAttribute("propertyValueTypeName");
 	}
 
 	String applicationSchemaName = null;
@@ -644,7 +692,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 	}
 
 	return new ModelElementSelectionInfo(modelElementType, modelElementStereotype, modelElementName,
-		modelElementOwnerName, modelElementOwnerStereotype, propertyValueTypeStereotype, applicationSchemaName);
+		modelElementOwnerName, modelElementOwnerStereotype, propertyValueTypeStereotype, propertyValueTypeName,
+		applicationSchemaName);
     }
 
     /**
