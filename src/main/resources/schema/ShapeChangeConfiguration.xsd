@@ -455,6 +455,7 @@
   <attribute name="modelElementOwnerName" type="string"/>
   <attribute name="modelElementOwnerStereotype" type="string"/>
   <attribute name="propertyValueTypeStereotype" type="string"/>
+  <attribute name="propertyValueTypeName" type="string"/>
   <attribute name="applicationSchemaName" type="string"/>
  </attributeGroup>
  <element name="TaggedValue" type="sc:TaggedValueType"/>
@@ -999,7 +1000,6 @@
   </sequence>
   <attribute name="name" type="string" use="required"/>
  </complexType>
-
  <element name="rdfGeneralProperties">
   <complexType>
    <sequence>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/gfs/notEncoded/test_gfs_notEncoded.eapx"/>
+		<parameter name="appSchemaNameRegex" value="Test.*"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="addTaggedValues" value="*"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/gfs/notEncoded/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="IDENTITY" input="INPUT" mode="enabled">
+			<taggedValues>
+				<TaggedValue name="gfsEncodingRule" value="notEncoded" modelElementType="Property" propertyValueTypeName=".*NotEncoded$"/>
+			</taggedValues>
+		</Transformer>
+
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.ShapeChange.Target.gfs.GfsTemplateTarget" mode="enabled" inputs="IDENTITY">
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="outputDirectory" value="testResults/gfs/notEncoded/results/gfs1"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="choiceForInlineOrByReference" value="byReference"/>
+			<targetParameter name="defaultEncodingRule" value="gfstest"/>
+			<rules>
+				<EncodingRule name="gfstest">
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+
+			<xi:include href="src/main/resources/config/StandardMapEntries_GFS.xml"/>
+		</Target>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/gfs/notEncoded/results/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="gml32WithMixins"/>
+			<rules>
+				<EncodingRule name="gml32WithMixins" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

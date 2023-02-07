@@ -37,13 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -379,7 +376,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		return o1.name().compareTo(o2.name());
 	    }
 	});
-	
+
 	List<PropertyInfo> result = new ArrayList<>();
 
 	for (ClassInfo supertype : supertypeClassesSortedByName) {
@@ -393,9 +390,9 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		}
 	    }
 	}
-	
+
 	result.addAll(propsFromCi);
-	
+
 	return result;
     }
 
@@ -411,8 +408,9 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	    propList.add(pi);
 	    identifyPropertyPaths(pi, propList, pathsToEndProperties);
 	}
-	
-	// for debugging the property paths (especially property order), uncomment the following:
+
+	// for debugging the property paths (especially property order), uncomment the
+	// following:
 	/*
 	 * System.out.println(ci.name()+":"); for(List<PropertyInfo> path :
 	 * pathsToEndProperties) {
@@ -630,7 +628,9 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	    if (pi.inClass().category() == Options.DATATYPE || pi.inClass().category() == Options.UNION) {
 
-		if (!pi.inClass().subtypes().isEmpty() || multipleOccurrencesOfPropertyInInheritanceHierarchy(pi)) {
+		if (pi.inClass().subtypesInCompleteHierarchy().stream()
+			.filter(subtype -> !subtype.isAbstract() && isEncoded(subtype)).findAny().isPresent()
+			|| multipleOccurrencesOfPropertyInInheritanceHierarchy(pi)) {
 
 		    /*
 		     * need to fan out according to names of non-abstract classes in inheritance
@@ -643,11 +643,11 @@ public class GfsTemplateTarget implements Target, MessageSource {
 			nonAbstractClassNames.add(pi.inClass().name());
 		    }
 		    for (ClassInfo subtype : pi.inClass().subtypesInCompleteHierarchy()) {
-			if (!subtype.isAbstract()) {
+			if (!subtype.isAbstract() && isEncoded(subtype)) {
 			    nonAbstractClassNames.add(subtype.name());
 			}
 		    }
-		    
+
 		    Collections.sort(nonAbstractClassNames);
 
 		    for (String className : nonAbstractClassNames) {
@@ -717,7 +717,15 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	    allClasses.addAll(topSupertype.subtypesInCompleteHierarchy());
 	    allClasses.add(topSupertype);
 	    for (ClassInfo ci : allClasses) {
+
+		if (!isEncoded(ci))
+		    continue;
+
 		for (PropertyInfo pix : ci.properties().values()) {
+
+		    if (!isEncoded(pix))
+			continue;
+
 		    if (pix.name().equals(pi.name())) {
 			countPropsWithPiName++;
 		    }
@@ -781,10 +789,9 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	    if (mc != null) {
 		mc.addDetail(this, 1, pi.fullNameInSchema());
 	    }
-	}
-
-	if (valueTypeIsMapped(pi) || pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT
-		|| pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST) {
+	} else if (valueTypeIsMapped(pi) || pi.categoryOfValue() == Options.FEATURE
+		|| pi.categoryOfValue() == Options.OBJECT || pi.categoryOfValue() == Options.ENUMERATION
+		|| pi.categoryOfValue() == Options.CODELIST) {
 
 	    pathsToEndProperties.add(propListUpToIncludingPi);
 
@@ -818,6 +825,10 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		if (typeCi.category() == Options.DATATYPE && !typeCi.subtypes().isEmpty()) {
 
 		    for (ClassInfo typeCiSubtype : typeCi.subtypesInCompleteHierarchy()) {
+
+			if (!isEncoded(typeCiSubtype)) {
+			    continue;
+			}
 
 			/*
 			 * handle the rare case that a subtype is abstract and a leaf class (does not
@@ -903,14 +914,13 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	return "true".equalsIgnoreCase(gmlMeasureTypeCharacteristicValue);
     }
 
-    private GfsPropertyType gfsPropertyType(PropertyInfo pi) {
-
-	return gfsPropertyType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(GfsTemplateConstants.PLATFORM));
+    private ProcessMapEntry mapEntryForValueType(PropertyInfo pi) {
+	return mapEntryParamInfos.getMapEntry(pi.typeInfo().name, pi.encodingRule(GfsTemplateConstants.PLATFORM));
     }
 
-    private GfsPropertyType gfsPropertyType(String typeName, String typeId, String encodingRule) {
+    private GfsPropertyType gfsPropertyType(PropertyInfo pi) {
 
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+	ProcessMapEntry pme = mapEntryForValueType(pi);
 
 	GfsPropertyType resType = GfsPropertyType.STRING;
 
@@ -927,27 +937,21 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	    } else {
 		// is checked via target configuration validator (which can be switched off)
-		result.addError(this, 112, typeName);
+		result.addError(this, 112, pi.typeInfo().name);
 	    }
 
 	} else {
 
-	    ClassInfo valueType = null;
-	    if (StringUtils.isNotBlank(typeId)) {
-		valueType = model.classById(typeId);
-	    }
-	    if (valueType == null && StringUtils.isNotBlank(typeName)) {
-		valueType = model.classByName(typeName);
-	    }
+	    ClassInfo valueType = model.classByIdOrName(pi.typeInfo());
 
 	    if (valueType == null) {
 
 		// The value type was not found in the model
-		result.addError(this, 113, typeName);
+		result.addError(this, 113, pi.typeInfo().name);
 
 	    } else if (!isEncoded(valueType)) {
 
-		result.addError(this, 114, typeName);
+		result.addError(this, 114, pi.typeInfo().name);
 
 	    } else if (valueType.category() == Options.OBJECT || valueType.category() == Options.FEATURE) {
 		resType = GfsPropertyType.FEATURE_PROPERTY;
