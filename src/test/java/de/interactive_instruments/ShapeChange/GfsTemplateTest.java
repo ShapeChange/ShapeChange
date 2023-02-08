@@ -57,4 +57,11 @@ public class GfsTemplateTest extends BasicTestSCXML {
 				new String[] { "xsd", "xml","gfs" }, "testResults/gfs/dataTypeSubtypePropsWithSameName/results",
 				"src/test/resources/gfs/dataTypeSubtypePropsWithSameName/reference/results");
 	}
+	
+	@Test
+	public void testNotEncoded() {
+		multiTest("src/test/resources/gfs/notEncoded/test_gfs_notEncoded.xml",
+				new String[] { "gfs" }, "testResults/gfs/notEncoded/results",
+				"src/test/resources/gfs/notEncoded/reference/results");
+	}
 }
