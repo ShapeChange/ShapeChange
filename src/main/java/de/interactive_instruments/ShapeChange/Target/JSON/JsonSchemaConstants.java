@@ -79,6 +79,7 @@ public class JsonSchemaConstants {
 
     public static final String PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION = "byReferenceJsonSchemaDefinition";
 
+    public static final String PARAM_BASE_JSON_SCHEMA_DEF_COLLECTIONS = "baseJsonSchemaDefinitionForCollections";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES = "baseJsonSchemaDefinitionForFeatureTypes";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES = "baseJsonSchemaDefinitionForObjectTypes";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES = "baseJsonSchemaDefinitionForDataTypes";
@@ -91,6 +92,8 @@ public class JsonSchemaConstants {
     public static final String PARAM_OBJECT_IDENTIFIER_TYPE = "objectIdentifierType";
     public static final String PARAM_OBJECT_IDENTIFIER_REQUIRED = "objectIdentifierRequired";
 
+    public static final String PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS = "preventUnknownTypesInFeatureCollection";
+    
     public static final String PARAM_ID_MEMBER_ENCODING_RESTRICTIONS = "idMemberEncodingRestrictions";
     
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";
@@ -126,4 +129,6 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_RESTRICT_EXT_ENTITY_TYPE_MEMBER = "rule-json-cls-restrictExternalEntityTypeMember";
     public static final String RULE_CLS_RESTRICT_EXT_ID_MEMBER = "rule-json-cls-restrictExternalIdentifierMember";
 
+    public static final String RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE = "rule-json-cls-collectionsBasedOnEntityType";
+    public static final String RULE_CLS_COLLECTIONS_WITH_TOP_LEVEL_ENTITY_TYPE = "rule-json-cls-collectionsWithTopLevelEntityType";
 }

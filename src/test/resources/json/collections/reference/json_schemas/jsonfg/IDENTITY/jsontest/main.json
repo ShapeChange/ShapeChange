@@ -1,0 +1,625 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schema/jsonfg",
+  "title": "test application schema",
+  "description": "Definition: main package Def  Description: main package Desc",
+  "$defs": {
+    "CL": {
+      "$anchor": "CL",
+      "description": "Definition: CL Def  Description: CL Desc",
+      "type": "string"
+    },
+    "E": {
+      "$anchor": "E",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "type": "string",
+      "enum": [
+        "e1",
+        "e2"
+      ]
+    },
+    "ExtFTSubtype": {
+      "$anchor": "ExtFTSubtype",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "https://example.org/external/schema/definitions.json#ExtFeatureType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attExtFTSubtype": {
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "attExtFTSubtype"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        },
+        {
+          "required": [
+            "featureType"
+          ]
+        }
+      ]
+    },
+    "ExtFTSubtypeCollection": {
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "title": "Feature type one",
+      "description": "Definition: FT1 Def  Description: FT1 Desc",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "att1": {
+                  "title": "attribute one",
+                  "description": "Definition: att1 Def  Description: att1 Desc",
+                  "type": "string"
+                },
+                "att2": {
+                  "title": "attribute two",
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "att1",
+                "att2"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        },
+        {
+          "required": [
+            "featureType"
+          ]
+        }
+      ]
+    },
+    "FT1Collection": {
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "https://example.org/schema/jsonfg#FT1"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "required": [
+            "featureType"
+          ]
+        }
+      ]
+    },
+    "FT2Collection": {
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "if": {
+            "required": [
+              "featureType"
+            ]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT3"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT4"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT5"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "not": {
+                    "required": [
+                      "featureType"
+                    ],
+                    "properties": {
+                      "featureType": {
+                        "enum": [
+                          "FT3",
+                          "FT4",
+                          "FT5"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT2"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "required": [
+              "features"
+            ],
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT3"
+          }
+        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT4"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT5"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                      }
+                    },
+                    {
+                      "if": {
+                        "not": {
+                          "required": [
+                            "featureType"
+                          ],
+                          "properties": {
+                            "featureType": {
+                              "enum": [
+                                "FT3",
+                                "FT4",
+                                "FT5"
+      ]
+                            }
+                          }
+                        }
+    },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT2"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FeatureCollection": {
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "if": {
+            "required": [
+              "featureType"
+            ]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "ExtFTSubtype"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT1"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT1"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT3"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT4"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT5"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "required": [
+              "features"
+            ],
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "ExtFTSubtype"
+          }
+        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT1"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT1"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT3"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT4"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT5"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                      }
+                    }
+      ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "T": {
+      "$anchor": "T",
+      "description": "Definition: T Def  Description: T Desc",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "@type"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "U": {
+      "$anchor": "U",
+      "description": "Definition: U Def  Description: U Desc",
+      "type": "object",
+      "properties": {
+        "o1": {
+          "description": "Definition: o1 Def  Description: o1 Desc",
+          "type": "integer"
+        },
+        "o2": {
+          "description": "Definition: o2 Def  Description: o2 Desc",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1
+    }
+  }
+}

@@ -68,6 +68,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaT
 public class JsonSchemaTargetConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_COLLECTIONS,
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES,
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS,
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES,
@@ -80,8 +81,10 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, JsonSchemaConstants.PARAM_JSON_BASE_URI,
 	    JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, JsonSchemaConstants.PARAM_LINK_OBJECT_URI,
 	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
-	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE, JsonSchemaConstants.PARAM_PRETTY_PRINT,
-	    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
+	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE,
+	    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS,
+	    JsonSchemaConstants.PARAM_PRETTY_PRINT, JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES)
+	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called

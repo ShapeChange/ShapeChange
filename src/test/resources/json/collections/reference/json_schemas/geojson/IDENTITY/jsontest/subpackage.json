@@ -1,0 +1,156 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$defs": {
+    "FT3": {
+      "$anchor": "FT3",
+      "allOf": [
+        {"$ref": "https://example.org/schema/jsonfg#FT2"},
+        {
+          "properties": {
+            "properties": {
+              "properties": {
+                "attDep": {
+                  "description": "Definition: attDep Def  Description: attDep Desc",
+                  "items": {"type": "integer"},
+                  "title": "attribute dep",
+                  "type": "array",
+                  "uniqueItems": true
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Definition: FT3 Def  Description: FT3 Desc"
+    },
+    "FT3Collection": {
+      "allOf": [
+        {"$ref": "https://geojson.org/schema/FeatureCollection.json"},
+        {
+          "properties": {
+            "features": {
+              "items": {
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "properties": {
+                          "properties": {
+                            "@type": {"const": "FT3"}
+                          },
+                          "required": ["@type"]
+                        }
+                      },
+                      "required": ["properties"]
+                    },
+                    "then": {"$ref": "https://example.org/schema/jsonfg#FT3"}
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "properties": {
+                          "properties": {
+                            "@type": {"const": "FT4"}
+                          },
+                          "required": ["@type"]
+                        }
+                      },
+                      "required": ["properties"]
+                    },
+                    "then": {"$ref": "https://example.org/schema/jsonfg#FT4"}
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "properties": {
+                          "properties": {
+                            "@type": {"const": "FT5"}
+                          },
+                          "required": ["@type"]
+                        }
+                      },
+                      "required": ["properties"]
+                    },
+                    "then": {"$ref": "https://example.org/schema/jsonfg#FT5"}
+                  },
+                  {
+                    "if": {
+                      "not": {
+                        "properties": {
+                          "properties": {
+                            "properties": {
+                              "@type": {
+                                "enum": [
+                                  "FT3",
+                                  "FT4",
+                                  "FT5"
+                                ]
+                              }
+                            },
+                            "required": ["@type"]
+                          }
+                        },
+                        "required": ["properties"]
+                      }
+                    },
+                    "then": {"$ref": "https://example.org/schema/jsonfg#FT3"}
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          },
+          "required": ["features"]
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "allOf": [
+        {"$ref": "https://example.org/schema/jsonfg#FT3"},
+        {"type": "object"}
+      ],
+      "description": "Definition: [None Specified]  Description: [None Specified]"
+    },
+    "FT4Collection": {
+      "allOf": [
+        {"$ref": "https://geojson.org/schema/FeatureCollection.json"},
+        {
+          "properties": {
+            "features": {
+              "items": {"$ref": "https://example.org/schema/jsonfg#FT4"},
+              "type": "array"
+            }
+          }
+        }
+      ]
+    },
+    "FT5": {
+      "$anchor": "FT5",
+      "allOf": [
+        {"$ref": "https://example.org/schema/jsonfg#FT3"},
+        {"type": "object"}
+      ],
+      "description": "Definition: [None Specified]  Description: [None Specified]"
+    },
+    "FT5Collection": {
+      "allOf": [
+        {"$ref": "https://geojson.org/schema/FeatureCollection.json"},
+        {
+          "properties": {
+            "features": {
+              "items": {"$ref": "https://example.org/schema/jsonfg#FT5"},
+              "type": "array"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$id": "https://example.org/schema/jsonfg",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "description": "Definition: subpackage Def  Description: subpackage Desc",
+  "title": "test sub-package"
+}

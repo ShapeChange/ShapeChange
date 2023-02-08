@@ -210,6 +210,179 @@ restricts the type to "string", and states that the "format" is "uri"
 https://tools.ietf.org/html/draft-handrews-json-schema-validation-02#section-7.3.5[JSON
 Schema validation, section 7.3.5]).
 
+[[rule-json-cls-collectionsBasedOnEntityType]]
+==== rule-json-cls-collectionsBasedOnEntityType
+
+(since v2.14.0)
+
+This rule creates collection schemas for feature types.
+
+NOTE: Object types are ignored. Such types can be transformed to feature types 
+(using the TypeConverter 
+xref:../transformations/Type_Converter.adoc#rule-trf-objectTypesToFeatureTypes[rule-trf-objectTypesToFeatureTypes]),
+if they should be treated like feature types in the JSON encoding.
+
+CAUTION: It is assumed that the content model of all relevant feature types contains an
+entity type member (e.g., "featureType", "type", "properties/type"), which 
+identifies the name of the type of the encoded object. If no such entity type
+member is available for one of the feature types of a collection definition,
+ShapeChange will log an error and ignore that feature type when creating the
+collection definition. The collection definition is not created if all of the
+feature types are ignored.
+
+[NOTE]
+======
+
+* The entity type member can be defined via a MapEntry for one of the 
+supertypes for a class, via target parameter xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForFeatureTypes_encodingInfos[baseJsonSchemaDefinitionForFeatureTypes_encodingInfos], 
+or generated via xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType].
+* The collection encoding supports objects with different entity type
+member paths.
+* Via xref:./JSON_Schema.adoc#rule-json-cls-collectionsWithTopLevelEntityType[rule-json-cls-collectionsWithTopLevelEntityType], the conversion
+can be altered to support cases in which the entity type member is
+not set per object, but on the collection level for all objects. Of
+course, this only makes sense if all objects in a collection are of the
+same type.
+
+======
+
+The rule creates the following collection schema definitions:
+
+* A general "FeatureCollection" schema for all non-abstract feature types.
+* One collection schema for each feature type (abstract and non-abstract).
+Each of these schemas defines a uniform collection, i.e. a collection
+that only has objects of a specific feature type (or subtypes thereof). 
+The collection name is `{feature type name} + 'Collection'`. Example: BuildingCollection.
+
+NOTE: The FeatureCollection schema will be added to the JSON Schema document 
+that is created for the main schema package (for further details, see the
+description of input parameter xref:../get started/The_element_input.adoc#mainAppSchema[mainAppSchema]).
+The other collection schemas will be added to the JSON Schema documents that contain 
+the definition of the respective feature type. If only a single application
+schema is processed, and all classes are encoded in a single JSON Schema document,
+then all collection schemas will be defined in that document.
+
+Two aspects play an important role when creating the collection schema:
+a base collection schema as well as how the actual member checks are defined.
+
+The base collection schema is determined as follows:
+
+* The conversion is based upon the assumption that the members of a collection are
+encoded in a JSON array.
+* The target parameter xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForCollections[baseJsonSchemaDefinitionForCollections], 
+if set, gives a reference to the base collection schema (which will be included
+in a particular collection schema using the "allOf" member). An example value would be
+https://geojson.org/schema/FeatureCollection.json - to reference the GeoJSON 
+feature collection schema. 
+** If the parameter is not set, or has no value, it is
+assumed that collections are encoded as simple JSON arrays, without any
+further structure (which can be useful in a plain JSON encoding).
+** If the parameter is set, then it is assumed that the JSON member that contains
+the array of collection members is the top-level "features" member. This is
+compatible with the GeoJSON feature collection. In the future, the path to that
+JSON member can be made configurable.
+
+The member check is realized as follows:
+
+* Within the general "FeatureCollection", the check is realized using an "allOf", which bundles a number of if-then-constraints:
+** One if-then-constraint per non-abstract feature type. The if-part checks the value of the entity type member against the name of the feature type. The then-part references the JSON Schema definition of the feature type.
+** By default, the FeatureCollection allows objects of unknown type. 
+Such objects are not validated, since none of the previously described if-constraints
+will match them. 
+In order to forbid unknown members in a collection, set target parameter
+xref:./JSON_Schema.adoc#preventUnknownTypesInFeatureCollection[preventUnknownTypesInFeatureCollection]
+to "true". In that case, another if-then-constraint is added:
+*** if-part:
+**** If the paths to the entity type members of all the feature types are equal: not-constraint
+with the path to the entity type member and enum with the names of the feature types.
+**** Otherwise, i.e. the entity type member paths are not all equal: not-constraint with oneOf,
+with one schema per entity type member path, and an enum with the names of the feature types
+whose entity type member is at that path.
+*** then-part: simply `false`.
+* For uniform collections, it depends on the represented feature type:
+** In case the feature type is a supertype:
+*** The member check is created using an "allOf" with a number of if-then-constraints,
+one per non-abstract class (in the set consisting of the feature types as
+well as its direct and indirect subtypes) - much like it is done for the 
+general "FeatureCollection".
+*** An additional if-then-constraint is used to validate objects of unknown type.
+However, other than for the general "FeatureCollection", here we have an actual
+schema to work with: that of the collection's feature type.
+** Otherwise, the feature type is a leaf class. In that case, the collection
+member check simply consists of a reference to the JSON Schema definition of
+the feature type.
+
+
+[[rule-json-cls-collectionsWithTopLevelEntityType]]
+==== rule-json-cls-collectionsWithTopLevelEntityType
+
+(since v2.14.0)
+
+Extends xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType] 
+to support cases in which the entity type member is not set per object, 
+but on the collection level for all objects. This rule should only be
+applied if the assumption then is that all objects in the collection 
+are of the same type.
+
+NOTE: In order for rule-json-cls-collectionsWithTopLevelEntityType 
+to work as expected,
+xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]
+should be part of the encoding rule as well.
+
+This rule further assumes that 
+xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForCollections[baseJsonSchemaDefinitionForCollections]
+is set, and that the base collection schema contains a top-level
+"featureType" member, which, if set, identifies the type of all
+collection members. In the following, that member is called
+__collection-featuretype-member__.
+
+In order for the assumed mechanism to work in practice, it is
+necessary that both the collection-featuretype-member as well 
+as the entity type members of collection member feature types 
+are optional.
+
+The implementation of the collection schemas created by 
+xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]
+for the general "FeatureCollection" and the uniform collections for supertypes
+is extended. In the collection definition, the first "allOf" schema -
+which links the base schema defined by parameter 
+xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForCollections[baseJsonSchemaDefinitionForCollections]
+with the member checks - is modified, so that the second schema 
+consists of an if-then-else constraint:
+
+* The if-part checks via `"required": ["featureType"]` if the 
+collection-featuretype-member is present in a given collection object. Note
+that the actual value is not checked here, including if the value is null.
+The mere presence of the collection-featuretype-member is assumed to
+indicate that it conveys the feature type name of all collection members.
+* The then-part contains an "allOf" with a number of if-then-constraints:
+** For each relevant non-abstract feature type, an if-then-constraint
+is created, which checks the value of the collection-featuretype-member
+against the name of the feature type. The then-part contains a 
+reference to the JSON Schema definition created for that feature type.
+** Similar to xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType],
+a final if-then-constraint is created (though for the general "FeatureCollection",
+only if target parameter 
+xref:./JSON_Schema.adoc#preventUnknownTypesInFeatureCollection[preventUnknownTypesInFeatureCollection] 
+is set to "true"). The constraint checks in the if-part that the 
+collection-featuretype-member value is not equal to a name of one
+of the feature types. In the case of the general "FeatureCollection" 
+(with target parameter preventUnknownTypesInFeatureCollection 
+not being "true"), the then-part is then simply `false`. In case 
+of a uniform collection for a supertype, the then-part is a
+reference to the schema of the collection feature type.
+* The else part of the if-then-else constraint contains the member
+check as created by 
+xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]
+(assuming that the entity type member is present for each
+collection member).
+
+NOTE: The encoding of uniform collections for leaf classes in 
+rule-json-cls-collectionsBasedOnEntityType does not need to be
+extended, since it is completely independent of any entity type 
+member checks.
+
+
 [[rule-json-cls-defaultGeometry-multipleGeometryProperties]]
 ==== rule-json-cls-defaultGeometry-multipleGeometryProperties
 
@@ -342,8 +515,8 @@ entity type member in the external schema. If such an external schema applies to
 type, then this conversion rule is ignored for that type.
 ** The base schema assignment is enabled via _xref:./JSON_Schema.adoc#rule-json-cls-virtualGeneralization[rule-json-cls-virtualGeneralization]_ (and the target parameters identified there), and encoding infos for the base schema can be given via the target parameters _xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForDataTypes_encodingInfos[baseJsonSchemaDefinitionForDataTypes_encodingInfos]_,
 _xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForObjectTypes_encodingInfos[baseJsonSchemaDefinitionForObjectTypes_encodingInfos]_, and _xref:./JSON_Schema.adoc#baseJsonSchemaDefinitionForFeatureTypes_encodingInfos[baseJsonSchemaDefinitionForFeatureTypes_encodingInfos]_.
-** Type mappings are documented <<Map_Entries,here>>. The encoding infos of a mapped type
-are conveyed via map entry parameter <<Parameter_encodingInfos,encodingInfos>>.
+** Type mappings are documented xref:./JSON_Schema.adoc#Map_Entries[here]. The encoding infos of a mapped type
+are conveyed via map entry parameter xref:./JSON_Schema.adoc#Parameter_encodingInfos[encodingInfos].
 
 [[rule-json-cls-name-as-entityType-union]]
 ==== rule-json-cls-name-as-entityType-union
@@ -650,6 +823,23 @@ priority:
 
 This target supports the parameters defined in the following
 subsections.
+
+[[baseJsonSchemaDefinitionForCollections]]
+==== baseJsonSchemaDefinitionForCollections
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _none_
+
+Explanation: Reference to the JSON Schema definition which shall be
+used as base schema for collection definitions generated by 
+_xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
+
 
 [[baseJsonSchemaDefinitionForDataTypes]]
 ==== baseJsonSchemaDefinitionForDataTypes
@@ -1004,6 +1194,23 @@ else false.
 
 Applies to Rule(s): _none_ – default behavior
 
+[[preventUnknownTypesInFeatureCollection]]
+==== preventUnknownTypesInFeatureCollection
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: "false", if objects of unknown type shall be allowed (and ignored) in 
+the general "FeatureCollection"; "true", if such objects shall cause the validation
+to fail.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
+
+
 [[sortedOutput]]
 ==== sortedOutput
 
@@ -1220,7 +1427,7 @@ The target supports two types of configuration elements for defining JSON Schema
 * SimpleAnnotation - For annotations with a simple JSON value, or an array thereof.
 * TemplateAnnotation - For annotations with a JSON string as value, or an array thereof, defined via a template that can include multiple descriptors and tagged values.
 
-NOTE: Annotations are only created for a model element if <<rule-json-all-documentation>> is part of the applicable encoding rule.
+NOTE: Annotations are only created for a model element if xref:./JSON_Schema.adoc#rule-json-all-documentation[rule-json-all-documentation] is part of the applicable encoding rule.
 
 NOTE: The JSON Schema annotation "examples" is an example for an annotation that has a JSON array as value, with the type of array items being unrestricted. In other words, the array can contain mixed value types. The "examples" annotation can thus have an array of strings (e.g., ["abc","xyz"]), numbers (e.g., [4,2]), booleans (e.g., [true, true]), and a mix thereof (e.g., ["abc", 2, true]) as value.
 
@@ -1282,7 +1489,10 @@ _AnnotationValue_ | Specifies how a case where one or more of the descriptors an
 | multiValue ConnectorToken | string | Optional | _a single space character_ | If a descriptor or tagged value used in the _valueTemplate_ has multiple values, and the _multiValueBehavior_ is set to _connectInSingleAnnotationValue_, then the values are concatenated to a single string value using this token as connector between two values.
 |===
 
-NOTE: Conversion rules exist to populate the annotations "default" and "readOnly" (see <<rule-json-prop-initialValueAsDefault>>, <<rule-json-prop-derivedAsReadOnly>>, and <<rule-json-prop-readOnly>>).
+NOTE: Conversion rules exist to populate the annotations "default" and "readOnly" (see 
+xref:./JSON_Schema.adoc#rule-json-prop-initialValueAsDefault[rule-json-prop-initialValueAsDefault], 
+xref:./JSON_Schema.adoc#rule-json-prop-derivedAsReadOnly[rule-json-prop-derivedAsReadOnly], and 
+xref:./JSON_Schema.adoc#rule-json-prop-readOnly[rule-json-prop-readOnly]).
 
 The annotation elements are configured within the `<advancedProcessConfigurations>` element of the JSON Schema target, as shown in <<#example_shapechange_jsonschema_annotation_elements>>.
 

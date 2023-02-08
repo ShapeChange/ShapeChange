@@ -67,6 +67,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.MapEntries;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.TargetUtil;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
@@ -121,6 +122,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     protected static String byReferenceJsonSchemaDefinition = null;
 
+    protected static String baseJsonSchemaDefinitionForCollections = null;
     protected static String baseJsonSchemaDefinitionForFeatureTypes = null;
     protected static String baseJsonSchemaDefinitionForObjectTypes = null;
     protected static String baseJsonSchemaDefinitionForDataTypes = null;
@@ -128,6 +130,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static EncodingInfos baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
     protected static EncodingInfos baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
     protected static EncodingInfos baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+    protected static boolean preventUnknownTypesInFeatureCollection = false;
 
     protected static Optional<EncodingRestrictions> idMemberEncodingRestrictions = Optional.empty();
 
@@ -147,6 +151,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
 
     protected static List<AbstractJsonSchemaAnnotationElement> annotationElements = new ArrayList<>();
+
+    protected static boolean createFeatureCollection = false;
+    protected static PackageInfo schemaForFeatureCollection = null;
 
     /* ------ */
     /*
@@ -178,6 +185,24 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	} else {
 	    numberOfEncodedSchemas++;
+
+	    /*
+	     * Identify the schema in which to create the "FeatureCollection" definition
+	     * schema.
+	     */
+	    if (schemaForFeatureCollection == null) {
+
+		// try to identify the main schema (just once)
+		if (!initialised) {
+		    schemaForFeatureCollection = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o,
+			    r);
+		}
+
+		// otherwise we use the first schema we encounter
+		if (schemaForFeatureCollection == null) {
+		    schemaForFeatureCollection = schema;
+		}
+	    }
 	}
 
 	if (!initialised) {
@@ -211,6 +236,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    byReferenceJsonSchemaDefinition = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION, null, false, true);
+
+	    baseJsonSchemaDefinitionForCollections = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_COLLECTIONS, null, false, true);
 
 	    baseJsonSchemaDefinitionForFeatureTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES, null, false, true);
@@ -246,11 +274,14 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS, null, false, true));
 	    }
 
+	    preventUnknownTypesInFeatureCollection = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS, false);
+
 	    if (options.hasParameter(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS)) {
 		// format already checked by validation of the configuration
-		idMemberEncodingRestrictions = Optional.of(EncodingRestrictions
-			.from(options.parameterAsString(this.getClass().getName(),
+		idMemberEncodingRestrictions = Optional
+			.of(EncodingRestrictions.from(options.parameterAsString(this.getClass().getName(),
 				JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS, null, false, true)));
 	    }
 
@@ -638,6 +669,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    registerClass(ci, null);
 
+	    if (ci.category() == Options.FEATURE
+		    && ci.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE)) {
+		createFeatureCollection = true;
+	    }
+
 	} else if (ci.category() == Options.UNION) {
 
 	    if (ci.matches(JsonSchemaConstants.RULE_CLS_UNION_PROPERTY_COUNT)
@@ -935,6 +971,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	jsDocsByCi.put(ci, jsd);
     }
 
+    public PackageInfo getSchemaForFeatureCollection() {
+	return schemaForFeatureCollection;
+    }
+
     @Override
     public void write() {
 
@@ -951,8 +991,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	// get the set of all non-empty json schema documents
-	Set<JsonSchemaDocument> jsdocs = jsDocsByPkg.values().stream().filter(jsd -> jsd.hasClasses())
+	// get the set of all non-empty json schema documents, including the feature
+	// collection document
+	Set<JsonSchemaDocument> jsdocs = jsDocsByPkg.values().stream()
+		.filter(jsd -> jsd.hasClasses() || (createFeatureCollection && jsd.isFeatureCollectionDocument()))
 		.collect(Collectors.toCollection(HashSet::new));
 
 	/*
@@ -978,7 +1020,15 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	/*
-	 * 4. create map entries (requires encoding infos to be computed, and
+	 * 4. create collection definitions (requires encoding infos to be computed for
+	 * all relevant classes)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.createCollectionDefinitions();
+	}
+
+	/*
+	 * 5. create map entries (requires encoding infos to be computed, and
 	 * restrictions to be applied)
 	 */
 	for (JsonSchemaDocument jsdoc : jsdocs) {
@@ -1058,6 +1108,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return encInfo;
 	}
     }
+    
+    public Set<ClassInfo> getAllEncodedTypes() {
+	return jsDocsByCi.keySet();
+    }
 
     @Override
     public void reset() {
@@ -1079,6 +1133,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	linkObjectUri = null;
 	byReferenceJsonSchemaDefinition = null;
 
+	baseJsonSchemaDefinitionForCollections = null;
 	baseJsonSchemaDefinitionForFeatureTypes = null;
 	baseJsonSchemaDefinitionForObjectTypes = null;
 	baseJsonSchemaDefinitionForDataTypes = null;
@@ -1086,6 +1141,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
 	baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
 	baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+	preventUnknownTypesInFeatureCollection = false;
 
 	idMemberEncodingRestrictions = Optional.empty();
 
@@ -1100,6 +1157,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();
+
+	createFeatureCollection = false;
+	schemaForFeatureCollection = null;
     }
 
     @Override
@@ -1110,6 +1170,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-basictype");
 	r.addRule("rule-json-cls-codelist-link");
 	r.addRule("rule-json-cls-codelist-uri-format");
+	r.addRule("rule-json-cls-collectionsBasedOnEntityType");
+	r.addRule("rule-json-cls-collectionsWithTopLevelEntityType");
 	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty");
 	r.addRule("rule-json-cls-defaultGeometry-multipleGeometryProperties");
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
@@ -1235,5 +1297,4 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public JsonSchemaVersion getJsonSchemaVersion() {
 	return jsonSchemaVersion;
     }
-
 }

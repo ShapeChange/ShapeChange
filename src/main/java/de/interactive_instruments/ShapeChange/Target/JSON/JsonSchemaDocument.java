@@ -131,7 +131,7 @@ public class JsonSchemaDocument implements MessageSource {
 		true) == null) {
 	    rootSchema.comment("JSON Schema document created by ShapeChange - http://shapechange.net/");
 	}
-	
+
 	jsonSchemaVersion = jsonSchemaTarget.getJsonSchemaVersion();
 
 	// add JSON Schema version, if a URI is defined for the schema version
@@ -206,14 +206,17 @@ public class JsonSchemaDocument implements MessageSource {
 		js = jsonSchema(ci);
 	    }
 
-	    // add schema definition to root schema
-	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
-		rootSchema.definition(ci.name(), js);
-	    } else {
-		rootSchema.def(ci.name(), js);
-	    }
+	    addToRootSchema(ci.name(), js);
 
 	    defSchemaByClass.put(ci, js);
+	}
+    }
+
+    private void addToRootSchema(String defName, JsonSchema js) {
+	if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+	    rootSchema.definition(defName, js);
+	} else {
+	    rootSchema.def(defName, js);
 	}
     }
 
@@ -414,7 +417,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    String[] etmPathComponents = extEncInfos.getEntityTypeMemberPath().get().split("/");
 			    String etPropName = etmPathComponents[etmPathComponents.length - 1];
 			    JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
-				    Arrays.copyOfRange(etmPathComponents, 0, etmPathComponents.length - 1));
+				    Arrays.copyOfRange(etmPathComponents, 0, etmPathComponents.length - 1), true);
 			    schemaForRestriction.required(etPropName);
 			    // update encoding infos
 			    encInfo.setEntityTypeMemberRequired(true);
@@ -430,7 +433,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 			    if (createIdMemberRestriction_required) {
 				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
-					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length - 1));
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length - 1), true);
 				schemaForRestriction.required(idPropName);
 				// update encoding infos
 				encInfo.setIdMemberRequired(true);
@@ -440,7 +443,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 			    if (createIdMemberRestriction_types) {
 				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
-					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length));
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length), true);
 
 				List<JsonSchemaType> types = new ArrayList<>();
 				for (String tr : newTypeRestrictions) {
@@ -459,7 +462,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 			    if (createIdMemberRestriction_formats) {
 				JsonSchema schemaForRestriction = getOrCreatePropertyPath(restrictionSchema,
-					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length));
+					Arrays.copyOfRange(idmPathComponents, 0, idmPathComponents.length), true);
 
 				for (String fr : newFormatRestrictions) {
 				    schemaForRestriction.format(fr);
@@ -491,22 +494,27 @@ public class JsonSchemaDocument implements MessageSource {
 	return resEis;
     }
 
-    private JsonSchema getOrCreatePropertyPath(JsonSchema startSchema, String[] pathSegments) {
+    private JsonSchema getOrCreatePropertyPath(JsonSchema startSchema, String[] pathSegments, boolean isOptionalPath) {
 
 	JsonSchema schema = startSchema;
 
-	for (int i = 0; i < pathSegments.length; i++) {
+	if (pathSegments != null) {
+	    for (int i = 0; i < pathSegments.length; i++) {
 
-	    String propName = pathSegments[i];
+		String propName = pathSegments[i];
 
-	    Optional<JsonSchema> propSchema = schema.property(propName);
+		if (!isOptionalPath) {
+		    schema.required(propName);
+		}
+		Optional<JsonSchema> propSchema = schema.property(propName);
 
-	    if (propSchema.isPresent()) {
-		schema = propSchema.get();
-	    } else {
-		JsonSchema newSchema = new JsonSchema();
-		schema.property(pathSegments[i], newSchema);
-		schema = newSchema;
+		if (propSchema.isPresent()) {
+		    schema = propSchema.get();
+		} else {
+		    JsonSchema newSchema = new JsonSchema();
+		    schema.property(pathSegments[i], newSchema);
+		    schema = newSchema;
+		}
 	    }
 	}
 
@@ -2366,6 +2374,10 @@ public class JsonSchemaDocument implements MessageSource {
 		pi.encodingRule(JsonSchemaConstants.PLATFORM));
     }
 
+    private Optional<JsonSchemaTypeInfo> identifyJsonSchemaType(ClassInfo ci) {
+	return identifyJsonSchemaType(ci.name(), ci.id(), ci.encodingRule(JsonSchemaConstants.PLATFORM));
+    }
+
     private Optional<JsonSchemaTypeInfo> identifyJsonSchemaType(String typeName, String typeId, String encodingRule) {
 
 	JsonSchemaTypeInfo jsTypeInfo = new JsonSchemaTypeInfo();
@@ -2449,6 +2461,10 @@ public class JsonSchemaDocument implements MessageSource {
 	return Optional.ofNullable(jsTypeInfo);
     }
 
+    public boolean isFeatureCollectionDocument() {
+	return this.representedPackage == jsonSchemaTarget.getSchemaForFeatureCollection();
+    }
+
     public void write() {
 
 	JsonSerializationContext context = new JsonSerializationContext();
@@ -2479,6 +2495,255 @@ public class JsonSchemaDocument implements MessageSource {
 	    e.printStackTrace();
 	}
 
+    }
+
+    public void createCollectionDefinitions() {
+
+	// create uniform collections
+	for (ClassInfo ci : this.classesByName.values()) {
+
+	    if (ci.category() == Options.FEATURE
+		    && ci.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE)) {
+
+		Set<ClassInfo> collectionMembers = ci.subtypesInCompleteHierarchy().stream()
+			.filter(subtype -> !subtype.isAbstract()
+				&& subtype.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE))
+			.collect(Collectors.toSet());
+		if (!ci.isAbstract() || collectionMembers.isEmpty()) {
+		    collectionMembers.add(ci);
+		}
+		createCollectionDefinition(ci.name() + "Collection", collectionMembers, true,
+			new JsonSchema().ref(identifyJsonSchemaType(ci).get().getRef()));
+	    }
+	}
+
+	if (this.isFeatureCollectionDocument()) {
+	    // create general FeatureCollection schema
+	    Set<ClassInfo> allEncodedTypes = jsonSchemaTarget.getAllEncodedTypes();
+	    Set<ClassInfo> featureCollectionMembers = allEncodedTypes.stream()
+		    .filter(type -> type.category() == Options.FEATURE && !type.isAbstract()
+			    && type.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE))
+		    .collect(Collectors.toSet());
+	    if (!featureCollectionMembers.isEmpty()) {
+		createCollectionDefinition("FeatureCollection", featureCollectionMembers,
+			JsonSchemaTarget.preventUnknownTypesInFeatureCollection, new JsonSchema(false));
+	    }
+	}
+
+    }
+
+    private void createCollectionDefinition(String defName, Set<ClassInfo> collectionMembersIn,
+	    boolean validateUnknownMembers, JsonSchema schemaForUnknownMembers) {
+
+	/*
+	 * Check availability of encoding infos, especially the presence of entity type
+	 * member, for all collection members.
+	 */
+	List<ClassInfo> collectionMembersWithEncodingInfos = new ArrayList<>();
+	for (ClassInfo ci : collectionMembersIn) {
+	    EncodingInfos ei = JsonSchemaTarget.encodingInfosByCi.get(ci);
+	    if (ei == null || ei.getEntityTypeMemberPath().isEmpty()) {
+		result.addError(this, 126, ci.name(), defName);
+	    } else {
+		collectionMembersWithEncodingInfos.add(ci);
+	    }
+	}
+
+	if (collectionMembersWithEncodingInfos.isEmpty()) {
+	    result.addWarning(this, 111, defName);
+	    return;
+	}
+
+	List<ClassInfo> collectionMembers = collectionMembersWithEncodingInfos.stream()
+		.sorted((m1, m2) -> m1.name().compareTo(m2.name())).collect(Collectors.toList());
+
+	JsonSchema js = new JsonSchema();
+	addToRootSchema(defName, js);
+
+	JsonSchema contentSchema = js;
+	String[] featuresMemberPath = null;
+
+	if (StringUtils.isNotBlank(JsonSchemaTarget.baseJsonSchemaDefinitionForCollections)) {
+	    contentSchema.allOf(new JsonSchema().ref(JsonSchemaTarget.baseJsonSchemaDefinitionForCollections));
+	    JsonSchema newContentSchema = new JsonSchema();
+	    contentSchema.allOf(newContentSchema);
+	    contentSchema = newContentSchema;
+	    featuresMemberPath = new String[] { "features" };
+	}
+
+	if (collectionMembers.size() == 1) {
+
+	    // no need for entity type checks
+	    JsonSchema featuresSchema = getOrCreatePropertyPath(contentSchema, featuresMemberPath, true);
+	    featuresSchema.type(JsonSchemaType.ARRAY).items(
+		    new JsonSchema().ref(identifyJsonSchemaType(collectionMembers.iterator().next()).get().getRef()));
+	} else {
+
+	    boolean collectionsWithTopLevelEntityType = collectionMembers.stream()
+		    .filter(m -> m.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_WITH_TOP_LEVEL_ENTITY_TYPE))
+		    .findAny().isPresent();
+
+	    if (collectionsWithTopLevelEntityType) {
+
+		/*
+		 * here, we generate the JSON Schema with the if-then-else check, and populate
+		 * the if- as well as the then-constraints
+		 * 
+		 * The else-constraint is created but left empty here. It is only set as the
+		 * contents schema, to be populated with the JSON Schema that is created for
+		 * object-level entity type member checks (which follows later on).
+		 */
+
+		contentSchema.if_(new JsonSchema().required("featureType"));
+
+		JsonSchema thenSchema = new JsonSchema();
+		contentSchema.then(thenSchema);
+
+		for (ClassInfo ci : collectionMembers) {
+
+		    JsonSchema memberJs = new JsonSchema();
+		    thenSchema.allOf(memberJs);
+
+		    // if
+		    JsonSchema ifMemberJs = new JsonSchema();
+		    memberJs.if_(ifMemberJs);
+
+		    JsonSchema ifMemberFeatureTypeJs = getOrCreatePropertyPath(ifMemberJs,
+			    new String[] { "featureType" }, false);
+		    ifMemberFeatureTypeJs.const_(new JsonString(ci.name()));
+
+		    // then
+		    JsonSchema thenMemberJs = new JsonSchema();
+		    memberJs.then(thenMemberJs);
+
+		    JsonSchema thenMemberFeaturesJs = getOrCreatePropertyPath(thenMemberJs, new String[] { "features" },
+			    false);
+		    thenMemberFeaturesJs.type(JsonSchemaType.ARRAY)
+			    .items(new JsonSchema().ref(identifyJsonSchemaType(ci).get().getRef()));
+		}
+
+		if (validateUnknownMembers) {
+
+		    JsonSchema unknownJs = new JsonSchema();
+		    thenSchema.allOf(unknownJs);
+
+		    JsonString[] collectionMemberNames = (JsonString[]) collectionMembers.stream()
+			    .map(m -> new JsonString(m.name())).toArray(size -> new JsonString[size]);
+
+		    // if
+		    JsonSchema ifUnknownJs = new JsonSchema();
+		    unknownJs.if_(ifUnknownJs);
+
+		    JsonSchema ifNotUnknownJs = new JsonSchema();
+		    ifUnknownJs.not(ifNotUnknownJs);
+
+		    JsonSchema ifNotUnknownFeatureTypeJs = getOrCreatePropertyPath(ifNotUnknownJs,
+			    new String[] { "featureType" }, false);
+		    ifNotUnknownFeatureTypeJs.enum_(collectionMemberNames);
+
+		    // then
+		    JsonSchema thenUnknownJs = new JsonSchema();
+		    unknownJs.then(thenUnknownJs);
+
+		    JsonSchema thenUnknownFeaturesJs = getOrCreatePropertyPath(thenUnknownJs,
+			    new String[] { "features" }, false);
+		    thenUnknownFeaturesJs.type(JsonSchemaType.ARRAY).items(schemaForUnknownMembers);
+		}
+
+		JsonSchema elseSchema = new JsonSchema();
+		contentSchema.else_(elseSchema);
+		contentSchema = elseSchema;
+	    }
+
+	    /*
+	     * Now create the items check for objects contained in the features member (see
+	     * featuresMemberPath), based upon the entity type member within each of these
+	     * objects.
+	     */
+
+	    JsonSchema featuresMemberJs = getOrCreatePropertyPath(contentSchema, featuresMemberPath, false);
+	    featuresMemberJs.type(JsonSchemaType.ARRAY);
+	    JsonSchema itemsSchema = new JsonSchema();
+	    featuresMemberJs.items(itemsSchema);
+
+	    for (ClassInfo ci : collectionMembers) {
+
+		JsonSchema memberJs = new JsonSchema();
+		itemsSchema.allOf(memberJs);
+
+		// if
+		JsonSchema ifMemberJs = new JsonSchema();
+		memberJs.if_(ifMemberJs);
+
+		String entityTypeMemberPath = JsonSchemaTarget.encodingInfosByCi.get(ci).getEntityTypeMemberPath()
+			.get();
+
+		JsonSchema ifMemberEntityTypeJs = getOrCreatePropertyPath(ifMemberJs, entityTypeMemberPath.split("/"),
+			false);
+		ifMemberEntityTypeJs.const_(new JsonString(ci.name()));
+
+		// then
+		memberJs.then(new JsonSchema().ref(identifyJsonSchemaType(ci).get().getRef()));
+	    }
+
+	    if (validateUnknownMembers) {
+
+		// group classes by entity type member path
+		SortedMap<String, List<ClassInfo>> classesByEntityTypeMemberPath = collectionMembers.stream()
+			.collect(Collectors.groupingBy(
+				ci -> JsonSchemaTarget.encodingInfosByCi.get(ci).getEntityTypeMemberPath().get(),
+				TreeMap::new, Collectors.toList()));
+
+		boolean isSingleEntityTypeMemberPath = classesByEntityTypeMemberPath.size() == 1;
+
+		JsonSchema unknownJs = new JsonSchema();
+		itemsSchema.allOf(unknownJs);
+
+		// if
+		JsonSchema ifUnknownJs = new JsonSchema();
+		unknownJs.if_(ifUnknownJs);
+
+		JsonSchema ifNotUnknownJs = new JsonSchema();
+		ifUnknownJs.not(ifNotUnknownJs);
+
+		if (isSingleEntityTypeMemberPath) {
+
+		    Entry<String, List<ClassInfo>> e = classesByEntityTypeMemberPath.entrySet().iterator().next();
+
+		    String entityTypeMemberPath = e.getKey();
+		    List<ClassInfo> collectionMembersForGroup = e.getValue();
+
+		    createUnknownCollectionMemberEntityTypeMemberCheck(ifNotUnknownJs, entityTypeMemberPath.split("/"),
+			    collectionMembersForGroup);
+		} else {
+
+		    for (Entry<String, List<ClassInfo>> e : classesByEntityTypeMemberPath.entrySet()) {
+
+			JsonSchema choiceJs = new JsonSchema();
+			ifNotUnknownJs.oneOf(choiceJs);
+
+			String entityTypeMemberPath = e.getKey();
+			List<ClassInfo> collectionMembersForGroup = e.getValue();
+
+			createUnknownCollectionMemberEntityTypeMemberCheck(choiceJs, entityTypeMemberPath.split("/"),
+				collectionMembersForGroup);
+		    }
+		}
+
+		// then
+		unknownJs.then(schemaForUnknownMembers);
+	    }
+	}
+    }
+
+    private void createUnknownCollectionMemberEntityTypeMemberCheck(JsonSchema baseJs,
+	    String[] entityTypeMemberPathSegments, List<ClassInfo> collectionMembers) {
+
+	JsonString[] collectionMemberNames = (JsonString[]) collectionMembers.stream()
+		.map(m -> new JsonString(m.name())).toArray(size -> new JsonString[size]);
+
+	JsonSchema entityTypeJs = getOrCreatePropertyPath(baseJs, entityTypeMemberPathSegments, false);
+	entityTypeJs.enum_(collectionMemberNames);
     }
 
     @Override
@@ -2518,7 +2783,8 @@ public class JsonSchemaDocument implements MessageSource {
 	case 110:
 	    return "(Initial) value '$1$' of enum '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for enumeration '$3$' is 'number'. The enum will not be encoded.";
 	case 111:
-	    return "";
+	    return "Could not create collection schema '$1$' because no member schemas are available for it. Check if relevant feature types exist (are encoded in JSON Schema, have an entity type member, are not abstract [in case of the general 'FeatureCollection'], and match "
+		    + JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE + ")";
 	case 112:
 	    return "Class '$1$' has multiple default geometry properties ($2$). None of them will be encoded as 'geometry' member. They will be encoded as usual properties.";
 	case 113:
@@ -2547,6 +2813,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
 	case 125:
 	    return "??Class '$1$' gets constraints from two external schemas, one from a base schema or supertype mapping, one from the mapping of supertype '$2$'. The encodings of these two schemas both define an $3$ member, but in different ways, which leads to ambiguity. The encoding infos from supertype '$2$' are ignored in the computation of encoding infos for class '$1$'.";
+	case 126:
+	    return "??Cannot add class '$1$' to collection '$2$', because the class has no entity type member.";
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}
