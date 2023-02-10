@@ -502,7 +502,7 @@ JSON member would already be inherited), the rule is ignored for a type
 T if T is a subtype and
 _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
 already applies to one of its supertypes.
-* By default, the rule does not apply to unions, enumerations, and code
+* By default, the rule does not apply to mixins, unions, enumerations, and code
 lists. +
 However, if
 _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType-union[rule-json-cls-name-as-entityType-union]_

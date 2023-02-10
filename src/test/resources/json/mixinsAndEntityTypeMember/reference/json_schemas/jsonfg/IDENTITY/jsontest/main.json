@@ -2,26 +2,9 @@
   "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/schema/jsonfg",
-  "title": "test application schema",
-  "description": "Definition: main package Def  Description: main package Desc",
   "$defs": {
-    "CL": {
-      "$anchor": "CL",
-      "description": "Definition: CL Def  Description: CL Desc",
-      "type": "string"
-    },
-    "E": {
-      "$anchor": "E",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
-      "type": "string",
-      "enum": [
-        "e1",
-        "e2"
-      ]
-    },
     "ExtFTSubtype": {
       "$anchor": "ExtFTSubtype",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
           "$ref": "https://example.org/external/schema/definitions.json#ExtFeatureType"
@@ -33,7 +16,6 @@
               "type": "object",
               "properties": {
                 "attExtFTSubtype": {
-                  "description": "Definition: [None Specified]  Description: [None Specified]",
                   "type": "integer"
                 }
               },
@@ -67,11 +49,12 @@
     },
     "FT1": {
       "$anchor": "FT1",
-      "title": "Feature type one",
-      "description": "Definition: FT1 Def  Description: FT1 Desc",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "$ref": "https://example.org/schema/jsonfg#MixinA"
         },
         {
           "type": "object",
@@ -80,13 +63,9 @@
               "type": "object",
               "properties": {
                 "att1": {
-                  "title": "attribute one",
-                  "description": "Definition: att1 Def  Description: att1 Desc",
                   "type": "string"
                 },
                 "att2": {
-                  "title": "attribute two",
-                  "description": "Definition: [None Specified]  Description: [None Specified]",
                   "type": "number"
                 }
               },
@@ -121,10 +100,12 @@
     },
     "FT2": {
       "$anchor": "FT2",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "$ref": "https://example.org/schema/jsonfg#MixinB"
         },
         {
           "type": "object"
@@ -269,8 +250,8 @@
                         "properties": {
                           "featureType": {
                             "const": "FT3"
-          }
-        }
+                          }
+                        }
                       },
                       "then": {
                         "$ref": "https://example.org/schema/jsonfg#FT3"
@@ -318,11 +299,11 @@
                                 "FT3",
                                 "FT4",
                                 "FT5"
-      ]
+                              ]
                             }
                           }
                         }
-    },
+                      },
                       "then": {
                         "$ref": "https://example.org/schema/jsonfg#FT2"
                       }
@@ -492,8 +473,8 @@
                         "properties": {
                           "featureType": {
                             "const": "ExtFTSubtype"
-          }
-        }
+                          }
+                        }
                       },
                       "then": {
                         "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
@@ -559,7 +540,7 @@
                         "$ref": "https://example.org/schema/jsonfg#FT5"
                       }
                     }
-      ]
+                  ]
                 }
               }
             }
@@ -567,20 +548,19 @@
         }
       ]
     },
-    "T": {
-      "$anchor": "T",
-      "description": "Definition: T Def  Description: T Desc",
+    "MixinA": {
+      "$anchor": "MixinA",
       "type": "object",
       "properties": {
         "properties": {
           "type": "object",
           "properties": {
-            "@type": {
-              "type": "string"
+            "attMixinA": {
+              "type": "boolean"
             }
           },
           "required": [
-            "@type"
+            "attMixinA"
           ]
         }
       },
@@ -588,23 +568,69 @@
         "properties"
       ]
     },
-    "U": {
-      "$anchor": "U",
-      "description": "Definition: U Def  Description: U Desc",
+    "MixinB": {
+      "$anchor": "MixinB",
       "type": "object",
       "properties": {
-        "o1": {
-          "description": "Definition: o1 Def  Description: o1 Desc",
-          "type": "integer"
-        },
-        "o2": {
-          "description": "Definition: o2 Def  Description: o2 Desc",
-          "type": "boolean"
+        "properties": {
+          "type": "object",
+          "properties": {
+            "attMixinB": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "attMixinB"
+          ]
         }
       },
-      "additionalProperties": false,
-      "minProperties": 1,
-      "maxProperties": 1
+      "required": [
+        "properties"
+      ]
+    },
+    "MixinC": {
+      "$anchor": "MixinC",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "attMixinC": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "attMixinC"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "@type": {
+              "type": "string"
+            },
+            "attT": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "@type",
+            "attT"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
     }
   }
 }

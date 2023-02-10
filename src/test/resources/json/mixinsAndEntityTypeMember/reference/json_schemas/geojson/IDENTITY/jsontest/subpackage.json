@@ -2,37 +2,35 @@
   "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/schema/jsonfg",
-  "title": "test sub-package",
-  "description": "Definition: subpackage Def  Description: subpackage Desc",
   "$defs": {
     "FT3": {
       "$anchor": "FT3",
-      "description": "Definition: FT3 Def  Description: FT3 Desc",
       "allOf": [
+        {
+          "$ref": "https://example.org/schema/jsonfg#MixinC"
+        },
         {
           "$ref": "https://example.org/schema/jsonfg#FT2"
         },
         {
           "type": "object",
+          "properties": {
             "properties": {
+              "type": "object",
               "properties": {
-                "type": "object",
-                  "properties": {
-                  "attDep": {
-                  "title": "attribute dep",
-                  "description": "Definition: attDep Def  Description: attDep Desc",
+                "attDep": {
                   "type": "array",
                   "items": {
-                "type": "integer"
-              },
-              "uniqueItems": true
+                    "type": "integer"
+                  },
+                  "uniqueItems": true
+                }
+              }
             }
           }
-          }
- }
         }
       ]
-      },
+    },
     "FT3Collection": {
       "allOf": [
         {
@@ -60,11 +58,11 @@
                           "properties": {
                             "@type": {
                               "const": "FT3"
-                          }
+                            }
                           }
                         }
                       }
-                      },
+                    },
                     "then": {
                       "$ref": "https://example.org/schema/jsonfg#FT3"
                     }
@@ -82,11 +80,11 @@
                           "properties": {
                             "@type": {
                               "const": "FT4"
-                          }
+                            }
                           }
                         }
                       }
-                      },
+                    },
                     "then": {
                       "$ref": "https://example.org/schema/jsonfg#FT4"
                     }
@@ -104,11 +102,11 @@
                           "properties": {
                             "@type": {
                               "const": "FT5"
-                          }
+                            }
                           }
                         }
                       }
-                      },
+                    },
                     "then": {
                       "$ref": "https://example.org/schema/jsonfg#FT5"
                     }
@@ -133,9 +131,9 @@
                                 ]
                               }
                             }
-                            }
+                          }
                         }
-                        }
+                      }
                     },
                     "then": {
                       "$ref": "https://example.org/schema/jsonfg#FT3"
@@ -143,14 +141,13 @@
                   }
                 ]
               }
-              }
+            }
           }
-          }
+        }
       ]
     },
     "FT4": {
       "$anchor": "FT4",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
           "$ref": "https://example.org/schema/jsonfg#FT3"
@@ -159,7 +156,7 @@
           "type": "object"
         }
       ]
-      },
+    },
     "FT4Collection": {
       "allOf": [
         {
@@ -179,7 +176,6 @@
     },
     "FT5": {
       "$anchor": "FT5",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
           "$ref": "https://example.org/schema/jsonfg#FT3"
@@ -188,7 +184,7 @@
           "type": "object"
         }
       ]
-      },
+    },
     "FT5Collection": {
       "allOf": [
         {

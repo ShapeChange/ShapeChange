@@ -79,7 +79,6 @@
                <rule name="rule-json-all-documentation"/>
                <rule name="rule-json-cls-union-propertyCount"/>
                <rule name="rule-json-cls-name-as-entityType"/>
-               <rule name="rule-json-cls-restrictExternalEntityTypeMember"/>
                <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
                <rule name="rule-json-cls-collectionsWithTopLevelEntityType"/>
             </EncodingRule>

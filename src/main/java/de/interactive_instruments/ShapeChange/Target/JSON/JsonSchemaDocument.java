@@ -1136,8 +1136,9 @@ public class JsonSchemaDocument implements MessageSource {
 
 	if (entityTypeMemberInfosFromSupertypesAndBaseSchema == null) {
 
-	    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
-		    || ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+	    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && ci.category() != Options.MIXIN
+		    && (ci.category() != Options.UNION
+			    || ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
 
 		String entityTypeMemberName = jsonSchemaTarget.getEntityTypeName();
 		jsProperties.property(entityTypeMemberName, new JsonSchema().type(JsonSchemaType.STRING))
@@ -1521,7 +1522,7 @@ public class JsonSchemaDocument implements MessageSource {
 		    } else {
 
 			if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
-				&& (supertype.category() != Options.UNION
+				&& supertype.category() != Options.MIXIN && (supertype.category() != Options.UNION
 					|| supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
 
 			    EncodingInfos entityTypeEncInfos = new EncodingInfos();
@@ -1570,7 +1571,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 		if (!supertypes.isEmpty()) {
 		    for (ClassInfo supertype : supertypes) {
-			if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)) {
+			if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)
+				&& supertype.category() != Options.MIXIN) {
 			    applyVirtualGeneralization = false;
 			    break;
 			}
@@ -1670,7 +1672,8 @@ public class JsonSchemaDocument implements MessageSource {
 		boolean applyVirtualGeneralization = true;
 
 		for (ClassInfo supertype : ci.supertypeClasses()) {
-		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)) {
+		    if (supertype.matches(JsonSchemaConstants.RULE_CLS_VIRTUAL_GENERALIZATION)
+			    && supertype.category() != Options.MIXIN) {
 			applyVirtualGeneralization = false;
 			break;
 		    }

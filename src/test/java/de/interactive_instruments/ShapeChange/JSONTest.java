@@ -71,4 +71,11 @@ public class JSONTest extends BasicTestSCXML {
 	multiTest("src/test/resources/json/collections/test_json_schema_collections.xml", new String[] { "json", "xml" },
 		"testResults/json/collections/json_schemas", "src/test/resources/json/collections/reference/json_schemas");
     }
+    
+    @Test
+    public void testJson_mixinsAndEntityTypeMember() {
+
+	multiTest("src/test/resources/json/mixinsAndEntityTypeMember/test_json_schema_mixinsAndEntityTypeMember.xml", new String[] { "json", "xml" },
+		"testResults/json/mixinsAndEntityTypeMember/json_schemas", "src/test/resources/json/mixinsAndEntityTypeMember/reference/json_schemas");
+    }
 }
