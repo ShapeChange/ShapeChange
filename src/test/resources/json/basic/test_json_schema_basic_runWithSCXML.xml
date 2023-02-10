@@ -1,480 +1,794 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
- <input id="input">
-  <parameter name="inputModelType" value="SCXML"/>
-  <parameter name="repositoryFileNameOrConnectionString" value="src/test/resources/json/basic/test_json_schema_basic.zip"/>
-  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
-  <parameter name="publicOnly" value="true"/>
-  <parameter name="checkingConstraints" value="enabled"/>
-  <parameter name="dontConstructAssociationNames" value="true"/>
-  <parameter name="extractSeparator" value="--"/>
-  <descriptorSources>
-   <DescriptorSource descriptor="documentation" source="ea:notes"/>
-   <DescriptorSource descriptor="alias" source="ea:alias"/>
-   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
-   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
-   <DescriptorSource descriptor="example" source="none"/>
-   <DescriptorSource descriptor="legalBasis" source="none"/>
-   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
-   <DescriptorSource descriptor="language" source="none"/>
-  </descriptorSources>
-  <stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	
-	
-	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
-	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
-	<StereotypeAlias alias="bundle" wellknown=""/>	
-	<StereotypeAlias alias="leaf" wellknown=""/>
-	
-	<StereotypeAlias alias="abstract" wellknown=""/>
-	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
-	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
-	<StereotypeAlias alias="request" wellknown="DataType"/>
-	<StereotypeAlias alias="response" wellknown="DataType"/>
-	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
-	<StereotypeAlias alias="interface" wellknown="Type"/>
-	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
-	
-	<StereotypeAlias alias="property" wellknown=""/>
-	<StereotypeAlias alias="enum" wellknown=""/>
-</stereotypeAliases>
- </input>
- <log>
-  <parameter name="reportLevel" value="INFO"/>
-  <parameter name="logFile" value="testResults/json/basic/log.xml"/>
- </log>
- <transformers>
-  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="model" input="input" mode="enabled"/>
-
-  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter" id="constraintconverterReal" input="model" mode="enabled">
-   <parameters>
-    <ProcessParameter name="valueTypeRepresentationTypes" value="PlaceSpecification{PointPositionSpecification, CurvePositionSpecification, SurfacePositionSpecification, LocationSpecification}"/>
-    <ProcessParameter name="valueTypeRepresentationConstraintRegex" value=".*Place Representations Disallowed.*"/>
-   </parameters>
-   <rules>
-    <ProcessRuleSet name="trf">
-     <rule name="rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion"/>
-    </ProcessRuleSet>
-   </rules>
-  </Transformer>
-<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper" id="constraintconverter" input="constraintconverterReal" mode="enabled"/>
- </transformers>
- <targets>
-  
-  
-  
-  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
-   <targetParameter name="sortedOutput" value="true"/>
-   <targetParameter name="writeMapEntries" value="true"/>
-   
-   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
-
-   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
-
-   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
-   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
-   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
-   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
-
-   <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
-   
-   <rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
-		<rule name="req-all-all-documentation"/>
-		<rule name="req-xsd-pkg-targetNamespace"/>
-		<rule name="req-xsd-pkg-xmlns"/>
-		<rule name="req-xsd-pkg-namespace-schema-only"/>
-		<rule name="rec-xsd-pkg-version"/>
-		<rule name="req-xsd-pkg-xsdDocument"/>
-		<rule name="req-xsd-pkg-dependencies"/>
-		<rule name="req-xsd-cls-codelist-asDictionary-true"/>
-		<rule name="req-xsd-cls-codelist-extensibility-values"/>
-		<rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
-		<rule name="req-xsd-cls-datatype-noPropertyType"/>
-		<rule name="req-xsd-cls-objecttype-noPropertyType"/>
-		<rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
-		<rule name="req-xsd-cls-enum-no-supertypes"/>
-		<rule name="rule-xsd-cls-mixin-classes"/>
-		<rule name="rule-xsd-prop-nillable"/>
-		
-	</EncodingRule>
-	<EncodingRule extends="iso19136_2007" name="okstra">
-		<rule name="rule-xsd-cls-no-base-class"/>
-		<rule name="rule-xsd-cls-no-abstract-classes"/>
-		<rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
-		<rule name="rule-xsd-cls-okstra-lifecycle"/>
-		<rule name="rule-xsd-cls-okstra-fid"/>
-	</EncodingRule>
-  <EncodingRule extends="iso19136_2007" name="gml21">
-    <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
-    <rule name="rule-xsd-all-gml21"/>
-  </EncodingRule>
-	<EncodingRule extends="*" name="notEncoded">
-		<rule name="rule-xsd-all-notEncoded"/>
-		<rule name="rule-json-all-notEncoded"/>
-		<rule name="rule-sql-all-notEncoded"/>
-		<rule name="rule-cdb-all-notEncoded"/>
-		<rule name="rule-gpkg-all-notEncoded"/>
-	</EncodingRule>
-	<EncodingRule extends="iso19136_2007" name="citygml-ade">
-		<rule name="req-xsd-cls-suppress-supertype"/>
-		<rule name="req-xsd-cls-suppress-subtype"/>
-		<rule name="req-xsd-cls-suppress-no-properties"/>
-		<rule name="rule-xsd-cls-suppress"/>
-		<rule name="rule-xsd-cls-adeelement"/>
-		<rule name="rule-xsd-cls-mixin-classes"/>
-		<rule name="rule-xsd-prop-initialValue"/>		
-	</EncodingRule>
-	<EncodingRule extends="iso19139_2007" name="metadata-profile">
-		<rule name="rule-xsd-cls-standard-19139-isoType"/>
-		<rule name="req-xsd-cls-suppress-supertype"/>
-		<rule name="req-xsd-cls-suppress-subtype"/>
-		<rule name="req-xsd-cls-suppress-no-properties"/>
-		<rule name="rule-xsd-cls-suppress"/>
-		<rule name="rule-xsd-pkg-schematron"/>
-	</EncodingRule>
-	<EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
-		<rule name="req-xsd-cls-mixin-supertypes"/>
-		<rule name="req-xsd-cls-codelist-no-supertypes"/>
-		<rule name="rule-xsd-cls-union-asCharacterString"/>
-		<rule name="rule-xsd-cls-union-asGroup"/>
-		<rule name="rule-xsd-cls-enum-supertypes"/>
-		<rule name="rule-xsd-cls-enum-subtypes"/>
-		<rule name="rule-xsd-cls-basictype"/>
-		<rule name="rule-xsd-cls-union-direct"/>		
-		<rule name="rule-xsd-cls-codelist-constraints"/>
-		<rule name="rule-xsd-cls-mixin-classes-as-group"/>
-		<rule name="rule-xsd-cls-mixin-classes"/>
-		<rule name="rule-xsd-prop-exclude-derived"/>
-		<rule name="rule-xsd-prop-length-size-pattern"/>
-		<rule name="rule-xsd-prop-xsdAsAttribute"/>
-		<rule name="rule-xsd-prop-nillable"/>
-		<rule name="rule-xsd-prop-nilReasonAllowed"/>
-		<rule name="rule-xsd-prop-initialValue"/>		
-		<rule name="rule-xsd-prop-att-map-entry"/>
-		<rule name="rule-xsd-pkg-schematron"/>
-		<rule name="rule-xsd-all-tagged-values"/>
-	</EncodingRule>   
-	<EncodingRule extends="*" name="external">
-		<rule name="rule-xsd-all-notEncoded"/>
-	</EncodingRule>
-	<EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
-		<rule name="rule-xsd-cls-no-gml-types"/>
-		<rule name="rule-xsd-all-naming-gml"/>
-		<rule name="rule-xsd-cls-global-enumeration"/>
-		<rule name="rule-xsd-cls-standard-gml-property-types"/>
-	</EncodingRule>
-</rules>
-   <rules>
-    <EncodingRule extends="defaultGeoJson" name="myGeoJson">
-     <rule name="rule-json-cls-identifierStereotype"/>
-    </EncodingRule>
-   </rules>
-
-   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
-    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
-    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
-    <MapEntry param="" rule="*" targetType="number" type="Number"/>
-    <MapEntry param="" rule="*" targetType="number" type="Real"/>
-    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-    <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
-<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
-    
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
-</mapEntries>
-   <mapEntries>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" type="External_Supertype"/>
-   </mapEntries>
-  </Target>
-  
-  
-  
-  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/json"/>
-   <targetParameter name="sortedOutput" value="true"/>
-   <targetParameter name="writeMapEntries" value="true"/>
-   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
-   <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
-   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
-
-   <targetParameter name="entityTypeName" value="@type"/>
-
-   <targetParameter name="defaultEncodingRule" value="my201909json"/>
-   <rules>
-
-    <EncodingRule extends="*" name="json_basic">
-     <rule name="rule-json-cls-name-as-anchor"/>
-     
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="my201909json">
-     <rule name="rule-json-cls-basictype"/>
-     <rule name="rule-json-cls-name-as-entityType"/>
-     <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
-     <rule name="rule-json-cls-union-propertyCount"/>
-     <rule name="rule-json-prop-voidable"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
-     <rule name="rule-json-cls-valueTypeOptions"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
-     <rule name="rule-json-cls-union-typeDiscriminator"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
-     <rule name="rule-json-cls-codelist-uri-format"/>
-    </EncodingRule>
-    <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
-     <rule name="rule-json-cls-codelist-link"/>
-    </EncodingRule>
-   </rules>
-
-   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
-    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
-    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
-    <MapEntry param="" rule="*" targetType="number" type="Number"/>
-    <MapEntry param="" rule="*" targetType="number" type="Real"/>
-    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-    <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
-<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
-    
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
-</mapEntries>
-   <mapEntries>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" type="External_Supertype"/>
-    
-    <MapEntry param="keywords{patternBase64=XlxkezR9KC0oMFsxLTldfDFbMC0yXSkoLSgwWzEtOV18WzEyXVswLTldfDNbMDFdKShUKFswMV1bMC05XXwyWzAtM10pOihbMC01XVswLTldKTooWzAtNV1bMC05XXw2MCkoXC5bMC05XSspPyhafChcK3wtKShbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSkpKT8pPyk/fG5vdyQ=}" rule="*" targetType="string" type="TM_Instant"/>
-    
-    <MapEntry param="keywords{patternBase64=XihcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdylcLyhcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdykk}" rule="*" targetType="string" type="TM_Period"/>
-   </mapEntries>
-  </Target>
-  
-  
-  
-  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/draft-07/json"/>
-   <targetParameter name="sortedOutput" value="true"/>
-   <targetParameter name="writeMapEntries" value="true"/>
-   <targetParameter name="jsonSchemaVersion" value="draft-07"/>
-   
-   <targetParameter name="appSchemaNameRegex" value="Test Schema (01).*"/>
-   <targetParameter name="defaultEncodingRule" value="mydraft07json"/>
-   <rules>
-    <EncodingRule name="mydraft07json">
-     <rule name="rule-json-cls-name-as-anchor"/>
-    </EncodingRule>
-   </rules>
-   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
-    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
-    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
-    <MapEntry param="" rule="*" targetType="number" type="Number"/>
-    <MapEntry param="" rule="*" targetType="number" type="Real"/>
-    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-    <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
-<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
-    
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
-</mapEntries>
-  </Target>
-  
-  
-  
-  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
-   
-   <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09).*"/>
-
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
-   <targetParameter name="sortedOutput" value="true"/>
-   <targetParameter name="jsonSchemaVersion" value="openapi30"/>
-
-   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
-   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
-
-   <targetParameter name="objectIdentifierName" value="@id"/>
-   <targetParameter name="objectIdentifierType" value="string, number"/>
-   <targetParameter name="objectIdentifierRequired" value="true"/>
-
-   <targetParameter name="defaultEncodingRule" value="myopenapi30jsonA"/>
-
-   <rules>
-
-    <EncodingRule extends="*" name="json_basic">
-     <rule name="rule-json-cls-name-as-anchor"/>
-     
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myopenapi30jsonA">
-     <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
-     <rule name="rule-json-cls-union-propertyCount"/>
-     <rule name="rule-json-prop-voidable"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
-     <rule name="rule-json-cls-valueTypeOptions"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
-     <rule name="rule-json-cls-union-typeDiscriminator"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
-     <rule name="rule-json-cls-codelist-uri-format"/>
-    </EncodingRule>
-    <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
-     <rule name="rule-json-cls-codelist-link"/>
-    </EncodingRule>
-
-   </rules>
-
-   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
-    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
-    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
-    <MapEntry param="" rule="*" targetType="number" type="Number"/>
-    <MapEntry param="" rule="*" targetType="number" type="Real"/>
-    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-    <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
-<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
-    
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
-</mapEntries>
-   <mapEntries>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
-   </mapEntries>
-  </Target>
-  
-  
-  
-  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" inputs="constraintconverter" mode="enabled">
-   
-   <targetParameter name="appSchemaNameRegex" value="Test Schema 10.*"/>
-
-   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
-   <targetParameter name="sortedOutput" value="true"/>
-   <targetParameter name="jsonSchemaVersion" value="openapi30"/>
-
-   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
-   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
-
-   <targetParameter name="objectIdentifierName" value="@id"/>
-   <targetParameter name="objectIdentifierType" value="string, number"/>
-   <targetParameter name="objectIdentifierRequired" value="true"/>
-
-   <targetParameter name="defaultEncodingRule" value="myopenapi30jsonB"/>
-
-   <rules>
-
-    <EncodingRule extends="*" name="json_basic">
-     <rule name="rule-json-cls-name-as-anchor"/>
-     
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myopenapi30jsonB">
-     <rule name="rule-json-cls-name-as-entityType"/>
-     <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
-     <rule name="rule-json-cls-union-propertyCount"/>
-     <rule name="rule-json-prop-voidable"/>
-     <rule name="rule-json-prop-readOnly"/>
-     <rule name="rule-json-prop-derivedAsReadOnly"/>
-     <rule name="rule-json-prop-initialValueAsDefault"/>
-     <rule name="rule-json-cls-valueTypeOptions"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
-     <rule name="rule-json-cls-union-typeDiscriminator"/>
-    </EncodingRule>
-
-    <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
-     <rule name="rule-json-cls-codelist-uri-format"/>
-    </EncodingRule>
-    <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
-     <rule name="rule-json-cls-codelist-link"/>
-    </EncodingRule>
-
-   </rules>
-
-   <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
-	<MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
-    <MapEntry param="keywords{minLength=1;maxLength=1}" rule="*" targetType="string" type="Character"/>
-    <MapEntry param="keywords{format=uri}" rule="*" targetType="string" type="URI"/>
-    <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
-    <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
-    <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
-    <MapEntry param="" rule="*" targetType="number" type="Number"/>
-    <MapEntry param="" rule="*" targetType="number" type="Real"/>
-    <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-    <MapEntry param="" rule="*" targetType="number" type="Length"/>
-    <MapEntry param="keywords{format=date}" rule="*" targetType="string" type="Date"/>
-    <MapEntry param="keywords{format=date-time}" rule="*" targetType="string" type="DateTime"/>
-	<MapEntry param="keywords{format=time}" rule="*" targetType="string" type="Time"/>
-<MapEntry param="" rule="*" targetType="http://www.opengis.net/to/be/determined/Any.json" type="Any"/>
-    
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/LineString.json" type="GM_Curve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiLineString.json" type="GM_MultiCurve"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPoint.json" type="GM_MultiPoint"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/MultiPolygon.json" type="GM_MultiSurface"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Geometry.json" type="GM_Object"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Point.json" type="GM_Point"/>
-    <MapEntry param="geometry" rule="*" targetType="https://geojson.org/schema/Polygon.json" type="GM_Surface"/>
-</mapEntries>
-   <mapEntries>
-    <MapEntry param="" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" type="External_FT"/>
-   </mapEntries>
-  </Target>
- </targets>
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:xi="http://www.w3.org/2001/XInclude"
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+   <input id="input">
+      <parameter name="inputModelType" value="SCXML"/>
+      <parameter name="repositoryFileNameOrConnectionString"
+                 value="src/test/resources/json/basic/test_json_schema_basic.zip"/>
+      <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+      <parameter name="publicOnly" value="true"/>
+      <parameter name="checkingConstraints" value="enabled"/>
+      <parameter name="dontConstructAssociationNames" value="true"/>
+      <parameter name="extractSeparator" value="--"/>
+      <descriptorSources>
+         <DescriptorSource descriptor="documentation" source="ea:notes"/>
+         <DescriptorSource descriptor="alias" source="ea:alias"/>
+         <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+         <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+         <DescriptorSource descriptor="example" source="none"/>
+         <DescriptorSource descriptor="legalBasis" source="none"/>
+         <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+         <DescriptorSource descriptor="language" source="none"/>
+      </descriptorSources>
+      <stereotypeAliases>
+         <StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+         <StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+         <StereotypeAlias alias="bundle" wellknown=""/>
+         <StereotypeAlias alias="leaf" wellknown=""/>
+         <StereotypeAlias alias="abstract" wellknown=""/>
+         <StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+         <StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+         <StereotypeAlias alias="request" wellknown="DataType"/>
+         <StereotypeAlias alias="response" wellknown="DataType"/>
+         <StereotypeAlias alias="feature" wellknown="FeatureType"/>
+         <StereotypeAlias alias="interface" wellknown="Type"/>
+         <StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+         <StereotypeAlias alias="property" wellknown=""/>
+         <StereotypeAlias alias="enum" wellknown=""/>
+      </stereotypeAliases>
+   </input>
+   <log>
+      <parameter name="reportLevel" value="INFO"/>
+      <parameter name="logFile" value="testResults/json/basic/log.xml"/>
+   </log>
+   <transformers>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform"
+                   id="model"
+                   input="input"
+                   mode="enabled"/>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Constraints.ConstraintConverter"
+                   id="constraintconverterReal"
+                   input="model"
+                   mode="enabled">
+         <parameters>
+            <ProcessParameter name="valueTypeRepresentationTypes"
+                              value="PlaceSpecification{PointPositionSpecification, CurvePositionSpecification, SurfacePositionSpecification, LocationSpecification}"/>
+            <ProcessParameter name="valueTypeRepresentationConstraintRegex"
+                              value=".*Place Representations Disallowed.*"/>
+         </parameters>
+         <rules>
+            <ProcessRuleSet name="trf">
+               <rule name="rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion"/>
+            </ProcessRuleSet>
+         </rules>
+      </Transformer>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.AssociationClassMapper"
+                   id="constraintconverter"
+                   input="constraintconverterReal"
+                   mode="enabled"/>
+   </transformers>
+   <targets>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/2019-09/geojson"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="writeMapEntries" value="true"/>
+         <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
+         <targetParameter name="byReferenceJsonSchemaDefinition"
+                          value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes"
+                          value="https://geojson.org/schema/Feature.json"/>
+         <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos"
+                          value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
+         <targetParameter name="baseJsonSchemaDefinitionForObjectTypes"
+                          value="https://geojson.org/schema/Feature.json"/>
+         <targetParameter name="baseJsonSchemaDefinitionForObjectTypes_encodingInfos"
+                          value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
+         <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
+         <rules>
+            <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
+               <rule name="req-all-all-documentation"/>
+               <rule name="req-xsd-pkg-targetNamespace"/>
+               <rule name="req-xsd-pkg-xmlns"/>
+               <rule name="req-xsd-pkg-namespace-schema-only"/>
+               <rule name="rec-xsd-pkg-version"/>
+               <rule name="req-xsd-pkg-xsdDocument"/>
+               <rule name="req-xsd-pkg-dependencies"/>
+               <rule name="req-xsd-cls-codelist-asDictionary-true"/>
+               <rule name="req-xsd-cls-codelist-extensibility-values"/>
+               <rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
+               <rule name="req-xsd-cls-datatype-noPropertyType"/>
+               <rule name="req-xsd-cls-objecttype-noPropertyType"/>
+               <rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
+               <rule name="req-xsd-cls-enum-no-supertypes"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-nillable"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="okstra">
+               <rule name="rule-xsd-cls-no-base-class"/>
+               <rule name="rule-xsd-cls-no-abstract-classes"/>
+               <rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
+               <rule name="rule-xsd-cls-okstra-lifecycle"/>
+               <rule name="rule-xsd-cls-okstra-fid"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="gml21">
+               <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
+               <rule name="rule-xsd-all-gml21"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="notEncoded">
+               <rule name="rule-xsd-all-notEncoded"/>
+               <rule name="rule-json-all-notEncoded"/>
+               <rule name="rule-sql-all-notEncoded"/>
+               <rule name="rule-cdb-all-notEncoded"/>
+               <rule name="rule-gpkg-all-notEncoded"/>
+               <rule name="rule-ldp2-all-notEncoded"/>
+               <rule name="rule-gfs-all-notEncoded"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="citygml-ade">
+               <rule name="req-xsd-cls-suppress-supertype"/>
+               <rule name="req-xsd-cls-suppress-subtype"/>
+               <rule name="req-xsd-cls-suppress-no-properties"/>
+               <rule name="rule-xsd-cls-suppress"/>
+               <rule name="rule-xsd-cls-adeelement"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-initialValue"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19139_2007" name="metadata-profile">
+               <rule name="rule-xsd-cls-standard-19139-isoType"/>
+               <rule name="req-xsd-cls-suppress-supertype"/>
+               <rule name="req-xsd-cls-suppress-subtype"/>
+               <rule name="req-xsd-cls-suppress-no-properties"/>
+               <rule name="rule-xsd-cls-suppress"/>
+               <rule name="rule-xsd-pkg-schematron"/>
+            </EncodingRule>
+            <EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
+               <rule name="req-xsd-cls-mixin-supertypes"/>
+               <rule name="req-xsd-cls-codelist-no-supertypes"/>
+               <rule name="rule-xsd-cls-union-asCharacterString"/>
+               <rule name="rule-xsd-cls-union-asGroup"/>
+               <rule name="rule-xsd-cls-enum-supertypes"/>
+               <rule name="rule-xsd-cls-enum-subtypes"/>
+               <rule name="rule-xsd-cls-basictype"/>
+               <rule name="rule-xsd-cls-union-direct"/>
+               <rule name="rule-xsd-cls-codelist-constraints"/>
+               <rule name="rule-xsd-cls-mixin-classes-as-group"/>
+               <rule name="rule-xsd-cls-mixin-classes"/>
+               <rule name="rule-xsd-prop-exclude-derived"/>
+               <rule name="rule-xsd-prop-length-size-pattern"/>
+               <rule name="rule-xsd-prop-xsdAsAttribute"/>
+               <rule name="rule-xsd-prop-nillable"/>
+               <rule name="rule-xsd-prop-nilReasonAllowed"/>
+               <rule name="rule-xsd-prop-initialValue"/>
+               <rule name="rule-xsd-prop-att-map-entry"/>
+               <rule name="rule-xsd-pkg-schematron"/>
+               <rule name="rule-xsd-all-tagged-values"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="external">
+               <rule name="rule-xsd-all-notEncoded"/>
+            </EncodingRule>
+            <EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
+               <rule name="rule-xsd-cls-no-gml-types"/>
+               <rule name="rule-xsd-all-naming-gml"/>
+               <rule name="rule-xsd-cls-global-enumeration"/>
+               <rule name="rule-xsd-cls-standard-gml-property-types"/>
+            </EncodingRule>
+         </rules>
+         <rules>
+            <EncodingRule extends="defaultGeoJson" name="myGeoJson">
+               <rule name="rule-json-cls-identifierStereotype"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_FT"
+                      type="External_FT"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_Supertype"
+                      type="External_Supertype"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/2019-09/json"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="writeMapEntries" value="true"/>
+         <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+         <targetParameter name="linkObjectUri"
+                          value="http://shapechange.net/tmp/ugas20/link.json"/>
+         <targetParameter name="byReferenceJsonSchemaDefinition"
+                          value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="defaultEncodingRule" value="my201909json"/>
+         <rules>
+            <EncodingRule extends="*" name="json_basic">
+               <rule name="rule-json-cls-name-as-anchor"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="my201909json">
+               <rule name="rule-json-cls-basictype"/>
+               <rule name="rule-json-cls-name-as-entityType"/>
+               <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+               <rule name="rule-json-cls-union-propertyCount"/>
+               <rule name="rule-json-prop-voidable"/>
+               <rule name="rule-json-prop-readOnly"/>
+               <rule name="rule-json-prop-derivedAsReadOnly"/>
+               <rule name="rule-json-prop-initialValueAsDefault"/>
+               <rule name="rule-json-cls-valueTypeOptions"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
+               <rule name="rule-json-cls-union-typeDiscriminator"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
+               <rule name="rule-json-cls-codelist-uri-format"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
+               <rule name="rule-json-cls-codelist-link"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_FT"
+                      type="External_FT"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_Supertype"
+                      type="External_Supertype"/>
+            <MapEntry param="keywords{patternBase64=XlxkezR9KC0oMFsxLTldfDFbMC0yXSkoLSgwWzEtOV18WzEyXVswLTldfDNbMDFdKShUKFswMV1bMC05XXwyWzAtM10pOihbMC01XVswLTldKTooWzAtNV1bMC05XXw2MCkoXC5bMC05XSspPyhafChcK3wtKShbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSkpKT8pPyk/fG5vdyQ=}"
+                      rule="*"
+                      targetType="string"
+                      type="TM_Instant"/>
+            <MapEntry param="keywords{patternBase64=XihcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdylcLyhcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdykk}"
+                      rule="*"
+                      targetType="string"
+                      type="TM_Period"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/2020-12/json"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="writeMapEntries" value="true"/>
+         <targetParameter name="jsonSchemaVersion" value="2020-12"/>
+         <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+         <targetParameter name="linkObjectUri"
+                          value="http://shapechange.net/tmp/ugas20/link.json"/>
+         <targetParameter name="byReferenceJsonSchemaDefinition"
+                          value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="defaultEncodingRule" value="my202012json"/>
+         <rules>
+            <EncodingRule extends="*" name="json_basic">
+               <rule name="rule-json-cls-name-as-anchor"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="my202012json">
+               <rule name="rule-json-cls-basictype"/>
+               <rule name="rule-json-cls-name-as-entityType"/>
+               <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+               <rule name="rule-json-cls-union-propertyCount"/>
+               <rule name="rule-json-prop-voidable"/>
+               <rule name="rule-json-prop-readOnly"/>
+               <rule name="rule-json-prop-derivedAsReadOnly"/>
+               <rule name="rule-json-prop-initialValueAsDefault"/>
+               <rule name="rule-json-cls-valueTypeOptions"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
+               <rule name="rule-json-cls-union-typeDiscriminator"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
+               <rule name="rule-json-cls-codelist-uri-format"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
+               <rule name="rule-json-cls-codelist-link"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_FT"
+                      type="External_FT"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_Supertype"
+                      type="External_Supertype"/>
+            <MapEntry param="keywords{patternBase64=XlxkezR9KC0oMFsxLTldfDFbMC0yXSkoLSgwWzEtOV18WzEyXVswLTldfDNbMDFdKShUKFswMV1bMC05XXwyWzAtM10pOihbMC01XVswLTldKTooWzAtNV1bMC05XXw2MCkoXC5bMC05XSspPyhafChcK3wtKShbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSkpKT8pPyk/fG5vdyQ=}"
+                      rule="*"
+                      targetType="string"
+                      type="TM_Instant"/>
+            <MapEntry param="keywords{patternBase64=XihcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdylcLyhcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdykk}"
+                      rule="*"
+                      targetType="string"
+                      type="TM_Period"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/draft-07/json"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="writeMapEntries" value="true"/>
+         <targetParameter name="jsonSchemaVersion" value="draft-07"/>
+         <targetParameter name="appSchemaNameRegex" value="Test Schema (01).*"/>
+         <targetParameter name="defaultEncodingRule" value="mydraf07json"/>
+         <rules>
+            <EncodingRule name="mydraf07json">
+               <rule name="rule-json-cls-name-as-anchor"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="appSchemaNameRegex" value="Test Schema (03|05|09).*"/>
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/openapi30/json"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="jsonSchemaVersion" value="openapi30"/>
+         <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+         <targetParameter name="byReferenceJsonSchemaDefinition"
+                          value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="objectIdentifierName" value="@id"/>
+         <targetParameter name="objectIdentifierType" value="string, number"/>
+         <targetParameter name="objectIdentifierRequired" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="myopenapi30jsonA"/>
+         <rules>
+            <EncodingRule extends="*" name="json_basic">
+               <rule name="rule-json-cls-name-as-anchor"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myopenapi30jsonA">
+               <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
+               <rule name="rule-json-cls-union-propertyCount"/>
+               <rule name="rule-json-prop-voidable"/>
+               <rule name="rule-json-prop-readOnly"/>
+               <rule name="rule-json-prop-derivedAsReadOnly"/>
+               <rule name="rule-json-prop-initialValueAsDefault"/>
+               <rule name="rule-json-cls-valueTypeOptions"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
+               <rule name="rule-json-cls-union-typeDiscriminator"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
+               <rule name="rule-json-cls-codelist-uri-format"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
+               <rule name="rule-json-cls-codelist-link"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_FT"
+                      type="External_FT"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="constraintconverter"
+              mode="enabled">
+         <targetParameter name="appSchemaNameRegex" value="Test Schema 10.*"/>
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/basic/json_schemas/openapi30/json"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="jsonSchemaVersion" value="openapi30"/>
+         <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+         <targetParameter name="byReferenceJsonSchemaDefinition"
+                          value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="objectIdentifierName" value="@id"/>
+         <targetParameter name="objectIdentifierType" value="string, number"/>
+         <targetParameter name="objectIdentifierRequired" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="myopenapi30jsonB"/>
+         <rules>
+            <EncodingRule extends="*" name="json_basic">
+               <rule name="rule-json-cls-name-as-anchor"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myopenapi30jsonB">
+               <rule name="rule-json-cls-name-as-entityType"/>
+               <rule name="rule-json-cls-identifierForTypeWithIdentity"/>
+               <rule name="rule-json-cls-union-propertyCount"/>
+               <rule name="rule-json-prop-voidable"/>
+               <rule name="rule-json-prop-readOnly"/>
+               <rule name="rule-json-prop-derivedAsReadOnly"/>
+               <rule name="rule-json-prop-initialValueAsDefault"/>
+               <rule name="rule-json-cls-valueTypeOptions"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonUnionTypeDiscriminator">
+               <rule name="rule-json-cls-union-typeDiscriminator"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistUriFormat">
+               <rule name="rule-json-cls-codelist-uri-format"/>
+            </EncodingRule>
+            <EncodingRule extends="json_basic" name="myjsonCodelistLinkObject">
+               <rule name="rule-json-cls-codelist-link"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.org/external/schema/definitions.json#External_FT"
+                      type="External_FT"/>
+         </mapEntries>
+      </Target>
+   </targets>
 </ShapeChangeConfiguration>

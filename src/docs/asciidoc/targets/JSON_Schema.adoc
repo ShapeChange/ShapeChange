@@ -28,12 +28,15 @@ schema in UML.
 NOTE: A number of configuration options and extensions have been
 implemented. They are documented in detail in the
 _https://docs.ogc.org/per/20-012.html[OGC UGAS-2020 Engineering
-Report]_. The report also documents which model transformations may need
+Report]_. Another source of information is the 
+https://github.com/Geonovum/uml2json[UML to JSON Encoding Rules] 
+specification. The documents also explain which model transformations may need
 to be applied before executing this target, for example to transform
 association classes. Therefore, if you are looking for a complete
 introduction of the conversion from UML to JSON Schema, read the
-according chapter in the OGC Engineering Report first. This page
-provides a quick reference of the available conversion rules,
+according chapter in the OGC Engineering Report as well as the other 
+specification first. 
+This page provides a quick reference of the available conversion rules,
 parameters, and configuration elements.
 
 [[Configuration]]
@@ -1101,7 +1104,7 @@ Applies to Rule(s): _none - default behavior_
 
 Required / Optional: optional
 
-Type: Enumeration, one of "2019-09", "draft-07", "OpenApi30"
+Type: Enumeration, one of "2020-12", "2019-09", "draft-07", "OpenApi30"
 
 Default Value: "2019-09"
 

@@ -1,0 +1,132 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri/ts3/ts3/test3.json",
+  "$defs": {
+    "TS3_FT1": {
+      "$anchor": "TS3_FT1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "prop1": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "prop2": {
+          "type": "integer"
+        },
+        "prop3": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "number"
+          }
+        },
+        "prop4": {
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "$ref": "https://example.org/baseuri/ts3/ts3/test3.json#TS3_FT2"
+            }
+          ]
+        },
+        "prop5": {
+          "type": "boolean",
+          "default": true
+        },
+        "prop6": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "type": "number"
+          },
+          "uniqueItems": true
+        },
+        "prop7": {
+          "type": "boolean",
+          "default": false
+        },
+        "prop8": {
+          "type": "integer",
+          "default": 4
+        },
+        "prop9": {
+          "type": "number",
+          "default": 4.1
+        },
+        "prop10": {
+          "type": "string",
+          "default": "foo"
+        },
+        "prop11": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "prop12": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "https://example.org/jsonschema/byreference.json"
+              },
+              "uniqueItems": true
+            }
+          ]
+        },
+        "prop13": {
+          "type": "string",
+          "readOnly": true
+        },
+        "prop14": {
+          "type": "string",
+          "readOnly": true
+        }
+      },
+      "required": [
+        "@type",
+        "prop10",
+        "prop11",
+        "prop12",
+        "prop13",
+        "prop14",
+        "prop3",
+        "prop4",
+        "prop5",
+        "prop6",
+        "prop7",
+        "prop8",
+        "prop9"
+      ]
+    },
+    "TS3_FT2": {
+      "$anchor": "TS3_FT2",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "ts3FT2toExtFT": {
+          "$ref": "https://example.org/external/schema/definitions.json#External_FT"
+        }
+      },
+      "required": [
+        "@type",
+        "ts3FT2toExtFT"
+      ]
+    }
+  }
+}
