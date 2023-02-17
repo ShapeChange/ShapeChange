@@ -2,26 +2,26 @@
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_FT1"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT1"
              type="TS4_FT1"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_FT2"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT2"
              type="TS4_FT2"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_FT3"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT3"
              type="TS4_FT3"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_FT4"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT4"
              type="TS4_FT4"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_FT5"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT5"
              type="TS4_FT5"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts4/ts4/test4.json#/$defs/TS4_Mixin"
+             targetType="https://example.org/baseuri/ts4/ts4/test4.json#TS4_Mixin"
              type="TS4_Mixin"/>
 </mapEntries>

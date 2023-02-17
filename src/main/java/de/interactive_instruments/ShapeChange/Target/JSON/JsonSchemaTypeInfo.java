@@ -55,6 +55,7 @@ public class JsonSchemaTypeInfo {
     protected JsonSchemaType simpleType = null;
     protected SortedMap<String,JsonSchemaKeyword> jsonSchemaKeywordsByName = new TreeMap<>();
     protected boolean isGeometry = false;
+    protected boolean isMeasure = false;
 
     /**
      * @return the ref
@@ -123,13 +124,27 @@ public class JsonSchemaTypeInfo {
     public void setGeometry(boolean isGeometry) {
 	this.isGeometry = isGeometry;
     }
-
+    
     /**
      * @return <code>true</code>, if the type represents a reference with a
      *         non-empty value, else <code>false</code>
      */
     public boolean hasRef() {
 	return StringUtils.isNotBlank(this.ref);
+    }
+
+    /**
+     * @return the isMeasure
+     */
+    public boolean isMeasure() {
+        return isMeasure;
+    }
+
+    /**
+     * @param isMeasure the isMeasure to set
+     */
+    public void setMeasure(boolean isMeasure) {
+        this.isMeasure = isMeasure;
     }
 
 }

@@ -1,5 +1,5 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.org/baseuri/ts8/multipleGeometries/ts8multy/test8multy.json",
   "$defs": {
@@ -27,7 +27,7 @@
       "$anchor": "TS8_Type2",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts8/multipleGeometries/ts8multy/test8multy.json#TS8_Type1"
+          "$ref": "#TS8_Type1"
         },
         {
           "type": "object",

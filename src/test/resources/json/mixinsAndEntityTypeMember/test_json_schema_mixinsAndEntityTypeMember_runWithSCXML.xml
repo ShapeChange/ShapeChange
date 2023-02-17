@@ -53,6 +53,7 @@
          <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos"
                           value="entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
          <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
          <targetParameter name="writeMapEntries" value="true"/>
          <targetParameter name="defaultEncodingRule" value="myJsonFGJson"/>
          <rules>
@@ -148,6 +149,7 @@
          <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos"
                           value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
          <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
          <targetParameter name="writeMapEntries" value="true"/>
          <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
          <rules>
@@ -236,6 +238,7 @@
          <targetParameter name="byReferenceJsonSchemaDefinition"
                           value="https://example.org/jsonschema/byreference.json"/>
          <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
          <targetParameter name="writeMapEntries" value="true"/>
          <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
          <rules>

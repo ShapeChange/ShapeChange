@@ -2,10 +2,10 @@
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
    <MapEntry param="encodingInfos{idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
              rule="*"
-             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#/$defs/TS8_FT1"
+             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#TS8_FT1"
              type="TS8_FT1"/>
    <MapEntry param="encodingInfos{idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
              rule="*"
-             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#/$defs/TS8_FT2"
+             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#TS8_FT2"
              type="TS8_FT2"/>
 </mapEntries>

@@ -1,0 +1,87 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "DT": {
+      "$anchor": "DT",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "$ref": "https://geojson.org/schema/Point.json"
+        },
+        "att2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+          "$ref": "https://geojson.org/schema/LineString.json"
+        }
+          ]
+        }
+      },
+      "required": [
+        "att1",
+        "att2"
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+          "$ref": "https://geojson.org/schema/Point.json"
+            }
+          ]
+        },
+        "att2": {
+          "type": "array",
+          "items": {
+            "$ref": "https://geojson.org/schema/LineString.json"
+          },
+          "uniqueItems": true
+        },
+        "roleT": {
+          "type": "string",
+          "format": "uri"
+        },
+        "roleFT2": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "att1"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "roleFT1": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "roleFT1"
+      ]
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object"
+    }
+  }
+}

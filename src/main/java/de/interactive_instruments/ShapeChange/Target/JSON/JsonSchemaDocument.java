@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -77,6 +78,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.AdditionalPropertiesKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.FormatKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.GenericAnnotationKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchema;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaType;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.JsonSchemaVersion;
@@ -94,16 +96,21 @@ import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
  */
 public class JsonSchemaDocument implements MessageSource {
 
+    protected enum PrimaryTimeOptionality {
+	UNDEFINED, OPTIONAL, REQUIRED
+    };
+
     protected Options options;
     protected ShapeChangeResult result;
     protected Model model;
     protected JsonSchemaTarget jsonSchemaTarget;
     protected String docName;
     protected PackageInfo representedPackage;
-    protected String rootSchemaId;
+    protected String schemaId;
     protected File jsonSchemaOutputFile;
     protected MapEntryParamInfos mapEntryParamInfos;
     protected JsonSchemaVersion jsonSchemaVersion;
+    protected boolean isSingularCollectionsSchema;
 
     protected SortedMap<String, ClassInfo> classesByName = new TreeMap<>();
     protected SortedMap<ClassInfo, JsonSchema> defSchemaByClass = new TreeMap<>();
@@ -115,21 +122,22 @@ public class JsonSchemaDocument implements MessageSource {
     protected AnnotationGenerator annotationGenerator;
 
     public JsonSchemaDocument(PackageInfo representedPackage, Model model, Options options, ShapeChangeResult result,
-	    JsonSchemaTarget jsonSchemaTarget, String rootSchemaId, File jsonSchemaOutputFile,
-	    MapEntryParamInfos mapEntryParamInfos) {
+	    JsonSchemaTarget jsonSchemaTarget, String schemaId, File jsonSchemaOutputFile,
+	    MapEntryParamInfos mapEntryParamInfos, boolean isSingularCollectionsSchema) {
 
 	this.representedPackage = representedPackage;
 	this.options = options;
 	this.result = result;
 	this.model = model;
 	this.jsonSchemaTarget = jsonSchemaTarget;
-	this.rootSchemaId = rootSchemaId;
+	this.schemaId = schemaId;
 	this.jsonSchemaOutputFile = jsonSchemaOutputFile;
 	this.mapEntryParamInfos = mapEntryParamInfos;
+	this.isSingularCollectionsSchema = isSingularCollectionsSchema;
 
 	if (options.getCurrentProcessConfig().parameterAsString(TargetOutputProcessor.PARAM_ADD_COMMENT, null, false,
 		true) == null) {
-	    rootSchema.comment("JSON Schema document created by ShapeChange - http://shapechange.net/");
+	    rootSchema.comment("JSON Schema document created by ShapeChange - https://shapechange.net/");
 	}
 
 	jsonSchemaVersion = jsonSchemaTarget.getJsonSchemaVersion();
@@ -140,12 +148,12 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	// add schema identifier
-	rootSchema.id(rootSchemaId);
+	rootSchema.id(schemaId);
 
 	this.annotationGenerator = new AnnotationGenerator(this.jsonSchemaTarget.getAnnotationElements(),
 		options.language(), result);
 
-	if (representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
+	if (!isSingularCollectionsSchema && representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
 	    this.annotationGenerator.applyAnnotations(rootSchema, representedPackage);
 	}
     }
@@ -168,13 +176,12 @@ public class JsonSchemaDocument implements MessageSource {
     }
 
     /**
-     * Retrieve the "$id" of this JSON Schema document, which is the combination of
-     * base URI, subdirectory, and document name.
+     * Retrieve the "$id" of this JSON Schema document.
      * 
      * @return the "$id" of the schema
      */
     public String getSchemaId() {
-	return this.rootSchemaId;
+	return this.schemaId;
     }
 
     public JsonSchemaVersion getSchemaVersion() {
@@ -494,6 +501,18 @@ public class JsonSchemaDocument implements MessageSource {
 	return resEis;
     }
 
+    /**
+     * Gets or creates the property definitions along the specified path in the
+     * given JSON Schema. The complete path can be made required. The result is the
+     * schema constraint for the last property in the path.
+     * 
+     * @param startSchema    the schema in which to get or create the property path
+     * @param pathSegments   the names of the path segments
+     * @param isOptionalPath <code>true</code>, if the complete path should consist
+     *                       of optional properties; <code>false</code> if all path
+     *                       segments should be required
+     * @return The schema constraint of the last property in the path
+     */
     private JsonSchema getOrCreatePropertyPath(JsonSchema startSchema, String[] pathSegments, boolean isOptionalPath) {
 
 	JsonSchema schema = startSchema;
@@ -607,12 +626,7 @@ public class JsonSchemaDocument implements MessageSource {
 	     * Compute the URL to the schema definition, ignoring the anchor capability
 	     * (because it would not be supported in an OpenAPI 3.0 schema).
 	     */
-	    String jsDefinitionReference;
-	    if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
-		jsDefinitionReference = rootSchemaId + "#/definitions/" + ci.name();
-	    } else {
-		jsDefinitionReference = rootSchemaId + "#/$defs/" + ci.name();
-	    }
+	    String jsDefinitionReference = schemaId + fragmentIdentifier(this, ci);
 
 	    // create map entry
 	    PackageInfo schemaPi = ci.pkg().rootPackage();
@@ -646,20 +660,39 @@ public class JsonSchemaDocument implements MessageSource {
 
 	String schemaId = jsd.getSchemaId();
 
-	if (jsd.getSchemaVersion() != JsonSchemaVersion.OPENAPI_30
+	String fragmentIdentifier = fragmentIdentifier(jsd, ci);
+
+	/*
+	 * 2023-02-13 JE: Currently, relative references are only created when a
+	 * definition within the same JSON Schema document is created. The reference
+	 * then simply uses the fragment identifier. In all other cases, a complete URI
+	 * is created, using the ID of the given schema document as well as the fragment
+	 * identifier to the definition of the given class.
+	 * 
+	 * There may be a way to improve references between separate JSON Schema
+	 * documents, using relative URIs. That is future work.
+	 */
+
+	return jsd == this ? fragmentIdentifier : schemaId + fragmentIdentifier;
+    }
+
+    private String fragmentIdentifier(JsonSchemaDocument jsd, ClassInfo ci) {
+
+	if (JsonSchemaTarget.useAnchorsInLinksToGeneratedSchemaDefinitions
+		&& jsd.getSchemaVersion() != JsonSchemaVersion.OPENAPI_30
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
 
 	    // the encoding of the class contains an anchor - use it
-	    return schemaId + "#" + ci.name();
+	    return "#" + ci.name();
 
 	} else {
 
 	    // use a JSON Pointer to reference the definition of the class
 	    if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_07
 		    || jsd.getSchemaVersion() == JsonSchemaVersion.OPENAPI_30) {
-		return schemaId + "#/definitions/" + ci.name();
+		return "#/definitions/" + ci.name();
 	    } else {
-		return schemaId + "#/$defs/" + ci.name();
+		return "#/$defs/" + ci.name();
 	    }
 	}
     }
@@ -702,36 +735,46 @@ public class JsonSchemaDocument implements MessageSource {
 
 	if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.STRING) {
 
-	    String length = ci.taggedValue("length");
-	    if (StringUtils.isBlank(length)) {
-		length = ci.taggedValue("maxLength");
+	    // Keyword: maxLength
+	    String tvMaxLengthName = "length";
+	    String maxLength = ci.taggedValue(tvMaxLengthName);
+	    if (StringUtils.isBlank(maxLength)) {
+		tvMaxLengthName = "maxLength";
+		maxLength = ci.taggedValue(tvMaxLengthName);
 	    }
-	    if (StringUtils.isBlank(length)) {
-		length = ci.taggedValue("size");
+	    if (StringUtils.isBlank(maxLength)) {
+		tvMaxLengthName = "size";
+		maxLength = ci.taggedValue(tvMaxLengthName);
 	    }
-
-	    if (StringUtils.isNotBlank(length)) {
-
-		try {
-		    int lengthValue = Integer.parseInt(length.trim());
-		    if (lengthValue < 0) {
-			MessageContext mc = result.addError(this, 102, ci.name(), length);
-			if (mc != null) {
-			    mc.addDetail(this, 0, ci.fullName());
-			}
-		    } else {
-			restrictingFacetSchema.maxLength(lengthValue);
-		    }
-		} catch (NumberFormatException e) {
-		    MessageContext mc = result.addError(this, 101, ci.name(), length);
+	    if (StringUtils.isNotBlank(maxLength)) {
+		int lengthValue = parseRestrictingFacetAsInteger(ci, maxLength, tvMaxLengthName, "maxLength");
+		if (lengthValue < 0) {
+		    MessageContext mc = result.addError(this, 102, ci.name(), maxLength, tvMaxLengthName, "maxLength");
 		    if (mc != null) {
 			mc.addDetail(this, 0, ci.fullName());
 		    }
+		} else {
+		    restrictingFacetSchema.maxLength(lengthValue);
 		}
 	    }
 
-	    String pattern = ci.taggedValue("jsonPattern");
+	    // Keyword: minLength
+	    String tvMinLengthName = "minLength";
+	    String minLength = ci.taggedValue(tvMinLengthName);
+	    if (StringUtils.isNotBlank(minLength)) {
+		int lengthValue = parseRestrictingFacetAsInteger(ci, minLength, tvMinLengthName, "minLength");
+		if (lengthValue < 0) {
+		    MessageContext mc = result.addError(this, 102, ci.name(), minLength, tvMinLengthName, "minLength");
+		    if (mc != null) {
+			mc.addDetail(this, 0, ci.fullName());
+		    }
+		} else {
+		    restrictingFacetSchema.minLength(lengthValue);
+		}
+	    }
 
+	    // Keyword: pattern
+	    String pattern = ci.taggedValue("jsonPattern");
 	    if (StringUtils.isNotBlank(pattern)) {
 		restrictingFacetSchema.pattern(pattern);
 	    }
@@ -739,21 +782,53 @@ public class JsonSchemaDocument implements MessageSource {
 	} else if (jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.NUMBER
 		|| jsImplementationTypeInfo.getSimpleType() == JsonSchemaType.INTEGER) {
 
-	    String min = ci.taggedValue("rangeMinimum");
-
+	    // Keyword: minimum
+	    String tvNameMinimum = "rangeMinimum";
+	    String min = ci.taggedValue(tvNameMinimum);
+	    if (StringUtils.isBlank(min)) {
+		tvNameMinimum = "minInclusive";
+		min = ci.taggedValue(tvNameMinimum);
+	    }
 	    if (StringUtils.isNotBlank(min)) {
-		Double minDouble = parseRestrictingFacetAsDouble(ci, min, "rangeMinimum", "minimum");
+		Double minDouble = parseRestrictingFacetAsDouble(ci, min, tvNameMinimum, "minimum");
 		if (minDouble != null) {
 		    restrictingFacetSchema.minimum(minDouble);
 		}
 	    }
 
-	    String max = ci.taggedValue("rangeMaximum");
+	    // Keyword: exclusiveMinimum
+	    String tvNameExclusiveMinimum = "minExclusive";
+	    String exclMin = ci.taggedValue(tvNameExclusiveMinimum);
+	    if (StringUtils.isNotBlank(exclMin)) {
+		Double minExclDouble = parseRestrictingFacetAsDouble(ci, exclMin, tvNameExclusiveMinimum,
+			"exclusiveMinimum");
+		if (minExclDouble != null) {
+		    restrictingFacetSchema.exclusiveMinimum(minExclDouble);
+		}
+	    }
 
+	    // Keyword: maximum
+	    String tvNameMaximum = "rangeMaximum";
+	    String max = ci.taggedValue(tvNameMaximum);
+	    if (StringUtils.isBlank(max)) {
+		tvNameMaximum = "maxInclusive";
+		max = ci.taggedValue(tvNameMaximum);
+	    }
 	    if (StringUtils.isNotBlank(max)) {
-		Double maxDouble = parseRestrictingFacetAsDouble(ci, max, "rangeMaximum", "maximum");
+		Double maxDouble = parseRestrictingFacetAsDouble(ci, max, tvNameMaximum, "maximum");
 		if (maxDouble != null) {
 		    restrictingFacetSchema.maximum(maxDouble);
+		}
+	    }
+
+	    // Keyword: exclusiveMaximum
+	    String tvNameExclusiveMaximum = "maxExclusive";
+	    String exclMax = ci.taggedValue(tvNameExclusiveMaximum);
+	    if (StringUtils.isNotBlank(exclMax)) {
+		Double maxExclDouble = parseRestrictingFacetAsDouble(ci, exclMax, tvNameExclusiveMaximum,
+			"exclusiveMaximum");
+		if (maxExclDouble != null) {
+		    restrictingFacetSchema.exclusiveMaximum(maxExclDouble);
 		}
 	    }
 
@@ -793,6 +868,21 @@ public class JsonSchemaDocument implements MessageSource {
 	    return doubleValue;
 	} catch (NumberFormatException e) {
 	    MessageContext mc = result.addError(this, 103, ci.name(), stringValue, tvName, jsKeywordName);
+	    if (mc != null) {
+		mc.addDetail(this, 0, ci.fullName());
+	    }
+	    return null;
+	}
+    }
+
+    private Integer parseRestrictingFacetAsInteger(ClassInfo ci, String stringValue, String tvName,
+	    String jsKeywordName) {
+
+	try {
+	    int integerValue = Integer.parseInt(stringValue.trim());
+	    return integerValue;
+	} catch (NumberFormatException e) {
+	    MessageContext mc = result.addError(this, 101, ci.name(), stringValue, tvName, jsKeywordName);
 	    if (mc != null) {
 		mc.addDetail(this, 0, ci.fullName());
 	    }
@@ -853,6 +943,22 @@ public class JsonSchemaDocument implements MessageSource {
 	JsonSchema jsClass = new JsonSchema();
 
 	addCommonSchemaMembers(jsClass, ci);
+
+	if (ci.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)
+		&& ci.matches(JsonSchemaConstants.RULE_CLS_DOCUMENTATION_ENUM_DESCRIPTION)) {
+
+	    for (PropertyInfo pi : ci.properties().values()) {
+		if (JsonSchemaTarget.isEncoded(pi)) {
+		    JsonSchema enumJs = new JsonSchema();
+		    this.annotationGenerator.applyAnnotations(enumJs, pi);
+//		    if (!enumJs.isEmpty()) {
+			String enumDescKey = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue().trim()
+				: pi.name();
+			jsClass.enumDescription(enumDescKey, enumJs);
+//		    }
+		}
+	    }
+	}
 
 	// identify and set the JSON Schema type as which the enumeration is implemented
 	JsonSchemaTypeInfo jsti = identifyLiteralEncodingType(ci);
@@ -991,6 +1097,13 @@ public class JsonSchemaDocument implements MessageSource {
 
 	EncodingInfos encInfo = jsonSchemaTarget.getOrCreateEncodingInfos(ci);
 
+	/*
+	 * =============
+	 * 
+	 * Handle generalization (virtual and explicit)
+	 * 
+	 * =============
+	 */
 	List<JsonSchema> allOfMembers = new ArrayList<>();
 
 	SortedSet<ClassInfo> supertypes = ci.supertypeClasses();
@@ -1040,76 +1153,27 @@ public class JsonSchemaDocument implements MessageSource {
 
 	jsClassContents.type(JsonSchemaType.OBJECT);
 
-	PropertyInfo defaultGeometryPi = null;
-	if (ci.category() != Options.UNION && !ci.properties().isEmpty()
-		&& (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
-			|| ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_MULTIGEOMPROPS))) {
+	/*
+	 * =============
+	 * 
+	 * Identify and handle special properties (default / primary geometry, primary
+	 * place, primary instant, primary interval)
+	 * 
+	 * =============
+	 */
+	Set<PropertyInfo> specialPisToMapButNotEncode = new HashSet<>();
 
-	    Map<PropertyInfo, JsonSchemaTypeInfo> typeInfoByGeometryPi = new HashMap<>();
-	    PropertyInfo directGeometryPi = null;
-	    Set<PropertyInfo> directProperties = new HashSet<>(ci.properties().values());
+	handleGeometryRestriction(ci, specialPisToMapButNotEncode, jsClassContents);
+	handlePrimaryPlaceRestriction(ci, specialPisToMapButNotEncode, jsClassContents);
+	handlePrimaryTimeRestriction(ci, specialPisToMapButNotEncode, jsClassContents);
 
-	    for (PropertyInfo pi : ci.propertiesAll()) {
-
-		if (!JsonSchemaTarget.isEncoded(pi)) {
-		    result.addInfo(this, 9, pi.name(), pi.inClass().name());
-		    continue;
-		}
-
-		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
-
-		if (typeInfoOpt.isPresent()) {
-
-		    JsonSchemaTypeInfo typeInfo = typeInfoOpt.get();
-
-		    if (typeInfo.isGeometry()
-			    && (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
-				    || "true".equalsIgnoreCase(pi.taggedValue("defaultGeometry")))) {
-
-			if (directProperties.contains(pi)) {
-			    directGeometryPi = pi;
-			}
-
-			typeInfoByGeometryPi.put(pi, typeInfo);
-		    }
-		}
-	    }
-
-	    if (directGeometryPi != null) {
-
-		if (typeInfoByGeometryPi.size() == 1) {
-
-		    // encode the default geometry property
-		    jsClassContents.property("geometry",
-			    new JsonSchema().ref(typeInfoByGeometryPi.get(directGeometryPi).getRef()));
-
-		    if (directGeometryPi.cardinality().maxOccurs > 1) {
-			MessageContext mc = result.addWarning(this, 117, directGeometryPi.name(), ci.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, directGeometryPi.fullName());
-			}
-		    }
-
-		    /*
-		     * keep track of this property, so that it can be ignored later on when encoding
-		     * the other properties of the class
-		     */
-		    defaultGeometryPi = directGeometryPi;
-
-		} else if (typeInfoByGeometryPi.size() > 1) {
-
-		    // inform about multiple default geometry properties
-		    String geometryPiNames = typeInfoByGeometryPi.keySet().stream().map(pi -> pi.name()).sorted()
-			    .collect(Collectors.joining(", "));
-
-		    MessageContext mc = result.addError(this, 112, ci.name(), geometryPiNames);
-		    if (mc != null) {
-			mc.addDetail(this, 0, ci.fullName());
-		    }
-		}
-	    }
-	}
-
+	/*
+	 * =============
+	 * 
+	 * Handle property nesting
+	 * 
+	 * =============
+	 */
 	JsonSchema jsProperties = jsClassContents;
 	if (!(ci.category() == Options.DATATYPE || ci.category() == Options.UNION)
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)) {
@@ -1125,6 +1189,13 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	/*
+	 * =============
+	 * 
+	 * Handle entity type member
+	 * 
+	 * =============
+	 */
+	/*
 	 * Check if an entity type member is available in the encodings of ci's
 	 * supertypes or its base class. If so, simply keep track of relevant infos for
 	 * it (for map entry creation, and potentially also type specific checks).
@@ -1136,9 +1207,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	if (entityTypeMemberInfosFromSupertypesAndBaseSchema == null) {
 
-	    if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && ci.category() != Options.MIXIN
-		    && (ci.category() != Options.UNION
-			    || ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+	    if (matchesEntityTypeCreationRules(ci)) {
 
 		String entityTypeMemberName = jsonSchemaTarget.getEntityTypeName();
 		jsProperties.property(entityTypeMemberName, new JsonSchema().type(JsonSchemaType.STRING))
@@ -1162,6 +1231,13 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
+	/*
+	 * =============
+	 * 
+	 * Handle identifier properties
+	 * 
+	 * =============
+	 */
 	if ((ci.category() == Options.FEATURE || ci.category() == Options.OBJECT)
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_IDENTIFIER_FOR_TYPE_WITH_IDENTITY)
 		&& !(ci.matches(JsonSchemaConstants.RULE_CLS_IGNORE_IDENTIFIER)
@@ -1204,6 +1280,13 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
+	/*
+	 * =============
+	 * 
+	 * Determine value type options
+	 * 
+	 * =============
+	 */
 	String valueTypeOptionsTV = ci.taggedValue("valueTypeOptions");
 	ValueTypeOptions vto;
 	if (StringUtils.isNotBlank(valueTypeOptionsTV) && ci.matches(JsonSchemaConstants.RULE_CLS_VALUE_TYPE_OPTIONS)) {
@@ -1212,6 +1295,13 @@ public class JsonSchemaDocument implements MessageSource {
 	    vto = new ValueTypeOptions();
 	}
 
+	/*
+	 * =============
+	 * 
+	 * General handling of class properties
+	 * 
+	 * =============
+	 */
 	for (PropertyInfo pi : ci.properties().values()) {
 
 	    if (!JsonSchemaTarget.isEncoded(pi)) {
@@ -1219,7 +1309,7 @@ public class JsonSchemaDocument implements MessageSource {
 		continue;
 	    }
 
-	    if (pi == defaultGeometryPi) {
+	    if (specialPisToMapButNotEncode.contains(pi)) {
 		continue;
 	    }
 
@@ -1378,6 +1468,13 @@ public class JsonSchemaDocument implements MessageSource {
 	    jsProperties.property(supertypePropertyName, supertypePropertyTypeRestrictionSchema);
 	}
 
+	/*
+	 * =============
+	 * 
+	 * Additional union specific constraints
+	 * 
+	 * =============
+	 */
 	if (ci.category() == Options.UNION) {
 
 	    if (ci.matches(JsonSchemaConstants.RULE_CLS_UNION_PROPERTY_COUNT)) {
@@ -1396,6 +1493,13 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
+	/*
+	 * =============
+	 * 
+	 * Clean-up
+	 * 
+	 * =============
+	 */
 	if (!(ci.category() == Options.DATATYPE || ci.category() == Options.UNION)
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)) {
 	    /*
@@ -1427,6 +1531,372 @@ public class JsonSchemaDocument implements MessageSource {
 	return jsClass;
     }
 
+    private void handlePrimaryTimeRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
+	    JsonSchema jsClassContents) {
+
+	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_TIME)) {
+
+	    PropertyInfo primaryInstantPi = null;
+	    PropertyInfo primaryIntervalPi_start = null;
+	    PropertyInfo primaryIntervalPi_end = null;
+	    PropertyInfo primaryIntervalPi_interval = null;
+
+	    for (PropertyInfo pi : ci.properties().values()) {
+		if (JsonSchemaTarget.isEncoded(pi)) {
+
+		    // identify primary instant property
+		    if ("true".equalsIgnoreCase(pi.taggedValue("jsonPrimaryInstant"))) {
+			if (primaryInstantPi == null) {
+			    primaryInstantPi = pi;
+			} else {
+			    MessageContext mc = result.addError(this, 131, ci.name(), primaryInstantPi.name(),
+				    pi.name());
+			    if (mc != null) {
+				mc.addDetail(this, 1, pi.fullName());
+			    }
+			}
+			specialPisToMapButNotEncode.add(pi);
+		    }
+
+		    // identify primary interval properties
+		    String primaryIntervalTV = pi.taggedValue("jsonPrimaryInterval");
+		    if ("start".equalsIgnoreCase(primaryIntervalTV)) {
+			if (primaryIntervalPi_start == null) {
+			    primaryIntervalPi_start = pi;
+			} else {
+			    MessageContext mc = result.addError(this, 132, ci.name(), primaryIntervalPi_start.name(),
+				    pi.name());
+			    if (mc != null) {
+				mc.addDetail(this, 1, pi.fullName());
+			    }
+			}
+			specialPisToMapButNotEncode.add(pi);
+
+		    } else if ("end".equalsIgnoreCase(primaryIntervalTV)) {
+			if (primaryIntervalPi_end == null) {
+			    primaryIntervalPi_end = pi;
+			} else {
+			    MessageContext mc = result.addError(this, 133, ci.name(), primaryIntervalPi_end.name(),
+				    pi.name());
+			    if (mc != null) {
+				mc.addDetail(this, 1, pi.fullName());
+			    }
+			}
+			specialPisToMapButNotEncode.add(pi);
+
+		    } else if ("interval".equalsIgnoreCase(primaryIntervalTV)) {
+			if (primaryIntervalPi_interval == null) {
+			    primaryIntervalPi_interval = pi;
+			} else {
+			    MessageContext mc = result.addError(this, 134, ci.name(), primaryIntervalPi_interval.name(),
+				    pi.name());
+			    if (mc != null) {
+				mc.addDetail(this, 1, pi.fullName());
+			    }
+			}
+			specialPisToMapButNotEncode.add(pi);
+		    }
+		}
+	    }
+
+	    /*
+	     * Determine Optionality of primary instant and primary interval
+	     */
+	    PrimaryTimeOptionality primaryInstantOptionality = PrimaryTimeOptionality.UNDEFINED;
+	    if (primaryInstantPi != null) {
+		primaryInstantOptionality = isOptional(primaryInstantPi) ? PrimaryTimeOptionality.OPTIONAL
+			: PrimaryTimeOptionality.REQUIRED;
+	    }
+
+	    PrimaryTimeOptionality primaryIntervalOptionality = PrimaryTimeOptionality.UNDEFINED;
+	    if (primaryIntervalPi_start != null || primaryIntervalPi_end != null
+		    || primaryIntervalPi_interval != null) {
+
+		/*
+		 * First, check primary interval consistency (duplicate start, end, or interval
+		 * cases have already been identified and logged).
+		 */
+		if ((primaryIntervalPi_start != null || primaryIntervalPi_end != null)
+			&& primaryIntervalPi_interval != null) {
+
+		    MessageContext mc = result.addError(this, 135, ci.name(), primaryIntervalPi_interval.name(),
+			    primaryIntervalPi_start != null ? primaryIntervalPi_start.name() : "<undefined>",
+			    primaryIntervalPi_end != null ? primaryIntervalPi_end.name() : "<undefined>");
+		    if (mc != null) {
+			mc.addDetail(this, 0, ci.fullName());
+		    }
+
+		} else {
+
+		    if (primaryIntervalPi_interval != null) {
+			primaryIntervalOptionality = isOptional(primaryIntervalPi_interval)
+				? PrimaryTimeOptionality.OPTIONAL
+				: PrimaryTimeOptionality.REQUIRED;
+		    } else {
+			if (primaryIntervalPi_start == null && primaryIntervalPi_end == null) {
+			    // nothing to do, really; added just in case the logic is changed in the future
+			    primaryIntervalOptionality = PrimaryTimeOptionality.UNDEFINED;
+			} else if ((primaryIntervalPi_start != null && !isOptional(primaryIntervalPi_start))
+				|| (primaryIntervalPi_end != null && !isOptional(primaryIntervalPi_end))) {
+			    primaryIntervalOptionality = PrimaryTimeOptionality.REQUIRED;
+			} else {
+			    primaryIntervalOptionality = PrimaryTimeOptionality.OPTIONAL;
+			}
+		    }
+		}
+	    }
+
+	    // now determine and create the actual restriction
+	    JsonSchema timeJs = new JsonSchema();
+
+	    if ((primaryInstantOptionality == PrimaryTimeOptionality.UNDEFINED
+		    && primaryIntervalOptionality == PrimaryTimeOptionality.UNDEFINED)
+		    || (primaryInstantOptionality == PrimaryTimeOptionality.OPTIONAL
+			    && primaryIntervalOptionality == PrimaryTimeOptionality.OPTIONAL)) {
+
+		// no time restriction is necessary
+
+	    } else if (primaryInstantOptionality == PrimaryTimeOptionality.UNDEFINED
+		    && primaryIntervalOptionality == PrimaryTimeOptionality.OPTIONAL) {
+
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.NULL));
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("interval"));
+
+	    } else if ((primaryInstantOptionality == PrimaryTimeOptionality.UNDEFINED
+		    || primaryInstantOptionality == PrimaryTimeOptionality.OPTIONAL)
+		    && primaryIntervalOptionality == PrimaryTimeOptionality.REQUIRED) {
+
+		timeJs.type(JsonSchemaType.OBJECT).required("interval");
+
+	    } else if (primaryInstantOptionality == PrimaryTimeOptionality.OPTIONAL
+		    && primaryIntervalOptionality == PrimaryTimeOptionality.UNDEFINED) {
+
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.NULL));
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("date"));
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("timestamp"));
+
+	    } else if (primaryInstantOptionality == PrimaryTimeOptionality.REQUIRED
+		    && (primaryIntervalOptionality == PrimaryTimeOptionality.UNDEFINED
+			    || primaryIntervalOptionality == PrimaryTimeOptionality.OPTIONAL)) {
+
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("date"));
+		timeJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("timestamp"));
+
+	    } else {
+
+		timeJs.allOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("interval"));
+
+		JsonSchema oneOfJs = new JsonSchema();
+		oneOfJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("date"));
+		oneOfJs.oneOf(new JsonSchema().type(JsonSchemaType.OBJECT).required("timestamp"));
+
+		timeJs.allOf(oneOfJs);
+	    }
+
+	    if (!timeJs.isEmpty()) {
+		jsClassContents.property("time", timeJs);
+	    }
+	}
+    }
+
+    private boolean isOptional(PropertyInfo pi) {
+	return pi.cardinality().minOccurs == 0 || (pi.voidable() && pi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE));
+    }
+
+    private void handlePrimaryPlaceRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
+	    JsonSchema jsClassContents) {
+
+	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_PLACE)) {
+
+	    PropertyInfo primaryPlacePi = null;
+
+	    for (PropertyInfo pi : ci.properties().values()) {
+		if (JsonSchemaTarget.isEncoded(pi) && "true".equalsIgnoreCase(pi.taggedValue("jsonPrimaryPlace"))) {
+		    primaryPlacePi = pi;
+		}
+	    }
+
+	    if (primaryPlacePi != null) {
+		specialPisToMapButNotEncode.add(primaryPlacePi);
+		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryPlacePi);
+
+		if (typeInfoOpt.isPresent()) {
+
+		    JsonSchema placeJs = new JsonSchema();
+		    specialPropertyValueRestriction(placeJs, primaryPlacePi, typeInfoOpt.get());
+		    jsClassContents.property("place", placeJs);
+
+		} else {
+		    MessageContext mc = result.addError(this, 130, primaryPlacePi.name(), ci.name(),
+			    primaryPlacePi.typeInfo().name);
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryPlacePi.fullName());
+		    }
+		}
+
+		if (primaryPlacePi.cardinality().maxOccurs > 1) {
+		    MessageContext mc = result.addWarning(this, 129, primaryPlacePi.name(), ci.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryPlacePi.fullName());
+		    }
+		}
+	    }
+
+	}
+    }
+
+    private void specialPropertyValueRestriction(JsonSchema jsForValueRestriction, PropertyInfo pi,
+	    JsonSchemaTypeInfo jsonSchemaTypeInfo) {
+
+	if (isOptional(pi)) {
+	    // create choice between null and an actual value
+	    jsForValueRestriction.oneOf(new JsonSchema().type(JsonSchemaType.NULL));
+	    jsForValueRestriction.oneOf(new JsonSchema().ref(jsonSchemaTypeInfo.getRef()));
+	} else {
+	    // the property must have an actual value
+	    jsForValueRestriction.ref(jsonSchemaTypeInfo.getRef());
+	}
+    }
+
+    private void handleGeometryRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
+	    JsonSchema jsClassContents) {
+
+	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_GEOMETRY)) {
+
+	    PropertyInfo primaryGeometryPi = null;
+
+	    /*
+	     * First, try to find a direct property that is explicitly marked to be the
+	     * primary geometry property of the feature type.
+	     */
+	    for (PropertyInfo pi : ci.properties().values()) {
+		if (JsonSchemaTarget.isEncoded(pi) && "true".equalsIgnoreCase(pi.taggedValue("jsonPrimaryGeometry"))) {
+		    primaryGeometryPi = pi;
+		}
+	    }
+
+	    /*
+	     * Second, if the primary geometry was not explicitly marked or found, determine
+	     * if the feature type only has a single geometric property (without tag
+	     * jsonPrimaryGeometry being equal to, ignoring case, "false"), and owns that
+	     * property. If so, note it as primary geometry.
+	     */
+	    if (primaryGeometryPi == null) {
+		List<PropertyInfo> geometryPis = new ArrayList<>();
+		for (PropertyInfo pi : ci.propertiesAll()) {
+		    if (JsonSchemaTarget.isEncoded(pi)) {
+			Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
+			if (typeInfoOpt.isPresent() && typeInfoOpt.get().isGeometry()) {
+			    geometryPis.add(pi);
+			}
+		    }
+		}
+		if (geometryPis.size() == 1) {
+		    PropertyInfo geomPi = geometryPis.get(0);
+		    if (geomPi.inClass() == ci
+			    && !"false".equalsIgnoreCase(geomPi.taggedValue("jsonPrimaryGeometry"))) {
+			primaryGeometryPi = geomPi;
+		    }
+		}
+	    }
+
+	    if (primaryGeometryPi != null) {
+		specialPisToMapButNotEncode.add(primaryGeometryPi);
+		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryGeometryPi);
+		if (typeInfoOpt.isPresent()) {
+
+		    JsonSchema geomJs = new JsonSchema();
+		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
+		    jsClassContents.property("geometry", geomJs);
+
+		} else {
+		    MessageContext mc = result.addError(this, 128, primaryGeometryPi.name(), ci.name(),
+			    primaryGeometryPi.typeInfo().name);
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		    }
+		}
+
+		if (primaryGeometryPi.cardinality().maxOccurs > 1) {
+		    MessageContext mc = result.addWarning(this, 127, primaryGeometryPi.name(), ci.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		    }
+		}
+	    }
+
+	} else if (ci.category() != Options.UNION && !ci.properties().isEmpty()
+		&& (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
+			|| ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_MULTIGEOMPROPS))) {
+
+	    Map<PropertyInfo, JsonSchemaTypeInfo> typeInfoByGeometryPi = new HashMap<>();
+	    PropertyInfo directGeometryPi = null;
+	    Set<PropertyInfo> directProperties = new HashSet<>(ci.properties().values());
+
+	    for (PropertyInfo pi : ci.propertiesAll()) {
+
+		if (!JsonSchemaTarget.isEncoded(pi)) {
+		    result.addInfo(this, 9, pi.name(), pi.inClass().name());
+		    continue;
+		}
+
+		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(pi);
+
+		if (typeInfoOpt.isPresent()) {
+
+		    JsonSchemaTypeInfo typeInfo = typeInfoOpt.get();
+
+		    if (typeInfo.isGeometry()
+			    && (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
+				    || "true".equalsIgnoreCase(pi.taggedValue("defaultGeometry")))) {
+
+			if (directProperties.contains(pi)) {
+			    directGeometryPi = pi;
+			}
+
+			typeInfoByGeometryPi.put(pi, typeInfo);
+		    }
+		}
+	    }
+
+	    if (directGeometryPi != null) {
+
+		if (typeInfoByGeometryPi.size() == 1) {
+
+		    // encode the default geometry property
+		    JsonSchema geomJs = new JsonSchema();
+		    specialPropertyValueRestriction(geomJs, directGeometryPi,
+			    typeInfoByGeometryPi.get(directGeometryPi));
+		    jsClassContents.property("geometry", geomJs);
+
+		    if (directGeometryPi.cardinality().maxOccurs > 1) {
+			MessageContext mc = result.addWarning(this, 117, directGeometryPi.name(), ci.name());
+			if (mc != null) {
+			    mc.addDetail(this, 1, directGeometryPi.fullName());
+			}
+		    }
+
+		    /*
+		     * keep track of this property, so that it can be ignored later on when encoding
+		     * the other properties of the class
+		     */
+		    specialPisToMapButNotEncode.add(directGeometryPi);
+
+		} else if (typeInfoByGeometryPi.size() > 1) {
+
+		    // inform about multiple default geometry properties
+		    String geometryPiNames = typeInfoByGeometryPi.keySet().stream().map(pi -> pi.name()).sorted()
+			    .collect(Collectors.joining(", "));
+
+		    MessageContext mc = result.addError(this, 112, ci.name(), geometryPiNames);
+		    if (mc != null) {
+			mc.addDetail(this, 0, ci.fullName());
+		    }
+		}
+	    }
+	}
+    }
+
     /**
      * @param ci the class for which to identify the entity type member path
      * @return the path of the JSON member that is used to encode the type of the
@@ -1447,8 +1917,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    } else {
 
 		// check if the entity type member is added to the type itself
-		if (ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() != Options.UNION
-			|| ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+		if (matchesEntityTypeCreationRules(ci)) {
 		    return (ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES) ? "properties/" : "")
 			    + jsonSchemaTarget.getEntityTypeName();
 		} else {
@@ -1521,9 +1990,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 		    } else {
 
-			if (supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE)
-				&& supertype.category() != Options.MIXIN && (supertype.category() != Options.UNION
-					|| supertype.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))) {
+			if (matchesEntityTypeCreationRules(supertype)) {
 
 			    EncodingInfos entityTypeEncInfos = new EncodingInfos();
 
@@ -1542,6 +2009,14 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return null;
+    }
+
+    private boolean matchesEntityTypeCreationRules(ClassInfo ci) {
+	return ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE) && (ci.category() == Options.FEATURE
+		|| ci.category() == Options.OBJECT
+		|| (ci.category() == Options.UNION && ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_UNION))
+		|| (ci.category() == Options.DATATYPE
+			&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ENTITYTYPE_DATATYPE)));
     }
 
     /**
@@ -1694,7 +2169,11 @@ public class JsonSchemaDocument implements MessageSource {
 	String s = pi.taggedValue("inlineOrByReference");
 
 	if (StringUtils.isBlank(s)) {
-	    return jsonSchemaTarget.getInlineOrByRefDefault();
+	    if (pi.matches(JsonSchemaConstants.RULE_PROP_INLINEORBYREFTAG)) {
+		return pi.isAttribute() ? "inline" : "byReference";
+	    } else {
+		return jsonSchemaTarget.getInlineOrByRefDefault();
+	    }
 	} else {
 	    return s;
 	}
@@ -1708,7 +2187,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    byRefInfo.setRef(jsonSchemaTarget.byReferenceJsonSchemaDefinition().get());
 	} else {
 	    byRefInfo.setSimpleType(JsonSchemaType.STRING);
-	    byRefInfo.setKeyword(new FormatKeyword("uri"));
+	    byRefInfo.setKeyword(new FormatKeyword(JsonSchemaTarget.byReferenceFormat));
 	}
 
 	return byRefInfo;
@@ -1733,6 +2212,7 @@ public class JsonSchemaDocument implements MessageSource {
 	boolean isAssociationClassRole = valueTypeOptions.isAssociationClassRole(pi.name());
 	SortedMap<String, JsonSchemaTypeInfo> valueTypeOptionsByTypeName = new TreeMap<>();
 	boolean byReferenceAllowed = false;
+	String unit = null;
 
 	if (typeInfoOpt.isPresent()) {
 
@@ -1777,6 +2257,18 @@ public class JsonSchemaDocument implements MessageSource {
 
 		} else {
 
+		    if (typeInfo.isMeasure() && pi.matches(JsonSchemaConstants.RULE_PROP_MEASURE)) {
+
+			unit = pi.taggedValue("unit");
+			if (StringUtils.isNotBlank(unit)) {
+			    typeInfo.setRef(null);
+			    typeInfo.setSimpleType(JsonSchemaType.NUMBER);
+			} else {
+			    typeInfo.setRef(JsonSchemaTarget.measureObjectUri);
+			    typeInfo.setSimpleType(null);
+			}
+		    }
+
 		    typeOptions.add(typeInfo);
 		}
 	    }
@@ -1791,6 +2283,10 @@ public class JsonSchemaDocument implements MessageSource {
 
 	if (pi.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
 	    this.annotationGenerator.applyAnnotations(jsProp, pi);
+	}
+
+	if (StringUtils.isNotBlank(unit)) {
+	    jsProp.add(new GenericAnnotationKeyword("unit", new JsonString(unit)));
 	}
 
 	JsonSchema parentForTypeSchema = jsProp;
@@ -2438,25 +2934,8 @@ public class JsonSchemaDocument implements MessageSource {
 		} else {
 
 		    JsonSchemaDocument jsd = jsdopt.get();
-
-		    String schemaId = jsd.getSchemaId();
-
-		    if (jsonSchemaVersion != JsonSchemaVersion.OPENAPI_30
-			    && valueType.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
-
-			// the encoding of the value type contains an anchor - use it
-			jsTypeInfo.setRef(schemaId + "#" + typeName);
-
-		    } else {
-
-			// use a JSON Pointer to reference the definition of the value type
-			if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_07
-				|| jsd.getSchemaVersion() == JsonSchemaVersion.OPENAPI_30) {
-			    jsTypeInfo.setRef(schemaId + "#/definitions/" + typeName);
-			} else {
-			    jsTypeInfo.setRef(schemaId + "#/$defs/" + typeName);
-			}
-		    }
+		    String schemaRef = jsonSchemaDefinitionReference(jsd, valueType);
+		    jsTypeInfo.setRef(schemaRef);
 		}
 	    }
 	}
@@ -2503,7 +2982,18 @@ public class JsonSchemaDocument implements MessageSource {
     public void createCollectionDefinitions() {
 
 	// create uniform collections
-	for (ClassInfo ci : this.classesByName.values()) {
+	Collection<ClassInfo> classesForUniformCollections;
+
+	if (this.isSingularCollectionsSchemaDocument()) {
+	    classesForUniformCollections = jsonSchemaTarget.getAllEncodedTypes().stream()
+		    .filter(type -> type.category() == Options.FEATURE
+			    && type.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE))
+		    .collect(Collectors.toSet());
+	} else {
+	    classesForUniformCollections = this.classesByName.values();
+	}
+
+	for (ClassInfo ci : classesForUniformCollections) {
 
 	    if (ci.category() == Options.FEATURE
 		    && ci.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE)) {
@@ -2520,7 +3010,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
-	if (this.isFeatureCollectionDocument()) {
+	if (this.isSingularCollectionsSchemaDocument() || this.isFeatureCollectionDocument()) {
 	    // create general FeatureCollection schema
 	    Set<ClassInfo> allEncodedTypes = jsonSchemaTarget.getAllEncodedTypes();
 	    Set<ClassInfo> featureCollectionMembers = allEncodedTypes.stream()
@@ -2532,7 +3022,14 @@ public class JsonSchemaDocument implements MessageSource {
 			JsonSchemaTarget.preventUnknownTypesInFeatureCollection, new JsonSchema(false));
 	    }
 	}
+    }
 
+    /**
+     * @return <code>true</code>, if this is the schema document where all
+     *         collection schema definitions are created; else <code>false</code>
+     */
+    private boolean isSingularCollectionsSchemaDocument() {
+	return this.isSingularCollectionsSchema;
     }
 
     private void createCollectionDefinition(String defName, Set<ClassInfo> collectionMembersIn,
@@ -2766,9 +3263,9 @@ public class JsonSchemaDocument implements MessageSource {
 	case 100:
 	    return "Exception occurred while writing JSON Schema to file: $1$. Exception message is: $2$.";
 	case 101:
-	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength' or 'size') could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
+	    return "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
 	case 102:
-	    return "Restricting facet 'maxLength' of basic type '$1$' defined by tagged value 'length' (or 'maxLength' or 'size') has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
+	    return "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
 	case 103:
 	    return "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as a double. Found value: $2$. The facet will be ignored.";
 	case 104:
@@ -2818,6 +3315,24 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??Class '$1$' gets constraints from two external schemas, one from a base schema or supertype mapping, one from the mapping of supertype '$2$'. The encodings of these two schemas both define an $3$ member, but in different ways, which leads to ambiguity. The encoding infos from supertype '$2$' are ignored in the computation of encoding infos for class '$1$'.";
 	case 126:
 	    return "??Cannot add class '$1$' to collection '$2$', because the class has no entity type member.";
+	case 127:
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	case 128:
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	case 129:
+	    return "Property '$1$' of type '$2$' has been identified as primary place of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"place\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	case 130:
+	    return "Property '$1$' of type '$2$' has been identified as primary place of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"place\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	case 131:
+	    return "The primary instant property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary instant property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 132:
+	    return "The primary interval start property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval start property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 133:
+	    return "The primary interval end property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval end property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 134:
+	    return "The primary interval property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 135:
+	    return "The primary interval of feature type '$1$' is defined both through an interval property ('$2$') as well as by start and/or end property (start: '$3$', end: '$4$'). This represents an inconsistency. All of these properties will not be encoded, and ignored when encoding the time restriction.";
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}

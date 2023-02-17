@@ -8,8 +8,8 @@
     <MapEntry type="Decimal" rule="*" targetType="number" param=""/>
     <MapEntry type="Number" rule="*" targetType="number" param=""/>
     <MapEntry type="Real" rule="*" targetType="number" param=""/>
-    <MapEntry type="Measure" rule="*" targetType="number" param=""/>
-    <MapEntry type="Length" rule="*" targetType="number" param=""/>
+    <MapEntry type="Measure" rule="*" targetType="number" param="measure"/>
+    <MapEntry type="Length" rule="*" targetType="number" param="measure"/>
     <MapEntry type="Date" rule="*" targetType="string" param="keywords{format=date}"/>
     <MapEntry type="DateTime" rule="*" targetType="string" param="keywords{format=date-time}"/>
 	<MapEntry type="Time" rule="*" targetType="string" param="keywords{format=time}"/>

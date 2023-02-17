@@ -43,6 +43,7 @@ public class JsonSchemaConstants {
     public static final String ME_PARAM_KEYWORDS = "keywords";
     public static final String ME_PARAM_GEOMETRY = "geometry";
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
+    public static final String ME_PARAM_MEASURE = "measure";
     public static final String ME_PARAM_ENCODING_INFOS = "encodingInfos";
     public static final String ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_PATH = "entityTypeMemberPath";
     public static final String ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_REQUIRED = "entityTypeMemberRequired";
@@ -51,7 +52,7 @@ public class JsonSchemaConstants {
     public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_TYPES = "idMemberTypes";
     public static final String ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_FORMATS = "idMemberFormats";
     
-    
+    public static final String PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS = "useAnchorsInLinksToGeneratedSchemaDefinitions";
     /**
      * Optional changes to the default documentation template and the default
      * strings for descriptors without value
@@ -78,15 +79,18 @@ public class JsonSchemaConstants {
     public static final String PARAM_ENTITY_TYPE_NAME = "entityTypeName";
 
     public static final String PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION = "byReferenceJsonSchemaDefinition";
-
+    public static final String PARAM_BY_REFERENCE_FORMAT = "byReferenceFormat";
+    
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_COLLECTIONS = "baseJsonSchemaDefinitionForCollections";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES = "baseJsonSchemaDefinitionForFeatureTypes";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES = "baseJsonSchemaDefinitionForObjectTypes";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES = "baseJsonSchemaDefinitionForDataTypes";
-
+        
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForFeatureTypes_encodingInfos";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForObjectTypes_encodingInfos";
     public static final String PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS = "baseJsonSchemaDefinitionForDataTypes_encodingInfos";
+    
+    public static final String PARAM_COLLECTION_SCHEMA_FILE_NAME = "collectionSchemaFileName";
     
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_OBJECT_IDENTIFIER_TYPE = "objectIdentifierType";
@@ -99,13 +103,17 @@ public class JsonSchemaConstants {
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";
     
     public static final String PARAM_LINK_OBJECT_URI = "linkObjectUri";
+    public static final String PARAM_MEASURE_OBJECT_URI = "measureObjectUri";
+    
 
     public static final String RULE_ALL_DOCUMENTATION = "rule-json-all-documentation";
+    public static final String RULE_CLS_DOCUMENTATION_ENUM_DESCRIPTION = "rule-json-cls-documentation-enumDescription";
     public static final String RULE_ALL_NOT_ENCODED = "rule-json-all-notEncoded";
 
     public static final String RULE_CLS_BASIC_TYPE = "rule-json-cls-basictype";
     public static final String RULE_CLS_NAME_AS_ANCHOR = "rule-json-cls-name-as-anchor";
     public static final String RULE_CLS_NAME_AS_ENTITYTYPE = "rule-json-cls-name-as-entityType";
+    public static final String RULE_CLS_NAME_AS_ENTITYTYPE_DATATYPE = "rule-json-cls-name-as-entityType-dataType";
     public static final String RULE_CLS_NAME_AS_ENTITYTYPE_UNION = "rule-json-cls-name-as-entityType-union";
     // Specialization not implemented yet; need for it unclear at the moment
 //    public static final String RULE_CLS_SPECIALIZATION = "rule-json-cls-specialization";
@@ -120,10 +128,15 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_UNION_TYPE_DISCRIMINATOR = "rule-json-cls-union-typeDiscriminator";
     public static final String RULE_CLS_CODELIST_URI_FORMAT = "rule-json-cls-codelist-uri-format";
     public static final String RULE_CLS_CODELIST_LINK = "rule-json-cls-codelist-link";
+    public static final String RULE_CLS_PRIMARY_GEOMETRY = "rule-json-cls-primaryGeometry";
+    public static final String RULE_CLS_PRIMARY_PLACE = "rule-json-cls-primaryPlace";
+    public static final String RULE_CLS_PRIMARY_TIME = "rule-json-cls-primaryTime";
     public static final String RULE_PROP_VOIDABLE = "rule-json-prop-voidable";
     public static final String RULE_PROP_READONLY = "rule-json-prop-readOnly";
     public static final String RULE_PROP_DERIVEDASREADONLY = "rule-json-prop-derivedAsReadOnly";
     public static final String RULE_PROP_INITIAL_VALUE_AS_DEFAULT = "rule-json-prop-initialValueAsDefault";
+    public static final String RULE_PROP_INLINEORBYREFTAG = "rule-json-prop-inlineOrByReferenceTag";
+    public static final String RULE_PROP_MEASURE = "rule-json-prop-measure";
 
     public static final String RULE_CLS_VALUE_TYPE_OPTIONS = "rule-json-cls-valueTypeOptions";
     public static final String RULE_CLS_RESTRICT_EXT_ENTITY_TYPE_MEMBER = "rule-json-cls-restrictExternalEntityTypeMember";

@@ -1,16 +1,16 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://example.org/schema/jsonfg",
+  "$id": "https://example.org/schemas/subpackage.json",
   "$defs": {
     "FT3": {
       "$anchor": "FT3",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#MixinC"
+          "$ref": "https://example.org/schemas/main.json#/$defs/MixinC"
         },
         {
-          "$ref": "https://example.org/schema/jsonfg#FT2"
+          "$ref": "https://example.org/schemas/main.json#/$defs/FT2"
         },
         {
           "type": "object",
@@ -64,7 +64,7 @@
                       }
                     },
                     "then": {
-                      "$ref": "https://example.org/schema/jsonfg#FT3"
+                      "$ref": "#/$defs/FT3"
                     }
                   },
                   {
@@ -86,7 +86,7 @@
                       }
                     },
                     "then": {
-                      "$ref": "https://example.org/schema/jsonfg#FT4"
+                      "$ref": "#/$defs/FT4"
                     }
                   },
                   {
@@ -108,7 +108,7 @@
                       }
                     },
                     "then": {
-                      "$ref": "https://example.org/schema/jsonfg#FT5"
+                      "$ref": "#/$defs/FT5"
                     }
                   },
                   {
@@ -136,7 +136,7 @@
                       }
                     },
                     "then": {
-                      "$ref": "https://example.org/schema/jsonfg#FT3"
+                      "$ref": "#/$defs/FT3"
                     }
                   }
                 ]
@@ -150,7 +150,7 @@
       "$anchor": "FT4",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#FT3"
+          "$ref": "#/$defs/FT3"
         },
         {
           "type": "object"
@@ -167,7 +167,7 @@
             "features": {
               "type": "array",
               "items": {
-                "$ref": "https://example.org/schema/jsonfg#FT4"
+                "$ref": "#/$defs/FT4"
               }
             }
           }
@@ -178,7 +178,7 @@
       "$anchor": "FT5",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#FT3"
+          "$ref": "#/$defs/FT3"
         },
         {
           "type": "object"
@@ -195,7 +195,7 @@
             "features": {
               "type": "array",
               "items": {
-                "$ref": "https://example.org/schema/jsonfg#FT5"
+                "$ref": "#/$defs/FT5"
               }
             }
           }

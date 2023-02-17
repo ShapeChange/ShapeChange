@@ -42,6 +42,7 @@
    <rules>
     <EncodingRule name="myPlainJson" extends="defaultPlainJson">
      <rule name="rule-json-all-documentation"/>  
+     <rule name="rule-json-cls-documentation-enumDescription"/>
      <rule name="rule-json-cls-union-propertyCount"/>
     </EncodingRule>
    </rules>

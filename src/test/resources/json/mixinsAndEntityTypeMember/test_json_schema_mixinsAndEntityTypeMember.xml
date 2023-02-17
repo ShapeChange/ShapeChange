@@ -42,6 +42,7 @@
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://beta.schemas.opengis.net/json-fg/feature.json"/>
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
    <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
    <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="defaultEncodingRule" value="myJsonFGJson"/>
    <rules>
@@ -71,6 +72,7 @@
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
    <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
    <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
    <rules>
@@ -95,6 +97,7 @@
    <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
    <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
    <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
    <rules>

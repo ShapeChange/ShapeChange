@@ -1,11 +1,11 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
   "definitions": {
     "CurvePositionSpecification": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+          "$ref": "#/definitions/PositionSpecification"
         },
         {
           "type": "object"
@@ -34,7 +34,7 @@
               "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+              "$ref": "#/definitions/PlaceSpecification"
             }
           ]
         }
@@ -48,7 +48,7 @@
     "LocationSpecification": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+          "$ref": "#/definitions/PlaceSpecification"
         },
         {
           "type": "object"
@@ -80,7 +80,7 @@
     "PointPositionSpecification": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+          "$ref": "#/definitions/PositionSpecification"
         },
         {
           "type": "object"
@@ -90,7 +90,7 @@
     "PositionSpecification": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+          "$ref": "#/definitions/PlaceSpecification"
         },
         {
           "type": "object"
@@ -100,7 +100,7 @@
     "SurfacePositionSpecification": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+          "$ref": "#/definitions/PositionSpecification"
         },
         {
           "type": "object"
@@ -131,7 +131,7 @@
             {
               "allOf": [
                 {
-                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/FeaturePlaceRelationship"
+                  "$ref": "#/definitions/FeaturePlaceRelationship"
                 },
                 {
                   "type": "object",
@@ -150,7 +150,7 @@
                             }
                           },
                           "then": {
-                            "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+                            "$ref": "#/definitions/LocationSpecification"
                           },
                           "else": {
                             "if": {
@@ -161,7 +161,7 @@
                               }
                             },
                             "then": {
-                              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                              "$ref": "#/definitions/PointPositionSpecification"
                             },
                             "else": false
                           }
@@ -184,7 +184,7 @@
     "TS10_FT2": {
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT1"
+          "$ref": "#/definitions/TS10_FT1"
         },
         {
           "type": "object",
@@ -197,7 +197,7 @@
                 {
                   "allOf": [
                     {
-                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/FeaturePlaceRelationship"
+                      "$ref": "#/definitions/FeaturePlaceRelationship"
                     },
                     {
                       "type": "object",
@@ -216,7 +216,7 @@
                                 }
                               },
                               "then": {
-                                "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+                                "$ref": "#/definitions/PointPositionSpecification"
                               },
                               "else": false
                             }

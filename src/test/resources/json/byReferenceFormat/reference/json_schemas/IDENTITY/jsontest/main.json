@@ -1,0 +1,48 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "roleT": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "roleFT2": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri-reference"
+              },
+              {
+                "$ref": "#FT2"
+              }
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "roleFT1": {
+          "$ref": "#FT1"
+        }
+      },
+      "required": [
+        "roleFT1"
+      ]
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object"
+    }
+  }
+}

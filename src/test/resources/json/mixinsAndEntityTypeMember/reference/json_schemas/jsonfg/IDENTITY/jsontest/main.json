@@ -1,7 +1,7 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://example.org/schema/jsonfg",
+  "$id": "https://example.org/schemas/main.json",
   "$defs": {
     "ExtFTSubtype": {
       "$anchor": "ExtFTSubtype",
@@ -40,7 +40,7 @@
             "features": {
               "type": "array",
               "items": {
-                "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+                "$ref": "#/$defs/ExtFTSubtype"
               }
             }
           }
@@ -54,7 +54,7 @@
           "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
         },
         {
-          "$ref": "https://example.org/schema/jsonfg#MixinA"
+          "$ref": "#/$defs/MixinA"
         },
         {
           "type": "object",
@@ -91,7 +91,7 @@
             "features": {
               "type": "array",
               "items": {
-                "$ref": "https://example.org/schema/jsonfg#FT1"
+                "$ref": "#/$defs/FT1"
               }
             }
           }
@@ -105,7 +105,7 @@
           "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
         },
         {
-          "$ref": "https://example.org/schema/jsonfg#MixinB"
+          "$ref": "#/$defs/MixinB"
         },
         {
           "type": "object"
@@ -144,7 +144,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT3"
                       }
                     }
                   }
@@ -169,7 +169,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT4"
                       }
                     }
                   }
@@ -194,7 +194,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT5"
                       }
                     }
                   }
@@ -225,7 +225,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT2"
+                        "$ref": "#/$defs/FT2"
                       }
                     }
                   }
@@ -254,7 +254,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT3"
                       }
                     },
                     {
@@ -269,7 +269,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT4"
                       }
                     },
                     {
@@ -284,7 +284,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT5"
                       }
                     },
                     {
@@ -305,7 +305,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT2"
+                        "$ref": "#/$defs/FT2"
                       }
                     }
                   ]
@@ -348,7 +348,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+                        "$ref": "#/$defs/ExtFTSubtype"
                       }
                     }
                   }
@@ -373,7 +373,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT1"
+                        "$ref": "#/$defs/FT1"
                       }
                     }
                   }
@@ -398,7 +398,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT3"
                       }
                     }
                   }
@@ -423,7 +423,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT4"
                       }
                     }
                   }
@@ -448,7 +448,7 @@
                     "features": {
                       "type": "array",
                       "items": {
-                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT5"
                       }
                     }
                   }
@@ -477,7 +477,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#ExtFTSubtype"
+                        "$ref": "#/$defs/ExtFTSubtype"
                       }
                     },
                     {
@@ -492,7 +492,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT1"
+                        "$ref": "#/$defs/FT1"
                       }
                     },
                     {
@@ -507,7 +507,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT3"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT3"
                       }
                     },
                     {
@@ -522,7 +522,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT4"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT4"
                       }
                     },
                     {
@@ -537,7 +537,7 @@
                         }
                       },
                       "then": {
-                        "$ref": "https://example.org/schema/jsonfg#FT5"
+                        "$ref": "https://example.org/schemas/subpackage.json#/$defs/FT5"
                       }
                     }
                   ]

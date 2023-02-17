@@ -2,6 +2,6 @@
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
    <MapEntry param="encodingInfos{idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
              rule="*"
-             targetType="https://example.org/baseuri/ts9/ts9/test9.json#/$defs/TS9_FT1"
+             targetType="https://example.org/baseuri/ts9/ts9/test9.json#TS9_FT1"
              type="TS9_FT1"/>
 </mapEntries>

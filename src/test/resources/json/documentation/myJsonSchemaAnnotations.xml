@@ -4,11 +4,12 @@
     <SimpleAnnotation annotation="title" descriptorOrTaggedValue="alias" noValueBehavior="ignore"/>
     <TemplateAnnotation annotation="description" valueTemplate="Definition: [[definition]]  Description: [[description]]" noValueValue="[None Specified]" noValueBehavior="populateOnce"/>
     <SimpleAnnotation annotation="unit" descriptorOrTaggedValue="TV:unit" noValueBehavior="ignore"/>
+    <SimpleAnnotation annotation="lesbarerName" descriptorOrTaggedValue="TV:lesbarerName" noValueBehavior="ignore"/>
     <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
     <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
     <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
     <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
-    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="property"/>    
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="ignore" noValueValue="0" type="integer" appliesTo="property"/>    
     <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues" />
     <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
   </annotations>

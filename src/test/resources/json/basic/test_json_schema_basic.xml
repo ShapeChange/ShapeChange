@@ -99,6 +99,7 @@
     <EncodingRule name="my201909json" extends="json_basic">
      <rule name="rule-json-cls-basictype"/>
      <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-name-as-entityType-dataType"/>
      <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>
@@ -157,6 +158,7 @@
     <EncodingRule name="my202012json" extends="json_basic">
      <rule name="rule-json-cls-basictype"/>
      <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-name-as-entityType-dataType"/>
      <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>
@@ -270,6 +272,7 @@
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonSchemaVersion" value="openapi30"/>
 
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>

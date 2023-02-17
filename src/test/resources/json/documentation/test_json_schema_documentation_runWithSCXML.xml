@@ -64,6 +64,13 @@
                                     noValueBehavior="ignore"
                                     noValueValue=""
                                     type="string"/>
+                  <SimpleAnnotation annotation="lesbarerName"
+                                    appliesTo="all"
+                                    arrayValue="false"
+                                    descriptorOrTaggedValue="TV:lesbarerName"
+                                    noValueBehavior="ignore"
+                                    noValueValue=""
+                                    type="string"/>
                   <SimpleAnnotation annotation="label"
                                     appliesTo="all"
                                     arrayValue="false"
@@ -96,7 +103,7 @@
                                     appliesTo="property"
                                     arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
-                                    noValueBehavior="populateOnce"
+                                    noValueBehavior="ignore"
                                     noValueValue="0"
                                     type="integer"/>
                   <TemplateAnnotation annotation="isDefinedBy"
@@ -128,6 +135,7 @@
          <rules>
             <EncodingRule extends="defaultPlainJson" name="myPlainJson">
                <rule name="rule-json-all-documentation"/>
+               <rule name="rule-json-cls-documentation-enumDescription"/>
                <rule name="rule-json-cls-union-propertyCount"/>
             </EncodingRule>
          </rules>
@@ -146,8 +154,8 @@
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
             <MapEntry param="" rule="*" targetType="number" type="Number"/>
             <MapEntry param="" rule="*" targetType="number" type="Real"/>
-            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
             <MapEntry param="keywords{format=date}"
                       rule="*"
                       targetType="string"
@@ -222,6 +230,13 @@
                                     noValueBehavior="ignore"
                                     noValueValue=""
                                     type="string"/>
+                  <SimpleAnnotation annotation="lesbarerName"
+                                    appliesTo="all"
+                                    arrayValue="false"
+                                    descriptorOrTaggedValue="TV:lesbarerName"
+                                    noValueBehavior="ignore"
+                                    noValueValue=""
+                                    type="string"/>
                   <SimpleAnnotation annotation="label"
                                     appliesTo="all"
                                     arrayValue="false"
@@ -254,7 +269,7 @@
                                     appliesTo="property"
                                     arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
-                                    noValueBehavior="populateOnce"
+                                    noValueBehavior="ignore"
                                     noValueValue="0"
                                     type="integer"/>
                   <TemplateAnnotation annotation="isDefinedBy"
@@ -304,8 +319,8 @@
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
             <MapEntry param="" rule="*" targetType="number" type="Number"/>
             <MapEntry param="" rule="*" targetType="number" type="Real"/>
-            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
             <MapEntry param="keywords{format=date}"
                       rule="*"
                       targetType="string"

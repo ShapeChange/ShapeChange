@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#DT"
+             type="DT"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#FT"
+             type="FT"/>
+</mapEntries>

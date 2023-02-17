@@ -1,5 +1,5 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri_from_config/t/subpackage.json",
   "title": "test sub-package",
@@ -25,7 +25,6 @@
                   "title": "attribute dep",
                   "description": "Definition: attDep Def  Description: attDep Desc",
                   "deprecated": true,
-                  "code": 0,
                   "type": "array",
                   "items": {
                     "type": "integer"

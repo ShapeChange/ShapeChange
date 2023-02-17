@@ -1,7 +1,7 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://example.org/schema/jsonfg",
+  "$id": "https://example.org/schemas/main.json",
   "title": "test application schema",
   "description": "Definition: main package Def  Description: main package Desc",
   "$defs": {

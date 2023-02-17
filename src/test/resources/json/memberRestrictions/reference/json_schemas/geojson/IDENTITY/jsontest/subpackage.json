@@ -1,7 +1,7 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://example.org/schema/jsonfg",
+  "$id": "https://example.org/schemas/subpackage.json",
   "title": "test sub-package",
   "description": "Definition: subpackage Def  Description: subpackage Desc",
   "$defs": {
@@ -10,7 +10,7 @@
       "description": "Definition: FT3 Def  Description: FT3 Desc",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#FT2"
+          "$ref": "https://example.org/schemas/main.json#FT2"
         },
         {
           "type": "object",
@@ -38,7 +38,7 @@
       "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#FT3"
+          "$ref": "#FT3"
         },
         {
           "type": "object"
@@ -50,7 +50,7 @@
       "description": "Definition: [None Specified]  Description: [None Specified]",
       "allOf": [
         {
-          "$ref": "https://example.org/schema/jsonfg#FT3"
+          "$ref": "#FT3"
         },
         {
           "type": "object"

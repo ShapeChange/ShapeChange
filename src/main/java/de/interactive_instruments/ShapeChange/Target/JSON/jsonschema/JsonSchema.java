@@ -211,6 +211,25 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	return this;
     }
 
+    public JsonSchema enumDescription(String name, JsonSchema enumSchema) {
+
+	Optional<JsonSchemaKeyword> lookup = this.stream().filter(keyword -> keyword instanceof EnumDescriptionKeyword)
+		.findFirst();
+
+	EnumDescriptionKeyword keyword;
+
+	if (lookup.isEmpty()) {
+	    keyword = new EnumDescriptionKeyword();
+	    this.add(keyword);
+	} else {
+	    keyword = (EnumDescriptionKeyword) lookup.get();
+	}
+
+	keyword.put(name, enumSchema);
+
+	return this;
+    }
+
     public JsonSchema examples(JsonValue... value) {
 	this.add(new ExamplesKeyword(Arrays.asList(value)));
 	return this;

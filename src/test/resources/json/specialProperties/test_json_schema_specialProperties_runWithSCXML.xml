@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+                          xmlns:xi="http://www.w3.org/2001/XInclude"
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+   <input id="input">
+      <parameter name="inputModelType" value="SCXML"/>
+      <parameter name="repositoryFileNameOrConnectionString"
+                 value="src/test/resources/json/specialProperties/test_json_schema_specialProperties.zip"/>
+      <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+      <parameter name="publicOnly" value="true"/>
+      <parameter name="checkingConstraints" value="enabled"/>
+      <parameter name="dontConstructAssociationNames" value="true"/>
+      <stereotypeAliases>
+         <StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+         <StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+         <StereotypeAlias alias="bundle" wellknown=""/>
+         <StereotypeAlias alias="leaf" wellknown=""/>
+         <StereotypeAlias alias="abstract" wellknown=""/>
+         <StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+         <StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+         <StereotypeAlias alias="request" wellknown="DataType"/>
+         <StereotypeAlias alias="response" wellknown="DataType"/>
+         <StereotypeAlias alias="feature" wellknown="FeatureType"/>
+         <StereotypeAlias alias="interface" wellknown="Type"/>
+         <StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+         <StereotypeAlias alias="property" wellknown=""/>
+         <StereotypeAlias alias="enum" wellknown=""/>
+      </stereotypeAliases>
+   </input>
+   <log>
+      <parameter name="reportLevel" value="INFO"/>
+      <parameter name="logFile" value="testResults/json/specialProperties/log.xml"/>
+   </log>
+   <transformers>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform"
+                   id="IDENTITY"
+                   input="input"
+                   mode="enabled"/>
+   </transformers>
+   <targets>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="IDENTITY"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/specialProperties/json_schemas/jsonfg"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes"
+                          value="https://beta.schemas.opengis.net/json-fg/feature.json"/>
+         <targetParameter name="defaultEncodingRule" value="myJsonFGJson"/>
+         <rules>
+            <EncodingRule extends="defaultGeoJson" name="myJsonFGJson">
+               <rule name="rule-json-cls-primaryGeometry"/>
+               <rule name="rule-json-cls-primaryPlace"/>
+               <rule name="rule-json-cls-primaryTime"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.com/schema.json#/$defs/TimePeriod"
+                      type="TM_Period"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polygon.json"
+                      type="GM_Surface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+                      type="GM_Solid"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
+              inputs="IDENTITY"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/specialProperties/json_schemas/geojson"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes"
+                          value="https://geojson.org/schema/Feature.json"/>
+         <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
+         <rules>
+            <EncodingRule extends="defaultGeoJson" name="myGeoJson">
+               <rule name="rule-json-cls-primaryGeometry"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="https://example.com/schema.json#/$defs/TimePeriod"
+                      type="TM_Period"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+                      type="GM_Solid"/>
+         </mapEntries>
+      </Target>
+   </targets>
+</ShapeChangeConfiguration>

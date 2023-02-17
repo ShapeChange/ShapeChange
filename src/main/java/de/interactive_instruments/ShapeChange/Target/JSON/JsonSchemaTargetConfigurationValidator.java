@@ -76,15 +76,16 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES,
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS,
 	    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION,
+	    JsonSchemaConstants.PARAM_BY_REFERENCE_FORMAT, JsonSchemaConstants.PARAM_COLLECTION_SCHEMA_FILE_NAME,
 	    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
 	    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS,
 	    JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, JsonSchemaConstants.PARAM_JSON_BASE_URI,
 	    JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, JsonSchemaConstants.PARAM_LINK_OBJECT_URI,
-	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
-	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE,
+	    JsonSchemaConstants.PARAM_MEASURE_OBJECT_URI, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME,
+	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE,
 	    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS,
-	    JsonSchemaConstants.PARAM_PRETTY_PRINT, JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES)
-	    .collect(Collectors.toSet()));
+	    JsonSchemaConstants.PARAM_PRETTY_PRINT, JsonSchemaConstants.PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS,
+	    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
@@ -132,6 +133,15 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 
 	    isValid = false;
 	    result.addError(this, 100, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT, inlineOrByRefDefault);
+	}
+
+	String byRefFormat = options.parameterAsString(this.getClass().getName(),
+		JsonSchemaConstants.PARAM_BY_REFERENCE_FORMAT, "uri", false, true);
+
+	if (!"uri".equalsIgnoreCase(byRefFormat) && !"uri-reference".equalsIgnoreCase(byRefFormat)) {
+
+	    isValid = false;
+	    result.addError(this, 100, JsonSchemaConstants.PARAM_BY_REFERENCE_FORMAT, byRefFormat);
 	}
 
 	isValid = isValid && checkEncodingInfosParameter(

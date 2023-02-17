@@ -73,6 +73,7 @@
          <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos"
                           value="entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
          <targetParameter name="entityTypeName" value="@type"/>
+         <targetParameter name="collectionSchemaFileName" value="collections.json"/>
          <targetParameter name="defaultEncodingRule" value="myJsonFGJson"/>
          <rules>
             <EncodingRule extends="defaultGeoJson" name="myJsonFGJson">

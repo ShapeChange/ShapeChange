@@ -1,5 +1,5 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri_from_config/t/main.json",
   "title": "test application schema",
@@ -11,14 +11,24 @@
       "code": 0,
       "type": "string"
     },
-    "E": {
-      "$anchor": "E",
-      "description": "Definition: [None Specified]  Description: [None Specified]",
+    "E1": {
+      "$anchor": "E1",
+      "description": "Definition: E1 Def  Description: E1 Desc",
       "code": 0,
       "type": "string",
       "enum": [
         "e1",
         "e2"
+      ]
+    },
+    "E2": {
+      "$anchor": "E2",
+      "description": "Definition: E2 Def  Description: E2 Desc",
+      "code": 0,
+      "type": "string",
+      "enum": [
+        "1000",
+        "2000"
       ]
     },
     "FT1": {
@@ -62,7 +72,6 @@
               "title": "attribute two",
               "description": "Definition: [None Specified]  Description: [None Specified]",
               "unit": "m2",
-              "code": 0,
               "examples": [
                 "1.1",
                 "2.2",

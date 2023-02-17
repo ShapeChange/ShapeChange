@@ -84,11 +84,11 @@
 				},
 				"measure":{
 					"title":"measure",
-					"$ref":"http://shapechange.net/tmp/ows9/json/measure.json"
+					"$ref":"https://shapechange.net/tmp/ows9/json/measure.json"
 				},
 				"length":{
 					"title":"length",
-					"$ref":"http://shapechange.net/tmp/ows9/json/measure.json"
+					"$ref":"https://shapechange.net/tmp/ows9/json/measure.json"
 				},
 				"metadata":{
 					"title":"metadata",

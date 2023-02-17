@@ -1,5 +1,5 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri/ts11/ts11/test11.json",
   "$defs": {
@@ -15,11 +15,23 @@
       "$anchor": "TS11_MyNumber",
       "type": "number"
     },
+    "TS11_Number0to100Exclusive": {
+      "$anchor": "TS11_Number0to100Exclusive",
+      "allOf": [
+        {
+          "$ref": "#TS11_MyNumber"
+        },
+        {
+          "exclusiveMinimum": 0.0,
+          "exclusiveMaximum": 100.0
+        }
+      ]
+    },
     "TS11_Number0to360": {
       "$anchor": "TS11_Number0to360",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_NumberNonNegative"
+          "$ref": "#TS11_NumberNonNegative"
         },
         {
           "maximum": 360.0
@@ -30,7 +42,7 @@
       "$anchor": "TS11_NumberMinus180toPlus180",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyNumber"
+          "$ref": "#TS11_MyNumber"
         },
         {
           "minimum": -180.0,
@@ -42,7 +54,7 @@
       "$anchor": "TS11_NumberNonNegative",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_NumberOther"
+          "$ref": "#TS11_NumberOther"
         },
         {
           "minimum": 0.0
@@ -51,7 +63,7 @@
     },
     "TS11_NumberOther": {
       "$anchor": "TS11_NumberOther",
-      "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyNumber"
+      "$ref": "#TS11_MyNumber"
     },
     "TS11_String10": {
       "$anchor": "TS11_String10",
@@ -64,11 +76,22 @@
         }
       ]
     },
+    "TS11_String10OrMore": {
+      "$anchor": "TS11_String10OrMore",
+      "allOf": [
+        {
+          "type": "string"
+        },
+        {
+          "minLength": 10
+        }
+      ]
+    },
     "TS11_StringFormat": {
       "$anchor": "TS11_StringFormat",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyCharacterString"
+          "$ref": "#TS11_MyCharacterString"
         },
         {
           "format": "email"
@@ -79,7 +102,7 @@
       "$anchor": "TS11_StringPattern",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts11/ts11/test11.json#TS11_MyCharacterString"
+          "$ref": "#TS11_MyCharacterString"
         },
         {
           "pattern": "^[abc]{3}$"

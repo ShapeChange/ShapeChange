@@ -2,6 +2,6 @@
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri_from_config/t12/Test_Schema_12_Keywords_in_Map_Entries.json#/$defs/T12_DataType"
+             targetType="https://example.org/baseuri_from_config/t12/Test_Schema_12_Keywords_in_Map_Entries.json#T12_DataType"
              type="T12_DataType"/>
 </mapEntries>

@@ -2,10 +2,10 @@
 <mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts3/ts3/test3.json#/$defs/TS3_FT1"
+             targetType="https://example.org/baseuri/ts3/ts3/test3.json#TS3_FT1"
              type="TS3_FT1"/>
    <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
              rule="*"
-             targetType="https://example.org/baseuri/ts3/ts3/test3.json#/$defs/TS3_FT2"
+             targetType="https://example.org/baseuri/ts3/ts3/test3.json#TS3_FT2"
              type="TS3_FT2"/>
 </mapEntries>

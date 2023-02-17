@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/test/resources/json/byReferenceFormat/test_json_schema_byReferenceFormat.eapx"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <xi:include href="src/main/resources/config/StandardAliases.xml"/>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/json/byReferenceFormat/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="IDENTITY" input="input" mode="enabled"/>
+ </transformers>
+ <targets>
+  
+  <!-- ========== -->
+  <!-- Plain JSON -->
+  <!-- ========== -->
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">   
+   <targetParameter name="outputDirectory" value="testResults/json/byReferenceFormat/json_schemas"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="byReferenceFormat" value="uri-reference"/>
+   <targetParameter name="defaultEncodingRule" value="defaultPlainJson"/>
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>

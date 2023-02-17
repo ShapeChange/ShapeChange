@@ -1,5 +1,5 @@
 {
-  "$comment": "JSON Schema document created by ShapeChange - http://shapechange.net/",
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
   "$defs": {
@@ -7,7 +7,7 @@
       "$anchor": "CurvePositionSpecification",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+          "$ref": "#PositionSpecification"
         },
         {
           "type": "object"
@@ -30,7 +30,7 @@
               "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
-              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PlaceSpecification"
+              "$ref": "#PlaceSpecification"
             }
           ]
         }
@@ -44,7 +44,7 @@
       "$anchor": "LocationSpecification",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PlaceSpecification"
+          "$ref": "#PlaceSpecification"
         },
         {
           "type": "object"
@@ -67,7 +67,7 @@
       "$anchor": "PointPositionSpecification",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+          "$ref": "#PositionSpecification"
         },
         {
           "type": "object"
@@ -78,7 +78,7 @@
       "$anchor": "PositionSpecification",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PlaceSpecification"
+          "$ref": "#PlaceSpecification"
         },
         {
           "type": "object"
@@ -89,7 +89,7 @@
       "$anchor": "SurfacePositionSpecification",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PositionSpecification"
+          "$ref": "#PositionSpecification"
         },
         {
           "type": "object"
@@ -114,7 +114,7 @@
             {
               "allOf": [
                 {
-                  "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#FeaturePlaceRelationship"
+                  "$ref": "#FeaturePlaceRelationship"
                 },
                 {
                   "type": "object",
@@ -133,7 +133,7 @@
                             }
                           },
                           "then": {
-                            "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#LocationSpecification"
+                            "$ref": "#LocationSpecification"
                           },
                           "else": {
                             "if": {
@@ -144,7 +144,7 @@
                               }
                             },
                             "then": {
-                              "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                              "$ref": "#PointPositionSpecification"
                             },
                             "else": false
                           }
@@ -167,7 +167,7 @@
       "$anchor": "TS10_FT2",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#TS10_FT1"
+          "$ref": "#TS10_FT1"
         },
         {
           "type": "object",
@@ -183,7 +183,7 @@
                 {
                   "allOf": [
                     {
-                      "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#FeaturePlaceRelationship"
+                      "$ref": "#FeaturePlaceRelationship"
                     },
                     {
                       "type": "object",
@@ -202,7 +202,7 @@
                                 }
                               },
                               "then": {
-                                "$ref": "https://example.org/baseuri/ts10/ts10/test10.json#PointPositionSpecification"
+                                "$ref": "#PointPositionSpecification"
                               },
                               "else": false
                             }
