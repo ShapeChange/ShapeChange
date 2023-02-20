@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
                           xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
                           xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -228,14 +229,14 @@
             <MapEntry param="" rule="*" targetType="Point" type="DirectPosition"/>
             <MapEntry param="" rule="*" targetType="Point" type="GM_Point"/>
             <MapEntry param="" rule="*" targetType="MultiPoint" type="GM_MultiPoint"/>
-            <MapEntry param="" rule="*" targetType="Curve" type="GM_Curve"/>
+            <MapEntry param="" rule="*" targetType="CompoundCurve" type="GM_Curve"/>
             <MapEntry param="" rule="*" targetType="LineString" type="GM_LineString"/>
             <MapEntry param=""
                       rule="*"
                       targetType="MultiCurve"
                       type="GM_CompositeCurve"/>
             <MapEntry param="" rule="*" targetType="MultiCurve" type="GM_MultiCurve"/>
-            <MapEntry param="" rule="*" targetType="Surface" type="GM_Surface"/>
+            <MapEntry param="" rule="*" targetType="CurvePolygon" type="GM_Surface"/>
             <MapEntry param="" rule="*" targetType="Polygon" type="GM_Polygon"/>
             <MapEntry param=""
                       rule="*"
@@ -245,12 +246,12 @@
                       rule="*"
                       targetType="MultiSurface"
                       type="GM_MultiSurface"/>
-            <MapEntry param="" rule="*" targetType="1" type="GM_Primitive"/>
+            <MapEntry param="" rule="*" targetType="0" type="GM_Primitive"/>
             <MapEntry param=""
                       rule="*"
                       targetType="GeometryCollection"
                       type="GM_Aggregate"/>
-            <MapEntry param="" rule="*" targetType="1" type="GM_Object"/>
+            <MapEntry param="" rule="*" targetType="0" type="GM_Object"/>
             <MapEntry param="" rule="*" targetType="String" type="TM_Duration"/>
          </mapEntries>
       </Target>
@@ -443,14 +444,14 @@
             <MapEntry param="" rule="*" targetType="Point" type="DirectPosition"/>
             <MapEntry param="" rule="*" targetType="Point" type="GM_Point"/>
             <MapEntry param="" rule="*" targetType="MultiPoint" type="GM_MultiPoint"/>
-            <MapEntry param="" rule="*" targetType="Curve" type="GM_Curve"/>
+            <MapEntry param="" rule="*" targetType="CompoundCurve" type="GM_Curve"/>
             <MapEntry param="" rule="*" targetType="LineString" type="GM_LineString"/>
             <MapEntry param=""
                       rule="*"
                       targetType="MultiCurve"
                       type="GM_CompositeCurve"/>
             <MapEntry param="" rule="*" targetType="MultiCurve" type="GM_MultiCurve"/>
-            <MapEntry param="" rule="*" targetType="Surface" type="GM_Surface"/>
+            <MapEntry param="" rule="*" targetType="CurvePolygon" type="GM_Surface"/>
             <MapEntry param="" rule="*" targetType="Polygon" type="GM_Polygon"/>
             <MapEntry param=""
                       rule="*"
@@ -460,12 +461,12 @@
                       rule="*"
                       targetType="MultiSurface"
                       type="GM_MultiSurface"/>
-            <MapEntry param="" rule="*" targetType="1" type="GM_Primitive"/>
+            <MapEntry param="" rule="*" targetType="0" type="GM_Primitive"/>
             <MapEntry param=""
                       rule="*"
                       targetType="GeometryCollection"
                       type="GM_Aggregate"/>
-            <MapEntry param="" rule="*" targetType="1" type="GM_Object"/>
+            <MapEntry param="" rule="*" targetType="0" type="GM_Object"/>
             <MapEntry param="" rule="*" targetType="String" type="TM_Duration"/>
          </mapEntries>
       </Target>

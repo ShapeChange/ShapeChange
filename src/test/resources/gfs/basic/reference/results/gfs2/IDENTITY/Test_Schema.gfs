@@ -5,7 +5,7 @@
       <GeomPropertyDefn>
          <Name>attGeom</Name>
          <ElementPath>attGeom</ElementPath>
-         <Type>Surface</Type>
+         <Type>CurvePolygon</Type>
       </GeomPropertyDefn>
       <SRSName>urn:ogc:def:crs:EPSG::25832</SRSName>
       <PropertyDefn>
@@ -60,7 +60,7 @@
       <GeomPropertyDefn>
          <Name>att5</Name>
          <ElementPath>att5</ElementPath>
-         <Type>Curve</Type>
+         <Type>CompoundCurve</Type>
       </GeomPropertyDefn>
       <SRSName>urn:ogc:def:crs:EPSG::25832</SRSName>
       <PropertyDefn>
@@ -91,17 +91,17 @@
       <GeomPropertyDefn>
          <Name>attDtSupertype/DataTypeSub1/attSuper1</Name>
          <ElementPath>attDtSupertype|DataTypeSub1|attSuper1</ElementPath>
-         <Type>1</Type>
+         <Type>0</Type>
       </GeomPropertyDefn>
       <GeomPropertyDefn>
          <Name>attDtSupertype/DataTypeSub2/attSuper1</Name>
          <ElementPath>attDtSupertype|DataTypeSub2|attSuper1</ElementPath>
-         <Type>1</Type>
+         <Type>0</Type>
       </GeomPropertyDefn>
       <GeomPropertyDefn>
          <Name>attDtSupertype/DataTypeSupertype/attSuper1</Name>
          <ElementPath>attDtSupertype|DataTypeSupertype|attSuper1</ElementPath>
-         <Type>1</Type>
+         <Type>0</Type>
       </GeomPropertyDefn>
       <SRSName>urn:ogc:def:crs:EPSG::25832</SRSName>
       <PropertyDefn>
