@@ -134,6 +134,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static EncodingInfos baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
 
     protected static String collectionSchemaFileName = null;
+    protected static boolean featureCollectionOnly = false;
 
     protected static boolean preventUnknownTypesInFeatureCollection = false;
 
@@ -294,7 +295,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    if (StringUtils.isNotBlank(collectionSchemaFileName) && !collectionSchemaFileName.endsWith(".json")) {
 		collectionSchemaFileName = collectionSchemaFileName + ".json";
 	    }
-
+	    
+	    featureCollectionOnly = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_COLLECTION_ONLY, false);
+	    
 	    preventUnknownTypesInFeatureCollection = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS, false);
 
@@ -1069,11 +1073,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    } else {
 		collSchemaId = StringUtils.removeEnd(baseSchemaId, "/") + "/" + collectionSchemaFileName;
 	    }
-	    /*
-	     * TBD: Not sure if it is necessary or useful to give schemaForFeatureCollection
-	     * as parameter. Instead, null may be appropriate.
-	     */
-	    JsonSchemaDocument collJsd = new JsonSchemaDocument(schemaForFeatureCollection, model, options, result,
+
+	    JsonSchemaDocument collJsd = new JsonSchemaDocument(null, model, options, result,
 		    this, collSchemaId, new File(subDirectoryFile, jsDoc), mapEntryParamInfos, true);
 	    jsdocs.add(collJsd);
 	    collJsd.createCollectionDefinitions();
@@ -1202,7 +1203,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
 
 	collectionSchemaFileName = null;
-
+	featureCollectionOnly = false;
 	preventUnknownTypesInFeatureCollection = false;
 
 	idMemberEncodingRestrictions = Optional.empty();

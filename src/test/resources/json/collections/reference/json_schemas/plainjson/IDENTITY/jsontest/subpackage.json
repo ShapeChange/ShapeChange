@@ -29,6 +29,7 @@
       ]
     },
     "FT3Collection": {
+      "$anchor": "FT3Collection",
       "type": "array",
       "items": {
         "allOf": [
@@ -114,6 +115,7 @@
       ]
     },
     "FT4Collection": {
+      "$anchor": "FT4Collection",
       "type": "array",
       "items": {
         "$ref": "#FT4"
@@ -132,6 +134,7 @@
       ]
     },
     "FT5Collection": {
+      "$anchor": "FT5Collection",
       "type": "array",
       "items": {
         "$ref": "#FT5"

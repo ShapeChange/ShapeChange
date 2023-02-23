@@ -105,6 +105,9 @@ public class JsonSchemaDocument implements MessageSource {
     protected Model model;
     protected JsonSchemaTarget jsonSchemaTarget;
     protected String docName;
+    /**
+     * can be <code>null</code>
+     */
     protected PackageInfo representedPackage;
     protected String schemaId;
     protected File jsonSchemaOutputFile;
@@ -153,7 +156,8 @@ public class JsonSchemaDocument implements MessageSource {
 	this.annotationGenerator = new AnnotationGenerator(this.jsonSchemaTarget.getAnnotationElements(),
 		options.language(), result);
 
-	if (!isSingularCollectionsSchema && representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
+	if (!isSingularCollectionsSchema && representedPackage != null
+		&& representedPackage.matches(JsonSchemaConstants.RULE_ALL_DOCUMENTATION)) {
 	    this.annotationGenerator.applyAnnotations(rootSchema, representedPackage);
 	}
     }
@@ -677,22 +681,26 @@ public class JsonSchemaDocument implements MessageSource {
     }
 
     private String fragmentIdentifier(JsonSchemaDocument jsd, ClassInfo ci) {
+	return fragmentIdentifier(jsd, ci.name(), ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR));
+    }
+
+    private String fragmentIdentifier(JsonSchemaDocument jsd, String definitionName,
+	    boolean anchorAvailableInDefinition) {
 
 	if (JsonSchemaTarget.useAnchorsInLinksToGeneratedSchemaDefinitions
-		&& jsd.getSchemaVersion() != JsonSchemaVersion.OPENAPI_30
-		&& ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR)) {
+		&& jsd.getSchemaVersion() != JsonSchemaVersion.OPENAPI_30 && anchorAvailableInDefinition) {
 
-	    // the encoding of the class contains an anchor - use it
-	    return "#" + ci.name();
+	    // the definition contains an anchor - use it
+	    return "#" + definitionName;
 
 	} else {
 
-	    // use a JSON Pointer to reference the definition of the class
+	    // use a JSON Pointer to reference the definition
 	    if (jsd.getSchemaVersion() == JsonSchemaVersion.DRAFT_07
 		    || jsd.getSchemaVersion() == JsonSchemaVersion.OPENAPI_30) {
-		return "#/definitions/" + ci.name();
+		return "#/definitions/" + definitionName;
 	    } else {
-		return "#/$defs/" + ci.name();
+		return "#/$defs/" + definitionName;
 	    }
 	}
     }
@@ -952,9 +960,9 @@ public class JsonSchemaDocument implements MessageSource {
 		    JsonSchema enumJs = new JsonSchema();
 		    this.annotationGenerator.applyAnnotations(enumJs, pi);
 //		    if (!enumJs.isEmpty()) {
-			String enumDescKey = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue().trim()
-				: pi.name();
-			jsClass.enumDescription(enumDescKey, enumJs);
+		    String enumDescKey = StringUtils.isNotBlank(pi.initialValue()) ? pi.initialValue().trim()
+			    : pi.name();
+		    jsClass.enumDescription(enumDescKey, enumJs);
 //		    }
 		}
 	    }
@@ -2982,15 +2990,17 @@ public class JsonSchemaDocument implements MessageSource {
     public void createCollectionDefinitions() {
 
 	// create uniform collections
-	Collection<ClassInfo> classesForUniformCollections;
+	Collection<ClassInfo> classesForUniformCollections = new ArrayList<>();
 
-	if (this.isSingularCollectionsSchemaDocument()) {
-	    classesForUniformCollections = jsonSchemaTarget.getAllEncodedTypes().stream()
-		    .filter(type -> type.category() == Options.FEATURE
-			    && type.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE))
-		    .collect(Collectors.toSet());
-	} else {
-	    classesForUniformCollections = this.classesByName.values();
+	if (!JsonSchemaTarget.featureCollectionOnly) {
+	    if (this.isSingularCollectionsSchemaDocument()) {
+		classesForUniformCollections = jsonSchemaTarget.getAllEncodedTypes().stream()
+			.filter(type -> type.category() == Options.FEATURE
+				&& type.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE))
+			.collect(Collectors.toSet());
+	    } else {
+		classesForUniformCollections = this.classesByName.values();
+	    }
 	}
 
 	for (ClassInfo ci : classesForUniformCollections) {
@@ -3020,6 +3030,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (!featureCollectionMembers.isEmpty()) {
 		createCollectionDefinition("FeatureCollection", featureCollectionMembers,
 			JsonSchemaTarget.preventUnknownTypesInFeatureCollection, new JsonSchema(false));
+
+		if (this.isSingularCollectionsSchemaDocument() && JsonSchemaTarget.featureCollectionOnly) {
+		    rootSchema.ref(fragmentIdentifier(this, "FeatureCollection", true));
+		}
 	    }
 	}
     }
@@ -3061,6 +3075,7 @@ public class JsonSchemaDocument implements MessageSource {
 	addToRootSchema(defName, js);
 
 	JsonSchema contentSchema = js;
+	contentSchema.anchor(defName);
 	String[] featuresMemberPath = null;
 
 	if (StringUtils.isNotBlank(JsonSchemaTarget.baseJsonSchemaDefinitionForCollections)) {

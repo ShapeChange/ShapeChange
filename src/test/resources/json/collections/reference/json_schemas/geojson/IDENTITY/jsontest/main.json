@@ -58,6 +58,7 @@
       ]
     },
     "ExtFTSubtypeCollection": {
+      "$anchor": "ExtFTSubtypeCollection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
@@ -116,6 +117,7 @@
       ]
     },
     "FT1Collection": {
+      "$anchor": "FT1Collection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
@@ -161,6 +163,7 @@
       ]
     },
     "FT2Collection": {
+      "$anchor": "FT2Collection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
@@ -276,6 +279,7 @@
       ]
     },
     "FeatureCollection": {
+      "$anchor": "FeatureCollection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"

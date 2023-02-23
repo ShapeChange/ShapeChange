@@ -60,6 +60,8 @@ public class JsonSchemaConstants {
     public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
     public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
+    public static final String PARAM_FEATURE_COLLECTION_ONLY = "featureCollectionOnly";
+    
     /**
      * True (the default) if the resulting json schemas shall be pretty printed,
      * else false.

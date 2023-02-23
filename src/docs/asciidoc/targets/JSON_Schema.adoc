@@ -264,6 +264,9 @@ Each of these schemas defines a uniform collection, i.e. a collection
 that only has objects of a specific feature type (or subtypes thereof). 
 The collection name is `{feature type name} + 'Collection'`. Example: BuildingCollection.
 
+NOTE: The generation of the uniform collections can be suppressed using
+target parameter xref:./JSON_Schema.adoc#featureCollectionOnly[featureCollectionOnly].
+
 The JSON Schema files to which the collection definitions are 
 added are determined as follows:
 
@@ -1353,6 +1356,12 @@ shall be added, for example "collections.json".
 If the file name does not end with ".json", that suffix
 is added to the file name.
 
+NOTE: If target parameter xref:./JSON_Schema.adoc#featureCollectionOnly[featureCollectionOnly]
+is set to "true", then only the general feature collection is generated.
+In that case, also a "$ref" to the definition of the general feature 
+collection is added to the collection schema (when encoded in a separate
+file using target parameter _collectionSchemaFileName_).
+
 Applies to Rule(s): 
 _xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
 
@@ -1387,6 +1396,24 @@ order to encode the type represented by that object.
 
 Applies to Rule(s):
 _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
+
+[[featureCollectionOnly]]
+==== featureCollectionOnly
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If this parameter is set to "true", then only
+the general feature collection is created. The uniform 
+collections (one per feature type) are not created.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
 
 [[idMemberEncodingRestrictions]]
 ==== idMemberEncodingRestrictions

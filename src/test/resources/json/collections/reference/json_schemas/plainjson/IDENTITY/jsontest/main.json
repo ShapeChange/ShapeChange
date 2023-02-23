@@ -46,6 +46,7 @@
       ]
     },
     "ExtFTSubtypeCollection": {
+      "$anchor": "ExtFTSubtypeCollection",
       "type": "array",
       "items": {
         "$ref": "#ExtFTSubtype"
@@ -78,6 +79,7 @@
       ]
     },
     "FT1Collection": {
+      "$anchor": "FT1Collection",
       "type": "array",
       "items": {
         "$ref": "#FT1"
@@ -97,6 +99,7 @@
       ]
     },
     "FT2Collection": {
+      "$anchor": "FT2Collection",
       "type": "array",
       "items": {
       "allOf": [
@@ -170,6 +173,7 @@
         }
     },
     "FeatureCollection": {
+      "$anchor": "FeatureCollection",
       "type": "array",
       "items": {
       "allOf": [

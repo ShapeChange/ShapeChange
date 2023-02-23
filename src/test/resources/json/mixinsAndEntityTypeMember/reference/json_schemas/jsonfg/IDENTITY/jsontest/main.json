@@ -31,6 +31,7 @@
       ]
     },
     "ExtFTSubtypeCollection": {
+      "$anchor": "ExtFTSubtypeCollection",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
@@ -82,6 +83,7 @@
       ]
     },
     "FT1Collection": {
+      "$anchor": "FT1Collection",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
@@ -113,6 +115,7 @@
       ]
     },
     "FT2Collection": {
+      "$anchor": "FT2Collection",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
@@ -317,6 +320,7 @@
       ]
     },
     "FeatureCollection": {
+      "$anchor": "FeatureCollection",
       "allOf": [
         {
           "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"

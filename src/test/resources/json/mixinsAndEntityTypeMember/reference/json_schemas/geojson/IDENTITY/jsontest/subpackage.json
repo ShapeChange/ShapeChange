@@ -32,6 +32,7 @@
       ]
     },
     "FT3Collection": {
+      "$anchor": "FT3Collection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
@@ -158,6 +159,7 @@
       ]
     },
     "FT4Collection": {
+      "$anchor": "FT4Collection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
@@ -186,6 +188,7 @@
       ]
     },
     "FT5Collection": {
+      "$anchor": "FT5Collection",
       "allOf": [
         {
           "$ref": "https://geojson.org/schema/FeatureCollection.json"
