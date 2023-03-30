@@ -842,6 +842,15 @@ element
 element
 |===
 
+NOTE: Many target parameters define a template for constructing
+a string, which uses specific markings for descriptors, to be replaced 
+with the actual descriptor value(s). An example is the 
+xref:../targets/xml schema/XML_Schema.adoc#documentationTemplate[documentationTemplate]
+parameter of the XML Schema target. An example of using the descriptor
+'alias' in such a template is: "\[[alias]]". Since ShapeChange v2.14.0,
+the value 'name' can be used as well (i.e., "\[[name]]"). This adds the
+name of the UML model element to the resulting string.
+
 Examples:
 
 [source,xml,linenumbers]

@@ -100,4 +100,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/complexDatatypes",
 			"src/test/resources/ldproxy2/complexDatatypes/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_labelTemplate() {
+		
+		multiTest("src/test/resources/ldproxy2/labelTemplate/test_ldproxy2.xml",
+			new String[] { "yaml", "yml", "sql" }, "testResults/ldproxy2/labelTemplate/results",
+			"src/test/resources/ldproxy2/labelTemplate/reference/results");
+	}
 }
