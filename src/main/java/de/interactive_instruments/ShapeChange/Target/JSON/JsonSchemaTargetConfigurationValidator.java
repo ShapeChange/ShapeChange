@@ -53,6 +53,7 @@ import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
@@ -165,37 +166,42 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    Element advancedProcessConfigElmt = config.getAdvancedProcessConfigurations();
 
 	    // identify annotation elements
-	    List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
-		    .parseJsonSchemaAnnotationElements(advancedProcessConfigElmt);
+	    try {
+		List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
+			.parseAndValidateJsonSchemaAnnotationElements(advancedProcessConfigElmt);
 
-	    for (AbstractJsonSchemaAnnotationElement annElmt : annotationElmts) {
+		for (AbstractJsonSchemaAnnotationElement annElmt : annotationElmts) {
 
-		if (annElmt instanceof SimpleAnnotationElement) {
-		    SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
-		    String desc = ann.getDescriptorOrTaggedValue();
-		    if (desc.startsWith("TV")) {
-			Matcher m = taggedValuePattern.matcher(desc);
-			if (!m.matches()) {
-			    result.addError(this, 109, desc, ann.getAnnotation());
-			    isValid = false;
-			}
-		    }
-		} else {
-		    TemplateAnnotationElement ann = (TemplateAnnotationElement) annElmt;
-
-		    /* Check valueTemplate */
-		    Matcher matcher = templatePattern.matcher(ann.getValueTemplate());
-		    while (matcher.find()) {
-			String desc = matcher.group(1).trim();
+		    if (annElmt instanceof SimpleAnnotationElement) {
+			SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
+			String desc = ann.getDescriptorOrTaggedValue();
 			if (desc.startsWith("TV")) {
 			    Matcher m = taggedValuePattern.matcher(desc);
 			    if (!m.matches()) {
-				result.addError(this, 110, desc, ann.getAnnotation());
+				result.addError(this, 109, desc, ann.getAnnotation());
 				isValid = false;
+			    }
+			}
+		    } else {
+			TemplateAnnotationElement ann = (TemplateAnnotationElement) annElmt;
+
+			/* Check valueTemplate */
+			Matcher matcher = templatePattern.matcher(ann.getValueTemplate());
+			while (matcher.find()) {
+			    String desc = matcher.group(1).trim();
+			    if (desc.startsWith("TV")) {
+				Matcher m = taggedValuePattern.matcher(desc);
+				if (!m.matches()) {
+				    result.addError(this, 110, desc, ann.getAnnotation());
+				    isValid = false;
+				}
 			    }
 			}
 		    }
 		}
+	    } catch (ShapeChangeParseException e) {
+		isValid = false;
+		result.addError(this, 112, e.getMessage());
 	    }
 	}
 
@@ -465,6 +471,8 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    return "Value of field [[$1$]] in @valueTemplate of TemplateAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
 	case 111:
 	    return "Parameter '$1$' is set to '$2$'. This is not a valid value. Details: $3$";
+	case 112:
+	    return "Invalid JSON Schema annotation(s) encountered: $1$";
 
 	default:
 	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "

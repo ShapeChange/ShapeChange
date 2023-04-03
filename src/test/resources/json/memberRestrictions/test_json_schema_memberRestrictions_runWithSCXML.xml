@@ -59,14 +59,12 @@
             <JsonSchemaAnnotations>
                <annotations>
                   <SimpleAnnotation annotation="title"
-                                    appliesTo="all"
                                     arrayValue="false"
                                     descriptorOrTaggedValue="alias"
                                     noValueBehavior="ignore"
                                     noValueValue=""
                                     type="string"/>
                   <TemplateAnnotation annotation="description"
-                                      appliesTo="all"
                                       arrayValue="false"
                                       multiValueBehavior="connectInSingleAnnotationValue"
                                       multiValueConnectorToken=" "
@@ -176,14 +174,12 @@
             <JsonSchemaAnnotations>
                <annotations>
                   <SimpleAnnotation annotation="title"
-                                    appliesTo="all"
                                     arrayValue="false"
                                     descriptorOrTaggedValue="alias"
                                     noValueBehavior="ignore"
                                     noValueValue=""
                                     type="string"/>
                   <TemplateAnnotation annotation="description"
-                                      appliesTo="all"
                                       arrayValue="false"
                                       multiValueBehavior="connectInSingleAnnotationValue"
                                       multiValueConnectorToken=" "
@@ -293,14 +289,12 @@
             <JsonSchemaAnnotations>
                <annotations>
                   <SimpleAnnotation annotation="title"
-                                    appliesTo="all"
                                     arrayValue="false"
                                     descriptorOrTaggedValue="alias"
                                     noValueBehavior="ignore"
                                     noValueValue=""
                                     type="string"/>
                   <TemplateAnnotation annotation="description"
-                                      appliesTo="all"
                                       arrayValue="false"
                                       multiValueBehavior="connectInSingleAnnotationValue"
                                       multiValueConnectorToken=" "

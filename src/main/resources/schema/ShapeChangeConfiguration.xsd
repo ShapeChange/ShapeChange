@@ -1310,18 +1310,7 @@
  <element abstract="true" name="AbstractJsonSchemaAnnotation" type="sc:AbstractJsonSchemaAnnotationType"/>
  <complexType name="AbstractJsonSchemaAnnotationType">
   <attribute name="annotation" type="string" use="required"> </attribute>
-  <attribute default="all" name="appliesTo">
-   <simpleType>
-    <restriction base="string">
-     <enumeration value="all"/>
-     <enumeration value="class"/>
-     <enumeration value="package"/>
-     <enumeration value="property"/>
-     <enumeration value="attribute"/>
-     <enumeration value="role"/>
-    </restriction>
-   </simpleType>
-  </attribute>
+  <attributeGroup ref="sc:modelElementSelectionGroup"/>
   <attribute default="false" name="arrayValue" type="boolean"> </attribute>
   <attribute default="ignore" name="noValueBehavior">
    <simpleType>

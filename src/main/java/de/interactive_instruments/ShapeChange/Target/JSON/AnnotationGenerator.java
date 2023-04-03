@@ -40,11 +40,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.ModelElementSelectionInfo;
+import de.interactive_instruments.ShapeChange.ModelElementSelectionParseException;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
-import de.interactive_instruments.ShapeChange.Model.PackageInfo;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.MultiValueBehavior;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.NoValueBehavior;
@@ -274,16 +274,9 @@ public class AnnotationGenerator implements MessageSource {
 
     protected boolean appliesTo(AbstractJsonSchemaAnnotationElement ann, Info i) {
 
-	String applicableModelElements = ann.getApplicableModelElements();
+	ModelElementSelectionInfo selectionInfo = ann.getModelElementSelectionInfo();
 
-	return applicableModelElements.equals("all")
-		|| (applicableModelElements.equals("class") && i instanceof ClassInfo)
-		|| (applicableModelElements.equals("property") && i instanceof PropertyInfo)
-		|| (applicableModelElements.equals("package") && i instanceof PackageInfo)
-		|| (applicableModelElements.equals("attribute") && i instanceof PropertyInfo
-			&& ((PropertyInfo) i).isAttribute())
-		|| (applicableModelElements.equals("role") && i instanceof PropertyInfo
-			&& !((PropertyInfo) i).isAttribute());
+	return selectionInfo == null || selectionInfo.matches(i);
     }
 
     protected boolean resolveDescriptor(Info i, String desc, List<String> values) {
@@ -419,20 +412,31 @@ public class AnnotationGenerator implements MessageSource {
      * @return list of JSON Schema annotation elements found in the
      *         advancedProcessConfigurations element; can be empty but not
      *         <code>null</code>
+     * @throws ShapeChangeParseException If one of the annotation attributes
+     *                                   contained an invalid value.
      */
-    public static List<AbstractJsonSchemaAnnotationElement> parseJsonSchemaAnnotationElements(
-	    Element advancedProcessConfigElmt) {
+    public static List<AbstractJsonSchemaAnnotationElement> parseAndValidateJsonSchemaAnnotationElements(
+	    Element advancedProcessConfigElmt) throws ShapeChangeParseException {
 
 	List<AbstractJsonSchemaAnnotationElement> result = new ArrayList<>();
 
 	Element jsAnnElmt = XMLUtil.getFirstElement(advancedProcessConfigElmt, "JsonSchemaAnnotations");
 
 	if (jsAnnElmt != null) {
+
 	    Element annotations = XMLUtil.getFirstElement(jsAnnElmt, "annotations");
 
-	    for (Element elmt : XMLUtil.getElementNodes(annotations.getChildNodes())) {
+	    List<Element> annotationElements = XMLUtil.getElementNodes(annotations.getChildNodes());
+
+	    List<String> compilationErrors = new ArrayList<>();
+
+	    for (int i = 0; i < annotationElements.size(); i++) {
+
+		Element elmt = annotationElements.get(i);
 
 		AbstractJsonSchemaAnnotationElement ann;
+
+		String annotationName = elmt.getAttribute("annotation");
 
 		if ("SimpleAnnotation".equalsIgnoreCase(elmt.getLocalName())) {
 
@@ -454,14 +458,14 @@ public class AnnotationGenerator implements MessageSource {
 			}
 		    }
 
-		    SimpleAnnotationElement simplAnn = new SimpleAnnotationElement(elmt.getAttribute("annotation"),
+		    SimpleAnnotationElement simplAnn = new SimpleAnnotationElement(annotationName,
 			    elmt.getAttribute("descriptorOrTaggedValue"), type);
 
 		    ann = simplAnn;
 
 		} else {
 
-		    TemplateAnnotationElement tpltAnn = new TemplateAnnotationElement(elmt.getAttribute("annotation"),
+		    TemplateAnnotationElement tpltAnn = new TemplateAnnotationElement(annotationName,
 			    elmt.getAttribute("valueTemplate"));
 
 		    ann = tpltAnn;
@@ -497,11 +501,20 @@ public class AnnotationGenerator implements MessageSource {
 		    ann.setNoValueValue(elmt.getAttribute("noValueValue"));
 		}
 
-		if (elmt.hasAttribute("appliesTo")) {
-		    ann.setApplicableModelElements(elmt.getAttribute("appliesTo"));
+		ModelElementSelectionInfo selectionInfo = ModelElementSelectionInfo.parse(elmt);
+		try {
+		    selectionInfo.validate();
+		} catch (ModelElementSelectionParseException e) {
+		    compilationErrors.add(i + " JSON Schema annotation element (annotation '" + annotationName
+			    + "'), model element selection attribute(s): " + e.getMessage());
 		}
+		ann.setModelElementSelectionInfo(selectionInfo);
 
 		result.add(ann);
+	    }
+
+	    if (!compilationErrors.isEmpty()) {
+		throw new ShapeChangeParseException(StringUtils.join(compilationErrors, ", "));
 	    }
 	}
 

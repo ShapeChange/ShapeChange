@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON.config;
 
+import de.interactive_instruments.ShapeChange.ModelElementSelectionInfo;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
@@ -43,7 +45,7 @@ public class AbstractJsonSchemaAnnotationElement {
     private NoValueBehavior noValueBehavior = NoValueBehavior.IGNORE;
     private String noValueValue = "";
 
-    private String applicableModelElements = "all";
+    private ModelElementSelectionInfo selectionInfo = null;
 
     public AbstractJsonSchemaAnnotationElement(String annotation) {
 	this.annotation = annotation;
@@ -98,11 +100,11 @@ public class AbstractJsonSchemaAnnotationElement {
 	this.noValueValue = noValueValue;
     }
 
-    public void setApplicableModelElements(String me) {
-	this.applicableModelElements = me;
+    public void setModelElementSelectionInfo(ModelElementSelectionInfo selectionInfo) {
+	this.selectionInfo = selectionInfo;
     }
     
-    public String getApplicableModelElements() {
-	return this.applicableModelElements;
+    public ModelElementSelectionInfo getModelElementSelectionInfo() {
+	return this.selectionInfo;
     }
 }

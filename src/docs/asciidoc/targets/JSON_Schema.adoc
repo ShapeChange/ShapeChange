@@ -1939,7 +1939,9 @@ The following two tables document the structure of the two ShapeChange JSON Sche
 |===
 | Configuration Information Item | Datatype & Structure | Required / Optional | Default Value | Description
 | annotation | string | Required | _not applicable_ | Name of the JSON Schema annotation keyword that shall be added to the JSON Schema element which represents the UML model element.
-| appliesTo | enum: _all_, _package_, _class_, _property_, _attribute_, _role_ | Optional | _all_ | Identifies the type of model element to which the annotation applies.
+5+| A number of attributes are used to select relevant model elements. They
+are the same as described
+xref:../transformations/Common_Transformer_Functionality.adoc#Model_element_filter_criteria[here].
 | arrayValue | boolean | Optional | _false_ | If true, then the annotation value will always be encoded as an array, even if only a single value is present. Otherwise, the default behavior is to only encode multiple values within a JSON array.
 | descriptorOr TaggedValue | string | Required | _not applicable_ | Either a _descriptor-ID_, identifying one of the <<table_descriptors,well-known descriptors>>, or a string identifying a tagged value.
 
@@ -1964,7 +1966,7 @@ In order to identify a tagged value, add prefix "TV:" to the name of the tagged 
 |===
 | Information Item | Datatype & Structure | Required / Optional | Default Value | Description
 | annotation 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
-| appliesTo 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
+5+| model element selection attributes, as defined in the <<table_jsonschema_annotation_element1,previous table>>
 | arrayValue 4+| as defined in the <<table_jsonschema_annotation_element1,previous table>>
 | valueTemplate | string | Required | _not applicable_ | Textual template where an occurrence of the field "[[_descriptor-ID_]]" is replaced with the value(s) of that descriptor. The IDs of supported descriptors are listed in <<table_descriptors>>. +
 
@@ -2007,8 +2009,8 @@ The annotation elements are configured within the `<advancedProcessConfiguration
         <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
         <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
         <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
-        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
-        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="property"/>
+        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" modelElementType="Class"/>
+        <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" modelElementType="Property"/>
         <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues"/>
         <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
       </annotations>
@@ -2055,8 +2057,8 @@ The `<advancedProcessConfigurations>` element can also reference another XML fil
     <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
     <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
     <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
-    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
-    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="property"/>    
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" modelElementType="Class"/>
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" modelElementType="Property"/>    
     <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues" />
     <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
   </annotations>

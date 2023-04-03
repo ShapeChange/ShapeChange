@@ -60,6 +60,7 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -295,10 +296,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    if (StringUtils.isNotBlank(collectionSchemaFileName) && !collectionSchemaFileName.endsWith(".json")) {
 		collectionSchemaFileName = collectionSchemaFileName + ".json";
 	    }
-	    
+
 	    featureCollectionOnly = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_FEATURE_COLLECTION_ONLY, false);
-	    
+
 	    preventUnknownTypesInFeatureCollection = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS, false);
 
@@ -377,9 +378,13 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			.getAdvancedProcessConfigurations();
 
 		// identify annotation elements
-		List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
-			.parseJsonSchemaAnnotationElements(advancedProcessConfigElmt);
-		annotationElements = annotationElmts;
+		try {
+		    List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
+			    .parseAndValidateJsonSchemaAnnotationElements(advancedProcessConfigElmt);
+		    annotationElements = annotationElmts;
+		} catch (ShapeChangeParseException e) {
+		    result.addError(this, 104, e.getMessage());
+		}
 	    }
 
 	    File outputDirectoryFile = new File(outputDirectory);
@@ -1074,8 +1079,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		collSchemaId = StringUtils.removeEnd(baseSchemaId, "/") + "/" + collectionSchemaFileName;
 	    }
 
-	    JsonSchemaDocument collJsd = new JsonSchemaDocument(null, model, options, result,
-		    this, collSchemaId, new File(subDirectoryFile, jsDoc), mapEntryParamInfos, true);
+	    JsonSchemaDocument collJsd = new JsonSchemaDocument(null, model, options, result, this, collSchemaId,
+		    new File(subDirectoryFile, jsDoc), mapEntryParamInfos, true);
 	    jsdocs.add(collJsd);
 	    collJsd.createCollectionDefinitions();
 
@@ -1337,6 +1342,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Creating JSON Schema document '$1$' for package '$2$'.";
 	case 103:
 	    return "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
+	case 104:
+	    return "Invalid JSON Schema annotation(s) encountered (they will be ignored): $1$";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

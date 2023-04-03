@@ -8,8 +8,8 @@
     <SimpleAnnotation annotation="label" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="false"/>
     <SimpleAnnotation annotation="label2" descriptorOrTaggedValue="TV(|):aliasList" arrayValue="true"/>
     <SimpleAnnotation annotation="deprecated" descriptorOrTaggedValue="TV:deprecated" type="boolean"/>
-    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" appliesTo="class"/>
-    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="ignore" noValueValue="0" type="integer" appliesTo="property"/>    
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="populateOnce" noValueValue="0" type="integer" modelElementType="Class"/>
+    <SimpleAnnotation annotation="code" descriptorOrTaggedValue="TV:codeNumber" noValueBehavior="ignore" noValueValue="0" type="integer" modelElementType="Property"/>    
     <TemplateAnnotation annotation="isDefinedBy" valueTemplate="http://example.org/view?i=[[TV(,):item]]" multiValueBehavior="createMultipleAnnotationValues" />
     <SimpleAnnotation annotation="examples" descriptorOrTaggedValue="example" arrayValue="true"/>
   </annotations>
