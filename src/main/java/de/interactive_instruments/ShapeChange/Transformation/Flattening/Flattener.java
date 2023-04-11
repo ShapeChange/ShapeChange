@@ -3693,7 +3693,9 @@ public class Flattener implements Transformer, MessageSource {
 						separatorByDescriptor, separator);
 				    }
 				}
-			    } else {
+			    }
+			    
+			    if(separatorMapEmpty || StringUtils.isNotBlank(tvNameForCodeValue)) {
 
 				/*
 				 * Execute merging of codes as defined before merging of descriptors with

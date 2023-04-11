@@ -542,10 +542,10 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	    }
 	    /*
 	     * The same reasoning applies for data types, which are not classes according to
-	     * the UML spec, but another type of classifier. However, if a union is modelled
-	     * as an EA datatype element, do not add the stereotype datatype.
+	     * the UML spec, but another type of classifier. However, if a union or enumeration
+	     * is modelled as an EA datatype element, do not add the stereotype datatype.
 	     */
-	    if (!(stereotypesCache.contains("datatype") || stereotypesCache.contains("union"))
+	    if (!(stereotypesCache.contains("datatype") || stereotypesCache.contains("union") || stereotypesCache.contains("enumeration"))
 		    && eaClassElement.GetType().equalsIgnoreCase("datatype")) {
 		stereotypesCache.add("datatype");
 		document.result.addDebug(null, 52, this.name(), "datatype");
