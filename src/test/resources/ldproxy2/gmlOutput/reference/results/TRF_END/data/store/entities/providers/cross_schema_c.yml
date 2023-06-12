@@ -83,13 +83,13 @@ types:
           title:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-title
+            label: TA-title
           href:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-ID
+            label: TA-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/typea/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ta/items/{{value}}'
       ftAtoTA_TypeASub:
         type: OBJECT
         objectType: Link
@@ -97,13 +97,13 @@ types:
           title:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-title
+            label: TASub-title
           href:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-ID
+            label: TASub-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/typeasub/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/tasub/items/{{value}}'
       attMeasure:
         sourcePath: attmeasure
         type: FLOAT
@@ -149,13 +149,13 @@ types:
           title:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-title
+            label: TA-title
           href:
             sourcePath: ftatota_typea_fk
             type: STRING
-            label: TypeA-ID
+            label: TA-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/typea/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/ta/items/{{value}}'
       ftAtoTA_TypeASub:
         type: OBJECT
         objectType: Link
@@ -163,13 +163,13 @@ types:
           title:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-title
+            label: TASub-title
           href:
             sourcePath: ftatota_typeasub_fk
             type: STRING
-            label: TypeASub-ID
+            label: TASub-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/typeasub/items/{{value}}'
+            - stringFormat: '{{serviceUrl}}/collections/tasub/items/{{value}}'
       attMeasure:
         sourcePath: attmeasure
         type: FLOAT
@@ -314,8 +314,8 @@ types:
                 label: FeatureTypeC2-ID
                 transformations:
                 - stringFormat: '{{serviceUrl}}/collections/featuretypec2/items/{{value}}'
-  typea:
-    sourcePath: /typea
+  ta:
+    sourcePath: /ta
     type: OBJECT
     objectType: TypeA
     properties:
@@ -329,8 +329,8 @@ types:
         constraints:
           codelist: CodeListA
           required: true
-  typeasub:
-    sourcePath: /typeasub
+  tasub:
+    sourcePath: /tasub
     type: OBJECT
     objectType: TypeASub
     properties:

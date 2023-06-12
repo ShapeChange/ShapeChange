@@ -36,7 +36,7 @@
 		</Transformer>
 		<Transformer
 			class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
-			input="TRF_1" id="TRF_END" mode="enabled">
+			input="TRF_1" id="TRF_2" mode="enabled">
 			<parameters>
 				<ProcessParameter name="flattenObjectTypes" value="false" />
 				<ProcessParameter name="flattenDataTypesExcludeRegex" value=".*" />
@@ -51,6 +51,17 @@
 			<rules>
 				<ProcessRuleSet name="flattener">
 					<rule name="rule-trf-prop-flatten-types" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="TRF_END" input="TRF_2" mode="enabled">
+			<parameters>
+				<ProcessParameter name="codeByTaggedValue" value="code"/>
+				<ProcessParameter name="keepOriginalNameAsCode" value="true"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-all-flatten-name"/>
 				</ProcessRuleSet>
 			</rules>
 		</Transformer>

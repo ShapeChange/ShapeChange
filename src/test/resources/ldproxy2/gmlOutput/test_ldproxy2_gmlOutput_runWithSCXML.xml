@@ -50,7 +50,7 @@
          </rules>
       </Transformer>
       <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
-                   id="TRF_END"
+                   id="TRF_2"
                    input="TRF_1"
                    mode="enabled">
          <parameters>
@@ -66,6 +66,20 @@
          <rules>
             <ProcessRuleSet name="flattener">
                <rule name="rule-trf-prop-flatten-types"/>
+            </ProcessRuleSet>
+         </rules>
+      </Transformer>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
+                   id="TRF_END"
+                   input="TRF_2"
+                   mode="enabled">
+         <parameters>
+            <ProcessParameter name="codeByTaggedValue" value="code"/>
+            <ProcessParameter name="keepOriginalNameAsCode" value="true"/>
+         </parameters>
+         <rules>
+            <ProcessRuleSet name="flattener">
+               <rule name="rule-trf-all-flatten-name"/>
             </ProcessRuleSet>
          </rules>
       </Transformer>
@@ -301,6 +315,7 @@
                <rule name="rule-cdb-all-notEncoded"/>
                <rule name="rule-gpkg-all-notEncoded"/>
                <rule name="rule-ldp2-all-notEncoded"/>
+               <rule name="rule-gfs-all-notEncoded"/>
             </EncodingRule>
             <EncodingRule extends="iso19136_2007" name="citygml-ade">
                <rule name="req-xsd-cls-suppress-supertype"/>

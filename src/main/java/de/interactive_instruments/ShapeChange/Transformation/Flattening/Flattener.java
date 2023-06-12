@@ -455,6 +455,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String TV_ORIGINAL_ASSOCIATION_REFLEXIVE = "SC_ORIGINAL_ASSOCIATION_REFLEXIVE";
 
     public static final String TV_ORIGINAL_PROPERTY_NAME = "originalPropertyName";
+    public static final String TV_ORIGINAL_CLASS_NAME = "originalClassName";
     public static final String TV_ORIGINAL_INCLASS_NAME = "originalInClassName";
     public static final String TV_ORIGINAL_SCHEMA_NAME = "originalSchemaName";
 
@@ -3022,6 +3023,10 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		genModel.updateClassName(genCi, code);
+		
+		if(StringUtils.isBlank(genCi.taggedValue(TV_ORIGINAL_CLASS_NAME))) {
+		    genCi.setTaggedValue(TV_ORIGINAL_CLASS_NAME, oldName, false);
+		}
 	    }
 	}
 
@@ -3079,6 +3084,10 @@ public class Flattener implements Transformer, MessageSource {
 
 		if (keepOriginalNameAsCode) {
 		    setCode(genPi, name);
+		}
+		
+		if(StringUtils.isBlank(genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME))) {
+		    genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, name, false);
 		}
 	    }
 	}

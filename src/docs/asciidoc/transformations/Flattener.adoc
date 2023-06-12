@@ -134,9 +134,21 @@ enumeration value names are not replaced.
 value. This behavior can be turned off via the configuration parameter
 _keepOriginalNameAsCode_ (set to false).
 
-NOTE: At the moment this rule only updates names of classes and
+[NOTE]
+======
+
+* At the moment this rule only updates names of classes and
 properties (attributes and association roles) in the application schema.
 It does not modify names of associations or packages.
+* (since v2.14.0) If the name of a class is replaced with a code value, and tagged value
+_originalClassName_ is blank, then tag _originalClassName_ is set, with the
+class name as value (i.e., the name before it was replaced by the code value).
+The same is done for property names, but using tag _originalPropertyName_.  
+These information items can be useful in subsequent 
+processing, such as when the xref:../targets/ldproxy2.adoc[ldproxy2 target] 
+is set to generate configurations that support GML output.
+
+======
 
 Parameters:
 

@@ -660,14 +660,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			new ArrayList<PropertyInfo>());
 
 		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(typeDefName).objectType(ci.name()).label(label(ci))
+			.name(typeDefName).objectType(originalClassName(ci)).label(label(ci))
 			.sourcePath("/" + databaseTableName(ci, false)).description(description(ci))
 			.propertyMap(propertyDefs).build();
 
 		if (enableGmlOutput) {
 		    String nsabr = gmlNsabr(gmlXmlNamespace(ci));
 		    if (!nsabr.equals(mainAppSchema.xmlns())) {
-			gmlObjectTypeNamespacesMap.put(ci.name(), nsabr);
+			gmlObjectTypeNamespacesMap.put(originalClassName(ci), nsabr);
 		    }
 		}
 
@@ -1199,11 +1199,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    nowVisitedList);
 		    propMemberDefBuilder.propertyMap(datatypePropertyDefs);
 
-		    propMemberDefBuilder.objectType(typeCi.name());
+		    propMemberDefBuilder.objectType(originalClassName(typeCi));
 		    if (enableGmlOutput) {
 			String nsabr = gmlNsabr(gmlXmlNamespace(typeCi));
 			if (!nsabr.equals(mainAppSchema.xmlns())) {
-			    gmlObjectTypeNamespacesMap.put(typeCi.name(), nsabr);
+			    gmlObjectTypeNamespacesMap.put(originalClassName(typeCi), nsabr);
 			}
 		    }
 		}
@@ -1424,7 +1424,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     private String gmlXmlNamespace(ClassInfo ci) {
 
-	String className = ci.name();
+	String className = originalClassName(ci);
 
 	PackageInfo schemaPkg = model.schemaPackage(ci);
 	String schemaName = schemaPkg == null ? null : schemaPkg.name();
@@ -1549,11 +1549,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private String originalInClassName(PropertyInfo pi) {
 	String originalInClassName = pi.taggedValue(Flattener.TV_ORIGINAL_INCLASS_NAME);
 	if (StringUtils.isBlank(originalInClassName)) {
-	    originalInClassName = pi.inClass().name();
+	    originalInClassName = originalClassName(pi.inClass());
 	}
 	return originalInClassName;
     }
-
+    
+    private String originalClassName(ClassInfo ci) {
+	String originalClassName = ci.taggedValue(Flattener.TV_ORIGINAL_CLASS_NAME);
+	if (StringUtils.isBlank(originalClassName)) {
+	    originalClassName = ci.name();
+	}
+	return originalClassName;
+    }
+    
     private boolean gmlRenameRequired(PropertyInfo pi, String xmlNamespaceOfRootCollection) {
 
 	String originalInClassName = originalInClassName(pi);

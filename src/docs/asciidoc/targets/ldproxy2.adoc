@@ -239,12 +239,12 @@ can be significantly different to the one from which the XML schema has been der
 and class to which a property belonged in the input model can be changed by flattening inheritance 
 and flattening complex types. The same applies to the property name - it may also be changed by a 
 transformation. If inheritance or complex types have been flattened, the original class, schema, as 
-well property name can be documented in tagged values _originalSchemaName_, _originalInClassName_, 
+well as property name can be documented in tagged values _originalSchemaName_, _originalInClassName_, 
 and _originalPropertyName_. For further details as to which properties exactly are tagged this 
 way, see the documentation of the Flattener transformation rules xref:../transformations/Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance] 
 and xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[rule-trf-prop-flatten-types]. 
 If these tags are set, they are used when looking up the XML namespace and XML name of a model element. 
-Otherwise, the name of the model element, in case of a property also the the class that owns it, as 
+Otherwise, the name of the model element, in case of a property also the class that owns it, as 
 well as the schema are taken directly from the model.
 * For a model element - classes and properties -, the XML namespace in which it is XML 
 encoded needs to be known. 
@@ -515,7 +515,7 @@ NOTE: ISO 19109 requires class names to be unique within the scope of a single a
 The following information items are encoded for the type definition within the provider configuration:
 
 * type: OBJECT
-* objectType: original name of the type 
+* objectType: original name of the type (taken from tagged value _originalClassName_, if present, otherwise it is the class name as found in the - potentially transformed and thus altered - model)
 * sourcePath: "/" + {<<ldproxy2_schemaconversionrules_types_database_table_names,table_name>>}
 * label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
 * description: value as derived using the _descriptionTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
@@ -617,7 +617,7 @@ A \<<dataType>> is not converted to a top-level provider type definition. Instea
 The following information items are encoded for the type definition of the \<<dataType>>:
 
 * type: OBJECT or OBJECT_ARRAY (depending on the multiplicity; for further details, see <<ldproxy2_schemaconversionrules_properties_propertytype>>)
-* objectType: original name of the data type 
+* objectType: original name of the data type (taken from tagged value _originalClassName_, if present, otherwise it is the class name as found in the - potentially transformed and thus altered - model)
 * sourcePath: as defined for datatype valued properties in section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>
 // {<<ldproxy2_schemaconversionrules_types_database_table_names,db_table_name>>}
 // irrelevant, see note at section end * label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)

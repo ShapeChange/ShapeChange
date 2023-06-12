@@ -78,15 +78,15 @@ collections:
         - rename: a:att2
         att2_dataTypeC2:
         - rename: att2
-        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC1: 
+        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC1:
         - rename: dtC2toFTC1
         att2_dataTypeC2.dtC2toFTC1_FeatureTypeC2:
         - rename: dtC2toFTC1
-        att2_dataTypeC3: 
+        att2_dataTypeC3:
         - rename: att2
         att2_dataTypeC3.dtC2toFTC1_FeatureTypeC1:
         - rename: dtC2toFTC1
-        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC2: 
+        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC2:
         - rename: dtC2toFTC1
         attMeasure:
         - rename: a:attMeasure
@@ -99,9 +99,9 @@ collections:
       conformance: NONE
       xmlAttributes:
       - att1.attDataTypeA.att2
-  typea:
-    id: typea
-    label: typea
+  ta:
+    id: ta
+    label: ta
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -110,9 +110,9 @@ collections:
         - codelist: CodeListA
     - buildingBlock: GML
       conformance: NONE
-  typeasub:
-    id: typeasub
-    label: typeasub
+  tasub:
+    id: tasub
+    label: tasub
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
