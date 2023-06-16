@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TransformerConfiguration;
 import de.interactive_instruments.ShapeChange.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.TaggedValues;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
@@ -153,6 +154,14 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	 */
 	public static final String RULE_TV_COPY_FROM_VALUE_TYPE = "rule-trf-taggedValue-copyFromValueType";
 
+	public static final String RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS = "rule-trf-taggedValue-createOriginalSchemaInformationTags";
+	public static final String TV_ORIG_SCHEMA_NAME = "originalSchemaName";
+	public static final String TV_ORIG_CLASS_NAME = "originalClassName";
+	public static final String TV_ORIG_INCLASS_NAME = "originalInClassName";
+	public static final String TV_ORIG_PROPERTY_NAME = "originalPropertyName";
+	public static final String TV_ORIG_PROPERTY_MULTIPLICITY = "originalPropertyMultiplicity";
+	public static final String TV_ORIG_PROPERTY_VALUETYPE = "originalPropertyValueType";
+	
 	private GenericModel genModel = null;
 	private Options options = null;
 	private ShapeChangeResult result = null;
@@ -199,8 +208,34 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 		    	result.addProcessFlowInfo(null, 20103, RULE_TV_COPY_FROM_VALUE_TYPE);
 			applyRuleTaggedValueCopyFromValueType(genModel, trfConfig);
 		}
+		
+		if (rules.contains(RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS)) {
+		    	result.addProcessFlowInfo(null, 20103, RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS);
+			applyRuleCreateOriginalSchemaInformationTags(genModel, trfConfig);
+		}
 
 		// apply post-processing (nothing to do right now)
+	}
+
+	private void applyRuleCreateOriginalSchemaInformationTags(GenericModel genModel2,
+		TransformerConfiguration trfConfig) {
+	    
+	    for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+		
+		PackageInfo schemaPi = genModel.schemaPackage(genCi);		
+		genCi.setTaggedValue(TV_ORIG_SCHEMA_NAME, schemaPi == null ? "" : schemaPi.name(), false);
+		genCi.setTaggedValue(TV_ORIG_CLASS_NAME, genCi.name(), false);	
+	    }
+	    
+	    for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+		
+		PackageInfo schemaPi = genModel.schemaPackage(genPi.inClass());		
+		genPi.setTaggedValue(TV_ORIG_SCHEMA_NAME, schemaPi == null ? "" : schemaPi.name(), false);
+		genPi.setTaggedValue(TV_ORIG_INCLASS_NAME, genPi.inClass().name(), false);
+		genPi.setTaggedValue(TV_ORIG_PROPERTY_NAME, genPi.name(), false);
+		genPi.setTaggedValue(TV_ORIG_PROPERTY_MULTIPLICITY, genPi.cardinality().toString(), false);
+		genPi.setTaggedValue(TV_ORIG_PROPERTY_VALUETYPE, genPi.typeInfo().name, false);
+	    }
 	}
 
 	private void applyRuleTaggedValueCopyFromValueType(GenericModel genModel2,

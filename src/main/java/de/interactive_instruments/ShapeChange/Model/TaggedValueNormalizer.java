@@ -124,9 +124,11 @@ public class TaggedValueNormalizer {
 	    "toCodelist", "codelistType", "shortName", "codeListSource", "codeListSourceCharset",
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
 	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
-	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType",
-	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType",
-	    "representsFeatureTypeSet", "representsTypeSet").collect(Collectors.toSet());
+	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "originalClassName",
+	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
+	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
+	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet")
+	    .collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values

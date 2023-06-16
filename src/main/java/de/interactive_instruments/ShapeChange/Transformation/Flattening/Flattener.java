@@ -3023,10 +3023,8 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		genModel.updateClassName(genCi, code);
-		
-		if(StringUtils.isBlank(genCi.taggedValue(TV_ORIGINAL_CLASS_NAME))) {
-		    genCi.setTaggedValue(TV_ORIGINAL_CLASS_NAME, oldName, false);
-		}
+
+		genCi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_CLASS_NAME, oldName, false);
 	    }
 	}
 
@@ -3085,10 +3083,8 @@ public class Flattener implements Transformer, MessageSource {
 		if (keepOriginalNameAsCode) {
 		    setCode(genPi, name);
 		}
-		
-		if(StringUtils.isBlank(genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME))) {
-		    genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, name, false);
-		}
+
+		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_PROPERTY_NAME, name, false);
 	    }
 	}
 
@@ -3592,10 +3588,16 @@ public class Flattener implements Transformer, MessageSource {
 			    if (genPi.isDerived()) {
 				copy.setDerived(true);
 			    }
-			    
-			    if("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
+
+			    if ("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
 				    || "true".equals(typeToProcess.taggedValue("representsTypeSet"))) {
-				copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+
+				if (StringUtils.isNotBlank(genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME))) {
+				    copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME,
+					    genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME), false);
+				} else {
+				    copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+				}
 			    }
 
 			    /*
@@ -3703,8 +3705,8 @@ public class Flattener implements Transformer, MessageSource {
 				    }
 				}
 			    }
-			    
-			    if(separatorMapEmpty || StringUtils.isNotBlank(tvNameForCodeValue)) {
+
+			    if (separatorMapEmpty || StringUtils.isNotBlank(tvNameForCodeValue)) {
 
 				/*
 				 * Execute merging of codes as defined before merging of descriptors with
@@ -5479,9 +5481,9 @@ public class Flattener implements Transformer, MessageSource {
 	     * property (that will be copied down to all subtypes).
 	     */
 	    if (!genPi.inClass().subtypes().isEmpty()) {
-		genPi.setTaggedValue(TV_ORIGINAL_INCLASS_NAME, genPi.inClass().name(), false);
-		genPi.setTaggedValue(TV_ORIGINAL_SCHEMA_NAME, genPi.model().schemaPackage(genPi.inClass()).name(),
-			false);
+		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_INCLASS_NAME, genPi.inClass().name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_SCHEMA_NAME,
+			genPi.model().schemaPackage(genPi.inClass()).name(), false);
 	    }
 
 	    /*
@@ -5495,7 +5497,7 @@ public class Flattener implements Transformer, MessageSource {
 	     * changes occur.
 	     */
 	    if (!genPi.isAttribute() && !genPi.typeClass().subtypes().isEmpty()) {
-		genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
 	    }
 	}
 
