@@ -51,6 +51,13 @@ NOTE att1 Desc</documentation>
                   </annotation>
                </element>
                <element name="att2" type="gml:MeasureType"/>
+            <element name="roleFt2" type="t:FT2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
             </sequence>
          </extension>
       </complexContent>
@@ -71,6 +78,13 @@ NOTE att1 Desc</documentation>
          <extension base="gml:AbstractFeatureType">
             <sequence>
                <element name="attMixinB" type="string"/>
+            <element name="roleFt1" type="t:FT1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
             </sequence>
          </extension>
       </complexContent>
