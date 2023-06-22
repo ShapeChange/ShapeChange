@@ -1291,6 +1291,134 @@
    </annotation>
   </attribute>
  </complexType>
+ <element name="SqlEncodingInfos" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:SqlEncodingInfosType"/>
+ <complexType name="SqlEncodingInfosType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="0" name="modelElementEncodings">
+      <complexType>
+       <sequence>
+        <element ref="sc:ModelElementSqlEncodingInfo" maxOccurs="unbounded" minOccurs="1"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="ModelElementSqlEncodingInfo" type="sc:ModelElementSqlEncodingInfoType" abstract="true"/>
+ <complexType name="ModelElementSqlEncodingInfoType">
+  <attribute name="schemaName" type="string" use="required">
+   <annotation>
+    <documentation>Name of the schema to which the model element belongs (in the model encoded by the SqlDdl target).</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="originalSchemaName" type="string">
+   <annotation>
+    <documentation>Name of the schema to which the model element originally belonged. Can be omitted, if the value is the same as schemaName.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="SqlClassEncodingInfo" type="sc:SqlClassEncodingInfoType" substitutionGroup="sc:ModelElementSqlEncodingInfo"/>
+ <complexType name="SqlClassEncodingInfoType">
+  <complexContent>
+   <extension base="sc:ModelElementSqlEncodingInfoType">
+    <attribute name="className" type="string" use="required">
+     <annotation>
+      <documentation>Class name (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalClassName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the class in the original schema. Can be omitted, if the value is the same as className.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="table" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database table that represents the class. Can be omitted if the class is not represented by a singular table. That can be the case if the class is represented by multiple, property usage specific tables.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="databaseSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the table is defined. Can be omitted if no particular schema is defined for the table.</documentation>
+     </annotation>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="SqlPropertyEncodingInfo" type="sc:SqlPropertyEncodingInfoType" substitutionGroup="sc:ModelElementSqlEncodingInfo"/>
+ <complexType name="SqlPropertyEncodingInfoType">
+  <complexContent>
+   <extension base="sc:ModelElementSqlEncodingInfoType">
+    <attribute name="propertyName" type="string" use="required">
+     <annotation>
+      <documentation>Property name (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="inClassName" type="string" use="required">
+     <annotation>
+      <documentation>Name of the class that owns the property (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="propertyValueType" type="string" use="required">
+     <annotation>
+      <documentation>Name of the property value type (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="propertyMultiplicity" type="string" use="required">
+     <annotation>
+      <documentation>Multiplicity of the property value type (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the property in the original schema. Can be omitted, if the value is the same as propertyName.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalInClassName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the class that owned the property in the original schema. Can be omitted, if the value is the same as inClassName.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyValueType" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the property value type in the original schema. Can be omitted, if the value is the same as propertyValueType.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyMultiplicity" type="string" use="optional">
+     <annotation>
+      <documentation>Multiplicity of the property value type in the original schema. Can be omitted, if the value is the same as propertyMultiplicity.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="sourceTable" type="string" use="required">
+     <annotation>
+      <documentation>Name of the database table that provides the context for the sourcePath.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="sourceTableSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the sourceTable is defined. Can be omitted if no particular schema is defined for the sourceTable</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="sourcePath" type="string" use="required">
+     <annotation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the property values in the database (with the </documentation>
+     </annotation>
+    </attribute>
+    <attribute name="targetTable" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the database table that the source path evaluates to. Can be omitted, if no such table exists (then the source path typically resolves to a value contained in a field within the source table, not to a value or values in another table.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="targetTableSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the targetTable is defined. Can be omitted if no particular schema is defined for the targetTable</documentation>
+     </annotation>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
  <element name="JsonSchemaAnnotations" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:JsonSchemaAnnotationsType"/>
  <complexType name="JsonSchemaAnnotationsType">
   <complexContent>

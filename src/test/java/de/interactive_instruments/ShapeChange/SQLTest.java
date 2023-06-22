@@ -68,7 +68,7 @@ public class SQLTest extends BasicTestSCXML {
 	 * SQL - associative tables tests
 	 */
 	multiTest("src/test/resources/sql/associativeTables/testEA_sqlAssociativeTables.xml", new String[] { "sql" },
-		"testResults/sql/associativeTables", "src/test/resources/sql/associativeTables/reference");
+		"testResults/sql/associativeTables/ddl", "src/test/resources/sql/associativeTables/reference/ddl");
     }
     
     @Test
@@ -218,8 +218,8 @@ public class SQLTest extends BasicTestSCXML {
     public void testReflexiveRelationshipFieldSuffix() {
 
 	multiTest("src/test/resources/sql/reflexiveRelationshipFieldSuffix/testEA_sql_reflexiveRelationshipFieldSuffix.xml",
-		new String[] { "sql" }, "testResults/sql/reflexiveRelationshipFieldSuffix",
-		"src/test/resources/sql/reflexiveRelationshipFieldSuffix/reference");
+		new String[] { "sql" }, "testResults/sql/reflexiveRelationshipFieldSuffix/ddl",
+		"src/test/resources/sql/reflexiveRelationshipFieldSuffix/reference/ddl");
     }
     
     @Test
@@ -260,5 +260,13 @@ public class SQLTest extends BasicTestSCXML {
 	multiTest("src/test/resources/sql/explicitlyEncodePkReferencedColumnInForeignKeys/testEA_sql_explicitlyEncodePkReferencedColumnInForeignKeys.xml",
 		new String[] { "sql" }, "testResults/sql/explicitlyEncodePkReferencedColumnInForeignKeys",
 		"src/test/resources/sql/explicitlyEncodePkReferencedColumnInForeignKeys/reference");
+    }
+    
+    @Test
+    public void testSqlEncodingInfos() {
+
+	multiTest("src/test/resources/sql/sqlEncodingInfos/testEA_sqlEncodingInfos.xml",
+		new String[] { "sql","xml" }, "testResults/sql/sqlEncodingInfos/results",
+		"src/test/resources/sql/sqlEncodingInfos/reference");
     }
 }

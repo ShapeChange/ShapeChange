@@ -3095,6 +3095,9 @@ Characteristics:
 that is identified by the map entry. Recognized values are:
 *** datatype
 *** codelist
+* primaryKeyColumns (since v2.14.0):
+** Applies to database type: all
+** Description: the value is a space-separated (!) list of the names of all columns that constitute the primary key of the table. A table often only has a single primary key column.
 
 [[Configuration_Examples]]
 == Configuration Examples
