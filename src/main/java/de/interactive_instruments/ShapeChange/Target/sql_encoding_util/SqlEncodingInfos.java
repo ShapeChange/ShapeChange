@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.sql_encoding_util;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -47,6 +48,9 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.PropertyEncodingContext;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
@@ -63,12 +67,16 @@ public class SqlEncodingInfos implements MessageSource {
     protected SortedSet<SqlClassEncodingInfo> classInfos = new TreeSet<>();
     protected SortedSet<SqlPropertyEncodingInfo> propertyInfos = new TreeSet<>();
 
-    public SortedSet<SqlClassEncodingInfo> getSqlClassEncodingInfo() {
+    public SortedSet<SqlClassEncodingInfo> getSqlClassEncodingInfos() {
 	return classInfos;
     }
 
-    public SortedSet<SqlPropertyEncodingInfo> getSqlPropertyEncodingInfo() {
+    public SortedSet<SqlPropertyEncodingInfo> getSqlPropertyEncodingInfos() {
 	return propertyInfos;
+    }
+
+    public boolean isEmpty() {
+	return this.classInfos.isEmpty() && this.propertyInfos.isEmpty();
     }
 
     public void add(SqlClassEncodingInfo scei) {
@@ -134,6 +142,62 @@ public class SqlEncodingInfos implements MessageSource {
 //	add(new ModelElementXmlEncoding(pi.inClass().name() + "::" + pi.name(),
 //		schemaPkg == null ? null : schemaPkg.name(), xmlName, xmlNamespace, isXmlAttribute));
 //    }
+
+    public Set<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi, PropertyEncodingContext context) {
+
+	Set<SqlPropertyEncodingInfo> result = new TreeSet<>();
+
+	for (SqlPropertyEncodingInfo sei : this.propertyInfos) {
+
+	    String name = sei.hasOriginalPropertyName() ? sei.getOriginalPropertyName() : sei.getPropertyName();
+	    String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
+
+	    String piSchema = pi.model().schemaPackage(pi.inClass()).name();
+
+	    String sourceTable = sei.getSourceTable();
+
+	    if (pi.name().equals(name) && piSchema.equals(schema) && sourceTable.equals(context.getSourceTable())
+		    && pi.inClass().name().equals(sei.getInClassName())) {
+		result.add(sei);
+	    }
+	}
+
+	return result;
+    }
+
+    public boolean hasClassEncodingInfo(ClassInfo ci) {
+
+	for (SqlClassEncodingInfo sei : this.classInfos) {
+
+	    String name = sei.hasOriginalClassName() ? sei.getOriginalClassName() : sei.getClassName();
+	    String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
+
+	    String ciSchema = ci.model().schemaPackage(ci).name();
+
+	    if (ci.name().equals(name) && ciSchema.equals(schema)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    public SqlClassEncodingInfo getClassEncodingInfo(ClassInfo ci) {
+
+	for (SqlClassEncodingInfo sei : this.classInfos) {
+
+	    String name = sei.hasOriginalClassName() ? sei.getOriginalClassName() : sei.getClassName();
+	    String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
+
+	    String ciSchema = ci.model().schemaPackage(ci).name();
+
+	    if (ci.name().equals(name) && ciSchema.equals(schema)) {
+		return sei;
+	    }
+	}
+
+	return null;
+    }
 
     public void toXml(File outputFile, ShapeChangeResult result) {
 
@@ -244,7 +308,7 @@ public class SqlEncodingInfos implements MessageSource {
 	    scei.setClassName(seie.getAttribute("className"));
 	    scei.setOriginalClassName(StringUtils.stripToNull(seie.getAttribute("originalClassName")));
 
-	    scei.setTable(seie.getAttribute("table"));
+	    scei.setTable(seie.getAttribute("tableName"));
 	    scei.setDatabaseSchema(StringUtils.stripToNull(seie.getAttribute("databaseSchema")));
 
 	    sei.add(scei);
@@ -285,8 +349,8 @@ public class SqlEncodingInfos implements MessageSource {
     }
 
     public void merge(SqlEncodingInfos otherSqlEncodingInfos) {
-	this.classInfos.addAll(otherSqlEncodingInfos.getSqlClassEncodingInfo());
-	this.propertyInfos.addAll(otherSqlEncodingInfos.getSqlPropertyEncodingInfo());
+	this.classInfos.addAll(otherSqlEncodingInfos.getSqlClassEncodingInfos());
+	this.propertyInfos.addAll(otherSqlEncodingInfos.getSqlPropertyEncodingInfos());
     }
 
     @Override

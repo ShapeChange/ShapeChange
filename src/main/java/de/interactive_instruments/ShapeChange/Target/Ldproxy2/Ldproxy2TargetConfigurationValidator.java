@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,14 +73,15 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
-		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
-		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
-		    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
-		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
-		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
-		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_FRAGMENTS,
+		    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
+		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
+		    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
+		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
+		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
+		    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
+		    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
+		    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));

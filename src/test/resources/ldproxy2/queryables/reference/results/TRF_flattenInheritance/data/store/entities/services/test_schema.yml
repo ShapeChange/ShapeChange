@@ -15,16 +15,14 @@ collections:
     label: featuretype
     enabled: true
     api:
-    - buildingBlock: FEATURES_CORE
-      queryables:
-        spatial:
-        - attPoint
-        temporal:
-        - attDate
-        other:
-        - attInt
-        - roleFTtoT_Subtype.title
-        - roleFTtoT_Type.title
+    - buildingBlock: QUERYABLES
+      included:
+      - attDate
+      - attInt
+      - attPoint
+      - roleFTtoT_Subtype.title
+      - roleFTtoT_Type.title
+      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML
       transformations:
         attDate:
@@ -34,18 +32,18 @@ collections:
     label: subtype
     enabled: true
     api:
-    - buildingBlock: FEATURES_CORE
-      queryables:
-        other:
-        - attCharacter
+    - buildingBlock: QUERYABLES
+      included:
+      - attCharacter
+      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML
   type:
     id: type
     label: type
     enabled: true
     api:
-    - buildingBlock: FEATURES_CORE
-      queryables:
-        other:
-        - attCharacter
+    - buildingBlock: QUERYABLES
+      included:
+      - attCharacter
+      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML

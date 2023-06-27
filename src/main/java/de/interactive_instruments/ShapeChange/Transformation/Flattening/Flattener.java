@@ -104,6 +104,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer;
 import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
 
@@ -453,11 +454,6 @@ public class Flattener implements Transformer, MessageSource {
     // internal tagged values used while flattening inheritance
     public static final String TV_ORIGINAL_ASSOCIATION = "SC_ORIGINAL_ASSOCIATION";
     public static final String TV_ORIGINAL_ASSOCIATION_REFLEXIVE = "SC_ORIGINAL_ASSOCIATION_REFLEXIVE";
-
-    public static final String TV_ORIGINAL_PROPERTY_NAME = "originalPropertyName";
-    public static final String TV_ORIGINAL_CLASS_NAME = "originalClassName";
-    public static final String TV_ORIGINAL_INCLASS_NAME = "originalInClassName";
-    public static final String TV_ORIGINAL_SCHEMA_NAME = "originalSchemaName";
 
     // =============================
     /* internal */
@@ -3024,7 +3020,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		genModel.updateClassName(genCi, code);
 
-		genCi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_CLASS_NAME, oldName, false);
+		genCi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_CLASS_NAME, oldName, false);
 	    }
 	}
 
@@ -3084,7 +3080,7 @@ public class Flattener implements Transformer, MessageSource {
 		    setCode(genPi, name);
 		}
 
-		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_PROPERTY_NAME, name, false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, name, false);
 	    }
 	}
 
@@ -3592,11 +3588,51 @@ public class Flattener implements Transformer, MessageSource {
 			    if ("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
 				    || "true".equals(typeToProcess.taggedValue("representsTypeSet"))) {
 
-				if (StringUtils.isNotBlank(genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME))) {
-				    copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME,
-					    genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME), false);
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME), false);
 				} else {
-				    copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(),
+					    false);
+				}
+
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME), false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+					    genPi.inClass().name(), false);
+				}
+
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY),
+					    false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
+					    genPi.cardinality().toString(), false);
+				}
+
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE),
+					    false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
+					    genPi.typeInfo().name, false);
+				}
+
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME), false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+					    genPi.model().schemaPackage(genPi.inClass()).name(), false);
 				}
 			    }
 
@@ -5481,8 +5517,9 @@ public class Flattener implements Transformer, MessageSource {
 	     * property (that will be copied down to all subtypes).
 	     */
 	    if (!genPi.inClass().subtypes().isEmpty()) {
-		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_INCLASS_NAME, genPi.inClass().name(), false);
-		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_SCHEMA_NAME,
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+			genPi.inClass().name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
 			genPi.model().schemaPackage(genPi.inClass()).name(), false);
 	    }
 
@@ -5497,7 +5534,7 @@ public class Flattener implements Transformer, MessageSource {
 	     * changes occur.
 	     */
 	    if (!genPi.isAttribute() && !genPi.typeClass().subtypes().isEmpty()) {
-		genPi.setTaggedValueIfCurrentlyBlank(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(), false);
 	    }
 	}
 

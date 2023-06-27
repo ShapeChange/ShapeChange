@@ -1334,7 +1334,7 @@
       <documentation>Name of the class in the original schema. Can be omitted, if the value is the same as className.</documentation>
      </annotation>
     </attribute>
-    <attribute name="table" type="string" use="optional">
+    <attribute name="tableName" type="string" use="optional">
      <annotation>
       <documentation>Identifier of the database table that represents the class. Can be omitted if the class is not represented by a singular table. That can be the case if the class is represented by multiple, property usage specific tables.</documentation>
      </annotation>

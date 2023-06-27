@@ -119,7 +119,7 @@ public class SqlClassEncodingInfo extends ModelElementSqlEncodingInfo implements
     public boolean hasDatabaseSchema() {
 	return StringUtils.isNotBlank(this.databaseSchema);
     }
-
+    
     @Override
     public int compareTo(SqlClassEncodingInfo o) {
 	if (this == o) {

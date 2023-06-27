@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,29 +39,28 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 public class Ldproxy2Constants {
 
     public static final String PLATFORM = "ldp2";
-    
+
     public static final long UNITTEST_UNIX_TIME = 1000000000000L;
 
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING = "initialValueEncoding";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE = "true";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE = "false";
-    
+
     public static final String ME_PARAM_GEOMETRY_INFOS = "geometryInfos";
     public static final String ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE = "geometryType";
-    
+
     public static final String ME_PARAM_LINK_INFOS = "linkInfos";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE = "urlTemplate";
-    
+
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
-    
-    
+
 //    /**
 //     * Optional changes to the default documentation template and the default
 //     * strings for descriptors without value
 //     */
 //    public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 //    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
-    
+
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
     public static final String PARAM_CFG_TEMPLATE_PATH = "cfgTemplatePath";
     public static final String PARAM_CODE_TARGET_TAG_NAME = "codeTargetTagName";
@@ -74,13 +73,14 @@ public class Ldproxy2Constants {
     public static final String PARAM_FK_COLUMN_SUFFIX = "foreignKeyColumnSuffix";
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
     public static final String PARAM_FK_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
+    public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
     public static final String PARAM_GML_SF_LEVEL = "gmlSfLevel";
     public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
     public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
     public static final String PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS = "supportsStandardResponseParameters";
-    public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";    
+    public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";
     public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
@@ -92,7 +92,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_SRID = "srid";
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
 
-    public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";   
+    public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
@@ -105,5 +105,5 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_ENUMERATION_ENUM_CONSTRAINT = "rule-ldp2-cls-enumeration-enum-constraint";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
-   
+
 }

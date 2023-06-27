@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:ext="https://shapechange.net/test/schema/external"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://test.org/shapechange/sql/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://test.org/shapechange/sql/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <import namespace="https://shapechange.net/test/schema/external"
+           schemaLocation="https://shapechange.net/test/schema/external.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="T1_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T1_Class1Type"/>
+   <complexType name="T1_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA1"
+                        type="t:T1_Class2PropertyType"/>
+               <element name="pA2" type="t:T1_Class2PropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA3"
+                        type="t:T1_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pA4" type="t:T1_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pA5" type="t:T1_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB3</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA6"
+                        type="t:T1_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB4</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA7"
+                        type="t:T1_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB5</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" name="pX" type="string"/>
+               <element maxOccurs="unbounded" name="pY" type="string"/>
+               <element name="pZ" type="gml:PointPropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T1_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T1_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T1_Class2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T1_Class2Type"/>
+   <complexType name="T1_Class2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pB1"
+                        type="t:T1_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA3</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pB2"
+                        type="t:T1_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA4</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pB3" type="t:T1_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA5</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="6"
+                        minOccurs="6"
+                        name="pB4"
+                        type="t:T1_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA6</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="3" name="pB5" type="t:T1_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA7</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="2" name="pB6" type="t:T1_Class1PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T1_Class2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T1_Class2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T2_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T2_Class1Type"/>
+   <complexType name="T2_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="pDerived" type="string"/>
+               <element name="pNormal" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T2_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T2_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T3_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T3_Class1Type"/>
+   <complexType name="T3_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="p1" type="integer"/>
+               <element name="p2" type="t:T3_Class2PropertyType"/>
+               <element name="p3" type="t:T3_Class3PropertyType"/>
+               <element maxOccurs="unbounded" name="p4" type="t:T3_Class4PropertyType"/>
+               <element name="p5" type="ext:ExternalDatatypeDefinedInModelPropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="p6"
+                        type="ext:ExternalDatatypeDefinedInModelPropertyType"/>
+               <element name="p7" type="ext:ExternalDatatypeDefinedOutsideOfModelPropertyType"/>
+               <element maxOccurs="unbounded"
+                        name="p8"
+                        type="ext:ExternalDatatypeDefinedOutsideOfModelPropertyType"/>
+               <element name="p9" type="t:T3_Class4PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T3_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T3_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T3_Class2"
+            substitutionGroup="gml:AbstractObject"
+            type="t:T3_Class2Type"/>
+   <complexType name="T3_Class2Type">
+      <sequence>
+         <element name="t3c2p1" type="string"/>
+         <element name="t3c2p2" type="t:T3_Class2SubDtPropertyType"/>
+         <element maxOccurs="unbounded"
+                  minOccurs="0"
+                  name="t3c2p3"
+                  type="t:T3_Class2SubDtPropertyType"/>
+      </sequence>
+   </complexType>
+   <complexType name="T3_Class2PropertyType">
+      <sequence>
+         <element ref="t:T3_Class2"/>
+      </sequence>
+   </complexType>
+   <element name="T3_Class2SubDt"
+            substitutionGroup="gml:AbstractObject"
+            type="t:T3_Class2SubDtType"/>
+   <complexType name="T3_Class2SubDtType">
+      <sequence>
+         <element name="t3c2subp1" type="string"/>
+      </sequence>
+   </complexType>
+   <complexType name="T3_Class2SubDtPropertyType">
+      <sequence>
+         <element ref="t:T3_Class2SubDt"/>
+      </sequence>
+   </complexType>
+   <element name="T3_Class3"
+            substitutionGroup="gml:AbstractObject"
+            type="t:T3_Class3Type"/>
+   <complexType name="T3_Class3Type">
+      <sequence>
+         <element maxOccurs="unbounded" name="t3c3p1" type="string"/>
+         <element name="t3c3p2" type="boolean"/>
+      </sequence>
+   </complexType>
+   <complexType name="T3_Class3PropertyType">
+      <sequence>
+         <element ref="t:T3_Class3"/>
+      </sequence>
+   </complexType>
+   <element name="T3_Class4"
+            substitutionGroup="gml:AbstractObject"
+            type="t:T3_Class4Type"/>
+   <complexType name="T3_Class4Type">
+      <sequence>
+         <element name="t3c4p1" type="integer"/>
+         <element name="t3c4p2" type="double"/>
+      </sequence>
+   </complexType>
+   <complexType name="T3_Class4PropertyType">
+      <sequence>
+         <element ref="t:T3_Class4"/>
+      </sequence>
+   </complexType>
+   <element name="T3_Class4Sub"
+            substitutionGroup="t:T3_Class4"
+            type="t:T3_Class4SubType"/>
+   <complexType name="T3_Class4SubType">
+      <complexContent>
+         <extension base="t:T3_Class4Type">
+            <sequence>
+               <element name="t3c4subp1" type="string"/>
+               <element maxOccurs="unbounded" name="t3c4subp2" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T3_Class4SubPropertyType">
+      <sequence>
+         <element ref="t:T3_Class4Sub"/>
+      </sequence>
+   </complexType>
+   <element name="T4_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T4_Class1Type"/>
+   <complexType name="T4_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="t4c1p1"
+                        type="ext:ExternalFeatureTypePropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">:extFtP1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        name="t4c1p2"
+                        type="ext:ExternalFeatureTypePropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">:extFtP2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T4_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T4_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T5_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T5_Class1Type"/>
+   <complexType name="T5_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="5" name="t5c1p1" type="t:T5_Enumeration1Type"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T5_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T5_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T5_Class2"
+            substitutionGroup="t:T5_Class1"
+            type="t:T5_Class2Type"/>
+   <complexType name="T5_Class2Type">
+      <complexContent>
+         <extension base="t:T5_Class1Type">
+            <sequence>
+               <element name="t5c2p1" type="t:T5_Enumeration2Type"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T5_Class2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T5_Class2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <simpleType name="T5_Enumeration1Type">
+      <restriction base="string">
+         <enumeration value="1000"/>
+         <enumeration value="2000"/>
+      </restriction>
+   </simpleType>
+   <simpleType name="T5_Enumeration2Type">
+      <restriction base="string">
+         <enumeration value="1000"/>
+         <enumeration value="2000"/>
+      </restriction>
+   </simpleType>
+   <element name="T6_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T6_Class1Type"/>
+   <complexType name="T6_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="feature1a" type="t:T6_Class1PropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="feature1b_target"
+                        type="t:T6_Class1PropertyType"/>
+               <element name="feature2" type="t:T6_Class2PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T6_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T6_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T6_Class2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T6_Class2Type"/>
+   <complexType name="T6_Class2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T6_Class2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T6_Class2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T7_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T7_Class1Type"/>
+   <complexType name="T7_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="att1" type="gml:CodeType"/>
+               <element maxOccurs="unbounded" name="att2" type="gml:CodeType"/>
+               <element name="att3" type="t:T7_DataTypePropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T7_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T7_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T7_DataType"
+            substitutionGroup="gml:AbstractObject"
+            type="t:T7_DataTypeType"/>
+   <complexType name="T7_DataTypeType">
+      <sequence>
+         <element name="attDt1" type="gml:CodeType"/>
+         <element maxOccurs="unbounded" name="attDt2" type="gml:CodeType"/>
+      </sequence>
+   </complexType>
+   <complexType name="T7_DataTypePropertyType">
+      <sequence>
+         <element ref="t:T7_DataType"/>
+      </sequence>
+   </complexType>
+   <element name="T8_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T8_Class1Type"/>
+   <complexType name="T8_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attC1" type="integer"/>
+               <element maxOccurs="unbounded" name="attC1Mult" type="integer"/>
+               <element maxOccurs="unbounded"
+                        name="role1to2"
+                        type="t:T8_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:role2to1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T8_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T8_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T8_Class1Sub"
+            substitutionGroup="t:T8_Class1"
+            type="t:T8_Class1SubType"/>
+   <complexType name="T8_Class1SubType">
+      <complexContent>
+         <extension base="t:T8_Class1Type">
+            <sequence>
+               <element name="attC1Sub" type="string"/>
+               <element maxOccurs="unbounded" name="attC1SubMult" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T8_Class1SubPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T8_Class1Sub"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="T8_Class2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T8_Class2Type"/>
+   <complexType abstract="true" name="T8_Class2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attC2" type="double"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="role2to1"
+                        type="t:T8_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:role1to2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T8_Class2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T8_Class2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T8_Class2Sub"
+            substitutionGroup="t:T8_Class2"
+            type="t:T8_Class2SubType"/>
+   <complexType name="T8_Class2SubType">
+      <complexContent>
+         <extension base="t:T8_Class2Type">
+            <sequence>
+               <element name="attC2Sub" type="boolean"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T8_Class2SubPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T8_Class2Sub"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

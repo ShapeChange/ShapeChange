@@ -1,0 +1,149 @@
+---
+id: test
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: MyServiceLabel
+description: '...'
+serviceType: OGC_API
+api:
+- buildingBlock: RESOURCES
+  enabled: true
+- buildingBlock: GML
+  enabled: true
+  applicationNamespaces:
+    t: http://test.org/shapechange/sql/test
+  defaultNamespace: t
+  schemaLocations:
+    t: "{{serviceUrl}}/resources/test_sql.xsd"
+  gmlIdPrefix: _
+- buildingBlock: QUERYABLES
+  enabled: true
+collections:
+  t1_class1:
+    id: t1_class1
+    label: t1_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t1_class2:
+    id: t1_class2
+    label: t1_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t2_class1:
+    id: t2_class1
+    label: t2_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t3_class1:
+    id: t3_class1
+    label: t3_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t4_class1:
+    id: t4_class1
+    label: t4_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t5_class1:
+    id: t5_class1
+    label: t5_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        t5c1p1:
+        - codelist: T5_Enumeration1
+    - buildingBlock: GML
+      conformance: NONE
+  t5_class2:
+    id: t5_class2
+    label: t5_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        t5c2p1:
+        - codelist: T5_Enumeration2
+    - buildingBlock: GML
+      conformance: NONE
+  t6_class1:
+    id: t6_class1
+    label: t6_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t6_class2:
+    id: t6_class2
+    label: t6_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t7_class1:
+    id: t7_class1
+    label: t7_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        att1:
+        - codelist: T7_CodeList
+        att2:
+        - codelist: T7_CodeList
+        att3.attDt1:
+        - codelist: T7_CodeList
+        att3.attDt2:
+        - codelist: T7_CodeList
+    - buildingBlock: GML
+      conformance: NONE
+  t8_class1:
+    id: t8_class1
+    label: t8_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t8_class1sub:
+    id: t8_class1sub
+    label: t8_class1sub
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t8_class2:
+    id: t8_class2
+    label: t8_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t8_class2sub:
+    id: t8_class2sub
+    label: t8_class2sub
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
