@@ -51,6 +51,7 @@ public class Ldproxy2Constants {
 
     public static final String ME_PARAM_LINK_INFOS = "linkInfos";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE = "urlTemplate";
+    public static final String ME_PARAM_LINK_INFOS_CHARACT_TABLE_NAME = "tableName";
 
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
 
@@ -94,6 +95,7 @@ public class Ldproxy2Constants {
 
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
+    public static final String RULE_ALL_LINK_OBJECT_AS_FEATURE_REF = "rule-ldp2-all-linkObjectAsFeatureRef";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";

@@ -33,7 +33,6 @@ package de.interactive_instruments.ShapeChange.Target.sql_encoding_util;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -95,70 +94,37 @@ public class SqlEncodingInfos implements MessageSource {
 	propertyInfos.addAll(speis);
     }
 
-//    public Optional<ModelElementXmlEncoding> getXmlEncodingInfo(String schemaName, String modelElementName) {
-//
-//	for (ModelElementXmlEncoding mexe : this.modelElementEncodings) {
-//	    if ((StringUtils.isBlank(schemaName) || mexe.getApplicationSchemaName().equals(schemaName))
-//		    && mexe.getModelElementName().equals(modelElementName)) {
-//		return Optional.of(mexe);
-//	    }
-//	}
-//
-//	return Optional.empty();
-//    }
-//
-//    public Optional<ModelElementXmlEncoding> getXmlEncodingInfo(String schemaName, ClassInfo ci) {
-//	return getXmlEncodingInfo(schemaName, ci.name());
-//    }
-//
-//    public Optional<ModelElementXmlEncoding> getXmlEncodingInfo(String schemaName, PropertyInfo pi) {
-//	return getXmlEncodingInfo(schemaName, pi.inClass().name() + "::" + pi.name());
-//    }
-//
-//    public Optional<String> findNsabr(String xmlNamespace) {
-//
-//	return this.xmlNamespaces.stream().filter(xns -> xns.getNs().equals(xmlNamespace)).map(xns -> xns.getNsabr())
-//		.findFirst();
-//    }
-//
-//    public boolean isXmlAttribute(String schemaName, String className, String propertyName) {
-//
-//	final String propertyModelElementName = className + "::" + propertyName;
-//
-//	return this.modelElementEncodings.stream()
-//		.filter(mexe -> (StringUtils.isBlank(schemaName) || mexe.getApplicationSchemaName().equals(schemaName))
-//			&& mexe.getModelElementName().equals(propertyModelElementName))
-//		.map(mexe -> mexe.isXmlAttribute()).findFirst().orElse(false);
-//    }
-//
-//    public void add(ClassInfo ci, String xmlName, String xmlNamespace) {
-//	PackageInfo schemaPkg = ci.model().schemaPackage(ci);
-//	add(new ModelElementXmlEncoding(ci.name(), schemaPkg == null ? null : schemaPkg.name(), xmlName, xmlNamespace,
-//		false));
-//    }
-//
-//    public void add(PropertyInfo pi, String xmlName, String xmlNamespace, boolean isXmlAttribute) {
-//	PackageInfo schemaPkg = pi.model().schemaPackage(pi.inClass());
-//	add(new ModelElementXmlEncoding(pi.inClass().name() + "::" + pi.name(),
-//		schemaPkg == null ? null : schemaPkg.name(), xmlName, xmlNamespace, isXmlAttribute));
-//    }
+    /**
+     * Look for SqlPropertyEncodingInfos that have same sourceTable as defined by
+     * the context, and that have originalPropertyName (if not set, then
+     * propertyName) equal to that of pi, and originalInClassName (if not set, then
+     * inClassName) equal to that of pi, and originalSchemaName (if not set, then
+     * schemaName) equal to that of pi.
+     * 
+     * @param pi      - tbd
+     * @param context - tbd
+     * @return - tbd
+     */
+    public SortedSet<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi,
+	    PropertyEncodingContext context) {
 
-    public Set<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi, PropertyEncodingContext context) {
-
-	Set<SqlPropertyEncodingInfo> result = new TreeSet<>();
+	SortedSet<SqlPropertyEncodingInfo> result = new TreeSet<>();
 
 	for (SqlPropertyEncodingInfo sei : this.propertyInfos) {
 
-	    String name = sei.hasOriginalPropertyName() ? sei.getOriginalPropertyName() : sei.getPropertyName();
-	    String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
-
-	    String piSchema = pi.model().schemaPackage(pi.inClass()).name();
-
 	    String sourceTable = sei.getSourceTable();
 
-	    if (pi.name().equals(name) && piSchema.equals(schema) && sourceTable.equals(context.getSourceTable())
-		    && pi.inClass().name().equals(sei.getInClassName())) {
-		result.add(sei);
+	    if (sourceTable.equals(context.getSourceTable())) {
+
+		String name = sei.hasOriginalPropertyName() ? sei.getOriginalPropertyName() : sei.getPropertyName();
+		String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
+		String inClass = sei.hasOriginalInClassName() ? sei.getOriginalInClassName() : sei.getInClassName();
+
+		String piSchema = pi.model().schemaPackage(pi.inClass()).name();
+
+		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)) {
+		    result.add(sei);
+		}
 	    }
 	}
 
@@ -180,6 +146,26 @@ public class SqlEncodingInfos implements MessageSource {
 	}
 
 	return false;
+    }
+
+    public boolean hasClassEncodingInfoForTable(String targetTableName) {
+
+	for (SqlClassEncodingInfo sei : this.classInfos) {
+	    if (sei.getTable().equalsIgnoreCase(targetTableName)) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public SqlClassEncodingInfo getClassEncodingInfoForTable(String targetTableName) {
+
+	for (SqlClassEncodingInfo sei : this.classInfos) {
+	    if (sei.getTable().equalsIgnoreCase(targetTableName)) {
+		return sei;
+	    }
+	}
+	return null;
     }
 
     public SqlClassEncodingInfo getClassEncodingInfo(ClassInfo ci) {
@@ -277,7 +263,11 @@ public class SqlEncodingInfos implements MessageSource {
 		if (sei.hasSourceTableSchema()) {
 		    XMLUtil.addAttribute(document, e2, "sourceTableSchema", sei.getSourceTableSchema());
 		}
-		XMLUtil.addAttribute(document, e2, "sourcePath", StringUtils.stripToEmpty(sei.getSourcePath()));
+		XMLUtil.addAttribute(document, e2, "valueSourcePath",
+			StringUtils.stripToEmpty(sei.getValueSourcePath()));
+		if (sei.hasIdSourcePath()) {
+		    XMLUtil.addAttribute(document, e2, "idSourcePath", StringUtils.stripToEmpty(sei.getIdSourcePath()));
+		}
 		if (sei.hasTargetTable()) {
 		    XMLUtil.addAttribute(document, e2, "targetTable", StringUtils.stripToEmpty(sei.getTargetTable()));
 		}
@@ -337,7 +327,8 @@ public class SqlEncodingInfos implements MessageSource {
 	    spei.setSourceTable(seie.getAttribute("sourceTable"));
 	    spei.setSourceTableSchema(StringUtils.stripToNull(seie.getAttribute("sourceTableSchema")));
 
-	    spei.setSourcePath(seie.getAttribute("sourcePath"));
+	    spei.setValueSourcePath(seie.getAttribute("valueSourcePath"));
+	    spei.setIdSourcePath(StringUtils.stripToNull(seie.getAttribute("idSourcePath")));
 
 	    spei.setTargetTable(seie.getAttribute("targetTable"));
 	    spei.setTargetTableSchema(StringUtils.stripToNull(seie.getAttribute("targetTableSchema")));

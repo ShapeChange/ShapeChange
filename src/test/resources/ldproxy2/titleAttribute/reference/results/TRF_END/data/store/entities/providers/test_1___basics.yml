@@ -51,9 +51,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel2Target:
-        sourcePath: '[idx=featuretype_refrel2source_id]FeatureType_refRel2Target/[featuretype_refrel2target_id=idx]featuretype'
+        sourcePath: "[idx=featuretype_refrel2source_id]FeatureType_refRel2Target/[featuretype_refrel2target_id=idx]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -68,9 +68,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel3Source:
-        sourcePath: '[idx=featuretype_refrel3target_id]FeatureType_refRel3Source/[featuretype_refrel3source_id=idx]featuretype'
+        sourcePath: "[idx=featuretype_refrel3target_id]FeatureType_refRel3Source/[featuretype_refrel3source_id=idx]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -85,9 +85,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel3Target:
-        sourcePath: '[idx=featuretype_refrel3source_id]FeatureType_refRel3Source/[featuretype_refrel3target_id=idx]featuretype'
+        sourcePath: "[idx=featuretype_refrel3source_id]FeatureType_refRel3Source/[featuretype_refrel3target_id=idx]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -102,7 +102,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Source:
         sourcePath: refrel4source_fk
         type: OBJECT
@@ -119,7 +119,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Target:
         sourcePath: refrel4target_fk
         type: OBJECT
@@ -136,9 +136,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       relRef5Source:
-        sourcePath: '[idx=relref5target_fk]featuretype'
+        sourcePath: "[idx=relref5target_fk]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -153,7 +153,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       relRef5Target:
         sourcePath: relref5target_fk
         type: OBJECT
@@ -170,7 +170,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
   ts1_featuretype1:
     sourcePath: /ts1_featuretype1
     type: OBJECT
@@ -189,13 +189,13 @@ types:
         constraints:
           required: true
       attReal:
-        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal{sortKey=ts1_featuretype1_id}/attreal'
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal{sortKey=ts1_featuretype1_id}/attreal"
         type: VALUE_ARRAY
         valueType: FLOAT
         constraints:
           minOccurrence: 0
       attLength:
-        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength{sortKey=ts1_featuretype1_id}/attlength'
+        sourcePath: "[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength{sortKey=ts1_featuretype1_id}/attlength"
         type: VALUE_ARRAY
         valueType: FLOAT
         constraints:
@@ -208,17 +208,17 @@ types:
           required: true
         properties:
           title:
-            sourcePath: attextdt1_fkdt
+            sourcePath: attextdt1_fk
             type: STRING
             label: ExtDt-title
           href:
-            sourcePath: attextdt1_fkdt
+            sourcePath: attextdt1_fk
             type: STRING
             label: ExtDt-ID
             transformations:
-            - stringFormat: https://example.org/dt/{{value}}
+            - stringFormat: "https://example.org/dt/{{value}}"
       attExtDt2:
-        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1ToExtDt'
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1ToExtDt/[extdt_id=idx]extdt"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -234,9 +234,9 @@ types:
             type: STRING
             label: ExtDt-ID
             transformations:
-            - stringFormat: https://example.org/dt/{{value}}
+            - stringFormat: "https://example.org/dt/{{value}}"
       roleToFt2_1:
-        sourcePath: '[idx=ts1_featuretype1_id]AssocTableTS1FT1FT21/[ts1_featuretype2_id=idx]ts1_featuretype2'
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1FT21/[ts1_featuretype2_id=idx]ts1_featuretype2"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -253,9 +253,9 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
       roleToFt2_2:
-        sourcePath: '[roletoft2_2_fk=idx]ts1_featuretype2'
+        sourcePath: "[roletoft2_2_fk=idx]ts1_featuretype2"
         type: OBJECT
         objectType: Link
         properties:
@@ -270,9 +270,9 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
       roleToFt2_3:
-        sourcePath: '[idx=ts1_featuretype1_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype2_id=idx]ts1_featuretype2'
+        sourcePath: "[idx=ts1_featuretype1_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype2_id=idx]ts1_featuretype2"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -289,9 +289,9 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
       roleToFt2_4:
-        sourcePath: '[roletoft2_4_fk=idx]ts1_featuretype2'
+        sourcePath: "[roletoft2_4_fk=idx]ts1_featuretype2"
         type: OBJECT
         objectType: Link
         properties:
@@ -306,9 +306,9 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
       roleToFt2_5:
-        sourcePath: '[roletoft2_5_fk=idx]ts1_featuretype2'
+        sourcePath: "[roletoft2_5_fk=idx]ts1_featuretype2"
         type: OBJECT
         objectType: Link
         properties:
@@ -323,7 +323,7 @@ types:
             type: STRING
             label: TS1_FeatureType2-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
   ts1_featuretype2:
     sourcePath: /ts1_featuretype2
     type: OBJECT
@@ -337,7 +337,7 @@ types:
         sourcePath: name
         type: STRING
       roleToFt1_3:
-        sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype1_id=idx]ts1_featuretype1'
+        sourcePath: "[idx=ts1_featuretype2_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype1_id=idx]ts1_featuretype1"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -352,9 +352,9 @@ types:
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
       roleToFt1_4:
-        sourcePath: '[idx=roletoft2_4_fk]ts1_featuretype1'
+        sourcePath: "[idx=roletoft2_4_fk]ts1_featuretype1"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -369,7 +369,7 @@ types:
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
       roleToFt1_5:
         type: OBJECT
         objectType: Link
@@ -383,7 +383,7 @@ types:
             type: STRING
             label: TS1_FeatureType1-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
       roleToMd1:
         type: OBJECT
         objectType: Link
@@ -399,9 +399,9 @@ types:
             type: STRING
             label: MD_Metadata-ID
             transformations:
-            - stringFormat: https://example.org/metadata/{{value}}
+            - stringFormat: "https://example.org/metadata/{{value}}"
       roleToMd2:
-        sourcePath: '[idx=ts1_featuretype2_id]TS1_FeatureType2_roleToMd2'
+        sourcePath: "[idx=ts1_featuretype2_id]TS1_FeatureType2_roleToMd2/[md_metadata_id=idx]md_metadata"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -416,4 +416,4 @@ types:
             type: STRING
             label: MD_Metadata-ID
             transformations:
-            - stringFormat: https://example.org/metadata/{{value}}
+            - stringFormat: "https://example.org/metadata/{{value}}"

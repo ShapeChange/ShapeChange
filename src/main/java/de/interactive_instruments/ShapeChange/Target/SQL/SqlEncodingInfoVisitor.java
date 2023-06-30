@@ -225,8 +225,11 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		    spei1.setSourceTableSchema(refTable2.getSchemaName());
 		    spei1.setTargetTable(refTable1.getName());
 		    spei1.setTargetTableSchema(refTable1.getSchemaName());
-		    spei1.setSourcePath("[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName
-			    + "/[" + c1.getName() + "=" + primaryKeyColumnName(refTable1) + "]" + refTable1.getName());
+		    spei1.setValueSourcePath(
+			    "[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName + "/["
+				    + c1.getName() + "=" + primaryKeyColumnName(refTable1) + "]" + refTable1.getName());
+		    spei1.setIdSourcePath("[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName
+			    + "/" + c1.getName());
 
 		    sei.add(spei1);
 		}
@@ -239,8 +242,11 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		    spei2.setSourceTableSchema(refTable1.getSchemaName());
 		    spei2.setTargetTable(refTable2.getName());
 		    spei2.setTargetTableSchema(refTable2.getSchemaName());
-		    spei2.setSourcePath("[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName
-			    + "/[" + c2.getName() + "=" + primaryKeyColumnName(refTable2) + "]" + refTable2.getName());
+		    spei2.setValueSourcePath(
+			    "[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName + "/["
+				    + c2.getName() + "=" + primaryKeyColumnName(refTable2) + "]" + refTable2.getName());
+		    spei2.setIdSourcePath("[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName
+			    + "/" + c2.getName());
 
 		    sei.add(spei2);
 		}
@@ -251,6 +257,12 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		 * The table is a usage specific table for encoding the data type values for a
 		 * specific property.
 		 */
+		
+		ClassInfo repCi = table.getRepresentedClass();
+		SqlClassEncodingInfo scei = createSqlClassEncodingInfoStub(repCi);
+		scei.setTable(tableName);
+		scei.setDatabaseSchema(schemaName);
+		sei.add(scei);
 
 		PropertyInfo tableRepPi = table.getRepresentedProperty();
 
@@ -288,8 +300,10 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 			    spei.setTargetTable(tableName);
 			    spei.setTargetTableSchema(schemaName);
 
-			    spei.setSourcePath(
+			    spei.setValueSourcePath(
 				    "[" + primaryKeyColumnName(parentTable) + "=" + col.getName() + "]" + tableName);
+			    spei.setIdSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + col.getName() + "]"
+				    + tableName + "/" + primaryKeyColumnName(table));
 
 			} else {
 
@@ -303,8 +317,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 				spei.setTargetTable(referencedTable.getName());
 				spei.setTargetTableSchema(referencedTable.getSchemaName());
 
-				spei.setSourcePath("[" + col.getName() + "=" + primaryKeyColumnName(referencedTable)
-					+ "]" + referencedTable.getName());
+				spei.setValueSourcePath("[" + col.getName() + "="
+					+ primaryKeyColumnName(referencedTable) + "]" + referencedTable.getName());
+				spei.setIdSourcePath(col.getName());
 
 				/*
 				 * check the case of n:1 relationship encoded by this property, and a relevant
@@ -317,7 +332,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 				}
 
 			    } else {
-				spei.setSourcePath(col.getName());
+				spei.setValueSourcePath(col.getName());
 			    }
 			}
 
@@ -328,8 +343,8 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 	    } else if (table.getRepresentedClass() != null && table.getRepresentedProperty() == null) {
 
 		/*
-		 * The table represents a feature type, an object type, a data type, or a code
-		 * list.
+		 * The table represents a feature type, an object type, a data type
+		 * (non-usage-specific case), or a code list.
 		 */
 
 		ClassInfo repCi = table.getRepresentedClass();
@@ -366,8 +381,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 				spei.setTargetTable(referencedTable.getName());
 				spei.setTargetTableSchema(referencedTable.getSchemaName());
 
-				spei.setSourcePath("[" + col.getName() + "=" + primaryKeyColumnName(referencedTable)
-					+ "]" + referencedTable.getName());
+				spei.setValueSourcePath("[" + col.getName() + "="
+					+ primaryKeyColumnName(referencedTable) + "]" + referencedTable.getName());
+				spei.setIdSourcePath(col.getName());
 
 				/*
 				 * check the case of n:1 relationship encoded by this property, and a relevant
@@ -380,7 +396,8 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 				}
 
 			    } else {
-				spei.setSourcePath(col.getName());
+				// property with simple value
+				spei.setValueSourcePath(col.getName());
 			    }
 
 			    sei.add(spei);
@@ -449,17 +466,20 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 			 * encode values for the 'targetTable' in the SqlPropertyEncodingInfo.
 			 */
 
-			spei.setSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
-				+ "]" + tableName + sortKeyAddition + "/" + repPiCol.getName());
+			spei.setValueSourcePath(
+				"[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName() + "]"
+					+ tableName + sortKeyAddition + "/" + repPiCol.getName());
 
 		    } else {
 
 			spei.setTargetTable(targetTable.getName());
 			spei.setTargetTableSchema(targetTable.getSchemaName());
 
-			spei.setSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
-				+ "]" + tableName + "/[" + repPiCol.getName() + "=" + primaryKeyColumnName(targetTable)
-				+ "]" + targetTable.getName());
+			spei.setValueSourcePath("[" + primaryKeyColumnName(parentTable) + "="
+				+ parentTableRefCol.getName() + "]" + tableName + "/[" + repPiCol.getName() + "="
+				+ primaryKeyColumnName(targetTable) + "]" + targetTable.getName());
+			spei.setIdSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
+				+ "]" + tableName + "/" + repPiCol.getName());
 		    }
 
 		} else {
@@ -467,8 +487,8 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		    spei.setSourceTable(parentTable.getName());
 		    spei.setSourceTableSchema(parentTable.getSchemaName());
 
-		    spei.setSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName() + "]"
-			    + tableName + sortKeyAddition + "/" + repPiCol.getName());
+		    spei.setValueSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
+			    + "]" + tableName + sortKeyAddition + "/" + repPiCol.getName());
 		}
 
 		sei.add(spei);
@@ -521,8 +541,10 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 	    speiRevPi.setTargetTable(targetTable.getName());
 	    speiRevPi.setTargetTableSchema(targetTable.getSchemaName());
 
-	    speiRevPi.setSourcePath("[" + primaryKeyColumnName(sourceTable) + "=" + colWithFkInTargetTable.getName()
-		    + "]" + targetTable.getName());
+	    speiRevPi.setValueSourcePath("[" + primaryKeyColumnName(sourceTable) + "="
+		    + colWithFkInTargetTable.getName() + "]" + targetTable.getName());
+	    speiRevPi.setIdSourcePath("[" + primaryKeyColumnName(sourceTable) + "=" + colWithFkInTargetTable.getName()
+		    + "]" + targetTable.getName() + "/" + primaryKeyColumnName(targetTable));
 
 	    sei.add(speiRevPi);
 	}

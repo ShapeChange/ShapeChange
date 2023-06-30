@@ -31,68 +31,62 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class PropertyEncodingContext {
+public class LdpSqlSourcePathInfos {
 
-    private boolean isInFragment = false;
-    private ClassInfo type = null;
-    private String sourceTable = null;
-    private PropertyEncodingContext parentContext = null;
+    public class SourcePathInfo {
+	String sourcePath;
+	String refType;
+	String refUriTemplate;
+	String targetTable;
+    }
     
-    /**
-     * @return the isInFragment
-     */
-    public boolean isInFragment() {
-	return isInFragment;
+    PropertyInfo pi;
+    PropertyEncodingContext context;
+    
+    private List<SourcePathInfo> spis = new ArrayList<>();
+
+    public LdpSqlSourcePathInfos() {
     }
 
-    /**
-     * @param isInFragment the isInFragment to set
-     */
-    public void setInFragment(boolean isInFragment) {
-	this.isInFragment = isInFragment;
+    public boolean isEmpty() {
+	return spis.isEmpty();
     }
 
-    /**
-     * @return the type
-     */
-    public ClassInfo getType() {
-	return type;
+    public List<SourcePathInfo> getSourcePathInfos() {
+	return this.spis;
     }
 
-    /**
-     * @param type the type to set
-     */
-    public void setType(ClassInfo type) {
-	this.type = type;
+    public boolean isSingleSourcePath() {
+	return this.spis.size() == 1;
     }
 
-    /**
-     * @return the sourceTable
-     */
-    public String getSourceTable() {
-	return sourceTable;
+    public boolean isMultipleSourcePaths() {
+	return this.spis.size() > 1;
     }
 
-    /**
-     * @param sourceTable the sourceTable to set
-     */
-    public void setSourceTable(String sourceTable) {
-	this.sourceTable = sourceTable;
+    public void addSourcePathInfo(String sourcePath, String refType, String refUriTemplate, String targetTable) {
+	SourcePathInfo spi = new SourcePathInfo();
+	spi.sourcePath = sourcePath;
+	spi.refType = refType;
+	spi.refUriTemplate = refUriTemplate;
+	spi.targetTable = targetTable;
+	this.spis.add(spi);
+    }
+    
+    public boolean concatRequired() {
+	return isMultipleSourcePaths() && pi.cardinality().maxOccurs > 1;
     }
 
-    public void setParentContext(PropertyEncodingContext context) {
-	this.parentContext = context;
-    }
-
-    public Optional<PropertyEncodingContext> getParentContext() {
-	return this.parentContext == null ? Optional.empty() : Optional.of(this.parentContext);
+    public boolean coalesceRequired() {
+	return isMultipleSourcePaths() && pi.cardinality().maxOccurs == 1;
     }
 }

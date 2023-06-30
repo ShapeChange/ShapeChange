@@ -248,6 +248,7 @@
       <sequence>
          <element name="t3c4p1" type="integer"/>
          <element name="t3c4p2" type="double"/>
+         <element maxOccurs="unbounded" name="t3c4p3" type="integer"/>
       </sequence>
    </complexType>
    <complexType name="T3_Class4PropertyType">
@@ -443,6 +444,9 @@
       <complexContent>
          <extension base="gml:AbstractFeatureType">
             <sequence>
+               <element name="pMixB" type="double"/>
+               <element name="pMixA1" type="integer"/>
+               <element name="pMixA2" type="boolean"/>
                <element name="attC1" type="integer"/>
                <element maxOccurs="unbounded" name="attC1Mult" type="integer"/>
                <element maxOccurs="unbounded"
@@ -472,6 +476,8 @@
       <complexContent>
          <extension base="t:T8_Class1Type">
             <sequence>
+               <element name="pMixC" type="string"/>
+               <element name="pMixD" type="integer"/>
                <element name="attC1Sub" type="string"/>
                <element maxOccurs="unbounded" name="attC1SubMult" type="string"/>
             </sequence>
@@ -531,6 +537,41 @@
       <sequence minOccurs="0">
          <element ref="t:T8_Class2Sub"/>
       </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="T8_Mixin_A1PropertyType">
+      <choice minOccurs="0">
+         <element ref="t:T8_Class1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="T8_Mixin_A2PropertyType">
+      <choice minOccurs="0">
+         <element ref="t:T8_Class1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="T8_Mixin_BPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:T8_Class1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="T8_Mixin_CPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:T8_Class1Sub"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="T8_Mixin_DPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:T8_Class1Sub"/>
+      </choice>
       <attributeGroup ref="gml:AssociationAttributeGroup"/>
       <attributeGroup ref="gml:OwnershipAttributeGroup"/>
    </complexType>

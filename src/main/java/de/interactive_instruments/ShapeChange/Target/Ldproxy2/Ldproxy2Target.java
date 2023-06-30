@@ -531,6 +531,44 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return Optional.ofNullable(options.targetMapEntry(ci.name(), ci.encodingRule(Ldproxy2Constants.PLATFORM)));
     }
 
+    public boolean valueTypeIsMapped(PropertyInfo pi) {
+
+	return valueTypeIsMapped(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean valueTypeIsMapped(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    public boolean isIgnored(PropertyInfo pi) {
+
+	if (!valueTypeIsMapped(pi)) {
+
+	    if (pi.typeClass() == null || !LdpInfo.isEncoded(pi.typeClass())) {
+		MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return true;
+	    } else if (LdpInfo.unsupportedCategoryOfValue(pi)) {
+		MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
     @Override
     public void write() {
 
@@ -679,6 +717,36 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return resType;
     }
 
+    public boolean isProcessedType(ClassInfo ci) {
+	return codelistsAndEnumerations.contains(ci) || objectFeatureAndMixinTypes.contains(ci);
+    }
+    
+    public boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
+
+	if (valueTypeIsMapped(pi)) {
+	    return isMappedToLink(pi);
+	} else {
+	    return LdpInfo.isTypeWithIdentityValueType(pi);
+	}
+    }
+
+    public boolean isMappedToLink(PropertyInfo pi) {
+
+	return isMappedToLink(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean isMappedToLink(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
+		&& pme.hasTargetType() && "LINK".equalsIgnoreCase(pme.getTargetType())) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
     @Override
     public void reset() {
 
@@ -741,6 +809,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
+	r.addRule(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
 	r.addRule(Ldproxy2Constants.RULE_ALL_QUERYABLES);
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
@@ -824,21 +893,21 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Type '$1$' has one or more supertypes. Conversion of inheritance relationships is only supported by this target if parameter '"
 		    + Ldproxy2Constants.PARAM_FRAGMENTS + "' is set to 'true'. The relationship will be ignored.";
 	case 104:
-	    return "Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
+	    return "??Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
 	case 105:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultGeometry') as default geometry property. So is property '$2$'. Multiple default geometry properties per type are not allowed. None will be marked as default geometry.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultGeometry') as default geometry property. Multiple default geometry properties per type are not allowed. None of the default geometry properties owned by '$1$' will be marked as default geometry.";
 	case 106:
-	    return "Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	    return "??Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 107:
-	    return "Property '$3$' of type '$1$' is marked (via stereotype 'identifier') as identifier property. So is property '$2$'. Multiple identifier properties per type are not allowed. None will be used as identifier (because no informed decision can be made).";
+	    return "??Type '$1$' has multiple identifier properties (i.e., properties with stereotype 'identifier', and taking into account inherited properties). Multiple identifier properties per type definition are not allowed. None of the identifier properties owned by '$1$' will be encoded (because no informed decision can be made).";
 	case 108:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultInstant') as default (temporal) instant property. So is property '$2$'. Multiple default instant properties per type are not allowed. None will be marked as default instant.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultInstant') as default (temporal) instant property. Multiple default instant properties per type are not allowed. None of the default instant properties owned by '$1$' will be marked as default instant.";
 	case 109:
-	    return "Property '$2$' of type '$1$' is marked as default interval start as well as default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	    return "??Property '$2$' of type '$1$' is marked as default interval start as well as default instant and/or default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 110:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. So is property '$2$'. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
 	case 111:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. So is property '$2$'. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
 	case 112:
 	    return "??No target type is defined in map entry for type '$1$'. Assuming ldproxy type 'STRING'.";
 	case 113:
@@ -856,7 +925,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 119:
 	    return "??Value type '$1$' of property '$2$' is neither mapped nor found in the model. Is there a typo in value type name? Has the type not been loaded (e.g. by excluding some package during model loading) or removed (e.g. through a transformation)? Setting source path for the property to 'FIXME'.";
 	case 120:
-	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transform (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
+	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transformation (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
 	case 121:
 	    return "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
 	case 122:
@@ -883,6 +952,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "The target configuration does not contain XML encoding infos.";
 	case 132:
 	    return "The target configuration does not contain SQL encoding infos.";
+	case 133:
+	    return "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
@@ -892,4 +963,5 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "(" + Ldproxy2Target.class.getName() + ") Unknown message with number: " + mnr;
 	}
     }
+
 }

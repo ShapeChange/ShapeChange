@@ -1401,9 +1401,14 @@
       <documentation>Identifier of the database schema, in which the sourceTable is defined. Can be omitted if no particular schema is defined for the sourceTable</documentation>
      </annotation>
     </attribute>
-    <attribute name="sourcePath" type="string" use="required">
+    <attribute name="valueSourcePath" type="string" use="required">
      <annotation>
-      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the property values in the database (with the </documentation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the property values in the database. </documentation>
+     </annotation>
+    </attribute>
+    <attribute name="idSourcePath" type="string" use="optional">
+     <annotation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the database identifiers, i.e., the primary keys, of property values in the database. </documentation>
      </annotation>
     </attribute>
     <attribute name="targetTable" type="string" use="optional">

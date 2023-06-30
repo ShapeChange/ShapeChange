@@ -107,6 +107,13 @@ CREATE TABLE t3_class1_p4_t3_class4 (
    t3_class1_id bigint NOT NULL
 );
 
+CREATE TABLE t3_class1_p4_t3_class4_t3c4p3 (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t3_class4_id bigint NOT NULL,
+   t3c4p3 integer NOT NULL
+);
+
 CREATE TABLE t3_class1_p4_t3_class4sub (
 
    _id bigserial NOT NULL PRIMARY KEY,
@@ -114,6 +121,13 @@ CREATE TABLE t3_class1_p4_t3_class4sub (
    t3c4p2 numeric NOT NULL,
    t3c4subp1 text NOT NULL,
    t3_class1_id bigint NOT NULL
+);
+
+CREATE TABLE t3_class1_p4_t3_class4sub_t3c4p3 (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t3_class4sub_id bigint NOT NULL,
+   t3c4p3 integer NOT NULL
 );
 
 CREATE TABLE t3_class1_p4_t3_class4sub_t3c4subp2 (
@@ -145,6 +159,13 @@ CREATE TABLE t3_class1_p9_t3_class4 (
    t3_class1_id bigint NOT NULL
 );
 
+CREATE TABLE t3_class1_p9_t3_class4_t3c4p3 (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t3_class4_id bigint NOT NULL,
+   t3c4p3 integer NOT NULL
+);
+
 CREATE TABLE t3_class1_p9_t3_class4sub (
 
    _id bigserial NOT NULL PRIMARY KEY,
@@ -152,6 +173,13 @@ CREATE TABLE t3_class1_p9_t3_class4sub (
    t3c4p2 numeric NOT NULL,
    t3c4subp1 text NOT NULL,
    t3_class1_id bigint NOT NULL
+);
+
+CREATE TABLE t3_class1_p9_t3_class4sub_t3c4p3 (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t3_class4sub_id bigint NOT NULL,
+   t3c4p3 integer NOT NULL
 );
 
 CREATE TABLE t3_class1_p9_t3_class4sub_t3c4subp2 (
@@ -262,6 +290,9 @@ CREATE TABLE t7_codelist (
 CREATE TABLE t8_class1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
+   pmixa2 boolean NOT NULL,
+   pmixa1 integer NOT NULL,
+   pmixb numeric NOT NULL,
    attc1 integer NOT NULL
 );
 
@@ -282,7 +313,12 @@ CREATE TABLE t8_class1_role1to2_t8_class2sub (
 CREATE TABLE t8_class1sub (
 
    _id bigserial NOT NULL PRIMARY KEY,
+   pmixa2 boolean NOT NULL,
+   pmixa1 integer NOT NULL,
+   pmixb numeric NOT NULL,
    attc1 integer NOT NULL,
+   pmixd integer NOT NULL,
+   pmixc text NOT NULL,
    attc1sub text NOT NULL
 );
 
@@ -344,14 +380,18 @@ ALTER TABLE t3_class1_p2_t3c2p3 ADD CONSTRAINT fk_t3_class1_p2_t3c2p3_t3_class2_
 ALTER TABLE t3_class1_p3 ADD CONSTRAINT fk_t3_class1_p3_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
 ALTER TABLE t3_class1_p3_t3c3p1 ADD CONSTRAINT fk_t3_class1_p3_t3c3p1_t3_class3_id FOREIGN KEY (t3_class3_id) REFERENCES t3_class1_p3;
 ALTER TABLE t3_class1_p4_t3_class4 ADD CONSTRAINT fk_t3_class1_p4_t3_class4_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
+ALTER TABLE t3_class1_p4_t3_class4_t3c4p3 ADD CONSTRAINT fk_t3_class1_p4_t3_class4_t3c4p3_t3_class4_id FOREIGN KEY (t3_class4_id) REFERENCES t3_class1_p4_t3_class4;
 ALTER TABLE t3_class1_p4_t3_class4sub ADD CONSTRAINT fk_t3_class1_p4_t3_class4sub_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
+ALTER TABLE t3_class1_p4_t3_class4sub_t3c4p3 ADD CONSTRAINT fk_t3_class1_p4_t3_class4sub_t3c4p3_t3_class4sub_id FOREIGN KEY (t3_class4sub_id) REFERENCES t3_class1_p4_t3_class4sub;
 ALTER TABLE t3_class1_p4_t3_class4sub_t3c4subp2 ADD CONSTRAINT fk_t3_class1_p4_t3_class4sub_t3c4subp2_t3_class4sub_id FOREIGN KEY (t3_class4sub_id) REFERENCES t3_class1_p4_t3_class4sub;
 ALTER TABLE t3_class1_p6 ADD CONSTRAINT fk_t3_class1_p6_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
 ALTER TABLE t3_class1_p6 ADD CONSTRAINT fk_t3_class1_p6_tb_extdtinmodel_id FOREIGN KEY (tb_extdtinmodel_id) REFERENCES tb_extdtinmodel;
 ALTER TABLE t3_class1_p8 ADD CONSTRAINT fk_t3_class1_p8_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
 ALTER TABLE t3_class1_p8 ADD CONSTRAINT fk_t3_class1_p8_tb_extdtoutsidemodel_id FOREIGN KEY (tb_extdtoutsidemodel_id) REFERENCES tb_extdtoutsidemodel;
 ALTER TABLE t3_class1_p9_t3_class4 ADD CONSTRAINT fk_t3_class1_p9_t3_class4_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
+ALTER TABLE t3_class1_p9_t3_class4_t3c4p3 ADD CONSTRAINT fk_t3_class1_p9_t3_class4_t3c4p3_t3_class4_id FOREIGN KEY (t3_class4_id) REFERENCES t3_class1_p9_t3_class4;
 ALTER TABLE t3_class1_p9_t3_class4sub ADD CONSTRAINT fk_t3_class1_p9_t3_class4sub_t3_class1_id FOREIGN KEY (t3_class1_id) REFERENCES t3_class1;
+ALTER TABLE t3_class1_p9_t3_class4sub_t3c4p3 ADD CONSTRAINT fk_t3_class1_p9_t3_class4sub_t3c4p3_t3_class4sub_id FOREIGN KEY (t3_class4sub_id) REFERENCES t3_class1_p9_t3_class4sub;
 ALTER TABLE t3_class1_p9_t3_class4sub_t3c4subp2 ADD CONSTRAINT fk_t3_class1_p9_t3_class4sub_t3c4subp2_t3_class4sub_id FOREIGN KEY (t3_class4sub_id) REFERENCES t3_class1_p9_t3_class4sub;
 ALTER TABLE t4_class1_t4c1p1 ADD CONSTRAINT fk_t4_class1_t4c1p1_t4_class1_id FOREIGN KEY (t4_class1_id) REFERENCES t4_class1;
 ALTER TABLE t4_class1_t4c1p1 ADD CONSTRAINT fk_t4_class1_t4c1p1_tb_extft_id FOREIGN KEY (tb_extft_id) REFERENCES tb_extft;

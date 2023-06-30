@@ -64,7 +64,9 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    .thenComparing(SqlPropertyEncodingInfo::getSourceTable, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getSourceTableSchema,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
-	    .thenComparing(SqlPropertyEncodingInfo::getSourcePath, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getValueSourcePath,
+		    Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getIdSourcePath, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTable, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTableSchema,
 		    Comparator.nullsFirst(Comparator.naturalOrder()));
@@ -79,7 +81,8 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     protected String originalPropertyMultiplicity;
     protected String sourceTable;
     protected String sourceTableSchema;
-    protected String sourcePath;
+    protected String valueSourcePath;
+    protected String idSourcePath;
     protected String targetTable;
     protected String targetTableSchema;
 
@@ -196,17 +199,31 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the sourcePath
+     * @return the valueSourcePath
      */
-    public String getSourcePath() {
-	return sourcePath;
+    public String getValueSourcePath() {
+	return valueSourcePath;
     }
 
     /**
-     * @param sourcePath the sourcePath to set
+     * @param valueSourcePath the valueSourcePath to set
      */
-    public void setSourcePath(String sourcePath) {
-	this.sourcePath = sourcePath;
+    public void setValueSourcePath(String valueSourcePath) {
+	this.valueSourcePath = valueSourcePath;
+    }
+
+    /**
+     * @return the idSourcePath
+     */
+    public String getIdSourcePath() {
+	return idSourcePath;
+    }
+
+    /**
+     * @param idSourcePath the idSourcePath to set
+     */
+    public void setIdSourcePath(String idSourcePath) {
+	this.idSourcePath = idSourcePath;
     }
 
     /**
@@ -260,9 +277,13 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     public boolean hasTargetTableSchema() {
 	return StringUtils.isNotBlank(this.targetTableSchema);
     }
-    
+
     public boolean hasTargetTable() {
 	return StringUtils.isNotBlank(this.targetTable);
+    }
+    
+    public boolean hasIdSourcePath() {
+	return StringUtils.isNotBlank(this.idSourcePath);
     }
 
     @Override
@@ -308,7 +329,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	int result = super.hashCode();
 	result = prime * result + Objects.hash(inClassName, originalInClassName, originalPropertyMultiplicity,
 		originalPropertyName, originalPropertyValueType, propertyMultiplicity, propertyName, propertyValueType,
-		sourcePath, sourceTable, sourceTableSchema, targetTable, targetTableSchema);
+		valueSourcePath, idSourcePath, sourceTable, sourceTableSchema, targetTable, targetTableSchema);
 	return result;
     }
 
@@ -329,7 +350,8 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 		&& Objects.equals(propertyMultiplicity, other.propertyMultiplicity)
 		&& Objects.equals(propertyName, other.propertyName)
 		&& Objects.equals(propertyValueType, other.propertyValueType)
-		&& Objects.equals(sourcePath, other.sourcePath) && Objects.equals(sourceTable, other.sourceTable)
+		&& Objects.equals(valueSourcePath, other.valueSourcePath)
+		&& Objects.equals(idSourcePath, other.idSourcePath) && Objects.equals(sourceTable, other.sourceTable)
 		&& Objects.equals(sourceTableSchema, other.sourceTableSchema)
 		&& Objects.equals(targetTable, other.targetTable)
 		&& Objects.equals(targetTableSchema, other.targetTableSchema);

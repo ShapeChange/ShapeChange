@@ -46,6 +46,9 @@
                    id="TRF_inheritance"
                    input="TRF_TV"
                    mode="enabled">
+         <parameters>
+            <ProcessParameter name="separatorForPropertyFromUnion" value="_"/>
+         </parameters>
          <rules>
             <ProcessRuleSet name="flattener">
                <rule name="rule-trf-cls-flatten-inheritance"/>

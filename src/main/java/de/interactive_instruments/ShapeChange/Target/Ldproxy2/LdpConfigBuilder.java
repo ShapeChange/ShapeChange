@@ -136,7 +136,7 @@ public class LdpConfigBuilder {
 
 	    for (ClassInfo ci : objectFeatureAndMixinTypes) {
 
-		String fragmentName = configIdentifierName(ci);
+		String fragmentName = LdpInfo.configIdentifierName(ci);
 
 		PropertyEncodingContext pec = new PropertyEncodingContext();
 		pec.setInFragment(true);
@@ -164,11 +164,11 @@ public class LdpConfigBuilder {
 
 	for (ClassInfo ci : objectFeatureAndMixinTypes) {
 
-	    if (ci.category() == Options.MIXIN) {
+	    if (ci.category() == Options.MIXIN || ci.isAbstract()) {
 		continue;
 	    }
 
-	    String typeDefName = configIdentifierName(ci);
+	    String typeDefName = LdpInfo.configIdentifierName(ci);
 
 	    /*
 	     * Create provider config entry
@@ -208,7 +208,7 @@ public class LdpConfigBuilder {
 			partialObjectSchemas.add(cixPartialObjectSchemaBuilder.build());
 		    }
 
-		    typeDefBuilder.allOf(partialObjectSchemas);
+		    typeDefBuilder.merge(partialObjectSchemas);
 		}
 
 	    } else {
@@ -457,12 +457,8 @@ public class LdpConfigBuilder {
 	return icd;
     }
 
-    private String configIdentifierName(Info i) {
-	return i.name().toLowerCase(Locale.ENGLISH);
-    }
-
     private String fragmentRef(ClassInfo ci) {
-	return "#/fragments/" + configIdentifierName(ci);
+	return "#/fragments/" + LdpInfo.configIdentifierName(ci);
     }
 
 }

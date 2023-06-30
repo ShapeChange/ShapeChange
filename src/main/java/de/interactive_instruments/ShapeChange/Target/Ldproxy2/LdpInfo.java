@@ -33,7 +33,12 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -133,6 +138,35 @@ public class LdpInfo {
 	return result;
     }
 
+    public static List<PropertyInfo> propertiesAllInOrder(ClassInfo ci) {
+
+	List<PropertyInfo> allProps = new ArrayList<>();
+
+	List<PropertyInfo> directProps = new ArrayList<>(ci.properties().values());
+
+	List<PropertyInfo> supertypeProps = new ArrayList<>();
+	for (String supertypeId : ci.supertypes()) {
+	    ClassInfo supertype = ci.model().classById(supertypeId);
+	    if (supertype != null) {
+		for (PropertyInfo supertypeProp : propertiesAllInOrder(supertype)) {
+		    /*
+		     * ensure that direct property of the class is not overridden by supertype
+		     * property
+		     */
+		    if (directProps.stream().filter(ciProp -> ciProp.name().equals(supertypeProp.name())).findFirst()
+			    .isEmpty()) {
+			supertypeProps.add(supertypeProp);
+		    }
+		}
+	    }
+	}
+	
+	allProps.addAll(supertypeProps);
+	allProps.addAll(directProps);
+
+	return allProps;
+    }
+
     public static Optional<String> featureTitleTemplate(ClassInfo ci) {
 
 	String tv = ci.taggedValue("ldpFeatureTitleTemplate");
@@ -168,5 +202,56 @@ public class LdpInfo {
 
     public static boolean isTypeWithIdentityValueType(PropertyInfo pi) {
 	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
+    }
+
+    public static boolean valueTypeHasValidLdpTitleAttributeTag(PropertyInfo pi) {
+
+	ClassInfo typeCi = pi.typeClass();
+	if (typeCi == null) {
+	    return false;
+	} else {
+	    PropertyInfo titleAtt = getTitleAttribute(typeCi);
+	    return titleAtt != null;
+	}
+    }
+
+    /**
+     * @param ci - tbd
+     * @return the attribute of ci whose name is equal to the value of tag
+     *         ldpTitleAttribute on ci
+     */
+    public static PropertyInfo getTitleAttribute(ClassInfo ci) {
+
+	PropertyInfo result = null;
+
+	String titleAttName = ci.taggedValue("ldpTitleAttribute");
+	if (StringUtils.isNotBlank(titleAttName)) {
+	    result = ci.property(titleAttName.trim());
+	}
+
+	return result;
+    }
+
+    public static Iterable<String> enumValues(ClassInfo enumeration) {
+
+	List<String> res = new ArrayList<>();
+
+	for (PropertyInfo pi : enumeration.properties().values()) {
+	    if (StringUtils.isNotBlank(pi.initialValue())) {
+		res.add(pi.initialValue().trim());
+	    } else {
+		res.add(pi.name());
+	    }
+	}
+
+	return res;
+    }
+
+    public static boolean isReflexive(PropertyInfo pi) {
+	return pi.inClass().id().equals(pi.typeInfo().id);
+    }
+
+    public static String configIdentifierName(Info i) {
+	return i.name().toLowerCase(Locale.ENGLISH);
     }
 }

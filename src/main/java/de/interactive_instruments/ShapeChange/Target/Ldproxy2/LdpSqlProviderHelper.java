@@ -32,10 +32,14 @@
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
 import java.util.Locale;
+import java.util.Optional;
+import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PackageInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlClassEncodingInfo;
 
 /**
@@ -66,5 +70,36 @@ public class LdpSqlProviderHelper {
 
 	    return result;
 	}
+    }
+
+    /**
+     * @param targetTableName
+     * @param pi
+     * @return the actual type class; can be empty if the class could not be
+     *         determined
+     */
+    public Optional<ClassInfo> actualTypeClass(String targetTableName, PropertyInfo pi) {
+
+	if (!Ldproxy2Target.sqlEncodingInfos.isEmpty()
+		&& Ldproxy2Target.sqlEncodingInfos.hasClassEncodingInfoForTable(targetTableName)) {
+
+	    SqlClassEncodingInfo scei = Ldproxy2Target.sqlEncodingInfos.getClassEncodingInfoForTable(targetTableName);
+
+	    String className = scei.hasOriginalClassName() ? scei.getOriginalClassName() : scei.getClassName();
+	    String schemaName = scei.hasOriginalSchemaName() ? scei.getOriginalSchemaName() : scei.getSchemaName();
+
+	    SortedSet<PackageInfo> schemas = Ldproxy2Target.model.schemas(schemaName);
+
+	    for (PackageInfo schema : schemas) {
+		Optional<ClassInfo> optCi = Ldproxy2Target.model.classes(schema).stream()
+			.filter(ci -> ci.name().equals(className)).findFirst();
+		if (optCi.isPresent()) {
+		    return optCi;
+		}
+	    }
+	}
+
+	// use the type class of pi as fallback
+	return Optional.ofNullable(pi.typeClass());
     }
 }

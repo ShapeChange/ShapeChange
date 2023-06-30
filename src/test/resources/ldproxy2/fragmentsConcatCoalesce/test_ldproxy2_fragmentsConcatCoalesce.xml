@@ -88,9 +88,9 @@
 			</xmlNamespaces>
 		</TargetXmlSchema>
 		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="TRF_END">
-			<advancedProcessConfigurations>
-				<xi:include href="src/test/resources/ldproxy2/fragmentsConcatCoalesce/reference/xsd/IDENTITY/t_XmlEncodingInfos.xml"/>
-			</advancedProcessConfigurations>
+			<!--<advancedProcessConfigurations>-->
+			<!--	<xi:include href="src/test/resources/ldproxy2/fragmentsConcatCoalesce/reference/xsd/IDENTITY/t_XmlEncodingInfos.xml"/>-->
+			<!--</advancedProcessConfigurations>-->
 			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/ldproxy_flat"/>
 			<targetParameter name="sortedOutput" value="true"/>
 			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
@@ -127,6 +127,7 @@
 				<EncodingRule name="ldptest1">
 					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
 					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
 					<rule name="rule-ldp2-all-queryables"/>
 					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
 					<rule name="rule-ldp2-cls-codelist-append-code"/>
@@ -139,9 +140,9 @@
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
 			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
 			<mapEntries>
-				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value)}"/>
-				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value)}"/>
-				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value)}"/>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
 			</mapEntries>
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="IDENTITY">
@@ -187,6 +188,7 @@
 				<EncodingRule name="ldptest2">
 					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
 					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
 					<rule name="rule-ldp2-all-queryables"/>
 					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
 					<rule name="rule-ldp2-cls-codelist-append-code"/>
@@ -199,9 +201,9 @@
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
 			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
 			<mapEntries>
-				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value)}"/>
-				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value)}"/>
-				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value)}"/>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
 			</mapEntries>
 		</Target>
 	</targets>

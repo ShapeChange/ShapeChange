@@ -12,10 +12,13 @@ api:
 - buildingBlock: GML
   enabled: true
   applicationNamespaces:
+    fixme1: FIXME
     t: http://test.org/shapechange/sql/test
   defaultNamespace: t
   schemaLocations:
     t: "{{serviceUrl}}/resources/test_sql.xsd"
+  objectTypeNamespaces:
+    ExternalDatatypeDefinedInModel: fixme1
   gmlIdPrefix: _
 - buildingBlock: QUERYABLES
   enabled: true
@@ -126,14 +129,6 @@ collections:
   t8_class1sub:
     id: t8_class1sub
     label: t8_class1sub
-    enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
-    - buildingBlock: GML
-      conformance: NONE
-  t8_class2:
-    id: t8_class2
-    label: t8_class2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML

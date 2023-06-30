@@ -16,16 +16,16 @@
 			<name>ShapeChange (plus additional components) release repository</name>
 			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
-		<!--<repository>-->
-		<!--	<id>ii-maven</id>-->
-		<!--	<name>interactive instruments maven snapshots repository</name>-->
-		<!--	<url>https://dl.interactive-instruments.de/repository/maven-snapshots/</url>-->
-		<!--</repository>-->
- 		<repository>
+		<repository>
+			<id>ii-maven</id>
+			<name>interactive instruments maven snapshots repository</name>
+			<url>https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
+		</repository>
+ 		<!--<repository>
  			<id>ii-maven-releases</id>
  			<name>interactive instruments maven releases repository</name>
  			<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>
- 		</repository>
+ 		</repository>-->
 	</repositories>
 	<dependencies>
 	<!-- https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
@@ -38,7 +38,8 @@
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
-			<version>3.4.1</version>
+			<!--<version>3.4.1</version>-->
+			<version>3.5.0-mapping-ops-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
 		<dependency>
