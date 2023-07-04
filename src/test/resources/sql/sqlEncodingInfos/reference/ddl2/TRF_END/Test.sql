@@ -303,6 +303,13 @@ CREATE TABLE t8_class1_attc1mult (
    attc1mult integer NOT NULL
 );
 
+CREATE TABLE t8_class1_pmixa2mult (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t8_class1_id bigint NOT NULL,
+   pmixa2mult integer NOT NULL
+);
+
 CREATE TABLE t8_class1_role1to2_t8_class2sub (
 
    _id bigserial NOT NULL PRIMARY KEY,
@@ -334,6 +341,13 @@ CREATE TABLE t8_class1sub_attc1submult (
    _id bigserial NOT NULL PRIMARY KEY,
    t8_class1sub_id bigint NOT NULL,
    attc1submult text NOT NULL
+);
+
+CREATE TABLE t8_class1sub_pmixa2mult (
+
+   _id bigserial NOT NULL PRIMARY KEY,
+   t8_class1sub_id bigint NOT NULL,
+   pmixa2mult integer NOT NULL
 );
 
 CREATE TABLE t8_class1sub_role1to2_t8_class2sub (
@@ -414,10 +428,12 @@ ALTER TABLE t7_class1_att3 ADD CONSTRAINT fk_t7_class1_att3_t7_class1_id FOREIGN
 ALTER TABLE t7_class1_att3_attdt2 ADD CONSTRAINT fk_t7_class1_att3_attdt2_t7_codelist_id FOREIGN KEY (t7_codelist_id) REFERENCES t7_codelist;
 ALTER TABLE t7_class1_att3_attdt2 ADD CONSTRAINT fk_t7_class1_att3_attdt2_t7_datatype_id FOREIGN KEY (t7_datatype_id) REFERENCES t7_class1_att3;
 ALTER TABLE t8_class1_attc1mult ADD CONSTRAINT fk_t8_class1_attc1mult_t8_class1_id FOREIGN KEY (t8_class1_id) REFERENCES t8_class1;
+ALTER TABLE t8_class1_pmixa2mult ADD CONSTRAINT fk_t8_class1_pmixa2mult_t8_class1_id FOREIGN KEY (t8_class1_id) REFERENCES t8_class1;
 ALTER TABLE t8_class1_role1to2_t8_class2sub ADD CONSTRAINT fk_t8_class1_role1to2_t8_class2sub_t8_class1_id FOREIGN KEY (t8_class1_id) REFERENCES t8_class1;
 ALTER TABLE t8_class1_role1to2_t8_class2sub ADD CONSTRAINT fk_t8_class1_role1to2_t8_class2sub_t8_class2sub_id FOREIGN KEY (t8_class2sub_id) REFERENCES t8_class2sub;
 ALTER TABLE t8_class1sub_attc1mult ADD CONSTRAINT fk_t8_class1sub_attc1mult_t8_class1sub_id FOREIGN KEY (t8_class1sub_id) REFERENCES t8_class1sub;
 ALTER TABLE t8_class1sub_attc1submult ADD CONSTRAINT fk_t8_class1sub_attc1submult_t8_class1sub_id FOREIGN KEY (t8_class1sub_id) REFERENCES t8_class1sub;
+ALTER TABLE t8_class1sub_pmixa2mult ADD CONSTRAINT fk_t8_class1sub_pmixa2mult_t8_class1sub_id FOREIGN KEY (t8_class1sub_id) REFERENCES t8_class1sub;
 ALTER TABLE t8_class1sub_role1to2_t8_class2sub ADD CONSTRAINT fk_t8_class1sub_role1to2_t8_class2sub_t8_class1sub_id FOREIGN KEY (t8_class1sub_id) REFERENCES t8_class1sub;
 ALTER TABLE t8_class1sub_role1to2_t8_class2sub ADD CONSTRAINT fk_t8_class1sub_role1to2_t8_class2sub_t8_class2sub_id FOREIGN KEY (t8_class2sub_id) REFERENCES t8_class2sub;
 ALTER TABLE tablepb1pa3 ADD CONSTRAINT fk_tablepb1pa3_t1_class1_id FOREIGN KEY (t1_class1_id) REFERENCES t1_class1;

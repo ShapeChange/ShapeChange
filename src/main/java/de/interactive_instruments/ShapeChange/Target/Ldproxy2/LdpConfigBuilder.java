@@ -34,12 +34,12 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -68,7 +68,6 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
@@ -80,7 +79,7 @@ public class LdpConfigBuilder {
     protected ShapeChangeResult result;
     protected Ldproxy2Target target;
 
-    protected List<ClassInfo> objectFeatureAndMixinTypes;
+    protected List<ClassInfo> objectFeatureMixinAndDataTypes;
     protected SortedSet<ClassInfo> codelistsAndEnumerations;
 
     protected LdproxyCfg cfg;
@@ -94,7 +93,7 @@ public class LdpConfigBuilder {
     protected LdpPropertyEncoder propertyEncoder;
 
     public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfg cfg,
-	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureAndMixinTypes,
+	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureMixinAndDataTypes,
 	    SortedSet<ClassInfo> codelistsAndEnumerations) {
 
 	this.target = target;
@@ -105,7 +104,7 @@ public class LdpConfigBuilder {
 	this.bbFeaturesHtmlBuilder = new LdpBuildingBlockFeaturesHtmlBuilder();
 	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder);
 
-	this.objectFeatureAndMixinTypes = objectFeatureAndMixinTypes;
+	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
     }
 
@@ -131,40 +130,98 @@ public class LdpConfigBuilder {
 	if (Ldproxy2Target.enableFragments) {
 
 	    /*
-	     * FRAGMENTS ERZEUGEN
+	     * CREATE FRAGMENTS
 	     */
 
-	    for (ClassInfo ci : objectFeatureAndMixinTypes) {
+	    for (ClassInfo ci : objectFeatureMixinAndDataTypes) {
 
 		String fragmentName = LdpInfo.configIdentifierName(ci);
+
+		ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
+			.name(fragmentName).objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
+			.description(LdpInfo.description(ci));
 
 		PropertyEncodingContext pec = new PropertyEncodingContext();
 		pec.setInFragment(true);
 		pec.setType(ci);
-		pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
 
-		LinkedHashMap<String, FeatureSchema> propertyDefs = propertyEncoder.propertyDefinitions(ci,
-			new ArrayList<PropertyInfo>(), pec);
-
-		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(fragmentName).objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
-			.description(LdpInfo.description(ci)).propertyMap(propertyDefs).build();
-
-		if (bbGmlBuilder != null) {
-		    // namespaces auch für mixins tracken
-		    bbGmlBuilder.register(ci);
+		// if fragments are enabled, the source path for datatype is only available for
+		// non-usage-specific datatype encoding
+		if (ci.category() == Options.MIXIN || (ci.category() == Options.DATATYPE
+			&& ci.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES))) {
+		    pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
 		}
 
-		providerFragmentDefinitions.put(fragmentName, typeDef);
+		LinkedHashMap<String, FeatureSchema> ciPropertyDefs = propertyEncoder.propertyDefinitions(ci,
+			new ArrayList<PropertyInfo>(), pec);
+
+		/*
+		 * Determine the supertypes of ci, in correct order, only keeping those that are
+		 * encoded.
+		 */
+		List<ClassInfo> supertypes = LdpInfo.directSupertypesInOrderOfXsdEncoding(ci).stream()
+			.filter(st -> LdpInfo.isEncoded(st)).collect(Collectors.toList());
+
+		if (supertypes.isEmpty()) {
+
+		    fragmentBuilder.propertyMap(ciPropertyDefs);
+
+		} else if (supertypes.size() == 1 && ciPropertyDefs.isEmpty()) {
+
+		    /*
+		     * ci apparently does not have any relevant property; since we only have a
+		     * single supertype schema, just reference that
+		     */
+		    fragmentBuilder.schema(LdpUtil.fragmentRef(supertypes.get(0)));
+
+		} else {
+
+		    ArrayList<ImmutablePartialObjectSchema> partialObjectSchemas = new ArrayList<>();
+
+		    for (ClassInfo cix : supertypes) {
+			ImmutablePartialObjectSchema cixPartialObjectSchema = new ImmutablePartialObjectSchema.Builder()
+				.schema(LdpUtil.fragmentRef(cix)).build();
+			partialObjectSchemas.add(cixPartialObjectSchema);
+		    }
+
+		    // add the ci properties in the right place as well
+		    ImmutablePartialObjectSchema ciPartialObjectSchema = new ImmutablePartialObjectSchema.Builder()
+			    .propertyMap(ciPropertyDefs).build();
+		    if (ci.category() == Options.MIXIN) {
+			/*
+			 * Add the properties of ci mixin first (because that is what is done by the
+			 * XmlSchema target, when encoding a mixin that has supertypes.
+			 */
+			partialObjectSchemas.add(0, ciPartialObjectSchema);
+		    } else {
+			/*
+			 * If ci is not a mixin, add the ci properties at the end.
+			 */
+			partialObjectSchemas.add(ciPartialObjectSchema);
+		    }
+
+		    fragmentBuilder.merge(partialObjectSchemas);
+		}
+
+		providerFragmentDefinitions.put(fragmentName, fragmentBuilder.build());
+
+		if (bbGmlBuilder != null) {
+		    // note: we also track namespaces for mixins
+		    bbGmlBuilder.register(ci);
+		}
 	    }
 	}
+
+	/*
+	 * CREATE TYPE DEFINITIONS
+	 */
 
 	SortedMap<String, FeatureSchema> providerTypeDefinitions = new TreeMap<>();
 	SortedMap<String, FeatureTypeConfigurationOgcApi> serviceCollectionDefinitions = new TreeMap<>();
 
-	for (ClassInfo ci : objectFeatureAndMixinTypes) {
+	for (ClassInfo ci : objectFeatureMixinAndDataTypes) {
 
-	    if (ci.category() == Options.MIXIN || ci.isAbstract()) {
+	    if (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE || ci.isAbstract()) {
 		continue;
 	    }
 
@@ -184,32 +241,38 @@ public class LdpConfigBuilder {
 
 	    if (Ldproxy2Target.enableFragments) {
 
-		if (ci.supertypes().isEmpty()) {
+//		if (ci.supertypes().isEmpty()) {
 
-		    LinkedHashMap<String, FeatureSchema> ciPropertyDefs = propertyEncoder.propertyDefinitions(ci,
-			    new ArrayList<PropertyInfo>(), pec);
+		/*
+		 * The fragment for ci has merge statements, thus aggregating all relevant
+		 * schema fragments for direct and indirect supertypes. When encoding properties
+		 * in the type definition, all properties from direct and indirect supertypes
+		 * must be considered and encoded.
+		 */
+		LinkedHashMap<String, FeatureSchema> ciPropertyDefs = propertyEncoder.propertyDefinitions(ci,
+			new ArrayList<PropertyInfo>(), pec);
 
-		    typeDefBuilder.schema(fragmentRef(ci)).propertyMap(ciPropertyDefs);
+		typeDefBuilder.schema(LdpUtil.fragmentRef(ci)).propertyMap(ciPropertyDefs);
 
-		} else {
-
-		    List<ClassInfo> cis = LdpInfo.allSupertypes(ci);
-		    cis.add(ci);
-
-		    List<ImmutablePartialObjectSchema> partialObjectSchemas = new ArrayList<>();
-
-		    for (ClassInfo cix : cis) {
-
-			ImmutablePartialObjectSchema.Builder cixPartialObjectSchemaBuilder = new ImmutablePartialObjectSchema.Builder()
-				.schema(fragmentRef(cix));
-			LinkedHashMap<String, FeatureSchema> cixPropertyDefs = propertyEncoder.propertyDefinitions(cix,
-				new ArrayList<PropertyInfo>(), pec);
-			cixPartialObjectSchemaBuilder.propertyMap(cixPropertyDefs);
-			partialObjectSchemas.add(cixPartialObjectSchemaBuilder.build());
-		    }
-
-		    typeDefBuilder.merge(partialObjectSchemas);
-		}
+//		} else {
+//
+//		    List<ClassInfo> cis = LdpInfo.directSupertypesInOrderOfXsdEncoding(ci);
+//		    cis.add(ci);
+//
+//		    List<ImmutablePartialObjectSchema> partialObjectSchemas = new ArrayList<>();
+//
+//		    for (ClassInfo cix : cis) {
+//
+//			ImmutablePartialObjectSchema.Builder cixPartialObjectSchemaBuilder = new ImmutablePartialObjectSchema.Builder()
+//				.schema(fragmentRef(cix));
+//			LinkedHashMap<String, FeatureSchema> cixPropertyDefs = propertyEncoder.propertyDefinitions(cix,
+//				new ArrayList<PropertyInfo>(), pec);
+//			cixPartialObjectSchemaBuilder.propertyMap(cixPropertyDefs);
+//			partialObjectSchemas.add(cixPartialObjectSchemaBuilder.build());
+//		    }
+//
+//		    typeDefBuilder.merge(partialObjectSchemas);
+//		}
 
 	    } else {
 
@@ -219,6 +282,10 @@ public class LdpConfigBuilder {
 		typeDefBuilder.objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
 			.description(LdpInfo.description(ci)).propertyMap(propertyDefs);
 	    }
+	    
+	    
+	    propertyEncoder.propertyDefinitionsForServiceConfiguration(ci,
+			new ArrayList<PropertyInfo>(), pec);
 
 	    if (bbGmlBuilder != null) {
 		bbGmlBuilder.register(ci);
@@ -457,8 +524,6 @@ public class LdpConfigBuilder {
 	return icd;
     }
 
-    private String fragmentRef(ClassInfo ci) {
-	return "#/fragments/" + LdpInfo.configIdentifierName(ci);
-    }
+    
 
 }

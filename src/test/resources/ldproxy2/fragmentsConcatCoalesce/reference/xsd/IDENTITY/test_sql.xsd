@@ -447,6 +447,7 @@
                <element name="pMixB" type="double"/>
                <element name="pMixA1" type="integer"/>
                <element name="pMixA2" type="boolean"/>
+               <element maxOccurs="unbounded" name="pMixA2Mult" type="integer"/>
                <element name="attC1" type="integer"/>
                <element maxOccurs="unbounded" name="attC1Mult" type="integer"/>
                <element maxOccurs="unbounded"

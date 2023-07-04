@@ -45,7 +45,7 @@ public class PropertyEncodingContext {
     private ClassInfo type = null;
     private String sourceTable = null;
     private PropertyEncodingContext parentContext = null;
-    
+
     /**
      * @return the isInFragment
      */
@@ -75,7 +75,8 @@ public class PropertyEncodingContext {
     }
 
     /**
-     * @return the sourceTable
+     * @return the sourceTable; can be <code>null</code>, especially if the context
+     *         type is a mixin
      */
     public String getSourceTable() {
 	return sourceTable;
@@ -94,5 +95,13 @@ public class PropertyEncodingContext {
 
     public Optional<PropertyEncodingContext> getParentContext() {
 	return this.parentContext == null ? Optional.empty() : Optional.of(this.parentContext);
+    }
+
+    public PropertyEncodingContext getTopParentContext() {
+	if(this.parentContext == null) {
+	    return this;
+	} else {
+	    return this.parentContext.getTopParentContext();
+	}
     }
 }

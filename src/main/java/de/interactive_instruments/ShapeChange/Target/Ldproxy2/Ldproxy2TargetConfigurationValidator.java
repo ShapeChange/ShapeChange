@@ -55,11 +55,11 @@ import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.TargetConfiguration;
+import de.interactive_instruments.ShapeChange.XmlNamespace;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.ModelElementXmlEncoding;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
-import de.interactive_instruments.ShapeChange.TargetConfiguration;
-import de.interactive_instruments.ShapeChange.XmlNamespace;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -77,11 +77,11 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
 		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
 		    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
-		    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
-		    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
-		    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
-		    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
-		    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+		    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
+		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
+		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
@@ -391,6 +391,32 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    isValid = isValid & checkParameterRequiredCharacteristicHasValue(characteristicsByParameter,
 			    Ldproxy2Constants.ME_PARAM_LINK_INFOS,
 			    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE, typeRuleKey, targetType);
+
+		    Map<String, String> linkInfosCharacteristics = characteristicsByParameter
+			    .get(Ldproxy2Constants.ME_PARAM_LINK_INFOS);
+
+		    if (linkInfosCharacteristics.containsKey(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT)) {
+
+			String representedCategory = linkInfosCharacteristics
+				.get(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT);
+
+			if (StringUtils.isBlank(representedCategory)) {
+
+			    isValid = false;
+			    result.addError(this, 113, typeRuleKey,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS);
+
+			} else if (!representedCategory
+				.matches(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX)) {
+
+			    isValid = false;
+			    result.addError(this, 114, typeRuleKey,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX);
+			}
+		    }
 		}
 	    }
 	}
@@ -507,6 +533,10 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
 	case 112:
 	    return "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
+	case 113:
+	    return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+	case 114:
+	    return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 
 	default:
 	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

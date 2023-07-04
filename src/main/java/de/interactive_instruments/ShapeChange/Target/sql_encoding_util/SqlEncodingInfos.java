@@ -32,7 +32,9 @@
 package de.interactive_instruments.ShapeChange.Target.sql_encoding_util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -168,7 +170,9 @@ public class SqlEncodingInfos implements MessageSource {
 	return null;
     }
 
-    public SqlClassEncodingInfo getClassEncodingInfo(ClassInfo ci) {
+    public List<SqlClassEncodingInfo> getClassEncodingInfos(ClassInfo ci) {
+
+	List<SqlClassEncodingInfo> result = new ArrayList<>();
 
 	for (SqlClassEncodingInfo sei : this.classInfos) {
 
@@ -178,11 +182,11 @@ public class SqlEncodingInfos implements MessageSource {
 	    String ciSchema = ci.model().schemaPackage(ci).name();
 
 	    if (ci.name().equals(name) && ciSchema.equals(schema)) {
-		return sei;
+		result.add(sei);
 	    }
 	}
 
-	return null;
+	return result;
     }
 
     public void toXml(File outputFile, ShapeChangeResult result) {

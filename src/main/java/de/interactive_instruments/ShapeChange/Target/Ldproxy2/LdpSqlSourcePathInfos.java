@@ -47,6 +47,7 @@ public class LdpSqlSourcePathInfos {
 	String refType;
 	String refUriTemplate;
 	String targetTable;
+	boolean targetsSingleValue;
     }
     
     PropertyInfo pi;
@@ -73,13 +74,15 @@ public class LdpSqlSourcePathInfos {
 	return this.spis.size() > 1;
     }
 
-    public void addSourcePathInfo(String sourcePath, String refType, String refUriTemplate, String targetTable) {
+    public SourcePathInfo addSourcePathInfo(String sourcePath, String refType, String refUriTemplate, String targetTable, boolean targetsSingleValue) {
 	SourcePathInfo spi = new SourcePathInfo();
 	spi.sourcePath = sourcePath;
 	spi.refType = refType;
 	spi.refUriTemplate = refUriTemplate;
 	spi.targetTable = targetTable;
+	spi.targetsSingleValue = targetsSingleValue;
 	this.spis.add(spi);
+	return spi;
     }
     
     public boolean concatRequired() {

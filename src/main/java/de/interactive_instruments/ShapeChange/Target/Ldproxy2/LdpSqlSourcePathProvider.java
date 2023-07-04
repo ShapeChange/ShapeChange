@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.ShapeChange.MessageSource;
+import de.interactive_instruments.ShapeChange.Multiplicity;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
@@ -103,6 +104,7 @@ public class LdpSqlSourcePathProvider {
 		String refType = null;
 		String refUriTemplate = null;
 		String targetTable = spei.getTargetTable();
+		boolean targetsSingleValue = (new Multiplicity(spei.getPropertyMultiplicity())).maxOccurs == 1;
 
 		if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
 			&& pme.hasTargetType()) {
@@ -128,7 +130,7 @@ public class LdpSqlSourcePathProvider {
 		    }
 		}
 
-		spRes.addSourcePathInfo(sourcePath, refType, refUriTemplate, targetTable);
+		spRes.addSourcePathInfo(sourcePath, refType, refUriTemplate, targetTable, targetsSingleValue);
 	    }
 	}
 
@@ -136,9 +138,7 @@ public class LdpSqlSourcePathProvider {
 	 * If we have identified source path information via the sql encoding infos,
 	 * return them. Otherwise, try to determine them the old-fashioned way.
 	 */
-	if (!spRes.isEmpty())
-
-	{
+	if (!spRes.isEmpty()) {
 	    return spRes;
 	}
 
@@ -146,6 +146,7 @@ public class LdpSqlSourcePathProvider {
 	String refType = null;
 	String refUriTemplate = null;
 	String targetTable = null;
+	boolean targetsSingleValue = pi.cardinality().maxOccurs == 1;
 
 	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
 
@@ -155,6 +156,7 @@ public class LdpSqlSourcePathProvider {
 
 		    // the target only allows and thus assumes max mult = 1
 		    sourcePath = databaseColumnName(pi);
+		    targetsSingleValue = true;
 
 		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
 
@@ -466,7 +468,7 @@ public class LdpSqlSourcePathProvider {
 	}
 
 	if (StringUtils.isNotBlank(sourcePath)) {
-	    spRes.addSourcePathInfo(sourcePath, refType, refUriTemplate, targetTable);
+	    spRes.addSourcePathInfo(sourcePath, refType, refUriTemplate, targetTable, targetsSingleValue);
 	}
 
 	return spRes;
@@ -478,19 +480,53 @@ public class LdpSqlSourcePathProvider {
 
 	Type t = target.ldproxyType(pi);
 
+//	if (!(LdpUtil.isLdproxySimpleType(t) || LdpUtil.isLdproxyGeometryType(t))) {
+//
+//	    if (LdpInfo.valueTypeIsTypeWithIdentity(pi) || target.isMappedToLink(pi)) {
+//		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffix;
+//	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
+//		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixDatatype;
+//	    }
+//
+//	} else if (pi.categoryOfValue() == Options.CODELIST && Ldproxy2Target.model.classByIdOrName(pi.typeInfo())
+//		.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+//
+//	    // Support SqlDdl target parameter foreignKeyColumnSuffixCodelist
+//	    suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixCodelist;
+//	}
+
+	boolean isReflexiveProperty = pi.inClass().id().equals(pi.typeInfo().id);
+
 	if (!(LdpUtil.isLdproxySimpleType(t) || LdpUtil.isLdproxyGeometryType(t))) {
 
-	    if (LdpInfo.valueTypeIsTypeWithIdentity(pi) || target.isMappedToLink(pi)) {
-		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffix;
+	    if (target.isMappedToLink(pi)) {
+
+		String typeName = pi.typeInfo().name;
+		String piEncodingRule = pi.encodingRule("sql");
+
+		String repCat = Ldproxy2Target.mapEntryParamInfos.getCharacteristic(typeName, piEncodingRule,
+			Ldproxy2Constants.ME_PARAM_LINK_INFOS, Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT);
+
+		if (repCat != null && repCat.equalsIgnoreCase("datatype")) {
+		    suffix = Ldproxy2Target.foreignKeyColumnSuffixDatatype;
+		} else if (repCat != null && repCat.equalsIgnoreCase("codelist")) {
+		    suffix = Ldproxy2Target.foreignKeyColumnSuffixCodelist;
+		} else {
+		    suffix = (isReflexiveProperty && Ldproxy2Target.reflexiveRelationshipFieldSuffix != null)
+			    ? Ldproxy2Target.reflexiveRelationshipFieldSuffix
+			    : Ldproxy2Target.foreignKeyColumnSuffix;
+		}
 	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
-		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixDatatype;
+		suffix = Ldproxy2Target.foreignKeyColumnSuffixDatatype;
+	    } else {
+		suffix = (isReflexiveProperty && Ldproxy2Target.reflexiveRelationshipFieldSuffix != null)
+			? Ldproxy2Target.reflexiveRelationshipFieldSuffix
+			: Ldproxy2Target.foreignKeyColumnSuffix;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.CODELIST && Ldproxy2Target.model.classByIdOrName(pi.typeInfo())
 		.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-
-	    // Support SqlDdl target parameter foreignKeyColumnSuffixCodelist
-	    suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixCodelist;
+	    suffix = Ldproxy2Target.foreignKeyColumnSuffixCodelist;
 	}
 
 	return databaseColumnName(pi, suffix);
@@ -544,13 +580,16 @@ public class LdpSqlSourcePathProvider {
 	if (LdpInfo.valueTypeIsTypeWithIdentity(pi)) {
 
 	    if (inAssociativeTable) {
-		suffix = suffix + Ldproxy2Target.associativeTableColumnSuffix;
+		suffix = Ldproxy2Target.associativeTableColumnSuffix;
 	    } else {
-		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffix;
+
+		suffix = (Ldproxy2Target.reflexiveRelationshipFieldSuffix != null)
+			? Ldproxy2Target.reflexiveRelationshipFieldSuffix
+			: Ldproxy2Target.foreignKeyColumnSuffix;
 	    }
 
 	} else if (pi.categoryOfValue() == Options.DATATYPE) {
-	    suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixDatatype;
+	    suffix = Ldproxy2Target.foreignKeyColumnSuffixDatatype;
 	}
 
 	return databaseColumnName(pi, suffix);

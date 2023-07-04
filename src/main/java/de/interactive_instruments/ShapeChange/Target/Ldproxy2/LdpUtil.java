@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
+import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -65,4 +66,7 @@ public class LdpUtil {
 	return t == Type.GEOMETRY;
     }
 
+    public static String fragmentRef(ClassInfo ci) {
+	return "#/fragments/" + LdpInfo.configIdentifierName(ci);
+    }
 }

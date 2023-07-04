@@ -103,6 +103,7 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
 			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
 			<targetParameter name="labelTemplate" value="[[name]]"/>
 			<targetParameter name="maxNameLength" value="63"/>
 			<targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
@@ -162,6 +163,7 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
 			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
 			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
 			<targetParameter name="labelTemplate" value="[[name]]"/>
 			<targetParameter name="maxNameLength" value="63"/>
 			<targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
@@ -202,7 +204,7 @@
 			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
 			<mapEntries>
 				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
-				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel;representedCategory=datatype}"/>
 				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
 			</mapEntries>
 		</Target>

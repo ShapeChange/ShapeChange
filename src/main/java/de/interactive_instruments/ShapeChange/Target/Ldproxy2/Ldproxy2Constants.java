@@ -52,6 +52,24 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_LINK_INFOS = "linkInfos";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE = "urlTemplate";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_TABLE_NAME = "tableName";
+    /**
+     * A characteristic for the parameter {@value #ME_PARAM_LINK_INFOS} that gives
+     * information about the category of the conceptual type that is identified by
+     * the map entry.
+     *
+     * Recognized values are:
+     * <ul>
+     * <li>datatype</li>
+     * <li>codelist</li>
+     * </ul>
+     */
+    public static final String ME_PARAM_LINK_INFOS_CHARACT_REP_CAT = "representedCategory";
+    /**
+     * Regular expression to check that a given string is one of a list of allowed
+     * values (NOTE: check is case-insensitive).
+     */
+    public static final String ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
+    
 
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
 
@@ -74,6 +92,12 @@ public class Ldproxy2Constants {
     public static final String PARAM_FK_COLUMN_SUFFIX = "foreignKeyColumnSuffix";
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
     public static final String PARAM_FK_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
+    /**
+     * Replaces the value of parameter {@value #PARAM_FK_COLUMN_SUFFIX} if
+     * the property represented is a reflexive property. This parameter is optional.
+     */
+    public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
+
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";

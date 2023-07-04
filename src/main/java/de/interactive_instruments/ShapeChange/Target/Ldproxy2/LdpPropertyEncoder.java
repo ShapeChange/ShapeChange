@@ -37,6 +37,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,6 +100,17 @@ public class LdpPropertyEncoder {
     public LinkedHashMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
 	    List<PropertyInfo> alreadyVisitedPiList, PropertyEncodingContext context) {
 
+	/*
+	 * NOTE: This method cannot easily be split into cases with fragments enabled
+	 * (differentiating between type definition and fragment encoding, maybe also
+	 * context type being a data type), and fragments disabled. The reason is that
+	 * without fragments enabled, full type definitions must be encoded, with
+	 * content that is otherwise encoded in fragments. If we were to split the
+	 * method into one for the case of fragments enabled, and one without, we would
+	 * have to duplicate a lot of code. It seems more efficient to differentiate the
+	 * relevant cases clearly within this method itself.
+	 */
+
 	LinkedHashMap<String, FeatureSchema> propertyDefs = new LinkedHashMap<>();
 
 	/*
@@ -147,14 +160,14 @@ public class LdpPropertyEncoder {
 	}
 
 	/*
-	 * TODO - Should we split the method into cases with fragments enabled
-	 * (differentiating between type definition and fragment encoding, maybe also
-	 * context type being a data type), and fragments disabled?
+	 * If fragment encoding is enabled and we are in a type definition, encode all
+	 * properties (from direct and indirect supertypes, taking into account the
+	 * order of the xsd encoding, and property overrides). Otherwise, only encode
+	 * the properties that are owned by the class.
 	 */
-	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment()
-		&& context.getType().category() == Options.DATATYPE) ? LdpInfo.propertiesAllInOrder(currentCi)
-			: currentCi.properties().values();
-//	Collection<PropertyInfo> propsToProcess = currentCi.properties().values();
+	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment())
+		? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
+		: currentCi.properties().values();
 
 	for (PropertyInfo pi : propsToProcess) {
 
@@ -169,29 +182,9 @@ public class LdpPropertyEncoder {
 
 	    Type ldpType = target.ldproxyType(pi);
 
-	    Type typeForBuilder;
-	    Optional<Type> valueTypeForBuilder = Optional.empty();
-
-	    if (pi.cardinality().maxOccurs > 1) {
-		if (ldpType == Type.OBJECT) {
-		    // TODO - JUST FOR TESTING FEATURE_REF
-		    typeForBuilder = (target.isMappedToOrImplementedAsLink(pi)
-			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF))
-				    ? Type.FEATURE_REF_ARRAY
-				    : Type.OBJECT_ARRAY;
-		} else if (ldpType == Type.GEOMETRY || pi == identifierPi) {
-		    // no array for geometry and identifier properties
-		    typeForBuilder = ldpType;
-		} else {
-		    typeForBuilder = Type.VALUE_ARRAY;
-		    valueTypeForBuilder = Optional.of(ldpType);
-		}
-	    } else {
-		// TODO - JUST FOR TESTING FEATURE_REF
-		typeForBuilder = (target.isMappedToOrImplementedAsLink(pi)
-			&& pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) ? Type.FEATURE_REF
-				: ldpType;
-	    }
+	    Type typeForBuilder = typeForBuilder(pi, identifierPi, pi.cardinality().maxOccurs == 1, ldpType);
+	    Optional<Type> valueTypeForBuilder = valueTypeForBuilder(pi, identifierPi, pi.cardinality().maxOccurs == 1,
+		    ldpType);
 
 	    Optional<SimpleFeatureGeometry> geometryTypeForBuilder = Optional.empty();
 	    if (ldpType == Type.GEOMETRY) {
@@ -204,32 +197,29 @@ public class LdpPropertyEncoder {
 		unitForBuilder = Optional.of(pi.taggedValue(Ldproxy2Target.uomTvName).trim());
 	    }
 
-	    Optional<Role> propRole;
+	    Optional<Role> propRoleForBuilder;
 
 	    if (identifierPi != null && !multipleIdentifierPisEncountered && pi == identifierPi) {
-		propRole = Optional.of(Role.ID);
+		propRoleForBuilder = Optional.of(Role.ID);
 	    } else if (defaultGeometryPi != null && !multipleDefaultGeometriesEncountered && pi == defaultGeometryPi) {
-		propRole = Optional.of(Role.PRIMARY_GEOMETRY);
+		propRoleForBuilder = Optional.of(Role.PRIMARY_GEOMETRY);
 	    } else if (defaultInstantPi != null && !multipleDefaultInstantsEncountered && pi == defaultInstantPi) {
-		propRole = Optional.of(Role.PRIMARY_INSTANT);
+		propRoleForBuilder = Optional.of(Role.PRIMARY_INSTANT);
 	    } else if (defaultIntervalStartPi != null && !multipleDefaultIntervalStartsEncountered
 		    && pi == defaultIntervalStartPi) {
-		propRole = Optional.of(Role.PRIMARY_INTERVAL_START);
+		propRoleForBuilder = Optional.of(Role.PRIMARY_INTERVAL_START);
 	    } else if (defaultIntervalEndPi != null && !multipleDefaultIntervalEndsEncountered
 		    && pi == defaultIntervalEndPi) {
-		propRole = Optional.of(Role.PRIMARY_INTERVAL_END);
+		propRoleForBuilder = Optional.of(Role.PRIMARY_INTERVAL_END);
 	    } else {
-		propRole = Optional.empty();
+		propRoleForBuilder = Optional.empty();
 	    }
-
-	    LdpSqlSourcePathInfos sourcePathInfosForProperty = sqlSourcePathProvider.sourcePathPropertyLevel(pi,
-		    alreadyVisitedPiList, context);
 
 	    boolean ignoreSourcePathOnPropertyLevel = false;
 
 	    Optional<String> objectTypeForBuilder = Optional.empty();
-	    Optional<String> refTypeForBuilder = Optional.empty();
-	    Optional<String> refUriTemplateForBuilder = Optional.empty();
+//	    Optional<String> refTypeForBuilder = Optional.empty();
+//	    Optional<String> refUriTemplateForBuilder = Optional.empty();
 
 	    LinkedHashMap<String, FeatureSchema> propertyMapForBuilder = new LinkedHashMap<>();
 
@@ -238,16 +228,16 @@ public class LdpPropertyEncoder {
 
 		if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 
-		    ClassInfo typeCi = pi.typeClass();
+//		    ClassInfo typeCi = pi.typeClass();
 
-		    if (!target.valueTypeIsMapped(pi) && typeCi != null && target.isProcessedType(typeCi)) {
-			// the value type must be a type with identity
-			refTypeForBuilder = Optional.of(pi.typeInfo().name.toLowerCase(Locale.ENGLISH));
-		    } else {
-			// the value type is mapped
-			refUriTemplateForBuilder = Optional.of(sqlSourcePathProvider.urlTemplateForValueType(pi));
-		    }
-		    
+//		    if (!target.valueTypeIsMapped(pi) && typeCi != null && target.isProcessedType(typeCi)) {
+//			// the value type must be a type with identity
+//			refTypeForBuilder = Optional.of(pi.typeInfo().name.toLowerCase(Locale.ENGLISH));
+//		    } else {
+//			// the value type is mapped
+//			refUriTemplateForBuilder = Optional.of(sqlSourcePathProvider.urlTemplateForValueType(pi));
+//		    }
+
 //		    objectTypeForBuilder = typeCi != null ? Optional.of(LdpInfo.originalClassName(typeCi)) : Optional.of(pi.typeInfo().name);
 
 		} else {
@@ -280,17 +270,14 @@ public class LdpPropertyEncoder {
 		    propertyMapForBuilder = linkPropertyDefs;
 		}
 
-	    } else if (!LdpUtil.isLdproxySimpleType(ldpType)
-		    && (pi.categoryOfValue() == Options.DATATYPE /* || pi.categoryOfValue() == Options.UNION */)) {
-
-		/*
-		 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-		 * time being, we keep the approach with type flattening.
-		 */
+	    } else if (!LdpUtil.isLdproxySimpleType(ldpType) && pi.categoryOfValue() == Options.DATATYPE) {
 
 		ClassInfo typeCi = pi.typeClass();
 
-		// detect circular dependency in the property path
+		/*
+		 * detect circular dependency in the property path - circular paths are not
+		 * supported
+		 */
 		if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == typeCi) || typeCi == currentCi) {
 
 		    ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
@@ -304,25 +291,54 @@ public class LdpPropertyEncoder {
 
 		} else {
 
-		    PropertyEncodingContext nextContext = new PropertyEncodingContext();
-		    nextContext.setInFragment(context.isInFragment());
-		    nextContext.setType(typeCi);
-		    nextContext.setSourceTable(sqlProviderHelper.databaseTableName(typeCi, false));
-		    nextContext.setParentContext(context);
+		    if (Ldproxy2Target.enableFragments && context.isInFragment()) {
 
-		    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
-			    nowVisitedList, nextContext);
-		    propertyMapForBuilder = datatypePropertyDefs;
+			if (typeCi.subtypesInCompleteHierarchy().size() > 0) {
 
-		    objectTypeForBuilder = Optional.of(LdpInfo.originalClassName(typeCi));
+			    /*
+			     * typeCi has subclasses; thus, we cannot identify one particular objectType.
+			     * Furthermore, we cannot reference a particular schema.
+			     */
 
-		    if (bbFeaturesGmlBuilder != null) {
-			bbFeaturesGmlBuilder.register(typeCi);
+			} else {
+
+			    objectTypeForBuilder = Optional.of(LdpInfo.originalClassName(typeCi));
+			    if (!target.isMappedToLink(typeCi)) {
+				propMemberDefBuilder.schema(LdpUtil.fragmentRef(typeCi));
+			    }
+			}
+
+		    } else {
+
+			/*
+			 * Case of datatype valued property within a type definition. We must drill down
+			 * recursively.
+			 */
+
+			PropertyEncodingContext nextContext = createChildContext(context, typeCi,
+				sqlProviderHelper.databaseTableName(typeCi, false));
+
+			LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
+				nowVisitedList, nextContext);
+			propertyMapForBuilder = datatypePropertyDefs;
+
+			objectTypeForBuilder = Optional.of(LdpInfo.originalClassName(typeCi));
 		    }
+
+//		    if (bbFeaturesGmlBuilder != null) {
+//			bbFeaturesGmlBuilder.register(typeCi);
+//		    }
 		}
 	    }
 
 	    Optional<String> constantValueForBuilder = Optional.empty();
+
+	    /*
+	     * Determine source path information for pi. Take into account the current
+	     * context. The result may contain multiple source paths.
+	     */
+	    LdpSqlSourcePathInfos sourcePathInfosForProperty = sqlSourcePathProvider.sourcePathPropertyLevel(pi,
+		    alreadyVisitedPiList, context);
 	    LdpSqlSourcePathInfos sourcePathInfosForBuilder = null;
 
 	    if (StringUtils.isNotBlank(pi.initialValue()) && pi.isReadOnly()
@@ -331,50 +347,28 @@ public class LdpPropertyEncoder {
 		constantValueForBuilder = Optional.of(constantValue(pi));
 
 	    } else if (!ignoreSourcePathOnPropertyLevel) {
-
 		/*
-		 * Encode the source path if either a) fragment encoding is disabled, or b) we
-		 * are in a fragment definition, and the source path is for a direct value
-		 * access.
+		 * Encode the source path only in certain circumstances.
 		 */
-
 		if (!Ldproxy2Target.enableFragments) {
+		    // no fragment encoding - we are in a type definition
 		    sourcePathInfosForBuilder = sourcePathInfosForProperty;
-
-		    // TODO compute single sourcePath string
-
-		} else if (context.isInFragment()) {
-		    if (isEncodedWithDirectValueSourcePath(pi, context)) {
-
-			// TODO compute single sourcePath string
-			sourcePathInfosForBuilder = sourcePathInfosForProperty;
-		    }
 		} else {
-		    // in type definition
-		    if (!isEncodedWithDirectValueSourcePath(pi, context)) {
-
-			// TODO compute single sourcePath string, or concat/coalesce construct (just get
-			// the according schema object)
-
-//			Problem: source path aus SqlEncodingInfos bestimmen; 
-//			ggfs. muss concat/coalesce gebildet werden - wie funktioniert das mit Link-Kodierung -> sourcePath und refType oder refUriTemplate angeben
+		    // fragment encoding enabled
+		    if (context.isInFragment() && isEncodedWithDirectValueSourcePath(pi, context)) {
+			sourcePathInfosForBuilder = sourcePathInfosForProperty;
+		    } else if (!context.isInFragment() && !isEncodedWithDirectValueSourcePath(pi, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		    }
 		}
-
 	    }
-
-	    
 
 	    // Generate constraints
 	    Optional<ImmutableSchemaConstraints> constraints = Optional.empty();
 	    boolean providerConfigConstraintCreated = false;
 	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
-	    if (pi.cardinality().minOccurs != 0 && !pi.voidable()/* && pi.inClass().category() != Options.UNION */) {
-		/*
-		 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-		 * time being, we keep the approach with type flattening.
-		 */
+	    if (pi.cardinality().minOccurs != 0 && !pi.voidable()) {
+
 		providerConfigConstraintCreated = true;
 		constraintsBuilder.required(true);
 	    }
@@ -417,13 +411,13 @@ public class LdpPropertyEncoder {
 		    constraintsBuilder.enumValues(LdpInfo.enumValues(typeCi));
 		}
 
-		if (!Ldproxy2Target.enableFragments || context.isInFragment()) {
-		    // Create content for inclusion in service config:
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .codelist(codelistId).build();
-		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-		}
+//		if (!Ldproxy2Target.enableFragments || context.isInFragment()) {
+//		    // Create content for inclusion in service config:
+//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+//			    .codelist(codelistId).build();
+//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
+//		}
 	    }
 
 	    if (providerConfigConstraintCreated) {
@@ -433,300 +427,396 @@ public class LdpPropertyEncoder {
 	    /*
 	     * Fragment encoding and what is encoded within a type definition are different
 	     * things. Within fragments - if enabled at all - we encode the structure of the
-	     * represented type. The only exception is the sourcePath, in case that it is
-	     * context specific. If it is, then the context specific sourcePath needs to be
-	     * encoded in the type definition. Otherwise, we encode the sourcePath in the
-	     * fragment. If fragments are not enabled, we encode everything in the type
-	     * definition, as usual.
+	     * represented type. The only exception is the sourcePath: if it is direct path
+	     * (i.e., a column within the source table of the context type), then the path
+	     * can be encoded in the fragment definition; otherwise, it needs to be encoded
+	     * within the type definition. If fragments are not enabled, we encode
+	     * everything in the type definition, as usual.
 	     */
 
 	    if (Ldproxy2Target.enableFragments && !context.isInFragment()) {
 
-		if (!ignoreSourcePathOnPropertyLevel && !isEncodedWithDirectValueSourcePath(pi, context)) {
+		/*
+		 * Fragment encoding is enabled and we are in a type definition.
+		 */
+
+		if (sourcePathInfosForBuilder != null) {
 
 		    /*
-		     * So fragment encoding is enabled, we are in a type definition, and the
-		     * property is not fully defined in the fragment.
+		     * The property is not fully defined in the fragment (that information has been
+		     * determined before, when setting the value for sourcePathInfosForBuilder).
 		     */
 
-		    if (sourcePathInfosForBuilder != null) {
+		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
 
-			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
+			SourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
 
-			    SourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
-			    propMemberDefBuilder.sourcePath(spi.sourcePath);
+			encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
+				nowVisitedList, currentCi, spi, context, propMemberDefBuilder, ldpType);
 
-			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-				if (StringUtils.isNotBlank(spi.refType)) {
-				    propMemberDefBuilder.refType(spi.refType);
-				}
-				if (StringUtils.isNotBlank(spi.refUriTemplate)) {
-				    propMemberDefBuilder.refUriTemplate(spi.refUriTemplate);
-				}
-			    }
+		    } else if (sourcePathInfosForBuilder.isMultipleSourcePaths()) {
 
-			    // TODO - also consider data type case
-			    if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi
-				    .categoryOfValue() == Options.DATATYPE /*
-									    * || pi.categoryOfValue() == Options.UNION
-									    */)) {
+			List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
 
-				/*
-				 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-				 * time being, we keep the approach with type flattening.
-				 */
+			for (SourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
 
-				// TODO - identify actual typeCi from SqlEncodingClassInfos, through inspection
-				// of targetTable
+			    ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
 
-				String targetTable = spi.targetTable;
+			    mspBuilder.name(pi.name() + "_to_" + spi.targetTable);
 
-				Optional<ClassInfo> optActualTypeCi = sqlProviderHelper.actualTypeClass(targetTable,
-					pi);
+			    encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
+				    nowVisitedList, currentCi, spi, context, mspBuilder, ldpType);
 
-				if (optActualTypeCi.isPresent()) {
+			    // determine the correct type for the item schema
 
-				    // original typeCi of pi is required for circular dependency check
-				    ClassInfo originalTypeCi = pi.typeClass();
+			    Type typeForMspBuilder = typeForBuilder(pi, identifierPi, spi.targetsSingleValue, ldpType);
+			    Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
+				    spi.targetsSingleValue, ldpType);
 
-				    // detect circular dependency in the property path
-				    if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == originalTypeCi)
-					    || originalTypeCi == currentCi) {
+			    mspBuilder.type(typeForMspBuilder).valueType(valueTypeForMspBuilder);
 
-					// already reported for fragment
+			    itemSchemas.add(mspBuilder.build());
+			}
 
-//					ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
-//
-//					MessageContext mc = result.addError(msgSource, 117, topType.name(),
-//						propertyPath(nowVisitedList));
-//					if (mc != null) {
-//					    mc.addDetail(msgSource, 0, topType.fullNameInSchema());
-//					}
-//
-//					continue;
-
-				    } else {
-
-					ClassInfo actualTypeCi = optActualTypeCi.get();
-
-					// TODO - encode schema fragment for actual typeCi
-
-					PropertyEncodingContext nextContext = new PropertyEncodingContext();
-					nextContext.setInFragment(context.isInFragment());
-					nextContext.setType(actualTypeCi);
-					nextContext.setSourceTable(targetTable);
-					nextContext.setParentContext(context);
-
-					// TODO does the current approach support data type inheritance, when it
-					// gets to actually checking and encoding properties? ... would we not have
-					// to reference multiple schema fragments, and thus use a merge?
-
-					LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(
-						actualTypeCi, nowVisitedList, nextContext);
-
-//					    ImmutableFeatureSchema.Builder mspPropMemberDefBuilder = new ImmutableFeatureSchema.Builder();
-					propMemberDefBuilder.propertyMap(datatypePropertyDefs);
-
-					propMemberDefBuilder
-						.objectType(Optional.of(LdpInfo.originalClassName(actualTypeCi)));
-
-					if (bbFeaturesGmlBuilder != null) {
-					    bbFeaturesGmlBuilder.register(actualTypeCi);
-					}
-				    }
-				}
-			    }
-
-			} else if (sourcePathInfosForBuilder.isMultipleSourcePaths()) {
-
-			    /*
-			     * use concat or coalesce build the according schema, with items one by one; for
-			     * each item, drill down where necessary (for data type)
-			     */
-
-			    List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
-
-//			    int index = 0;
-			    for (SourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
-
-				ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
-
-//				mspBuilder.name(pi.name() + index++);
-				mspBuilder.name(pi.name() + "_to_"+spi.targetTable);
-
-				mspBuilder.sourcePath(spi.sourcePath);
-
-				if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-				    if (StringUtils.isNotBlank(spi.refType)) {
-					mspBuilder.refType(spi.refType);
-				    }
-				    if (StringUtils.isNotBlank(spi.refUriTemplate)) {
-					mspBuilder.refUriTemplate(spi.refUriTemplate);
-				    }
-				}
-
-				if (!LdpUtil.isLdproxySimpleType(ldpType)
-					&& (pi.categoryOfValue() == Options.DATATYPE /*
-										      * || pi.categoryOfValue() ==
-										      * Options.UNION
-										      */)) {
-
-				    /*
-				     * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-				     * time being, we keep the approach with type flattening.
-				     */
-
-				    // TODO - identify actual typeCi from SqlEncodingClassInfos, through inspection
-				    // of targetTable
-
-				    String targetTable = spi.targetTable;
-
-				    Optional<ClassInfo> optActualTypeCi = sqlProviderHelper.actualTypeClass(targetTable,
-					    pi);
-
-				    if (optActualTypeCi.isPresent()) {
-
-					// original typeCi of pi is required for circular dependency check
-					ClassInfo originalTypeCi = pi.typeClass();
-
-					// detect circular dependency in the property path
-					if (alreadyVisitedPiList.stream()
-						.anyMatch(vPi -> vPi.inClass() == originalTypeCi)
-						|| originalTypeCi == currentCi) {
-
-					    // already reported for fragment
-
-//					ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
-//
-//					MessageContext mc = result.addError(msgSource, 117, topType.name(),
-//						propertyPath(nowVisitedList));
-//					if (mc != null) {
-//					    mc.addDetail(msgSource, 0, topType.fullNameInSchema());
-//					}
-//
-//					continue;
-
-					} else {
-
-					    ClassInfo actualTypeCi = optActualTypeCi.get();
-
-					    // TODO - encode schema fragment for actual typeCi
-
-					    PropertyEncodingContext nextContext = new PropertyEncodingContext();
-					    nextContext.setInFragment(context.isInFragment());
-					    nextContext.setType(actualTypeCi);
-					    nextContext.setSourceTable(targetTable);
-					    nextContext.setParentContext(context);
-
-					    // TODO does the current approach support data type inheritance, when it
-					    // gets to actually checking and encoding properties? ... would we not have
-					    // to reference multiple schema fragments, and thus use a merge?
-
-					    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(
-						    actualTypeCi, nowVisitedList, nextContext);
-
-//					    ImmutableFeatureSchema.Builder mspPropMemberDefBuilder = new ImmutableFeatureSchema.Builder();
-					    mspBuilder.propertyMap(datatypePropertyDefs);
-
-					    mspBuilder.objectType(Optional.of(LdpInfo.originalClassName(actualTypeCi)));
-
-					    if (bbFeaturesGmlBuilder != null) {
-						bbFeaturesGmlBuilder.register(actualTypeCi);
-					    }
-					}
-				    }
-				}
-
-				itemSchemas.add(mspBuilder.build());
-			    }
-
-			    if (sourcePathInfosForBuilder.concatRequired()) {
-				propMemberDefBuilder.concat(itemSchemas);
-			    } else {
-				// coalesce
-				propMemberDefBuilder.coalesce(itemSchemas);
-			    }
+			if (sourcePathInfosForBuilder.concatRequired()) {
+			    propMemberDefBuilder.concat(itemSchemas);
+			} else {
+			    propMemberDefBuilder.coalesce(itemSchemas);
 			}
 		    }
 
-		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).type(typeForBuilder)
-			    .valueType(valueTypeForBuilder).build();
-		    propertyDefs.put(pi.name(), propMemberDef);
+		    propMemberDefBuilder.name(pi.name()).type(typeForBuilder).valueType(valueTypeForBuilder);
+
+		    propertyDefs.put(pi.name(), propMemberDefBuilder.build());
 		}
 
 	    } else {
 
+		/*
+		 * Case of fragment encoding, or of a type definition if fragments are disabled.
+		 */
+
 		if (sourcePathInfosForBuilder != null) {
 
 		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
+
 			SourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
 			propMemberDefBuilder.sourcePath(spi.sourcePath);
 
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-			    if (StringUtils.isNotBlank(spi.refType)) {
-				propMemberDefBuilder.refType(spi.refType);
-			    }
-			    if (StringUtils.isNotBlank(spi.refUriTemplate)) {
-				propMemberDefBuilder.refUriTemplate(spi.refUriTemplate);
-			    }
+			    addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, spi);
 			}
 
 		    } else {
 
-			System.out.println("Multiple Source Paths in fragment detected, but not encoded!");
-
-		    }
-		}
-
-		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))
-			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
-			.valueType(valueTypeForBuilder).constraints(constraints).role(propRole)
-			.constantValue(constantValueForBuilder).geometryType(geometryTypeForBuilder)
-			.unit(unitForBuilder).propertyMap(propertyMapForBuilder)
 			/*
-			 * .refType(refTypeForBuilder) .refUriTemplate(refUriTemplateForBuilder)
-			 */.build();
-		propertyDefs.put(pi.name(), propMemberDef);
-
-		// create more service constraint content
-		if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
-		    String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
-		    if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
-			ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
-				.build();
-			bbFeaturesHtmlBuilder
-				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-					nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-		    } else {
-			MessageContext mc = result.addError(msgSource, 122, pi.name(), pi.taggedValue("ldpRemove"));
+			 * Multiple source paths found, which is unexpected for this case, but who knows
+			 * if this cannot occur in the future. Thus, better log an appropriate error
+			 * message.
+			 */
+			MessageContext mc = result.addError(msgSource, 134);
 			if (mc != null) {
 			    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
 			}
 		    }
 		}
-		if (ldpType == Type.DATE && StringUtils.isNotBlank(Ldproxy2Target.dateFormat)) {
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .dateFormat(Ldproxy2Target.dateFormat).build();
-		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-		}
-		if (ldpType == Type.DATETIME && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .dateFormat(Ldproxy2Target.dateTimeFormat).build();
-		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-		}
 
-		if (bbFeaturesGmlBuilder != null) {
+		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))
+			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
+			.valueType(valueTypeForBuilder).constraints(constraints).role(propRoleForBuilder)
+			.constantValue(constantValueForBuilder).geometryType(geometryTypeForBuilder)
+			.unit(unitForBuilder).propertyMap(propertyMapForBuilder).build();
+		/*
+		 * .refType(refTypeForBuilder) .refUriTemplate(refUriTemplateForBuilder)
+		 */
+		propertyDefs.put(pi.name(), propMemberDef);
 
-		    ClassInfo firstCi = nowVisitedList.get(0).inClass();
-
-		    bbFeaturesGmlBuilder.register(pi, firstCi, propertyPath(nowVisitedList));
-		}
+//		// create more service constraint content
+//		if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
+//		    String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
+//		    if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
+//			ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
+//				.build();
+//			bbFeaturesHtmlBuilder
+//				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+//					nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
+//		    } else {
+//			MessageContext mc = result.addError(msgSource, 122, pi.name(), pi.taggedValue("ldpRemove"));
+//			if (mc != null) {
+//			    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+//			}
+//		    }
+//		}
+//		if (ldpType == Type.DATE && StringUtils.isNotBlank(Ldproxy2Target.dateFormat)) {
+//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+//			    .dateFormat(Ldproxy2Target.dateFormat).build();
+//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
+//		}
+//		if (ldpType == Type.DATETIME && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
+//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+//			    .dateFormat(Ldproxy2Target.dateTimeFormat).build();
+//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
+//		}
+//
+//		if (bbFeaturesGmlBuilder != null) {
+//
+//		    ClassInfo firstCi = nowVisitedList.get(0).inClass();
+//
+//		    bbFeaturesGmlBuilder.register(pi, firstCi, propertyPath(nowVisitedList));
+//		}
 	    }
 	}
 
 	return propertyDefs;
+    }
+
+    private Optional<Type> valueTypeForBuilder(PropertyInfo pi, PropertyInfo identifierPi, boolean isSingleValued,
+	    Type ldpType) {
+
+	if (!isSingleValued && !(ldpType == Type.OBJECT || ldpType == Type.GEOMETRY || pi == identifierPi)) {
+	    return Optional.of(ldpType);
+	} else {
+	    return Optional.empty();
+	}
+    }
+
+    private Type typeForBuilder(PropertyInfo pi, PropertyInfo identifierPi, boolean isSingleValued, Type ldpType) {
+
+	if (!isSingleValued) {
+	    if (ldpType == Type.OBJECT) {
+		return isEncodedAsFeatureRef(pi) ? Type.FEATURE_REF_ARRAY : Type.OBJECT_ARRAY;
+	    } else if (ldpType == Type.GEOMETRY || pi == identifierPi) {
+		// no array for geometry and identifier properties
+		return ldpType;
+	    } else {
+		return Type.VALUE_ARRAY;
+//		    valueTypeForBuilder = Optional.of(ldpType);
+	    }
+	} else {
+	    return isEncodedAsFeatureRef(pi) ? Type.FEATURE_REF : ldpType;
+	}
+    }
+
+    private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder,
+	    SourcePathInfo spi) {
+	if (StringUtils.isNotBlank(spi.refType)) {
+	    schemaBuilder.refType(spi.refType);
+	}
+	if (StringUtils.isNotBlank(spi.refUriTemplate)) {
+	    schemaBuilder.refUriTemplate(spi.refUriTemplate);
+	}
+    }
+
+    private void encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(PropertyInfo pi,
+	    List<PropertyInfo> alreadyVisitedPiList, List<PropertyInfo> nowVisitedList, ClassInfo currentCi,
+	    SourcePathInfo spi, PropertyEncodingContext context, ImmutableFeatureSchema.Builder schemaBuilder,
+	    Type ldpType) {
+
+	schemaBuilder.sourcePath(spi.sourcePath);
+
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, spi);
+	}
+
+	if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi.categoryOfValue() == Options.DATATYPE)) {
+
+	    /*
+	     * Identify actual typeCi from SqlEncodingClassInfos, through inspection of
+	     * targetTable.
+	     */
+	    String targetTable = spi.targetTable;
+	    Optional<ClassInfo> optActualTypeCi = sqlProviderHelper.actualTypeClass(targetTable, pi);
+
+	    if (optActualTypeCi.isPresent()) {
+
+		// original typeCi of pi is required for circular dependency check
+		ClassInfo originalTypeCi = pi.typeClass();
+
+		// detect circular dependency in the property path
+		if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == originalTypeCi)
+			|| originalTypeCi == currentCi) {
+
+		    // the circular dependency is already reported for the fragment case
+
+		} else {
+
+		    ClassInfo actualTypeCi = optActualTypeCi.get();
+
+		    PropertyEncodingContext nextContext = createChildContext(context, actualTypeCi, targetTable);
+
+		    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(actualTypeCi,
+			    nowVisitedList, nextContext);
+
+		    schemaBuilder.propertyMap(datatypePropertyDefs);
+
+		    schemaBuilder.objectType(Optional.of(LdpInfo.originalClassName(actualTypeCi)));
+		    if (!target.isMappedToLink(actualTypeCi)) {
+			schemaBuilder.schema(LdpUtil.fragmentRef(actualTypeCi));
+		    }
+
+//				if (bbFeaturesGmlBuilder != null) {
+//				    bbFeaturesGmlBuilder.register(actualTypeCi);
+//				}
+		}
+	    }
+	}
+    }
+
+    private boolean isEncodedAsFeatureRef(PropertyInfo pi) {
+	return target.isMappedToOrImplementedAsLink(pi)
+		&& pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
+    }
+
+    /**
+     * NOTE: The method calls itself recursively.
+     * 
+     * @param currentCi            - tbd
+     * @param alreadyVisitedPiList - tbd
+     * @param context              provides additional information about the context
+     *                             in which property definitions shall be encoded
+     */
+    public void propertyDefinitionsForServiceConfiguration(ClassInfo currentCi, List<PropertyInfo> alreadyVisitedPiList,
+	    PropertyEncodingContext context) {
+
+	ClassInfo typeDefinitionCi = context.getTopParentContext().getType();
+
+	/*
+	 * If fragment encoding is enabled and we are in a type definition, encode all
+	 * properties (from direct and indirect supertypes, taking into account the
+	 * order of the xsd encoding, and property overrides).
+	 */
+	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment())
+		? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
+		: currentCi.properties().values();
+
+	for (PropertyInfo pi : propsToProcess) {
+
+	    if (!LdpInfo.isEncoded(pi) || target.isIgnored(pi)) {
+		continue;
+	    }
+
+	    List<PropertyInfo> nowVisitedList = new ArrayList<>(alreadyVisitedPiList);
+	    nowVisitedList.add(pi);
+
+	    Type ldpType = target.ldproxyType(pi);
+
+	    // handle embedded cases (datatype or link properties)
+	    if (target.isMappedToOrImplementedAsLink(pi)) {
+
+		// can be ignored when encoding the service configuration
+
+//		if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+//		    // feature ref case
+//		} else {
+//		    // link object case
+//		}
+
+	    } else if (!LdpUtil.isLdproxySimpleType(ldpType) && pi.categoryOfValue() == Options.DATATYPE) {
+
+		ClassInfo typeCi = pi.typeClass();
+
+		SortedSet<ClassInfo> typeAndSubtypesSet = new TreeSet<>();
+		typeAndSubtypesSet.add(typeCi);
+		typeAndSubtypesSet.addAll(typeCi.subtypesInCompleteHierarchy());
+
+		List<ClassInfo> typeAndSubtypes = typeAndSubtypesSet.stream()
+			.filter(actualTypeCi -> !actualTypeCi.isAbstract() && LdpInfo.isEncoded(actualTypeCi)
+				&& target.mapEntry(actualTypeCi).isEmpty())
+			.collect(Collectors.toList());
+
+		for (ClassInfo actualTypeCi : typeAndSubtypes) {
+
+		    // detect circular dependency in the property path -
+		    if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == actualTypeCi)
+			    || actualTypeCi == currentCi) {
+			/*
+			 * circular paths are not supported
+			 */
+		    } else {
+
+			PropertyEncodingContext nextContext = createChildContext(context, actualTypeCi,
+				sqlProviderHelper.databaseTableName(actualTypeCi, false));
+
+			propertyDefinitionsForServiceConfiguration(actualTypeCi, nowVisitedList, nextContext);
+
+			if (bbFeaturesGmlBuilder != null) {
+			    bbFeaturesGmlBuilder.register(actualTypeCi);
+			}
+		    }
+		}
+	    }
+
+	    if (LdpInfo.isEnumerationOrCodelistValueType(pi) && !target.valueTypeIsMapped(pi)) {
+
+		ClassInfo typeCi = pi.typeClass();
+
+		String codelistId = LdpInfo.codelistId(typeCi);
+
+		if (!Ldproxy2Target.codelistsAndEnumerations.contains(typeCi)) {
+		    /*
+		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
+		     * from the schemas selected for processing.
+		     */
+		    MessageContext mc = result.addWarning(msgSource, 127, typeCi.name(), codelistId);
+		    if (mc != null) {
+			mc.addDetail(msgSource, 0, typeCi.fullNameInSchema());
+		    }
+		}
+
+		// Create content for inclusion in service config:
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
+			.build();
+		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+	    }
+
+	    // create more service constraint content
+	    if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
+		String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
+		if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
+		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
+			    .build();
+		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+			    typeDefinitionCi, propertyPath(nowVisitedList), trf);
+		} else {
+		    MessageContext mc = result.addError(msgSource, 122, pi.name(), pi.taggedValue("ldpRemove"));
+		    if (mc != null) {
+			mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+		    }
+		}
+	    }
+	    if (ldpType == Type.DATE && StringUtils.isNotBlank(Ldproxy2Target.dateFormat)) {
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			.dateFormat(Ldproxy2Target.dateFormat).build();
+		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+	    }
+	    if (ldpType == Type.DATETIME && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			.dateFormat(Ldproxy2Target.dateTimeFormat).build();
+		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+	    }
+
+	    if (bbFeaturesGmlBuilder != null) {
+
+		bbFeaturesGmlBuilder.register(pi, typeDefinitionCi, propertyPath(nowVisitedList));
+	    }
+	}
+    }
+
+    private PropertyEncodingContext createChildContext(PropertyEncodingContext parentContext, ClassInfo newTypeCi,
+	    String newSourceTable) {
+
+	PropertyEncodingContext childContext = new PropertyEncodingContext();
+	childContext.setInFragment(parentContext.isInFragment());
+	childContext.setType(newTypeCi);
+	childContext.setSourceTable(newSourceTable);
+	childContext.setParentContext(parentContext);
+
+	return childContext;
     }
 
     private String propertyPath(List<PropertyInfo> propertyList) {
@@ -776,41 +866,6 @@ public class LdpPropertyEncoder {
 
     private boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, PropertyEncodingContext context) {
 
-	/*
-	 * TODO we need to identify the following cases (that result in context specific
-	 * source paths):
-	 * 
-	 * * (Supertype) property with simple value type and max occurs > 1. It results
-	 * in a single source path - for the associative table that is specific to the
-	 * context type.
-	 * 
-	 * * Property with complex value type that is a supertype. Then we need to
-	 * identify how many context specific source paths we actually have. It may be
-	 * just a single one (depends on sql encoding infos, as well as the type
-	 * hierarchy if there are no sql encoding infos [in that case, it depends on how
-	 * many concrete types are in the hierarchy]). The property multiplicity is
-	 * irrelevant in that case, because even with max mult 1, multiple cases - for
-	 * the type and its subtypes - may be relevant.
-	 * 
-	 * * Property with data type as value type, which is either a) encoded in a
-	 * usage specific table (one-to-many-several-tables) or b) requires an
-	 * associative table (due to max mult > 1; the associative table is then
-	 * specific to the context type).
-	 * 
-	 * If we have identified more than one context specific source path, it is a
-	 * case for concat/coalesce. Otherwise, we can use the direct sourcePath member
-	 * within the type definition.
-	 * 
-	 * NOTE: According to AZ, concat/coalesce does support data types! The content
-	 * of these members is just a schema, as can be used in any type definition. It
-	 * should thus be possible to refer to fragment definitions - or to use the full
-	 * schema directly, for cases in which context specific data type encoding
-	 * applies.
-	 * 
-	 */
-
-//	WEITERMACHEN
-
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
 	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
@@ -853,48 +908,7 @@ public class LdpPropertyEncoder {
 	    }
 	    return true;
 
-	}
-
-//	else if (!sqlEncodingInfos.isEmpty()) {
-//
-//	    // TODO check sql encoding infos: if such infos are available at all, see how
-//	    // many apply to the property
-//
-//	    // TODO the sql encoding infos need to be evaluated in the current context
-//	    // (sourceTable that applies to the given property)
-//
-//	    Set<SqlPropertyEncodingInfo> propEncInfos = sqlEncodingInfos.getPropertyEncodingInfos(pi, context);
-//
-//	    /*
-//	     * TODO we need to differentiate:
-//	     * 
-//	     * * fragment definition encoding case ->
-//	     * 
-//	     * ** context type is always equal to pi.inClass -> if the fragment is for a
-//	     * supertype, then actual type definitions for subtypes must define the source
-//	     * paths for the supertype properties
-//	     * 
-//	     * * type definition encoding case ->
-//	     * 
-//	     * ** context type != pi.inClass
-//	     * 
-//	     * ** context type == pi.inClass the context type may be different to
-//	     * pi.inClass()
-//	     */
-//
-//	    /*
-//	     * If we have multiple property encodings for the property within the current
-//	     * context, we definitely have a context specific source path.
-//	     */
-//	    return propEncInfos.size() > 1;
-//
-//	} 
-	else {
-
-//	    SortedSet<ClassInfo> allTypeCiSubtypes = typeCi.subtypesInCompleteHierarchy();
-//	    allTypeCiSubtypes.add(typeCi);
-//	    List<ClassInfo> nonAbstractTypeCis = allTypeCiSubtypes.stream().filter(tci -> !tci.isAbstract())
-//		    .collect(Collectors.toList());
+	} else {
 
 	    if (pi.cardinality().maxOccurs == 1
 		    && (pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST)) {

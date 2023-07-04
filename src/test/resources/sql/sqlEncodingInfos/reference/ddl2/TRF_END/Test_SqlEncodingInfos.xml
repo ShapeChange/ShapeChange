@@ -449,6 +449,22 @@
                                sourceTable="t8_class1sub"
                                valueSourcePath="pmixa2"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1"
+                               originalInClassName="T8_Mixin_A2"
+                               propertyMultiplicity="1..*"
+                               propertyName="pMixA2Mult"
+                               propertyValueType="Integer"
+                               schemaName="Test"
+                               sourceTable="t8_class1"
+                               valueSourcePath="[_id=t8_class1_id]t8_class1_pmixa2mult/pmixa2mult"/>
+      <SqlPropertyEncodingInfo inClassName="T8_Class1Sub"
+                               originalInClassName="T8_Mixin_A2"
+                               propertyMultiplicity="1..*"
+                               propertyName="pMixA2Mult"
+                               propertyValueType="Integer"
+                               schemaName="Test"
+                               sourceTable="t8_class1sub"
+                               valueSourcePath="[_id=t8_class1sub_id]t8_class1sub_pmixa2mult/pmixa2mult"/>
+      <SqlPropertyEncodingInfo inClassName="T8_Class1"
                                originalInClassName="T8_Mixin_B"
                                propertyMultiplicity="1"
                                propertyName="pMixB"

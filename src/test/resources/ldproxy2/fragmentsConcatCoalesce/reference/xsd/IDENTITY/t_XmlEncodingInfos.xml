@@ -322,6 +322,10 @@
                                xmlName="pMixA2"
                                xmlNamespace="http://test.org/shapechange/sql/test"/>
       <ModelElementXmlEncoding applicationSchemaName="Test"
+                               modelElementName="T8_Mixin_A2::pMixA2Mult"
+                               xmlName="pMixA2Mult"
+                               xmlNamespace="http://test.org/shapechange/sql/test"/>
+      <ModelElementXmlEncoding applicationSchemaName="Test"
                                modelElementName="T8_Mixin_B::pMixB"
                                xmlName="pMixB"
                                xmlNamespace="http://test.org/shapechange/sql/test"/>

@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -48,33 +49,48 @@ import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlClassE
  */
 public class LdpSqlProviderHelper {
 
+    /**
+     * @param ci                                                          - tbd
+     * @param isAssociativeTableContextAndNotReflexiveRelationshipContext - tbd
+     * @return the determined database table name for ci; can be <code>null</code>,
+     *         if ci is a mixin, or if ci is a datatype, and those types are encoded
+     *         in the SQL with usage-specific tables (e.g. multiple sql encoding
+     *         infos were found for the class, or no encoding infos are available
+     *         but the class matches
+     *         {@value Ldproxy2Constants#RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES})
+     */
     public String databaseTableName(ClassInfo ci, boolean isAssociativeTableContextAndNotReflexiveRelationshipContext) {
 
 	if (!Ldproxy2Target.sqlEncodingInfos.isEmpty() && Ldproxy2Target.sqlEncodingInfos.hasClassEncodingInfo(ci)) {
 
-	    SqlClassEncodingInfo scei = Ldproxy2Target.sqlEncodingInfos.getClassEncodingInfo(ci);
+	    List<SqlClassEncodingInfo> scei = Ldproxy2Target.sqlEncodingInfos.getClassEncodingInfos(ci);
 
-	    return scei.getTable();
+	    if (scei.size() == 1) {
+		return scei.get(0).getTable();
+	    } else {
+		return null;
+	    }
 
 	} else {
 
-	    String result = ci.name();
+		String result = ci.name();
 
-	    if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
-		result = result + Ldproxy2Target.associativeTableColumnSuffix;
-	    }
+		if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
+		    result = result + Ldproxy2Target.associativeTableColumnSuffix;
+		}
 
-	    result = result.toLowerCase(Locale.ENGLISH);
+		result = result.toLowerCase(Locale.ENGLISH);
 
-	    result = StringUtils.substring(result, 0, Ldproxy2Target.maxNameLength);
+		result = StringUtils.substring(result, 0, Ldproxy2Target.maxNameLength);
 
-	    return result;
+		return result;
+	    
 	}
     }
 
     /**
-     * @param targetTableName
-     * @param pi
+     * @param targetTableName - tbd
+     * @param pi - tbd
      * @return the actual type class; can be empty if the class could not be
      *         determined
      */

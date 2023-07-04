@@ -523,7 +523,7 @@ types:
         type: INTEGER
         role: ID
       feature1a:
-        sourcePath: feature1a_fk
+        sourcePath: feature1a_reflexive
         type: FEATURE_REF
         label: feature1a
         constraints:
@@ -619,6 +619,14 @@ types:
         label: pMixA2
         constraints:
           required: true
+      pMixA2Mult:
+        sourcePath: "[_id=t8_class1_id]T8_Class1_pMixA2Mult/pmixa2mult"
+        type: VALUE_ARRAY
+        valueType: INTEGER
+        label: pMixA2Mult
+        constraints:
+          required: true
+          minOccurrence: 1
       pMixA1:
         sourcePath: pmixa1
         type: INTEGER
@@ -668,6 +676,14 @@ types:
         label: pMixA2
         constraints:
           required: true
+      pMixA2Mult:
+        sourcePath: "[_id=t8_class1sub_id]T8_Class1Sub_pMixA2Mult/pmixa2mult"
+        type: VALUE_ARRAY
+        valueType: INTEGER
+        label: pMixA2Mult
+        constraints:
+          required: true
+          minOccurrence: 1
       pMixA1:
         sourcePath: pmixa1
         type: INTEGER

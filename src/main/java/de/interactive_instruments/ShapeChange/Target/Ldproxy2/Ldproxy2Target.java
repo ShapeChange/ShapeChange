@@ -105,6 +105,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     static boolean enableGmlOutput = false;
     static Force forceAxisOrder = Force.NONE;
     static String foreignKeyColumnSuffix = "";
+    static String reflexiveRelationshipFieldSuffix = null;
     static String foreignKeyColumnSuffixDatatype = "";
     static String foreignKeyColumnSuffixCodelist = "";
 
@@ -136,7 +137,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
      */
     static MapEntryParamInfos mapEntryParamInfos = null;
 
-    static List<ClassInfo> objectFeatureAndMixinTypes = new ArrayList<>();
+    static List<ClassInfo> objectFeatureMixinAndDataTypes = new ArrayList<>();
     static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
 
     static LdproxyCfg cfg = null;
@@ -235,6 +236,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    foreignKeyColumnSuffix = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, "", false, true);
+
+	    reflexiveRelationshipFieldSuffix = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, null, true, true);
 
 	    foreignKeyColumnSuffixDatatype = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, "", false, true);
@@ -450,20 +454,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	 * time being, we keep the approach with type flattening. 2023-06-23 JE: In
 	 * other words, unions are not supported, but data types are.
 	 */
-	if (ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
+	if (!enableFragments && ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
 
 	    // ignore here - will be encoded as needed
 
 	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
-		|| (enableFragments && ci.category() == Options.MIXIN)) {
+		|| (enableFragments && (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE))) {
 
-	    if (objectFeatureAndMixinTypes.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
+	    if (objectFeatureMixinAndDataTypes.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
 		MessageContext mc = result.addError(this, 125, ci.name());
 		if (mc != null) {
 		    mc.addDetail(this, 0, ci.fullNameInSchema());
 		}
 	    } else {
-		objectFeatureAndMixinTypes.add(ci);
+		objectFeatureMixinAndDataTypes.add(ci);
 	    }
 
 	} else if (ci.category() == Options.ENUMERATION || ci.category() == Options.CODELIST) {
@@ -547,6 +551,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
+    /**
+     * @param pi - tbd
+     * @return <code>true</code>, if the value type of pi is not mapped, and either
+     *         a) is not encoded, or b) is of an unsupported category; else
+     *         <code>false</code>
+     */
     public boolean isIgnored(PropertyInfo pi) {
 
 	if (!valueTypeIsMapped(pi)) {
@@ -618,8 +628,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		}
 	    }
 
-	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder, objectFeatureAndMixinTypes,
-		    codelistsAndEnumerations);
+	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder,
+		    objectFeatureMixinAndDataTypes, codelistsAndEnumerations);
 
 	    configBuilder.process();
 
@@ -697,20 +707,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		result.addError(this, 114, typeName);
 
-	    } else {
+	    } else if (valueType.category() == Options.ENUMERATION || valueType.category() == Options.CODELIST) {
 
-		if (valueType.category() == Options.ENUMERATION || valueType.category() == Options.CODELIST) {
-
-		    if (!valueType.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)
-			    && StringUtils.isNotBlank(valueType.taggedValue("numericType"))) {
-			resType = ldproxyType(valueType.taggedValue("numericType"), null,
-				valueType.encodingRule(Ldproxy2Constants.PLATFORM));
-		    } else {
-			resType = Type.STRING;
-		    }
+		if (!valueType.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)
+			&& StringUtils.isNotBlank(valueType.taggedValue("numericType"))) {
+		    resType = ldproxyType(valueType.taggedValue("numericType"), null,
+			    valueType.encodingRule(Ldproxy2Constants.PLATFORM));
 		} else {
-		    resType = Type.OBJECT;
+		    resType = Type.STRING;
 		}
+	    } else {
+		resType = Type.OBJECT;
 	    }
 	}
 
@@ -718,9 +725,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     }
 
     public boolean isProcessedType(ClassInfo ci) {
-	return codelistsAndEnumerations.contains(ci) || objectFeatureAndMixinTypes.contains(ci);
+	return codelistsAndEnumerations.contains(ci) || objectFeatureMixinAndDataTypes.contains(ci);
     }
-    
+
     public boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
 
 	if (valueTypeIsMapped(pi)) {
@@ -728,6 +735,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	} else {
 	    return LdpInfo.isTypeWithIdentityValueType(pi);
 	}
+    }
+
+    public boolean isMappedToLink(ClassInfo ci) {
+
+	return isMappedToLink(ci.name(), ci.id(), ci.encodingRule(Ldproxy2Constants.PLATFORM));
     }
 
     public boolean isMappedToLink(PropertyInfo pi) {
@@ -739,8 +751,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
-		&& pme.hasTargetType() && "LINK".equalsIgnoreCase(pme.getTargetType())) {
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
+		&& "LINK".equalsIgnoreCase(pme.getTargetType())) {
 	    return true;
 	} else {
 	    return false;
@@ -781,6 +793,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
 	queryablesFromConfig = new TreeSet<>();
+	reflexiveRelationshipFieldSuffix = "";
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
 	srid = 4326;
@@ -798,7 +811,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	mapEntryParamInfos = null;
 
-	objectFeatureAndMixinTypes = new ArrayList<>();
+	objectFeatureMixinAndDataTypes = new ArrayList<>();
 	codelistsAndEnumerations = new TreeSet<>();
 
 	cfg = null;
@@ -954,7 +967,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "The target configuration does not contain SQL encoding infos.";
 	case 133:
 	    return "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
-
+	case 134:
+	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
+	    
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:

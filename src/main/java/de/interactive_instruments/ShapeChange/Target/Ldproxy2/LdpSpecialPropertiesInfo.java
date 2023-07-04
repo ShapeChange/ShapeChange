@@ -228,12 +228,12 @@ class LdpSpecialPropertiesInfo {
 	    multipleIdentifierPisEncountered = (identifierPropsFromCurrentCi.size()
 		    + identifierPropsFromSupertypes.size()) > 1;
 
-	    if (ci.supertypesInCompleteHierarchy().stream()
-		    .anyMatch(st -> LdpInfo.isEncoded(st) && st.category() != Options.MIXIN)) {
+	    if (ci.supertypesInCompleteHierarchy().stream().anyMatch(st -> LdpInfo.isEncoded(st)
+		    && st.category() != Options.MIXIN && st.category() != Options.DATATYPE)) {
 		/*
-		 * currentCi has at least one non-mixin supertype that is encoded -> it will
-		 * definitely provide an identifier property for the type definition of
-		 * currentCi
+		 * currentCi has at least one non-mixin and non-datatype supertype that is
+		 * encoded -> it will definitely provide an identifier property for the type
+		 * definition of currentCi
 		 */
 	    } else if (!multipleIdentifierPisEncountered) {
 
@@ -243,10 +243,12 @@ class LdpSpecialPropertiesInfo {
 		    this.identifierPiOfCi = identifierPropsFromCurrentCi.get(0);
 		} else {
 		    /*
-		     * No identifier property at all, and no non-mixin supertype. Encode an
-		     * additional identifier property if ci itself is not a mixin.
+		     * No identifier property at all, and no non-mixin / non-datatype supertype.
+		     * Encode an additional identifier property if ci itself is not a mixin and not
+		     * a datatype.
 		     */
-		    encodeAdditionalIdentifierProp = ci.category() != Options.MIXIN;
+		    encodeAdditionalIdentifierProp = ci.category() != Options.MIXIN
+			    && ci.category() != Options.DATATYPE;
 		}
 	    }
 

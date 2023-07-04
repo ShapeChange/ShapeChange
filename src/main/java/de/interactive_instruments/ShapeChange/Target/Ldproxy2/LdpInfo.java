@@ -35,10 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -123,46 +121,74 @@ public class LdpInfo {
 	return originalClassName;
     }
 
-    public static List<ClassInfo> allSupertypes(ClassInfo ci) {
+//    public static List<ClassInfo> allSupertypes(ClassInfo ci) {
+//
+//	List<ClassInfo> result = new ArrayList<ClassInfo>();
+//
+//	for (String supertypeId : ci.supertypes()) {
+//
+//	    ClassInfo supertype = ci.model().classById(supertypeId);
+//
+//	    result.addAll(allSupertypes(supertype));
+//	    result.add(supertype);
+//	}
+//
+//	return result;
+//    }
 
-	List<ClassInfo> result = new ArrayList<ClassInfo>();
+    public static List<ClassInfo> directSupertypesInOrderOfXsdEncoding(ClassInfo ci) {
 
-	for (String supertypeId : ci.supertypes()) {
+	List<ClassInfo> result = new ArrayList<>();
 
-	    ClassInfo supertype = ci.model().classById(supertypeId);
-
-	    result.addAll(allSupertypes(supertype));
-	    result.add(supertype);
+	if (ci.category() != Options.MIXIN) {
+	    result.addAll(ci.supertypeClasses());
+	} else {
+	    SortedSet<ClassInfo> stcis = ci.supertypeClasses();
+	    ClassInfo baseClass = ci.baseClass();
+	    if (baseClass != null) {
+		result.add(baseClass);
+		stcis.remove(baseClass);
+		result.addAll(stcis);
+	    } else {
+		result.addAll(stcis);
+	    }
 	}
 
 	return result;
     }
 
-    public static List<PropertyInfo> propertiesAllInOrder(ClassInfo ci) {
+    public static List<PropertyInfo> allPropertiesInOrderOfXsdEncoding(ClassInfo ci) {
 
 	List<PropertyInfo> allProps = new ArrayList<>();
 
 	List<PropertyInfo> directProps = new ArrayList<>(ci.properties().values());
 
 	List<PropertyInfo> supertypeProps = new ArrayList<>();
-	for (String supertypeId : ci.supertypes()) {
-	    ClassInfo supertype = ci.model().classById(supertypeId);
-	    if (supertype != null) {
-		for (PropertyInfo supertypeProp : propertiesAllInOrder(supertype)) {
-		    /*
-		     * ensure that direct property of the class is not overridden by supertype
-		     * property
-		     */
-		    if (directProps.stream().filter(ciProp -> ciProp.name().equals(supertypeProp.name())).findFirst()
-			    .isEmpty()) {
-			supertypeProps.add(supertypeProp);
-		    }
+
+	List<ClassInfo> supertypes = LdpInfo.directSupertypesInOrderOfXsdEncoding(ci).stream()
+		.filter(st -> LdpInfo.isEncoded(st)).collect(Collectors.toList());
+
+	for (ClassInfo supertype : supertypes) {
+
+	    for (PropertyInfo supertypeProp : allPropertiesInOrderOfXsdEncoding(supertype)) {
+		/*
+		 * ensure that direct property of the class is not overridden by supertype
+		 * property
+		 */
+		if (directProps.stream().filter(ciProp -> ciProp.name().equals(supertypeProp.name())).findFirst()
+			.isEmpty()) {
+		    supertypeProps.add(supertypeProp);
 		}
 	    }
 	}
-	
-	allProps.addAll(supertypeProps);
-	allProps.addAll(directProps);
+
+	if (ci.category() == Options.MIXIN) {
+	    allProps.addAll(directProps);
+	    allProps.addAll(supertypeProps);
+	} else {
+	    allProps.addAll(supertypeProps);
+	    allProps.addAll(directProps);
+	}
 
 	return allProps;
     }
