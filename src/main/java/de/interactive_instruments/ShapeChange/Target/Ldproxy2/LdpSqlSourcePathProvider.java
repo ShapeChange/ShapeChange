@@ -342,7 +342,6 @@ public class LdpSqlSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				// no need for a table join in this case
 				// case p2 from ppt image (n:1 for bi-directional reflexive association)
 				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
@@ -369,9 +368,26 @@ public class LdpSqlSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				// no need for a table join in this case
 				// case p1 from ppt image (n:1 for bi-directional reflexive association)
-				sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+
+				if (isImplementedAsFeatureReference(pi)) {
+
+				    // no need for a table join in this case
+				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+
+				} else {
+
+				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+						+ primaryKeyColumn(typeCi) + "]" + targetTable;
+
+				    } else {
+					// the source path on property level is omitted in this case
+					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+					sourcePath = null;
+				    }
+				}
 
 			    } else {
 
@@ -380,6 +396,9 @@ public class LdpSqlSourcePathProvider {
 				if (isImplementedAsFeatureReference(pi)) {
 				    sourcePath = databaseColumnName(pi);
 				} else {
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
 				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 					    + targetTable;
 				}
@@ -391,8 +410,23 @@ public class LdpSqlSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				// no need for a table join in this case
-				sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				if (isImplementedAsFeatureReference(pi)) {
+
+				    // no need for a table join in this case
+				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+
+				} else {
+
+				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+						+ primaryKeyColumn(typeCi) + "]" + targetTable;
+
+				    } else {
+					// the source path on property level is omitted in this case
+					sourcePath = null;
+				    }
+				}
 
 			    } else {
 
@@ -400,6 +434,9 @@ public class LdpSqlSourcePathProvider {
 				if (isImplementedAsFeatureReference(pi)) {
 				    sourcePath = databaseColumnName(pi);
 				} else {
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
 				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 					    + targetTable;
 				}
@@ -409,20 +446,38 @@ public class LdpSqlSourcePathProvider {
 		    } else {
 
 			// attribute or uni-directional association
+
 			if (pi.cardinality().maxOccurs == 1) {
 
 			    // n:1
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				// no need for a table join in this case
-				sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				if (isImplementedAsFeatureReference(pi)) {
+				    // no need for a table join in this case
+				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				} else {
+
+				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+						+ primaryKeyColumn(typeCi) + "]" + targetTable;
+
+				    } else {
+					// the source path on property level is omitted in this case
+					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+					sourcePath = null;
+				    }
+				}
 
 			    } else {
 
 				if (isImplementedAsFeatureReference(pi)) {
 				    sourcePath = databaseColumnName(pi);
 				} else {
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
 				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
 					    + targetTable;
 				}

@@ -313,7 +313,19 @@ public class LdpConfigBuilder {
 		     * value that marks the property as queryable
 		     */
 		    if (queryables.contains(pi.name()) || queryables.contains(LdpInfo.originalPropertyName(pi))) {
-			String queryableName = pi.isAttribute() ? pi.name() : pi.name() + ".title";
+			String queryableName;
+			if(pi.isAttribute()) {
+			    queryableName = pi.name();
+			} else {
+			    // pi is association role
+			    if(pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+				// TODO - review, once title encoding for FEATURE REF is possible
+				queryableName = pi.name();
+			    } else {
+				// assume link encoding (where a .title property is available)
+				queryableName = pi.name() + ".title";
+			    }
+			}
 			queryableProperties.add(queryableName);
 		    }
 		}

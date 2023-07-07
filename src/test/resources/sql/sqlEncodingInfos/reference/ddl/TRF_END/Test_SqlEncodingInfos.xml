@@ -136,6 +136,13 @@
                                schemaName="Test"
                                sourceTable="t7_datatype"
                                valueSourcePath="[_id=t7_datatype_id]t7_datatype_attdt2/attdt2"/>
+      <SqlPropertyEncodingInfo inClassName="T6_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="attTitle"
+                               propertyValueType="CharacterString"
+                               schemaName="Test"
+                               sourceTable="t6_class1"
+                               valueSourcePath="atttitle"/>
       <SqlPropertyEncodingInfo idSourcePath="feature1a_reflexive"
                                inClassName="T6_Class1"
                                propertyMultiplicity="1"
@@ -154,6 +161,24 @@
                                sourceTable="t6_class1"
                                targetTable="t6_class1"
                                valueSourcePath="[_id=t6_class1_feature1b_source_id]t6_class1_feature1b_target/[t6_class1_feature1b_target_id=_id]t6_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="feature1c_reflexive"
+                               inClassName="T6_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="feature1c"
+                               propertyValueType="T6_Class1"
+                               schemaName="Test"
+                               sourceTable="t6_class1"
+                               targetTable="t6_class1"
+                               valueSourcePath="[feature1c_reflexive=_id]t6_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=feature1c_reflexive]t6_class1/_id"
+                               inClassName="T6_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="feature1d"
+                               propertyValueType="T6_Class1"
+                               schemaName="Test"
+                               sourceTable="t6_class1"
+                               targetTable="t6_class1"
+                               valueSourcePath="[_id=feature1c_reflexive]t6_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="feature2_fk"
                                inClassName="T6_Class1"
                                propertyMultiplicity="1"

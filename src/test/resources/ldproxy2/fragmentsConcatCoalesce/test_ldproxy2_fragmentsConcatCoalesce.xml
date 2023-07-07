@@ -146,6 +146,61 @@
 				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
 			</mapEntries>
 		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="TRF_END">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/ldproxy_flat_linkobjects"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml"/>
+			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+			 <targetParameter name="descriptionTemplate" value="[[definition]]"/> 
+			 <targetParameter name="descriptorNoValue" value=""/> 
+			<targetParameter name="forceAxisOrder" value="NONE"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
+			<targetParameter name="labelTemplate" value="[[name]]"/>
+			<targetParameter name="maxNameLength" value="63"/>
+			<targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
+			<targetParameter name="objectIdentifierName" value="oid"/>
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="MyServiceLabel" />
+			<!-- 			<targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" /> -->
+			<targetParameter name="srid" value="31467" />
+			
+			<targetParameter name="enableGmlOutput" value="true"/>
+			<targetParameter name="gmlIdPrefix" value="_"/>
+			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything other than sf:FeatureCollection. -->
+			<!-- 			<targetParameter name="gmlSfLevel" value="1"/> -->
+<!--			<targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>-->
+<!--			<targetParameter name="featureMemberElementName" value="wfs:member"/>-->
+<!--			<targetParameter name="supportsStandardResponseParameters" value="true"/>-->
+			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest3"/>
+			<rules>
+				<EncodingRule name="ldptest3">
+					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-queryables"/>
+					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
+					<rule name="rule-ldp2-cls-codelist-append-code"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-prop-readOnly"/>
+					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
+			<mapEntries>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
+			</mapEntries>
+		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="IDENTITY">
 			<advancedProcessConfigurations>
 				<xi:include href="src/test/resources/sql/sqlEncodingInfos/reference/ddl2/TRF_END/Test_SqlEncodingInfos.xml"/>

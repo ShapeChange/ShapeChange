@@ -870,6 +870,192 @@ capitalisation following the input model of the target
 NOTE: DDL statements that have no equivalent in the replication schema
 are ignored, for example foreign key constraints.
 
+
+[[SQL_Encoding_Infos]]
+== SQL Encoding Infos
+
+(since v2.14.0)
+
+The primary purpose of the SQL DDL target is to encode a given 
+application schema as a database schema. However, the way in which certain
+model elements are represented by the database schema may be of
+interest for additional applications. For example, the 
+xref:./ldproxy2.adoc[ldproxy target] can use it to determine 
+source path information when encoding an application schema as ldproxy 
+configuration files. When the SQL DDL target parameter 
+xref:./SQL_DDL.adoc#writeSqlEncodingInfos[writeSqlEncodingInfos]
+is set to `true`, the target will create an XML file with details
+about the database representation of model elements, based upon
+the generated database schema. 
+The name of that file has suffix `_SqlEncodingInfos.xml`.
+
+NOTE: Information about the origin of a schema element, such as the
+original name of a class or property (before the name was modified by
+a model transformation), can be taken into account, if according 
+tagged values are set. These tags can be added to the model via the
+xref:../transformations/Tagged_Value_Transformer.adoc[tagged value transformer],
+more specifically via its transformation 
+xref:../transformations/Tagged_Value_Transformer.adoc#rule-trf-taggedValue-createOriginalSchemaInformationTags[rule-trf-taggedValue-createOriginalSchemaInformationTags]
+(which also documents the names of relevant tags).
+
+The SQL encoding infos are contained in XML element `SqlEncodingInfos`.
+Its structure is defined in the 
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange Configuration XML Schema]. 
+The two main components are `SqlClassEncodingInfo` and `SqlPropertyEncodingInfo` elements. 
+
+A `SqlClassEncodingInfo` element has the following XML attributes:
+
+* schemaName (required): Name of the schema to which the class belongs 
+(in the model encoded by the SqlDdl target).
+* originalSchemaName (optional): Name of the schema to which the class 
+originally belonged. Can be omitted, if the value is the same as schemaName.
+* className (required): Class name (in the model encoded by the SqlDdl 
+target).
+* originalClassName (optional): Name of the class in the original schema. 
+Can be omitted, if the value is the same as className.
+* tableName (optional): Identifier of the database table that represents 
+the class. Multiple SqlClassEncodingInfo elements may exist with same 
+className but different tableName. That can be the case if the class is 
+represented by multiple, property usage specific tables.
+* databaseSchema (optional): Identifier of the database schema, in which 
+the table is defined. Can be omitted if no particular schema is defined 
+for the table.
+
+A `SqlPropertyEncodingInfo` element has the following XML attributes:
+
+* schemaName (required): Name of the schema to which the property belongs 
+(in the model encoded by the SqlDdl target).
+* originalSchemaName (optional): Name of the schema to which the property 
+originally belonged. Can be omitted, if the value is the same as schemaName.
+* propertyName (required): Property name (in the model encoded by the 
+SqlDdl target).
+* originalPropertyName (optional): Name of the property in the original schema. 
+Can be omitted, if the value is the same as propertyName.
+* inClassName (required): Name of the class that owns the property (in the 
+model encoded by the SqlDdl target).
+* originalInClassName (optional): Name of the class that owned the 
+property in the original schema. Can be omitted, if the value is the 
+same as inClassName.
+* propertyValueType (required): Name of the property value type (in the 
+model encoded by the SqlDdl target).
+* originalPropertyValueType (optional): Name of the property value type 
+in the original schema. Can be omitted, if the value is the same as 
+propertyValueType.
+* propertyMultiplicity (required): Multiplicity of the property (in the 
+model encoded by the SqlDdl target).
+* originalPropertyMultiplicity (optional): Multiplicity of the property 
+in the original schema. Can be omitted, if the value is the same as 
+propertyMultiplicity.
+* sourceTable (required): Name of the database table that provides the 
+context for the sourcePath.
+* sourceTableSchema (optional): Identifier of the database schema, in 
+which the sourceTable is defined. Can be omitted if no particular 
+schema is defined for the sourceTable.
+* valueSourcePath (required): Path expression (in syntax used by the 
+xref:./ldproxy2.adoc[ldproxy target]) that is used to access the property 
+values in the database.
+* idSourcePath (optional): Path expression (in syntax used by the 
+xref:./ldproxy2.adoc[ldproxy target]) that is used to access the database 
+identifiers, i.e., the primary keys, of (complex) property values in the database. 
+Can be omitted for cases in which the property values are 
+simple, such as strings and integers.
+* targetTable (optional): Name of the database table that the source path 
+evaluates to. Can be omitted, if no such table exists - then the source 
+path typically resolves to a simple value contained in a field within the source 
+table, not to a complex value in another table.
+* targetTableSchema (optional): Identifier of the database schema, in 
+which the targetTable is defined. Can be omitted if no particular 
+schema is defined for the targetTable.
+
+[[SQL_Encoding_InfosExample]]
+=== Example
+
+NOTE: The following example is from one of the ShapeChange unit tests.
+The model, configuration, and results of that test are available 
+https://github.com/ShapeChange/ShapeChange/tree/master/src/test/resources/sql/sqlEncodingInfos[here].
+
+[source,xml,linenumbers]
+----------
+<SqlEncodingInfos xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <modelElementEncodings>
+      <SqlClassEncodingInfo className="T1_Class1" schemaName="Test" tableName="t1_class1"/>
+      <SqlClassEncodingInfo className="T1_Class2" schemaName="Test" tableName="t1_class2"/>
+      <!-- ... --->
+      <SqlClassEncodingInfo className="T3_Class1" schemaName="Test" tableName="t3_class1"/>
+      <SqlClassEncodingInfo className="T3_Class4"
+                            schemaName="Test"
+                            tableName="t3_class1_p4_t3_class4"/>
+      <SqlClassEncodingInfo className="T3_Class4"
+                            schemaName="Test"
+                            tableName="t3_class1_p9_t3_class4"/>
+      <!-- ... -->      
+      <SqlPropertyEncodingInfo inClassName="T3_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="p1"
+                               propertyValueType="Integer"
+                               schemaName="Test"
+                               sourceTable="t3_class1"
+                               valueSourcePath="p1"/>      
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t3_class1_id]t3_class1_p4_t3_class4/_id"
+                               inClassName="T3_Class1"
+                               originalPropertyMultiplicity="1..*"
+                               originalPropertyName="p4"
+                               propertyMultiplicity="0..*"
+                               propertyName="p4_t3_Class4"
+                               propertyValueType="T3_Class4"
+                               schemaName="Test"
+                               sourceTable="t3_class1"
+                               targetTable="t3_class1_p4_t3_class4"
+                               valueSourcePath="[_id=t3_class1_id]t3_class1_p4_t3_class4"/>      
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t3_class1_id]t3_class1_p9_t3_class4/_id"
+                               inClassName="T3_Class1"
+                               originalPropertyMultiplicity="1"
+                               originalPropertyName="p9"
+                               propertyMultiplicity="0..1"
+                               propertyName="p9_t3_Class4"
+                               propertyValueType="T3_Class4"
+                               schemaName="Test"
+                               sourceTable="t3_class1"
+                               targetTable="t3_class1_p9_t3_class4"
+                               valueSourcePath="[_id=t3_class1_id]t3_class1_p9_t3_class4"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class1_id]t1_class1_pa1/t1_class2_id"
+                               inClassName="T1_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="pA1"
+                               propertyValueType="T1_Class2"
+                               schemaName="Test"
+                               sourceTable="t1_class1"
+                               targetTable="t1_class2"
+                               valueSourcePath="[_id=t1_class1_id]t1_class1_pa1/[t1_class2_id=_id]t1_class2"/>      
+      <SqlPropertyEncodingInfo idSourcePath="pb6_1_fk"
+                               inClassName="T1_Class2"
+                               originalPropertyMultiplicity="1..2"
+                               originalPropertyName="pB6"
+                               propertyMultiplicity="1"
+                               propertyName="pB6_1"
+                               propertyValueType="T1_Class1"
+                               schemaName="Test"
+                               sourceTable="t1_class2"
+                               targetTable="t1_class1"
+                               valueSourcePath="[pb6_1_fk=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="pb6_2_fk"
+                               inClassName="T1_Class2"
+                               originalPropertyMultiplicity="1..2"
+                               originalPropertyName="pB6"
+                               propertyMultiplicity="0..1"
+                               propertyName="pB6_2"
+                               propertyValueType="T1_Class1"
+                               schemaName="Test"
+                               sourceTable="t1_class2"
+                               targetTable="t1_class1"
+                               valueSourcePath="[pb6_2_fk=_id]t1_class1"/>
+      <!-- ... -->
+   </modelElementEncodings>
+</SqlEncodingInfos>
+----------
+
+
+
 [[Configuration]]
 == Configuration
 
@@ -2879,6 +3065,24 @@ There is no default value.
 
 +++Applies to Rule(s):+++
 xref:./SQL_DDL.adoc#rule-sql-all-databaseModel[rule-sql-all-databaseModel]
+
+[[writeSqlEncodingInfos]]
+==== writeSqlEncodingInfos
+
+(since v2.14.0)
+
++++Required / Optional:+++ optional
+
++++Type:+++ String
+
++++Default Value:+++ _none_
+
++++Explanation:+++ This optional parameter can be set, in order to
+generate xref:./SQL_DDL.adoc#SQL_Encoding_Infos[SQL encoding infos].
+
++++Applies to Rule(s):+++
+_none_
+
 
 [[Map_Entries]]
 === Map Entries

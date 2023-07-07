@@ -368,11 +368,29 @@
       <complexContent>
          <extension base="gml:AbstractFeatureType">
             <sequence>
+               <element name="attTitle" type="string"/>
                <element name="feature1a" type="t:T6_Class1PropertyType"/>
                <element maxOccurs="unbounded"
                         minOccurs="0"
                         name="feature1b_target"
                         type="t:T6_Class1PropertyType"/>
+               <element name="feature1c" type="t:T6_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:feature1d</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="feature1d"
+                        type="t:T6_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:feature1c</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
                <element name="feature2" type="t:T6_Class2PropertyType"/>
             </sequence>
          </extension>

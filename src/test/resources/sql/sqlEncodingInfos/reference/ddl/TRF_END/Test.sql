@@ -212,7 +212,9 @@ CREATE TABLE t5_class2_t5c1p1 (
 CREATE TABLE t6_class1 (
 
    _id bigserial NOT NULL PRIMARY KEY,
+   atttitle text NOT NULL,
    feature1a_reflexive bigint NOT NULL,
+   feature1c_reflexive bigint NOT NULL,
    feature2_fk bigint NOT NULL
 );
 
@@ -385,6 +387,7 @@ ALTER TABLE t5_class2 ADD CONSTRAINT t5_class2_t5c2p1_chk CHECK (t5c2p1 IN ('100
 ALTER TABLE t5_class2_t5c1p1 ADD CONSTRAINT fk_t5_class2_t5c1p1_t5_class2_id FOREIGN KEY (t5_class2_id) REFERENCES t5_class2;
 ALTER TABLE t5_class2_t5c1p1 ADD CONSTRAINT t5_class2_t5c1p1_t5c1p1_chk CHECK (t5c1p1 IN ('1000', '2000'));
 ALTER TABLE t6_class1 ADD CONSTRAINT fk_t6_class1_feature1a_reflexive FOREIGN KEY (feature1a_reflexive) REFERENCES t6_class1;
+ALTER TABLE t6_class1 ADD CONSTRAINT fk_t6_class1_feature1c_reflexive FOREIGN KEY (feature1c_reflexive) REFERENCES t6_class1;
 ALTER TABLE t6_class1 ADD CONSTRAINT fk_t6_class1_feature2_fk FOREIGN KEY (feature2_fk) REFERENCES t6_class2;
 ALTER TABLE t6_class1_feature1b_target ADD CONSTRAINT fk_t6_class1_feature1b_target_t6_class1_feature1b_source_id FOREIGN KEY (t6_class1_feature1b_source_id) REFERENCES t6_class1;
 ALTER TABLE t6_class1_feature1b_target ADD CONSTRAINT fk_t6_class1_feature1b_target_t6_class1_feature1b_target_id FOREIGN KEY (t6_class1_feature1b_target_id) REFERENCES t6_class1;

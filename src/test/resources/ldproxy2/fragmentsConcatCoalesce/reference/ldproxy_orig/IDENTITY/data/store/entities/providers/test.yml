@@ -232,6 +232,14 @@ types:
         sourcePath: "[_id=t6_class1_feature1b_source_id]t6_class1_feature1b_target/t6_class1_feature1b_target_id"
         type: FEATURE_REF_ARRAY
         refType: t6_class1
+      feature1c:
+        sourcePath: feature1c_reflexive
+        type: FEATURE_REF
+        refType: t6_class1
+      feature1d:
+        sourcePath: "[_id=feature1c_reflexive]t6_class1/_id"
+        type: FEATURE_REF_ARRAY
+        refType: t6_class1
       feature2:
         sourcePath: feature2_fk
         type: FEATURE_REF
@@ -674,6 +682,12 @@ fragments:
         sourcePath: _id
         type: INTEGER
         role: ID
+      attTitle:
+        sourcePath: atttitle
+        type: STRING
+        label: attTitle
+        constraints:
+          required: true
       feature1a:
         type: FEATURE_REF
         label: feature1a
@@ -682,6 +696,16 @@ fragments:
       feature1b_target:
         type: FEATURE_REF_ARRAY
         label: feature1b_target
+        constraints:
+          minOccurrence: 0
+      feature1c:
+        type: FEATURE_REF
+        label: feature1c
+        constraints:
+          required: true
+      feature1d:
+        type: FEATURE_REF_ARRAY
+        label: feature1d
         constraints:
           minOccurrence: 0
       feature2:

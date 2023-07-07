@@ -31,54 +31,128 @@ types:
         type: INTEGER
         role: ID
       pA1:
-        sourcePath: "[_id=t1_class1_id]T1_Class1_pA1/t1_class2_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class1_id]T1_Class1_pA1/[t1_class2_id=_id]t1_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pA1
         constraints:
           minOccurrence: 0
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA2:
-        sourcePath: pa2_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pA2
         constraints:
           required: true
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: pa2_fk
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: pa2_fk
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA3:
-        sourcePath: "[_id=t1_class1_id]TablePB1PA3/t1_class2_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class1_id]TablePB1PA3/[t1_class2_id=_id]t1_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pA3
         constraints:
           minOccurrence: 0
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA4:
-        sourcePath: pa4_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pA4
         constraints:
           required: true
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: pa4_fk
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: pa4_fk
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA5:
-        sourcePath: pa5_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pA5
         constraints:
           required: true
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: pa5_fk
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: pa5_fk
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA6:
-        sourcePath: "[_id=t1_class1_id]T1_Class1_pA6/t1_class2_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class1_id]T1_Class1_pA6/[t1_class2_id=_id]t1_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pA6
         constraints:
           minOccurrence: 0
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pA7:
-        sourcePath: "[_id=t1_class1_id]T1_Class1_pA7/t1_class2_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class1_id]T1_Class1_pA7/[t1_class2_id=_id]t1_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pA7
         constraints:
           minOccurrence: 0
-        refType: t1_class2
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class2/items/{{value}}"
       pX:
         sourcePath: "[_id=t1_class1_id]T1_Class1_pX/px"
         type: VALUE_ARRAY
@@ -114,56 +188,130 @@ types:
         type: INTEGER
         role: ID
       pB1:
-        sourcePath: "[_id=t1_class2_id]TablePB1PA3/t1_class1_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class2_id]TablePB1PA3/[t1_class1_id=_id]t1_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pB1
         constraints:
           minOccurrence: 0
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB2:
-        sourcePath: "[_id=pa4_fk]t1_class1/_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=pa4_fk]t1_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pB2
         constraints:
           minOccurrence: 0
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB3:
-        sourcePath: pb3_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pB3
         constraints:
           required: true
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: pb3_fk
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: pb3_fk
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB4:
-        sourcePath: "[_id=t1_class2_id]T1_Class1_pA6/t1_class1_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class2_id]T1_Class1_pA6/[t1_class1_id=_id]t1_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pB4
         constraints:
           required: true
           minOccurrence: 6
           maxOccurrence: 6
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB5:
-        sourcePath: "[_id=t1_class2_id]T1_Class1_pA7/t1_class1_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t1_class2_id]T1_Class1_pA7/[t1_class1_id=_id]t1_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: pB5
         constraints:
           required: true
           minOccurrence: 1
           maxOccurrence: 3
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB6_1:
-        sourcePath: pb6_1_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pB6_1
         constraints:
           required: true
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: pb6_1_fk
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: pb6_1_fk
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
       pB6_2:
-        sourcePath: pb6_2_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: pB6_2
-        refType: t1_class1
+        properties:
+          title:
+            sourcePath: pb6_2_fk
+            type: STRING
+            label: T1_Class1-title
+          href:
+            sourcePath: pb6_2_fk
+            type: STRING
+            label: T1_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t1_class1/items/{{value}}"
   t2_class1:
     sourcePath: /t2_class1
     type: OBJECT
@@ -337,34 +485,76 @@ types:
               required: true
               minOccurrence: 1
       p5:
-        sourcePath: p5_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: p5
         constraints:
           required: true
-        refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedInModel/{{value}}"
+        properties:
+          title:
+            sourcePath: p5_fk
+            type: STRING
+            label: ExternalDatatypeDefinedInModel-title
+          href:
+            sourcePath: p5_fk
+            type: STRING
+            label: ExternalDatatypeDefinedInModel-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalDatatypeDefinedInModel/{{value}}"
       p6:
-        sourcePath: "[_id=t3_class1_id]T3_Class1_p6/tb_extdtinmodel_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t3_class1_id]T3_Class1_p6/[tb_extdtinmodel_id=_id]tb_extdtinmodel"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: p6
         constraints:
           minOccurrence: 0
-        refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedInModel/{{value}}"
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: ExternalDatatypeDefinedInModel-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: ExternalDatatypeDefinedInModel-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalDatatypeDefinedInModel/{{value}}"
       p7:
-        sourcePath: p7_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: p7
         constraints:
           required: true
-        refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/{{value}}"
+        properties:
+          title:
+            sourcePath: p7_fk
+            type: STRING
+            label: ExternalDatatypeDefinedOutsideOfModel-title
+          href:
+            sourcePath: p7_fk
+            type: STRING
+            label: ExternalDatatypeDefinedOutsideOfModel-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/{{value}}"
       p8:
-        sourcePath: "[_id=t3_class1_id]T3_Class1_p8/tb_extdtoutsidemodel_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t3_class1_id]T3_Class1_p8/[tb_extdtoutsidemodel_id=_id]tb_extdtoutsidemodel"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: p8
         constraints:
           required: true
           minOccurrence: 1
-        refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/{{value}}"
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: ExternalDatatypeDefinedOutsideOfModel-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: ExternalDatatypeDefinedOutsideOfModel-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/{{value}}"
       p9_t3_Class4:
         sourcePath: "[_id=t3_class1_id]T3_Class1_p9_t3_Class4"
         type: OBJECT
@@ -442,20 +632,42 @@ types:
         type: INTEGER
         role: ID
       t4c1p1:
-        sourcePath: "[_id=t4_class1_id]T4_Class1_t4c1p1/tb_extft_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t4_class1_id]T4_Class1_t4c1p1/[tb_extft_id=_id]tb_extft"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: t4c1p1
         constraints:
           minOccurrence: 0
-        refUriTemplate: "https://example.org/external/ExternalFeatureType/{{value}}"
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: ExternalFeatureType-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: ExternalFeatureType-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalFeatureType/{{value}}"
       t4c1p2:
-        sourcePath: "[_id=t4_class1_id]T4C1TOEXTFT/tb_extft_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t4_class1_id]T4C1TOEXTFT/[tb_extft_id=_id]tb_extft"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: t4c1p2
         constraints:
           required: true
           minOccurrence: 1
-        refUriTemplate: "https://example.org/external/ExternalFeatureType/{{value}}"
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: ExternalFeatureType-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: ExternalFeatureType-ID
+            transformations:
+            - stringFormat: "https://example.org/external/ExternalFeatureType/{{value}}"
   t5_class1:
     sourcePath: /t5_class1
     type: OBJECT
@@ -529,40 +741,94 @@ types:
         constraints:
           required: true
       feature1a:
-        sourcePath: feature1a_reflexive
-        type: FEATURE_REF
+        sourcePath: "[feature1a_reflexive=_id]t6_class1"
+        type: OBJECT
+        objectType: Link
         label: feature1a
         constraints:
           required: true
-        refType: t6_class1
+        properties:
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T6_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t6_class1/items/{{value}}"
       feature1b_target:
-        sourcePath: "[_id=t6_class1_feature1b_source_id]T6_Class1_feature1b_target/t6_class1_feature1b_target_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t6_class1_feature1b_source_id]T6_Class1_feature1b_target/[t6_class1_feature1b_target_id=_id]t6_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: feature1b_target
         constraints:
           minOccurrence: 0
-        refType: t6_class1
+        properties:
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T6_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t6_class1/items/{{value}}"
       feature1c:
-        sourcePath: feature1c_reflexive
-        type: FEATURE_REF
+        sourcePath: "[feature1c_reflexive=_id]t6_class1"
+        type: OBJECT
+        objectType: Link
         label: feature1c
         constraints:
           required: true
-        refType: t6_class1
+        properties:
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T6_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t6_class1/items/{{value}}"
       feature1d:
-        sourcePath: "[_id=feature1c_reflexive]t6_class1/_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=feature1c_reflexive]t6_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: feature1d
         constraints:
           minOccurrence: 0
-        refType: t6_class1
+        properties:
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T6_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t6_class1/items/{{value}}"
       feature2:
-        sourcePath: feature2_fk
-        type: FEATURE_REF
+        type: OBJECT
+        objectType: Link
         label: feature2
         constraints:
           required: true
-        refType: t6_class2
+        properties:
+          title:
+            sourcePath: feature2_fk
+            type: STRING
+            label: T6_Class2-title
+          href:
+            sourcePath: feature2_fk
+            type: STRING
+            label: T6_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t6_class2/items/{{value}}"
   t6_class2:
     sourcePath: /t6_class2
     type: OBJECT
@@ -674,12 +940,23 @@ types:
           required: true
           minOccurrence: 1
       role1to2_T8_Class2Sub:
-        sourcePath: "[_id=t8_class1_id]T8_Class1_role1to2_T8_Class2Sub/t8_class2sub_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t8_class1_id]T8_Class1_role1to2_T8_Class2Sub/[t8_class2sub_id=_id]t8_class2sub"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: role1to2_T8_Class2Sub
         constraints:
           minOccurrence: 0
-        refType: t8_class2sub
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class2Sub-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class2Sub-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t8_class2sub/items/{{value}}"
   t8_class1sub:
     sourcePath: /t8_class1sub
     type: OBJECT
@@ -731,12 +1008,23 @@ types:
           required: true
           minOccurrence: 1
       role1to2_T8_Class2Sub:
-        sourcePath: "[_id=t8_class1sub_id]T8_Class1Sub_role1to2_T8_Class2Sub/t8_class2sub_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t8_class1sub_id]T8_Class1Sub_role1to2_T8_Class2Sub/[t8_class2sub_id=_id]t8_class2sub"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: role1to2_T8_Class2Sub
         constraints:
           minOccurrence: 0
-        refType: t8_class2sub
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class2Sub-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class2Sub-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t8_class2sub/items/{{value}}"
       pMixD:
         sourcePath: pmixd
         type: INTEGER
@@ -780,19 +1068,41 @@ types:
         constraints:
           required: true
       role2to1_T8_Class1:
-        sourcePath: "[_id=t8_class2sub_id]T8_Class1_role1to2_T8_Class2Sub/t8_class1_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t8_class2sub_id]T8_Class1_role1to2_T8_Class2Sub/[t8_class1_id=_id]t8_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: role2to1_T8_Class1
         constraints:
           minOccurrence: 0
-        refType: t8_class1
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t8_class1/items/{{value}}"
       role2to1_T8_Class1Sub:
-        sourcePath: "[_id=t8_class2sub_id]T8_Class1Sub_role1to2_T8_Class2Sub/t8_class1sub_id"
-        type: FEATURE_REF_ARRAY
+        sourcePath: "[_id=t8_class2sub_id]T8_Class1Sub_role1to2_T8_Class2Sub/[t8_class1sub_id=_id]t8_class1sub"
+        type: OBJECT_ARRAY
+        objectType: Link
         label: role2to1_T8_Class1Sub
         constraints:
           minOccurrence: 0
-        refType: t8_class1sub
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class1Sub-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T8_Class1Sub-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t8_class1sub/items/{{value}}"
       attC2Sub:
         sourcePath: attc2sub
         type: BOOLEAN

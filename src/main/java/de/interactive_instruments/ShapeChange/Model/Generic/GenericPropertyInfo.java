@@ -638,7 +638,7 @@ public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSour
 
     public void setTaggedValueIfCurrentlyBlank(String tvName, String tvValue, boolean updateFields) {
 
-	String[] currentValues = this.taggedValuesForTag(tvValue);
+	String[] currentValues = this.taggedValuesForTag(tvName);
 
 	if (currentValues.length == 0 || Arrays.asList(currentValues).stream().allMatch(s -> StringUtils.isBlank(s))) {
 	    this.setTaggedValue(tvName, tvValue, updateFields);

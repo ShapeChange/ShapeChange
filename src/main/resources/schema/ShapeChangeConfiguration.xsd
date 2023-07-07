@@ -1336,7 +1336,7 @@
     </attribute>
     <attribute name="tableName" type="string" use="optional">
      <annotation>
-      <documentation>Identifier of the database table that represents the class. Can be omitted if the class is not represented by a singular table. That can be the case if the class is represented by multiple, property usage specific tables.</documentation>
+      <documentation>Identifier of the database table that represents the class. Multiple SqlClassEncodingInfo elements may exist with same className but different tableName. That can be the case if the class is represented by multiple, property usage specific tables.</documentation>
      </annotation>
     </attribute>
     <attribute name="databaseSchema" type="string" use="optional">
@@ -1368,7 +1368,7 @@
     </attribute>
     <attribute name="propertyMultiplicity" type="string" use="required">
      <annotation>
-      <documentation>Multiplicity of the property value type (in the model encoded by the SqlDdl target).</documentation>
+      <documentation>Multiplicity of the property (in the model encoded by the SqlDdl target).</documentation>
      </annotation>
     </attribute>
     <attribute name="originalPropertyName" type="string" use="optional">
@@ -1388,7 +1388,7 @@
     </attribute>
     <attribute name="originalPropertyMultiplicity" type="string" use="optional">
      <annotation>
-      <documentation>Multiplicity of the property value type in the original schema. Can be omitted, if the value is the same as propertyMultiplicity.</documentation>
+      <documentation>Multiplicity of the property in the original schema. Can be omitted, if the value is the same as propertyMultiplicity.</documentation>
      </annotation>
     </attribute>
     <attribute name="sourceTable" type="string" use="required">
@@ -1398,7 +1398,7 @@
     </attribute>
     <attribute name="sourceTableSchema" type="string" use="optional">
      <annotation>
-      <documentation>Identifier of the database schema, in which the sourceTable is defined. Can be omitted if no particular schema is defined for the sourceTable</documentation>
+      <documentation>Identifier of the database schema, in which the sourceTable is defined. Can be omitted if no particular schema is defined for the sourceTable.</documentation>
      </annotation>
     </attribute>
     <attribute name="valueSourcePath" type="string" use="required">
@@ -1408,12 +1408,12 @@
     </attribute>
     <attribute name="idSourcePath" type="string" use="optional">
      <annotation>
-      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the database identifiers, i.e., the primary keys, of property values in the database. </documentation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the database identifiers, i.e., the primary keys, of property values in the database. Can be omitted for cases in which the property values are simple, such as strings and integers.</documentation>
      </annotation>
     </attribute>
     <attribute name="targetTable" type="string" use="optional">
      <annotation>
-      <documentation>Name of the database table that the source path evaluates to. Can be omitted, if no such table exists (then the source path typically resolves to a value contained in a field within the source table, not to a value or values in another table.</documentation>
+      <documentation>Name of the database table that the source path evaluates to. Can be omitted, if no such table exists - then the source path typically resolves to a simple value contained in a field within the source table, not to a complex value in another table.</documentation>
      </annotation>
     </attribute>
     <attribute name="targetTableSchema" type="string" use="optional">

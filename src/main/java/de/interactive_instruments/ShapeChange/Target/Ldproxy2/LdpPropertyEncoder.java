@@ -687,9 +687,9 @@ public class LdpPropertyEncoder {
 	 * properties (from direct and indirect supertypes, taking into account the
 	 * order of the xsd encoding, and property overrides).
 	 */
-	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment())
-		? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
-		: currentCi.properties().values();
+	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment()
+		&& currentCi.category() != Options.DATATYPE) ? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
+			: currentCi.properties().values();
 
 	for (PropertyInfo pi : propsToProcess) {
 

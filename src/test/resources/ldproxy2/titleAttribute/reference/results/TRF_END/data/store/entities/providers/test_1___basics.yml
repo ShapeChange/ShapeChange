@@ -36,7 +36,7 @@ types:
         constraints:
           required: true
       refRel1Target:
-        sourcePath: refrel1target_fk
+        sourcePath: "[refrel1target_fk=idx]featuretype"
         type: OBJECT
         objectType: Link
         constraints:
@@ -104,7 +104,7 @@ types:
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Source:
-        sourcePath: refrel4source_fk
+        sourcePath: "[refrel4source_fk=idx]featuretype"
         type: OBJECT
         objectType: Link
         constraints:
@@ -121,7 +121,7 @@ types:
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Target:
-        sourcePath: refrel4target_fk
+        sourcePath: "[refrel4target_fk=idx]featuretype"
         type: OBJECT
         objectType: Link
         constraints:
@@ -155,7 +155,7 @@ types:
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       relRef5Target:
-        sourcePath: relref5target_fk
+        sourcePath: "[relref5target_fk=idx]featuretype"
         type: OBJECT
         objectType: Link
         constraints:
