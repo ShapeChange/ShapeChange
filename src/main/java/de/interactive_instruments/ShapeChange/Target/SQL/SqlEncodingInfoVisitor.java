@@ -33,6 +33,9 @@ package de.interactive_instruments.ShapeChange.Target.SQL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -44,6 +47,7 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Alter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Column;
+import de.interactive_instruments.ShapeChange.Target.SQL.structure.ColumnDataType;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Comment;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateIndex;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.CreateSchema;
@@ -213,9 +217,11 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 		PropertyInfo pi1 = c1.getRepresentedProperty();
 		Table refTable1 = c1.getReferencedTable();
+		Optional<String> c1IdValueTypeOpt = ldproxyType(c1.getDataType());
 
 		PropertyInfo pi2 = c2.getRepresentedProperty();
 		Table refTable2 = c2.getReferencedTable();
+		Optional<String> c2IdValueTypeOpt = ldproxyType(c2.getDataType());
 
 		if (isRelevantProperty(pi1)) {
 
@@ -228,8 +234,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		    spei1.setValueSourcePath(
 			    "[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName + "/["
 				    + c1.getName() + "=" + primaryKeyColumnName(refTable1) + "]" + refTable1.getName());
-		    spei1.setIdSourcePath("[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName
-			    + "/" + c1.getName());
+		    String idSourcePath = "[" + primaryKeyColumnName(refTable2) + "=" + c2.getName() + "]" + tableName
+			    + "/" + c1.getName();
+		    spei1.setIdInfos(idSourcePath, c1IdValueTypeOpt);
 
 		    sei.add(spei1);
 		}
@@ -245,8 +252,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		    spei2.setValueSourcePath(
 			    "[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName + "/["
 				    + c2.getName() + "=" + primaryKeyColumnName(refTable2) + "]" + refTable2.getName());
-		    spei2.setIdSourcePath("[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName
-			    + "/" + c2.getName());
+		    String idSourcePath = "[" + primaryKeyColumnName(refTable1) + "=" + c1.getName() + "]" + tableName
+			    + "/" + c2.getName();
+		    spei2.setIdInfos(idSourcePath, c2IdValueTypeOpt);
 
 		    sei.add(spei2);
 		}
@@ -257,7 +265,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		 * The table is a usage specific table for encoding the data type values for a
 		 * specific property.
 		 */
-		
+
 		ClassInfo repCi = table.getRepresentedClass();
 		SqlClassEncodingInfo scei = createSqlClassEncodingInfoStub(repCi);
 		scei.setTable(tableName);
@@ -294,6 +302,8 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 			    // this is the column that references the parent table
 
+			    // we create encoding info for the data type valued property
+
 			    spei.setSourceTable(parentTable.getName());
 			    spei.setSourceTableSchema(parentTable.getSchemaName());
 
@@ -302,10 +312,14 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 			    spei.setValueSourcePath(
 				    "[" + primaryKeyColumnName(parentTable) + "=" + col.getName() + "]" + tableName);
-			    spei.setIdSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + col.getName() + "]"
-				    + tableName + "/" + primaryKeyColumnName(table));
+			    String idSourcePath = "[" + primaryKeyColumnName(parentTable) + "=" + col.getName() + "]"
+				    + tableName + "/" + primaryKeyColumnName(table);
+			    Optional<String> idValueTypeOpt = ldproxyTypeFromPrimaryKeyColumn(table);
+			    spei.setIdInfos(idSourcePath, idValueTypeOpt);
 
 			} else {
+
+			    // create encoding info for a property owned by the data type itself
 
 			    spei.setSourceTable(tableName);
 			    spei.setSourceTableSchema(schemaName);
@@ -319,7 +333,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 				spei.setValueSourcePath("[" + col.getName() + "="
 					+ primaryKeyColumnName(referencedTable) + "]" + referencedTable.getName());
-				spei.setIdSourcePath(col.getName());
+				spei.setIdInfos(col.getName(), ldproxyType(col.getDataType()));
 
 				/*
 				 * check the case of n:1 relationship encoded by this property, and a relevant
@@ -348,11 +362,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 		 */
 
 		ClassInfo repCi = table.getRepresentedClass();
-
 		SqlClassEncodingInfo scei = createSqlClassEncodingInfoStub(repCi);
 		scei.setTable(tableName);
 		scei.setDatabaseSchema(schemaName);
-
 		sei.add(scei);
 
 		/*
@@ -383,7 +395,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 				spei.setValueSourcePath("[" + col.getName() + "="
 					+ primaryKeyColumnName(referencedTable) + "]" + referencedTable.getName());
-				spei.setIdSourcePath(col.getName());
+				spei.setIdInfos(col.getName(),ldproxyType(col.getDataType()));
 
 				/*
 				 * check the case of n:1 relationship encoded by this property, and a relevant
@@ -478,8 +490,9 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 			spei.setValueSourcePath("[" + primaryKeyColumnName(parentTable) + "="
 				+ parentTableRefCol.getName() + "]" + tableName + "/[" + repPiCol.getName() + "="
 				+ primaryKeyColumnName(targetTable) + "]" + targetTable.getName());
-			spei.setIdSourcePath("[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
-				+ "]" + tableName + "/" + repPiCol.getName());
+			String idSourcePath = "[" + primaryKeyColumnName(parentTable) + "=" + parentTableRefCol.getName()
+				+ "]" + tableName + "/" + repPiCol.getName();
+			spei.setIdInfos(idSourcePath, ldproxyType(repPiCol.getDataType()));
 		    }
 
 		} else {
@@ -543,8 +556,10 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 	    speiRevPi.setValueSourcePath("[" + primaryKeyColumnName(sourceTable) + "="
 		    + colWithFkInTargetTable.getName() + "]" + targetTable.getName());
-	    speiRevPi.setIdSourcePath("[" + primaryKeyColumnName(sourceTable) + "=" + colWithFkInTargetTable.getName()
-		    + "]" + targetTable.getName() + "/" + primaryKeyColumnName(targetTable));
+	    String idSourcePath = "[" + primaryKeyColumnName(sourceTable) + "=" + colWithFkInTargetTable.getName()
+		    + "]" + targetTable.getName() + "/" + primaryKeyColumnName(targetTable);
+	    Optional<String> idValueTypeOpt = ldproxyTypeFromPrimaryKeyColumn(targetTable);
+	    speiRevPi.setIdInfos(idSourcePath, idValueTypeOpt);
 
 	    sei.add(speiRevPi);
 	}
@@ -644,6 +659,40 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
     public SqlEncodingInfos getSqlEncodingInfos() {
 	return sei;
+    }
+
+    public Optional<String> ldproxyType(ColumnDataType dataType) {
+	if (dataType != null) {
+	    return ldproxyTypeFromDataType(dataType.getName());
+	} else {
+	    return Optional.empty();
+	}
+    }
+
+    public Optional<String> ldproxyTypeFromDataType(String dataTypeName) {
+	if (StringUtils.equalsAnyIgnoreCase(dataTypeName, "int", "integer", "bigserial", "smallint", "bigint",
+		"shortinteger", "longinteger")) {
+	    return Optional.of("integer");
+	} else {
+	    // assume string then
+	    return Optional.of("string");
+	}
+    }
+
+    public Optional<String> ldproxyTypeFromPrimaryKeyColumn(Table table) {
+
+	if (table != null) {
+
+	    List<Column> pkCols = table.getPrimaryKeyColumns();
+
+	    if (pkCols.size() == 1) {
+		return ldproxyType(pkCols.get(0).getDataType());
+	    } else {
+		// undefined - return empty optional
+	    }
+	}
+
+	return Optional.empty();
     }
 
     @Override

@@ -112,6 +112,7 @@
           <rule name="rule-sql-cls-data-types"/>
           <rule name="rule-sql-cls-object-types"/>
           <rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+          <rule name="rule-sql-cls-identifierStereotype"/>
         </EncodingRule>
       </rules>
       <xi:include href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml"/>
@@ -151,6 +152,7 @@
           <rule name="rule-sql-prop-check-constraints-for-enumerations"/>
           <rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
           <rule name="rule-sql-cls-code-lists" />
+          <rule name="rule-sql-cls-identifierStereotype"/>
         </EncodingRule>
       </rules>
       <xi:include href="src/main/resources/config/StandardSqlMapEntries-PostgreSQL.xml"/>

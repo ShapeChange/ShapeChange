@@ -33,6 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.sql_encoding_util;
 
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.junit.platform.commons.util.StringUtils;
 
@@ -67,6 +68,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    .thenComparing(SqlPropertyEncodingInfo::getValueSourcePath,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getIdSourcePath, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getIdValueType, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTable, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTableSchema,
 		    Comparator.nullsFirst(Comparator.naturalOrder()));
@@ -83,6 +85,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     protected String sourceTableSchema;
     protected String valueSourcePath;
     protected String idSourcePath;
+    protected String idValueType;
     protected String targetTable;
     protected String targetTableSchema;
 
@@ -220,10 +223,14 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @param idSourcePath the idSourcePath to set
+     * @param idSourcePath   the idSourcePath to set
+     * @param idValueTypeOpt the idValueType to set, may be empty
      */
-    public void setIdSourcePath(String idSourcePath) {
+    public void setIdInfos(String idSourcePath, Optional<String> idValueTypeOpt) {
 	this.idSourcePath = idSourcePath;
+	if (idValueTypeOpt.isPresent()) {
+	    this.idValueType = idValueTypeOpt.get();
+	}
     }
 
     /**
@@ -281,7 +288,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     public boolean hasTargetTable() {
 	return StringUtils.isNotBlank(this.targetTable);
     }
-    
+
     public boolean hasIdSourcePath() {
 	return StringUtils.isNotBlank(this.idSourcePath);
     }
@@ -323,13 +330,21 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	this.originalPropertyMultiplicity = originalPropertyMultiplicity;
     }
 
+    /**
+     * @return the idValueType - can be null
+     */
+    public String getIdValueType() {
+	return idValueType;
+    }
+
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
-	result = prime * result + Objects.hash(inClassName, originalInClassName, originalPropertyMultiplicity,
-		originalPropertyName, originalPropertyValueType, propertyMultiplicity, propertyName, propertyValueType,
-		valueSourcePath, idSourcePath, sourceTable, sourceTableSchema, targetTable, targetTableSchema);
+	result = prime * result + Objects.hash(idSourcePath, idValueType, inClassName, originalInClassName,
+		originalPropertyMultiplicity, originalPropertyName, originalPropertyValueType, propertyMultiplicity,
+		propertyName, propertyValueType, sourceTable, sourceTableSchema, targetTable, targetTableSchema,
+		valueSourcePath);
 	return result;
     }
 
@@ -342,7 +357,8 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	if (getClass() != obj.getClass())
 	    return false;
 	SqlPropertyEncodingInfo other = (SqlPropertyEncodingInfo) obj;
-	return Objects.equals(inClassName, other.inClassName)
+	return Objects.equals(idSourcePath, other.idSourcePath) && Objects.equals(idValueType, other.idValueType)
+		&& Objects.equals(inClassName, other.inClassName)
 		&& Objects.equals(originalInClassName, other.originalInClassName)
 		&& Objects.equals(originalPropertyMultiplicity, other.originalPropertyMultiplicity)
 		&& Objects.equals(originalPropertyName, other.originalPropertyName)
@@ -350,11 +366,10 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 		&& Objects.equals(propertyMultiplicity, other.propertyMultiplicity)
 		&& Objects.equals(propertyName, other.propertyName)
 		&& Objects.equals(propertyValueType, other.propertyValueType)
-		&& Objects.equals(valueSourcePath, other.valueSourcePath)
-		&& Objects.equals(idSourcePath, other.idSourcePath) && Objects.equals(sourceTable, other.sourceTable)
+		&& Objects.equals(sourceTable, other.sourceTable)
 		&& Objects.equals(sourceTableSchema, other.sourceTableSchema)
 		&& Objects.equals(targetTable, other.targetTable)
-		&& Objects.equals(targetTableSchema, other.targetTableSchema);
+		&& Objects.equals(targetTableSchema, other.targetTableSchema)
+		&& Objects.equals(valueSourcePath, other.valueSourcePath);
     }
-
 }

@@ -22,6 +22,8 @@
       <SqlClassEncodingInfo className="T8_Class1" schemaName="Test" tableName="t8_class1"/>
       <SqlClassEncodingInfo className="T8_Class1Sub" schemaName="Test" tableName="t8_class1sub"/>
       <SqlClassEncodingInfo className="T8_Class2Sub" schemaName="Test" tableName="t8_class2sub"/>
+      <SqlClassEncodingInfo className="T9_Class1" schemaName="Test" tableName="t9_class1"/>
+      <SqlClassEncodingInfo className="T9_Class2" schemaName="Test" tableName="t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="[extpk=tb_extft_id]t4_class1_t4c1p1/t4_class1_id"
                                inClassName="ExternalFeatureType"
                                propertyMultiplicity="0..*"
@@ -136,6 +138,13 @@
                                schemaName="Test"
                                sourceTable="t7_datatype"
                                valueSourcePath="[_id=t7_datatype_id]t7_datatype_attdt2/attdt2"/>
+      <SqlPropertyEncodingInfo inClassName="T9_Class2"
+                               propertyMultiplicity="1"
+                               propertyName="attId"
+                               propertyValueType="CharacterString"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               valueSourcePath="attid"/>
       <SqlPropertyEncodingInfo inClassName="T6_Class1"
                                propertyMultiplicity="1"
                                propertyName="attTitle"
@@ -304,6 +313,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[_id=t1_class1_id]t1_class1_pa1/[t1_class2_id=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t9_class1_id]t9_class1_pa1/t9_class2_id"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="pA1"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[_id=t9_class1_id]t9_class1_pa1/[t9_class2_id=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="pa2_fk"
                                inClassName="T1_Class1"
                                propertyMultiplicity="1"
@@ -313,6 +332,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[pa2_fk=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="pa2_fk"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="pA2"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[pa2_fk=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class1_id]tablepb1pa3/t1_class2_id"
                                inClassName="T1_Class1"
                                propertyMultiplicity="0..*"
@@ -322,6 +351,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[_id=t1_class1_id]tablepb1pa3/[t1_class2_id=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t9_class1_id]t9_class1_pa3/t9_class2_id"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="pA3"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[_id=t9_class1_id]t9_class1_pa3/[t9_class2_id=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="pa4_fk"
                                inClassName="T1_Class1"
                                propertyMultiplicity="1"
@@ -331,6 +370,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[pa4_fk=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="pa4_fk"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="pA4"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[pa4_fk=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="pa5_fk"
                                inClassName="T1_Class1"
                                propertyMultiplicity="1"
@@ -340,6 +389,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[pa5_fk=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="pa5_fk"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="1"
+                               propertyName="pA5"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[pa5_fk=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class1_id]t1_class1_pa6/t1_class2_id"
                                inClassName="T1_Class1"
                                propertyMultiplicity="0..*"
@@ -349,6 +408,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[_id=t1_class1_id]t1_class1_pa6/[t1_class2_id=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t9_class1_id]t9_class1_pa6/t9_class2_id"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="pA6"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[_id=t9_class1_id]t9_class1_pa6/[t9_class2_id=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class1_id]t1_class1_pa7/t1_class2_id"
                                inClassName="T1_Class1"
                                propertyMultiplicity="0..*"
@@ -358,6 +427,16 @@
                                sourceTable="t1_class1"
                                targetTable="t1_class2"
                                valueSourcePath="[_id=t1_class1_id]t1_class1_pa7/[t1_class2_id=_id]t1_class2"/>
+      <SqlPropertyEncodingInfo idSourcePath="[_id=t9_class1_id]t9_class1_pa7/t9_class2_id"
+                               idValueType="string"
+                               inClassName="T9_Class1"
+                               propertyMultiplicity="0..*"
+                               propertyName="pA7"
+                               propertyValueType="T9_Class2"
+                               schemaName="Test"
+                               sourceTable="t9_class1"
+                               targetTable="t9_class2"
+                               valueSourcePath="[_id=t9_class1_id]t9_class1_pa7/[t9_class2_id=attid]t9_class2"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class2_id]tablepb1pa3/t1_class1_id"
                                inClassName="T1_Class2"
                                propertyMultiplicity="0..*"
@@ -367,6 +446,15 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[_id=t1_class2_id]tablepb1pa3/[t1_class1_id=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="[attid=t9_class2_id]t9_class1_pa3/t9_class1_id"
+                               inClassName="T9_Class2"
+                               propertyMultiplicity="0..*"
+                               propertyName="pB1"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[attid=t9_class2_id]t9_class1_pa3/[t9_class1_id=_id]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=pa4_fk]t1_class1/_id"
                                inClassName="T1_Class2"
                                propertyMultiplicity="0..*"
@@ -376,6 +464,15 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[_id=pa4_fk]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="[attid=pa4_fk]t9_class1/_id"
+                               inClassName="T9_Class2"
+                               propertyMultiplicity="0..*"
+                               propertyName="pB2"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[attid=pa4_fk]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="pb3_fk"
                                inClassName="T1_Class2"
                                propertyMultiplicity="1"
@@ -385,6 +482,15 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[pb3_fk=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="pb3_fk"
+                               inClassName="T9_Class2"
+                               propertyMultiplicity="1"
+                               propertyName="pB3"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[pb3_fk=_id]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class2_id]t1_class1_pa6/t1_class1_id"
                                inClassName="T1_Class2"
                                propertyMultiplicity="6"
@@ -394,6 +500,15 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[_id=t1_class2_id]t1_class1_pa6/[t1_class1_id=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="[attid=t9_class2_id]t9_class1_pa6/t9_class1_id"
+                               inClassName="T9_Class2"
+                               propertyMultiplicity="6"
+                               propertyName="pB4"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[attid=t9_class2_id]t9_class1_pa6/[t9_class1_id=_id]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="[_id=t1_class2_id]t1_class1_pa7/t1_class1_id"
                                inClassName="T1_Class2"
                                propertyMultiplicity="1..3"
@@ -403,6 +518,15 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[_id=t1_class2_id]t1_class1_pa7/[t1_class1_id=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="[attid=t9_class2_id]t9_class1_pa7/t9_class1_id"
+                               inClassName="T9_Class2"
+                               propertyMultiplicity="1..3"
+                               propertyName="pB5"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[attid=t9_class2_id]t9_class1_pa7/[t9_class1_id=_id]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="pb6_1_fk"
                                inClassName="T1_Class2"
                                originalPropertyMultiplicity="1..2"
@@ -414,6 +538,17 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[pb6_1_fk=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="pb6_1_fk"
+                               inClassName="T9_Class2"
+                               originalPropertyMultiplicity="1..2"
+                               originalPropertyName="pB6"
+                               propertyMultiplicity="1"
+                               propertyName="pB6_1"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[pb6_1_fk=_id]t9_class1"/>
       <SqlPropertyEncodingInfo idSourcePath="pb6_2_fk"
                                inClassName="T1_Class2"
                                originalPropertyMultiplicity="1..2"
@@ -425,8 +560,19 @@
                                sourceTable="t1_class2"
                                targetTable="t1_class1"
                                valueSourcePath="[pb6_2_fk=_id]t1_class1"/>
+      <SqlPropertyEncodingInfo idSourcePath="pb6_2_fk"
+                               inClassName="T9_Class2"
+                               originalPropertyMultiplicity="1..2"
+                               originalPropertyName="pB6"
+                               propertyMultiplicity="0..1"
+                               propertyName="pB6_2"
+                               propertyValueType="T9_Class1"
+                               schemaName="Test"
+                               sourceTable="t9_class2"
+                               targetTable="t9_class1"
+                               valueSourcePath="[pb6_2_fk=_id]t9_class1"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1"
-                               originalInClassName="T8_Mixin_A1"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1"
                                propertyName="pMixA1"
                                propertyValueType="Integer"
@@ -434,7 +580,7 @@
                                sourceTable="t8_class1"
                                valueSourcePath="pmixa1"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1Sub"
-                               originalInClassName="T8_Mixin_A1"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1"
                                propertyName="pMixA1"
                                propertyValueType="Integer"
@@ -442,7 +588,7 @@
                                sourceTable="t8_class1sub"
                                valueSourcePath="pmixa1"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1"
-                               originalInClassName="T8_Mixin_A2"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1"
                                propertyName="pMixA2"
                                propertyValueType="Boolean"
@@ -450,7 +596,7 @@
                                sourceTable="t8_class1"
                                valueSourcePath="pmixa2"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1Sub"
-                               originalInClassName="T8_Mixin_A2"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1"
                                propertyName="pMixA2"
                                propertyValueType="Boolean"
@@ -458,7 +604,7 @@
                                sourceTable="t8_class1sub"
                                valueSourcePath="pmixa2"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1"
-                               originalInClassName="T8_Mixin_A2"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1..*"
                                propertyName="pMixA2Mult"
                                propertyValueType="Integer"
@@ -466,7 +612,7 @@
                                sourceTable="t8_class1"
                                valueSourcePath="[_id=t8_class1_id]t8_class1_pmixa2mult/pmixa2mult"/>
       <SqlPropertyEncodingInfo inClassName="T8_Class1Sub"
-                               originalInClassName="T8_Mixin_A2"
+                               originalInClassName="T8_Mixin_A"
                                propertyMultiplicity="1..*"
                                propertyName="pMixA2Mult"
                                propertyValueType="Integer"

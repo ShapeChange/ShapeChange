@@ -166,3 +166,24 @@ collections:
         role2to1_T8_Class1Sub:
         - rename: role2to1
       conformance: NONE
+  t9_class1:
+    id: t9_class1
+    label: t9_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t9_class2:
+    id: t9_class2
+    label: t9_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      transformations:
+        pB6_1:
+        - rename: pB6
+        pB6_2:
+        - rename: pB6
+      conformance: NONE

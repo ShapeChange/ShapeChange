@@ -889,7 +889,9 @@ about the database representation of model elements, based upon
 the generated database schema. 
 The name of that file has suffix `_SqlEncodingInfos.xml`.
 
-NOTE: Information about the origin of a schema element, such as the
+[NOTE]
+======
+Information about the origin of a schema element, such as the
 original name of a class or property (before the name was modified by
 a model transformation), can be taken into account, if according 
 tagged values are set. These tags can be added to the model via the
@@ -897,6 +899,19 @@ xref:../transformations/Tagged_Value_Transformer.adoc[tagged value transformer],
 more specifically via its transformation 
 xref:../transformations/Tagged_Value_Transformer.adoc#rule-trf-taggedValue-createOriginalSchemaInformationTags[rule-trf-taggedValue-createOriginalSchemaInformationTags]
 (which also documents the names of relevant tags).
+
+Care must be taken, however, when attempting to match elements of a
+transformed model with elements from the original model. Certain
+model transformations can alter the model in a way where tracing
+back to the original model elements is not feasible (or where the
+necessary tracing mechanics would need to be designed first). An
+example is xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[flattening of complex types].
+There, the semantics of properties is getting mixed, when creating copies
+of value type properties. The only exception are unions that 
+represent feature type sets, such as those that are generated when
+flattening inheritance.
+
+======
 
 The SQL encoding infos are contained in XML element `SqlEncodingInfos`.
 Its structure is defined in the 
@@ -959,6 +974,8 @@ xref:./ldproxy2.adoc[ldproxy target]) that is used to access the database
 identifiers, i.e., the primary keys, of (complex) property values in the database. 
 Can be omitted for cases in which the property values are 
 simple, such as strings and integers.
+* idValueType (optional): Type of value provided by the idSourcePath, 
+if one is defined. Either `string` or `integer` (default value).
 * targetTable (optional): Name of the database table that the source path 
 evaluates to. Can be omitted, if no such table exists - then the source 
 path typically resolves to a simple value contained in a field within the source 

@@ -136,6 +136,7 @@
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-prop-readOnly"/>
 					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
@@ -191,6 +192,7 @@
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-prop-readOnly"/>
 					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>
@@ -253,6 +255,7 @@
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
 					<rule name="rule-ldp2-prop-readOnly"/>
 					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>

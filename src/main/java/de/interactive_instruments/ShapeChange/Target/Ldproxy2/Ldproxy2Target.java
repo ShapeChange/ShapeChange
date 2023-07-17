@@ -38,8 +38,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -153,6 +155,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     private PackageInfo schema = null;
     private boolean schemaNotEncoded = false;
+    
+    private Map<ClassInfo,LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
 
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
@@ -722,6 +726,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	return resType;
+    }
+    
+    LdpSpecialPropertiesInfo specialPropertiesInfo(ClassInfo ci) {
+	
+	if(this.specialPropertiesInfoByCi.containsKey(ci)) {
+	    return this.specialPropertiesInfoByCi.get(ci);
+	} else {
+	    LdpSpecialPropertiesInfo specPropInfo = new LdpSpecialPropertiesInfo(ci,this);
+	    this.specialPropertiesInfoByCi.put(ci,specPropInfo);
+	    return specPropInfo;
+	}
     }
 
     public boolean isProcessedType(ClassInfo ci) {

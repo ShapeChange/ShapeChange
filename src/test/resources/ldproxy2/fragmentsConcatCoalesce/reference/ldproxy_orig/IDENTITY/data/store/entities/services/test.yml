@@ -141,3 +141,19 @@ collections:
     - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
+  t9_class1:
+    id: t9_class1
+    label: t9_class1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+  t9_class2:
+    id: t9_class2
+    label: t9_class2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE

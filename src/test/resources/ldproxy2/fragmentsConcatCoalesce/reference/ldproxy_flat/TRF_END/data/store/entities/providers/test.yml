@@ -633,6 +633,12 @@ types:
         sourcePath: _id
         type: INTEGER
         role: ID
+      pMixA1:
+        sourcePath: pmixa1
+        type: INTEGER
+        label: pMixA1
+        constraints:
+          required: true
       pMixA2:
         sourcePath: pmixa2
         type: BOOLEAN
@@ -647,12 +653,6 @@ types:
         constraints:
           required: true
           minOccurrence: 1
-      pMixA1:
-        sourcePath: pmixa1
-        type: INTEGER
-        label: pMixA1
-        constraints:
-          required: true
       pMixB:
         sourcePath: pmixb
         type: FLOAT
@@ -690,6 +690,12 @@ types:
         sourcePath: _id
         type: INTEGER
         role: ID
+      pMixA1:
+        sourcePath: pmixa1
+        type: INTEGER
+        label: pMixA1
+        constraints:
+          required: true
       pMixA2:
         sourcePath: pmixa2
         type: BOOLEAN
@@ -704,12 +710,6 @@ types:
         constraints:
           required: true
           minOccurrence: 1
-      pMixA1:
-        sourcePath: pmixa1
-        type: INTEGER
-        label: pMixA1
-        constraints:
-          required: true
       pMixB:
         sourcePath: pmixb
         type: FLOAT
@@ -799,3 +799,126 @@ types:
         label: attC2Sub
         constraints:
           required: true
+  t9_class1:
+    sourcePath: /t9_class1
+    type: OBJECT
+    objectType: T9_Class1
+    label: T9_Class1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      pA1:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA1/t9_class2_id"
+        type: FEATURE_REF_ARRAY
+        label: pA1
+        constraints:
+          minOccurrence: 0
+        refType: t9_class2
+      pA2:
+        sourcePath: pa2_fk
+        type: FEATURE_REF
+        label: pA2
+        constraints:
+          required: true
+        refType: t9_class2
+      pA3:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA3/t9_class2_id"
+        type: FEATURE_REF_ARRAY
+        label: pA3
+        constraints:
+          minOccurrence: 0
+        refType: t9_class2
+      pA4:
+        sourcePath: pa4_fk
+        type: FEATURE_REF
+        label: pA4
+        constraints:
+          required: true
+        refType: t9_class2
+      pA5:
+        sourcePath: pa5_fk
+        type: FEATURE_REF
+        label: pA5
+        constraints:
+          required: true
+        refType: t9_class2
+      pA6:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA6/t9_class2_id"
+        type: FEATURE_REF_ARRAY
+        label: pA6
+        constraints:
+          minOccurrence: 0
+        refType: t9_class2
+      pA7:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA7/t9_class2_id"
+        type: FEATURE_REF_ARRAY
+        label: pA7
+        constraints:
+          minOccurrence: 0
+        refType: t9_class2
+  t9_class2:
+    sourcePath: /t9_class2
+    type: OBJECT
+    objectType: T9_Class2
+    label: T9_Class2
+    properties:
+      attId:
+        sourcePath: attid
+        type: STRING
+        role: ID
+        label: attId
+        constraints:
+          required: true
+      pB1:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA3/t9_class1_id"
+        type: FEATURE_REF_ARRAY
+        label: pB1
+        constraints:
+          minOccurrence: 0
+        refType: t9_class1
+      pB2:
+        sourcePath: "[attid=pa4_fk]t9_class1/_id"
+        type: FEATURE_REF_ARRAY
+        label: pB2
+        constraints:
+          minOccurrence: 0
+        refType: t9_class1
+      pB3:
+        sourcePath: pb3_fk
+        type: FEATURE_REF
+        label: pB3
+        constraints:
+          required: true
+        refType: t9_class1
+      pB4:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA6/t9_class1_id"
+        type: FEATURE_REF_ARRAY
+        label: pB4
+        constraints:
+          required: true
+          minOccurrence: 6
+          maxOccurrence: 6
+        refType: t9_class1
+      pB5:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA7/t9_class1_id"
+        type: FEATURE_REF_ARRAY
+        label: pB5
+        constraints:
+          required: true
+          minOccurrence: 1
+          maxOccurrence: 3
+        refType: t9_class1
+      pB6_1:
+        sourcePath: pb6_1_fk
+        type: FEATURE_REF
+        label: pB6_1
+        constraints:
+          required: true
+        refType: t9_class1
+      pB6_2:
+        sourcePath: pb6_2_fk
+        type: FEATURE_REF
+        label: pB6_2
+        refType: t9_class1

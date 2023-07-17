@@ -130,7 +130,7 @@ public class LdpPropertyEncoder {
 
 	if (alreadyVisitedPiList.isEmpty()) {
 
-	    LdpSpecialPropertiesInfo spi = new LdpSpecialPropertiesInfo(currentCi, target);
+	    LdpSpecialPropertiesInfo spi = target.specialPropertiesInfo(currentCi);
 
 	    identifierPi = spi.getIdentifierPiOfCi();
 	    multipleIdentifierPisEncountered = spi.isMultipleIdentifierPisEncountered();
@@ -504,7 +504,7 @@ public class LdpPropertyEncoder {
 			propMemberDefBuilder.sourcePath(spi.sourcePath);
 
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-			    addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, spi);
+			    addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, pi, spi);
 			}
 
 		    } else {
@@ -599,13 +599,21 @@ public class LdpPropertyEncoder {
 	}
     }
 
-    private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder,
+    private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder, PropertyInfo pi,
 	    SourcePathInfo spi) {
-	if (StringUtils.isNotBlank(spi.refType)) {
-	    schemaBuilder.refType(spi.refType);
-	}
-	if (StringUtils.isNotBlank(spi.refUriTemplate)) {
-	    schemaBuilder.refUriTemplate(spi.refUriTemplate);
+
+	if (StringUtils.isNotBlank(spi.refType) || StringUtils.isNotBlank(spi.refUriTemplate)) {
+
+	    if (StringUtils.isNotBlank(spi.refType)) {
+		schemaBuilder.refType(spi.refType);
+	    }
+
+	    if (StringUtils.isNotBlank(spi.refUriTemplate)) {
+		schemaBuilder.refUriTemplate(spi.refUriTemplate);
+	    }
+
+	    Type valueType = sqlProviderHelper.valueTypeForFeatureRef(pi, spi);
+	    schemaBuilder.valueType(valueType);
 	}
     }
 
@@ -617,7 +625,7 @@ public class LdpPropertyEncoder {
 	schemaBuilder.sourcePath(spi.sourcePath);
 
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, spi);
+	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, pi, spi);
 	}
 
 	if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi.categoryOfValue() == Options.DATATYPE)) {

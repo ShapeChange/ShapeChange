@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
@@ -44,10 +45,13 @@ public class LdpSqlSourcePathInfos {
 
     public class SourcePathInfo {
 	String sourcePath;
+	Type valueType;
 	String refType;
 	String refUriTemplate;
 	String targetTable;
 	boolean targetsSingleValue;
+	
+	
     }
     
     PropertyInfo pi;
@@ -74,9 +78,10 @@ public class LdpSqlSourcePathInfos {
 	return this.spis.size() > 1;
     }
 
-    public SourcePathInfo addSourcePathInfo(String sourcePath, String refType, String refUriTemplate, String targetTable, boolean targetsSingleValue) {
+    public SourcePathInfo addSourcePathInfo(String sourcePath, Type valueType, String refType, String refUriTemplate, String targetTable, boolean targetsSingleValue) {
 	SourcePathInfo spi = new SourcePathInfo();
 	spi.sourcePath = sourcePath;
+	spi.valueType = valueType;
 	spi.refType = refType;
 	spi.refUriTemplate = refUriTemplate;
 	spi.targetTable = targetTable;

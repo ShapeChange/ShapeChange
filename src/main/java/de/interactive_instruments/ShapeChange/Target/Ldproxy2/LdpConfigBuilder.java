@@ -166,13 +166,16 @@ public class LdpConfigBuilder {
 
 		    fragmentBuilder.propertyMap(ciPropertyDefs);
 
-		} else if (supertypes.size() == 1 && ciPropertyDefs.isEmpty()) {
+		} else if (supertypes.size() == 1) {
 
 		    /*
-		     * ci apparently does not have any relevant property; since we only have a
-		     * single supertype schema, just reference that
+		     * since we only have a single supertype schema, just reference that
 		     */
 		    fragmentBuilder.schema(LdpUtil.fragmentRef(supertypes.get(0)));
+
+		    if (!ciPropertyDefs.isEmpty()) {
+			fragmentBuilder.propertyMap(ciPropertyDefs);
+		    }
 
 		} else {
 
@@ -232,7 +235,8 @@ public class LdpConfigBuilder {
 	     */
 
 	    ImmutableFeatureSchema.Builder typeDefBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		    .name(typeDefName).sourcePath("/" + sqlProviderHelper.databaseTableName(ci, false));
+		    .name(typeDefName).sourcePath("/" + sqlProviderHelper.databaseTableName(ci, false)).label(LdpInfo.label(ci))
+			.description(LdpInfo.description(ci));
 
 	    PropertyEncodingContext pec = new PropertyEncodingContext();
 	    pec.setInFragment(false);
@@ -279,13 +283,10 @@ public class LdpConfigBuilder {
 		LinkedHashMap<String, FeatureSchema> propertyDefs = propertyEncoder.propertyDefinitions(ci,
 			new ArrayList<PropertyInfo>(), pec);
 
-		typeDefBuilder.objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
-			.description(LdpInfo.description(ci)).propertyMap(propertyDefs);
+		typeDefBuilder.objectType(LdpInfo.originalClassName(ci)).propertyMap(propertyDefs);
 	    }
-	    
-	    
-	    propertyEncoder.propertyDefinitionsForServiceConfiguration(ci,
-			new ArrayList<PropertyInfo>(), pec);
+
+	    propertyEncoder.propertyDefinitionsForServiceConfiguration(ci, new ArrayList<PropertyInfo>(), pec);
 
 	    if (bbGmlBuilder != null) {
 		bbGmlBuilder.register(ci);
@@ -314,11 +315,11 @@ public class LdpConfigBuilder {
 		     */
 		    if (queryables.contains(pi.name()) || queryables.contains(LdpInfo.originalPropertyName(pi))) {
 			String queryableName;
-			if(pi.isAttribute()) {
+			if (pi.isAttribute()) {
 			    queryableName = pi.name();
 			} else {
 			    // pi is association role
-			    if(pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 				// TODO - review, once title encoding for FEATURE REF is possible
 				queryableName = pi.name();
 			    } else {
@@ -535,7 +536,5 @@ public class LdpConfigBuilder {
 
 	return icd;
     }
-
-    
 
 }

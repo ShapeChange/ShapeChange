@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -230,7 +231,6 @@ public class SqlEncodingInfos implements MessageSource {
 		if (sei.hasDatabaseSchema()) {
 		    XMLUtil.addAttribute(document, e2, "databaseSchema", sei.getDatabaseSchema());
 		}
-
 	    }
 
 	    for (SqlPropertyEncodingInfo sei : propertyInfos) {
@@ -271,6 +271,10 @@ public class SqlEncodingInfos implements MessageSource {
 			StringUtils.stripToEmpty(sei.getValueSourcePath()));
 		if (sei.hasIdSourcePath()) {
 		    XMLUtil.addAttribute(document, e2, "idSourcePath", StringUtils.stripToEmpty(sei.getIdSourcePath()));
+		    if (StringUtils.isNotBlank(sei.getIdValueType())
+			    && !"integer".equalsIgnoreCase(sei.getIdValueType())) {
+			XMLUtil.addAttribute(document, e2, "idValueType", sei.getIdValueType());
+		    }
 		}
 		if (sei.hasTargetTable()) {
 		    XMLUtil.addAttribute(document, e2, "targetTable", StringUtils.stripToEmpty(sei.getTargetTable()));
@@ -332,7 +336,12 @@ public class SqlEncodingInfos implements MessageSource {
 	    spei.setSourceTableSchema(StringUtils.stripToNull(seie.getAttribute("sourceTableSchema")));
 
 	    spei.setValueSourcePath(seie.getAttribute("valueSourcePath"));
-	    spei.setIdSourcePath(StringUtils.stripToNull(seie.getAttribute("idSourcePath")));
+
+	    String idValueType = seie.getAttribute("idValueType");
+	    if (StringUtils.isBlank(idValueType)) {
+		idValueType = "integer";
+	    }
+	    spei.setIdInfos(StringUtils.stripToNull(seie.getAttribute("idSourcePath")), Optional.of(idValueType));
 
 	    spei.setTargetTable(seie.getAttribute("targetTable"));
 	    spei.setTargetTableSchema(StringUtils.stripToNull(seie.getAttribute("targetTableSchema")));

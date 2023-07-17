@@ -111,7 +111,7 @@ public class SqlClassEncodingInfo extends ModelElementSqlEncodingInfo implements
     public void setDatabaseSchema(String databaseSchema) {
 	this.databaseSchema = databaseSchema;
     }
-    
+
     public boolean hasOriginalClassName() {
 	return StringUtils.isNotBlank(this.originalClassName);
     }
@@ -119,7 +119,7 @@ public class SqlClassEncodingInfo extends ModelElementSqlEncodingInfo implements
     public boolean hasDatabaseSchema() {
 	return StringUtils.isNotBlank(this.databaseSchema);
     }
-    
+
     @Override
     public int compareTo(SqlClassEncodingInfo o) {
 	if (this == o) {
@@ -133,7 +133,8 @@ public class SqlClassEncodingInfo extends ModelElementSqlEncodingInfo implements
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
-	result = prime * result + Objects.hash(className, databaseSchema, originalClassName, table);
+	result = prime * result
+		+ Objects.hash(className, databaseSchema, originalClassName, table);
 	return result;
     }
 
@@ -147,8 +148,7 @@ public class SqlClassEncodingInfo extends ModelElementSqlEncodingInfo implements
 	    return false;
 	SqlClassEncodingInfo other = (SqlClassEncodingInfo) obj;
 	return Objects.equals(className, other.className) && Objects.equals(databaseSchema, other.databaseSchema)
-		&& Objects.equals(originalClassName, other.originalClassName) && Objects.equals(table, other.table);
+		&& Objects.equals(originalClassName, other.originalClassName)
+		&& Objects.equals(table, other.table);
     }
-
-    
 }

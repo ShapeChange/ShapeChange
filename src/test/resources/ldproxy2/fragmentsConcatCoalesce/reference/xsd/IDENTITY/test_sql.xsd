@@ -559,14 +559,7 @@
       <attributeGroup ref="gml:AssociationAttributeGroup"/>
       <attributeGroup ref="gml:OwnershipAttributeGroup"/>
    </complexType>
-   <complexType name="T8_Mixin_A1PropertyType">
-      <choice minOccurs="0">
-         <element ref="t:T8_Class1"/>
-      </choice>
-      <attributeGroup ref="gml:AssociationAttributeGroup"/>
-      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
-   </complexType>
-   <complexType name="T8_Mixin_A2PropertyType">
+   <complexType name="T8_Mixin_APropertyType">
       <choice minOccurs="0">
          <element ref="t:T8_Class1"/>
       </choice>
@@ -591,6 +584,137 @@
       <choice minOccurs="0">
          <element ref="t:T8_Class1Sub"/>
       </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T9_Class1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T9_Class1Type"/>
+   <complexType name="T9_Class1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA1"
+                        type="t:T9_Class2PropertyType"/>
+               <element name="pA2" type="t:T9_Class2PropertyType"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA3"
+                        type="t:T9_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pA4" type="t:T9_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pA5" type="t:T9_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB3</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA6"
+                        type="t:T9_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB4</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pA7"
+                        type="t:T9_Class2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pB5</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T9_Class1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T9_Class1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T9_Class2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:T9_Class2Type"/>
+   <complexType name="T9_Class2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attId" type="string"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pB1"
+                        type="t:T9_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA3</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="pB2"
+                        type="t:T9_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA4</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="pB3" type="t:T9_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA5</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="6"
+                        minOccurs="6"
+                        name="pB4"
+                        type="t:T9_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA6</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="3" name="pB5" type="t:T9_Class1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:pA7</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="2" name="pB6" type="t:T9_Class1PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T9_Class2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T9_Class2"/>
+      </sequence>
       <attributeGroup ref="gml:AssociationAttributeGroup"/>
       <attributeGroup ref="gml:OwnershipAttributeGroup"/>
    </complexType>

@@ -899,6 +899,12 @@ types:
         sourcePath: _id
         type: INTEGER
         role: ID
+      pMixA1:
+        sourcePath: pmixa1
+        type: INTEGER
+        label: pMixA1
+        constraints:
+          required: true
       pMixA2:
         sourcePath: pmixa2
         type: BOOLEAN
@@ -913,12 +919,6 @@ types:
         constraints:
           required: true
           minOccurrence: 1
-      pMixA1:
-        sourcePath: pmixa1
-        type: INTEGER
-        label: pMixA1
-        constraints:
-          required: true
       pMixB:
         sourcePath: pmixb
         type: FLOAT
@@ -967,6 +967,12 @@ types:
         sourcePath: _id
         type: INTEGER
         role: ID
+      pMixA1:
+        sourcePath: pmixa1
+        type: INTEGER
+        label: pMixA1
+        constraints:
+          required: true
       pMixA2:
         sourcePath: pmixa2
         type: BOOLEAN
@@ -981,12 +987,6 @@ types:
         constraints:
           required: true
           minOccurrence: 1
-      pMixA1:
-        sourcePath: pmixa1
-        type: INTEGER
-        label: pMixA1
-        constraints:
-          required: true
       pMixB:
         sourcePath: pmixb
         type: FLOAT
@@ -1109,3 +1109,274 @@ types:
         label: attC2Sub
         constraints:
           required: true
+  t9_class1:
+    sourcePath: /t9_class1
+    type: OBJECT
+    objectType: T9_Class1
+    label: T9_Class1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      pA1:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA1/[t9_class2_id=attid]t9_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pA1
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA2:
+        type: OBJECT
+        objectType: Link
+        label: pA2
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: pa2_fk
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: pa2_fk
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA3:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA3/[t9_class2_id=attid]t9_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pA3
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA4:
+        type: OBJECT
+        objectType: Link
+        label: pA4
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: pa4_fk
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: pa4_fk
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA5:
+        type: OBJECT
+        objectType: Link
+        label: pA5
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: pa5_fk
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: pa5_fk
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA6:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA6/[t9_class2_id=attid]t9_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pA6
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+      pA7:
+        sourcePath: "[_id=t9_class1_id]T9_Class1_pA7/[t9_class2_id=attid]t9_class2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pA7
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-title
+          href:
+            sourcePath: attid
+            type: STRING
+            label: T9_Class2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class2/items/{{value}}"
+  t9_class2:
+    sourcePath: /t9_class2
+    type: OBJECT
+    objectType: T9_Class2
+    label: T9_Class2
+    properties:
+      attId:
+        sourcePath: attid
+        type: STRING
+        role: ID
+        label: attId
+        constraints:
+          required: true
+      pB1:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA3/[t9_class1_id=_id]t9_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pB1
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB2:
+        sourcePath: "[attid=pa4_fk]t9_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pB2
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB3:
+        type: OBJECT
+        objectType: Link
+        label: pB3
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: pb3_fk
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: pb3_fk
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB4:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA6/[t9_class1_id=_id]t9_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pB4
+        constraints:
+          required: true
+          minOccurrence: 6
+          maxOccurrence: 6
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB5:
+        sourcePath: "[attid=t9_class2_id]T9_Class1_pA7/[t9_class1_id=_id]t9_class1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        label: pB5
+        constraints:
+          required: true
+          minOccurrence: 1
+          maxOccurrence: 3
+        properties:
+          title:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: _id
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB6_1:
+        type: OBJECT
+        objectType: Link
+        label: pB6_1
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: pb6_1_fk
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: pb6_1_fk
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"
+      pB6_2:
+        type: OBJECT
+        objectType: Link
+        label: pB6_2
+        properties:
+          title:
+            sourcePath: pb6_2_fk
+            type: STRING
+            label: T9_Class1-title
+          href:
+            sourcePath: pb6_2_fk
+            type: STRING
+            label: T9_Class1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/t9_class1/items/{{value}}"

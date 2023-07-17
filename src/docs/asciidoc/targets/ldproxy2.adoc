@@ -466,7 +466,27 @@ encoded within the type definition.
 
 If a type has supertypes, then the fragment definition of the type merges 
 the fragment definitions of these supertypes, as well as the schema of the 
-properties directly owned by the type. The merge items are encoded in a way
+properties directly owned by the type. If a class only has a single
+supertype, then a direct `schema` reference (to the fragment definition 
+of the supertype) is used. If the class has multiple
+supertypes, the `merge` keyword is used to encode the necessary references.
+
+[WARNING]
+======
+Multiple inheritance is only supported if no (direct or indirect) 
+supertype of the class uses multiple inheritance! This is currently a
+restriction of ldproxy regarding the `merge` keyword.
+
+The `merge` keyword results in a shallow merge, where property override
+applies. That reflects the property override in UML, i.e., a property 
+defined in a subclass overrides the definition of a property with same
+name that is defined in a (direct or indirect) superclass. Be aware,
+though, that the `schema` reference results in a deep merge. Property
+overrides in the application schema may lead to unexpected results there.
+
+======
+
+In case of multiple inheritance, the merge items are encoded in a way
 that reflects the order in which the XML Schema target encodes supertype
 properties (also taking into account mixin encoding). This is an important
 aspect when <<ldproxy2_GML_output>> shall be supported by the resulting
@@ -502,6 +522,7 @@ collections:
   t8_class1:
     sourcePath: /t8_class1
     type: OBJECT
+    label: T8_Class1
     properties:
       pMixA2Mult:
         sourcePath: "[_id=t8_class1_id]t8_class1_pmixa2mult/pmixa2mult"
@@ -519,6 +540,7 @@ collections:
   t8_class1sub:
     sourcePath: /t8_class1sub
     type: OBJECT
+    label: T8_Class1Sub
     properties:
       pMixA2Mult:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_pmixa2mult/pmixa2mult"
@@ -540,6 +562,7 @@ collections:
   t8_class2sub:
     sourcePath: /t8_class2sub
     type: OBJECT
+    label: T8_Class2Sub
     properties:
       role2to1:
         type: FEATURE_REF_ARRAY
@@ -556,32 +579,31 @@ fragments:
     type: OBJECT
     objectType: T8_Class1
     label: T8_Class1
-    merge:
-    - schema: '#/fragments/t8_mixin_b'
-    - propertyMap:
-        oid:
-          sourcePath: _id
-          type: INTEGER
-          role: ID
-        attC1:
-          sourcePath: attc1
-          type: INTEGER
-          label: attC1
-          constraints:
-            required: true
-        attC1Mult:
-          type: VALUE_ARRAY
-          valueType: INTEGER
-          label: attC1Mult
-          constraints:
-            required: true
-            minOccurrence: 1
-        role1to2:
-          type: FEATURE_REF_ARRAY
-          label: role1to2
-          constraints:
-            required: true
-            minOccurrence: 1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      attC1:
+        sourcePath: attc1
+        type: INTEGER
+        label: attC1
+        constraints:
+          required: true
+      attC1Mult:
+        type: VALUE_ARRAY
+        valueType: INTEGER
+        label: attC1Mult
+        constraints:
+          required: true
+          minOccurrence: 1
+      role1to2:
+        type: FEATURE_REF_ARRAY
+        label: role1to2
+        constraints:
+          required: true
+          minOccurrence: 1
+    schema: '#/fragments/t8_mixin_b'
   t8_class1sub:
     type: OBJECT
     objectType: T8_Class1Sub
@@ -628,19 +650,18 @@ fragments:
     type: OBJECT
     objectType: T8_Class2Sub
     label: T8_Class2Sub
-    merge:
-    - schema: '#/fragments/t8_class2'
-    - propertyMap:
-        attC2Sub:
-          sourcePath: attc2sub
-          type: BOOLEAN
-          label: attC2Sub
-          constraints:
-            required: true
-  t8_mixin_a1:
+    properties:
+      attC2Sub:
+        sourcePath: attc2sub
+        type: BOOLEAN
+        label: attC2Sub
+        constraints:
+          required: true
+    schema: '#/fragments/t8_class2'
+  t8_mixin_a:
     type: OBJECT
-    objectType: T8_Mixin_A1
-    label: T8_Mixin_A1
+    objectType: T8_Mixin_A
+    label: T8_Mixin_A
     properties:
       pMixA1:
         sourcePath: pmixa1
@@ -648,11 +669,6 @@ fragments:
         label: pMixA1
         constraints:
           required: true
-  t8_mixin_a2:
-    type: OBJECT
-    objectType: T8_Mixin_A2
-    label: T8_Mixin_A2
-    properties:
       pMixA2:
         sourcePath: pmixa2
         type: BOOLEAN
@@ -670,16 +686,14 @@ fragments:
     type: OBJECT
     objectType: T8_Mixin_B
     label: T8_Mixin_B
-    merge:
-    - propertyMap:
-        pMixB:
-          sourcePath: pmixb
-          type: FLOAT
-          label: pMixB
-          constraints:
-            required: true
-    - schema: '#/fragments/t8_mixin_a1'
-    - schema: '#/fragments/t8_mixin_a2'
+    properties:
+      pMixB:
+        sourcePath: pmixb
+        type: FLOAT
+        label: pMixB
+        constraints:
+          required: true
+    schema: '#/fragments/t8_mixin_a'
   t8_mixin_c:
     type: OBJECT
     objectType: T8_Mixin_C

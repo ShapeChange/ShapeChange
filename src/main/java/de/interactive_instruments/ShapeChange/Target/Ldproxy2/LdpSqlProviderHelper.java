@@ -38,9 +38,11 @@ import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSqlSourcePathInfos.SourcePathInfo;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlClassEncodingInfo;
 
 /**
@@ -73,24 +75,24 @@ public class LdpSqlProviderHelper {
 
 	} else {
 
-		String result = ci.name();
+	    String result = ci.name();
 
-		if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
-		    result = result + Ldproxy2Target.associativeTableColumnSuffix;
-		}
+	    if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
+		result = result + Ldproxy2Target.associativeTableColumnSuffix;
+	    }
 
-		result = result.toLowerCase(Locale.ENGLISH);
+	    result = result.toLowerCase(Locale.ENGLISH);
 
-		result = StringUtils.substring(result, 0, Ldproxy2Target.maxNameLength);
+	    result = StringUtils.substring(result, 0, Ldproxy2Target.maxNameLength);
 
-		return result;
-	    
+	    return result;
+
 	}
     }
 
     /**
      * @param targetTableName - tbd
-     * @param pi - tbd
+     * @param pi              - tbd
      * @return the actual type class; can be empty if the class could not be
      *         determined
      */
@@ -117,5 +119,9 @@ public class LdpSqlProviderHelper {
 
 	// use the type class of pi as fallback
 	return Optional.ofNullable(pi.typeClass());
+    }
+
+    public Type valueTypeForFeatureRef(PropertyInfo pi, SourcePathInfo spi) {	
+	return spi.valueType != null ? spi.valueType : Type.INTEGER;
     }
 }
