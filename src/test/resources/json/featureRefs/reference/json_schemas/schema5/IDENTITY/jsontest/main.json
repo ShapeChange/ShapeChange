@@ -1,0 +1,356 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "DT": {
+      "$anchor": "DT",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "$ref": "https://geojson.org/schema/Point.json"
+        },
+        "att2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "$ref": "https://geojson.org/schema/LineString.json"
+            }
+          ]
+        }
+      },
+      "required": [
+        "att1",
+        "att2"
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "$ref": "https://geojson.org/schema/Point.json"
+            }
+          ]
+        },
+        "attDt": {
+          "$ref": "#DT"
+        },
+        "roleT": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "properties": {
+                "collectionId": {
+                  "type": "string"
+                },
+                "featureId": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "collectionId",
+                "featureId"
+              ],
+              "type": "object",
+              "x-ogc-role": "reference"
+            }
+          ]
+        },
+        "roleFT2": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "$ref": "#/$defs/SCLinkObject"
+              },
+              {
+                "properties": {
+                  "collectionId": {
+                    "type": "string"
+                  },
+                  "featureId": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "collectionId",
+                  "featureId"
+                ],
+                "type": "object",
+                "x-ogc-role": "reference"
+              }
+            ]
+          },
+          "uniqueItems": true
+        },
+        "roleFT3": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "type": [
+                    "string",
+                    "integer"
+                  ],
+                "x-ogc-role": "reference",
+              "x-ogc-uriTemplate": "https://example.com/foo/ft3/bar/{featureId}"
+            }
+          ]
+        }
+      },
+      "required": [
+        "att1",
+        "attDt",
+        "roleFT3"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "roleFT1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "properties": {
+                "collectionId": {
+                  "type": "string"
+                },
+                "featureId": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "collectionId",
+                "featureId"
+              ],
+              "type": "object",
+              "x-ogc-role": "reference"
+            }
+          ]
+        },
+        "roleExtFT1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "type": "integer",
+              "x-ogc-role": "reference",
+              "x-ogc-uriTemplate": "https://example.com/foo/extft1/bar/{featureId}"
+            }
+          ]
+        },
+        "roleExtFT2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "properties": {
+                "collectionId": {
+                  "type": "string",
+                "enum": [
+                    "extft2",
+                    "extft2sub1",
+                    "extft2sub2"
+                  ]
+                },
+                "featureId": {
+                  "type": "string"
+                  },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "collectionId",
+                "featureId"
+              ],
+              "type": "object",
+              "x-ogc-role": "reference",
+              "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/bar/{featureId}"
+            }
+          ]
+        },
+        "roleExtFT3": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "properties": {
+                "collectionId": {
+                  "type": "string"
+                },
+                "featureId": {
+                  "type": [
+                    "string",
+                    "integer"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "collectionId",
+                "featureId"
+              ],
+              "type": "object",
+              "x-ogc-role": "reference",
+              "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/baz/{featureId}"
+            }
+          ]
+        }
+      },
+      "required": [
+        "roleExtFT1",
+        "roleExtFT2",
+        "roleExtFT3",
+        "roleFT1"
+      ]
+    },
+    "FT2Sub1": {
+      "$anchor": "FT2Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub1Sub1": {
+      "$anchor": "FT2Sub1Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2Sub1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub2": {
+      "$anchor": "FT2Sub2",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "type": "object"
+    },
+    "SCLinkObject": {
+      "title": "link object",
+      "description": "definition of a link object",
+      "type": "object",
+      "required": [
+        "href"
+      ],
+      "properties": {
+        "href": {
+          "type": "string",
+          "description": "Supplies the URI to a remote resource (or resource fragment)."
+        },
+        "rel": {
+          "type": "string",
+          "description": "The type or semantics of the relation."
+        },
+        "type": {
+          "type": "string",
+          "description": "A hint indicating what the media type of the result of dereferencing the link should be."
+        },
+        "hreflang": {
+          "type": "string",
+          "description": "A hint indicating what the language of the result of dereferencing the link should be."
+        },
+        "title": {
+          "type": "string",
+          "description": "Used to label the destination of a link such that it can be used as a human-readable identifier."
+        },
+        "length": {
+          "type": "integer"
+        }
+      }
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object"
+    }
+  }
+}

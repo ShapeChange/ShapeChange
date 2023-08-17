@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -162,6 +163,13 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static PackageInfo schemaForFeatureCollection = null;
 
     protected static boolean useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+    protected static boolean createSeparatePropertyDefinitions = false;
+    protected static SortedSet<String> geoJsonCompatibleGeometryTypes = null;
+     
+    protected static SortedSet<String> featureRefProfiles = null;
+    protected static SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
+    protected static boolean featureRefWithAnyCollectionId = false;
 
     /* ------ */
     /*
@@ -346,6 +354,29 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			"2019-09");
 		jsonSchemaVersion = JsonSchemaVersion.DRAFT_2019_09;
 	    }
+
+	    createSeparatePropertyDefinitions = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_CREATE_SEPARATE_PROPERTY_DEFINITIONS, false);
+	    geoJsonCompatibleGeometryTypes = new TreeSet<>(
+		    options.parameterAsStringList(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES, new String[] { "GM_Point",
+				    "GM_Curve", "GM_Surface", "GM_MultiPoint", "GM_MultiCurve", "GM_MultiSurface" },
+			    false, true));
+	    featureRefProfiles = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES, new String[] { "rel-as-link" }, false, true));
+	    List<String> featureRefIdTypes_ = options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, new String[] { "integer" }, false, true);
+
+	    for (String s : featureRefIdTypes_) {
+		if ("string".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.STRING);
+		} else if ("integer".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.INTEGER);
+		}
+	    }
+
+	    featureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, false);
 
 	    // identify map entries defined in the target configuration
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
@@ -1229,12 +1260,19 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	schemaForFeatureCollection = null;
 
 	useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+	createSeparatePropertyDefinitions = false;
+	geoJsonCompatibleGeometryTypes = null;
+	featureRefProfiles = null;
+	featureRefIdTypes = new TreeSet<>();
+	featureRefWithAnyCollectionId = false;
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule("rule-json-all-documentation");
+	r.addRule("rule-json-all-featureRefs");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
 	r.addRule("rule-json-cls-codelist-link");
@@ -1247,6 +1285,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
 	r.addRule("rule-json-cls-identifierStereotype");
 	r.addRule("rule-json-cls-ignoreIdentifier");
+	r.addRule("rule-json-cls-jsonFgGeometry");
 	r.addRule("rule-json-cls-name-as-anchor");
 	r.addRule("rule-json-cls-name-as-entityType");
 	r.addRule("rule-json-cls-name-as-entityType-dataType");
