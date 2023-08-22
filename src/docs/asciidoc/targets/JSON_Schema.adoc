@@ -593,6 +593,11 @@ then the schema restriction for the "geometry" member will define a choice
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
 
+NOTE: (since v2.14.0) If the geometry type of the default geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
+
 [[rule-json-cls-defaultGeometry-singleGeometryProperty]]
 ==== rule-json-cls-defaultGeometry-singleGeometryProperty
 
@@ -611,6 +616,11 @@ then the schema restriction for the "geometry" member will define a choice
 - using the "oneOf" JSON Schema keyword - between a null value and
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
+
+NOTE: (since v2.14.0) If the geometry type of the default geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
 
 [[rule-json-cls-documentation-enumDescription]]
 ==== rule-json-cls-documentation-enumDescription
@@ -677,6 +687,38 @@ Also, all identifier properties that are identified by
 _xref:./JSON_Schema.adoc#rule-json-cls-identifierStereotype[rule-json-cls-identifierStereotype]_
 - if also included in the encoding rule - will simply be ignored when
 encoding the type with identity.
+
+[[rule-json-cls-jsonFgGeometry]]
+==== rule-json-cls-jsonFgGeometry
+
+(since v2.14.0)
+
+This rule takes into account the different options for encoding 
+geometry values in JSON-FG features. The primary geometry property 
+(identified via 
+xref:./JSON_Schema.adoc#rule-json-cls-primaryGeometry[rule-json-cls-primaryGeometry], 
+xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-multipleGeometryProperties[rule-json-cls-defaultGeometry-multipleGeometryProperties], 
+or xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-singleGeometryProperty[rule-json-cls-defaultGeometry-singleGeometryProperty]) 
+is encoded as JSON Schema constraints for the geometry and / or place members as follows: 
+
+* If the geometry type of the primary geometry property is one of those defined
+by target parameter xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes]: 
+The JSON Schema constraint for the geometry type is created for both the 
+"geometry" and the "place" member. A null value is allowed for both members.
+* Otherwise: The JSON Schema constraint for the geometry type is only created for
+the "place" member. A null value is only allowed for that member, if the primary
+geometry property is optional.
+** NOTE: In this case, no specific constraints are created for the "geometry" member.
+When publishing data, for example in the GeoJSON compatibility mode, the 
+publisher can thus choose a suitable way of deriving a value for the "geometry"
+member from the geometry that is encoded in the "place" member.
+
+WARNING: At the moment, this rule is only applicable for application schemas that 
+do not define a secondary geometry! Issue 
+https://github.com/ShapeChange/ShapeChange/issues/344[344] documents how the rule
+can be enhanced to support schemas with secondary geometry as well. That approach
+has not been implemented yet.
+
 
 [[rule-json-cls-name-as-anchor]]
 ==== rule-json-cls-name-as-anchor
@@ -832,6 +874,11 @@ then the schema restriction for the "geometry" member will define a choice
 - using the "oneOf" JSON Schema keyword - between a null value and
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
+
+NOTE: If the geometry type of the primary geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
 
 In instance data, the value of the primary geometry property 
 must be encoded within the (GeoJSON) top-level "geometry" member 
@@ -1644,6 +1691,29 @@ of the "collectionId" member, else false.
 Applies to Rule(s): 
 _xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
 
+
+[[geoJsonCompatibleGeometryTypes]]
+==== geoJsonCompatibleGeometryTypes
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: (comma-separated list of) String(s)
+
+Default Value: GM_Point, GM_Curve, GM_Surface, GM_MultiPoint, GM_MultiCurve, GM_MultiSurface
+
+Explanation: Set of types (typically from ISO 19107), that are defined 
+as being compatible with GeoJSON geometry types. Geometric properties 
+that have one of these types can be encoded as JSON Schema constraints 
+for the geometry-member.
+
+Applies to Rule(s): 
+
+* _xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-singleGeometryProperty[rule-json-cls-defaultGeometry-singleGeometryProperty]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-multipleGeometryProperties[rule-json-cls-defaultGeometry-multipleGeometryProperties]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-primaryGeometry[rule-json-cls-primaryGeometry]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-jsonFgGeometry[rule-json-cls-jsonFgGeometry]_
 
 [[idMemberEncodingRestrictions]]
 ==== idMemberEncodingRestrictions

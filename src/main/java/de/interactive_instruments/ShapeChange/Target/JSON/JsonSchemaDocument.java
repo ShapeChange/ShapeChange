@@ -2018,14 +2018,6 @@ public class JsonSchemaDocument implements MessageSource {
 		boolean isGeoJsonCompatibleGeometryType = JsonSchemaTarget.geoJsonCompatibleGeometryTypes
 			.contains(primaryGeometryPi.typeInfo().name);
 
-		if (!isGeoJsonCompatibleGeometryType) {
-		    MessageContext mc = result.addWarning(this, 139, primaryGeometryPi.typeInfo().name,
-			    primaryGeometryPi.name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, primaryGeometryPi.fullName());
-		    }
-		}
-
 		if (primaryGeometryPi.inClass().matches(JsonSchemaConstants.RULE_CLS_JSON_FG_GEOMETRY)) {
 
 		    // TODO Take into account the secondary geometry!
@@ -2059,6 +2051,14 @@ public class JsonSchemaDocument implements MessageSource {
 		    JsonSchema geomJs = new JsonSchema();
 		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
 		    jsClassContents.property("geometry", geomJs);
+
+		} else {
+
+		    MessageContext mc = result.addWarning(this, 139, primaryGeometryPi.typeInfo().name,
+			    primaryGeometryPi.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		    }
 		}
 	    }
 	}

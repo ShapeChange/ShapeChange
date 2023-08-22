@@ -2,9 +2,9 @@
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
                    config="src/test/resources/json/jsonFgGeometry/test_json_schema_jsonFgGeometry.xml"
-                   end="Tue Aug 22 13:16:36 CEST 2023"
+                   end="Tue Aug 22 14:09:49 CEST 2023"
                    resultCode="0"
-                   start="Tue Aug 22 13:16:21 CEST 2023"
+                   start="Tue Aug 22 14:09:43 CEST 2023"
                    version="2.13.1-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -30,25 +30,9 @@
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test'"/>
       <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
       <Warning message="Application schema 'Test Schema 1' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: 'Test_Schema_1.json'."/>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft1geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT1::ft1geom'"/>
-      </Warning>
-      <Warning message="Value type 'GM_Surface' of primary geometry property 'ft2geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT2::ft2geom'"/>
-      </Warning>
       <Warning message="Property 'ft3geom' of type 'FT3' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the &#34;geometry&#34; member (and maybe the JSON-FG &#34;place&#34; member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.">
          <Detail xmlns=""
                  message="Context: property 'Model::Schemas::Test Schema 1::FT3::ft3geom'"/>
-      </Warning>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft3geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT3::ft3geom'"/>
-      </Warning>
-      <Warning message="Value type 'GM_Surface' of primary geometry property 'ft4subgeom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT4Sub::ft4subgeom'"/>
       </Warning>
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test'"/>
@@ -76,15 +60,7 @@
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test'"/>
       <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft1geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT1::ft1geom'"/>
-      </Warning>
       <Warning message="Property 'ft3geom' of type 'FT3' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the &#34;geometry&#34; member (and maybe the JSON-FG &#34;place&#34; member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 1::FT3::ft3geom'"/>
-      </Warning>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft3geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
          <Detail xmlns=""
                  message="Context: property 'Model::Schemas::Test Schema 1::FT3::ft3geom'"/>
       </Warning>
@@ -107,15 +83,7 @@
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 2', target namespace: 'http://example.org/shapechange/schema/test2'"/>
       <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
       <Warning message="Application schema 'Test Schema 2' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: 'Test_Schema_2.json'."/>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft1geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 2::FT1::ft1geom'"/>
-      </Warning>
       <Warning message="Property 'ft3geom' of type 'FT3' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the &#34;geometry&#34; member (and maybe the JSON-FG &#34;place&#34; member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.">
-         <Detail xmlns=""
-                 message="Context: property 'Model::Schemas::Test Schema 2::FT3::ft3geom'"/>
-      </Warning>
-      <Warning message="Value type 'GM_Solid' of primary geometry property 'ft3geom' is not one of the GeoJSON compatible geometry types defined via target parameter geoJsonCompatibleGeometryTypes. No restriction will be encoded for the &#34;geometry&#34; member.">
          <Detail xmlns=""
                  message="Context: property 'Model::Schemas::Test Schema 2::FT3::ft3geom'"/>
       </Warning>
