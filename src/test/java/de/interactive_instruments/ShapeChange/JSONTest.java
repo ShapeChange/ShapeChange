@@ -122,4 +122,12 @@ public class JSONTest extends BasicTestSCXML {
 		new String[] { "json" }, "testResults/json/featureRefs/json_schemas",
 		"src/test/resources/json/featureRefs/reference/json_schemas");
     }
+    
+    @Test
+    public void testJson_jsonFgGeometry() {
+
+	multiTest("src/test/resources/json/jsonFgGeometry/test_json_schema_jsonFgGeometry.xml",
+		new String[] { "json" }, "testResults/json/jsonFgGeometry/json_schemas",
+		"src/test/resources/json/jsonFgGeometry/reference/json_schemas");
+    }
 }

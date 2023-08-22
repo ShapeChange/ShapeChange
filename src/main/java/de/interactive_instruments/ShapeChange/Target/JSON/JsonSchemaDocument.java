@@ -1894,9 +1894,9 @@ public class JsonSchemaDocument implements MessageSource {
     private void handleGeometryRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
 	    JsonSchema jsClassContents) {
 
-	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_GEOMETRY)) {
+	PropertyInfo primaryGeometryPi = null;
 
-	    PropertyInfo primaryGeometryPi = null;
+	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_GEOMETRY)) {
 
 	    /*
 	     * First, try to find a direct property that is explicitly marked to be the
@@ -1933,37 +1933,11 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    if (primaryGeometryPi != null) {
-		specialPisToMapButNotEncode.add(primaryGeometryPi);
-		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryGeometryPi);
-		if (typeInfoOpt.isPresent()) {
-
-		    JsonSchema geomJs = new JsonSchema();
-		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
-		    jsClassContents.property("geometry", geomJs);
-
-		} else {
-		    MessageContext mc = result.addError(this, 128, primaryGeometryPi.name(), ci.name(),
-			    primaryGeometryPi.typeInfo().name);
-		    if (mc != null) {
-			mc.addDetail(this, 1, primaryGeometryPi.fullName());
-		    }
-		}
-
-		if (primaryGeometryPi.cardinality().maxOccurs > 1) {
-		    MessageContext mc = result.addWarning(this, 127, primaryGeometryPi.name(), ci.name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, primaryGeometryPi.fullName());
-		    }
-		}
-	    }
-
 	} else if (ci.category() != Options.UNION && !ci.properties().isEmpty()
 		&& (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
 			|| ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_MULTIGEOMPROPS))) {
 
 	    Map<PropertyInfo, JsonSchemaTypeInfo> typeInfoByGeometryPi = new HashMap<>();
-	    PropertyInfo directGeometryPi = null;
 	    Set<PropertyInfo> directProperties = new HashSet<>(ci.properties().values());
 
 	    for (PropertyInfo pi : ci.propertiesAll()) {
@@ -1984,7 +1958,7 @@ public class JsonSchemaDocument implements MessageSource {
 				    || "true".equalsIgnoreCase(pi.taggedValue("defaultGeometry")))) {
 
 			if (directProperties.contains(pi)) {
-			    directGeometryPi = pi;
+			    primaryGeometryPi = pi;
 			}
 
 			typeInfoByGeometryPi.put(pi, typeInfo);
@@ -1992,32 +1966,15 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    if (directGeometryPi != null) {
+	    if (primaryGeometryPi != null) {
 
-		if (typeInfoByGeometryPi.size() == 1) {
+		if (typeInfoByGeometryPi.size() > 1) {
 
-		    // encode the default geometry property
-		    JsonSchema geomJs = new JsonSchema();
-		    specialPropertyValueRestriction(geomJs, directGeometryPi,
-			    typeInfoByGeometryPi.get(directGeometryPi));
-		    jsClassContents.property("geometry", geomJs);
+		    // multiple default geometry properties detected
 
-		    if (directGeometryPi.cardinality().maxOccurs > 1) {
-			MessageContext mc = result.addWarning(this, 117, directGeometryPi.name(), ci.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, directGeometryPi.fullName());
-			}
-		    }
+		    // ensure that none is encoded
+		    primaryGeometryPi = null;
 
-		    /*
-		     * keep track of this property, so that it can be ignored later on when encoding
-		     * the other properties of the class
-		     */
-		    specialPisToMapButNotEncode.add(directGeometryPi);
-
-		} else if (typeInfoByGeometryPi.size() > 1) {
-
-		    // inform about multiple default geometry properties
 		    String geometryPiNames = typeInfoByGeometryPi.keySet().stream().map(pi -> pi.name()).sorted()
 			    .collect(Collectors.joining(", "));
 
@@ -2028,6 +1985,103 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 	}
+
+	// Evaluate the primary / default geometry
+	if (primaryGeometryPi != null) {
+
+	    /*
+	     * keep track of this property, so that it can be ignored later on when encoding
+	     * the other properties of the class
+	     */
+	    specialPisToMapButNotEncode.add(primaryGeometryPi);
+
+	    // check cardinality
+	    if (primaryGeometryPi.cardinality().maxOccurs > 1) {
+		MessageContext mc = result.addWarning(this, 127, primaryGeometryPi.name(), ci.name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		}
+	    }
+
+	    Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryGeometryPi);
+
+	    if (typeInfoOpt.isEmpty()) {
+
+		MessageContext mc = result.addError(this, 128, primaryGeometryPi.name(), ci.name(),
+			primaryGeometryPi.typeInfo().name);
+		if (mc != null) {
+		    mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		}
+
+	    } else {
+
+		boolean isGeoJsonCompatibleGeometryType = JsonSchemaTarget.geoJsonCompatibleGeometryTypes
+			.contains(primaryGeometryPi.typeInfo().name);
+
+		if (!isGeoJsonCompatibleGeometryType) {
+		    MessageContext mc = result.addWarning(this, 139, primaryGeometryPi.typeInfo().name,
+			    primaryGeometryPi.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		    }
+		}
+
+		if (primaryGeometryPi.inClass().matches(JsonSchemaConstants.RULE_CLS_JSON_FG_GEOMETRY)) {
+
+		    // TODO Take into account the secondary geometry!
+
+		    /*
+		     * WARNING: Right now, the logic here only supports schemas with at most one
+		     * geometric property per feature type.
+		     */
+
+		    // encode restriction for the "geometry" member only if the type is compatible
+		    if (isGeoJsonCompatibleGeometryType) {
+
+			createPrimaryGeometryValueRestriction(jsClassContents, "geometry", primaryGeometryPi,
+				typeInfoOpt.get(), true);
+			createPrimaryGeometryValueRestriction(jsClassContents, "place", primaryGeometryPi,
+				typeInfoOpt.get(), true);
+		    } else {
+
+			/*
+			 * Encode the restriction also for the "place" member.
+			 * 
+			 * TODO Take into account the secondary geometry!
+			 */
+
+			createPrimaryGeometryValueRestriction(jsClassContents, "place", primaryGeometryPi,
+				typeInfoOpt.get(), false);
+		    }
+
+		} else if (isGeoJsonCompatibleGeometryType) {
+
+		    JsonSchema geomJs = new JsonSchema();
+		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
+		    jsClassContents.property("geometry", geomJs);
+		}
+	    }
+	}
+    }
+
+    private void createPrimaryGeometryValueRestriction(JsonSchema jsContentSchemaForPrimaryGeometryPropertyRestriction,
+	    String jsonMemberName, PropertyInfo primaryGeometryPi, JsonSchemaTypeInfo jsonSchemaTypeInfo,
+	    boolean alwaysAddNullOption) {
+
+	JsonSchema jsForValueRestriction = new JsonSchema();
+
+	boolean addNullOption = alwaysAddNullOption || isOptional(primaryGeometryPi);
+
+	if (addNullOption) {
+	    // create choice between null and an actual value
+	    jsForValueRestriction.oneOf(new JsonSchema().type(JsonSchemaType.NULL));
+	    jsForValueRestriction.oneOf(new JsonSchema().ref(jsonSchemaTypeInfo.getRef()));
+	} else {
+	    // the property must have an actual value
+	    jsForValueRestriction.ref(jsonSchemaTypeInfo.getRef());
+	}
+
+	jsContentSchemaForPrimaryGeometryPropertyRestriction.property(jsonMemberName, jsForValueRestriction);
     }
 
     /**
@@ -3711,7 +3765,7 @@ public class JsonSchemaDocument implements MessageSource {
 	case 116:
 	    return "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not encoded. No type restriction is created for properties with this type as value type.";
 	case 117:
-	    return "Property '$1$' of type '$2$' has been identified as default geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	    return "";
 	case 118:
 	    return "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
 	case 119:
@@ -3731,9 +3785,9 @@ public class JsonSchemaDocument implements MessageSource {
 	case 126:
 	    return "??Cannot add class '$1$' to collection '$2$', because the class has no entity type member.";
 	case 127:
-	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member (and maybe the JSON-FG \"place\" member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.";
 	case 128:
-	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member (and maybe the JSON-FG \"place\" member as well). Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
 	case 129:
 	    return "Property '$1$' of type '$2$' has been identified as primary place of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"place\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
 	case 130:
@@ -3756,6 +3810,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type. The map entry contains collection infos, but not the required value for characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
 		    + ". The by reference case with 'rel-as-key' encoding cannot be created for the property. Add the uri template to the collection infos of the map entry.";
+	case 139:
+	    return "Value type '$1$' of primary geometry property '$2$' is not one of the GeoJSON compatible geometry types defined via target parameter "
+		    + JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES
+		    + ". No restriction will be encoded for the \"geometry\" member.";
 
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;

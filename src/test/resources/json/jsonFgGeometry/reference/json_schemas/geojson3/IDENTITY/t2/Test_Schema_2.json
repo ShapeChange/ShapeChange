@@ -1,0 +1,154 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.org/FIXME/t2/Test_Schema_2.json",
+  "$defs": {
+    "FT1": {
+      "$anchor": "FT1",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "otherGeom": {
+                  "$ref": "https://geojson.org/schema/Point.json"
+                }
+              },
+              "required": [
+                "otherGeom"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://geojson.org/schema/Polygon.json"
+            }
+          }
+        }
+      ]
+    },
+    "FT2Sub": {
+      "$anchor": "FT2Sub",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "otherGeom": {
+                  "$ref": "https://geojson.org/schema/Point.json"
+                }
+              },
+              "required": [
+                "otherGeom"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "otherGeom": {
+                  "$ref": "https://geojson.org/schema/Point.json"
+                }
+              },
+              "required": [
+                "otherGeom"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "otherGeom": {
+                  "$ref": "https://geojson.org/schema/Point.json"
+                }
+              },
+              "required": [
+                "otherGeom"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FT4Sub": {
+      "$anchor": "FT4Sub",
+      "allOf": [
+        {
+          "$ref": "#FT4"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://geojson.org/schema/Polygon.json"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

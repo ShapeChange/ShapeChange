@@ -1,0 +1,107 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.org/FIXME/t/Test_Schema_1.json",
+  "$defs": {
+    "FT1": {
+      "$anchor": "FT1",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+            }
+          }
+        }
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polygon.json"
+            }
+          }
+        }
+      ]
+    },
+    "FT2Sub": {
+      "$anchor": "FT2Sub",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT4Sub": {
+      "$anchor": "FT4Sub",
+      "allOf": [
+        {
+          "$ref": "#FT4"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polygon.json"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
