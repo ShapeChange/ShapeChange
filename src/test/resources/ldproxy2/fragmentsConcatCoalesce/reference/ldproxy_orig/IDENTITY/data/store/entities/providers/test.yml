@@ -28,30 +28,37 @@ types:
       pA1:
         sourcePath: "[_id=t1_class1_id]t1_class1_pa1/t1_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class2
       pA2:
         sourcePath: pa2_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t1_class2
       pA3:
         sourcePath: "[_id=t1_class1_id]tablepb1pa3/t1_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class2
       pA4:
         sourcePath: pa4_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t1_class2
       pA5:
         sourcePath: pa5_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t1_class2
       pA6:
         sourcePath: "[_id=t1_class1_id]t1_class1_pa6/t1_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class2
       pA7:
         sourcePath: "[_id=t1_class1_id]t1_class1_pa7/t1_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class2
       pX:
         sourcePath: "[_id=t1_class1_id]t1_class1_px/px"
@@ -70,31 +77,38 @@ types:
       pB1:
         sourcePath: "[_id=t1_class2_id]tablepb1pa3/t1_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class1
       pB2:
         sourcePath: "[_id=pa4_fk]t1_class1/_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class1
       pB3:
         sourcePath: pb3_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t1_class1
       pB4:
         sourcePath: "[_id=t1_class2_id]t1_class1_pa6/t1_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class1
       pB5:
         sourcePath: "[_id=t1_class2_id]t1_class1_pa7/t1_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t1_class1
       pB6:
         type: FEATURE_REF_ARRAY
         concat:
         - sourcePath: pb6_1_fk
           type: FEATURE_REF
+          valueType: INTEGER
           refType: t1_class1
         - sourcePath: pb6_2_fk
           type: FEATURE_REF
+          valueType: INTEGER
           refType: t1_class1
     schema: '#/fragments/t1_class2'
   t2_class1:
@@ -161,11 +175,13 @@ types:
       p6:
         sourcePath: "[_id=t3_class1_id]t3_class1_p6/tb_extdtinmodel_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         objectType: ExternalDatatypeDefinedInModel
         refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedInModel/{{value}}"
       p8:
         sourcePath: "[_id=t3_class1_id]t3_class1_p8/tb_extdtoutsidemodel_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refUriTemplate: "https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/{{value}}"
       p9:
         type: OBJECT
@@ -201,10 +217,12 @@ types:
       t4c1p1:
         sourcePath: "[_id=t4_class1_id]t4_class1_t4c1p1/tb_extft_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refUriTemplate: "https://example.org/external/ExternalFeatureType/{{value}}"
       t4c1p2:
         sourcePath: "[_id=t4_class1_id]t4c1toextft/tb_extft_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refUriTemplate: "https://example.org/external/ExternalFeatureType/{{value}}"
     schema: '#/fragments/t4_class1'
   t5_class1:
@@ -235,22 +253,27 @@ types:
       feature1a:
         sourcePath: feature1a_reflexive
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t6_class1
       feature1b_target:
         sourcePath: "[_id=t6_class1_feature1b_source_id]t6_class1_feature1b_target/t6_class1_feature1b_target_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t6_class1
       feature1c:
         sourcePath: feature1c_reflexive
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t6_class1
       feature1d:
         sourcePath: "[_id=feature1c_reflexive]t6_class1/_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t6_class1
       feature2:
         sourcePath: feature2_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t6_class2
     schema: '#/fragments/t6_class1'
   t6_class2:
@@ -294,6 +317,7 @@ types:
       role1to2:
         sourcePath: "[_id=t8_class1_id]t8_class1_role1to2_t8_class2sub/t8_class2sub_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t8_class2sub
     schema: '#/fragments/t8_class1'
   t8_class1sub:
@@ -312,6 +336,7 @@ types:
       role1to2:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_role1to2_t8_class2sub/t8_class2sub_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t8_class2sub
       attC1SubMult:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_attc1submult/attc1submult"
@@ -328,9 +353,11 @@ types:
         concat:
         - sourcePath: "[_id=t8_class2sub_id]t8_class1_role1to2_t8_class2sub/t8_class1_id"
           type: FEATURE_REF_ARRAY
+          valueType: INTEGER
           refType: t8_class1
         - sourcePath: "[_id=t8_class2sub_id]t8_class1sub_role1to2_t8_class2sub/t8_class1sub_id"
           type: FEATURE_REF_ARRAY
+          valueType: INTEGER
           refType: t8_class1sub
     schema: '#/fragments/t8_class2sub'
   t9_class1:
@@ -341,30 +368,37 @@ types:
       pA1:
         sourcePath: "[_id=t9_class1_id]t9_class1_pa1/t9_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: STRING
         refType: t9_class2
       pA2:
         sourcePath: pa2_fk
         type: FEATURE_REF
+        valueType: STRING
         refType: t9_class2
       pA3:
         sourcePath: "[_id=t9_class1_id]t9_class1_pa3/t9_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: STRING
         refType: t9_class2
       pA4:
         sourcePath: pa4_fk
         type: FEATURE_REF
+        valueType: STRING
         refType: t9_class2
       pA5:
         sourcePath: pa5_fk
         type: FEATURE_REF
+        valueType: STRING
         refType: t9_class2
       pA6:
         sourcePath: "[_id=t9_class1_id]t9_class1_pa6/t9_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: STRING
         refType: t9_class2
       pA7:
         sourcePath: "[_id=t9_class1_id]t9_class1_pa7/t9_class2_id"
         type: FEATURE_REF_ARRAY
+        valueType: STRING
         refType: t9_class2
     schema: '#/fragments/t9_class1'
   t9_class2:
@@ -375,31 +409,38 @@ types:
       pB1:
         sourcePath: "[attid=t9_class2_id]t9_class1_pa3/t9_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t9_class1
       pB2:
         sourcePath: "[attid=pa4_fk]t9_class1/_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t9_class1
       pB3:
         sourcePath: pb3_fk
         type: FEATURE_REF
+        valueType: INTEGER
         refType: t9_class1
       pB4:
         sourcePath: "[attid=t9_class2_id]t9_class1_pa6/t9_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t9_class1
       pB5:
         sourcePath: "[attid=t9_class2_id]t9_class1_pa7/t9_class1_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t9_class1
       pB6:
         type: FEATURE_REF_ARRAY
         concat:
         - sourcePath: pb6_1_fk
           type: FEATURE_REF
+          valueType: INTEGER
           refType: t9_class1
         - sourcePath: pb6_2_fk
           type: FEATURE_REF
+          valueType: INTEGER
           refType: t9_class1
     schema: '#/fragments/t9_class2'
 fragments:
@@ -572,6 +613,7 @@ fragments:
       p5:
         sourcePath: p5_fkdt
         type: FEATURE_REF
+        valueType: INTEGER
         label: p5
         constraints:
           required: true
@@ -584,6 +626,7 @@ fragments:
       p7:
         sourcePath: p7_fk
         type: FEATURE_REF
+        valueType: INTEGER
         label: p7
         constraints:
           required: true
@@ -890,7 +933,7 @@ fragments:
     - schema: '#/fragments/t8_class1'
     - schema: '#/fragments/t8_mixin_c'
     - schema: '#/fragments/t8_mixin_d'
-    - propertyMap:
+    - properties:
         attC1Sub:
           sourcePath: attc1sub
           type: STRING

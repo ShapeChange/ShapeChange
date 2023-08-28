@@ -473,7 +473,17 @@ public class LdpPropertyEncoder {
 			    Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
 				    spi.targetsSingleValue, ldpType);
 
-			    mspBuilder.type(typeForMspBuilder).valueType(valueTypeForMspBuilder);
+			    mspBuilder.type(typeForMspBuilder);
+
+			    /*
+			     * NOTE: If the property is encoded as a feature reference, the value type is
+			     * already set before (together with refType or refUriTemplate, in
+			     * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
+			     * addFeatureRefDetails).
+			     */
+			    if (!isEncodedAsFeatureRef(pi)) {
+				mspBuilder.valueType(valueTypeForMspBuilder);
+			    }
 
 			    itemSchemas.add(mspBuilder.build());
 			}
@@ -485,7 +495,17 @@ public class LdpPropertyEncoder {
 			}
 		    }
 
-		    propMemberDefBuilder.name(pi.name()).type(typeForBuilder).valueType(valueTypeForBuilder);
+		    propMemberDefBuilder.name(pi.name()).type(typeForBuilder);
+
+		    /*
+		     * NOTE: If the property is encoded as a feature reference, the value type is
+		     * already set before (together with refType or refUriTemplate, in
+		     * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
+		     * addFeatureRefDetails).
+		     */
+		    if (!isEncodedAsFeatureRef(pi)) {
+			propMemberDefBuilder.valueType(valueTypeForBuilder);
+		    }
 
 		    propertyDefs.put(pi.name(), propMemberDefBuilder.build());
 		}
@@ -521,14 +541,21 @@ public class LdpPropertyEncoder {
 		    }
 		}
 
+		/*
+		 * NOTE: If the property is encoded as a feature reference, the value type is
+		 * already set before (together with refType or refUriTemplate, in
+		 * addFeatureRefDetails).
+		 */
+		if (!isEncodedAsFeatureRef(pi)) {
+		    propMemberDefBuilder.valueType(valueTypeForBuilder);
+		}
+
 		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))
 			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
-			.valueType(valueTypeForBuilder).constraints(constraints).role(propRoleForBuilder)
-			.constantValue(constantValueForBuilder).geometryType(geometryTypeForBuilder)
-			.unit(unitForBuilder).propertyMap(propertyMapForBuilder).build();
-		/*
-		 * .refType(refTypeForBuilder) .refUriTemplate(refUriTemplateForBuilder)
-		 */
+			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
+			.geometryType(geometryTypeForBuilder).unit(unitForBuilder).propertyMap(propertyMapForBuilder)
+			.build();
+
 		propertyDefs.put(pi.name(), propMemberDef);
 
 //		// create more service constraint content
@@ -592,7 +619,6 @@ public class LdpPropertyEncoder {
 		return ldpType;
 	    } else {
 		return Type.VALUE_ARRAY;
-//		    valueTypeForBuilder = Optional.of(ldpType);
 	    }
 	} else {
 	    return isEncodedAsFeatureRef(pi) ? Type.FEATURE_REF : ldpType;

@@ -182,6 +182,7 @@ public class LdpSqlSourcePathProvider {
 			}
 
 			// TODO determine value type via new map entry characteristic
+			// Right now, we always use Integer for types mapped as LINK
 			valueType = Type.INTEGER;
 
 		    } else {
