@@ -643,6 +643,20 @@ workspace (UML) model will be created.
 
 Applies to Rule(s): _none_ - default behavior
 
+[[outputFilename]]
+==== outputFilename
+
+Required / Optional: Required
+
+Type: String
+
+Default Value: The name of the schema
+
+Explanation: The name of the ArcGIS workspace model file (can be 
+without file extension).
+
+Applies to Rule(s): none – default behavior
+
 [[reflexiveRelationshipFieldSuffix]]
 ==== reflexiveRelationshipFieldSuffix
 
