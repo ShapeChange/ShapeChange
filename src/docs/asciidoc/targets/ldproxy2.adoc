@@ -535,6 +535,7 @@ collections:
       role1to2:
         sourcePath: "[_id=t8_class1_id]t8_class1_role1to2_t8_class2sub/t8_class2sub_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t8_class2sub
     schema: '#/fragments/t8_class1'
   t8_class1sub:
@@ -553,6 +554,7 @@ collections:
       role1to2:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_role1to2_t8_class2sub/t8_class2sub_id"
         type: FEATURE_REF_ARRAY
+        valueType: INTEGER
         refType: t8_class2sub
       attC1SubMult:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_attc1submult/attc1submult"
@@ -569,9 +571,11 @@ collections:
         concat:
         - sourcePath: "[_id=t8_class2sub_id]t8_class1_role1to2_t8_class2sub/t8_class1_id"
           type: FEATURE_REF_ARRAY
+          valueType: INTEGER
           refType: t8_class1
         - sourcePath: "[_id=t8_class2sub_id]t8_class1sub_role1to2_t8_class2sub/t8_class1sub_id"
           type: FEATURE_REF_ARRAY
+          valueType: INTEGER
           refType: t8_class1sub
     schema: '#/fragments/t8_class2sub'
 fragments:
@@ -612,7 +616,7 @@ fragments:
     - schema: '#/fragments/t8_class1'
     - schema: '#/fragments/t8_mixin_c'
     - schema: '#/fragments/t8_mixin_d'
-    - propertyMap:
+    - properties:
         attC1Sub:
           sourcePath: attc1sub
           type: STRING
