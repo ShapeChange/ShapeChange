@@ -1,0 +1,71 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: MyServiceLabel
+description: '...'
+serviceType: OGC_API
+api:
+- enabled: true
+  buildingBlock: RESOURCES
+- enabled: true
+  applicationNamespaces:
+    t: http://example.org/shapechange/schema/test
+  defaultNamespace: t
+  schemaLocations:
+    t: "{{serviceUrl}}/resources/test.xsd"
+  gmlIdPrefix: _
+  buildingBlock: GML
+- enabled: true
+  buildingBlock: QUERYABLES
+collections:
+  ft1:
+    id: ft1
+    label: ft1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - conformance: NONE
+      buildingBlock: GML
+  ft2:
+    id: ft2
+    label: ft2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - conformance: NONE
+      buildingBlock: GML
+  ft2sub1sub1:
+    id: ft2sub1sub1
+    label: ft2sub1sub1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - conformance: NONE
+      buildingBlock: GML
+  ft3:
+    id: ft3
+    label: ft3
+    enabled: true
+    api:
+    - transformations:
+        attFt3A:
+        - codelist: MyEnumeration
+        attFt3B:
+        - codelist: MyCodelist
+        attFt3C:
+        - codelist: MyEnumeration
+        attFt3D:
+        - codelist: MyCodelist
+      buildingBlock: FEATURES_HTML
+    - conformance: NONE
+      buildingBlock: GML
+  t:
+    id: t
+    label: t
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - conformance: NONE
+      buildingBlock: GML

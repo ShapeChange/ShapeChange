@@ -67,10 +67,6 @@ public class LdpInfo {
 	}
     }
 
-    public static boolean valueTypeIsTypeWithIdentity(PropertyInfo pi) {
-	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
-    }
-
     public static String codelistId(ClassInfo ci) {
 	return ci.name().replaceAll("\\W", "_");
     }
@@ -226,6 +222,10 @@ public class LdpInfo {
 	return pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST;
     }
 
+    public static boolean isTypeWithIdentity(ClassInfo ci) {
+	return ci.category() == Options.FEATURE || ci.category() == Options.OBJECT;
+    }
+    
     public static boolean isTypeWithIdentityValueType(PropertyInfo pi) {
 	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
     }

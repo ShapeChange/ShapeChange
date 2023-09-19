@@ -116,4 +116,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml", "xsd", "xml" }, "testResults/ldproxy2/fragmentsConcatCoalesce/results",
 			"src/test/resources/ldproxy2/fragmentsConcatCoalesce/reference");
 	}
+	
+	@Test
+	public void test_ldproxy2_coretable() {
+		
+		multiTest("src/test/resources/ldproxy2/coretable/test_ldproxy2_coretable.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/coretable/results",
+			"src/test/resources/ldproxy2/coretable/reference/results");
+	}
 }

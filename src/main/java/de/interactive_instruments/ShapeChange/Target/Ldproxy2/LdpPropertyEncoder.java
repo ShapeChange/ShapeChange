@@ -55,9 +55,10 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSqlSourcePathInfos.SourcePathInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -69,14 +70,15 @@ public class LdpPropertyEncoder {
     protected Ldproxy2Target target;
     protected MessageSource msgSource;
 
-    protected LdpSqlProviderHelper sqlProviderHelper = new LdpSqlProviderHelper();
-    protected LdpSqlSourcePathProvider sqlSourcePathProvider;
-
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
 
+    protected LdpProvider ldpProvider;
+    protected LdpSourcePathProvider sourcePathProvider;
+
     public LdpPropertyEncoder(Ldproxy2Target target, LdpBuildingBlockFeaturesGmlBuilder gml,
-	    LdpBuildingBlockFeaturesHtmlBuilder featuresHtml) {
+	    LdpBuildingBlockFeaturesHtmlBuilder featuresHtml, LdpProvider ldpProvider,
+	    LdpSourcePathProvider sourcePathProvider) {
 
 	this.target = target;
 	this.result = target.result;
@@ -85,7 +87,8 @@ public class LdpPropertyEncoder {
 	this.bbFeaturesGmlBuilder = gml;
 	this.bbFeaturesHtmlBuilder = featuresHtml;
 
-	this.sqlSourcePathProvider = new LdpSqlSourcePathProvider(target);
+	this.ldpProvider = ldpProvider;
+	this.sourcePathProvider = sourcePathProvider;
     }
 
     /**
@@ -98,7 +101,7 @@ public class LdpPropertyEncoder {
      * @return the schema definition
      */
     public LinkedHashMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
-	    List<PropertyInfo> alreadyVisitedPiList, PropertyEncodingContext context) {
+	    List<PropertyInfo> alreadyVisitedPiList, LdpPropertyEncodingContext context) {
 
 	/*
 	 * NOTE: This method cannot easily be split into cases with fragments enabled
@@ -153,8 +156,8 @@ public class LdpPropertyEncoder {
 	    if (spi.isEncodeAdditionalIdentifierProp() && (!Ldproxy2Target.enableFragments || context.isInFragment())) {
 
 		ImmutableFeatureSchema identifierMemberDef = new ImmutableFeatureSchema.Builder()
-			.name(Ldproxy2Target.objectIdentifierName).sourcePath(Ldproxy2Target.primaryKeyColumn)
-			.type(Type.INTEGER).role(Role.ID).build();
+			.name(Ldproxy2Target.objectIdentifierName).sourcePath(sourcePathProvider.defaultPrimaryKey())
+			.type(ldpProvider.objectIdentifierType()).role(Role.ID).build();
 		propertyDefs.put(identifierMemberDef.getName(), identifierMemberDef);
 	    }
 	}
@@ -251,7 +254,7 @@ public class LdpPropertyEncoder {
 
 		    ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
 			    .label(pi.typeInfo().name + "-title").type(Type.STRING);
-		    List<String> titleSourcePaths = sqlSourcePathProvider.sourcePathsLinkLevelTitle(pi);
+		    List<String> titleSourcePaths = sourcePathProvider.sourcePathsLinkLevelTitle(pi);
 		    if (titleSourcePaths.size() == 1) {
 			titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
 		    } else {
@@ -262,9 +265,9 @@ public class LdpPropertyEncoder {
 
 		    ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
 		    linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			    .sourcePath(sqlSourcePathProvider.sourcePathLinkLevelHref(pi));
+			    .sourcePath(sourcePathProvider.sourcePathLinkLevelHref(pi));
 		    linkPropHrefBuilder.addAllTransformationsBuilders(new ImmutablePropertyTransformation.Builder()
-			    .stringFormat(sqlSourcePathProvider.urlTemplateForValueType(pi)));
+			    .stringFormat(sourcePathProvider.urlTemplateForValueType(pi)));
 		    linkPropertyDefs.put("href", linkPropHrefBuilder.build());
 
 		    propertyMapForBuilder = linkPropertyDefs;
@@ -293,7 +296,8 @@ public class LdpPropertyEncoder {
 
 		    if (Ldproxy2Target.enableFragments && context.isInFragment()) {
 
-			if (typeCi.subtypesInCompleteHierarchy().size() > 0) {
+			if (!ldpProvider.isDatatypeWithSubtypesEncodedInFragmentWithSingularSchemaAndObjectType()
+				&& typeCi.subtypesInCompleteHierarchy().size() > 0) {
 
 			    /*
 			     * typeCi has subclasses; thus, we cannot identify one particular objectType.
@@ -315,8 +319,7 @@ public class LdpPropertyEncoder {
 			 * recursively.
 			 */
 
-			PropertyEncodingContext nextContext = createChildContext(context, typeCi,
-				sqlProviderHelper.databaseTableName(typeCi, false));
+			LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context, typeCi);
 
 			LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
 				nowVisitedList, nextContext);
@@ -337,9 +340,9 @@ public class LdpPropertyEncoder {
 	     * Determine source path information for pi. Take into account the current
 	     * context. The result may contain multiple source paths.
 	     */
-	    LdpSqlSourcePathInfos sourcePathInfosForProperty = sqlSourcePathProvider.sourcePathPropertyLevel(pi,
+	    LdpSourcePathInfos sourcePathInfosForProperty = sourcePathProvider.sourcePathPropertyLevel(pi,
 		    alreadyVisitedPiList, context);
-	    LdpSqlSourcePathInfos sourcePathInfosForBuilder = null;
+	    LdpSourcePathInfos sourcePathInfosForBuilder = null;
 
 	    if (StringUtils.isNotBlank(pi.initialValue()) && pi.isReadOnly()
 		    && pi.matches(Ldproxy2Constants.RULE_PROP_READONLY)) {
@@ -355,9 +358,10 @@ public class LdpPropertyEncoder {
 		    sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		} else {
 		    // fragment encoding enabled
-		    if (context.isInFragment() && isEncodedWithDirectValueSourcePath(pi, context)) {
+		    if (context.isInFragment() && sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
-		    } else if (!context.isInFragment() && !isEncodedWithDirectValueSourcePath(pi, context)) {
+		    } else if (!context.isInFragment()
+			    && !sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		    }
 		}
@@ -449,7 +453,7 @@ public class LdpPropertyEncoder {
 
 		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
 
-			SourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+			LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
 
 			encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
 				nowVisitedList, currentCi, spi, context, propMemberDefBuilder, ldpType);
@@ -458,11 +462,14 @@ public class LdpPropertyEncoder {
 
 			List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
 
-			for (SourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
+			int index = 0;
+			for (LdpSourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
+
+			    index++;
 
 			    ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
 
-			    mspBuilder.name(pi.name() + "_to_" + spi.targetTable);
+			    mspBuilder.name(pi.name() + "_" + index);
 
 			    encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
 				    nowVisitedList, currentCi, spi, context, mspBuilder, ldpType);
@@ -520,7 +527,7 @@ public class LdpPropertyEncoder {
 
 		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
 
-			SourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+			LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
 			propMemberDefBuilder.sourcePath(spi.sourcePath);
 
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
@@ -529,14 +536,61 @@ public class LdpPropertyEncoder {
 
 		    } else {
 
-			/*
-			 * Multiple source paths found, which is unexpected for this case, but who knows
-			 * if this cannot occur in the future. Thus, better log an appropriate error
-			 * message.
-			 */
-			MessageContext mc = result.addError(msgSource, 134);
-			if (mc != null) {
-			    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+			if (sourcePathProvider.multipleSourcePathsUnsupportedinFragments()) {
+			    /*
+			     * Multiple source paths found, which is unexpected for this case, but who knows
+			     * if this cannot occur in the future. Thus, better log an appropriate error
+			     * message.
+			     */
+			    MessageContext mc = result.addError(msgSource, 134);
+			    if (mc != null) {
+				mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+			    }
+
+			} else {
+
+			    List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
+
+			    int index = 0;
+			    for (LdpSourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
+
+				index++;
+
+				ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
+
+				mspBuilder.name(pi.name() + "_" + index);
+
+				mspBuilder.sourcePath(spi.sourcePath);
+
+				if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+				    addFeatureRefDetailsFromSourcePathInfo(mspBuilder, pi, spi);
+				}
+
+				// determine the correct type for the item schema
+
+				Type typeForMspBuilder = typeForBuilder(pi, identifierPi, spi.targetsSingleValue,
+					ldpType);
+				Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
+					spi.targetsSingleValue, ldpType);
+
+				mspBuilder.type(typeForMspBuilder);
+
+				/*
+				 * NOTE: If the property is encoded as a feature reference, the value type is
+				 * already set before (together with refType or refUriTemplate).
+				 */
+				if (!isEncodedAsFeatureRef(pi)) {
+				    mspBuilder.valueType(valueTypeForMspBuilder);
+				}
+
+				itemSchemas.add(mspBuilder.build());
+			    }
+
+			    if (sourcePathInfosForBuilder.concatRequired()) {
+				propMemberDefBuilder.concat(itemSchemas);
+			    } else {
+				propMemberDefBuilder.coalesce(itemSchemas);
+			    }
 			}
 		    }
 		}
@@ -626,7 +680,7 @@ public class LdpPropertyEncoder {
     }
 
     private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder, PropertyInfo pi,
-	    SourcePathInfo spi) {
+	    LdpSourcePathInfo spi) {
 
 	if (StringUtils.isNotBlank(spi.refType) || StringUtils.isNotBlank(spi.refUriTemplate)) {
 
@@ -638,14 +692,14 @@ public class LdpPropertyEncoder {
 		schemaBuilder.refUriTemplate(spi.refUriTemplate);
 	    }
 
-	    Type valueType = sqlProviderHelper.valueTypeForFeatureRef(pi, spi);
+	    Type valueType = ldpProvider.valueTypeForFeatureRef(pi, spi);
 	    schemaBuilder.valueType(valueType);
 	}
     }
 
     private void encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(PropertyInfo pi,
 	    List<PropertyInfo> alreadyVisitedPiList, List<PropertyInfo> nowVisitedList, ClassInfo currentCi,
-	    SourcePathInfo spi, PropertyEncodingContext context, ImmutableFeatureSchema.Builder schemaBuilder,
+	    LdpSourcePathInfo spi, LdpPropertyEncodingContext context, ImmutableFeatureSchema.Builder schemaBuilder,
 	    Type ldpType) {
 
 	schemaBuilder.sourcePath(spi.sourcePath);
@@ -656,12 +710,7 @@ public class LdpPropertyEncoder {
 
 	if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi.categoryOfValue() == Options.DATATYPE)) {
 
-	    /*
-	     * Identify actual typeCi from SqlEncodingClassInfos, through inspection of
-	     * targetTable.
-	     */
-	    String targetTable = spi.targetTable;
-	    Optional<ClassInfo> optActualTypeCi = sqlProviderHelper.actualTypeClass(targetTable, pi);
+	    Optional<ClassInfo> optActualTypeCi = ldpProvider.actualTypeClass(spi, pi);
 
 	    if (optActualTypeCi.isPresent()) {
 
@@ -678,7 +727,7 @@ public class LdpPropertyEncoder {
 
 		    ClassInfo actualTypeCi = optActualTypeCi.get();
 
-		    PropertyEncodingContext nextContext = createChildContext(context, actualTypeCi, targetTable);
+		    LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context, actualTypeCi, spi);
 
 		    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(actualTypeCi,
 			    nowVisitedList, nextContext);
@@ -712,7 +761,7 @@ public class LdpPropertyEncoder {
      *                             in which property definitions shall be encoded
      */
     public void propertyDefinitionsForServiceConfiguration(ClassInfo currentCi, List<PropertyInfo> alreadyVisitedPiList,
-	    PropertyEncodingContext context) {
+	    LdpPropertyEncodingContext context) {
 
 	ClassInfo typeDefinitionCi = context.getTopParentContext().getType();
 
@@ -770,8 +819,7 @@ public class LdpPropertyEncoder {
 			 */
 		    } else {
 
-			PropertyEncodingContext nextContext = createChildContext(context, actualTypeCi,
-				sqlProviderHelper.databaseTableName(actualTypeCi, false));
+			LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context, actualTypeCi);
 
 			propertyDefinitionsForServiceConfiguration(actualTypeCi, nowVisitedList, nextContext);
 
@@ -841,18 +889,6 @@ public class LdpPropertyEncoder {
 	}
     }
 
-    private PropertyEncodingContext createChildContext(PropertyEncodingContext parentContext, ClassInfo newTypeCi,
-	    String newSourceTable) {
-
-	PropertyEncodingContext childContext = new PropertyEncodingContext();
-	childContext.setInFragment(parentContext.isInFragment());
-	childContext.setType(newTypeCi);
-	childContext.setSourceTable(newSourceTable);
-	childContext.setParentContext(parentContext);
-
-	return childContext;
-    }
-
     private String propertyPath(List<PropertyInfo> propertyList) {
 	return propertyList.stream().map(pi -> pi.name()).collect(Collectors.joining("."));
     }
@@ -896,61 +932,6 @@ public class LdpPropertyEncoder {
 
 	return (pi.cardinality().maxOccurs == 1
 		&& (target.isMappedToLink(pi) || !LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)));
-    }
-
-    private boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, PropertyEncodingContext context) {
-
-	String typeName = pi.typeInfo().name;
-	String typeId = pi.typeInfo().id;
-	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
-
-	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-
-	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
-
-	    if (pme.hasTargetType()) {
-
-		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
-
-		    // the target only allows and thus assumes max mult = 1
-		    return true;
-
-		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
-
-		    return pi.cardinality().maxOccurs == 1;
-
-		} else {
-
-		    // value type is a simple ldproxy type
-		    return pi.cardinality().maxOccurs == 1;
-		}
-
-	    } else {
-		// is checked via target configuration validator (which can be switched off)
-		result.addError(msgSource, 118, typeName);
-		return true;
-	    }
-	}
-
-	ClassInfo typeCi = pi.typeClass();
-
-	if (typeCi == null) {
-
-	    MessageContext mc = result.addError(msgSource, 118, typeName);
-	    if (mc != null) {
-		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-	    }
-	    return true;
-
-	} else {
-
-	    if (pi.cardinality().maxOccurs == 1
-		    && (pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST)) {
-		return true;
-	    } else {
-		return false;
-	    }
-	}
     }
 
     private Optional<SimpleFeatureGeometry> geometryType(PropertyInfo pi) {

@@ -116,8 +116,15 @@ public class Ldproxy2Constants {
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
+    
+    public static final String PARAM_CORETABLE_NAME = "coretableName";
+    public static final String PARAM_CORETABLE_ID_COLUMN_NAME = "coretableIdColumnName";
+    public static final String PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE = "coretableIdColumnLdproxyType";
+    public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME = "coretableFeatureTypeColumnName";
+    public static final String PARAM_CORETABLE_GEOMETRY_COLUMN_NAME = "coretableGeometryColumnName";
 
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
+    public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
     public static final String RULE_ALL_LINK_OBJECT_AS_FEATURE_REF = "rule-ldp2-all-linkObjectAsFeatureRef";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";

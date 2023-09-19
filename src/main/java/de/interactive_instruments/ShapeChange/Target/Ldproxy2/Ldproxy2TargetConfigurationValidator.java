@@ -34,12 +34,12 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,9 +54,9 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
-import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
 import de.interactive_instruments.ShapeChange.XmlNamespace;
+import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.ModelElementXmlEncoding;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
@@ -69,7 +69,12 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
 	    .of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
+		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE_NAME,
+		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME,
+		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+		    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME,
+		    Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME,
+		    Ldproxy2Constants.PARAM_DATE_FORMAT,
 		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
@@ -168,6 +173,18 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		MessageContext mc = result.addError(this, 110, Ldproxy2Constants.PARAM_GML_SF_LEVEL, paramValue);
 		mc.addDetail(this, 0, targetConfigInputs);
 		isValid = false;
+	    }
+	}
+
+	if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE)) {
+
+	    String coretableIdColumnLdproxyType = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE, "Integer", false, true);
+	    if (!("Integer".equalsIgnoreCase(coretableIdColumnLdproxyType)
+		    || "String".equalsIgnoreCase(coretableIdColumnLdproxyType))) {
+		isValid = false;
+		result.addError(this, 100, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+			coretableIdColumnLdproxyType);
 	    }
 	}
 

@@ -43,7 +43,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
- * Internal helper class to determine information about special properties of a
+ * Helper class to determine information about special properties of a
  * given class.
  * 
  * NOTE: Property override is taken into account. Even though ldproxy does not
@@ -54,7 +54,7 @@ import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-class LdpSpecialPropertiesInfo {
+public class LdpSpecialPropertiesInfo {
 
     private PropertyInfo identifierPiOfCi = null;
     private boolean multipleIdentifierPisEncountered = false;

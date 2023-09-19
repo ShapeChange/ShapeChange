@@ -70,6 +70,12 @@ import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetUtil;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable.LdpCoretableProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
@@ -80,7 +86,8 @@ import de.interactive_instruments.ShapeChange.Util.XMLUtil;
  */
 public class Ldproxy2Target implements SingleTarget, MessageSource {
 
-    static Model model = null;
+    public static Model model = null;
+    
     private static boolean initialised = false;
     protected static boolean diagnosticsOnly = false;
     protected static int numberOfEncodedSchemas = 0;
@@ -96,7 +103,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //     */
 //    protected static String documentationNoValue = null;
 
-    static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
+    public static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
     static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
     static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
     static String dateFormat = null; // no default value
@@ -106,25 +113,31 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     static boolean enableFragments = false;
     static boolean enableGmlOutput = false;
     static Force forceAxisOrder = Force.NONE;
-    static String foreignKeyColumnSuffix = "";
-    static String reflexiveRelationshipFieldSuffix = null;
-    static String foreignKeyColumnSuffixDatatype = "";
-    static String foreignKeyColumnSuffixCodelist = "";
+    public static String foreignKeyColumnSuffix = "";
+    public static String reflexiveRelationshipFieldSuffix = null;
+    public static String foreignKeyColumnSuffixDatatype = "";
+    public static String foreignKeyColumnSuffixCodelist = "";
 
     static String labelTemplate = "[[alias]]";
-    static int maxNameLength = 63;
+    public static int maxNameLength = 63;
     static ZoneId nativeTimeZone = ZoneId.systemDefault();
     static String objectIdentifierName = "oid";
-    static String primaryKeyColumn = "id";
+    public static String primaryKeyColumn = "id";
     static SortedSet<String> queryablesFromConfig = new TreeSet<>();
     static String serviceConfigTemplatePathString = null;
     static String serviceDescription = "FIXME";
     static String serviceLabel = "FIXME";
     static int srid = 4326;
     static String uomTvName = null;
-    static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
+    public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
 
     static SortedSet<String> dbSchemaNames = new TreeSet<String>();
+
+    public static String coretableName = "features";
+    public static String coretableIdColumnName = null;
+    public static Type coretableIdColumnLdproxyType = Type.INTEGER;
+    public static String coretableFeatureTypeColumnName = "featuretype";
+    public static String coretableGeometryColumnName = "geom";
 
     static boolean isUnitTest = false;
 
@@ -137,7 +150,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
      * Contains information parsed from the 'param' attributes of each map entry
      * defined for this target.
      */
-    static MapEntryParamInfos mapEntryParamInfos = null;
+    public static MapEntryParamInfos mapEntryParamInfos = null;
 
     static List<ClassInfo> objectFeatureMixinAndDataTypes = new ArrayList<>();
     static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
@@ -150,13 +163,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     /*
      * Non-static fields
      */
-    ShapeChangeResult result = null;
+    public ShapeChangeResult result = null;
     Options options = null;
 
     private PackageInfo schema = null;
     private boolean schemaNotEncoded = false;
-    
-    private Map<ClassInfo,LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
+
+    private Map<ClassInfo, LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
 
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
@@ -348,6 +361,26 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
 			gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
 			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
+	    }
+
+	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
+
+		coretableName = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_NAME, "features", false, true);
+
+		// WARNING: MUST BE COMPUTED AFTER primaryKeyColumn HAS BEEN COMPUTED!
+		coretableIdColumnName = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME, primaryKeyColumn, false, true);
+
+		String ldpTypeTmp = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE, "Integer", false, true);
+		coretableIdColumnLdproxyType = Type.valueOf(ldpTypeTmp.toUpperCase(Locale.ENGLISH));
+
+		coretableFeatureTypeColumnName = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME, "featuretype", false, true);
+
+		coretableGeometryColumnName = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME, "geom", false, true);
 	    }
 
 	    // identify map entries defined in the target configuration
@@ -632,8 +665,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		}
 	    }
 
+	    LdpProvider provider;
+	    LdpSourcePathProvider sourcePathProvider;
+	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
+		provider = new LdpCoretableProvider();
+		sourcePathProvider = new LdpCoretableSourcePathProvider(this);
+	    } else {
+		provider = new LdpSqlProvider();
+		sourcePathProvider = new LdpSqlSourcePathProvider(this);
+	    }
+
 	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder,
-		    objectFeatureMixinAndDataTypes, codelistsAndEnumerations);
+		    objectFeatureMixinAndDataTypes, codelistsAndEnumerations, provider, sourcePathProvider);
 
 	    configBuilder.process();
 
@@ -663,12 +706,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     }
 
-    Type ldproxyType(PropertyInfo pi) {
+    public Type ldproxyType(PropertyInfo pi) {
 
 	return ldproxyType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
     }
 
-    Type ldproxyType(String typeName, String typeId, String encodingRule) {
+    public Type ldproxyType(String typeName, String typeId, String encodingRule) {
 
 	Type resType = Type.STRING;
 
@@ -727,14 +770,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	return resType;
     }
-    
-    LdpSpecialPropertiesInfo specialPropertiesInfo(ClassInfo ci) {
-	
-	if(this.specialPropertiesInfoByCi.containsKey(ci)) {
+
+    public LdpSpecialPropertiesInfo specialPropertiesInfo(ClassInfo ci) {
+
+	if (this.specialPropertiesInfoByCi.containsKey(ci)) {
 	    return this.specialPropertiesInfoByCi.get(ci);
 	} else {
-	    LdpSpecialPropertiesInfo specPropInfo = new LdpSpecialPropertiesInfo(ci,this);
-	    this.specialPropertiesInfoByCi.put(ci,specPropInfo);
+	    LdpSpecialPropertiesInfo specPropInfo = new LdpSpecialPropertiesInfo(ci, this);
+	    this.specialPropertiesInfoByCi.put(ci, specPropInfo);
 	    return specPropInfo;
 	}
     }
@@ -830,12 +873,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	codelistsAndEnumerations = new TreeSet<>();
 
 	cfg = null;
+
+	coretableName = "features";
+	coretableIdColumnName = null;
+	coretableIdColumnLdproxyType = Type.INTEGER;
+	coretableFeatureTypeColumnName = "featuretype";
+	coretableGeometryColumnName = "geom";
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
+	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
 	r.addRule(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
@@ -875,6 +925,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Context: class '$1$'";
 	case 1:
 	    return "Context: property '$1$'";
+	case 2:
+	    return "Context: schema '$1$'";
 
 	case 3:
 	    return "Context: class Ldproxy2Target";
@@ -984,7 +1036,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 134:
 	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
-	    
+
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:

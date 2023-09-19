@@ -29,12 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,6 +48,14 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpPropertyEncodingContext;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSourcePathInfos;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSpecialPropertiesInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpUtil;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Constants;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.AbstractLdpSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlPropertyEncodingInfo;
 
@@ -54,7 +63,7 @@ import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlProper
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpSqlSourcePathProvider {
+public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
     protected LdpSqlProviderHelper sqlProviderHelper = new LdpSqlProviderHelper();
 
@@ -79,15 +88,18 @@ public class LdpSqlSourcePathProvider {
      * @param alreadyVisitedPiList information about previous steps in the source
      *                             path; can be analyzed to detect special cases
      *                             (e.g. lists of data type valued properties)
-     * @param context              - The context in which the property is encoded
+     * @param contextx             - The context in which the property is encoded
      * @return - TBD
      */
-    public LdpSqlSourcePathInfos sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
-	    PropertyEncodingContext context) {
+    @Override
+    public LdpSourcePathInfos sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
+	    LdpPropertyEncodingContext contextx) {
 
-	LdpSqlSourcePathInfos spRes = new LdpSqlSourcePathInfos();
-	spRes.pi = pi;
-	spRes.context = context;
+	LdpSqlPropertyEncodingContext context = (LdpSqlPropertyEncodingContext) contextx;
+
+	LdpSourcePathInfos spRes = new LdpSourcePathInfos();
+	spRes.setPi(pi);
+	spRes.setContext(context);
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
@@ -96,7 +108,7 @@ public class LdpSqlSourcePathProvider {
 
 	if (!encodingInfos.isEmpty()) {
 
-	    SortedSet<SqlPropertyEncodingInfo> speis = encodingInfos.getPropertyEncodingInfos(pi, context);
+	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi, context);
 
 	    for (SqlPropertyEncodingInfo spei : speis) {
 
@@ -133,8 +145,14 @@ public class LdpSqlSourcePathProvider {
 		    }
 		}
 
-		spRes.addSourcePathInfo(sourcePath, valueType, refType, refUriTemplate, targetTable,
-			targetsSingleValue);
+		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo();
+		spi.sourcePath = sourcePath;
+		spi.valueType = valueType;
+		spi.refType = refType;
+		spi.refUriTemplate = refUriTemplate;
+		spi.targetTable = targetTable;
+		spi.targetsSingleValue = targetsSingleValue;
+		spRes.addSourcePathInfo(spi);
 	    }
 	}
 
@@ -534,7 +552,16 @@ public class LdpSqlSourcePathProvider {
 	}
 
 	if (StringUtils.isNotBlank(sourcePath)) {
-	    spRes.addSourcePathInfo(sourcePath, valueType, refType, refUriTemplate, targetTable, targetsSingleValue);
+
+	    LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo();
+	    spi.sourcePath = sourcePath;
+	    spi.valueType = valueType;
+	    spi.refType = refType;
+	    spi.refUriTemplate = refUriTemplate;
+	    spi.targetTable = targetTable;
+	    spi.targetsSingleValue = targetsSingleValue;
+
+	    spRes.addSourcePathInfo(spi);
 	}
 
 	return spRes;
@@ -659,7 +686,7 @@ public class LdpSqlSourcePathProvider {
 
 	String suffix = "";
 
-	if (LdpInfo.valueTypeIsTypeWithIdentity(pi)) {
+	if (LdpInfo.isTypeWithIdentityValueType(pi)) {
 
 	    if (inAssociativeTable) {
 		suffix = Ldproxy2Target.associativeTableColumnSuffix;
@@ -728,6 +755,43 @@ public class LdpSqlSourcePathProvider {
 	} else {
 	    return primaryKeyColumn(typeCi);
 	}
+    }
+
+    /**
+     * Look for SqlPropertyEncodingInfos that have same sourceTable as defined by
+     * the context, and that have originalPropertyName (if not set, then
+     * propertyName) equal to that of pi, and originalInClassName (if not set, then
+     * inClassName) equal to that of pi, and originalSchemaName (if not set, then
+     * schemaName) equal to that of pi.
+     * 
+     * @param pi      - tbd
+     * @param context - tbd
+     * @return - tbd
+     */
+    protected SortedSet<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi,
+	    LdpSqlPropertyEncodingContext context) {
+
+	SortedSet<SqlPropertyEncodingInfo> result = new TreeSet<>();
+
+	for (SqlPropertyEncodingInfo sei : this.encodingInfos.getSqlPropertyEncodingInfos()) {
+
+	    String sourceTable = sei.getSourceTable();
+
+	    if (sourceTable.equals(context.getSourceTable())) {
+
+		String name = sei.hasOriginalPropertyName() ? sei.getOriginalPropertyName() : sei.getPropertyName();
+		String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
+		String inClass = sei.hasOriginalInClassName() ? sei.getOriginalInClassName() : sei.getInClassName();
+
+		String piSchema = pi.model().schemaPackage(pi.inClass()).name();
+
+		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)) {
+		    result.add(sei);
+		}
+	    }
+	}
+
+	return result;
     }
 
     private String primaryKeyColumn(ClassInfo ci) {
@@ -852,12 +916,6 @@ public class LdpSqlSourcePathProvider {
 	return res;
     }
 
-    private boolean isImplementedAsFeatureReference(PropertyInfo pi) {
-
-	return LdpInfo.isTypeWithIdentityValueType(pi)
-		&& pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
-    }
-
     public String urlTemplateForValueType(PropertyInfo pi) {
 
 	String urlTemplate = null;
@@ -874,8 +932,10 @@ public class LdpSqlSourcePathProvider {
 		    pi.encodingRule(Ldproxy2Constants.PLATFORM), Ldproxy2Constants.ME_PARAM_LINK_INFOS,
 		    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE);
 
-	    urlTemplate = urlTemplate.replaceAll("\\(value\\)", "{{value}}").replaceAll("\\(serviceUrl\\)",
-		    "{{serviceUrl}}");
+	    if (urlTemplate != null) {
+		urlTemplate = urlTemplate.replaceAll("\\(value\\)", "{{value}}").replaceAll("\\(serviceUrl\\)",
+			"{{serviceUrl}}");
+	    }
 	}
 
 	if (StringUtils.isBlank(urlTemplate)) {
@@ -884,5 +944,81 @@ public class LdpSqlSourcePathProvider {
 	}
 
 	return urlTemplate;
+    }
+
+    @Override
+    public String sourcePathTypeLevel(ClassInfo ci) {
+	return "/" + sqlProviderHelper.databaseTableName(ci, false);
+    }
+
+    @Override
+    public String defaultPrimaryKey() {
+	return Ldproxy2Target.primaryKeyColumn;
+    }
+
+    @Override
+    public String defaultSortKey() {
+	return Ldproxy2Target.primaryKeyColumn;
+    }
+    
+    @Override
+    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
+
+	String typeName = pi.typeInfo().name;
+	String typeId = pi.typeInfo().id;
+	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+
+	    if (pme.hasTargetType()) {
+
+		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
+
+		    // the target only allows and thus assumes max mult = 1
+		    return true;
+
+		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
+
+		    return pi.cardinality().maxOccurs == 1;
+
+		} else {
+
+		    // value type is a simple ldproxy type
+		    return pi.cardinality().maxOccurs == 1;
+		}
+
+	    } else {
+		// is checked via target configuration validator (which can be switched off)
+		result.addError(msgSource, 118, typeName);
+		return true;
+	    }
+	}
+
+	ClassInfo typeCi = pi.typeClass();
+
+	if (typeCi == null) {
+
+	    MessageContext mc = result.addError(msgSource, 118, typeName);
+	    if (mc != null) {
+		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+	    }
+	    return true;
+
+	} else {
+
+	    if (pi.cardinality().maxOccurs == 1
+		    && (pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST)) {
+		return true;
+	    } else {
+		return false;
+	    }
+	}
+    }
+
+    @Override
+    public boolean multipleSourcePathsUnsupportedinFragments() {
+	return true;
     }
 }

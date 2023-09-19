@@ -29,20 +29,16 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.SortedSet;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.PackageInfo;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSqlSourcePathInfos.SourcePathInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Constants;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlClassEncodingInfo;
 
 /**
@@ -90,38 +86,5 @@ public class LdpSqlProviderHelper {
 	}
     }
 
-    /**
-     * @param targetTableName - tbd
-     * @param pi              - tbd
-     * @return the actual type class; can be empty if the class could not be
-     *         determined
-     */
-    public Optional<ClassInfo> actualTypeClass(String targetTableName, PropertyInfo pi) {
-
-	if (!Ldproxy2Target.sqlEncodingInfos.isEmpty()
-		&& Ldproxy2Target.sqlEncodingInfos.hasClassEncodingInfoForTable(targetTableName)) {
-
-	    SqlClassEncodingInfo scei = Ldproxy2Target.sqlEncodingInfos.getClassEncodingInfoForTable(targetTableName);
-
-	    String className = scei.hasOriginalClassName() ? scei.getOriginalClassName() : scei.getClassName();
-	    String schemaName = scei.hasOriginalSchemaName() ? scei.getOriginalSchemaName() : scei.getSchemaName();
-
-	    SortedSet<PackageInfo> schemas = Ldproxy2Target.model.schemas(schemaName);
-
-	    for (PackageInfo schema : schemas) {
-		Optional<ClassInfo> optCi = Ldproxy2Target.model.classes(schema).stream()
-			.filter(ci -> ci.name().equals(className)).findFirst();
-		if (optCi.isPresent()) {
-		    return optCi;
-		}
-	    }
-	}
-
-	// use the type class of pi as fallback
-	return Optional.ofNullable(pi.typeClass());
-    }
-
-    public Type valueTypeForFeatureRef(PropertyInfo pi, SourcePathInfo spi) {	
-	return spi.valueType != null ? spi.valueType : Type.INTEGER;
-    }
+    
 }

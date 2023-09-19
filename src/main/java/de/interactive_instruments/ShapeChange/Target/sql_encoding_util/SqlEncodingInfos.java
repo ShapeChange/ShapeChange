@@ -51,8 +51,6 @@ import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ShapeChangeException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.PropertyEncodingContext;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
@@ -95,43 +93,6 @@ public class SqlEncodingInfos implements MessageSource {
 
     public void addSqlPropertyEncodingInfos(Collection<SqlPropertyEncodingInfo> speis) {
 	propertyInfos.addAll(speis);
-    }
-
-    /**
-     * Look for SqlPropertyEncodingInfos that have same sourceTable as defined by
-     * the context, and that have originalPropertyName (if not set, then
-     * propertyName) equal to that of pi, and originalInClassName (if not set, then
-     * inClassName) equal to that of pi, and originalSchemaName (if not set, then
-     * schemaName) equal to that of pi.
-     * 
-     * @param pi      - tbd
-     * @param context - tbd
-     * @return - tbd
-     */
-    public SortedSet<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi,
-	    PropertyEncodingContext context) {
-
-	SortedSet<SqlPropertyEncodingInfo> result = new TreeSet<>();
-
-	for (SqlPropertyEncodingInfo sei : this.propertyInfos) {
-
-	    String sourceTable = sei.getSourceTable();
-
-	    if (sourceTable.equals(context.getSourceTable())) {
-
-		String name = sei.hasOriginalPropertyName() ? sei.getOriginalPropertyName() : sei.getPropertyName();
-		String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
-		String inClass = sei.hasOriginalInClassName() ? sei.getOriginalInClassName() : sei.getInClassName();
-
-		String piSchema = pi.model().schemaPackage(pi.inClass()).name();
-
-		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)) {
-		    result.add(sei);
-		}
-	    }
-	}
-
-	return result;
     }
 
     public boolean hasClassEncodingInfo(ClassInfo ci) {

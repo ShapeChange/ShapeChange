@@ -67,6 +67,8 @@ import de.ii.xtraplatform.features.sql.domain.ImmutableSqlPathDefaults;
 import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
@@ -87,14 +89,17 @@ public class LdpConfigBuilder {
     protected ImmutableFeatureProviderSqlData providerConfig = null;
     protected List<ImmutableCodelistData> codelists = new ArrayList<>();
 
-    protected LdpSqlProviderHelper sqlProviderHelper = new LdpSqlProviderHelper();
     protected LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
+    
     protected LdpPropertyEncoder propertyEncoder;
+    
+    protected LdpProvider ldpProvider;
+    protected LdpSourcePathProvider ldpSourcePathProvider;
 
     public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfg cfg,
 	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureMixinAndDataTypes,
-	    SortedSet<ClassInfo> codelistsAndEnumerations) {
+	    SortedSet<ClassInfo> codelistsAndEnumerations, LdpProvider ldpProvider, LdpSourcePathProvider ldpSourcePathProvider) {
 
 	this.target = target;
 	this.result = target.result;
@@ -102,10 +107,13 @@ public class LdpConfigBuilder {
 	this.cfg = cfg;
 	this.bbGmlBuilder = buldingBlockGmlBuilder;
 	this.bbFeaturesHtmlBuilder = new LdpBuildingBlockFeaturesHtmlBuilder();
-	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder);
+	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder, ldpProvider, ldpSourcePathProvider);
 
 	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
+	
+	this.ldpProvider = ldpProvider;
+	this.ldpSourcePathProvider = ldpSourcePathProvider;
     }
 
     public void process() {
@@ -140,17 +148,8 @@ public class LdpConfigBuilder {
 		ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
 			.name(fragmentName).objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
 			.description(LdpInfo.description(ci));
-
-		PropertyEncodingContext pec = new PropertyEncodingContext();
-		pec.setInFragment(true);
-		pec.setType(ci);
-
-		// if fragments are enabled, the source path for datatype is only available for
-		// non-usage-specific datatype encoding
-		if (ci.category() == Options.MIXIN || (ci.category() == Options.DATATYPE
-			&& ci.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES))) {
-		    pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
-		}
+		
+		LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci,false);
 
 		LinkedHashMap<String, FeatureSchema> ciPropertyDefs = propertyEncoder.propertyDefinitions(ci,
 			new ArrayList<PropertyInfo>(), pec);
@@ -235,14 +234,11 @@ public class LdpConfigBuilder {
 	     */
 
 	    ImmutableFeatureSchema.Builder typeDefBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		    .name(typeDefName).sourcePath("/" + sqlProviderHelper.databaseTableName(ci, false)).label(LdpInfo.label(ci))
+		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci)).label(LdpInfo.label(ci))
 			.description(LdpInfo.description(ci));
 
-	    PropertyEncodingContext pec = new PropertyEncodingContext();
-	    pec.setInFragment(false);
-	    pec.setType(ci);
-	    pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
-
+	    LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci,true);
+	    
 	    if (Ldproxy2Target.enableFragments) {
 
 //		if (ci.supertypes().isEmpty()) {
@@ -420,7 +416,7 @@ public class LdpConfigBuilder {
 		.schemas(Ldproxy2Target.dbSchemaNames).build();
 
 	ImmutableSqlPathDefaults sourcePathDefaults = cfg.builder().entity().provider().sourcePathDefaultsBuilder()
-		.primaryKey(Ldproxy2Target.primaryKeyColumn).sortKey(Ldproxy2Target.primaryKeyColumn).build();
+		.primaryKey(ldpSourcePathProvider.defaultPrimaryKey()).sortKey(ldpSourcePathProvider.defaultSortKey()).build();
 
 	ImmutableQueryGeneratorSettings queryGeneration = cfg.builder().entity().provider().queryGenerationBuilder()
 		.computeNumberMatched(true).build();

@@ -29,50 +29,17 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql;
 
-import java.util.Optional;
-
-import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpPropertyEncodingContext;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class PropertyEncodingContext {
+public class LdpSqlPropertyEncodingContext extends LdpPropertyEncodingContext {
 
-    private boolean isInFragment = false;
-    private ClassInfo type = null;
-    private String sourceTable = null;
-    private PropertyEncodingContext parentContext = null;
-
-    /**
-     * @return the isInFragment
-     */
-    public boolean isInFragment() {
-	return isInFragment;
-    }
-
-    /**
-     * @param isInFragment the isInFragment to set
-     */
-    public void setInFragment(boolean isInFragment) {
-	this.isInFragment = isInFragment;
-    }
-
-    /**
-     * @return the type
-     */
-    public ClassInfo getType() {
-	return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(ClassInfo type) {
-	this.type = type;
-    }
+    protected String sourceTable = null;
 
     /**
      * @return the sourceTable; can be <code>null</code>, especially if the context
@@ -87,21 +54,5 @@ public class PropertyEncodingContext {
      */
     public void setSourceTable(String sourceTable) {
 	this.sourceTable = sourceTable;
-    }
-
-    public void setParentContext(PropertyEncodingContext context) {
-	this.parentContext = context;
-    }
-
-    public Optional<PropertyEncodingContext> getParentContext() {
-	return this.parentContext == null ? Optional.empty() : Optional.of(this.parentContext);
-    }
-
-    public PropertyEncodingContext getTopParentContext() {
-	if(this.parentContext == null) {
-	    return this;
-	} else {
-	    return this.parentContext.getTopParentContext();
-	}
     }
 }
