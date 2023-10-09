@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.ii.ldproxy.cfg.LdproxyCfg;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
@@ -84,7 +84,7 @@ public class LdpConfigBuilder {
     protected List<ClassInfo> objectFeatureMixinAndDataTypes;
     protected SortedSet<ClassInfo> codelistsAndEnumerations;
 
-    protected LdproxyCfg cfg;
+    protected LdproxyCfgWriter cfg;
     protected ImmutableOgcApiDataV2 serviceConfig = null;
     protected ImmutableFeatureProviderSqlData providerConfig = null;
     protected List<ImmutableCodelistData> codelists = new ArrayList<>();
@@ -97,7 +97,7 @@ public class LdpConfigBuilder {
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider ldpSourcePathProvider;
 
-    public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfg cfg,
+    public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfgWriter cfg,
 	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureMixinAndDataTypes,
 	    SortedSet<ClassInfo> codelistsAndEnumerations, LdpProvider ldpProvider, LdpSourcePathProvider ldpSourcePathProvider) {
 

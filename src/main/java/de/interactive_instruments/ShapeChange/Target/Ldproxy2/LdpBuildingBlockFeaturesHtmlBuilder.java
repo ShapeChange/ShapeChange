@@ -34,7 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.util.List;
 import java.util.SortedMap;
 
-import de.ii.ldproxy.cfg.LdproxyCfg;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
@@ -45,7 +45,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
  */
 public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder {
 
-    public ImmutableFeaturesHtmlConfiguration createConfigurationForServiceCollection(LdproxyCfg cfg, ClassInfo ci) {
+    public ImmutableFeaturesHtmlConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
 
 	ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension().featuresHtml();
 

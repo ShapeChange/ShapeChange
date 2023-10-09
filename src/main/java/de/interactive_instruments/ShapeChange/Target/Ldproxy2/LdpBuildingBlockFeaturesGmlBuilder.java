@@ -44,7 +44,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.ii.ldproxy.cfg.LdproxyCfg;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
@@ -316,7 +316,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	return this.scConfigResourcesBuilder;
     }
 
-    public void createServiceConfigurationBuilders(LdproxyCfg cfg) {
+    public void createServiceConfigurationBuilders(LdproxyCfgWriter cfg) {
 
 	scConfigGmlBuilder = cfg.builder().ogcApiExtension().gml();
 
@@ -370,7 +370,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	scConfigGmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
     }
 
-    public ImmutableGmlConfiguration createGmlConfigurationForServiceCollection(LdproxyCfg cfg, ClassInfo ci) {
+    public ImmutableGmlConfiguration createGmlConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
 
 	ImmutableGmlConfiguration.Builder gmlBuilder = cfg.builder().ogcApiExtension().gml();
 	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
