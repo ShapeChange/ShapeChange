@@ -51,7 +51,6 @@
 			<targetParameter name="descriptorNoValue" value=""/>
 			<targetParameter name="forceAxisOrder" value="NONE"/>
 			<targetParameter name="labelTemplate" value="[[name]]"/>
-			<targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
 			<targetParameter name="objectIdentifierName" value="oid"/>
 			<targetParameter name="serviceDescription" value="..."/>
 			<targetParameter name="serviceLabel" value="MyServiceLabel"/>

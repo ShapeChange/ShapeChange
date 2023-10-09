@@ -256,6 +256,7 @@
          <targetParameter name="forceAxisOrder" value="NONE"/>
          <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
          <targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+         <targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
          <targetParameter name="primaryKeyColumn" value="idx"/>
          <targetParameter name="serviceDescription" value="..."/>
          <targetParameter name="serviceLabel" value="label"/>

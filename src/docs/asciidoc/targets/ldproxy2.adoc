@@ -145,7 +145,7 @@ The following information items are added to the provider configuration file:
 ** code: value of target parameter _srid_; default is 4326
 *** NOTE: The SqlDdl target has a similar parameter.
 ** forceAxisOrder: value of target parameter _forceAxisOrder_; default is NONE
-* nativeTimeZone: value of target parameter _nativeTimeZone_; default: the default system time zone
+* nativeTimeZone: value of target parameter _nativeTimeZone_; default: NONE
 ** NOTE: The time-zone ID is given as a string like 'Europe/Paris'. Internally, parsing is achieved using the Java ZoneId class and its static `of(String zoneId)` method. The system default time-zone ID is determined via the static `systemDefault()` method. For further information about the allowed formats of the time-zone ID, consult the documentation of the Java ZoneId class and the two methods.
 * types: will be populated as described in section <<ldproxy2_schemaconversionrules_types>>
 * fragments: will be generated if target parameter _enableFragments_ is set to true. For further details, see section <<ldproxy2_schemaconversionrules_types_inheritance_and_specialization>>.

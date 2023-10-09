@@ -130,7 +130,7 @@
 			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
 			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt" />
 			<!-- <targetParameter name="maxNameLength" value="63"/> -->
-			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
+			<targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
 			<!-- <targetParameter name="objectIdentifierName" value="oid"/> -->
 			<targetParameter name="primaryKeyColumn" value="idx" />
 			<targetParameter name="serviceDescription" value="..." />

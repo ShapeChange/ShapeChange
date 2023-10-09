@@ -87,7 +87,7 @@ import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     public static Model model = null;
-    
+
     private static boolean initialised = false;
     protected static boolean diagnosticsOnly = false;
     protected static int numberOfEncodedSchemas = 0;
@@ -120,7 +120,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     static String labelTemplate = "[[alias]]";
     public static int maxNameLength = 63;
-    static ZoneId nativeTimeZone = ZoneId.systemDefault();
+    static ZoneId nativeTimeZone = null;
     static String objectIdentifierName = "oid";
     public static String primaryKeyColumn = "id";
     static SortedSet<String> queryablesFromConfig = new TreeSet<>();
@@ -270,8 +270,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, 63);
 
 	    String nativeTimeZoneParamValue = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, ZoneId.systemDefault().toString(), false, true);
-	    nativeTimeZone = ZoneId.of(nativeTimeZoneParamValue);
+		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, null, false, true);
+	    if (nativeTimeZoneParamValue != null) {
+		nativeTimeZone = ZoneId.of(nativeTimeZoneParamValue);
+	    }
 
 	    objectIdentifierName = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, "oid", false, true);
@@ -847,7 +849,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixCodelist = "";
 	labelTemplate = "[[alias]]";
 	maxNameLength = 63;
-	nativeTimeZone = ZoneId.systemDefault();
+	nativeTimeZone = null;
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
 	queryablesFromConfig = new TreeSet<>();

@@ -91,15 +91,16 @@ public class LdpConfigBuilder {
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
-    
+
     protected LdpPropertyEncoder propertyEncoder;
-    
+
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider ldpSourcePathProvider;
 
     public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfgWriter cfg,
 	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureMixinAndDataTypes,
-	    SortedSet<ClassInfo> codelistsAndEnumerations, LdpProvider ldpProvider, LdpSourcePathProvider ldpSourcePathProvider) {
+	    SortedSet<ClassInfo> codelistsAndEnumerations, LdpProvider ldpProvider,
+	    LdpSourcePathProvider ldpSourcePathProvider) {
 
 	this.target = target;
 	this.result = target.result;
@@ -107,11 +108,12 @@ public class LdpConfigBuilder {
 	this.cfg = cfg;
 	this.bbGmlBuilder = buldingBlockGmlBuilder;
 	this.bbFeaturesHtmlBuilder = new LdpBuildingBlockFeaturesHtmlBuilder();
-	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder, ldpProvider, ldpSourcePathProvider);
+	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder,
+		ldpProvider, ldpSourcePathProvider);
 
 	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
-	
+
 	this.ldpProvider = ldpProvider;
 	this.ldpSourcePathProvider = ldpSourcePathProvider;
     }
@@ -148,8 +150,8 @@ public class LdpConfigBuilder {
 		ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
 			.name(fragmentName).objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
 			.description(LdpInfo.description(ci));
-		
-		LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci,false);
+
+		LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, false);
 
 		LinkedHashMap<String, FeatureSchema> ciPropertyDefs = propertyEncoder.propertyDefinitions(ci,
 			new ArrayList<PropertyInfo>(), pec);
@@ -234,11 +236,11 @@ public class LdpConfigBuilder {
 	     */
 
 	    ImmutableFeatureSchema.Builder typeDefBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci)).label(LdpInfo.label(ci))
-			.description(LdpInfo.description(ci));
+		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci))
+		    .label(LdpInfo.label(ci)).description(LdpInfo.description(ci));
 
-	    LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci,true);
-	    
+	    LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, true);
+
 	    if (Ldproxy2Target.enableFragments) {
 
 //		if (ci.supertypes().isEmpty()) {
@@ -416,7 +418,8 @@ public class LdpConfigBuilder {
 		.schemas(Ldproxy2Target.dbSchemaNames).build();
 
 	ImmutableSqlPathDefaults sourcePathDefaults = cfg.builder().entity().provider().sourcePathDefaultsBuilder()
-		.primaryKey(ldpSourcePathProvider.defaultPrimaryKey()).sortKey(ldpSourcePathProvider.defaultSortKey()).build();
+		.primaryKey(ldpSourcePathProvider.defaultPrimaryKey()).sortKey(ldpSourcePathProvider.defaultSortKey())
+		.build();
 
 	ImmutableQueryGeneratorSettings queryGeneration = cfg.builder().entity().provider().queryGenerationBuilder()
 		.computeNumberMatched(true).build();
@@ -424,10 +427,16 @@ public class LdpConfigBuilder {
 	ImmutableEpsgCrs nativeCrs = cfg.builder().entity().provider().nativeCrsBuilder().code(Ldproxy2Target.srid)
 		.forceAxisOrder(Ldproxy2Target.forceAxisOrder).build();
 
-	providerConfig = cfg.builder().entity().provider().id(Ldproxy2Target.mainId).connectionInfo(connectionInfo)
-		.sourcePathDefaults(sourcePathDefaults).queryGeneration(queryGeneration).nativeCrs(nativeCrs)
-		.nativeTimeZone(Ldproxy2Target.nativeTimeZone).types(providerTypeDefinitions)
-		.fragments(providerFragmentDefinitions).build();
+	ImmutableFeatureProviderSqlData.Builder providerConfigBuilder = cfg.builder().entity().provider()
+		.id(Ldproxy2Target.mainId).connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
+		.queryGeneration(queryGeneration).nativeCrs(nativeCrs).types(providerTypeDefinitions)
+		.fragments(providerFragmentDefinitions);
+
+	if (Ldproxy2Target.nativeTimeZone != null) {
+	    providerConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
+	}
+
+	providerConfig = providerConfigBuilder.build();
 
 	if (Ldproxy2Target.isUnitTest) {
 	    providerConfig = providerConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)

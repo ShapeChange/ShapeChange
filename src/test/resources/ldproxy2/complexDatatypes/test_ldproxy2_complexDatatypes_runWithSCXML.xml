@@ -87,7 +87,6 @@
          <targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
          <targetParameter name="labelTemplate" value="[[alias]]"/>
          <targetParameter name="maxNameLength" value="63"/>
-         <targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
          <targetParameter name="objectIdentifierName" value="oid"/>
          <targetParameter name="primaryKeyColumn" value="_id"/>
          <targetParameter name="serviceDescription" value="..."/>

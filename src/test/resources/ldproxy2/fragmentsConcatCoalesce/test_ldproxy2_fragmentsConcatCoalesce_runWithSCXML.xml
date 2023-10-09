@@ -3025,7 +3025,6 @@
          <targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
          <targetParameter name="labelTemplate" value="[[name]]"/>
          <targetParameter name="maxNameLength" value="63"/>
-         <targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
          <targetParameter name="objectIdentifierName" value="oid"/>
          <targetParameter name="primaryKeyColumn" value="_id"/>
          <targetParameter name="serviceDescription" value="..."/>
@@ -3267,7 +3266,6 @@
          <targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
          <targetParameter name="labelTemplate" value="[[name]]"/>
          <targetParameter name="maxNameLength" value="63"/>
-         <targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
          <targetParameter name="objectIdentifierName" value="oid"/>
          <targetParameter name="primaryKeyColumn" value="_id"/>
          <targetParameter name="serviceDescription" value="..."/>
@@ -5089,7 +5087,6 @@
          <targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
          <targetParameter name="labelTemplate" value="[[name]]"/>
          <targetParameter name="maxNameLength" value="63"/>
-         <targetParameter name="nativeTimeZone" value="Europe/Berlin"/>
          <targetParameter name="objectIdentifierName" value="oid"/>
          <targetParameter name="primaryKeyColumn" value="_id"/>
          <targetParameter name="serviceDescription" value="..."/>

@@ -8,7 +8,6 @@ providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
-nativeTimeZone: Europe/Berlin
 connectionInfo:
   database: FIXME
   host: FIXME
