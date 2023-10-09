@@ -775,8 +775,8 @@ fragments:
         constraints:
           codelist: T5_Enumeration1
           enum:
-          - "1000"
-          - "2000"
+          - 1000
+          - 2000
           required: true
           minOccurrence: 1
           maxOccurrence: 5
@@ -792,8 +792,8 @@ fragments:
         constraints:
           codelist: T5_Enumeration2
           enum:
-          - "1000"
-          - "2000"
+          - 1000
+          - 2000
           required: true
     schema: '#/fragments/t5_class1'
   t6_class1:

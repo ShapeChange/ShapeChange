@@ -5,6 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: MyServiceLabel
 description: '...'
+enabled: true
 serviceType: OGC_API
 api:
 - buildingBlock: RESOURCES

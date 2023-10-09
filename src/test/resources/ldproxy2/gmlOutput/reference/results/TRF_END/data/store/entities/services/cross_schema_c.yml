@@ -5,6 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: label
 description: '...'
+enabled: true
 serviceType: OGC_API
 api:
 - buildingBlock: RESOURCES
@@ -17,7 +18,7 @@ api:
     c: http://shapechange.net/test/c
   defaultNamespace: c
   schemaLocations:
-    c: '{{serviceUrl}}/resources/c.xsd'
+    c: "{{serviceUrl}}/resources/c.xsd"
   objectTypeNamespaces:
     DataTypeA: a
     FeatureTypeB: b
@@ -43,10 +44,10 @@ collections:
         - rename: a:att1
         att2.att2:
         - rename: a:att2
-      conformance: NONE
       xmlAttributes:
       - att1
       - att2.att2
+      conformance: NONE
   featuretypec1:
     id: featuretypec1
     label: featuretypec1
@@ -96,9 +97,9 @@ collections:
         - rename: a:ftAtoTA
         geom:
         - rename: a:geom
-      conformance: NONE
       xmlAttributes:
       - att1.attDataTypeA.att2
+      conformance: NONE
   ta:
     id: ta
     label: ta

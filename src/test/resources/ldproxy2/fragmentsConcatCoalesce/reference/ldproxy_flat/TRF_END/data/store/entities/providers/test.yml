@@ -494,8 +494,8 @@ types:
         constraints:
           codelist: T5_Enumeration1
           enum:
-          - "1000"
-          - "2000"
+          - 1000
+          - 2000
           required: true
           minOccurrence: 1
           maxOccurrence: 5
@@ -517,8 +517,8 @@ types:
         constraints:
           codelist: T5_Enumeration1
           enum:
-          - "1000"
-          - "2000"
+          - 1000
+          - 2000
           required: true
           minOccurrence: 1
           maxOccurrence: 5
@@ -529,8 +529,8 @@ types:
         constraints:
           codelist: T5_Enumeration2
           enum:
-          - "1000"
-          - "2000"
+          - 1000
+          - 2000
           required: true
   t6_class1:
     sourcePath: /t6_class1

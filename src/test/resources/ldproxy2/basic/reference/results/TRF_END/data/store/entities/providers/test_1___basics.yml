@@ -317,8 +317,8 @@ types:
             constraints:
               codelist: TS2_Enumeration2
               enum:
-              - "1"
-              - "2"
+              - 1
+              - 2
               required: true
           attBoolean:
             sourcePath: attboolean
@@ -642,4 +642,4 @@ types:
         type: FLOAT
         constraints:
           required: true
-        constantValue: "1"
+        constantValue: 1

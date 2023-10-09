@@ -30,7 +30,7 @@ types:
         type: INTEGER
         role: ID
       attDT1Multi:
-        sourcePath: '[_id=featuretype_id]FeatureType_attDT1Multi'
+        sourcePath: "[_id=featuretype_id]FeatureType_attDT1Multi"
         type: OBJECT_ARRAY
         objectType: DataType1
         constraints:
@@ -38,7 +38,7 @@ types:
           minOccurrence: 1
         properties:
           attCodeListMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attCodeListMulti{sortKey=datatype1_id}/codelist_id'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Multi_attCodeListMulti{sortKey=datatype1_id}/codelist_id"
             type: VALUE_ARRAY
             valueType: STRING
             constraints:
@@ -52,7 +52,7 @@ types:
               codelist: CodeList
               required: true
           attDataType2Multi:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Multi'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Multi"
             type: OBJECT_ARRAY
             objectType: DataType2
             constraints:
@@ -60,7 +60,7 @@ types:
               minOccurrence: 1
             properties:
               attDT2CodeListMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -74,7 +74,7 @@ types:
                   codelist: CodeList
                   required: true
               attDT2EnumerationMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2EnumerationMult{sortKey=datatype2_id}/attdt2enumerationmulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2EnumerationMult{sortKey=datatype2_id}/attdt2enumerationmulti"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -94,7 +94,7 @@ types:
                   - enum2
                   required: true
               attDT2SimpleMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti"
                 type: VALUE_ARRAY
                 valueType: INTEGER
                 constraints:
@@ -106,14 +106,14 @@ types:
                 constraints:
                   required: true
           attDataType2Single:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Single'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Multi_attDataType2Single"
             type: OBJECT
             objectType: DataType2
             constraints:
               required: true
             properties:
               attDT2CodeListMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -127,7 +127,7 @@ types:
                   codelist: CodeList
                   required: true
               attDT2EnumerationMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -147,7 +147,7 @@ types:
                   - enum2
                   required: true
               attDT2SimpleMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Multi_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti"
                 type: VALUE_ARRAY
                 valueType: INTEGER
                 constraints:
@@ -159,7 +159,7 @@ types:
                 constraints:
                   required: true
           attEnumerationMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Multi_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti"
             type: VALUE_ARRAY
             valueType: STRING
             constraints:
@@ -179,7 +179,7 @@ types:
               - enum2
               required: true
           attSimpleMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Multi_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Multi_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti"
             type: VALUE_ARRAY
             valueType: INTEGER
             constraints:
@@ -191,14 +191,14 @@ types:
             constraints:
               required: true
       attDT1Single:
-        sourcePath: '[_id=featuretype_id]FeatureType_attDT1Single'
+        sourcePath: "[_id=featuretype_id]FeatureType_attDT1Single"
         type: OBJECT
         objectType: DataType1
         constraints:
           required: true
         properties:
           attCodeListMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attCodeListMulti{sortKey=datatype1_id}/codelist_id'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Single_attCodeListMulti{sortKey=datatype1_id}/codelist_id"
             type: VALUE_ARRAY
             valueType: STRING
             constraints:
@@ -212,7 +212,7 @@ types:
               codelist: CodeList
               required: true
           attDataType2Multi:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Multi'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Multi"
             type: OBJECT_ARRAY
             objectType: DataType2
             constraints:
@@ -220,7 +220,7 @@ types:
               minOccurrence: 1
             properties:
               attDT2CodeListMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -234,7 +234,7 @@ types:
                   codelist: CodeList
                   required: true
               attDT2EnumerationMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2EnumerationMul{sortKey=datatype2_id}/attdt2enumerationmulti"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -254,7 +254,7 @@ types:
                   - enum2
                   required: true
               attDT2SimpleMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Multi_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti"
                 type: VALUE_ARRAY
                 valueType: INTEGER
                 constraints:
@@ -266,14 +266,14 @@ types:
                 constraints:
                   required: true
           attDataType2Single:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Single'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Single_attDataType2Single"
             type: OBJECT
             objectType: DataType2
             constraints:
               required: true
             properties:
               attDT2CodeListMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2CodeListMulti{sortKey=datatype2_id}/codelist_id"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -287,7 +287,7 @@ types:
                   codelist: CodeList
                   required: true
               attDT2EnumerationMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2EnumerationMu{sortKey=datatype2_id}/attdt2enumerationmulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2EnumerationMu{sortKey=datatype2_id}/attdt2enumerationmulti"
                 type: VALUE_ARRAY
                 valueType: STRING
                 constraints:
@@ -307,7 +307,7 @@ types:
                   - enum2
                   required: true
               attDT2SimpleMulti:
-                sourcePath: '[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti'
+                sourcePath: "[_id=datatype2_id]FeatureType_attDT1Single_attDataType2Single_attDT2SimpleMulti{sortKey=datatype2_id}/attdt2simplemulti"
                 type: VALUE_ARRAY
                 valueType: INTEGER
                 constraints:
@@ -319,7 +319,7 @@ types:
                 constraints:
                   required: true
           attEnumerationMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Single_attEnumerationMulti{sortKey=datatype1_id}/attenumerationmulti"
             type: VALUE_ARRAY
             valueType: STRING
             constraints:
@@ -339,7 +339,7 @@ types:
               - enum2
               required: true
           attSimpleMulti:
-            sourcePath: '[_id=datatype1_id]FeatureType_attDT1Single_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti'
+            sourcePath: "[_id=datatype1_id]FeatureType_attDT1Single_attSimpleMulti{sortKey=datatype1_id}/attsimplemulti"
             type: VALUE_ARRAY
             valueType: INTEGER
             constraints:

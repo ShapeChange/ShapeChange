@@ -5,20 +5,21 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: MyServiceLabel
 description: '...'
+enabled: true
 serviceType: OGC_API
 api:
-- enabled: true
-  buildingBlock: RESOURCES
-- enabled: true
+- buildingBlock: RESOURCES
+  enabled: true
+- buildingBlock: GML
+  enabled: true
   applicationNamespaces:
     t: http://example.org/shapechange/schema/test
   defaultNamespace: t
   schemaLocations:
     t: "{{serviceUrl}}/resources/test.xsd"
   gmlIdPrefix: _
-  buildingBlock: GML
-- enabled: true
-  buildingBlock: QUERYABLES
+- buildingBlock: QUERYABLES
+  enabled: true
 collections:
   ft1:
     id: ft1
@@ -26,30 +27,31 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-    - conformance: NONE
-      buildingBlock: GML
+    - buildingBlock: GML
+      conformance: NONE
   ft2:
     id: ft2
     label: ft2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-    - conformance: NONE
-      buildingBlock: GML
+    - buildingBlock: GML
+      conformance: NONE
   ft2sub1sub1:
     id: ft2sub1sub1
     label: ft2sub1sub1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-    - conformance: NONE
-      buildingBlock: GML
+    - buildingBlock: GML
+      conformance: NONE
   ft3:
     id: ft3
     label: ft3
     enabled: true
     api:
-    - transformations:
+    - buildingBlock: FEATURES_HTML
+      transformations:
         attFt3A:
         - codelist: MyEnumeration
         attFt3B:
@@ -58,14 +60,13 @@ collections:
         - codelist: MyEnumeration
         attFt3D:
         - codelist: MyCodelist
-      buildingBlock: FEATURES_HTML
-    - conformance: NONE
-      buildingBlock: GML
+    - buildingBlock: GML
+      conformance: NONE
   t:
     id: t
     label: t
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-    - conformance: NONE
-      buildingBlock: GML
+    - buildingBlock: GML
+      conformance: NONE

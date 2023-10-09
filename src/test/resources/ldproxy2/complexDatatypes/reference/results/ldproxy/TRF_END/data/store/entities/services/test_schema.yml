@@ -5,6 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: label
 description: '...'
+enabled: true
 serviceType: OGC_API
 collections:
   featuretype:

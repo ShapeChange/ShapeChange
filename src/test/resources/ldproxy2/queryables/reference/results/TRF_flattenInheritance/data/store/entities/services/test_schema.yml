@@ -5,6 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: FIXME
 description: FIXME
+enabled: true
 serviceType: OGC_API
 api:
 - buildingBlock: QUERYABLES
@@ -22,7 +23,6 @@ collections:
       - attPoint
       - roleFTtoT_Subtype.title
       - roleFTtoT_Type.title
-      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML
       transformations:
         attDate:
@@ -35,7 +35,6 @@ collections:
     - buildingBlock: QUERYABLES
       included:
       - attCharacter
-      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML
   type:
     id: type
@@ -45,5 +44,4 @@ collections:
     - buildingBlock: QUERYABLES
       included:
       - attCharacter
-      pathSeparator: DOT
     - buildingBlock: FEATURES_HTML

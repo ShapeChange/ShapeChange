@@ -37,14 +37,14 @@ types:
           codelist: TS2_Codelist1
           required: true
       attDt:
-        sourcePath: '[attdt_fkdt=idx]ts2_datatype1'
+        sourcePath: "[attdt_fkdt=idx]ts2_datatype1"
         type: OBJECT
         objectType: TS2_DataType1
         constraints:
           required: true
         properties:
           attCode2:
-            sourcePath: '[idx=ts2_datatype1_id]TS2_DataType1_attCode2{sortKey=ts2_datatype1_id}/ts2_codelist2_id'
+            sourcePath: "[idx=ts2_datatype1_id]TS2_DataType1_attCode2{sortKey=ts2_datatype1_id}/ts2_codelist2_id"
             type: VALUE_ARRAY
             valueType: STRING
             constraints:
