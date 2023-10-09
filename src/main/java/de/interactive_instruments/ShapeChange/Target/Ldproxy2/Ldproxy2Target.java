@@ -50,7 +50,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import de.ii.ldproxy.cfg.LdproxyCfg;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelistData;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
@@ -155,7 +155,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     static List<ClassInfo> objectFeatureMixinAndDataTypes = new ArrayList<>();
     static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
 
-    static LdproxyCfg cfg = null;
+    static LdproxyCfgWriter cfg = null;
 
     static LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder = null;
 
@@ -429,7 +429,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
-	    cfg = new LdproxyCfg(dataDirectoryPath);
+	    cfg = LdproxyCfgWriter.create(dataDirectoryPath, true);
 	}
 
 	/*
