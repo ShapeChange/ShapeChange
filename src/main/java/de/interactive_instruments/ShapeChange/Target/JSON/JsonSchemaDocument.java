@@ -228,7 +228,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    addToRootSchema(ci.name(), js);
 
-	    if (jsonSchemaTarget.createSeparatePropertyDefinitions && propertyDefSchemaByClass.containsKey(ci)) {
+	    if (JsonSchemaTarget.createSeparatePropertyDefinitions && propertyDefSchemaByClass.containsKey(ci)) {
 		addToRootSchema(ci.name() + "_Properties", propertyDefSchemaByClass.get(ci));
 	    }
 
@@ -1466,8 +1466,46 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
-	// create property definitions for valueTypeOptions that target properties from
-	// supertypes
+	/*
+	 * =============
+	 * 
+	 * Handle generic value types
+	 * 
+	 * =============
+	 */
+	if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& jsonSchemaTarget.genericValueTypes() != null
+		&& jsonSchemaTarget.genericValueTypes().contains(ci.name())) {
+
+	    /*
+	     * Gather simple type infos from the properties of all subtypes. Ignore
+	     * non-simple cases (e.g., schema references) and format declarations.
+	     */
+
+	    SortedSet<JsonSchemaType> typeSet = new TreeSet<>();
+
+	    for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
+		for (PropertyInfo subPi : subtype.properties().values()) {
+		    Optional<JsonSchemaTypeInfo> jsti = identifyJsonSchemaType(subPi);
+		    if (jsti.isPresent() && jsti.get().hasSimpleType()) {
+			typeSet.add(jsti.get().getSimpleType());
+		    }
+		}
+	    }
+
+	    // add new value property
+	    jsProperties.property("value", new JsonSchema().type(typeSet.toArray(new JsonSchemaType[typeSet.size()])))
+		    .required("value");
+	}
+
+	/*
+	 * =============
+	 * 
+	 * create property definitions for valueTypeOptions that target properties from
+	 * supertypes
+	 * 
+	 * =============
+	 */
 	for (String supertypePropertyName : vto.getPropertiesWithValueTypeOptions()) {
 
 	    PropertyInfo supertypePi = ci.property(supertypePropertyName);

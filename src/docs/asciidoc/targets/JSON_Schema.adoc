@@ -637,6 +637,69 @@ configured xref:./JSON_Schema.adoc#Annotations[JSON Schema annotations] to the
 enum. Note that if none of the annotation definitions creates an annotation 
 value for the enum, then the JSON object will be empty.
 
+[[rule-json-cls-genericValueType]]
+==== rule-json-cls-genericValueType
+
+(since v2.14.0)
+
+Some domains use constructs like the one shown in 
+<<img_jsonschema_generic_value_types>> 
+to add extension points to their feature types. The generic attributes
+shown in this example contain a name and a (simple) value. They provide
+a specific place for additional key-value-pair based information.
+
+[#img_jsonschema_generic_value_types,reftext='{figure-caption} {counter:figure-num}']
+.Example schema with generic value types
+image::../images/ldp2_specificrules_genericvaluetypes.png[align="center"]
+
+There is a specific solution for supporting such structures in JSON.
+
+The according conversion is enabled using __rule-json-cls-genericValueType__.
+The conversion rule is applied for a \<<dataType>> whose name is contained in the
+(comma-separated) value of target parameter 
+xref:./JSON_Schema.adoc#genericValueTypes[genericValueTypes]. 
+The subtypes will automatically be taken into account as well. 
+For example: `genericValueTypes=GenerAttribute`
+
+The JSON Schema definition for GenerAttribute, in plain JSON encoding, would be as follows:
+
+[source,JSON,linenumbers]
+----
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$defs": {
+    "GenerAttribute": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["string", "integer", "number"]
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  }
+}
+----
+
+Only the plain type information from the value types of the common `value`
+property of the subtypes contributes to the type definition of property
+"value". Any JSON Schema format keywords, defined for such value types,
+are ignored.
+
+The resulting JSON definition of GenerAttribute supports encoding of 
+values for any of the actual subtypes of GenerAttribute.
+
+NOTE: The JSON Schema definition allows for type checks and is more 
+expressive than the definition that would be created by default for just 
+GenerAttribute (with only the "name" attribute defined).
+
+
 [[rule-json-cls-identifierForTypeWithIdentity]]
 ==== rule-json-cls-identifierForTypeWithIdentity
 
@@ -1691,6 +1754,25 @@ of the "collectionId" member, else false.
 Applies to Rule(s): 
 _xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
 
+
+
+[[genericValueTypes]]
+==== genericValueTypes
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: (comma-separated list of) string(s)
+
+Default Value: _none_
+
+Explanation: Identifies the classes that represent the roots of generic 
+value type inheritance trees, which shall be encoded as defined by
+__rule-json-cls-genericValueType__.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-cls-genericValueType[rule-json-cls-genericValueType]_
 
 [[geoJsonCompatibleGeometryTypes]]
 ==== geoJsonCompatibleGeometryTypes

@@ -87,6 +87,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinLengthKe
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinimumKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MultipleOfKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PatternKeyword;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -166,7 +167,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     protected static boolean createSeparatePropertyDefinitions = false;
     protected static SortedSet<String> geoJsonCompatibleGeometryTypes = null;
-     
+    protected static SortedSet<String> genericValueTypes = null;
     protected static SortedSet<String> featureRefProfiles = null;
     protected static SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
     protected static boolean featureRefWithAnyCollectionId = false;
@@ -362,6 +363,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES, new String[] { "GM_Point",
 				    "GM_Curve", "GM_Surface", "GM_MultiPoint", "GM_MultiCurve", "GM_MultiSurface" },
 			    false, true));
+	    genericValueTypes = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_GENERIC_VALUE_TYPES, null, false, true));
 	    featureRefProfiles = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES, new String[] { "rel-as-link" }, false, true));
 	    List<String> featureRefIdTypes_ = options.parameterAsStringList(this.getClass().getName(),
@@ -645,6 +648,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public String baseJsonSchemaDefinitionForDataTypes() {
 	return baseJsonSchemaDefinitionForDataTypes;
     }
+    
+    public SortedSet<String> genericValueTypes() {	
+	return genericValueTypes;
+    }
 
     public String getEntityTypeName() {
 	return entityTypeName;
@@ -728,6 +735,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    } else {
 		result.addError(this, 20, ci.name(), simpleJsTypeInfo.getSimpleType().getName());
 	    }
+
+	} else if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci,genericValueTypes)) {
+	    
+	    result.addInfo(this, 24, ci.name());
 
 	} else if (ci.category() == Options.MIXIN || ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
 		|| ci.category() == Options.DATATYPE || ci.category() == Options.ENUMERATION
@@ -1262,6 +1274,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	useAnchorsInLinksToGeneratedSchemaDefinitions = true;
 
 	createSeparatePropertyDefinitions = false;
+	genericValueTypes = null;
 	geoJsonCompatibleGeometryTypes = null;
 	featureRefProfiles = null;
 	featureRefIdTypes = new TreeSet<>();
@@ -1285,6 +1298,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
 	r.addRule("rule-json-cls-identifierStereotype");
 	r.addRule("rule-json-cls-ignoreIdentifier");
+	r.addRule("rule-json-cls-genericValueType");
 	r.addRule("rule-json-cls-jsonFgGeometry");
 	r.addRule("rule-json-cls-name-as-anchor");
 	r.addRule("rule-json-cls-name-as-entityType");
@@ -1374,7 +1388,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
 	    return "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
-
+	case 24:
+	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 	case 101:
 	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
 	case 102:

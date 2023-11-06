@@ -82,7 +82,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
 	    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_FEATURE_COLLECTION_ONLY,
 	    JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES,
-	    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID,
+	    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, JsonSchemaConstants.PARAM_GENERIC_VALUE_TYPES,
 	    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES,
 	    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT,
 	    JsonSchemaConstants.PARAM_JSON_BASE_URI, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION,

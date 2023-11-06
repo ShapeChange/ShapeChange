@@ -89,6 +89,8 @@ public class JsonSchemaConstants {
     public static final String PARAM_JSON_BASE_URI = "jsonBaseUri";
 
     public static final String PARAM_ENTITY_TYPE_NAME = "entityTypeName";
+    
+    public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
 
     public static final String PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION = "byReferenceJsonSchemaDefinition";
     public static final String PARAM_BY_REFERENCE_FORMAT = "byReferenceFormat";
@@ -137,6 +139,7 @@ public class JsonSchemaConstants {
     public static final String RULE_ALL_NOT_ENCODED = "rule-json-all-notEncoded";
 
     public static final String RULE_CLS_BASIC_TYPE = "rule-json-cls-basictype";
+    public static final String RULE_CLS_GENERIC_VALUE_TYPE = "rule-json-cls-genericValueType";
     public static final String RULE_CLS_NAME_AS_ANCHOR = "rule-json-cls-name-as-anchor";
     public static final String RULE_CLS_NAME_AS_ENTITYTYPE = "rule-json-cls-name-as-entityType";
     public static final String RULE_CLS_NAME_AS_ENTITYTYPE_DATATYPE = "rule-json-cls-name-as-entityType-dataType";

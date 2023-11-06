@@ -1,0 +1,62 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri_from_config/t/",
+  "$defs": {
+    "FT": {
+      "$anchor": "FT",
+      "type": "object",
+      "properties": {
+        "someGenerAttribute": {
+          "$ref": "#GenerAttribute"
+        },
+        "otherGenerAttribute": {
+          "type": "array",
+          "items": {
+            "$ref": "#GenerAttribute"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "GenerAttribute": {
+      "$anchor": "GenerAttribute",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    },
+    "GenerAttribute2": {
+      "$anchor": "GenerAttribute2",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "number",
+            "boolean"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  }
+}

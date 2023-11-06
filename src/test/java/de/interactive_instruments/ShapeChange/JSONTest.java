@@ -130,4 +130,12 @@ public class JSONTest extends BasicTestSCXML {
 		new String[] { "json" }, "testResults/json/jsonFgGeometry/json_schemas",
 		"src/test/resources/json/jsonFgGeometry/reference/json_schemas");
     }
+    
+    @Test
+    public void testJson_genericValueTypes() {
+
+	multiTest("src/test/resources/json/genericValueTypes/test_json_schema_genericValueTypes.xml",
+		new String[] { "json" }, "testResults/json/genericValueTypes",
+		"src/test/resources/json/genericValueTypes/reference");
+    }
 }
