@@ -1015,6 +1015,8 @@ public class ShapeChangeResult {
 	    return "??The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
 	case 1004: // used by supertype class
 	    return "Class '$1$' has an unknown category, an object is assumed.";
+	case 1005: //
+	    return "??The minimum multiplicity value of '$1$' is neither a number nor a known string. '0' is used instead.";
 	
 	case 10003: // used by supertype class
 	    return "Checked class '$1$', category '$2$', result '$3$'"; //x

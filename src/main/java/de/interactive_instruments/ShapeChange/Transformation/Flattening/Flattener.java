@@ -303,6 +303,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE = "rule-trf-cls-flatten-reverse-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+    public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_IN_SEQUENCE = "rule-trf-cls-flatten-inheritance-add-attributes-in-sequence";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES = "rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
@@ -5334,6 +5335,8 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	boolean addAttributesAtBottom = trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM);
+	boolean addAttributesInSequence = trfConfig
+		.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_IN_SEQUENCE);
 
 	/*
 	 * Identify supertypes and leafs in selected schemas. A class is only identified
@@ -5607,6 +5610,8 @@ public class Flattener implements Transformer, MessageSource {
 		     */
 		    if (addAttributesAtBottom) {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
+		    } else if (addAttributesInSequence) {
+			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_INSEQUENCE);
 		    } else {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 		    }
@@ -5676,8 +5681,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	/*
 	 * remove inheritance relationships from leaf classes, but keep relationships to
-	 * ArcGIS parent if RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES is
-	 * enabled.
+	 * a) ArcGIS parent if RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES
+	 * is enabled b) supertypes that were not flattened.
 	 */
 	for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 
@@ -5685,8 +5690,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	    for (String supertypeID : leafCi.supertypes()) {
 
-		if (trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-			&& ArcGISUtil.isArcGISSubtype(leafCi)) {
+		if ((trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+			&& ArcGISUtil.isArcGISSubtype(leafCi)) || !genSuperclassesById.containsKey(supertypeID)) {
 		    // keep relationship to this supertype
 		    newSupertypes.add(supertypeID);
 		}

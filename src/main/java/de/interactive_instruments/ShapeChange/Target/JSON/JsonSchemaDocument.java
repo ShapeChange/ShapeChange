@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -1153,7 +1154,9 @@ public class JsonSchemaDocument implements MessageSource {
 		|| ci.category() == Options.MIXIN) && !supertypes.isEmpty()) {
 
 	    // add schema definitions for all supertypes
-	    for (ClassInfo supertype : supertypes) {
+	    List<ClassInfo> customSortedSupertypes = applyCustomEncodingOrder(
+		    ci.taggedValue(JsonSchemaConstants.TV_SUPERTYPES_ENCODING_ORDER), supertypes);
+	    for (ClassInfo supertype : customSortedSupertypes) {
 		Optional<JsonSchemaTypeInfo> typeInfo = identifyJsonSchemaTypeForSupertype(supertype,
 			ci.encodingRule(JsonSchemaConstants.PLATFORM));
 
@@ -1662,6 +1665,45 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return jsClass;
+    }
+
+    private List<ClassInfo> applyCustomEncodingOrder(String encodingOrderInstructions, SortedSet<ClassInfo> classes) {
+
+	List<ClassInfo> res = new ArrayList<>();
+
+	if (StringUtils.isNotBlank(encodingOrderInstructions)) {
+
+	    SortedMap<String, ClassInfo> classByName = new TreeMap<>();
+	    for (ClassInfo ci : classes) {
+		classByName.put(ci.name(), ci);
+	    }
+
+	    Splitter splitter = Splitter.on(',');
+	    splitter = splitter.omitEmptyStrings();
+	    splitter = splitter.trimResults();
+	    List<String> result = splitter.splitToList(encodingOrderInstructions);
+
+	    for (String eoi : result) {
+		if (classByName.containsKey(eoi)) {
+		    res.add(classByName.get(eoi));
+		    classByName.remove(eoi);
+		}
+	    }
+
+	    // now add the remaining classes
+	    for (ClassInfo ci : classByName.values()) {
+		res.add(ci);
+	    }
+
+	} else {
+
+	    // use the original set order
+	    for (ClassInfo ci : classes) {
+		res.add(ci);
+	    }
+	}
+
+	return res;
     }
 
     private void handlePrimaryTimeRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,

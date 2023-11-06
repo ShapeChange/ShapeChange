@@ -68,10 +68,11 @@ public class TaggedValueNormalizer {
      * 
      * NOTE: defaultGeometry is also used by the ldproxy2 target.
      */
-    protected static final Set<String> jsonTags = Stream.of("collectionUriTemplate", "jsonFormat", "jsonDocument",
-	    "jsonBaseURI", "jsonBaseUri", "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern",
-	    "jsonId", "minLength", "minInclusive", "minExclusive", "maxInclusive", "maxExclusive", "unit",
-	    "jsonPrimaryGeometry", "jsonPrimaryPlace", "jsonPrimaryInstant", "jsonPrimaryInterval")
+    protected static final Set<String> jsonTags = Stream
+	    .of("collectionUriTemplate", "jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
+		    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern", "jsonId", "minLength",
+		    "minInclusive", "minExclusive", "maxInclusive", "maxExclusive", "unit", "jsonPrimaryGeometry",
+		    "jsonPrimaryPlace", "jsonPrimaryInstant", "jsonPrimaryInterval", "jsonSupertypesEncodingOrder")
 	    .collect(Collectors.toSet());
 
     /*
@@ -100,9 +101,9 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the Ldproxy2 target
      */
-    protected static final Set<String> ldp2Tags = Stream
-	    .of("ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate",
-		    "ldpTitleAttribute", "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove")
+    protected static final Set<String> ldp2Tags = Stream.of("ldp2EncodingRule", "ldpCodeTargetValue",
+	    "ldpFallbackValue", "ldpFeatureTitleTemplate", "ldpTitleAttribute", "defaultInstant",
+	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldp2GenericValueTypeSuffix")
 	    .collect(Collectors.toSet());
 
     /*

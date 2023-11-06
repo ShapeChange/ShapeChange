@@ -41,6 +41,7 @@ public class JsonSchemaConstants {
     public static final String SC_LINK_OBJECT_DEF_NAME = "SCLinkObject";
     
     public static final String TV_COLLECTION_URI_TEMPLATE = "collectionUriTemplate";
+    public static final String TV_SUPERTYPES_ENCODING_ORDER = "jsonSupertypesEncodingOrder";
 
     public static final String PLATFORM = "json";
 
@@ -171,4 +172,5 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_COLLECTIONS_WITH_TOP_LEVEL_ENTITY_TYPE = "rule-json-cls-collectionsWithTopLevelEntityType";
 
     public static final String RULE_CLS_JSON_FG_GEOMETRY = "rule-json-cls-jsonFgGeometry";
+
 }

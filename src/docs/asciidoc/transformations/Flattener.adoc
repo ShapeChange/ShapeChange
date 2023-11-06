@@ -325,6 +325,7 @@ Parameters:
 |xref:./Flattener.adoc#codeByTaggedValue[codeByTaggedValue] | Optional
 |===
 
+
 [[rule-trf-cls-flatten-inheritance-add-attributes-at-bottom]]
 ==== rule-trf-cls-flatten-inheritance-add-attributes-at-bottom
 
@@ -335,6 +336,33 @@ association roles that are copied from a supertype to a subtype during the execu
 xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance]
 will be placed at the bottom of the sequence of existing properties,
 instead of at the top.
+
+[[rule-trf-cls-flatten-inheritance-add-attributes-in-sequence]]
+==== rule-trf-cls-flatten-inheritance-add-attributes-in-sequence
+
+(since v2.14.0)
+
+Behavior: If this rule is enabled, then attributes and also
+association roles that are copied from a supertype to a subtype during the execution of
+xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance]
+will be be merged into the sequence of existing properties according to their sequence 
+number, instead of at the top.
+
+[NOTE]
+=====
+
+* This rule can be useful in (rare) cases where sequence numbers were chosen in a way
+that prevents conflicts with sequence numbers of subtypes (and other supertypes of 
+these subtypes). In other words, this rule can be useful for cases in which the
+scope of tagged value _sequenceNumber_ is not restricted to a class, but instead
+reaches over multiple classes. Be warned that such an overarching scope can be
+complex to maintain and get right, and that it is NOT the default scope assumed by
+ShapeChange.
+* This rule has lower priority than 
+xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance-add-attributes-at-bottom[rule-trf-cls-flatten-inheritance-add-attributes-at-bottom]
+
+===== 
+
 
 [[rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType]]
 ==== rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType
