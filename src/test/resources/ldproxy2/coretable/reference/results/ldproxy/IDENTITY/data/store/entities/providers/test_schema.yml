@@ -39,6 +39,11 @@ types:
     type: OBJECT
     label: FT3
     schema: '#/fragments/ft3'
+  ft4:
+    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT4'}"
+    type: OBJECT
+    label: FT4
+    schema: '#/fragments/ft4'
   t:
     sourcePath: "/mycoretable{filter=myfeaturetypecolumn='T'}"
     type: OBJECT
@@ -111,6 +116,19 @@ fragments:
           type: FEATURE_REF
           valueType: STRING
           refType: ft2sub1sub1
+  dt3:
+    type: OBJECT
+    objectType: DT3
+    label: DT3
+    properties:
+      generAttribute:
+        sourcePath: generAttribute
+        type: OBJECT
+        objectType: GenerAttribute
+        label: generAttribute
+        constraints:
+          required: true
+        schema: '#/fragments/generattribute'
   ft1:
     type: OBJECT
     objectType: FT1
@@ -291,6 +309,74 @@ fragments:
           codelist: MyCodelist
           required: true
           minOccurrence: 1
+  ft4:
+    type: OBJECT
+    objectType: FT4
+    label: FT4
+    properties:
+      oid:
+        sourcePath: myidcolumn
+        type: STRING
+        role: ID
+      someGenerAttribute:
+        sourcePath: "[JSON]properties/someGenerAttribute"
+        type: OBJECT
+        objectType: GenerAttribute
+        label: someGenerAttribute
+        schema: '#/fragments/generattribute'
+      otherGenerAttribute:
+        sourcePath: "[JSON]properties/otherGenerAttribute"
+        type: OBJECT_ARRAY
+        objectType: GenerAttribute
+        label: otherGenerAttribute
+        constraints:
+          minOccurrence: 0
+        schema: '#/fragments/generattribute'
+      attDt3:
+        sourcePath: "[JSON]properties/attDt3"
+        type: OBJECT
+        objectType: DT3
+        label: attDt3
+        constraints:
+          required: true
+        schema: '#/fragments/dt3'
+  generattribute:
+    type: OBJECT
+    objectType: GenerAttribute
+    label: GenerAttribute
+    properties:
+      name:
+        sourcePath: name
+        type: STRING
+        label: name
+        constraints:
+          required: true
+      dataType:
+        sourcePath: datatype
+        type: STRING
+        label: data type
+        constraints:
+          enum:
+          - DateAttribute
+          - DoubleAttribute
+          - IntegerAttribute
+          - StringAttribute
+          - UrlAttribute
+          required: true
+      value:
+        type: VALUE
+        label: value
+        coalesce:
+        - sourcePath: value_DateAttribute
+          type: DATE
+        - sourcePath: value_double
+          type: FLOAT
+        - sourcePath: value_IntegerAttribute
+          type: INTEGER
+        - sourcePath: value_string
+          type: STRING
+        - sourcePath: value_UrlAttribute
+          type: STRING
   mixin:
     type: OBJECT
     objectType: Mixin

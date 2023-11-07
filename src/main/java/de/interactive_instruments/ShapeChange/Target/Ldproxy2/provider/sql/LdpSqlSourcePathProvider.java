@@ -960,9 +960,46 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     public String defaultSortKey() {
 	return Ldproxy2Target.primaryKeyColumn;
     }
-    
+
     @Override
     public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
+
+	if (pi.cardinality().maxOccurs == 1 && !this.encodingInfos.isEmpty()) {
+	    /*
+	     * For single valued properties, check if there is a deviation in the property
+	     * name, i.e., the name of pi is not equal to the actual property name defined
+	     * in (one of) the encoding info(s). In such a case, we need to encode the
+	     * source path within the type definition and not in the fragment, using the
+	     * source path from the encoding infos. The reason is that otherwise, the name
+	     * of pi, which is used as source path (retrieved via method
+	     * databaseColumnName(..); potentially also adding a suffix), would not be the
+	     * actual column name in the database schema.
+	     * 
+	     * An example, where this was relevant, was conversion of type CI_Date, with
+	     * property 'date', and multiplicity 1. In SQL, 'date' is a reserved keyword.
+	     * Thus, a suffix was appended to the column name in the database schema. Using
+	     * 'date' as sourcePath for property 'date' in the ldproxy provider
+	     * configuration, more specifically the fragment definition of CI_Date, would
+	     * not be correct. The situation is taken into account with this check.
+	     * 
+	     * NOTE: In the future, we could also try to check the actual value source path
+	     * given in the property encoding info. The databaseColumnName(..) methods take
+	     * into account certain suffixes, which complicates the matter.
+	     */
+	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi,
+		    (LdpSqlPropertyEncodingContext) context);
+
+	    for (SqlPropertyEncodingInfo spei : speis) {
+
+		/*
+		 * If the encoding info has an original property name, it is equal to that of
+		 * pi.
+		 */
+		if (!spei.getPropertyName().equals(pi.name())) {
+		    return false;
+		}
+	    }
+	}
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;

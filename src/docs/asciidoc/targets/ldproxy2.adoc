@@ -173,18 +173,22 @@ The following information items are added to the service configuration file:
 * api: can be provided - in form of a template - via target parameter _serviceConfigTemplatePath_; information about the modules implemented by the actual API is typically not included in the model, therefore the target uses information provided via a separate template file
 * collections: will be populated as described in section <<ldproxy2_schemaconversionrules_types>>.
 * If target parameter _enableGmlOutput_ is 'true' (default being 'false'), then API building blocks 
-as described in subsection <<ldproxy2_GML_output>> are added to the service configuration.
+as described in subsection <<ldproxy2_building_block_features_gml>> are added to the service configuration.
 
 NOTE: Members of the service configuration, whose value is equal to the default value for that member defined by ldproxy, may not actually be written to the service configuration file created by the target.
 
-[[ldproxy2_GML_output]]
-===== GML Output
+[[ldproxy2_building_block_features_gml]]
+===== Features - GML
 
-Version 3.3.0 of ldproxy supports encoding data as GML. The 
-https://docs.ldproxy.net/services/building-blocks/features_-_gml.html[ldproxy documentation] describes the 
-necessary ldproxy configuration items. The ShapeChange ldproxy target supports generating 
-these ldproxy configuration items. By setting target parameter _enableGmlOutput_ 
-to 'true', these items are generated.
+Version 3.3.0 of ldproxy supports encoding data as GML. The documentation of 
+ldproxy building block Features - GML describes relevant configuration items.
+By setting target parameter __enableFeaturesGml__ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/services/building-blocks/features_-_gml.html[Features - GML]
+to the service configuration as enabled.
+
+NOTE: The initial name of the target parameter was _enableGmlOutput_. For backwards compatibility of existing ShapeChange configurations, the old parameter name is supported 
+as an alias for _enableFeaturesGml_.
 
 The target thereby needs to know how application schema elements shall be represented in 
 XML. In other words, it needs to know how the desired XML encoding looks like. This 
@@ -330,6 +334,34 @@ collections:
       - att1
       - att2.att2
 ----------
+
+
+[[ldproxy2_building_block_features_geojson]]
+===== Features - GeoJSON
+
+By setting target parameter _enableFeaturesGeoJson_ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/features_-_geojson.html[Features - GeoJSON]
+to the service configuration as enabled.
+
+Currently, specific configuration items for this building block are added
+through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
+In the future, generation of additional configuration items for this
+building block can be supported.
+
+
+[[ldproxy2_building_block_features_jsonfg]]
+===== Features - JSON-FG
+
+By setting target parameter _enableFeaturesJsonFg_ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/features_-_json-fg.html[Features - JSON-FG]
+to the service configuration as enabled.
+
+Currently, specific configuration items for this building block are added
+through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
+In the future, generation of additional configuration items for this
+building block can be supported.
 
 
 [[ldproxy2_queryables]]
@@ -489,7 +521,7 @@ overrides in the application schema may lead to unexpected results there.
 In case of multiple inheritance, the merge items are encoded in a way
 that reflects the order in which the XML Schema target encodes supertype
 properties (also taking into account mixin encoding). This is an important
-aspect when <<ldproxy2_GML_output>> shall be supported by the resulting
+aspect when <<ldproxy2_building_block_features_gml>> shall be supported by the resulting
 ldproxy configuration.
 
 A type definition references the according fragment definition via a `schema` member.
@@ -911,7 +943,7 @@ NOTE: Additional temporal properties are encoded like all other UML properties.
 [[ldproxy2_schemaconversionrules_types_datatype]]
 ==== Data Type
 
-A \<<dataType>> is not converted to a top-level provider type definition. Instead, 
+By default, a \<<dataType>> is not converted to a top-level provider type definition. Instead, 
 the data type will be encoded as a fragment definition (if fragments are enabled,
 i.e. target parameter _enableFragments_ = `true`), and the type definition for the 
 data type is encoded whenever a property, whose value type is the data type, is encoded.
@@ -1348,6 +1380,200 @@ If __rule-ldp2-all-notEncoded__ applies to an element of the application schema,
 NOTE: How to define the encoding rule that applies to an application schema element is documented in more detail <<applying_specific_encoding_rule_to_model_element,here>>. The https://shapechange.net/resources/config/StandardRules.xml[ShapeChange configuration file StandardRules.xml] defines an encoding rule named "notEncoded", which includes __rule-ldp2-all-notEncoded__. When StandardRules.xml is included in the configuration of the ldproxy target (typically using an xinclude XML element), then by setting tagged value _ldp2EncodingRule_ to "notEncoded", one would achieve that that model element is not encoded in the ldproxy configuration files.
 
 NOTE: If a property is encountered whose value type is not encoded (__rule-ldp2-all-notEncoded__ applies to the value type), the ldproxy target will log an error and ignore the property. 
+
+
+[[ldproxy2_schemaconversionrules_specificrules]]
+=== Specific rules
+
+[[ldproxy2_schemaconversionrules_specificrules_genericvaluetypes]]
+==== Conversion of generic value types
+
+(since v2.14.0)
+
+Some domains use constructs like the one shown in 
+<<img_ldproxy2_specific_rules_generic_value_types>> 
+to add extension points to their feature types. The generic attributes
+shown in this example contain a name and a (simple) value. They provide
+a specific place for adding further information in a key-value-pair based fashion.
+
+[#img_ldproxy2_specific_rules_generic_value_types,reftext='{figure-caption} {counter:figure-num}']
+.Example schema with generic value types
+image::../images/ldp2_specificrules_genericvaluetypes.png[align="center"]
+
+There is a specific solution for supporting such structures with ldproxy.
+
+The according conversion is enabled using __rule-ldp2-cls-genericValueType__.
+The conversion rule is applied for a \<<dataType>> whose name is contained in the
+(comma-separated) value of target parameter _genericValueTypes_. The subtypes will
+automatically be taken into account (so do not list them in the parameter value). 
+For the example, `genericValueTypes=GenerAttribute` would thus suffice.
+
+////
+
+kept out for the time being; could be introduced in future
+
+NOTE: The conversion rule assumes that only the generic value types are used as
+value type by properties of other classes. If a property uses one of the generic
+value type subtypes, an error will be logged and the property is not encoded.
+
+////
+
+The provider configuration for FT4 would contain the definitions listed in 
+<<example_ldproxy2_specific_rules_generic_value_types_provider>>.
+
+[#example_ldproxy2_specific_rules_generic_value_types_provider,reftext='{listing-caption} {counter:listing-num}']
+.Generic value type encoding in the provider configuration
+[source,YAML,linenumbers]
+----
+  someGenerAttribute:
+    type: OBJECT
+    objectType: GenerAttribute
+    label: GenerAttribute
+    description: The description of type GenerAttribute.
+    properties:
+      name:
+        sourcePath: name
+        type: STRING
+        label: name
+        description: Description of attribute 'name'.
+        constraints:
+          required: true
+      dataType:
+        sourcePath: datatype
+        type: STRING
+        label: data type
+        constraints:
+          required: true
+          enum:
+          - IntegerAttribute
+          - DoubleAttribute
+          - StringAttribute
+          - DateAttribute
+          - UrlAttribute
+      value:
+        type: VALUE
+        label: value
+        coalesce:
+        - sourcePath: value_integer
+          type: INTEGER
+        - sourcePath: value_double
+          type: FLOAT
+        - sourcePath: value_string
+          type: STRING
+        - sourcePath: value_date
+          type: DATE
+        - sourcePath: value_uri
+          type: STRING
+  otherGenerAttribute:
+    type: OBJECT_ARRAY
+    objectType: GenerAttribute
+    label: GenerAttribute
+    description: The description of type GenerAttribute.
+    properties:
+      name:
+        sourcePath: name
+        type: STRING
+        label: name
+        description: Description of attribute 'name'.
+        constraints:
+          required: true
+      dataType:
+        sourcePath: datatype
+        type: STRING
+        label: data type
+        constraints:
+          required: true
+          enum:
+          - IntegerAttribute
+          - DoubleAttribute
+          - StringAttribute
+          - DateAttribute
+          - UrlAttribute
+      value:
+        type: VALUE
+        label: value
+        coalesce:
+        - sourcePath: value_IntegerAttribute
+          type: INTEGER
+        - sourcePath: value_double
+          type: FLOAT
+        - sourcePath: value_string
+          type: STRING
+        - sourcePath: value_DateAttribute
+          type: DATE
+        - sourcePath: value_UrlAttribute
+          type: STRING
+----
+
+The `sourcePath` values within value.coalesce are constructed using the template
+`{attribute name} + "_" + {suffix}` - where the suffix default is the name of the attribute
+value type. That default can be overwritten by setting tagged value 
+__ldp2GenericValueTypeSuffix__ on the attribute. In the example, that is the case for 
+the attributes StringAttribute.value as well as DoubleAttribute.value.
+
+NOTE: If fragments are enabled (target parameter `enableFragments = true`), a single
+fragment definition for GenerAttribute would be created, and referenced in the
+definitions of someGenerAttribute and otherGenerAttribute.
+
+The `sourcePath` for someGenerAttribute and otherGenerAttribute is not shown in 
+<<example_ldproxy2_specific_rules_generic_value_types_provider>>. The path would 
+be constructed as usual for any data type valued property. For further details,
+see <<ldproxy2_schemaconversionrules_properties_sourcepaths>>.
+
+NOTE: __rule-ldp2-cls-genericValueType__ only looks for a single attribute that
+is common to all subtypes of the classes identified by target 
+parameter _genericValueTypes_. Additional properties of these subtypes are ignored!
+Also, if multiple common properties exist, all will be ignored (and an error logged)!
+
+The primary purpose of the `dataType` property is to support compliant GML output.
+The enumeration is constructed with the names of the subtypes of the generic value
+type.
+If building block <<ldproxy2_building_block_features_gml>> is enabled, 
+then the service configuration
+would declare `variableObjectElementNames` (one per generic value type) 
+for building block GML, as shown in the following example.
+
+[source,YAML,linenumbers]
+----
+- buildingBlock: GML
+  enabled: true
+  variableObjectElementNames:
+    GenerAttribute:
+      property: dataType
+      mapping:
+        IntegerAttribute: ns:IntegerAttribute
+        DoubleAttribute: ns:DoubleAttribute
+        StringAttribute: ns:StringAttribute
+        DateAttribute: ns:DateAttribute
+        UrlAttribute: ns:UrlAttribute
+----
+
+NOTE: The namespace prefixes in the mappings are automatically determined by ShapeChange.
+
+Furthermore, in the <<ldproxy2_building_block_features_geojson>> and 
+<<ldproxy2_building_block_features_jsonfg>> building blocks, if enabled, 
+a transformation is added to remove property `dataType` from the according output. Example:
+
+[source,YAML,linenumbers]
+----
+  ft4:
+    id: ft4
+    label: ft4
+    enabled: true
+    api:
+    - buildingBlock: GEO_JSON
+      transformations:
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
+    - buildingBlock: JSON_FG
+      transformations:
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
+----
 
 
 [[ldproxy2_encodingrules]]

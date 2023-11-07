@@ -36,8 +36,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -55,10 +58,15 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -72,12 +80,16 @@ public class LdpPropertyEncoder {
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
+    protected LdpBuildingBlockFeaturesGeoJsonBuilder bbFeaturesGeoJsonBuilder;
+    protected LdpBuildingBlockFeaturesJsonFgBuilder bbFeaturesJsonFgBuilder;
 
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider sourcePathProvider;
 
     public LdpPropertyEncoder(Ldproxy2Target target, LdpBuildingBlockFeaturesGmlBuilder gml,
-	    LdpBuildingBlockFeaturesHtmlBuilder featuresHtml, LdpProvider ldpProvider,
+	    LdpBuildingBlockFeaturesHtmlBuilder featuresHtml,
+	    LdpBuildingBlockFeaturesGeoJsonBuilder featuresGeoJsonBuilder,
+	    LdpBuildingBlockFeaturesJsonFgBuilder featuresJsonFgBuilder, LdpProvider ldpProvider,
 	    LdpSourcePathProvider sourcePathProvider) {
 
 	this.target = target;
@@ -86,6 +98,8 @@ public class LdpPropertyEncoder {
 
 	this.bbFeaturesGmlBuilder = gml;
 	this.bbFeaturesHtmlBuilder = featuresHtml;
+	this.bbFeaturesGeoJsonBuilder = featuresGeoJsonBuilder;
+	this.bbFeaturesJsonFgBuilder = featuresJsonFgBuilder;
 
 	this.ldpProvider = ldpProvider;
 	this.sourcePathProvider = sourcePathProvider;
@@ -650,7 +664,66 @@ public class LdpPropertyEncoder {
 	    }
 	}
 
+	/*
+	 * =============
+	 * 
+	 * Handle generic value types
+	 * 
+	 * =============
+	 */
+	if (target.isGenericValueType(currentCi)) {
+	    handleGenericValueType(currentCi, propertyDefs);
+	}
+
 	return propertyDefs;
+    }
+
+    private void handleGenericValueType(ClassInfo ci, LinkedHashMap<String, FeatureSchema> propertyDefs) {
+
+	// determine common attribute in subtypes
+	Optional<String> valuePropNameOpt = GenericValueTypeUtil.commonValuePropertyOfSubtypes(ci);
+
+	if (valuePropNameOpt.isEmpty()) {
+	    result.addError(msgSource, 135, ci.name());
+	} else {
+
+	    String valuePropName = valuePropNameOpt.get();
+
+	    // create 'dataType' and common value properties
+	    SortedMap<String, ClassInfo> subtypesByName = new TreeMap<>();
+	    for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
+		subtypesByName.put(subtype.name(), subtype);
+	    }
+
+	    ImmutableFeatureSchema.Builder dataTypeMemberDef = new ImmutableFeatureSchema.Builder().name("dataType")
+		    .sourcePath(sourcePathProvider.sourcePathForDataTypeMemberOfGenericValueType()).type(Type.STRING)
+		    .label("data type");
+	    ImmutableSchemaConstraints.Builder dataTypeMemberConstraintsBuilder = new ImmutableSchemaConstraints.Builder();
+	    dataTypeMemberConstraintsBuilder.required(true);
+	    dataTypeMemberConstraintsBuilder.enumValues(subtypesByName.keySet());
+	    dataTypeMemberDef.constraints(dataTypeMemberConstraintsBuilder.build());
+	    propertyDefs.put("dataType", dataTypeMemberDef.build());
+
+	    ImmutableFeatureSchema.Builder valueMemberDef = new ImmutableFeatureSchema.Builder().name(valuePropName)
+		    .type(Type.VALUE).label(valuePropName);
+
+	    List<FeatureSchema> coalesceItems = new ArrayList<>();
+	    for (Entry<String, ClassInfo> e : subtypesByName.entrySet()) {
+		ClassInfo subtype = e.getValue();
+		PropertyInfo valueProp = subtype.property(valuePropName);
+		String suffix = StringUtils.defaultIfBlank(valueProp.taggedValue("ldp2GenericValueTypeSuffix"),
+			subtype.name());
+		Type ldpType = target.ldproxyType(valueProp);
+		ImmutableFeatureSchema.Builder item = new ImmutableFeatureSchema.Builder()
+			.name("case_" + subtype.name())
+			.sourcePath(
+				sourcePathProvider.sourcePathForValueMemberOfGenericValueType(valuePropName, suffix))
+			.type(ldpType);
+		coalesceItems.add(item.build());
+	    }
+	    valueMemberDef.coalesce(coalesceItems);
+	    propertyDefs.put(valuePropName, valueMemberDef.build());
+	}
     }
 
     private Optional<Type> valueTypeForBuilder(PropertyInfo pi, PropertyInfo identifierPi, boolean isSingleValued,
@@ -800,31 +873,35 @@ public class LdpPropertyEncoder {
 
 		ClassInfo typeCi = pi.typeClass();
 
-		SortedSet<ClassInfo> typeAndSubtypesSet = new TreeSet<>();
-		typeAndSubtypesSet.add(typeCi);
-		typeAndSubtypesSet.addAll(typeCi.subtypesInCompleteHierarchy());
+		if (!target.isGenericValueType(typeCi)) {
 
-		List<ClassInfo> typeAndSubtypes = typeAndSubtypesSet.stream()
-			.filter(actualTypeCi -> !actualTypeCi.isAbstract() && LdpInfo.isEncoded(actualTypeCi)
-				&& target.mapEntry(actualTypeCi).isEmpty())
-			.collect(Collectors.toList());
+		    SortedSet<ClassInfo> typeAndSubtypesSet = new TreeSet<>();
+		    typeAndSubtypesSet.add(typeCi);
+		    typeAndSubtypesSet.addAll(typeCi.subtypesInCompleteHierarchy());
 
-		for (ClassInfo actualTypeCi : typeAndSubtypes) {
+		    List<ClassInfo> typeAndSubtypes = typeAndSubtypesSet
+			    .stream().filter(actualTypeCi -> !actualTypeCi.isAbstract()
+				    && LdpInfo.isEncoded(actualTypeCi) && target.mapEntry(actualTypeCi).isEmpty())
+			    .collect(Collectors.toList());
 
-		    // detect circular dependency in the property path -
-		    if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == actualTypeCi)
-			    || actualTypeCi == currentCi) {
-			/*
-			 * circular paths are not supported
-			 */
-		    } else {
+		    for (ClassInfo actualTypeCi : typeAndSubtypes) {
 
-			LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context, actualTypeCi);
+			// detect circular dependency in the property path -
+			if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == actualTypeCi)
+				|| actualTypeCi == currentCi) {
+			    /*
+			     * circular paths are not supported
+			     */
+			} else {
 
-			propertyDefinitionsForServiceConfiguration(actualTypeCi, nowVisitedList, nextContext);
+			    LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context,
+				    actualTypeCi);
 
-			if (bbFeaturesGmlBuilder != null) {
-			    bbFeaturesGmlBuilder.register(actualTypeCi);
+			    propertyDefinitionsForServiceConfiguration(actualTypeCi, nowVisitedList, nextContext);
+
+			    if (bbFeaturesGmlBuilder != null) {
+				bbFeaturesGmlBuilder.register(actualTypeCi);
+			    }
 			}
 		    }
 		}
@@ -883,8 +960,37 @@ public class LdpPropertyEncoder {
 	    }
 
 	    if (bbFeaturesGmlBuilder != null) {
-
 		bbFeaturesGmlBuilder.register(pi, typeDefinitionCi, propertyPath(nowVisitedList));
+	    }
+
+	    if (bbFeaturesGeoJsonBuilder != null) {
+
+		ClassInfo typeCi = pi.typeClass();
+
+		if (typeCi != null) {
+		    if (target.isGenericValueType(typeCi)) {
+			ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+				.remove("ALWAYS").build();
+			bbFeaturesGeoJsonBuilder
+				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+					typeDefinitionCi, propertyPath(nowVisitedList) + ".dataType", trf);
+		    }
+		}
+	    }
+
+	    if (bbFeaturesJsonFgBuilder != null) {
+
+		ClassInfo typeCi = pi.typeClass();
+
+		if (typeCi != null) {
+		    if (target.isGenericValueType(typeCi)) {
+			ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+				.remove("ALWAYS").build();
+			bbFeaturesJsonFgBuilder
+				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+					typeDefinitionCi, propertyPath(nowVisitedList) + ".dataType", trf);
+		    }
+		}
 	    }
 	}
     }

@@ -29,7 +29,7 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
  *
  */
 public abstract class LdpBuildingBlockBuilder {
-
+    
     /**
      * Property transformations, to be added to the building blocks of type
      * collections in the service configuration.

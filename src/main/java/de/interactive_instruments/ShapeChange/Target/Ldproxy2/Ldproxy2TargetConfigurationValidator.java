@@ -67,28 +67,28 @@ import de.interactive_instruments.ShapeChange.Util.XMLUtil;
  */
 public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
-	    .of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE_NAME,
-		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME,
-		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
-		    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME,
-		    Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME,
-		    Ldproxy2Constants.PARAM_DATE_FORMAT,
-		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
-		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_FRAGMENTS,
-		    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
-		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
-		    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
-		    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
-		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
-		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
-		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
-		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
-		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
+	    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE_NAME,
+	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+	    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME,
+	    Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
+	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
+	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FEATURES_GEOJSON,
+	    Ldproxy2Constants.PARAM_FEATURES_JSONFG, Ldproxy2Constants.PARAM_FEATURES_GML,
+	    Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX,
+	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST,
+	    Ldproxy2Constants.PARAM_FRAGMENTS, Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES,
+	    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
+	    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
+	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
+	    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+	    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+	    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
+	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
+	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 

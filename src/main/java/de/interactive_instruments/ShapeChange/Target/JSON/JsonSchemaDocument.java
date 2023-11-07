@@ -93,6 +93,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.TypeKeyword
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcCollectionIdKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcRoleKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcUriTemplateKeyword;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
 
 /**
@@ -1473,29 +1474,40 @@ public class JsonSchemaDocument implements MessageSource {
 	 * 
 	 * =============
 	 */
-	if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
-		&& jsonSchemaTarget.genericValueTypes() != null
-		&& jsonSchemaTarget.genericValueTypes().contains(ci.name())) {
+	if (jsonSchemaTarget.isGenericValueType(ci)) {
 
-	    /*
-	     * Gather simple type infos from the properties of all subtypes. Ignore
-	     * non-simple cases (e.g., schema references) and format declarations.
-	     */
+	    // determine common attribute in subtypes
+	    Optional<String> valuePropNameOpt = GenericValueTypeUtil.commonValuePropertyOfSubtypes(ci);
 
-	    SortedSet<JsonSchemaType> typeSet = new TreeSet<>();
+	    if (valuePropNameOpt.isEmpty()) {
+		result.addError(this, 140, ci.name());
+	    } else {
 
-	    for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
-		for (PropertyInfo subPi : subtype.properties().values()) {
-		    Optional<JsonSchemaTypeInfo> jsti = identifyJsonSchemaType(subPi);
+		String valuePropName = valuePropNameOpt.get();
+
+		/*
+		 * Gather simple type infos from the value properties of all subtypes. Ignore
+		 * non-simple cases (e.g., schema references) and format declarations.
+		 */
+
+		SortedSet<JsonSchemaType> typeSet = new TreeSet<>();
+
+		for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
+		    PropertyInfo subtypeValueProp = subtype.property(valuePropName);
+		    Optional<JsonSchemaTypeInfo> jsti = identifyJsonSchemaType(subtypeValueProp);
 		    if (jsti.isPresent() && jsti.get().hasSimpleType()) {
 			typeSet.add(jsti.get().getSimpleType());
+		    } else {
+			// could be reported in the future
 		    }
 		}
-	    }
 
-	    // add new value property
-	    jsProperties.property("value", new JsonSchema().type(typeSet.toArray(new JsonSchemaType[typeSet.size()])))
-		    .required("value");
+		// add new value property
+		jsProperties
+			.property(valuePropName,
+				new JsonSchema().type(typeSet.toArray(new JsonSchemaType[typeSet.size()])))
+			.required(valuePropName);
+	    }
 	}
 
 	/*
@@ -3894,6 +3906,8 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "Value type '$1$' of primary geometry property '$2$' is not one of the GeoJSON compatible geometry types defined via target parameter "
 		    + JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES
 		    + ". No restriction will be encoded for the \"geometry\" member.";
+	case 140:
+	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
 
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;

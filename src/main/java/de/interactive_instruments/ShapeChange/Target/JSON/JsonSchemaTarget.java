@@ -648,8 +648,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public String baseJsonSchemaDefinitionForDataTypes() {
 	return baseJsonSchemaDefinitionForDataTypes;
     }
-    
-    public SortedSet<String> genericValueTypes() {	
+
+    public SortedSet<String> genericValueTypes() {
 	return genericValueTypes;
     }
 
@@ -679,6 +679,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public List<AbstractJsonSchemaAnnotationElement> getAnnotationElements() {
 	return annotationElements;
+    }
+
+    public boolean isGenericValueType(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
     }
 
     @Override
@@ -737,8 +742,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    }
 
 	} else if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
-		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci,genericValueTypes)) {
-	    
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci, genericValueTypes)) {
+
 	    result.addInfo(this, 24, ci.name());
 
 	} else if (ci.category() == Options.MIXIN || ci.category() == Options.OBJECT || ci.category() == Options.FEATURE

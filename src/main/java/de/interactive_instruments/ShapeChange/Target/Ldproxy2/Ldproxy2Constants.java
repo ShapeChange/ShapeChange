@@ -100,7 +100,12 @@ public class Ldproxy2Constants {
 
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
+    public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
+    // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
+    public static final String PARAM_FEATURES_GEOJSON = "enableFeaturesGeoJson";
+    public static final String PARAM_FEATURES_JSONFG = "enableFeaturesJsonFg";
+    public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
     public static final String PARAM_GML_SF_LEVEL = "gmlSfLevel";
     public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
     public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
@@ -136,6 +141,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_CODELIST_TARGETBYTV = "rule-ldp2-cls-codelist-targetbytaggedvalue";
     public static final String RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES = "rule-ldp2-cls-data-types-oneToMany-severalTables";
     public static final String RULE_CLS_ENUMERATION_ENUM_CONSTRAINT = "rule-ldp2-cls-enumeration-enum-constraint";
+    public static final String RULE_CLS_GENERIC_VALUE_TYPE = "rule-ldp2-cls-genericValueType";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
 

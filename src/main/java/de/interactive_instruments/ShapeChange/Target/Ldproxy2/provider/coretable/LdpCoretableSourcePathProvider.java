@@ -55,13 +55,13 @@ import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSourcePathInfos
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSpecialPropertiesInfo;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target;
-import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.AbstractLdpSourcePathProvider;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpCoretableSourcePathProvider implements LdpSourcePathProvider {
+public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvider {
 
     protected ShapeChangeResult result;
     protected Ldproxy2Target target;

@@ -45,8 +45,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
+import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
+import de.ii.ogcapi.features.jsonfg.domain.ImmutableJsonFgConfiguration;
 import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
 import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableFeatureTypeConfigurationOgcApi;
@@ -69,6 +71,10 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
@@ -89,8 +95,10 @@ public class LdpConfigBuilder {
     protected ImmutableFeatureProviderSqlData providerConfig = null;
     protected List<ImmutableCodelistData> codelists = new ArrayList<>();
 
-    protected LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder;
+    protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
+    protected LdpBuildingBlockFeaturesGeoJsonBuilder bbFeaturesGeoJsonBuilder;
+    protected LdpBuildingBlockFeaturesJsonFgBuilder bbFeaturesJsonFgBuilder;
 
     protected LdpPropertyEncoder propertyEncoder;
 
@@ -98,24 +106,31 @@ public class LdpConfigBuilder {
     protected LdpSourcePathProvider ldpSourcePathProvider;
 
     public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfgWriter cfg,
-	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockGmlBuilder, List<ClassInfo> objectFeatureMixinAndDataTypes,
-	    SortedSet<ClassInfo> codelistsAndEnumerations, LdpProvider ldpProvider,
-	    LdpSourcePathProvider ldpSourcePathProvider) {
+	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockFeaturesGmlBuilder,
+	    LdpBuildingBlockFeaturesGeoJsonBuilder buldingBlockGeoJsonBuilder,
+	    LdpBuildingBlockFeaturesJsonFgBuilder buldingBlockJsonFgBuilder,
+	    List<ClassInfo> objectFeatureMixinAndDataTypes, SortedSet<ClassInfo> codelistsAndEnumerations,
+	    LdpProvider ldpProvider, LdpSourcePathProvider ldpSourcePathProvider) {
 
 	this.target = target;
 	this.result = target.result;
 
 	this.cfg = cfg;
-	this.bbGmlBuilder = buldingBlockGmlBuilder;
+	this.bbFeaturesGmlBuilder = buldingBlockFeaturesGmlBuilder;
 	this.bbFeaturesHtmlBuilder = new LdpBuildingBlockFeaturesHtmlBuilder();
-	this.propertyEncoder = new LdpPropertyEncoder(target, buldingBlockGmlBuilder, bbFeaturesHtmlBuilder,
-		ldpProvider, ldpSourcePathProvider);
+	this.bbFeaturesGeoJsonBuilder = buldingBlockGeoJsonBuilder;
+	this.bbFeaturesJsonFgBuilder = buldingBlockJsonFgBuilder;
+
+	this.ldpProvider = ldpProvider;
+	this.ldpSourcePathProvider = ldpSourcePathProvider;
+
+	this.propertyEncoder = new LdpPropertyEncoder(this.target, this.bbFeaturesGmlBuilder,
+		this.bbFeaturesHtmlBuilder, this.bbFeaturesGeoJsonBuilder, this.bbFeaturesJsonFgBuilder,
+		this.ldpProvider, this.ldpSourcePathProvider);
 
 	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
 
-	this.ldpProvider = ldpProvider;
-	this.ldpSourcePathProvider = ldpSourcePathProvider;
     }
 
     public void process() {
@@ -209,9 +224,9 @@ public class LdpConfigBuilder {
 
 		providerFragmentDefinitions.put(fragmentName, fragmentBuilder.build());
 
-		if (bbGmlBuilder != null) {
+		if (bbFeaturesGmlBuilder != null) {
 		    // note: we also track namespaces for mixins
-		    bbGmlBuilder.register(ci);
+		    bbFeaturesGmlBuilder.register(ci);
 		}
 	    }
 	}
@@ -286,8 +301,8 @@ public class LdpConfigBuilder {
 
 	    propertyEncoder.propertyDefinitionsForServiceConfiguration(ci, new ArrayList<PropertyInfo>(), pec);
 
-	    if (bbGmlBuilder != null) {
-		bbGmlBuilder.register(ci);
+	    if (bbFeaturesGmlBuilder != null) {
+		bbFeaturesGmlBuilder.register(ci);
 	    }
 
 	    providerTypeDefinitions.put(typeDefName, typeDefBuilder.build());
@@ -341,9 +356,22 @@ public class LdpConfigBuilder {
 		    .createConfigurationForServiceCollection(cfg, ci);
 	    extensionConfigurations.add(featuresHtmlConfig);
 
-	    if (bbGmlBuilder != null) {
-		ImmutableGmlConfiguration gmlConfig = bbGmlBuilder.createGmlConfigurationForServiceCollection(cfg, ci);
+	    if (bbFeaturesGmlBuilder != null) {
+		ImmutableGmlConfiguration gmlConfig = bbFeaturesGmlBuilder
+			.createGmlConfigurationForServiceCollection(cfg, ci);
 		extensionConfigurations.add(gmlConfig);
+	    }
+
+	    if (bbFeaturesGeoJsonBuilder != null) {
+		ImmutableGeoJsonConfiguration geoJsonConfig = bbFeaturesGeoJsonBuilder
+			.createConfigurationForServiceCollection(cfg, ci);
+		extensionConfigurations.add(geoJsonConfig);
+	    }
+
+	    if (bbFeaturesJsonFgBuilder != null) {
+		ImmutableJsonFgConfiguration jsonFgConfig = bbFeaturesJsonFgBuilder
+			.createConfigurationForServiceCollection(cfg, ci);
+		extensionConfigurations.add(jsonFgConfig);
 	    }
 
 	    ImmutableFeatureTypeConfigurationOgcApi serviceCollDef = new ImmutableFeatureTypeConfigurationOgcApi.Builder()
@@ -364,10 +392,10 @@ public class LdpConfigBuilder {
 
 	ImmutableResourcesConfiguration.Builder resourcesBuilder = null;
 
-	if (bbGmlBuilder != null) {
-	    bbGmlBuilder.createServiceConfigurationBuilders(cfg);
-	    gmlBuilder = bbGmlBuilder.getServiceConfigGmlConfigurationBuilder();
-	    resourcesBuilder = bbGmlBuilder.getServiceConfigResourcesConfigurationBuilder();
+	if (bbFeaturesGmlBuilder != null) {
+	    bbFeaturesGmlBuilder.createServiceConfigurationBuilders(cfg);
+	    gmlBuilder = bbFeaturesGmlBuilder.getServiceConfigGmlConfigurationBuilder();
+	    resourcesBuilder = bbFeaturesGmlBuilder.getServiceConfigResourcesConfigurationBuilder();
 	}
 
 	ImmutableQueryablesConfiguration.Builder queryablesBuilder = null;

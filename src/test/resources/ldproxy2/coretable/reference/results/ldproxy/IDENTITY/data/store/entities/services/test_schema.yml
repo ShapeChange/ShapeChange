@@ -17,6 +17,15 @@ api:
   defaultNamespace: t
   schemaLocations:
     t: "{{serviceUrl}}/resources/test.xsd"
+  variableObjectElementNames:
+    GenerAttribute:
+      property: dataType
+      mapping:
+        DateAttribute: t:DateAttribute
+        DoubleAttribute: t:DoubleAttribute
+        IntegerAttribute: t:IntegerAttribute
+        StringAttribute: t:StringAttribute
+        UrlAttribute: t:UrlAttribute
   gmlIdPrefix: _
 - buildingBlock: QUERYABLES
   enabled: true
@@ -29,6 +38,8 @@ collections:
     - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
   ft2:
     id: ft2
     label: ft2
@@ -37,6 +48,8 @@ collections:
     - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
   ft2sub1sub1:
     id: ft2sub1sub1
     label: ft2sub1sub1
@@ -45,6 +58,8 @@ collections:
     - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
   ft3:
     id: ft3
     label: ft3
@@ -62,6 +77,32 @@ collections:
         - codelist: MyCodelist
     - buildingBlock: GML
       conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  ft4:
+    id: ft4
+    label: ft4
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+      transformations:
+        attDt3.generAttribute.dataType:
+        - remove: ALWAYS
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
+    - buildingBlock: JSON_FG
+      transformations:
+        attDt3.generAttribute.dataType:
+        - remove: ALWAYS
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
   t:
     id: t
     label: t
@@ -70,3 +111,5 @@ collections:
     - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG

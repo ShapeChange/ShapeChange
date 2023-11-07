@@ -35,6 +35,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -76,8 +77,12 @@ import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlProvider;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
 import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
@@ -104,34 +109,37 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //    protected static String documentationNoValue = null;
 
     public static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
-    static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
-    static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
-    static String dateFormat = null; // no default value
-    static String dateTimeFormat = null; // no default value
-    static String descriptionTemplate = "[[definition]]";
-    static String descriptorNoValue = "";
-    static boolean enableFragments = false;
-    static boolean enableGmlOutput = false;
-    static Force forceAxisOrder = Force.NONE;
+    public static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
+    public static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
+    public static String dateFormat = null; // no default value
+    public static String dateTimeFormat = null; // no default value
+    public static String descriptionTemplate = "[[definition]]";
+    public static String descriptorNoValue = "";
+    public static boolean enableFragments = false;
+    public static boolean enableFeaturesGml = false;
+    public static boolean enableFeaturesGeoJson = false;
+    public static boolean enableFeaturesJsonFg = false;
+    public static Force forceAxisOrder = Force.NONE;
     public static String foreignKeyColumnSuffix = "";
     public static String reflexiveRelationshipFieldSuffix = null;
     public static String foreignKeyColumnSuffixDatatype = "";
     public static String foreignKeyColumnSuffixCodelist = "";
+    public static SortedSet<String> genericValueTypes = null;
 
-    static String labelTemplate = "[[alias]]";
+    public static String labelTemplate = "[[alias]]";
     public static int maxNameLength = 63;
-    static ZoneId nativeTimeZone = null;
-    static String objectIdentifierName = "oid";
+    public static ZoneId nativeTimeZone = null;
+    public static String objectIdentifierName = "oid";
     public static String primaryKeyColumn = "id";
-    static SortedSet<String> queryablesFromConfig = new TreeSet<>();
-    static String serviceConfigTemplatePathString = null;
-    static String serviceDescription = "FIXME";
-    static String serviceLabel = "FIXME";
-    static int srid = 4326;
-    static String uomTvName = null;
+    public static SortedSet<String> queryablesFromConfig = new TreeSet<>();
+    public static String serviceConfigTemplatePathString = null;
+    public static String serviceDescription = "FIXME";
+    public static String serviceLabel = "FIXME";
+    public static int srid = 4326;
+    public static String uomTvName = null;
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
 
-    static SortedSet<String> dbSchemaNames = new TreeSet<String>();
+    public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
     public static String coretableName = "features";
     public static String coretableIdColumnName = null;
@@ -139,12 +147,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String coretableFeatureTypeColumnName = "featuretype";
     public static String coretableGeometryColumnName = "geom";
 
-    static boolean isUnitTest = false;
+    public static boolean isUnitTest = false;
 
-    static String outputDirectory = null;
-    static File dataDirectoryFile = null;
-    static String mainId = null;
-    static PackageInfo mainAppSchema = null;
+    public static String outputDirectory = null;
+    public static File dataDirectoryFile = null;
+    public static String mainId = null;
+    public static PackageInfo mainAppSchema = null;
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -155,9 +163,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     static List<ClassInfo> objectFeatureMixinAndDataTypes = new ArrayList<>();
     static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
 
-    static LdproxyCfgWriter cfg = null;
+    public static LdproxyCfgWriter cfg = null;
 
-    static LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder = null;
+    public static LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder = null;
+    public static LdpBuildingBlockFeaturesGeoJsonBuilder bbGeoJsonBuilder = null;
+    public static LdpBuildingBlockFeaturesJsonFgBuilder bbJsonFgBuilder = null;
 
     /* ------ */
     /*
@@ -263,6 +273,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    foreignKeyColumnSuffixCodelist = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, "", false, true);
 
+	    genericValueTypes = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES, null, false, true));
+
 	    labelTemplate = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    "[[alias]]", false, true);
 
@@ -310,10 +323,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    // GML relevant parameters
 
-	    enableGmlOutput = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_GML_OUTPUT,
-		    false);
+	    if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_FEATURES_GML)) {
+		enableFeaturesGml = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_FEATURES_GML, false);
+	    } else if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_GML_OUTPUT)) {
+		enableFeaturesGml = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_OUTPUT, false);
+	    }
 
-	    if (enableGmlOutput) {
+	    if (enableFeaturesGml) {
 
 		String gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_ID_PREFIX, null, false, true);
@@ -363,6 +381,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
 			gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
 			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
+	    }
+
+	    enableFeaturesGeoJson = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, false);
+
+	    if (enableFeaturesGeoJson) {
+		bbGeoJsonBuilder = new LdpBuildingBlockFeaturesGeoJsonBuilder();
+	    }
+
+	    enableFeaturesJsonFg = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FEATURES_JSONFG, false);
+
+	    if (enableFeaturesJsonFg) {
+		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder();
 	    }
 
 	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
@@ -431,6 +463,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
+	    createStoreDirectory(dataDirectoryPath);
 	    cfg = LdproxyCfgWriter.create(dataDirectoryPath, true);
 	}
 
@@ -438,6 +471,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	 * Required to be performed for each application schema
 	 */
 	result.addDebug(this, 10001, pi.name());
+    }
+
+    public static void createStoreDirectory(Path dataDirectoryPath) {
+	try {
+	    Files.createDirectories(dataDirectoryPath.resolve("store/entities/providers"));
+	} catch (IOException e) {
+	    /*
+	     * The statement has only been added to avoid the following warning from the
+	     * ldproxy-cfg-lib: [main] WARN de.ii.xtraplatform.store.app.EventStoreDefault -
+	     * Store source FS[store] not found.
+	     */
+	}
     }
 
     @Override
@@ -488,14 +533,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	 * that is mapped to a simple ldproxy type; if so, ci is a basic type.
 	 */
 
-	/*
-	 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-	 * time being, we keep the approach with type flattening. 2023-06-23 JE: In
-	 * other words, unions are not supported, but data types are.
-	 */
-	if (!enableFragments && ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
+	if (ci.category() == Options.DATATYPE && ci.matches(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci, genericValueTypes)) {
+
+	    result.addInfo(this, 24, ci.name());
+
+	} else if (!enableFragments && ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
 
 	    // ignore here - will be encoded as needed
+
+	    /*
+	     * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
+	     * time being, we keep the approach with type flattening. 2023-06-23 JE: In
+	     * other words, unions are not supported, but data types are.
+	     */
 
 	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
 		|| (enableFragments && (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE))) {
@@ -677,8 +728,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		sourcePathProvider = new LdpSqlSourcePathProvider(this);
 	    }
 
-	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder,
-		    objectFeatureMixinAndDataTypes, codelistsAndEnumerations, provider, sourcePathProvider);
+	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder, bbGeoJsonBuilder,
+		    bbJsonFgBuilder, objectFeatureMixinAndDataTypes, codelistsAndEnumerations, provider,
+		    sourcePathProvider);
 
 	    configBuilder.process();
 
@@ -819,6 +871,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
+    public boolean isGenericValueType(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
+    }
+
     @Override
     public void reset() {
 
@@ -847,6 +904,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffix = "";
 	foreignKeyColumnSuffixDatatype = "";
 	foreignKeyColumnSuffixCodelist = "";
+	genericValueTypes = null;
 	labelTemplate = "[[alias]]";
 	maxNameLength = 63;
 	nativeTimeZone = null;
@@ -864,9 +922,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	mainId = null;
 	mainAppSchema = null;
 
-	enableGmlOutput = false;
+	enableFeaturesGml = false;
+	enableFeaturesGeoJson = false;
+	enableFeaturesJsonFg = false;
 	uomTvName = null;
 	bbGmlBuilder = null;
+	bbGeoJsonBuilder = null;
+	bbJsonFgBuilder = null;
 	sqlEncodingInfos = new SqlEncodingInfos();
 
 	mapEntryParamInfos = null;
@@ -899,6 +961,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES);
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);
+	r.addRule(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
     }
@@ -962,6 +1025,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
 	    return "";
+	case 24:
+	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 
 	case 100:
 	    return Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT
@@ -1038,6 +1103,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 134:
 	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
+	case 135:
+	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
@@ -1047,5 +1114,4 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "(" + Ldproxy2Target.class.getName() + ") Unknown message with number: " + mnr;
 	}
     }
-
 }

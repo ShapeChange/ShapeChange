@@ -31,9 +31,15 @@
  */
 package de.interactive_instruments.ShapeChange.Util;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
+import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -59,5 +65,36 @@ public class GenericValueTypeUtil {
 	}
 
 	return aSupertypeIsAGenericValueType;
+    }
+
+    public static Optional<String> commonValuePropertyOfSubtypes(ClassInfo genericValueType) {
+
+	List<Set<String>> propNameSets = new ArrayList<>();
+
+	for (ClassInfo subtype : genericValueType.subtypesInCompleteHierarchy()) {
+	    Set<String> propNames = new HashSet<>();
+	    for (PropertyInfo subPi : subtype.properties().values()) {
+		propNames.add(subPi.name());
+	    }
+	    propNameSets.add(propNames);
+	}
+
+	if (propNameSets.isEmpty()) {
+	    return Optional.empty();
+	} else {
+
+	    Set<String> intersection = propNameSets.get(0);
+
+	    for (int i = 1; i < propNameSets.size(); i++) {
+		Set<String> nextSet = propNameSets.get(i);
+		intersection.retainAll(nextSet);
+	    }
+
+	    if (intersection.size() == 1) {
+		return Optional.of(intersection.iterator().next());
+	    } else {
+		return Optional.empty();
+	    }
+	}
     }
 }

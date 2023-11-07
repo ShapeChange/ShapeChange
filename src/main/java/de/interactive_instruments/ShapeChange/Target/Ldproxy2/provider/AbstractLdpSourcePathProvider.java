@@ -11,4 +11,12 @@ public abstract class AbstractLdpSourcePathProvider implements LdpSourcePathProv
 	return LdpInfo.isTypeWithIdentityValueType(pi)
 		&& pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
     }
+    
+    public String sourcePathForDataTypeMemberOfGenericValueType() {
+	return "datatype";
+    }
+    
+    public String sourcePathForValueMemberOfGenericValueType(String valuePropertyName, String suffix) {
+	return valuePropertyName + "_" + suffix;
+    }
 }

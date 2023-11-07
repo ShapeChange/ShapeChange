@@ -12,6 +12,7 @@
 	<MapEntry type="Time" rule="*" targetType="STRING" param=""/>
 	<MapEntry type="Year" rule="*" targetType="INTEGER" param=""/>
 	<MapEntry type="URI" rule="*" targetType="STRING" param=""/>
+	<MapEntry type="URL" rule="*" targetType="STRING" param=""/>
 	<MapEntry type="Measure" rule="*" targetType="FLOAT" param=""/>
 	<MapEntry type="Distance" rule="*" targetType="FLOAT" param=""/>
 	<MapEntry type="Length" rule="*" targetType="FLOAT" param=""/>

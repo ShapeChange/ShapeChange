@@ -29,13 +29,13 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.service;
 
 import java.util.List;
 import java.util.SortedMap;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
-import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
+import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 
@@ -43,21 +43,19 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder {
+public class LdpBuildingBlockFeaturesGeoJsonBuilder extends LdpBuildingBlockBuilder {
 
-    public ImmutableFeaturesHtmlConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+    public ImmutableGeoJsonConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
 
-	ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension().featuresHtml();
-
-	fhtmlBuilder.featureTitleTemplate(LdpInfo.featureTitleTemplate(ci));
+	ImmutableGeoJsonConfiguration.Builder bbBuilder = cfg.builder().ogcApiExtension().geoJson();
 
 	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
 	    SortedMap<String, List<PropertyTransformation>> featuresHtmlPropertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
 		    .get(ci);
-	    fhtmlBuilder.transformations(featuresHtmlPropertyTransformations);
+	    bbBuilder.transformations(featuresHtmlPropertyTransformations);
 	}
 
-	return fhtmlBuilder.build();
+	return bbBuilder.build();
     }
 
 }

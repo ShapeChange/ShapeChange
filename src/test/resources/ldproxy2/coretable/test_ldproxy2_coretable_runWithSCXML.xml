@@ -2942,6 +2942,12 @@
                          xmlTypeContent="complex"
                          xmlTypeType="complex"
                          xsdEncodingRules="*"/>
+            <XsdMapEntry type="URI"
+                         xmlPropertyType="anyURI"
+                         xmlType="anyURI"
+                         xmlTypeContent="simple"
+                         xmlTypeType="simple"
+                         xsdEncodingRules="*"/>
          </xsdMapEntries>
          <xmlNamespaces>
             <XmlNamespace location="https://shapechange.net/test/schema/external.xsd"
@@ -2973,9 +2979,12 @@
          <targetParameter name="coretableFeatureTypeColumnName" value="myfeaturetypecolumn"/>
          <targetParameter name="coretableGeometryColumnName" value="mygeometrycolumn"/>
          <targetParameter name="enableFragments" value="true"/>
-         <targetParameter name="enableGmlOutput" value="true"/>
+         <targetParameter name="enableFeaturesGml" value="true"/>
+         <targetParameter name="enableFeaturesGeoJson" value="true"/>
+         <targetParameter name="enableFeaturesJsonFg" value="true"/>
          <targetParameter name="gmlIdPrefix" value="_"/>
          <targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+         <targetParameter name="genericValueTypes" value="GenerAttribute"/>
          <targetParameter name="_unitTestOverride" value="true"/>
          <targetParameter name="defaultEncodingRule" value="ldptest1"/>
          <rules>
@@ -2985,6 +2994,7 @@
                <rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
                <rule name="rule-ldp2-all-queryables"/>
                <rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+               <rule name="rule-ldp2-cls-genericValueType"/>
             </EncodingRule>
          </rules>
          <rules>
@@ -3091,6 +3101,7 @@
             <MapEntry param="" rule="*" targetType="STRING" type="Time"/>
             <MapEntry param="" rule="*" targetType="INTEGER" type="Year"/>
             <MapEntry param="" rule="*" targetType="STRING" type="URI"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="URL"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Measure"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Distance"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Length"/>
@@ -3207,6 +3218,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>

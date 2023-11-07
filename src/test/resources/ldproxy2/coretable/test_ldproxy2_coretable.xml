@@ -36,6 +36,7 @@
 				<XsdMapEntry type="ExtFT1" xsdEncodingRules="*" xmlType="ext:ExtFT1Type" xmlElement="ext:ExtFT1" xmlPropertyType="ext:ExtFT1PropertyType"/>
 				<XsdMapEntry type="ExtFT2" xsdEncodingRules="*" xmlType="ext:ExtFT2Type" xmlElement="ext:ExtFT2" xmlPropertyType="ext:ExtFT2PropertyType"/>
 				<XsdMapEntry type="ExtFT3" xsdEncodingRules="*" xmlType="ext:ExtFT3Type" xmlElement="ext:ExtFT3" xmlPropertyType="ext:ExtFT3PropertyType"/>
+				<XsdMapEntry type="URI" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="*"/>
 			</xsdMapEntries>
 			<xmlNamespaces>
 				<XmlNamespace nsabr="ext" ns="https://shapechange.net/test/schema/external" location="https://shapechange.net/test/schema/external.xsd"/>
@@ -63,7 +64,9 @@
 			<targetParameter name="coretableFeatureTypeColumnName" value="myfeaturetypecolumn"/>
 			<targetParameter name="coretableGeometryColumnName" value="mygeometrycolumn"/>
 			<targetParameter name="enableFragments" value="true"/>
-			<targetParameter name="enableGmlOutput" value="true"/>
+			<targetParameter name="enableFeaturesGml" value="true"/>
+			<targetParameter name="enableFeaturesGeoJson" value="true"/>
+			<targetParameter name="enableFeaturesJsonFg" value="true"/>
 			<targetParameter name="gmlIdPrefix" value="_"/>
 			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything 
 				other than sf:FeatureCollection. -->
@@ -72,6 +75,7 @@
 			<!-- <targetParameter name="featureMemberElementName" value="wfs:member"/> -->
 			<!-- <targetParameter name="supportsStandardResponseParameters" value="true"/> -->
 			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="genericValueTypes" value="GenerAttribute"/>
 			<targetParameter name="_unitTestOverride" value="true"/>
 			<targetParameter name="defaultEncodingRule" value="ldptest1"/>
 			<rules>
@@ -81,6 +85,7 @@
 					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
 					<rule name="rule-ldp2-all-queryables"/>
 					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-cls-genericValueType"/>
 				</EncodingRule>
 			</rules>
 			<xi:include href="src/main/resources/config/StandardRules.xml"/>

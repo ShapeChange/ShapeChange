@@ -687,10 +687,15 @@ The JSON Schema definition for GenerAttribute, in plain JSON encoding, would be 
 }
 ----
 
-Only the plain type information from the value types of the common `value`
-property of the subtypes contributes to the type definition of property
-"value". Any JSON Schema format keywords, defined for such value types,
+Only the plain type information from the value types of the common value
+property of the subtypes contributes to the type definition of the according
+JSON property. Any JSON Schema format keywords, defined for such value types,
 are ignored.
+
+NOTE: __rule-json-cls-genericValueType__ only looks for a single attribute that
+is common to all subtypes of the classes identified by target 
+parameter _genericValueTypes_. Additional properties of these subtypes are ignored!
+Also, if multiple common properties exist, all will be ignored (and an error logged)!
 
 The resulting JSON definition of GenerAttribute supports encoding of 
 values for any of the actual subtypes of GenerAttribute.

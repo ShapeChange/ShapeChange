@@ -29,7 +29,7 @@
  * 53115 Bonn
  * Germany
  */
-package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
+package de.interactive_instruments.ShapeChange.Target.Ldproxy2.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
+import de.ii.ogcapi.features.gml.domain.ImmutableVariableName;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
@@ -56,6 +57,8 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 
 /**
@@ -69,6 +72,8 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 
     protected PackageInfo mainAppSchema;
     protected Model model;
+
+    protected Ldproxy2Target target;
 
     protected SortedMap<String, String> gmlNsabrByNs = new TreeMap<>();
     protected SortedMap<String, String> gmlObjectTypeNamespacesMap = new TreeMap<>();
@@ -84,12 +89,14 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected String gmlFeatureMemberElementName = null;
     protected boolean gmlSupportsStandardResponseParameters = false;
 
+    protected SortedMap<String, ClassInfo> genericValueTypes = new TreeMap<>();
+
     protected XmlEncodingInfos xmlEncodingInfos = null;
 
     protected ImmutableGmlConfiguration.Builder scConfigGmlBuilder = null;
     protected ImmutableResourcesConfiguration.Builder scConfigResourcesBuilder = null;
 
-    public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, MessageSource msgSource,
+    public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, Ldproxy2Target target,
 	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, int gmlSfLevel,
 	    String gmlFeatureCollectionElementName, String gmlFeatureMemberElementName,
 	    boolean gmlSupportsStandardResponseParameters, XmlEncodingInfos xmlEncodingInfos) {
@@ -97,7 +104,8 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	super();
 
 	this.result = result;
-	this.msgSource = msgSource;
+	this.msgSource = target;
+	this.target = target;
 
 	this.mainAppSchema = mainAppSchema;
 	this.model = model;
@@ -302,9 +310,14 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     }
 
     public void register(ClassInfo ci) {
+
 	String nsabr = gmlNsabr(gmlXmlNamespace(ci));
 	if (!nsabr.equals(Ldproxy2Target.mainAppSchema.xmlns())) {
 	    gmlObjectTypeNamespacesMap.put(LdpInfo.originalClassName(ci), nsabr);
+	}
+
+	if (target.isGenericValueType(ci)) {
+	    genericValueTypes.put(ci.name(), ci);
 	}
     }
 
@@ -368,6 +381,20 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    scConfigGmlBuilder.featureMemberElementName(gmlFeatureMemberElementName);
 	}
 	scConfigGmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
+
+	if (!genericValueTypes.isEmpty()) {
+	    for (ClassInfo gvt : genericValueTypes.values()) {
+		ImmutableVariableName.Builder ivn = new ImmutableVariableName.Builder();
+		ivn.property("dataType");
+		SortedMap<String, String> mapping = new TreeMap<>();
+		for (ClassInfo subtype : gvt.subtypesInCompleteHierarchy()) {
+		    String nsabr = gmlNsabr(subtype.pkg().targetNamespace());
+		    mapping.put(subtype.name(), nsabr + ":" + subtype.name());
+		}
+		ivn.mapping(mapping);
+		scConfigGmlBuilder.putVariableObjectElementNames(gvt.name(), ivn.build());
+	    }
+	}
     }
 
     public ImmutableGmlConfiguration createGmlConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
