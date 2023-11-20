@@ -240,6 +240,17 @@ public class LdpInfo {
 	    return titleAtt != null;
 	}
     }
+    
+    public static boolean valueTypeHasValidLdpTypeAttributeTag(PropertyInfo pi) {
+
+	ClassInfo typeCi = pi.typeClass();
+	if (typeCi == null) {
+	    return false;
+	} else {
+	    PropertyInfo titleAtt = getTypeAttribute(typeCi);
+	    return titleAtt != null;
+	}
+    }
 
     /**
      * @param ci - tbd
@@ -251,6 +262,23 @@ public class LdpInfo {
 	PropertyInfo result = null;
 
 	String titleAttName = ci.taggedValue("ldpTitleAttribute");
+	if (StringUtils.isNotBlank(titleAttName)) {
+	    result = ci.property(titleAttName.trim());
+	}
+
+	return result;
+    }
+    
+    /**
+     * @param ci - tbd
+     * @return the attribute of ci whose name is equal to the value of tag
+     *         ldpTypeAttribute on ci
+     */
+    public static PropertyInfo getTypeAttribute(ClassInfo ci) {
+
+	PropertyInfo result = null;
+
+	String titleAttName = ci.taggedValue("ldpTypeAttribute");
 	if (StringUtils.isNotBlank(titleAttName)) {
 	    result = ci.property(titleAttName.trim());
 	}

@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -112,8 +113,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 	    for (SqlPropertyEncodingInfo spei : speis) {
 
-		String sourcePath;
-		Type valueType = null;
+		Optional<String> idSourcePath = Optional.empty();
+		Optional<String> valueSourcePath = Optional.empty();
+		Optional<Type> idValueType = Optional.empty();
 		String refType = null;
 		String refUriTemplate = null;
 		String targetTable = spei.getTargetTable();
@@ -122,36 +124,33 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
 			&& pme.hasTargetType()) {
 
+		    // the property value type is mapped
+
 		    if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
 			refUriTemplate = urlTemplateForValueType(pi);
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-			    sourcePath = spei.getIdSourcePath();
-			    valueType = determineIdValueType(spei.getIdValueType());
-			} else {
-			    sourcePath = spei.getValueSourcePath();
+			    idSourcePath = Optional.of(spei.getIdSourcePath());
+			    idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
 			}
 		    } else {
-			sourcePath = spei.getValueSourcePath();
+			valueSourcePath = Optional.of(spei.getValueSourcePath());
 		    }
 
 		} else {
 
+		    // the property value type is not mapped - so is available in the database
+
+		    valueSourcePath = Optional.of(spei.getValueSourcePath());
+
 		    if (isImplementedAsFeatureReference(pi)) {
-			sourcePath = spei.getIdSourcePath();
-			valueType = determineIdValueType(spei.getIdValueType());
+			idSourcePath = Optional.of(spei.getIdSourcePath());
+			idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
 			refType = spei.getPropertyValueType().toLowerCase(Locale.ENGLISH);
-		    } else {
-			sourcePath = spei.getValueSourcePath();
 		    }
 		}
 
-		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo();
-		spi.sourcePath = sourcePath;
-		spi.valueType = valueType;
-		spi.refType = refType;
-		spi.refUriTemplate = refUriTemplate;
-		spi.targetTable = targetTable;
-		spi.targetsSingleValue = targetsSingleValue;
+		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
+			refUriTemplate, targetsSingleValue, targetTable);
 		spRes.addSourcePathInfo(spi);
 	    }
 	}
@@ -164,8 +163,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	    return spRes;
 	}
 
-	String sourcePath = "";
-	Type valueType = null;
+	Optional<String> idSourcePath = Optional.empty();
+	Optional<String> valueSourcePath = Optional.empty();
+	Optional<Type> idValueType = null;
 	String refType = null;
 	String refUriTemplate = null;
 	String targetTable = null;
@@ -178,30 +178,48 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
 
 		    // the target only allows and thus assumes max mult = 1
-		    sourcePath = databaseColumnName(pi);
+		    valueSourcePath = Optional.of(databaseColumnName(pi));
 		    targetsSingleValue = true;
 
 		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
 
+		    // property type is mapped to LINK
+
 		    String tableName = databaseTableNameForMappedValueType(pi);
 		    targetTable = tableName;
+
+		    // TODO: PK Column of target table not yet configurable
+		    // -> define primary key column for table mapping
+//		    String pkTargetTable = Ldproxy2Target.primaryKeyColumn;
+
 		    refUriTemplate = urlTemplateForValueType(pi);
 
 		    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 
 			// feature ref encoding
 			if (pi.cardinality().maxOccurs == 1) {
-			    sourcePath = databaseColumnName(pi);
+			    idSourcePath = Optional.of(databaseColumnName(pi));
+//	an actual value is not available in this case		   
+			    // valueSourcePath = "[" + databaseColumnName(pi) + "=" + pkTargetTable + "]" +
+			    // targetTable;
 			} else {
-			    sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+
+			    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi, alreadyVisitedPiList) + "/" + tableName
-				    + Ldproxy2Target.associativeTableColumnSuffix;
+				    + associativeTableName(pi, alreadyVisitedPiList);
+
+//				an actual value is not available in this case
+//			    valueSourcePath = baseSourcePath + "/[" + targetTable
+//				    + Ldproxy2Target.associativeTableColumnSuffix + "=" + pkTargetTable + "]"
+//				    + targetTable;
+
+			    idSourcePath = Optional.of(
+				    baseSourcePath + "/" + targetTable + Ldproxy2Target.associativeTableColumnSuffix);
 			}
 
 			// TODO determine value type via new map entry characteristic
 			// Right now, we always use Integer for types mapped as LINK
-			valueType = Type.INTEGER;
+			idValueType = Optional.of(Type.INTEGER);
 
 		    } else {
 
@@ -211,13 +229,11 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    // no source path to add on property level
 			} else {
 
-			    // NOTE: PK Column of target table not yet configurable
-
-			    sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+			    valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
 				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
 				    + associativeTableName(pi, alreadyVisitedPiList) + "/[" + tableName
 				    + Ldproxy2Target.associativeTableColumnSuffix + "="
-				    + Ldproxy2Target.primaryKeyColumn + "]" + tableName;
+				    + Ldproxy2Target.primaryKeyColumn + "]" + tableName);
 			}
 		    }
 
@@ -226,7 +242,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		    // value type is a simple ldproxy type
 		    if (pi.cardinality().maxOccurs == 1) {
 
-			sourcePath = databaseColumnName(pi);
+			valueSourcePath = Optional.of(databaseColumnName(pi));
 
 		    } else {
 
@@ -235,19 +251,22 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
 			    sortKeyAddition = "";
 			}
-			sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+			valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
 				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
 				+ associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/"
-				+ databaseColumnName(pi);
+				+ databaseColumnName(pi));
 		    }
 		}
 
 	    } else {
 		// is checked via target configuration validator (which can be switched off)
 		result.addError(msgSource, 118, typeName);
-		sourcePath = "FIXME";
+		valueSourcePath = Optional.of("FIXME");
 	    }
+
 	} else {
+
+	    // property type is NOT mapped
 
 	    ClassInfo typeCi = pi.typeClass();
 
@@ -257,7 +276,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		if (mc != null) {
 		    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
 		}
-		sourcePath = "FIXME";
+		valueSourcePath = Optional.of("FIXME");
 
 	    } else {
 
@@ -269,7 +288,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			 * Note: Addition of code list foreign key suffix is handled in method
 			 * databaseColumnName(..).
 			 */
-			sourcePath = databaseColumnName(pi);
+			valueSourcePath = Optional.of(databaseColumnName(pi));
 
 		    } else {
 
@@ -291,7 +310,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			}
 
 			String path = path1 + path2;
-			sourcePath = path;
+			valueSourcePath = Optional.of(path);
 		    }
 
 		} else if (typeCi.category() == Options.DATATYPE) {
@@ -300,8 +319,8 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			targetTable = associativeTableName(pi, alreadyVisitedPiList);
 
-			sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]" + targetTable;
+			valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]" + targetTable);
 
 		    } else {
 
@@ -309,15 +328,15 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			if (pi.cardinality().maxOccurs == 1) {
 
-			    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				    + targetTable;
+			    valueSourcePath = Optional.of(
+				    "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 			} else {
 
-			    sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+			    valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
 				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
 				    + associativeTableName(pi, alreadyVisitedPiList) + "/["
 				    + sqlProviderHelper.databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi)
-				    + "]" + targetTable;
+				    + "]" + targetTable);
 			}
 		    }
 
@@ -325,7 +344,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		    // value type is type with identity
 		    refType = LdpInfo.configIdentifierName(typeCi);
-		    valueType = determineIdMemberType(typeCi);
+		    idValueType = Optional.of(determineIdMemberType(typeCi));
 		    targetTable = sqlProviderHelper.databaseTableName(typeCi, false);
 
 		    if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
@@ -337,32 +356,35 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
 					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
 					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
 
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += sqlProviderHelper.databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true);
-				} else {
-				    sourcePath += "[" + sqlProviderHelper.databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true) + "="
-					    + primaryKeyColumn(pi.inClass()) + "]" + targetTable;
+				    idSourcePath = Optional
+					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
+						    + "_" + databaseColumnNameReflexiveProperty(pi, true));
 				}
+
+				valueSourcePath = Optional
+					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
+						+ "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+						+ primaryKeyColumn(pi.inClass()) + "]" + targetTable);
 
 			    } else {
 
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
 					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
 
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += sqlProviderHelper.databaseTableName(typeCi, true);
-				} else {
-				    sourcePath += "[" + sqlProviderHelper.databaseTableName(typeCi, true) + "="
-					    + primaryKeyColumn(typeCi) + "]" + targetTable;
+				    idSourcePath = Optional
+					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
 				}
+				valueSourcePath = Optional
+					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
+						+ "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 			    }
 
 			} else if (pi.cardinality().maxOccurs > 1) {
@@ -372,22 +394,26 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    if (LdpInfo.isReflexive(pi)) {
 
 				// case p2 from ppt image (n:1 for bi-directional reflexive association)
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
 					+ targetTable;
 
+				valueSourcePath = Optional.of(sourcePath);
+
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += "/" + primaryKeyColumn(pi.inClass());
+				    idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(pi.inClass()));
 				}
 
 			    } else {
 
 				// case pB from ppt image (n:1 for bi-directional association)
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ databaseColumnName(pi.reverseProperty()) + "]" + targetTable;
 
+				valueSourcePath = Optional.of(sourcePath);
+
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += "/" + primaryKeyColumn(typeCi);
+				    idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(typeCi));
 				}
 			    }
 
@@ -399,22 +425,20 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 				// case p1 from ppt image (n:1 for bi-directional reflexive association)
 
+				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+
 				if (isImplementedAsFeatureReference(pi)) {
 
 				    // no need for a table join in this case
-				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
 
 				} else {
 
-				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-
-					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-						+ primaryKeyColumn(typeCi) + "]" + targetTable;
-
-				    } else {
+				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 					// the source path on property level is omitted in this case
 					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
-					sourcePath = null;
+					valueSourcePath = Optional.empty();
 				    }
 				}
 
@@ -423,14 +447,13 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 				// case pA from ppt image (n:1 for bi-directional association)
 
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath = databaseColumnName(pi);
-				} else {
-				    /*
-				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				     */
-				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-					    + targetTable;
+				    idSourcePath = Optional.of(databaseColumnName(pi));
 				}
+				/*
+				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				 */
+				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
 			    }
 
 			} else {
@@ -439,21 +462,19 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
+				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+
 				if (isImplementedAsFeatureReference(pi)) {
 
 				    // no need for a table join in this case
-				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
 
 				} else {
 
-				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-
-					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-						+ primaryKeyColumn(typeCi) + "]" + targetTable;
-
-				    } else {
+				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 					// the source path on property level is omitted in this case
-					sourcePath = null;
+					valueSourcePath = Optional.empty();
 				    }
 				}
 
@@ -461,14 +482,14 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 				// max mult = 1 on both ends
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath = databaseColumnName(pi);
-				} else {
-				    /*
-				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				     */
-				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-					    + targetTable;
+				    idSourcePath = Optional.of(databaseColumnName(pi));
 				}
+
+				/*
+				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				 */
+				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
 			    }
 			}
 
@@ -482,34 +503,34 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
+				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+
 				if (isImplementedAsFeatureReference(pi)) {
 				    // no need for a table join in this case
-				    sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
 				} else {
 
-				    if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
-					sourcePath = "[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-						+ primaryKeyColumn(typeCi) + "]" + targetTable;
-
-				    } else {
 					// the source path on property level is omitted in this case
 					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
-					sourcePath = null;
+					valueSourcePath = Optional.empty();
 				    }
 				}
 
 			    } else {
 
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath = databaseColumnName(pi);
-				} else {
-				    /*
-				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				     */
-				    sourcePath = "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-					    + targetTable;
+				    idSourcePath = Optional.of(databaseColumnName(pi));
 				}
+
+				/*
+				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				 */
+				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+
 			    }
 
 			} else {
@@ -518,32 +539,36 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 			    if (LdpInfo.isReflexive(pi)) {
 
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
 					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
 					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
 
 				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += sqlProviderHelper.databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true);
-				} else {
-				    sourcePath += "[" + sqlProviderHelper.databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true) + "="
-					    + primaryKeyColumn(pi.inClass()) + "]" + targetTable;
+				    idSourcePath = Optional
+					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
+						    + "_" + databaseColumnNameReflexiveProperty(pi, true));
 				}
+
+				valueSourcePath = Optional
+					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
+						+ "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+						+ primaryKeyColumn(pi.inClass()) + "]" + targetTable);
 
 			    } else {
 
-				sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
 					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
 					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
-				if (isImplementedAsFeatureReference(pi)) {
-				    sourcePath += sqlProviderHelper.databaseTableName(typeCi, true);
-				} else {
 
-				    sourcePath += "[" + sqlProviderHelper.databaseTableName(typeCi, true) + "="
-					    + primaryKeyColumn(typeCi) + "]" + targetTable;
+				if (isImplementedAsFeatureReference(pi)) {
+				    idSourcePath = Optional
+					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
 				}
+
+				valueSourcePath = Optional
+					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
+						+ "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 			    }
 			}
 		    }
@@ -551,16 +576,10 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	    }
 	}
 
-	if (StringUtils.isNotBlank(sourcePath)) {
+	if (valueSourcePath.isPresent() || idSourcePath.isPresent()) {
 
-	    LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo();
-	    spi.sourcePath = sourcePath;
-	    spi.valueType = valueType;
-	    spi.refType = refType;
-	    spi.refUriTemplate = refUriTemplate;
-	    spi.targetTable = targetTable;
-	    spi.targetsSingleValue = targetsSingleValue;
-
+	    LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
+		    refUriTemplate, targetsSingleValue, targetTable);
 	    spRes.addSourcePathInfo(spi);
 	}
 
@@ -1058,4 +1077,10 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     public boolean multipleSourcePathsUnsupportedinFragments() {
 	return true;
     }
+
+    @Override
+    public String sourcePathFeatureRefId(PropertyInfo pi) {
+	return primaryKeyColumn(pi);
+    }
+
 }

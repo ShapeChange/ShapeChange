@@ -103,7 +103,7 @@ public class TaggedValueNormalizer {
      */
     protected static final Set<String> ldp2Tags = Stream.of("ldp2EncodingRule", "ldpCodeTargetValue",
 	    "ldpFallbackValue", "ldpFeatureTitleTemplate", "ldpTitleAttribute", "defaultInstant",
-	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldp2GenericValueTypeSuffix")
+	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldpGenericValueTypeSuffix", "ldpTypeAttribute")
 	    .collect(Collectors.toSet());
 
     /*

@@ -15,37 +15,34 @@ connectionInfo:
   password: FIXME-base64-encoded
   schemas:
   - public
-sourcePathDefaults:
-  primaryKey: myidcolumn
-  sortKey: myidcolumn
 types:
   ft1:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT1'}"
+    sourcePath: "/features{filter=featuretype='ft1'}"
     type: OBJECT
     label: FT1
     schema: '#/fragments/ft1'
   ft2:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT2'}"
+    sourcePath: "/features{filter=featuretype='ft2'}"
     type: OBJECT
     label: FT2
     schema: '#/fragments/ft2'
   ft2sub1sub1:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT2Sub1Sub1'}"
+    sourcePath: "/features{filter=featuretype='ft2sub1sub1'}"
     type: OBJECT
     label: FT2Sub1Sub1
     schema: '#/fragments/ft2sub1sub1'
   ft3:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT3'}"
+    sourcePath: "/features{filter=featuretype='ft3'}"
     type: OBJECT
     label: FT3
     schema: '#/fragments/ft3'
   ft4:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='FT4'}"
+    sourcePath: "/features{filter=featuretype='ft4'}"
     type: OBJECT
     label: FT4
     schema: '#/fragments/ft4'
   t:
-    sourcePath: "/mycoretable{filter=myfeaturetypecolumn='T'}"
+    sourcePath: "/features{filter=featuretype='t'}"
     type: OBJECT
     label: T
     schema: '#/fragments/t'
@@ -71,18 +68,6 @@ fragments:
           required: true
           minOccurrence: 1
         schema: '#/fragments/dt2'
-  dt1sub:
-    type: OBJECT
-    objectType: DT1Sub
-    label: DT1Sub
-    properties:
-      attDt1Sub:
-        sourcePath: attDt1Sub
-        type: STRING
-        label: attDt1Sub
-        constraints:
-          required: true
-    schema: '#/fragments/dt'
   dt2:
     type: OBJECT
     objectType: DT2
@@ -94,28 +79,6 @@ fragments:
         label: attDt2A
         constraints:
           required: true
-      roleFT3:
-        sourcePath: roleFT3
-        type: FEATURE_REF
-        valueType: STRING
-        label: roleFT3
-        constraints:
-          required: true
-        refType: ft3
-      roleFT2:
-        type: FEATURE_REF
-        label: roleFT2
-        constraints:
-          required: true
-        coalesce:
-        - sourcePath: roleFT2/featureId
-          type: FEATURE_REF
-          valueType: STRING
-          refType: ft2
-        - sourcePath: roleFT2/featureId
-          type: FEATURE_REF
-          valueType: STRING
-          refType: ft2sub1sub1
   dt3:
     type: OBJECT
     objectType: DT3
@@ -135,7 +98,7 @@ fragments:
     label: FT1
     properties:
       oid:
-        sourcePath: myidcolumn
+        sourcePath: id
         type: STRING
         role: ID
       att1:
@@ -143,7 +106,7 @@ fragments:
         type: FLOAT
         label: att1
       att2:
-        sourcePath: mygeometrycolumn
+        sourcePath: geometry
         type: GEOMETRY
         role: PRIMARY_GEOMETRY
         geometryType: POINT
@@ -167,27 +130,43 @@ fragments:
           required: true
         schema: '#/fragments/dt'
       roleT:
-        sourcePath: "[JSON]properties/roleT"
+        sourcePath: "[id=id]references{filter=rel='roleT'}/[ref=id]features"
         type: FEATURE_REF
-        valueType: STRING
         label: roleT
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+          title:
+            sourcePath: "[JSON]properties/attTTitle"
+            type: STRING
+            label: T-title
         refType: t
       roleFT2:
+        sourcePath: "[id=id]references{filter=rel='roleFT2'}/[ref=id]features"
         type: FEATURE_REF_ARRAY
         label: roleFT2
         constraints:
           minOccurrence: 0
-        concat:
-        - sourcePath: "[JSON]properties/roleFT2/featureId"
-          type: FEATURE_REF_ARRAY
-          valueType: STRING
-          refType: ft2
-        - sourcePath: "[JSON]properties/roleFT2/featureId"
-          type: FEATURE_REF_ARRAY
-          valueType: STRING
-          refType: ft2sub1sub1
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+          title:
+            type: STRING
+            label: FT2-title
+            sourcePaths:
+            - id
+            - "[JSON]properties/attFt2Title"
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - ft2
+              - ft2sub1sub1
       roleFT3:
-        sourcePath: "[JSON]properties/roleFT3"
+        sourcePath: ref
         type: FEATURE_REF
         valueType: STRING
         label: roleFT3
@@ -200,19 +179,23 @@ fragments:
     label: FT2
     properties:
       oid:
-        sourcePath: myidcolumn
+        sourcePath: id
         type: STRING
         role: ID
       attFt2A:
-        sourcePath: mygeometrycolumn
+        sourcePath: geometry
         type: GEOMETRY
         role: PRIMARY_GEOMETRY
         geometryType: LINE_STRING
         label: attFt2A
         constraints:
           required: true
+      attFt2Title:
+        sourcePath: "[JSON]properties/attFt2Title"
+        type: STRING
+        label: attFt2Title
       roleFT1:
-        sourcePath: "[JSON]properties/roleFT1"
+        sourcePath: "[id=ref]references{filter=rel_inv='roleFT1'}/id"
         type: FEATURE_REF
         valueType: STRING
         label: roleFT1
@@ -220,29 +203,13 @@ fragments:
           required: true
         refType: ft1
       roleExtFT1:
-        sourcePath: "[JSON]properties/roleExtFT1"
+        sourcePath: "[id=id]references{filter=rel='roleExtFT1'}/ref"
         type: FEATURE_REF
         valueType: STRING
         label: roleExtFT1
         constraints:
           required: true
         refUriTemplate: "https://example.org/external/ExtFT1/{{value}}"
-      roleExtFT2:
-        sourcePath: "[JSON]properties/roleExtFT2"
-        type: FEATURE_REF
-        valueType: STRING
-        label: roleExtFT2
-        constraints:
-          required: true
-        refUriTemplate: "https://example.org/external/ExtFT2/{{value}}"
-      roleExtFT3:
-        sourcePath: "[JSON]properties/roleExtFT3"
-        type: FEATURE_REF
-        valueType: STRING
-        label: roleExtFT3
-        constraints:
-          required: true
-        refUriTemplate: "https://example.org/external/ExtFT3/{{value}}"
   ft2sub1:
     type: OBJECT
     objectType: FT2Sub1
@@ -268,7 +235,7 @@ fragments:
     label: FT3
     properties:
       oid:
-        sourcePath: myidcolumn
+        sourcePath: id
         type: STRING
         role: ID
       attFt3A:
@@ -315,7 +282,7 @@ fragments:
     label: FT4
     properties:
       oid:
-        sourcePath: myidcolumn
+        sourcePath: id
         type: STRING
         role: ID
       someGenerAttribute:
@@ -394,6 +361,12 @@ fragments:
     label: T
     properties:
       oid:
-        sourcePath: myidcolumn
+        sourcePath: id
         type: STRING
         role: ID
+      attTTitle:
+        sourcePath: "[JSON]properties/attTTitle"
+        type: STRING
+        label: attTTitle
+        constraints:
+          required: true

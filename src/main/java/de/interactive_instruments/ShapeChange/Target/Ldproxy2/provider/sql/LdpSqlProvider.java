@@ -55,6 +55,11 @@ public class LdpSqlProvider extends AbstractLdpProvider {
     protected LdpSqlProviderHelper sqlProviderHelper = new LdpSqlProviderHelper();
 
     @Override
+    public Type idValueTypeForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi) {
+	return spi.getIdValueType().isPresent() ? spi.getIdValueType().get() : Type.INTEGER;
+    }
+    
+    @Override
     public LdpSqlPropertyEncodingContext createInitialPropertyEncodingContext(ClassInfo ci, boolean isTypeDefinition) {
 
 	LdpSqlPropertyEncodingContext pec = new LdpSqlPropertyEncodingContext();

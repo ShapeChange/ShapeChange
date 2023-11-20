@@ -33,8 +33,15 @@
 package de.interactive_instruments.ShapeChange.Model;
 
 public interface AssociationInfo extends Info {
+    
+	/**
+	 * @return the association role at the target end
+	 */
 	public PropertyInfo end1();
 
+	/**
+	 * @return the association role at the source end
+	 */
 	public PropertyInfo end2();
 
 	public ClassInfo assocClass();

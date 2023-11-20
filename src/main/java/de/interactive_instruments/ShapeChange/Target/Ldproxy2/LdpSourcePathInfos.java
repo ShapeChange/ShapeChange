@@ -2,6 +2,8 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 
@@ -45,29 +47,75 @@ public class LdpSourcePathInfos {
      * @return the pi
      */
     public PropertyInfo getPi() {
-        return pi;
+	return pi;
     }
 
     /**
      * @param pi the pi to set
      */
     public void setPi(PropertyInfo pi) {
-        this.pi = pi;
+	this.pi = pi;
     }
 
     /**
      * @return the context
      */
     public LdpPropertyEncodingContext getContext() {
-        return context;
+	return context;
     }
 
     /**
      * @param context the context to set
      */
     public void setContext(LdpPropertyEncodingContext context) {
-        this.context = context;
+	this.context = context;
     }
-    
-    
+
+    public Optional<String> commonIdSourcePath() {
+	List<String> distinctIdSourcePaths = this.spis.stream().map(
+		spi -> spi.getIdSourcePath().isPresent() ? spi.getIdSourcePath().get() : "ID_SOURCE_PATH_UNAVAILABLE")
+		.distinct().collect(Collectors.toList());
+
+	if (distinctIdSourcePaths.size() == 1 && !"ID_SOURCE_PATH_UNAVAILABLE".equals(distinctIdSourcePaths.get(0))) {
+	    return Optional.of(distinctIdSourcePaths.get(0));
+	} else {
+	    return Optional.empty();
+	}
+    }
+
+    public Optional<String> commonValueSourcePath() {
+	List<String> distinctValueSourcePaths = this.spis.stream()
+		.map(spi -> spi.getIdSourcePath().isPresent() ? spi.getValueSourcePath().get()
+			: "VALUE_SOURCE_PATH_UNAVAILABLE")
+		.distinct().collect(Collectors.toList());
+
+	if (distinctValueSourcePaths.size() == 1
+		&& !"VALUE_SOURCE_PATH_UNAVAILABLE".equals(distinctValueSourcePaths.get(0))) {
+	    return Optional.of(distinctValueSourcePaths.get(0));
+	} else {
+	    return Optional.empty();
+	}
+    }
+
+    private void validateSourcePaths() {
+
+	// helper method, for debugging purposes
+
+	for (LdpSourcePathInfo spi : spis) {
+	    if (spi.getIdSourcePath().isEmpty() && spi.getValueSourcePath().isEmpty()) {
+		System.out.println("Invalid source path info element for property " + pi.fullNameInSchema());
+	    }
+	}
+
+    }
+
+    public boolean allWithRefType() {
+	for (LdpSourcePathInfo spi : spis) {
+	    if (spi.getRefType() == null) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
 }

@@ -122,11 +122,17 @@ public class Ldproxy2Constants {
     public static final String PARAM_SRID = "srid";
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
     
-    public static final String PARAM_CORETABLE_NAME = "coretableName";
-    public static final String PARAM_CORETABLE_ID_COLUMN_NAME = "coretableIdColumnName";
+    public static final String PARAM_CORETABLE = "coretable";
+    public static final String PARAM_CORETABLE_ID_COLUMN = "coretableIdColumn";
     public static final String PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE = "coretableIdColumnLdproxyType";
-    public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME = "coretableFeatureTypeColumnName";
-    public static final String PARAM_CORETABLE_GEOMETRY_COLUMN_NAME = "coretableGeometryColumnName";
+    public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN = "coretableFeatureTypeColumn";
+    public static final String PARAM_CORETABLE_GEOMETRY_COLUMN = "coretableGeometryColumn";
+    
+    public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
+    public static final String PARAM_CORETABLE_REF_RELATIONS = "coretableRefRelations";
+    public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";
+    public static final String PARAM_CORETABLE_RELATION_NAME_COLUMN = "coretableRelationNameColumn";
+    public static final String PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN = "coretableInverseRelationNameColumn";
 
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";

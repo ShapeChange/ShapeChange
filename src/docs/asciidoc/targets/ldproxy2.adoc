@@ -1508,7 +1508,7 @@ The provider configuration for FT4 would contain the definitions listed in
 The `sourcePath` values within value.coalesce are constructed using the template
 `{attribute name} + "_" + {suffix}` - where the suffix default is the name of the attribute
 value type. That default can be overwritten by setting tagged value 
-__ldp2GenericValueTypeSuffix__ on the attribute. In the example, that is the case for 
+__ldpGenericValueTypeSuffix__ on the attribute. In the example, that is the case for 
 the attributes StringAttribute.value as well as DoubleAttribute.value.
 
 NOTE: If fragments are enabled (target parameter `enableFragments = true`), a single

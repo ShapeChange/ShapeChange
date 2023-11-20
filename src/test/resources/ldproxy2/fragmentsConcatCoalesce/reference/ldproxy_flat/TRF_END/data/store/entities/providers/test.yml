@@ -548,36 +548,64 @@ types:
         constraints:
           required: true
       feature1a:
-        sourcePath: feature1a_reflexive
+        sourcePath: "[feature1a_reflexive=_id]t6_class1"
         type: FEATURE_REF
-        valueType: INTEGER
         label: feature1a
         constraints:
           required: true
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
         refType: t6_class1
       feature1b_target:
-        sourcePath: "[_id=t6_class1_feature1b_source_id]T6_Class1_feature1b_target/t6_class1_feature1b_target_id"
+        sourcePath: "[_id=t6_class1_feature1b_source_id]T6_Class1_feature1b_target/[t6_class1_feature1b_target_id=_id]t6_class1"
         type: FEATURE_REF_ARRAY
-        valueType: INTEGER
         label: feature1b_target
         constraints:
           minOccurrence: 0
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
         refType: t6_class1
       feature1c:
-        sourcePath: feature1c_reflexive
+        sourcePath: "[feature1c_reflexive=_id]t6_class1"
         type: FEATURE_REF
-        valueType: INTEGER
         label: feature1c
         constraints:
           required: true
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
         refType: t6_class1
       feature1d:
-        sourcePath: "[_id=feature1c_reflexive]t6_class1/_id"
+        sourcePath: "[_id=feature1c_reflexive]t6_class1"
         type: FEATURE_REF_ARRAY
-        valueType: INTEGER
         label: feature1d
         constraints:
           minOccurrence: 0
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: T6_Class1-title
         refType: t6_class1
       feature2:
         sourcePath: feature2_fk

@@ -29,7 +29,7 @@ public interface LdpProvider {
 
     public LdpPropertyEncodingContext createChildContext(LdpPropertyEncodingContext parentContext, ClassInfo typeCi);
 
-    public Type valueTypeForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi);
+    public Type idValueTypeForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi);
 
     public Optional<ClassInfo> actualTypeClass(LdpSourcePathInfo spi, PropertyInfo pi);
 

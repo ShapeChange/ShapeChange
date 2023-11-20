@@ -40,10 +40,12 @@ import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -141,11 +143,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
-    public static String coretableName = "features";
-    public static String coretableIdColumnName = null;
+    public static String coretable = "features";
+    public static String coretableIdColumn = null;
     public static Type coretableIdColumnLdproxyType = Type.INTEGER;
-    public static String coretableFeatureTypeColumnName = "featuretype";
-    public static String coretableGeometryColumnName = "geom";
+    public static String coretableFeatureTypeColumn = "featuretype";
+    public static String coretableGeometryColumn = "geom";
+
+    public static String coretableRefColumn = "ref";
+    public static Set<String> coretableRefRelations = new HashSet<>();
+    public static String coretableRelationsTable = "references";
+    public static String coretableRelationNameColumn = "rel";
+    public static String coretableInverseRelationNameColumn = "rel_inv";
 
     public static boolean isUnitTest = false;
 
@@ -399,22 +407,37 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
 
-		coretableName = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_NAME, "features", false, true);
+		coretable = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_CORETABLE,
+			"features", false, true);
 
 		// WARNING: MUST BE COMPUTED AFTER primaryKeyColumn HAS BEEN COMPUTED!
-		coretableIdColumnName = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME, primaryKeyColumn, false, true);
+		coretableIdColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, primaryKeyColumn, false, true);
 
 		String ldpTypeTmp = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE, "Integer", false, true);
 		coretableIdColumnLdproxyType = Type.valueOf(ldpTypeTmp.toUpperCase(Locale.ENGLISH));
 
-		coretableFeatureTypeColumnName = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME, "featuretype", false, true);
+		coretableFeatureTypeColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN, "featuretype", false, true);
 
-		coretableGeometryColumnName = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME, "geom", false, true);
+		coretableGeometryColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN, "geom", false, true);
+
+		coretableRefColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, "ref", false, true);
+
+		coretableRefRelations = new HashSet<>(options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_REF_RELATIONS, null, false, true));
+
+		coretableRelationsTable = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, "references", false, true);
+
+		coretableRelationNameColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN, "rel", false, true);
+
+		coretableInverseRelationNameColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, "rel_inv", false, true);
 	    }
 
 	    // identify map entries defined in the target configuration
@@ -938,11 +961,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	cfg = null;
 
-	coretableName = "features";
-	coretableIdColumnName = null;
+	coretable = "features";
+	coretableIdColumn = null;
 	coretableIdColumnLdproxyType = Type.INTEGER;
-	coretableFeatureTypeColumnName = "featuretype";
-	coretableGeometryColumnName = "geom";
+	coretableFeatureTypeColumn = "featuretype";
+	coretableGeometryColumn = "geom";
+	coretableRefColumn = "ref";
+	coretableRefRelations = new HashSet<>();
+	coretableRelationsTable = "references";
+	coretableRelationNameColumn = "rel";
+	coretableInverseRelationNameColumn = "rel_inv";
     }
 
     @Override
@@ -1105,7 +1133,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
 	case 135:
 	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
-
+	case 136:
+	    return "??The property '$1$' of data type '$2$' has a type with identity as value type. No feature-ref id source path can be computed for this construct in the coretable approach. 'FIXME' is used as source path.";
+	    
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:

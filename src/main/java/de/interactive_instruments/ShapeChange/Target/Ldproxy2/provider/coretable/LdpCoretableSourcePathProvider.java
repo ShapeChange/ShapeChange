@@ -34,6 +34,7 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretabl
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -96,12 +97,13 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
 	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
-	String sourcePath = pi.name();
+	Optional<String> idSourcePath = Optional.empty();
+	Optional<String> valueSourcePath = Optional.of(pi.name());
 	if (alreadyVisitedPiList.isEmpty()
 		&& (LdpInfo.isTypeWithIdentity(pi.inClass()) || pi.inClass().category() == Options.MIXIN)) {
-	    sourcePath = "[JSON]properties/" + sourcePath;
+	    valueSourcePath = Optional.of("[JSON]properties/" + valueSourcePath.get());
 	}
-	Type valueType = null;
+	Optional<Type> idValueType = Optional.empty();
 	String refType = null;
 	String refUriTemplate = null;
 	boolean targetsSingleValue = pi.cardinality().maxOccurs == 1;
@@ -111,6 +113,8 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	LdpSpecialPropertiesInfo specialPropInfos = this.target.specialPropertiesInfo(pi.inClass());
 
 	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+
+	    // property type is mapped
 
 	    if (pme.hasTargetType()) {
 
@@ -122,9 +126,9 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 		    // special handling for primary geometry
 		    if (specialPropInfos != null && specialPropInfos.getDefaultGeometryPiOfCi() == pi) {
-			sourcePath = Ldproxy2Target.coretableGeometryColumnName;
+			valueSourcePath = Optional.of(Ldproxy2Target.coretableGeometryColumn);
 		    } else {
-			// source path is just the property name
+			// value source path is just the property name
 		    }
 
 		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
@@ -132,31 +136,34 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 		    // only feature ref encoding is supported in the coretable approach
 
 		    refUriTemplate = urlTemplateForValueType(pi);
-		    valueType = Ldproxy2Target.coretableIdColumnLdproxyType;
+		    idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
 
-		    // source path is just the property name
+		    idSourcePath = featureRefIdSourcePath(pi);
 
-		    // TODO CP - DEFINITION WIE DAS MIT URL TEMPLATE UND VARIABLER COLLECTION ID
-		    // KLAPPT
-
-//		    TODO collectionInfos wie im JSON Schema Target?
-//			    mit collectionIds (Liste oder 'any') und collectionIdTypes (darf aber nur einer sein, oder sonst string nutzen?)
-//			    urlTemplate um Platzhalter (collectionId) erweitern??
+		    /*
+		     * TODO unclear how url template and variable collection id should work in the
+		     * coretable approach
+		     * 
+		     * TODO Handle case of inheritance for the property value type (differentiate
+		     * mapped and non-mapped subtypes).
+		     */
 
 		} else {
 
-		    // value type is a simple ldproxy type
+		    // property type is mapped to a simple ldproxy type
 
-		    // source path is just the property name
+		    // value source path is just the property name
 		}
 
 	    } else {
 		// is checked via target configuration validator (which can be switched off)
 		result.addError(msgSource, 118, typeName);
-		sourcePath = "FIXME";
+		valueSourcePath = Optional.of("FIXME");
 	    }
 
 	} else {
+
+	    // property type is NOT mapped
 
 	    ClassInfo typeCi = pi.typeClass();
 
@@ -166,47 +173,43 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 		if (mc != null) {
 		    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
 		}
-		sourcePath = "FIXME";
+		valueSourcePath = Optional.of("FIXME");
 
 	    } else {
 
 		if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
 
-		    // source path is just the property name
+		    // value source path is just the property name
 
 		} else if (typeCi.category() == Options.DATATYPE) {
 
-		    // source path is just the property name
+		    // value source path is just the property name
 
 		} else {
 
-		    // value type is type with identity
+		    // property type is type with identity
 
 		    SortedSet<String> collectionIds = collectionIds(pi);
 
+		    idSourcePath = featureRefIdSourcePath(pi);
+		    valueSourcePath = featureRefValueSourcePath(pi);
+
+		    idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
+
 		    if (collectionIds.size() == 1) {
 
-			// source path is just the property name
 			refType = collectionIds.first();
-			valueType = Ldproxy2Target.coretableIdColumnLdproxyType;
 
 		    } else {
 
 			featureRefWithMultiCaseEncountered = true;
 
-			// TODO CP - DEFINE HOW THIS CASE IS ACTUALLY ENCODED
-
-			// TODO DIFFERENTIATE CASES WITH/OUT URI TEMPLATE
+			// TBD: DIFFERENTIATE CASES WITH/OUT URI TEMPLATE?
 
 			for (String collectionId : collectionIds) {
 
-			    LdpSourcePathInfo spi = new LdpSourcePathInfo();
-
-			    spi.sourcePath = sourcePath + "/featureId";
-			    spi.valueType = Ldproxy2Target.coretableIdColumnLdproxyType;
-			    spi.refType = collectionId;
-			    spi.refUriTemplate = null;
-			    spi.targetsSingleValue = targetsSingleValue;
+			    LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath, idValueType,
+				    collectionId, null, targetsSingleValue);
 
 			    spRes.addSourcePathInfo(spi);
 			}
@@ -215,14 +218,10 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	    }
 	}
 
-	if (StringUtils.isNotBlank(sourcePath) && !featureRefWithMultiCaseEncountered) {
+	if ((valueSourcePath.isPresent() || idSourcePath.isPresent()) && !featureRefWithMultiCaseEncountered) {
 
-	    LdpSourcePathInfo spi = new LdpSourcePathInfo();
-	    spi.sourcePath = sourcePath;
-	    spi.valueType = valueType;
-	    spi.refType = refType;
-	    spi.refUriTemplate = refUriTemplate;
-	    spi.targetsSingleValue = targetsSingleValue;
+	    LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
+		    refUriTemplate, targetsSingleValue);
 
 	    spRes.addSourcePathInfo(spi);
 	}
@@ -230,13 +229,127 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	return spRes;
     }
 
-    public List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
+    private Optional<String> featureRefIdSourcePath(PropertyInfo pi) {
 
-	// coretable approach only supports feature refs, not links
+	String idSourcePath;
+	if (pi.inClass().category() == Options.DATATYPE) {
+
+	    // does not really work in coretable approach
+
+	    // NOTE: Such a situation would actually not be compliant to ISO 19109
+
+	    // untested attempt: pi.name() + (pi.cardinality().maxOccurs > 1 ? "/featureId"
+	    // : "");
+
+	    MessageContext mc = result.addWarning(msgSource, 136, pi.name(), pi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+	    }
+	    idSourcePath = "FIXME";
+
+	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
+
+	    idSourcePath = Ldproxy2Target.coretableRefColumn;
+
+	} else {
+
+	    // lookup via separate reference table
+
+	    String refTableSourceIdColumn;
+	    String refTableTargetIdColumn;
+	    String relColumnName;
+
+	    if (pi.isAttribute() || !pi.association().isBiDirectional() || pi.association().end2() == pi) {
+
+		refTableSourceIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableTargetIdColumn = Ldproxy2Target.coretableRefColumn;
+		relColumnName = Ldproxy2Target.coretableRelationNameColumn;
+
+	    } else {
+
+		refTableTargetIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableSourceIdColumn = Ldproxy2Target.coretableRefColumn;
+		relColumnName = Ldproxy2Target.coretableInverseRelationNameColumn;
+
+	    }
+
+	    idSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + refTableSourceIdColumn + "]"
+		    + Ldproxy2Target.coretableRelationsTable + "{filter=" + relColumnName + "='" + pi.name() + "'}/"
+		    + refTableTargetIdColumn;
+	}
+
+	return Optional.ofNullable(idSourcePath);
+    }
+
+    private Optional<String> featureRefValueSourcePath(PropertyInfo pi) {
+
+	String valueSourcePath;
+	if (pi.inClass().category() == Options.DATATYPE) {
+
+	    // does not really work in coretable approach
+
+	    // NOTE: Such a situation would actually not be compliant to ISO 19109
+
+	    MessageContext mc = result.addWarning(msgSource, 136, pi.name(), pi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+	    }
+	    valueSourcePath = "FIXME";
+
+	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
+
+	    valueSourcePath = "[" + Ldproxy2Target.coretableRefColumn + "=" + Ldproxy2Target.coretableIdColumn + "]"
+		    + Ldproxy2Target.coretable;
+
+	} else {
+
+	    // lookup via separate reference table
+
+	    String refTableSourceIdColumn;
+	    String refTableTargetIdColumn;
+	    String relColumnName;
+
+	    if (pi.isAttribute() || !pi.association().isBiDirectional() || pi.association().end2() == pi) {
+
+		refTableSourceIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableTargetIdColumn = Ldproxy2Target.coretableRefColumn;
+		relColumnName = Ldproxy2Target.coretableRelationNameColumn;
+
+	    } else {
+
+		refTableTargetIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableSourceIdColumn = Ldproxy2Target.coretableRefColumn;
+		relColumnName = Ldproxy2Target.coretableInverseRelationNameColumn;
+
+	    }
+
+	    valueSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + refTableSourceIdColumn + "]"
+		    + Ldproxy2Target.coretableRelationsTable + "{filter=" + relColumnName + "='" + pi.name() + "'}/["
+		    + refTableTargetIdColumn + "=" + Ldproxy2Target.coretableIdColumn + "]" + Ldproxy2Target.coretable;
+	}
+
+	return Optional.ofNullable(valueSourcePath);
+    }
+
+    public List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
 
 	List<String> result = new ArrayList<>();
 
-	result.add("LINK_UNSUPPORTED_IN_CORETABLE_APPROACH");
+	if (!target.isMappedToLink(pi) && LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+	    PropertyInfo titleAtt = LdpInfo.getTitleAttribute(pi.typeClass());
+	    if (titleAtt.cardinality().minOccurs == 0) {
+		/*
+		 * id column of coretable shall be listed first, since the last listed
+		 * sourcePaths "wins", and that should be the title attribute, if it exists
+		 */
+		result.add(Ldproxy2Target.coretableIdColumn);
+	    }
+	    result.add("[JSON]properties/" + titleAtt.name());
+
+	} else {
+	    result.add(Ldproxy2Target.coretableIdColumn);
+	}
 
 	return result;
     }
@@ -282,18 +395,18 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
     @Override
     public String sourcePathTypeLevel(ClassInfo ci) {
-	return "/" + Ldproxy2Target.coretableName + "{filter=" + Ldproxy2Target.coretableFeatureTypeColumnName + "='"
-		+ ci.name() + "'}";
+	return "/" + Ldproxy2Target.coretable + "{filter=" + Ldproxy2Target.coretableFeatureTypeColumn + "='"
+		+ formatCollectionId(ci.name()) + "'}";
     }
 
     @Override
     public String defaultPrimaryKey() {
-	return Ldproxy2Target.coretableIdColumnName;
+	return Ldproxy2Target.coretableIdColumn;
     }
 
     @Override
     public String defaultSortKey() {
-	return Ldproxy2Target.coretableIdColumnName;
+	return Ldproxy2Target.coretableIdColumn;
     }
 
     /**
@@ -387,5 +500,10 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     @Override
     public boolean multipleSourcePathsUnsupportedinFragments() {
 	return false;
+    }
+
+    @Override
+    public String sourcePathFeatureRefId(PropertyInfo pi) {
+	return Ldproxy2Target.coretableIdColumn;
     }
 }

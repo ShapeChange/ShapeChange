@@ -69,10 +69,12 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
 	    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
-	    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE_NAME,
-	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_NAME, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
-	    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN_NAME,
-	    Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
+	    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE,
+	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+	    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_REF_RELATIONS,
+	    Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, Ldproxy2Constants.PARAM_DATE_FORMAT,
 	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FEATURES_GEOJSON,
 	    Ldproxy2Constants.PARAM_FEATURES_JSONFG, Ldproxy2Constants.PARAM_FEATURES_GML,

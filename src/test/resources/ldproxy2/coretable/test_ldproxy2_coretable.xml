@@ -58,11 +58,16 @@
 			<!-- <targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" 
 				/> -->
 			<targetParameter name="srid" value="31467"/>
-			<targetParameter name="coretableName" value="mycoretable"/>
-			<targetParameter name="coretableIdColumnName" value="myidcolumn"/>
+			<targetParameter name="coretable" value="features"/>
+			<targetParameter name="coretableIdColumn" value="id"/>
 			<targetParameter name="coretableIdColumnLdproxyType" value="string"/>
-			<targetParameter name="coretableFeatureTypeColumnName" value="myfeaturetypecolumn"/>
-			<targetParameter name="coretableGeometryColumnName" value="mygeometrycolumn"/>
+			<targetParameter name="coretableFeatureTypeColumn" value="featuretype"/>
+			<targetParameter name="coretableGeometryColumn" value="geometry"/>
+			<targetParameter name="coretableRefColumn" value="ref"/>
+			<targetParameter name="coretableRefRelations" value="roleFT3"/>
+			<targetParameter name="coretableRelationsTable" value="references"/>
+			<targetParameter name="coretableRelationNameColumn" value="rel"/>
+			<targetParameter name="coretableInverseRelationNameColumn" value="rel_inv"/>
 			<targetParameter name="enableFragments" value="true"/>
 			<targetParameter name="enableFeaturesGml" value="true"/>
 			<targetParameter name="enableFeaturesGeoJson" value="true"/>
@@ -92,9 +97,6 @@
 			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
 			<mapEntries>
 				<MapEntry type="ExtFT1" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExtFT1/(value)}"/>
-				<MapEntry type="ExtFT2" rule="*" targetType="LINK"
-					param="linkInfos{urlTemplate=https://example.org/external/ExtFT2/(value)}"/>
-				<MapEntry type="ExtFT3" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExtFT3/(value)}"/>
 			</mapEntries>
 		</Target>
 		<Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">
@@ -112,10 +114,10 @@
 			<mapEntries>
 				<MapEntry type="ExtFT1" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT1"
 					param="collectionInfos{uriTemplate=https://example.com/foo/extft1/bar/(featureId);collectionIdTypes=integer}"/>
-				<MapEntry type="ExtFT2" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
+				<!--<MapEntry type="ExtFT2" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
 					param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string}"/>
 				<MapEntry type="ExtFT3" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT3"
-					param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/baz/(featureId);collectionIdTypes=string,integer}"/>
+					param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/baz/(featureId);collectionIdTypes=string,integer}"/>-->
 			</mapEntries>
 		</Target>
 	</targets>

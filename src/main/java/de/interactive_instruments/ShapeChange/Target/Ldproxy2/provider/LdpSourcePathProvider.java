@@ -71,8 +71,10 @@ public interface LdpSourcePathProvider {
     public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context);
 
     public boolean multipleSourcePathsUnsupportedinFragments();
-    
+
     public String sourcePathForDataTypeMemberOfGenericValueType();
-    
+
     public String sourcePathForValueMemberOfGenericValueType(String valuePropertyName, String suffix);
+
+    public String sourcePathFeatureRefId(PropertyInfo pi);
 }

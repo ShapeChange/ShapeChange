@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
+import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema.Builder;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
 import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
@@ -192,6 +193,8 @@ public class LdpPropertyEncoder {
 		continue;
 	    }
 
+	    ClassInfo typeCi = pi.typeClass();
+
 	    List<PropertyInfo> nowVisitedList = new ArrayList<>(alreadyVisitedPiList);
 	    nowVisitedList.add(pi);
 
@@ -266,30 +269,16 @@ public class LdpPropertyEncoder {
 
 		    LinkedHashMap<String, FeatureSchema> linkPropertyDefs = new LinkedHashMap<>();
 
-		    ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
-			    .label(pi.typeInfo().name + "-title").type(Type.STRING);
-		    List<String> titleSourcePaths = sourcePathProvider.sourcePathsLinkLevelTitle(pi);
-		    if (titleSourcePaths.size() == 1) {
-			titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
-		    } else {
-			titlePropBuilder = titlePropBuilder.sourcePaths(titleSourcePaths);
-		    }
+		    ImmutableFeatureSchema titleSubProp = createTitlePropertyForLinkOrFeatureRef(pi);
+		    linkPropertyDefs.put("title", titleSubProp);
 
-		    linkPropertyDefs.put("title", titlePropBuilder.build());
-
-		    ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
-		    linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			    .sourcePath(sourcePathProvider.sourcePathLinkLevelHref(pi));
-		    linkPropHrefBuilder.addAllTransformationsBuilders(new ImmutablePropertyTransformation.Builder()
-			    .stringFormat(sourcePathProvider.urlTemplateForValueType(pi)));
-		    linkPropertyDefs.put("href", linkPropHrefBuilder.build());
+		    ImmutableFeatureSchema linkPropHref = createHrefPropertyForLink(pi);
+		    linkPropertyDefs.put("href", linkPropHref);
 
 		    propertyMapForBuilder = linkPropertyDefs;
 		}
 
 	    } else if (!LdpUtil.isLdproxySimpleType(ldpType) && pi.categoryOfValue() == Options.DATATYPE) {
-
-		ClassInfo typeCi = pi.typeClass();
 
 		/*
 		 * detect circular dependency in the property path - circular paths are not
@@ -406,8 +395,6 @@ public class LdpPropertyEncoder {
 	    }
 	    if (LdpInfo.isEnumerationOrCodelistValueType(pi) && !target.valueTypeIsMapped(pi)) {
 
-		ClassInfo typeCi = pi.typeClass();
-
 		providerConfigConstraintCreated = true;
 		String codelistId = LdpInfo.codelistId(typeCi);
 
@@ -460,108 +447,31 @@ public class LdpPropertyEncoder {
 
 		if (sourcePathInfosForBuilder != null) {
 
-		    /*
-		     * The property is not fully defined in the fragment (that information has been
-		     * determined before, when setting the value for sourcePathInfosForBuilder).
-		     */
+		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
+			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
+			    && (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)
+				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi))
+			    && sourcePathInfosForBuilder.commonValueSourcePath().isPresent()) {
 
-		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
-
-			LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
-
-			encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
-				nowVisitedList, currentCi, spi, context, propMemberDefBuilder, ldpType);
-
-		    } else if (sourcePathInfosForBuilder.isMultipleSourcePaths()) {
-
-			List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
-
-			int index = 0;
-			for (LdpSourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
-
-			    index++;
-
-			    ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
-
-			    mspBuilder.name(pi.name() + "_" + index);
-
-			    encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, alreadyVisitedPiList,
-				    nowVisitedList, currentCi, spi, context, mspBuilder, ldpType);
-
-			    // determine the correct type for the item schema
-
-			    Type typeForMspBuilder = typeForBuilder(pi, identifierPi, spi.targetsSingleValue, ldpType);
-			    Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
-				    spi.targetsSingleValue, ldpType);
-
-			    mspBuilder.type(typeForMspBuilder);
-
-			    /*
-			     * NOTE: If the property is encoded as a feature reference, the value type is
-			     * already set before (together with refType or refUriTemplate, in
-			     * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
-			     * addFeatureRefDetails).
-			     */
-			    if (!isEncodedAsFeatureRef(pi)) {
-				mspBuilder.valueType(valueTypeForMspBuilder);
-			    }
-
-			    itemSchemas.add(mspBuilder.build());
-			}
-
-			if (sourcePathInfosForBuilder.concatRequired()) {
-			    propMemberDefBuilder.concat(itemSchemas);
-			} else {
-			    propMemberDefBuilder.coalesce(itemSchemas);
-			}
-		    }
-
-		    propMemberDefBuilder.name(pi.name()).type(typeForBuilder);
-
-		    /*
-		     * NOTE: If the property is encoded as a feature reference, the value type is
-		     * already set before (together with refType or refUriTemplate, in
-		     * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
-		     * addFeatureRefDetails).
-		     */
-		    if (!isEncodedAsFeatureRef(pi)) {
-			propMemberDefBuilder.valueType(valueTypeForBuilder);
-		    }
-
-		    propertyDefs.put(pi.name(), propMemberDefBuilder.build());
-		}
-
-	    } else {
-
-		/*
-		 * Case of fragment encoding, or of a type definition if fragments are disabled.
-		 */
-
-		if (sourcePathInfosForBuilder != null) {
-
-		    if (sourcePathInfosForBuilder.isSingleSourcePath()) {
-
-			LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
-			propMemberDefBuilder.sourcePath(spi.sourcePath);
-
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-			    addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, pi, spi);
-			}
+			addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(pi, propMemberDefBuilder,
+				sourcePathInfosForBuilder, propertyMapForBuilder, typeCi, nowVisitedList, context);
 
 		    } else {
 
-			if (sourcePathProvider.multipleSourcePathsUnsupportedinFragments()) {
-			    /*
-			     * Multiple source paths found, which is unexpected for this case, but who knows
-			     * if this cannot occur in the future. Thus, better log an appropriate error
-			     * message.
-			     */
-			    MessageContext mc = result.addError(msgSource, 134);
-			    if (mc != null) {
-				mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-			    }
+			/*
+			 * The property is not fully defined in the fragment (that information has been
+			 * determined before, when setting the value for sourcePathInfosForBuilder).
+			 */
 
-			} else {
+			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
+
+			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+
+			    encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, typeCi, alreadyVisitedPiList,
+				    nowVisitedList, currentCi, spi, context, propMemberDefBuilder, ldpType,
+				    propertyMapForBuilder);
+
+			} else if (sourcePathInfosForBuilder.isMultipleSourcePaths()) {
 
 			    List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
 
@@ -574,24 +484,24 @@ public class LdpPropertyEncoder {
 
 				mspBuilder.name(pi.name() + "_" + index);
 
-				mspBuilder.sourcePath(spi.sourcePath);
-
-				if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-				    addFeatureRefDetailsFromSourcePathInfo(mspBuilder, pi, spi);
-				}
+				encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, typeCi,
+					alreadyVisitedPiList, nowVisitedList, currentCi, spi, context, mspBuilder,
+					ldpType, propertyMapForBuilder);
 
 				// determine the correct type for the item schema
 
-				Type typeForMspBuilder = typeForBuilder(pi, identifierPi, spi.targetsSingleValue,
+				Type typeForMspBuilder = typeForBuilder(pi, identifierPi, spi.isTargetsSingleValue(),
 					ldpType);
 				Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
-					spi.targetsSingleValue, ldpType);
+					spi.isTargetsSingleValue(), ldpType);
 
 				mspBuilder.type(typeForMspBuilder);
 
 				/*
 				 * NOTE: If the property is encoded as a feature reference, the value type is
-				 * already set before (together with refType or refUriTemplate).
+				 * already set before (together with refType or refUriTemplate, in
+				 * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
+				 * addFeatureRefDetails).
 				 */
 				if (!isEncodedAsFeatureRef(pi)) {
 				    mspBuilder.valueType(valueTypeForMspBuilder);
@@ -600,10 +510,123 @@ public class LdpPropertyEncoder {
 				itemSchemas.add(mspBuilder.build());
 			    }
 
+			    /*
+			     * Reset the 'properties' for this case (type definition), since the actual
+			     * details are contained in the concat/coalesce members.
+			     */
+			    propertyMapForBuilder = new LinkedHashMap<>();
+			    
 			    if (sourcePathInfosForBuilder.concatRequired()) {
 				propMemberDefBuilder.concat(itemSchemas);
 			    } else {
 				propMemberDefBuilder.coalesce(itemSchemas);
+			    }
+			}
+		    }
+
+		    /*
+		     * NOTE: If the property is encoded as a feature reference, the value type is
+		     * already set before (together with refType or refUriTemplate, in
+		     * encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled (which calls
+		     * addFeatureRefDetails).
+		     */
+		    if (!isEncodedAsFeatureRef(pi)) {
+			propMemberDefBuilder.valueType(valueTypeForBuilder);
+		    }
+
+		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).type(typeForBuilder)
+			    .propertyMap(propertyMapForBuilder).build();
+		    
+		    propertyDefs.put(pi.name(), propMemberDef);
+		}
+
+	    } else {
+
+		/*
+		 * Case of fragment encoding, or of a type definition if fragments are disabled.
+		 */
+
+		if (sourcePathInfosForBuilder != null) {
+
+		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
+			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
+			    && (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)
+				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi))
+			    && sourcePathInfosForBuilder.commonValueSourcePath().isPresent()) {
+
+			addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(pi, propMemberDefBuilder,
+				sourcePathInfosForBuilder, propertyMapForBuilder, typeCi, nowVisitedList, context);
+
+		    } else {
+
+			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
+
+			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+			    propMemberDefBuilder.sourcePath(applicableSourcePath(pi, spi));
+
+			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+				addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, pi, spi,
+					propertyMapForBuilder);
+			    }
+
+			} else {
+
+			    if (sourcePathProvider.multipleSourcePathsUnsupportedinFragments()) {
+				/*
+				 * Multiple source paths found, which is unexpected for this case, but who knows
+				 * if this cannot occur in the future. Thus, better log an appropriate error
+				 * message.
+				 */
+				MessageContext mc = result.addError(msgSource, 134);
+				if (mc != null) {
+				    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+				}
+
+			    } else {
+
+				List<ImmutableFeatureSchema> itemSchemas = new ArrayList<>();
+
+				int index = 0;
+				for (LdpSourcePathInfo spi : sourcePathInfosForBuilder.getSourcePathInfos()) {
+
+				    index++;
+
+				    ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
+
+				    mspBuilder.name(pi.name() + "_" + index);
+
+				    mspBuilder.sourcePath(applicableSourcePath(pi, spi));
+
+				    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+					addFeatureRefDetailsFromSourcePathInfo(mspBuilder, pi, spi,
+						propertyMapForBuilder);
+				    }
+
+				    // determine the correct type for the item schema
+
+				    Type typeForMspBuilder = typeForBuilder(pi, identifierPi,
+					    spi.isTargetsSingleValue(), ldpType);
+				    Optional<Type> valueTypeForMspBuilder = valueTypeForBuilder(pi, identifierPi,
+					    spi.isTargetsSingleValue(), ldpType);
+
+				    mspBuilder.type(typeForMspBuilder);
+
+				    /*
+				     * NOTE: If the property is encoded as a feature reference, the value type is
+				     * already set before (together with refType or refUriTemplate).
+				     */
+				    if (!isEncodedAsFeatureRef(pi)) {
+					mspBuilder.valueType(valueTypeForMspBuilder);
+				    }
+
+				    itemSchemas.add(mspBuilder.build());
+				}
+
+				if (sourcePathInfosForBuilder.concatRequired()) {
+				    propMemberDefBuilder.concat(itemSchemas);
+				} else {
+				    propMemberDefBuilder.coalesce(itemSchemas);
+				}
 			    }
 			}
 		    }
@@ -678,6 +701,120 @@ public class LdpPropertyEncoder {
 	return propertyDefs;
     }
 
+    private void addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(PropertyInfo pi,
+	    Builder propMemberDefBuilder, LdpSourcePathInfos sourcePathInfosForBuilder,
+	    LinkedHashMap<String, FeatureSchema> propertyMapForBuilder, ClassInfo typeCi,
+	    List<PropertyInfo> nowVisitedList, LdpPropertyEncodingContext context) {
+
+	propMemberDefBuilder.sourcePath(sourcePathInfosForBuilder.commonValueSourcePath().get());
+
+	if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+	    ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, sourcePathInfosForBuilder.spis.get(0));
+	    propertyMapForBuilder.put("id", idSubProp);
+
+	    ImmutableFeatureSchema titleSubProp = createTitlePropertyForLinkOrFeatureRef(pi);
+	    propertyMapForBuilder.put("title", titleSubProp);
+	}
+
+	addTypeDetailsToFeatureRefPropertyWithCommonSourcePath(pi, typeCi, nowVisitedList, context,
+		sourcePathInfosForBuilder, propertyMapForBuilder);
+    }
+
+    private ImmutableFeatureSchema createIdPropertyForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi) {
+
+	ImmutableFeatureSchema.Builder idPropBuilder = new ImmutableFeatureSchema.Builder();
+	idPropBuilder.name("id").type(ldpProvider.idValueTypeForFeatureRef(pi, spi))
+		.sourcePath(sourcePathProvider.sourcePathFeatureRefId(pi));
+
+	return idPropBuilder.build();
+    }
+
+    private ImmutableFeatureSchema createHrefPropertyForLink(PropertyInfo pi) {
+
+	ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
+	linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
+		.sourcePath(sourcePathProvider.sourcePathLinkLevelHref(pi));
+	linkPropHrefBuilder.addAllTransformationsBuilders(new ImmutablePropertyTransformation.Builder()
+		.stringFormat(sourcePathProvider.urlTemplateForValueType(pi)));
+
+	return linkPropHrefBuilder.build();
+    }
+
+    private ImmutableFeatureSchema createTitlePropertyForLinkOrFeatureRef(PropertyInfo pi) {
+
+	ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
+		.type(Type.STRING).label(pi.typeInfo().name + "-title");
+	List<String> titleSourcePaths = sourcePathProvider.sourcePathsLinkLevelTitle(pi);
+	if (titleSourcePaths.size() == 1) {
+	    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
+	} else {
+	    titlePropBuilder = titlePropBuilder.sourcePaths(titleSourcePaths);
+	}
+
+	return titlePropBuilder.build();
+    }
+
+    /**
+     * Adds a number of information items to a feature-ref property, to which a
+     * common source path applies. Adds a type sub-property. That property either
+     * has a constant value, if only a single ref type is involved. Otherwise, i.e.,
+     * multiple ref types apply, no refType member is created, and the type
+     * sub-property has an enum constraint which lists the ref types. In that case,
+     * and if either coretable conversion applies, or the value type of the
+     * feature-ref-property has a valid type attribute, also a source is set for the
+     * type sub-property (which is used to retrieve the actual type of a given
+     * object value for the feature-ref).
+     * 
+     * @param pi                        the feature-ref property
+     * @param typeCi                    the value type of the feature-ref property
+     * @param nowVisitedList            the list of visited properties (including
+     *                                  the feature-ref property)
+     * @param context                   the property encoding context for the
+     *                                  feature-ref property
+     * @param sourcePathInfosForBuilder source path infos for the feature-ref
+     *                                  property
+     * @param propertyMapForBuilder     property map for the feature-ref property
+     *                                  (to be added as the 'properties' member of
+     *                                  that property)
+     */
+    private void addTypeDetailsToFeatureRefPropertyWithCommonSourcePath(PropertyInfo pi, ClassInfo typeCi,
+	    List<PropertyInfo> nowVisitedList, LdpPropertyEncodingContext context,
+	    LdpSourcePathInfos sourcePathInfosForBuilder, LinkedHashMap<String, FeatureSchema> propertyMapForBuilder) {
+
+	ImmutableFeatureSchema.Builder typePropertyDefBuilder = new ImmutableFeatureSchema.Builder();
+	typePropertyDefBuilder.name("type").type(Type.STRING);
+
+	List<LdpSourcePathInfo> spis = sourcePathInfosForBuilder.getSourcePathInfos();
+
+	if (spis.size() == 1) {
+	    String singularRefType = spis.get(0).getRefType();
+	    typePropertyDefBuilder.constantValue(singularRefType);
+	} else {
+
+	    if (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
+		typePropertyDefBuilder.sourcePath(Ldproxy2Target.coretableFeatureTypeColumn);
+	    } else {
+		PropertyInfo typeAttribute = LdpInfo.getTypeAttribute(typeCi);
+//		    LdpPropertyEncodingContext typeCiContext = ldpProvider.createInitialPropertyEncodingContext(
+//			    typeCi, !Ldproxy2Target.enableFragments || !context.isInFragment());
+//		    LdpSourcePathInfos typeAttributeSpis = sourcePathProvider.sourcePathPropertyLevel(
+//			    typeAttribute, new ArrayList<PropertyInfo>(), typeCiContext);
+		LdpSourcePathInfos typeAttributeSpis = sourcePathProvider.sourcePathPropertyLevel(typeAttribute,
+			nowVisitedList, ldpProvider.createChildContext(context, typeCi));
+
+		if (typeAttributeSpis.commonValueSourcePath().isPresent()) {
+		    typePropertyDefBuilder.sourcePath(typeAttributeSpis.commonValueSourcePath().get());
+		}
+	    }
+
+	    typePropertyDefBuilder.constraintsBuilder()
+		    .addAllEnumValues(spis.stream().map(spi -> spi.getRefType()).sorted().collect(Collectors.toList()));
+
+	}
+	propertyMapForBuilder.put("type", typePropertyDefBuilder.build());
+    }
+
     private void handleGenericValueType(ClassInfo ci, LinkedHashMap<String, FeatureSchema> propertyDefs) {
 
 	// determine common attribute in subtypes
@@ -711,7 +848,7 @@ public class LdpPropertyEncoder {
 	    for (Entry<String, ClassInfo> e : subtypesByName.entrySet()) {
 		ClassInfo subtype = e.getValue();
 		PropertyInfo valueProp = subtype.property(valuePropName);
-		String suffix = StringUtils.defaultIfBlank(valueProp.taggedValue("ldp2GenericValueTypeSuffix"),
+		String suffix = StringUtils.defaultIfBlank(valueProp.taggedValue("ldpGenericValueTypeSuffix"),
 			subtype.name());
 		Type ldpType = target.ldproxyType(valueProp);
 		ImmutableFeatureSchema.Builder item = new ImmutableFeatureSchema.Builder()
@@ -753,32 +890,54 @@ public class LdpPropertyEncoder {
     }
 
     private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder, PropertyInfo pi,
-	    LdpSourcePathInfo spi) {
+	    LdpSourcePathInfo spi, LinkedHashMap<String, FeatureSchema> propertyMapForBuilder) {
 
-	if (StringUtils.isNotBlank(spi.refType) || StringUtils.isNotBlank(spi.refUriTemplate)) {
+	if (StringUtils.isNotBlank(spi.getRefType()) || StringUtils.isNotBlank(spi.getRefUriTemplate())) {
 
-	    if (StringUtils.isNotBlank(spi.refType)) {
-		schemaBuilder.refType(spi.refType);
+	    boolean ignoreIdValueType = false;
+
+	    if (StringUtils.isNotBlank(spi.getRefType())) {
+		schemaBuilder.refType(spi.getRefType());
+
+		if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+		    /*
+		     * In this case, where id and title properties are explicitly set for the
+		     * feature ref, its source path will result in the actual object, not just the
+		     * id. So ignore / do not encode the id value type.
+		     */
+		    ignoreIdValueType = true;
+
+		    ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, spi);
+		    propertyMapForBuilder.put("id", idSubProp);
+
+		    ImmutableFeatureSchema titleSubProp = createTitlePropertyForLinkOrFeatureRef(pi);
+		    propertyMapForBuilder.put("title", titleSubProp);
+		}
 	    }
 
-	    if (StringUtils.isNotBlank(spi.refUriTemplate)) {
-		schemaBuilder.refUriTemplate(spi.refUriTemplate);
+	    if (StringUtils.isNotBlank(spi.getRefUriTemplate())) {
+		schemaBuilder.refUriTemplate(spi.getRefUriTemplate());
 	    }
 
-	    Type valueType = ldpProvider.valueTypeForFeatureRef(pi, spi);
-	    schemaBuilder.valueType(valueType);
+	    if (!ignoreIdValueType) {
+		Type idValueType = ldpProvider.idValueTypeForFeatureRef(pi, spi);
+		if (idValueType != null) {
+		    schemaBuilder.valueType(idValueType);
+		}
+	    }
 	}
     }
 
-    private void encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(PropertyInfo pi,
+    private void encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(PropertyInfo pi, ClassInfo typeCi,
 	    List<PropertyInfo> alreadyVisitedPiList, List<PropertyInfo> nowVisitedList, ClassInfo currentCi,
 	    LdpSourcePathInfo spi, LdpPropertyEncodingContext context, ImmutableFeatureSchema.Builder schemaBuilder,
-	    Type ldpType) {
+	    Type ldpType, LinkedHashMap<String, FeatureSchema> propertyMapForBuilder) {
 
-	schemaBuilder.sourcePath(spi.sourcePath);
+	schemaBuilder.sourcePath(applicableSourcePath(pi, spi));
 
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, pi, spi);
+	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, pi, spi, propertyMapForBuilder);
 	}
 
 	if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi.categoryOfValue() == Options.DATATYPE)) {
@@ -818,6 +977,17 @@ public class LdpPropertyEncoder {
 		}
 	    }
 	}
+    }
+
+    private Optional<String> applicableSourcePath(PropertyInfo pi, LdpSourcePathInfo spi) {
+	return (spi.getIdSourcePath().isPresent() && !isFeatureRefWithTitle(pi)) ? spi.getIdSourcePath()
+		: spi.getValueSourcePath();
+    }
+
+    private boolean isFeatureRefWithTitle(PropertyInfo pi) {
+	return LdpInfo.isTypeWithIdentityValueType(pi)
+		&& pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
+		&& LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi);
     }
 
     private boolean isEncodedAsFeatureRef(PropertyInfo pi) {

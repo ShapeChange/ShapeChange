@@ -90,7 +90,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     protected String targetTableSchema;
 
     /**
-     * @return the propertyName
+     * @return the propertyName - cannot be <code>null</code>
      */
     public String getPropertyName() {
 	return propertyName;
@@ -104,7 +104,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the originalPropertyName
+     * @return the originalPropertyName - can be <code>null</code>
      */
     public String getOriginalPropertyName() {
 	return originalPropertyName;
@@ -118,7 +118,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the inClassName
+     * @return the inClassName - cannot be <code>null</code>
      */
     public String getInClassName() {
 	return inClassName;
@@ -132,7 +132,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the originalInClassName
+     * @return the originalInClassName - can be <code>null</code>
      */
     public String getOriginalInClassName() {
 	return originalInClassName;
@@ -146,7 +146,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the propertyValueType
+     * @return the propertyValueType - cannot be <code>null</code>
      */
     public String getPropertyValueType() {
 	return propertyValueType;
@@ -160,7 +160,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the originalPropertyValueType
+     * @return the originalPropertyValueType - can be <code>null</code>
      */
     public String getOriginalPropertyValueType() {
 	return originalPropertyValueType;
@@ -174,7 +174,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the sourceTable
+     * @return the sourceTable - cannot be <code>null</code>
      */
     public String getSourceTable() {
 	return sourceTable;
@@ -188,7 +188,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the sourceTableSchema
+     * @return the sourceTableSchema - can be <code>null</code>
      */
     public String getSourceTableSchema() {
 	return sourceTableSchema;
@@ -202,7 +202,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the valueSourcePath
+     * @return the valueSourcePath - cannot be <code>null</code>
      */
     public String getValueSourcePath() {
 	return valueSourcePath;
@@ -216,7 +216,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the idSourcePath
+     * @return the idSourcePath - can be <code>null</code>
      */
     public String getIdSourcePath() {
 	return idSourcePath;
@@ -234,7 +234,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the targetTable
+     * @return the targetTable - can be <code>null</code>
      */
     public String getTargetTable() {
 	return targetTable;
@@ -248,7 +248,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the targetTableSchema
+     * @return the targetTableSchema - can be <code>null</code>
      */
     public String getTargetTableSchema() {
 	return targetTableSchema;
@@ -303,7 +303,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the propertyMultiplicity
+     * @return the propertyMultiplicity - cannot be <code>null</code>
      */
     public String getPropertyMultiplicity() {
 	return propertyMultiplicity;
@@ -317,7 +317,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the originalPropertyMultiplicity
+     * @return the originalPropertyMultiplicity - can be <code>null</code>
      */
     public String getOriginalPropertyMultiplicity() {
 	return originalPropertyMultiplicity;
@@ -331,7 +331,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     }
 
     /**
-     * @return the idValueType - can be null
+     * @return the idValueType - can be <code>null</code>
      */
     public String getIdValueType() {
 	return idValueType;

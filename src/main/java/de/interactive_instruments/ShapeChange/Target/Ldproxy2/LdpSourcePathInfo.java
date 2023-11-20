@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
+import java.util.Optional;
+
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 
 /**
@@ -39,9 +41,66 @@ import de.ii.xtraplatform.features.domain.SchemaBase.Type;
  */
 public class LdpSourcePathInfo {
 
-    public String sourcePath;
-    public Type valueType;
-    public String refType;
-    public String refUriTemplate;
-    public boolean targetsSingleValue;
+    protected Optional<String> idSourcePath;
+    protected Optional<String> valueSourcePath;
+    protected Optional<Type> idValueType;
+    protected String refType;
+    protected String refUriTemplate;
+    protected boolean targetsSingleValue;
+
+    public LdpSourcePathInfo(Optional<String> idSourcePath, Optional<String> valueSourcePath,
+	    Optional<Type> idValueType, String refType, String refUriTemplate, boolean targetsSingleValue) {
+	this.idSourcePath = idSourcePath;
+	this.valueSourcePath = valueSourcePath;
+	this.idValueType = idValueType;
+	this.refType = refType;
+	this.refUriTemplate = refUriTemplate;
+	this.targetsSingleValue = targetsSingleValue;
+    }
+
+    /**
+     * @return the idValueType
+     */
+    public Optional<Type> getIdValueType() {
+	return idValueType;
+    }
+
+    /**
+     * @return the refType
+     */
+    public String getRefType() {
+	return refType;
+    }
+
+    /**
+     * @return the refUriTemplate
+     */
+    public String getRefUriTemplate() {
+	return refUriTemplate;
+    }
+
+    /**
+     * @return <code>true</code>, if the property for which this object holds source
+     *         path information has at most a single value; else <code>false</code>
+     */
+    public boolean isTargetsSingleValue() {
+	return targetsSingleValue;
+    }
+
+    /**
+     * @return the idSourcePath; can be empty for cases of properties with simple or
+     *         geometry type
+     */
+    public Optional<String> getIdSourcePath() {
+	return idSourcePath;
+    }
+
+    /**
+     * @return the valueSourcePath; can be empty for cases of links/refs to external
+     *         resources
+     */
+    public Optional<String> getValueSourcePath() {
+	return valueSourcePath;
+    }
+
 }

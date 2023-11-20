@@ -48,6 +48,12 @@ import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.AbstractL
 public class LdpCoretableProvider extends AbstractLdpProvider {
 
     @Override
+    public Type idValueTypeForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi) {
+	return spi.getIdValueType().isPresent() ? spi.getIdValueType().get()
+		: Ldproxy2Target.coretableIdColumnLdproxyType;
+    }
+
+    @Override
     public LdpPropertyEncodingContext createInitialPropertyEncodingContext(ClassInfo ci, boolean isTypeDefinition) {
 
 	LdpPropertyEncodingContext pec = new LdpPropertyEncodingContext();

@@ -2973,11 +2973,16 @@
          <targetParameter name="serviceDescription" value="..."/>
          <targetParameter name="serviceLabel" value="MyServiceLabel"/>
          <targetParameter name="srid" value="31467"/>
-         <targetParameter name="coretableName" value="mycoretable"/>
-         <targetParameter name="coretableIdColumnName" value="myidcolumn"/>
+         <targetParameter name="coretable" value="features"/>
+         <targetParameter name="coretableIdColumn" value="id"/>
          <targetParameter name="coretableIdColumnLdproxyType" value="string"/>
-         <targetParameter name="coretableFeatureTypeColumnName" value="myfeaturetypecolumn"/>
-         <targetParameter name="coretableGeometryColumnName" value="mygeometrycolumn"/>
+         <targetParameter name="coretableFeatureTypeColumn" value="featuretype"/>
+         <targetParameter name="coretableGeometryColumn" value="geometry"/>
+         <targetParameter name="coretableRefColumn" value="ref"/>
+         <targetParameter name="coretableRefRelations" value="roleFT3"/>
+         <targetParameter name="coretableRelationsTable" value="references"/>
+         <targetParameter name="coretableRelationNameColumn" value="rel"/>
+         <targetParameter name="coretableInverseRelationNameColumn" value="rel_inv"/>
          <targetParameter name="enableFragments" value="true"/>
          <targetParameter name="enableFeaturesGml" value="true"/>
          <targetParameter name="enableFeaturesGeoJson" value="true"/>
@@ -3184,14 +3189,6 @@
                       rule="*"
                       targetType="LINK"
                       type="ExtFT1"/>
-            <MapEntry param="linkInfos{urlTemplate=https://example.org/external/ExtFT2/(value)}"
-                      rule="*"
-                      targetType="LINK"
-                      type="ExtFT2"/>
-            <MapEntry param="linkInfos{urlTemplate=https://example.org/external/ExtFT3/(value)}"
-                      rule="*"
-                      targetType="LINK"
-                      type="ExtFT3"/>
          </mapEntries>
       </Target>
       <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget"
@@ -3279,14 +3276,6 @@
                       rule="*"
                       targetType="https://example.org/extschema/schema.json#/$defs/ExtFT1"
                       type="ExtFT1"/>
-            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string}"
-                      rule="*"
-                      targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
-                      type="ExtFT2"/>
-            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/baz/(featureId);collectionIdTypes=string,integer}"
-                      rule="*"
-                      targetType="https://example.org/extschema/schema.json#/$defs/ExtFT3"
-                      type="ExtFT3"/>
          </mapEntries>
       </Target>
    </targets>
