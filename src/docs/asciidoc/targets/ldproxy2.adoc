@@ -533,10 +533,10 @@ encoded in the database in multiple ways - for example because of
 multiplicity being flattened (like a property with max multiplicity 2),
 and the property values thus being SQL encoded by multiple separate columns,
 or because the property value type has subtypes, and each subtype is SQL encoded
-in a separate table - the property is encoded (in the type definition) 
-using the ldproxy keyword `concat` or `coalesce`. The former is used
+in a separate table - the property is typically encoded (in the type definition) 
+as a FEATURE_REF using the ldproxy keyword `concat` or `coalesce`. The former is used
 if the maximum multiplicity of the property is greater than one, the latter if it is 
-equal to one.
+equal to one. Further details on the encoding of a FEATURE_REF are given <<feature_ref,here>>.
 
 NOTE: The following example is from one of the ShapeChange unit tests.
 The ShapeChange configuration and results of that test are available https://github.com/ShapeChange/ShapeChange/tree/master/src/test/resources/ldproxy2/fragmentsConcatCoalesce[here], 
@@ -1248,7 +1248,7 @@ The `type` member of a property definition depends upon the value type of the pr
 ** the value type is mapped to or implemented by a simple type, then the `type` is VALUE_ARRAY, and an additional `valueType` member is added, with the name of the simple type as value.
 *** NOTE: The ldproxy target does not support geometry properties with multiplicity greater than 1. Such cases should be modeled as property with max multiplicity 1 and a multi-geometry (e.g. GM_MultiPoint) or geometry collection (GM_Aggregate) as value type. If the ldproxy target encounters a geometry property with max multiplicity greater than 1, it will log an error and continue processing, assuming max multiplicity equal to 1 for the property.
 ** the value type is mapped to LINK or a type with identity, and:
-*** the property matches _rule-ldp2-all-linkObjectAsFeatureRef_, the value type is encoded as a feature reference, the `type` is FEATURE_REF_ARRAY, and either `refUriTemplate` is added (if the value type is mapped to LINK - then the template is determined like the stringFormat-transformation of a link object href-member, see <<link_object,below>>), or a `refType` with the identifier of the value type.
+*** the property matches _rule-ldp2-all-linkObjectAsFeatureRef_, the value type is encoded as a feature reference, the `type` is FEATURE_REF_ARRAY, and either `refUriTemplate` is added, or a `refType` with the identifier of the value type. Further details on the encoding of a FEATURE_REF are given <<feature_ref,here>>.
 *** otherwise, the value type is implemented as a link object, the `type` is OBJECT_ARRAY, and a link object is created in the property definition as defined <<link_object,below>>.
 * Otherwise, i.e. the maximum multiplicity of the property is equal to 1:
 ** If the value type is mapped to a simple ldproxy type, then `type` is the target type defined by the map entry.
@@ -1256,7 +1256,7 @@ The `type` member of a property definition depends upon the value type of the pr
 ** Otherwise, if the value type is an enumeration or code list, then `type` is STRING or a numeric type, as explained in the <<ldproxy2_schemaconversionrules_types_enumeration_and_codelist>> section.
 ** Otherwise, if the value type is implemented as OBJECT but is not a type with identity (so most likely it is a data type), `type` simply is OBJECT.
 ** Otherwise, if the value type is mapped to LINK, or a type with identity, and:
-*** the property matches _rule-ldp2-all-linkObjectAsFeatureRef_, the value type is encoded as a feature reference, the `type` is FEATURE_REF, and either `refUriTemplate` is added (if the value type is mapped to LINK - then the template is determined like the stringFormat-transformation of a link object href-member, see <<link_object,below>>), or a `refType` with the identifier of the value type.
+*** the property matches _rule-ldp2-all-linkObjectAsFeatureRef_, the value type is encoded as a feature reference, the `type` is FEATURE_REF, and either `refUriTemplate` is added, or a `refType` with the identifier of the value type. Further details on the encoding of a FEATURE_REF are given <<feature_ref,here>>.
 *** otherwise, the value type is implemented as a link object, the `type` is OBJECT, and a link object is created in the property definition as defined <<link_object,below>>.
 
 [[link_object]]
@@ -1280,10 +1280,71 @@ is optional (i.e., it has a minimum multiplicity of 0), then: a) `sourcePaths` i
 *** `transformations`:
 **** `stringFormat`: Either the URL template from the map entry, if one is defined for the property value type, or '{{serviceUrl}}/collections/{value_type_name}/items/{{value}}', where value_type_name is the name of the value type, in lower case (and {{serviceUrl}} as well as {{value}} will automatically be replaced by ldproxy).
 
+[[feature_ref]]
+The definition of a FEATURE_REF within a property definition is as follows:
+
+* If only a single source path was determined: `sourcePath`, as defined for 
+the property (for details, 
+see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
+** NOTE: If a specific title is defined for the value type, then the source path 
+is for the actual value of the FEATURE_REF. Otherwise, it is the identifier of the
+referenced feature (which can be a foreign key column).
+* `type: FEATURE_REF`, if the maximum multiplicity of the property is 1, 
+otherwise `type: FEATURE_REF_ARRAY`
+* If the value type is mapped to LINK: `refUriTemplate` is added, 
+with the template value being determined like the stringFormat-transformation 
+of a <<link_object,link object href-member>>.
+* Otherwise, i.e., the value type is NOT mapped to LINK, it depends:
+** If a single source path was determined for the FEATURE_REF:
+*** `refType` is added, with the identifier of the value type as value.
+*** If tag _ldpTitleAttribute_ on the value type has a valid value (i.e., it 
+contains the name of an attribute of the value type), then `properties` with two members
+is added:
+**** Member `id`, with: 
+***** `sourcePath`: path for the ID member of the value type
+***** `type`: ldproxy type which corresponds to the type of the identifier
+**** Member `title`: 
+***** `sourcePath`: path for the title attribute of the value type
+****** NOTE: If tag _ldpTitleAttribute_ on the value type has a valid value (i.e., it 
+contains the name of an attribute of the value type), and that attribute of the value type
+is optional (i.e., it has a minimum multiplicity of 0), then: 
+a) `sourcePaths` is used instead of `sourcePath`, and 
+b) the name of the primary key column for (the table representing the) 
+value type is added as another source path value - to be used as 
+fallback in case that the title attribute on the value type has no value.
+***** `type`: ldproxy type which corresponds to the type of the title attribute.
+***** `label`: {value type name} + "-title"
+*** Otherwise, i.e., we have a single source path and tag _ldpTitleAttribute_ 
+on the value type does NOT have a valid value: 
+**** `valueType` is added, with the ldproxy type of the ID member in the value type definition.
+** Otherwise, i.e., multiple source paths were determined for the FEATURE_REF:
+*** If the source paths all have the same value - which can happen 
+in cases where features are stored in the same place, and an additional type 
+discriminator field exists in the data store - like in 
+the <<ldproxy2_schemaconversionrules_specificrules_coretable>>, or if tag _ldpTypeAttribute_
+on the the value type has a valid value: 
+**** `properties` with a `type` member is added:
+***** The `sourcePath` of that `type` member is the path to the type discriminator field.
+***** Another `type` member defines the type of the discriminator value (typically STRING).
+***** An enum constraint is added, with one value per relevant type identifier.
+**** If tag _ldpTitleAttribute_ on the value type has a valid value, `id` and `title` 
+members are also encoded within the `properties` member, as described before.
+*** Otherwise, i.e. multiple source paths with different value were determined:
+**** `concat` or `coalesce` is used to encode the individual source 
+path options. The former is used if the maximum multiplicity of 
+the property is greater than one, the latter if it is equal to one. 
+An example is shown in section 
+<<ldproxy2_schemaconversionrules_types_inheritance_and_specialization>>.
+**** Per case within `concat` or `coalesce`:
+***** `sourcePath`: One of the source path values.
+***** `refType` is added, with value being the identifier of the actual 
+(value) type that is targeted by the source path.
+***** If tag _ldpTitleAttribute_ on the value type has a valid value, `id` and `title` 
+members are encoded within a `properties` member, as described before.
+
 // https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/README.md
 
 NOTE: The _inlineOrByReference_ tagged value of the property is ignored by the ldproxy target.
-
 
 
 [[ldproxy2_schemaconversionrules_properties_multiplicity_voidable]]
@@ -1574,6 +1635,96 @@ a transformation is added to remove property `dataType` from the according outpu
         someGenerAttribute.dataType:
         - remove: ALWAYS
 ----
+
+[[ldproxy2_schemaconversionrules_specificrules_coretable]]
+==== Coretable Approach
+
+(since v2.14.0)
+
+Application schemas can be quite extensive, and can have classes with 
+quite complex structure. Managing data for that schema in a relational database
+can be a daunting and demanding task - especially if the database schema
+is also complex (lots of tables, lots of columns, lots of foreign key and
+other constraints). The _coretable approach_ is a way to mitigate the level
+of complexity. In this approach, the database schema only consists of two tables:
+a coretable with one entry per object, and a separate references table, where
+most of the object references are managed. 
+
+To signal that the coretable approach applies, include 
+__rule-ldp2-all-coretable__ in the encoding rule.
+
+The coretable is defined as follows:
+
+* The table name is given by target parameter _coretable_ (default value is 'features').
+* The table should have a separate primary key column 
+(for ldproxy use, ideally integer valued).
+* The table has a column with the object identifiers. The identifiers are used 
+in object references. The column name is given by target parameter _coretableIdColumn_ 
+(default value is the value of target parameter _primaryKeyColumn_). The ldproxy type
+of the column is defined via target parameter _coretableIdColumnLdproxyType_ (default
+is 'INTEGER').
+* The table also has a column in which the name of the feature type of an object is 
+encoded. The name is equal to the ldproxy collection ID for that feature type 
+(typically the feature type name in lower case). The column name is defined via
+target parameter _coretableFeatureTypeColumn_ (default value is 'featuretype').
+* The table must have a `properties` column with JSON-encoded value. This column
+is used to encode all object properties that are not object references. In other words,
+properties with simple type, enumeration or codelist type, or with a data type as value,
+are encoded within a JSON object. NOTE: The JSON object does not have an additional
+level of nesting, like in the case of a GeoJSON-encoded feature. The object properties
+are directly encoded as members of the JSON object (data type values would of course
+lead to some level of nesting).
+* The table has a column to store the 
+<<ldproxy2_schemaconversionrules_types_primarygeometry,primary geometry>> of the object.
+The column name is given by target parameter _coretableGeometryColumn_ (default value
+is 'geom').
+* The table may also have a column to store the value of a high priority object reference,
+for each object. Which property that reference embodies per feature type is domain 
+specific. Target parameter _coretableRefColumn_ defines the column name (default value 
+is 'ref'). Target parameter _coretableRefRelations_ is used to identify all relevant
+schema properties by their name (the parameter has a comma-separated value, without a default). The column is useful to speed up certain queries. The properties identified
+by target parameter _coretableRefRelations_ must have maximum multiplicity of 1, and
+for each feature type only at most one of the properties must apply. That means that
+not every feature type needs to have such a high priority property.
+* The table may have additional columns, which will be ignored by ldproxy.
+
+The references table is defined as follows:
+
+* The table name is given by target parameter _coretableRelationsTable_ 
+(default value is 'references').
+* The table should have a separate primary key column 
+(for ldproxy use, ideally integer valued).
+* The table has two columns with the identifiers of the objects that participate 
+in an object-object relationship. The object-object relationship is typically 
+modeled as an association. For a uni-directional association, the direction 
+of the association is unimportant. The owner of the navigable association role
+automatically is identified as the source of the relationship, and the association role
+automatically is seen as the target role. However, for a bi-directional 
+association, the direction in which the association was modeled does matter, 
+because source and target must be encoded in separate and distinct columns within the references table. 
+In the bi-directional case, the class that is the source of the association is the source
+of the relationship, and the other class is the target. The association role that is navigable
+from the source is the target role, and the other association role is the source role.
+** The column that contains the identifier of the source object is defined by target parameter
+_coretableIdColumn_ (like in the coretable itself, see above). 
+** The column that contains the identifier of the target object is defined by target parameter
+_coretableRefColumn_ (like in the coretable itself, see above).
+** The ldproxy type of both columns is defined by target parameter _coretableIdColumnLdproxyType_
+( like in the coretable itself, see above).
+* The references table also has two columns in which the names of the 
+target and the source roles are encoded (for a uni-directional association, 
+only the target role name is provided):
+** The name of the column with the target role is defined by target parameter 
+_coretableRelationNameColumn_ (default value is 'rel').
+** The name of the column with the source role is defined by target parameter 
+_coretableInverseRelationNameColumn_ (default value is 'rel_inv').
+** The ldproxy type of both columns is 'STRING'.
+
+The ldproxy target will create appropriate configurations for this particular database schema.
+
+NOTE: The coretable approach does not support object references whose sources are data types.
+Such references may be encoded within the JSON-properties, but they cannot be represented
+in the high-priority reference column of the coretable or in the references table.
 
 
 [[ldproxy2_encodingrules]]
