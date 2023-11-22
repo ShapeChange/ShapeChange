@@ -30,9 +30,9 @@ api:
 - buildingBlock: QUERYABLES
   enabled: true
 collections:
-  ft1:
-    id: ft1
-    label: ft1
+  FT1:
+    id: FT1
+    label: FT1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -40,9 +40,9 @@ collections:
       conformance: NONE
     - buildingBlock: GEO_JSON
     - buildingBlock: JSON_FG
-  ft2:
-    id: ft2
-    label: ft2
+  FT2:
+    id: FT2
+    label: FT2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -50,9 +50,9 @@ collections:
       conformance: NONE
     - buildingBlock: GEO_JSON
     - buildingBlock: JSON_FG
-  ft2sub1sub1:
-    id: ft2sub1sub1
-    label: ft2sub1sub1
+  FT2Sub1Sub1:
+    id: FT2Sub1Sub1
+    label: FT2Sub1Sub1
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -60,9 +60,9 @@ collections:
       conformance: NONE
     - buildingBlock: GEO_JSON
     - buildingBlock: JSON_FG
-  ft3:
-    id: ft3
-    label: ft3
+  FT3:
+    id: FT3
+    label: FT3
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -79,9 +79,9 @@ collections:
       conformance: NONE
     - buildingBlock: GEO_JSON
     - buildingBlock: JSON_FG
-  ft4:
-    id: ft4
-    label: ft4
+  FT4:
+    id: FT4
+    label: FT4
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -103,9 +103,9 @@ collections:
         - remove: ALWAYS
         someGenerAttribute.dataType:
         - remove: ALWAYS
-  t:
-    id: t
-    label: t
+  T:
+    id: T
+    label: T
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML

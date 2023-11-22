@@ -128,6 +128,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String foreignKeyColumnSuffixCodelist = "";
     public static SortedSet<String> genericValueTypes = null;
 
+    public static String collectionIdFormat = "lowerCase";
+
     public static String labelTemplate = "[[alias]]";
     public static int maxNameLength = 63;
     public static ZoneId nativeTimeZone = null;
@@ -148,6 +150,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static Type coretableIdColumnLdproxyType = Type.INTEGER;
     public static String coretableFeatureTypeColumn = "featuretype";
     public static String coretableGeometryColumn = "geom";
+    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
 
     public static String coretableRefColumn = "ref";
     public static Set<String> coretableRefRelations = new HashSet<>();
@@ -244,6 +247,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //		    Ldproxy2Constants.PARAM_DOCUMENTATION_TEMPLATE);
 //	    documentationNoValue = options.parameter(this.getClass().getName(),
 //		    Ldproxy2Constants.PARAM_DOCUMENTATION_NOVALUE);
+
+	    collectionIdFormat = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT, "lowerCase", false, true);
 
 	    cfgTemplatePath = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
@@ -423,6 +429,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		coretableGeometryColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN, "geom", false, true);
+
+		coretableJsonFeatureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID, false);
 
 		coretableRefColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, "ref", false, true);
@@ -912,6 +921,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	dbSchemaNames = new TreeSet<String>();
 
+	collectionIdFormat = "lowerCase";
+
 //	documentationTemplate = null;
 //	documentationNoValue = null;
 
@@ -966,6 +977,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	coretableIdColumnLdproxyType = Type.INTEGER;
 	coretableFeatureTypeColumn = "featuretype";
 	coretableGeometryColumn = "geom";
+	coretableJsonFeatureRefWithAnyCollectionId = false;
 	coretableRefColumn = "ref";
 	coretableRefRelations = new HashSet<>();
 	coretableRelationsTable = "references";
@@ -1133,9 +1145,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
 	case 135:
 	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
-	case 136:
-	    return "??The property '$1$' of data type '$2$' has a type with identity as value type. No feature-ref id source path can be computed for this construct in the coretable approach. 'FIXME' is used as source path.";
-	    
+
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
 	case 10002:

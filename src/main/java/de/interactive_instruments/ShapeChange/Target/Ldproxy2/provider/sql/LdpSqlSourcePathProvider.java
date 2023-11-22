@@ -145,7 +145,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		    if (isImplementedAsFeatureReference(pi)) {
 			idSourcePath = Optional.of(spei.getIdSourcePath());
 			idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
-			refType = spei.getPropertyValueType().toLowerCase(Locale.ENGLISH);
+			refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
 		    }
 		}
 
@@ -958,7 +958,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	}
 
 	if (StringUtils.isBlank(urlTemplate)) {
-	    urlTemplate = "{{serviceUrl}}/collections/" + valueTypeName.toLowerCase(Locale.ENGLISH)
+	    urlTemplate = "{{serviceUrl}}/collections/" + LdpUtil.formatCollectionId(valueTypeName)
 		    + "/items/{{value}}";
 	}
 

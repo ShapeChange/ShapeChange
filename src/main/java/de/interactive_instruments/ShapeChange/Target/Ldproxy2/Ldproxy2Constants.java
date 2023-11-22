@@ -80,6 +80,8 @@ public class Ldproxy2Constants {
 //    public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 //    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
+    public static final String PARAM_COLLECTION_ID_FORMAT = "collectionIdFormat";
+    
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
     public static final String PARAM_CFG_TEMPLATE_PATH = "cfgTemplatePath";
     public static final String PARAM_CODE_TARGET_TAG_NAME = "codeTargetTagName";
@@ -127,6 +129,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE = "coretableIdColumnLdproxyType";
     public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN = "coretableFeatureTypeColumn";
     public static final String PARAM_CORETABLE_GEOMETRY_COLUMN = "coretableGeometryColumn";
+    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
     
     public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
     public static final String PARAM_CORETABLE_REF_RELATIONS = "coretableRefRelations";

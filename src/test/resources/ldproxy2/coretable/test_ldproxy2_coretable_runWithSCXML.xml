@@ -2972,6 +2972,7 @@
          <targetParameter name="objectIdentifierName" value="oid"/>
          <targetParameter name="serviceDescription" value="..."/>
          <targetParameter name="serviceLabel" value="MyServiceLabel"/>
+         <targetParameter name="collectionIdFormat" value="none"/>
          <targetParameter name="srid" value="31467"/>
          <targetParameter name="coretable" value="features"/>
          <targetParameter name="coretableIdColumn" value="id"/>

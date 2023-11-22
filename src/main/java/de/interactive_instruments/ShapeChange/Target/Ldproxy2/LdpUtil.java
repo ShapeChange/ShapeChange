@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
@@ -68,5 +70,13 @@ public class LdpUtil {
 
     public static String fragmentRef(ClassInfo ci) {
 	return "#/fragments/" + LdpInfo.configIdentifierName(ci);
+    }
+
+    public static String formatCollectionId(String id) {
+	if ("none".equalsIgnoreCase(Ldproxy2Target.collectionIdFormat)) {
+	    return id;
+	} else {
+	    return id.toLowerCase(Locale.ENGLISH);
+	}
     }
 }

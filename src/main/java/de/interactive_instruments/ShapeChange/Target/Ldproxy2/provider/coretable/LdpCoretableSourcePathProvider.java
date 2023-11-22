@@ -33,11 +33,8 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretabl
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,6 +51,7 @@ import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpPropertyEncodin
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSourcePathInfo;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSourcePathInfos;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpSpecialPropertiesInfo;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpUtil;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.AbstractLdpSourcePathProvider;
@@ -189,7 +187,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 		    // property type is type with identity
 
-		    SortedSet<String> collectionIds = collectionIds(pi);
+		    SortedSet<String> collectionIds = LdpInfo.collectionIds(pi);
 
 		    idSourcePath = featureRefIdSourcePath(pi);
 		    valueSourcePath = featureRefValueSourcePath(pi);
@@ -234,18 +232,10 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	String idSourcePath;
 	if (pi.inClass().category() == Options.DATATYPE) {
 
-	    // does not really work in coretable approach
-
 	    // NOTE: Such a situation would actually not be compliant to ISO 19109
 
-	    // untested attempt: pi.name() + (pi.cardinality().maxOccurs > 1 ? "/featureId"
-	    // : "");
-
-	    MessageContext mc = result.addWarning(msgSource, 136, pi.name(), pi.inClass().name());
-	    if (mc != null) {
-		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-	    }
-	    idSourcePath = "FIXME";
+	    idSourcePath = pi.name() + ((LdpInfo.collectionIds(pi).size() > 1
+		    || Ldproxy2Target.coretableJsonFeatureRefWithAnyCollectionId) ? "/featureId" : "");
 
 	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
 
@@ -286,15 +276,12 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	String valueSourcePath;
 	if (pi.inClass().category() == Options.DATATYPE) {
 
-	    // does not really work in coretable approach
-
 	    // NOTE: Such a situation would actually not be compliant to ISO 19109
 
-	    MessageContext mc = result.addWarning(msgSource, 136, pi.name(), pi.inClass().name());
-	    if (mc != null) {
-		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-	    }
-	    valueSourcePath = "FIXME";
+	    String idSourcePath = featureRefIdSourcePath(pi).get();
+
+	    valueSourcePath = "[" + idSourcePath + "=" + Ldproxy2Target.coretableIdColumn + "]"
+		    + Ldproxy2Target.coretable;
 
 	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
 
@@ -386,7 +373,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	}
 
 	if (StringUtils.isBlank(urlTemplate)) {
-	    urlTemplate = "{{serviceUrl}}/collections/" + valueTypeName.toLowerCase(Locale.ENGLISH)
+	    urlTemplate = "{{serviceUrl}}/collections/" + LdpUtil.formatCollectionId(valueTypeName)
 		    + "/items/{{value}}";
 	}
 
@@ -396,7 +383,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     @Override
     public String sourcePathTypeLevel(ClassInfo ci) {
 	return "/" + Ldproxy2Target.coretable + "{filter=" + Ldproxy2Target.coretableFeatureTypeColumn + "='"
-		+ formatCollectionId(ci.name()) + "'}";
+		+ LdpUtil.formatCollectionId(ci.name()) + "'}";
     }
 
     @Override
@@ -407,48 +394,6 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     @Override
     public String defaultSortKey() {
 	return Ldproxy2Target.coretableIdColumn;
-    }
-
-    /**
-     * Identify the collection IDs for the value type of the property. The value
-     * type must be a type with identity. A collection ID is returned for each case
-     * in the inheritance hierarchy of the value type (starting with the value type,
-     * and going down) that is encoded and not abstract.
-     * 
-     * @param pi Property to determine the collection IDs for
-     * @return collection IDs for the value type of the property; can be empty
-     *         (especially if the value type is not a type with identity) but not
-     *         <code>null</code>
-     */
-    protected SortedSet<String> collectionIds(PropertyInfo pi) {
-
-	SortedSet<String> collectionIds = new TreeSet<>();
-
-	if (LdpInfo.isTypeWithIdentityValueType(pi)) {
-
-	    ClassInfo typeCi = pi.typeClass();
-
-	    if (typeCi != null) {
-
-		SortedSet<ClassInfo> typeSet = typeCi.subtypesInCompleteHierarchy();
-		typeSet.add(typeCi);
-		List<ClassInfo> relevantTypes = typeSet.stream()
-			.filter(ci -> !ci.isAbstract() && LdpInfo.isEncoded(typeCi)).collect(Collectors.toList());
-		for (ClassInfo ci : relevantTypes) {
-		    collectionIds.add(formatCollectionId(ci.name()));
-		}
-
-	    } else {
-		collectionIds.add(formatCollectionId(pi.typeInfo().name));
-	    }
-	}
-
-	return collectionIds;
-    }
-
-    protected String formatCollectionId(String id) {
-	// NOTE: In future, we may have different ways to format the collection id
-	return id.toLowerCase(Locale.ENGLISH);
     }
 
     @Override

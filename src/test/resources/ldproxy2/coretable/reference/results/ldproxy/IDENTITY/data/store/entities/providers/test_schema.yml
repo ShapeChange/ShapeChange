@@ -16,38 +16,38 @@ connectionInfo:
   schemas:
   - public
 types:
-  ft1:
-    sourcePath: "/features{filter=featuretype='ft1'}"
+  FT1:
+    sourcePath: "/features{filter=featuretype='FT1'}"
     type: OBJECT
     label: FT1
-    schema: '#/fragments/ft1'
-  ft2:
-    sourcePath: "/features{filter=featuretype='ft2'}"
+    schema: '#/fragments/FT1'
+  FT2:
+    sourcePath: "/features{filter=featuretype='FT2'}"
     type: OBJECT
     label: FT2
-    schema: '#/fragments/ft2'
-  ft2sub1sub1:
-    sourcePath: "/features{filter=featuretype='ft2sub1sub1'}"
+    schema: '#/fragments/FT2'
+  FT2Sub1Sub1:
+    sourcePath: "/features{filter=featuretype='FT2Sub1Sub1'}"
     type: OBJECT
     label: FT2Sub1Sub1
-    schema: '#/fragments/ft2sub1sub1'
-  ft3:
-    sourcePath: "/features{filter=featuretype='ft3'}"
+    schema: '#/fragments/FT2Sub1Sub1'
+  FT3:
+    sourcePath: "/features{filter=featuretype='FT3'}"
     type: OBJECT
     label: FT3
-    schema: '#/fragments/ft3'
-  ft4:
-    sourcePath: "/features{filter=featuretype='ft4'}"
+    schema: '#/fragments/FT3'
+  FT4:
+    sourcePath: "/features{filter=featuretype='FT4'}"
     type: OBJECT
     label: FT4
-    schema: '#/fragments/ft4'
-  t:
-    sourcePath: "/features{filter=featuretype='t'}"
+    schema: '#/fragments/FT4'
+  T:
+    sourcePath: "/features{filter=featuretype='T'}"
     type: OBJECT
     label: T
-    schema: '#/fragments/t'
+    schema: '#/fragments/T'
 fragments:
-  dt:
+  DT:
     type: OBJECT
     objectType: DT
     label: DT
@@ -67,8 +67,8 @@ fragments:
         constraints:
           required: true
           minOccurrence: 1
-        schema: '#/fragments/dt2'
-  dt2:
+        schema: '#/fragments/DT2'
+  DT2:
     type: OBJECT
     objectType: DT2
     label: DT2
@@ -79,7 +79,38 @@ fragments:
         label: attDt2A
         constraints:
           required: true
-  dt3:
+      roleFT3:
+        sourcePath: roleFT3
+        type: FEATURE_REF
+        valueType: STRING
+        label: roleFT3
+        constraints:
+          required: true
+        refType: FT3
+      roleFT2:
+        sourcePath: "[roleFT2/featureId=id]features"
+        type: FEATURE_REF
+        label: roleFT2
+        constraints:
+          required: true
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+          title:
+            type: STRING
+            label: FT2-title
+            sourcePaths:
+            - id
+            - "[JSON]properties/attFt2Title"
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT2
+              - FT2Sub1Sub1
+  DT3:
     type: OBJECT
     objectType: DT3
     label: DT3
@@ -91,8 +122,8 @@ fragments:
         label: generAttribute
         constraints:
           required: true
-        schema: '#/fragments/generattribute'
-  ft1:
+        schema: '#/fragments/GenerAttribute'
+  FT1:
     type: OBJECT
     objectType: FT1
     label: FT1
@@ -128,7 +159,7 @@ fragments:
         label: attDt
         constraints:
           required: true
-        schema: '#/fragments/dt'
+        schema: '#/fragments/DT'
       roleT:
         sourcePath: "[id=id]references{filter=rel='roleT'}/[ref=id]features"
         type: FEATURE_REF
@@ -141,7 +172,7 @@ fragments:
             sourcePath: "[JSON]properties/attTTitle"
             type: STRING
             label: T-title
-        refType: t
+        refType: T
       roleFT2:
         sourcePath: "[id=id]references{filter=rel='roleFT2'}/[ref=id]features"
         type: FEATURE_REF_ARRAY
@@ -163,8 +194,8 @@ fragments:
             type: STRING
             constraints:
               enum:
-              - ft2
-              - ft2sub1sub1
+              - FT2
+              - FT2Sub1Sub1
       roleFT3:
         sourcePath: ref
         type: FEATURE_REF
@@ -172,8 +203,8 @@ fragments:
         label: roleFT3
         constraints:
           required: true
-        refType: ft3
-  ft2:
+        refType: FT3
+  FT2:
     type: OBJECT
     objectType: FT2
     label: FT2
@@ -201,7 +232,7 @@ fragments:
         label: roleFT1
         constraints:
           required: true
-        refType: ft1
+        refType: FT1
       roleExtFT1:
         sourcePath: "[id=id]references{filter=rel='roleExtFT1'}/ref"
         type: FEATURE_REF
@@ -210,18 +241,18 @@ fragments:
         constraints:
           required: true
         refUriTemplate: "https://example.org/external/ExtFT1/{{value}}"
-  ft2sub1:
+  FT2Sub1:
     type: OBJECT
     objectType: FT2Sub1
     label: FT2Sub1
-    schema: '#/fragments/ft2'
-  ft2sub1sub1:
+    schema: '#/fragments/FT2'
+  FT2Sub1Sub1:
     type: OBJECT
     objectType: FT2Sub1Sub1
     label: FT2Sub1Sub1
     merge:
-    - schema: '#/fragments/ft2sub1'
-    - schema: '#/fragments/mixin'
+    - schema: '#/fragments/FT2Sub1'
+    - schema: '#/fragments/Mixin'
     - properties:
         attFt2subsub:
           sourcePath: "[JSON]properties/attFt2subsub"
@@ -229,7 +260,7 @@ fragments:
           label: attFt2subsub
           constraints:
             required: true
-  ft3:
+  FT3:
     type: OBJECT
     objectType: FT3
     label: FT3
@@ -276,7 +307,7 @@ fragments:
           codelist: MyCodelist
           required: true
           minOccurrence: 1
-  ft4:
+  FT4:
     type: OBJECT
     objectType: FT4
     label: FT4
@@ -290,7 +321,7 @@ fragments:
         type: OBJECT
         objectType: GenerAttribute
         label: someGenerAttribute
-        schema: '#/fragments/generattribute'
+        schema: '#/fragments/GenerAttribute'
       otherGenerAttribute:
         sourcePath: "[JSON]properties/otherGenerAttribute"
         type: OBJECT_ARRAY
@@ -298,7 +329,7 @@ fragments:
         label: otherGenerAttribute
         constraints:
           minOccurrence: 0
-        schema: '#/fragments/generattribute'
+        schema: '#/fragments/GenerAttribute'
       attDt3:
         sourcePath: "[JSON]properties/attDt3"
         type: OBJECT
@@ -306,8 +337,8 @@ fragments:
         label: attDt3
         constraints:
           required: true
-        schema: '#/fragments/dt3'
-  generattribute:
+        schema: '#/fragments/DT3'
+  GenerAttribute:
     type: OBJECT
     objectType: GenerAttribute
     label: GenerAttribute
@@ -344,7 +375,7 @@ fragments:
           type: STRING
         - sourcePath: value_UrlAttribute
           type: STRING
-  mixin:
+  Mixin:
     type: OBJECT
     objectType: Mixin
     label: Mixin
@@ -355,7 +386,7 @@ fragments:
         label: attMixin
         constraints:
           required: true
-  t:
+  T:
     type: OBJECT
     objectType: T
     label: T

@@ -252,7 +252,7 @@ public class LdpPropertyEncoder {
 
 //		    if (!target.valueTypeIsMapped(pi) && typeCi != null && target.isProcessedType(typeCi)) {
 //			// the value type must be a type with identity
-//			refTypeForBuilder = Optional.of(pi.typeInfo().name.toLowerCase(Locale.ENGLISH));
+//			refTypeForBuilder = Optional.of(LdpUtil.formatCollectionId(pi.typeInfo().name));
 //		    } else {
 //			// the value type is mapped
 //			refUriTemplateForBuilder = Optional.of(sqlSourcePathProvider.urlTemplateForValueType(pi));

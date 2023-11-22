@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -225,7 +226,7 @@ public class LdpInfo {
     public static boolean isTypeWithIdentity(ClassInfo ci) {
 	return ci.category() == Options.FEATURE || ci.category() == Options.OBJECT;
     }
-    
+
     public static boolean isTypeWithIdentityValueType(PropertyInfo pi) {
 	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
     }
@@ -240,7 +241,7 @@ public class LdpInfo {
 	    return titleAtt != null;
 	}
     }
-    
+
     public static boolean valueTypeHasValidLdpTypeAttributeTag(PropertyInfo pi) {
 
 	ClassInfo typeCi = pi.typeClass();
@@ -268,7 +269,7 @@ public class LdpInfo {
 
 	return result;
     }
-    
+
     /**
      * @param ci - tbd
      * @return the attribute of ci whose name is equal to the value of tag
@@ -306,6 +307,51 @@ public class LdpInfo {
     }
 
     public static String configIdentifierName(Info i) {
-	return i.name().toLowerCase(Locale.ENGLISH);
+	if (i instanceof ClassInfo) {
+	    if ("none".equalsIgnoreCase(Ldproxy2Target.collectionIdFormat)) {
+		return i.name();
+	    } else {
+		return i.name().toLowerCase(Locale.ENGLISH);
+	    }
+	} else {
+	    return i.name().toLowerCase(Locale.ENGLISH);
+	}
+    }
+
+    /**
+     * Identify the collection IDs for the value type of the property. The value
+     * type must be a type with identity. A collection ID is returned for each case
+     * in the inheritance hierarchy of the value type (starting with the value type,
+     * and going down) that is encoded and not abstract.
+     * 
+     * @param pi Property to determine the collection IDs for
+     * @return collection IDs for the value type of the property; can be empty
+     *         (especially if the value type is not a type with identity) but not
+     *         <code>null</code>
+     */
+    public static SortedSet<String> collectionIds(PropertyInfo pi) {
+
+	SortedSet<String> collectionIds = new TreeSet<>();
+
+	if (LdpInfo.isTypeWithIdentityValueType(pi)) {
+
+	    ClassInfo typeCi = pi.typeClass();
+
+	    if (typeCi != null) {
+
+		SortedSet<ClassInfo> typeSet = typeCi.subtypesInCompleteHierarchy();
+		typeSet.add(typeCi);
+		List<ClassInfo> relevantTypes = typeSet.stream()
+			.filter(ci -> !ci.isAbstract() && LdpInfo.isEncoded(typeCi)).collect(Collectors.toList());
+		for (ClassInfo ci : relevantTypes) {
+		    collectionIds.add(LdpUtil.formatCollectionId(ci.name()));
+		}
+
+	    } else {
+		collectionIds.add(LdpUtil.formatCollectionId(pi.typeInfo().name));
+	    }
+	}
+
+	return collectionIds;
     }
 }

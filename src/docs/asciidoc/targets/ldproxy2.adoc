@@ -832,7 +832,14 @@ NOTE: A future enhancement of the ldproxy target could introduce mechanisms for 
 [[ldproxy2_schemaconversionrules_types_featureandobjecttype_providertype]]
 ===== Provider Type Definition
 
-The name of the definition is the class name, in lower case.
+The name of the definition is the class name. The name can be formatted, as defined by
+target parameter _collectionIdFormat_ (default value is 'lowerCase'). Supported parameter
+values are:
+
+[[collectionIdFormat]]
+
+* none - no formatting is applied; can be useful for the <<ldproxy2_schemaconversionrules_specificrules_coretable>>.
+* lowerCase - The name is converted to lower case, using the English locale.
 
 NOTE: ISO 19109 requires class names to be unique within the scope of a single application schema. Although not recommended, different schemas may define types with same name. The ldproxy target will log an error if it encounters multiple classes (from the schemas selected for processing) that have equal name (ignoring case) and which shall be encoded by the target.
 
@@ -854,7 +861,9 @@ definitions are encoded. For further details, see section <<ldproxy2_schemaconve
 [[ldproxy2_schemaconversionrules_types_featureandobjecttype_servicecollection]]
 ===== Service Collection Definition
 
-The name of the collection definition is the class name, in lower case. It is therefore equal to the name of the provider type definition.
+The name of the collection definition is the class name, formatted according to 
+target parameter <<collectionIdFormat>>. It is therefore equal to the name of 
+the provider type definition.
 
 // https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/services
 
@@ -1278,7 +1287,7 @@ is optional (i.e., it has a minimum multiplicity of 0), then: a) `sourcePaths` i
 *** `sourcePath`: as defined for the property (for details, see section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
 *** `type`: STRING
 *** `transformations`:
-**** `stringFormat`: Either the URL template from the map entry, if one is defined for the property value type, or '{{serviceUrl}}/collections/{value_type_name}/items/{{value}}', where value_type_name is the name of the value type, in lower case (and {{serviceUrl}} as well as {{value}} will automatically be replaced by ldproxy).
+**** `stringFormat`: Either the URL template from the map entry, if one is defined for the property value type, or '{{serviceUrl}}/collections/{value_type_name}/items/{{value}}', where value_type_name is the name of the value type (formatted according to target parameter <<collectionIdFormat>>) (and {{serviceUrl}} as well as {{value}} will automatically be replaced by ldproxy).
 
 [[feature_ref]]
 The definition of a FEATURE_REF within a property definition is as follows:
@@ -1664,13 +1673,25 @@ in object references. The column name is given by target parameter _coretableIdC
 of the column is defined via target parameter _coretableIdColumnLdproxyType_ (default
 is 'INTEGER').
 * The table also has a column in which the name of the feature type of an object is 
-encoded. The name is equal to the ldproxy collection ID for that feature type 
-(typically the feature type name in lower case). The column name is defined via
+encoded. The name is equal to the ldproxy collection ID for that feature type. 
+The column name is defined via
 target parameter _coretableFeatureTypeColumn_ (default value is 'featuretype').
 * The table must have a `properties` column with JSON-encoded value. This column
-is used to encode all object properties that are not object references. In other words,
-properties with simple type, enumeration or codelist type, or with a data type as value,
-are encoded within a JSON object. NOTE: The JSON object does not have an additional
+is used to encode all object properties, including object references from data types, but
+typically not object references from or between types with identity.
+** If a data type is encoded, then any object reference it may have is encoded within
+the JSON properties as well - NOT in the high priority reference column of the coretable
+or within the references table. The encoding follows the rules for FEATURE_REFs laid out
+<<feature_ref,here>>. However, the source path is just the name of the property that
+represents the object reference, optionally followed by `/featureId` if either multiple
+collections are targeted by the property value type (i.e., the value type is a supertype,
+with multiple non-abstract types in the subtype hierarchy) or target parameter 
+_coretableJsonFeatureRefWithAnyCollectionId_ is set to true (default value is false).
+That specific source path encoding matches the JSON encoding that can be achieved using
+xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs] with 
+JSON Schema target parameter `featureRelProfiles=rel-as-key``, and potentially 
+`featureRefWithAnyCollectionId=true`.
+** NOTE: The JSON object does not have an additional
 level of nesting, like in the case of a GeoJSON-encoded feature. The object properties
 are directly encoded as members of the JSON object (data type values would of course
 lead to some level of nesting).

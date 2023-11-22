@@ -57,12 +57,15 @@
 			<targetParameter name="serviceLabel" value="MyServiceLabel"/>
 			<!-- <targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" 
 				/> -->
+			<targetParameter name="collectionIdFormat" value="none"/>
 			<targetParameter name="srid" value="31467"/>
 			<targetParameter name="coretable" value="features"/>
 			<targetParameter name="coretableIdColumn" value="id"/>
 			<targetParameter name="coretableIdColumnLdproxyType" value="string"/>
 			<targetParameter name="coretableFeatureTypeColumn" value="featuretype"/>
 			<targetParameter name="coretableGeometryColumn" value="geometry"/>
+			<!-- coretableJsonFeatureRefWithAnyCollectionId not used in unit test, only manual testing -->
+<!-- 			<targetParameter name="coretableJsonFeatureRefWithAnyCollectionId" value="true"/> -->
 			<targetParameter name="coretableRefColumn" value="ref"/>
 			<targetParameter name="coretableRefRelations" value="roleFT3"/>
 			<targetParameter name="coretableRelationsTable" value="references"/>
