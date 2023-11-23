@@ -146,6 +146,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
     public static String coretable = "features";
+    public static String coretablePkColumn = "pk";
     public static String coretableIdColumn = null;
     public static Type coretableIdColumnLdproxyType = Type.INTEGER;
     public static String coretableFeatureTypeColumn = "featuretype";
@@ -416,6 +417,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		coretable = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_CORETABLE,
 			"features", false, true);
 
+		coretablePkColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN, "pk", false, true);
+		
 		// WARNING: MUST BE COMPUTED AFTER primaryKeyColumn HAS BEEN COMPUTED!
 		coretableIdColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, primaryKeyColumn, false, true);
@@ -973,6 +977,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	cfg = null;
 
 	coretable = "features";
+	coretablePkColumn = "pk";
 	coretableIdColumn = null;
 	coretableIdColumnLdproxyType = Type.INTEGER;
 	coretableFeatureTypeColumn = "featuretype";

@@ -15,6 +15,9 @@ connectionInfo:
   password: FIXME-base64-encoded
   schemas:
   - public
+sourcePathDefaults:
+  primaryKey: pk
+  sortKey: pk
 types:
   FT1:
     sourcePath: "/features{filter=featuretype='FT1'}"
@@ -196,6 +199,29 @@ fragments:
               enum:
               - FT2
               - FT2Sub1Sub1
+      roleFT2HighPriority:
+        sourcePath: "[ref=id]features"
+        type: FEATURE_REF
+        label: roleFT2HighPriority
+        constraints:
+          required: true
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+          title:
+            type: STRING
+            label: FT2-title
+            sourcePaths:
+            - id
+            - "[JSON]properties/attFt2Title"
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT2
+              - FT2Sub1Sub1
       roleFT3:
         sourcePath: ref
         type: FEATURE_REF
@@ -232,6 +258,14 @@ fragments:
         label: roleFT1
         constraints:
           required: true
+        refType: FT1
+      roleFT1HighPriorityReverse:
+        sourcePath: "[id=ref]features/id"
+        type: FEATURE_REF_ARRAY
+        valueType: STRING
+        label: roleFT1HighPriorityReverse
+        constraints:
+          minOccurrence: 0
         refType: FT1
       roleExtFT1:
         sourcePath: "[id=id]references{filter=rel='roleExtFT1'}/ref"

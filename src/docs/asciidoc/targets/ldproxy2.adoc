@@ -1654,10 +1654,12 @@ Application schemas can be quite extensive, and can have classes with
 quite complex structure. Managing data for that schema in a relational database
 can be a daunting and demanding task - especially if the database schema
 is also complex (lots of tables, lots of columns, lots of foreign key and
-other constraints). The _coretable approach_ is a way to mitigate the level
+other constraints). Furthermore, changes in the application schema structure,
+during application schema development, or between application schema versions,
+require complex database updates. The _coretable approach_ is a way to mitigate the level
 of complexity. In this approach, the database schema only consists of two tables:
-a coretable with one entry per object, and a separate references table, where
-most of the object references are managed. 
+a coretable with one entry per object (each object MUST have a globally unique identifier), 
+and a separate references table, where the object references are managed.
 
 To signal that the coretable approach applies, include 
 __rule-ldp2-all-coretable__ in the encoding rule.
@@ -1665,10 +1667,11 @@ __rule-ldp2-all-coretable__ in the encoding rule.
 The coretable is defined as follows:
 
 * The table name is given by target parameter _coretable_ (default value is 'features').
-* The table should have a separate primary key column 
-(for ldproxy use, ideally integer valued).
+* The table must have a separate primary key column (integer valued). The column
+name is given by target parameter _coretablePkColumn_ (default value is 'pk').
 * The table has a column with the object identifiers. The identifiers are used 
-in object references. The column name is given by target parameter _coretableIdColumn_ 
+in object references, and must be unique (at least within the coretable; UUIDs would be
+suitable, for example). The column name is given by target parameter _coretableIdColumn_ 
 (default value is the value of target parameter _primaryKeyColumn_). The ldproxy type
 of the column is defined via target parameter _coretableIdColumnLdproxyType_ (default
 is 'INTEGER').

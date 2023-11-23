@@ -1083,4 +1083,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	return primaryKeyColumn(pi);
     }
 
+    @Override
+    public String objectIdentifierSourcePath() {
+	return defaultPrimaryKey();
+    }
+
 }

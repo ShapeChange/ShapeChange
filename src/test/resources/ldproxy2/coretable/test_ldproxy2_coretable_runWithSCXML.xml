@@ -2980,7 +2980,7 @@
          <targetParameter name="coretableFeatureTypeColumn" value="featuretype"/>
          <targetParameter name="coretableGeometryColumn" value="geometry"/>
          <targetParameter name="coretableRefColumn" value="ref"/>
-         <targetParameter name="coretableRefRelations" value="roleFT3"/>
+         <targetParameter name="coretableRefRelations" value="roleFT3, roleFT2HighPriority"/>
          <targetParameter name="coretableRelationsTable" value="references"/>
          <targetParameter name="coretableRelationNameColumn" value="rel"/>
          <targetParameter name="coretableInverseRelationNameColumn" value="rel_inv"/>

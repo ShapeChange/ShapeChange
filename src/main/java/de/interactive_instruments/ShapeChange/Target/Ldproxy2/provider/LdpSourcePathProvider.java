@@ -77,4 +77,6 @@ public interface LdpSourcePathProvider {
     public String sourcePathForValueMemberOfGenericValueType(String valuePropertyName, String suffix);
 
     public String sourcePathFeatureRefId(PropertyInfo pi);
+
+    public String objectIdentifierSourcePath();
 }

@@ -125,6 +125,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
     
     public static final String PARAM_CORETABLE = "coretable";
+    public static final String PARAM_CORETABLE_PK_COLUMN = "coretablePkColumn";
     public static final String PARAM_CORETABLE_ID_COLUMN = "coretableIdColumn";
     public static final String PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE = "coretableIdColumnLdproxyType";
     public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN = "coretableFeatureTypeColumn";

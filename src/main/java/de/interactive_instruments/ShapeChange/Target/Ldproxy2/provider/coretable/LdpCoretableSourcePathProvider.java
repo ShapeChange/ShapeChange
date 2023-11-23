@@ -241,6 +241,12 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 	    idSourcePath = Ldproxy2Target.coretableRefColumn;
 
+	} else if (pi.reverseProperty() != null
+		&& Ldproxy2Target.coretableRefRelations.contains(pi.reverseProperty().name())) {
+
+	    idSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + Ldproxy2Target.coretableRefColumn + "]"
+		    + Ldproxy2Target.coretable + "/" + Ldproxy2Target.coretableIdColumn;
+
 	} else {
 
 	    // lookup via separate reference table
@@ -286,6 +292,12 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
 
 	    valueSourcePath = "[" + Ldproxy2Target.coretableRefColumn + "=" + Ldproxy2Target.coretableIdColumn + "]"
+		    + Ldproxy2Target.coretable;
+
+	} else if (pi.reverseProperty() != null
+		&& Ldproxy2Target.coretableRefRelations.contains(pi.reverseProperty().name())) {
+
+	    valueSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + Ldproxy2Target.coretableRefColumn + "]"
 		    + Ldproxy2Target.coretable;
 
 	} else {
@@ -388,12 +400,12 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
     @Override
     public String defaultPrimaryKey() {
-	return Ldproxy2Target.coretableIdColumn;
+	return Ldproxy2Target.coretablePkColumn;
     }
 
     @Override
     public String defaultSortKey() {
-	return Ldproxy2Target.coretableIdColumn;
+	return Ldproxy2Target.coretablePkColumn;
     }
 
     @Override
@@ -449,6 +461,11 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
     @Override
     public String sourcePathFeatureRefId(PropertyInfo pi) {
+	return Ldproxy2Target.coretableIdColumn;
+    }
+
+    @Override
+    public String objectIdentifierSourcePath() {
 	return Ldproxy2Target.coretableIdColumn;
     }
 }

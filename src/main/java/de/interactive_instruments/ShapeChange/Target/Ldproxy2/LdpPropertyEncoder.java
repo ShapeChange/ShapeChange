@@ -171,7 +171,7 @@ public class LdpPropertyEncoder {
 	    if (spi.isEncodeAdditionalIdentifierProp() && (!Ldproxy2Target.enableFragments || context.isInFragment())) {
 
 		ImmutableFeatureSchema identifierMemberDef = new ImmutableFeatureSchema.Builder()
-			.name(Ldproxy2Target.objectIdentifierName).sourcePath(sourcePathProvider.defaultPrimaryKey())
+			.name(Ldproxy2Target.objectIdentifierName).sourcePath(sourcePathProvider.objectIdentifierSourcePath())
 			.type(ldpProvider.objectIdentifierType()).role(Role.ID).build();
 		propertyDefs.put(identifierMemberDef.getName(), identifierMemberDef);
 	    }
