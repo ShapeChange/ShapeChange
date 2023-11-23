@@ -557,6 +557,8 @@ types:
           id:
             sourcePath: _id
             type: INTEGER
+            constraints:
+              required: true
           title:
             sourcePath: atttitle
             type: STRING
@@ -572,6 +574,8 @@ types:
           id:
             sourcePath: _id
             type: INTEGER
+            constraints:
+              required: true
           title:
             sourcePath: atttitle
             type: STRING
@@ -587,6 +591,8 @@ types:
           id:
             sourcePath: _id
             type: INTEGER
+            constraints:
+              required: true
           title:
             sourcePath: atttitle
             type: STRING
@@ -602,6 +608,8 @@ types:
           id:
             sourcePath: _id
             type: INTEGER
+            constraints:
+              required: true
           title:
             sourcePath: atttitle
             type: STRING

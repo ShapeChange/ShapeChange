@@ -40,12 +40,10 @@ import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -151,11 +149,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static Type coretableIdColumnLdproxyType = Type.INTEGER;
     public static String coretableFeatureTypeColumn = "featuretype";
     public static String coretableGeometryColumn = "geom";
-    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
+    /*
+     * 2023-11-23 JE: Can be re-activated in the future, when /featureId in
+     * JSON-encoded references within the coretable approach is affirmed.
+     */
+//    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
 
-    public static String coretableRefColumn = "ref";
-    public static Set<String> coretableRefRelations = new HashSet<>();
     public static String coretableRelationsTable = "references";
+    public static String coretableRefColumn = "ref";
     public static String coretableRelationNameColumn = "rel";
     public static String coretableInverseRelationNameColumn = "rel_inv";
 
@@ -419,7 +420,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		coretablePkColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN, "pk", false, true);
-		
+
 		// WARNING: MUST BE COMPUTED AFTER primaryKeyColumn HAS BEEN COMPUTED!
 		coretableIdColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, primaryKeyColumn, false, true);
@@ -434,14 +435,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		coretableGeometryColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN, "geom", false, true);
 
-		coretableJsonFeatureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID, false);
+//		coretableJsonFeatureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+//			Ldproxy2Constants.PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID, false);
 
 		coretableRefColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, "ref", false, true);
-
-		coretableRefRelations = new HashSet<>(options.parameterAsStringList(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_CORETABLE_REF_RELATIONS, null, false, true));
 
 		coretableRelationsTable = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, "references", false, true);
@@ -982,9 +980,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	coretableIdColumnLdproxyType = Type.INTEGER;
 	coretableFeatureTypeColumn = "featuretype";
 	coretableGeometryColumn = "geom";
-	coretableJsonFeatureRefWithAnyCollectionId = false;
+//	coretableJsonFeatureRefWithAnyCollectionId = false;
 	coretableRefColumn = "ref";
-	coretableRefRelations = new HashSet<>();
 	coretableRelationsTable = "references";
 	coretableRelationNameColumn = "rel";
 	coretableInverseRelationNameColumn = "rel_inv";

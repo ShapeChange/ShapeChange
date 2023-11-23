@@ -130,10 +130,13 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE = "coretableIdColumnLdproxyType";
     public static final String PARAM_CORETABLE_FEATURE_TYPE_COLUMN = "coretableFeatureTypeColumn";
     public static final String PARAM_CORETABLE_GEOMETRY_COLUMN = "coretableGeometryColumn";
-    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
+    /*
+     * 2023-11-23 JE: Can be re-activated in the future, when /featureId in
+     * JSON-encoded references within the coretable approach is affirmed.
+     */
+//    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
     
     public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
-    public static final String PARAM_CORETABLE_REF_RELATIONS = "coretableRefRelations";
     public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";
     public static final String PARAM_CORETABLE_RELATION_NAME_COLUMN = "coretableRelationNameColumn";
     public static final String PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN = "coretableInverseRelationNameColumn";

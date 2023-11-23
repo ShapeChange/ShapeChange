@@ -44,6 +44,16 @@ types:
     type: OBJECT
     label: FT4
     schema: '#/fragments/FT4'
+  FT5:
+    sourcePath: "/features{filter=featuretype='FT5'}"
+    type: OBJECT
+    label: FT5
+    schema: '#/fragments/FT5'
+  FT5Sub1:
+    sourcePath: "/features{filter=featuretype='FT5Sub1'}"
+    type: OBJECT
+    label: FT5Sub1
+    schema: '#/fragments/FT5Sub1'
   T:
     sourcePath: "/features{filter=featuretype='T'}"
     type: OBJECT
@@ -91,7 +101,7 @@ fragments:
           required: true
         refType: FT3
       roleFT2:
-        sourcePath: "[roleFT2/featureId=id]features"
+        sourcePath: "[roleFT2=id]features"
         type: FEATURE_REF
         label: roleFT2
         constraints:
@@ -100,6 +110,8 @@ fragments:
           id:
             sourcePath: id
             type: STRING
+            constraints:
+              required: true
           title:
             type: STRING
             label: FT2-title
@@ -113,6 +125,7 @@ fragments:
               enum:
               - FT2
               - FT2Sub1Sub1
+              required: true
   DT3:
     type: OBJECT
     objectType: DT3
@@ -171,6 +184,8 @@ fragments:
           id:
             sourcePath: id
             type: STRING
+            constraints:
+              required: true
           title:
             sourcePath: "[JSON]properties/attTTitle"
             type: STRING
@@ -186,6 +201,8 @@ fragments:
           id:
             sourcePath: id
             type: STRING
+            constraints:
+              required: true
           title:
             type: STRING
             label: FT2-title
@@ -199,37 +216,35 @@ fragments:
               enum:
               - FT2
               - FT2Sub1Sub1
-      roleFT2HighPriority:
-        sourcePath: "[ref=id]features"
-        type: FEATURE_REF
-        label: roleFT2HighPriority
-        constraints:
-          required: true
-        properties:
-          id:
-            sourcePath: id
-            type: STRING
-          title:
-            type: STRING
-            label: FT2-title
-            sourcePaths:
-            - id
-            - "[JSON]properties/attFt2Title"
-          type:
-            sourcePath: featuretype
-            type: STRING
-            constraints:
-              enum:
-              - FT2
-              - FT2Sub1Sub1
+              required: true
       roleFT3:
-        sourcePath: ref
+        sourcePath: "[id=id]references{filter=rel='roleFT3'}/ref"
         type: FEATURE_REF
         valueType: STRING
         label: roleFT3
         constraints:
           required: true
         refType: FT3
+      roleFT5:
+        sourcePath: "[id=id]references{filter=rel='roleFT5'}/[ref=id]features"
+        type: FEATURE_REF
+        label: roleFT5
+        constraints:
+          required: true
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+            constraints:
+              required: true
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT5
+              - FT5Sub1
+              required: true
   FT2:
     type: OBJECT
     objectType: FT2
@@ -258,14 +273,6 @@ fragments:
         label: roleFT1
         constraints:
           required: true
-        refType: FT1
-      roleFT1HighPriorityReverse:
-        sourcePath: "[id=ref]features/id"
-        type: FEATURE_REF_ARRAY
-        valueType: STRING
-        label: roleFT1HighPriorityReverse
-        constraints:
-          minOccurrence: 0
         refType: FT1
       roleExtFT1:
         sourcePath: "[id=id]references{filter=rel='roleExtFT1'}/ref"
@@ -372,6 +379,26 @@ fragments:
         constraints:
           required: true
         schema: '#/fragments/DT3'
+  FT5:
+    type: OBJECT
+    objectType: FT5
+    label: FT5
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      att1:
+        sourcePath: "[JSON]properties/att1"
+        type: INTEGER
+        label: att1
+        constraints:
+          required: true
+  FT5Sub1:
+    type: OBJECT
+    objectType: FT5Sub1
+    label: FT5Sub1
+    schema: '#/fragments/FT5'
   GenerAttribute:
     type: OBJECT
     objectType: GenerAttribute

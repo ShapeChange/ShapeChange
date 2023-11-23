@@ -1686,14 +1686,16 @@ typically not object references from or between types with identity.
 the JSON properties as well - NOT in the high priority reference column of the coretable
 or within the references table. The encoding follows the rules for FEATURE_REFs laid out
 <<feature_ref,here>>. However, the source path is just the name of the property that
-represents the object reference, optionally followed by `/featureId` if either multiple
-collections are targeted by the property value type (i.e., the value type is a supertype,
-with multiple non-abstract types in the subtype hierarchy) or target parameter 
-_coretableJsonFeatureRefWithAnyCollectionId_ is set to true (default value is false).
-That specific source path encoding matches the JSON encoding that can be achieved using
-xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs] with 
-JSON Schema target parameter `featureRelProfiles=rel-as-key``, and potentially 
-`featureRefWithAnyCollectionId=true`.
+represents the object reference.
+*** NOTE: This encoding does NOT take into account all possibilities of the JSON encoding
+with xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs], 
+JSON Schema target parameters `featureRelProfiles=rel-as-key``, and (potentially also) 
+`featureRefWithAnyCollectionId=true`. The source path would need to be followed by `/featureId` 
+if either multiple collections are targeted by the property value type (i.e., the 
+value type is a supertype, with multiple non-abstract types in the subtype hierarchy), 
+or some target parameter that reflected the JSON Schema target parameter
+_featureRefWithAnyCollectionId_ was set to true. The encoding of `/featureId` may be
+added in a future version of the ldproxy target.
 ** NOTE: The JSON object does not have an additional
 level of nesting, like in the case of a GeoJSON-encoded feature. The object properties
 are directly encoded as members of the JSON object (data type values would of course
@@ -1702,22 +1704,15 @@ lead to some level of nesting).
 <<ldproxy2_schemaconversionrules_types_primarygeometry,primary geometry>> of the object.
 The column name is given by target parameter _coretableGeometryColumn_ (default value
 is 'geom').
-* The table may also have a column to store the value of a high priority object reference,
-for each object. Which property that reference embodies per feature type is domain 
-specific. Target parameter _coretableRefColumn_ defines the column name (default value 
-is 'ref'). Target parameter _coretableRefRelations_ is used to identify all relevant
-schema properties by their name (the parameter has a comma-separated value, without a default). The column is useful to speed up certain queries. The properties identified
-by target parameter _coretableRefRelations_ must have maximum multiplicity of 1, and
-for each feature type only at most one of the properties must apply. That means that
-not every feature type needs to have such a high priority property.
-* The table may have additional columns, which will be ignored by ldproxy.
+* The table may have additional columns (for example, to identify the application schema version), 
+which will be ignored by ldproxy.
 
 The references table is defined as follows:
 
 * The table name is given by target parameter _coretableRelationsTable_ 
 (default value is 'references').
-* The table should have a separate primary key column 
-(for ldproxy use, ideally integer valued).
+* The table must have a separate primary key column, whose name 
+is given by target parameter _coretablePkColumn_ (like in the coretable itself, see above).
 * The table has two columns with the identifiers of the objects that participate 
 in an object-object relationship. The object-object relationship is typically 
 modeled as an association. For a uni-directional association, the direction 
@@ -1732,9 +1727,9 @@ from the source is the target role, and the other association role is the source
 ** The column that contains the identifier of the source object is defined by target parameter
 _coretableIdColumn_ (like in the coretable itself, see above). 
 ** The column that contains the identifier of the target object is defined by target parameter
-_coretableRefColumn_ (like in the coretable itself, see above).
+_coretableRefColumn_ (default value is 'ref').
 ** The ldproxy type of both columns is defined by target parameter _coretableIdColumnLdproxyType_
-( like in the coretable itself, see above).
+(like in the coretable itself, see above).
 * The references table also has two columns in which the names of the 
 target and the source roles are encoded (for a uni-directional association, 
 only the target role name is provided):
@@ -1746,9 +1741,9 @@ _coretableInverseRelationNameColumn_ (default value is 'rel_inv').
 
 The ldproxy target will create appropriate configurations for this particular database schema.
 
-NOTE: The coretable approach does not support object references whose sources are data types.
-Such references may be encoded within the JSON-properties, but they cannot be represented
-in the high-priority reference column of the coretable or in the references table.
+The coretable approach supports object references whose sources are data types.
+However, such references MUST be encoded within the JSON-properties. They cannot be 
+represented in the references table.
 
 
 [[ldproxy2_encodingrules]]

@@ -103,6 +103,26 @@ collections:
         - remove: ALWAYS
         someGenerAttribute.dataType:
         - remove: ALWAYS
+  FT5:
+    id: FT5
+    label: FT5
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT5Sub1:
+    id: FT5Sub1
+    label: FT5Sub1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
   T:
     id: T
     label: T

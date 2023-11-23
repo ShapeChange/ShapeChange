@@ -171,7 +171,8 @@ public class LdpPropertyEncoder {
 	    if (spi.isEncodeAdditionalIdentifierProp() && (!Ldproxy2Target.enableFragments || context.isInFragment())) {
 
 		ImmutableFeatureSchema identifierMemberDef = new ImmutableFeatureSchema.Builder()
-			.name(Ldproxy2Target.objectIdentifierName).sourcePath(sourcePathProvider.objectIdentifierSourcePath())
+			.name(Ldproxy2Target.objectIdentifierName)
+			.sourcePath(sourcePathProvider.objectIdentifierSourcePath())
 			.type(ldpProvider.objectIdentifierType()).role(Role.ID).build();
 		propertyDefs.put(identifierMemberDef.getName(), identifierMemberDef);
 	    }
@@ -515,7 +516,7 @@ public class LdpPropertyEncoder {
 			     * details are contained in the concat/coalesce members.
 			     */
 			    propertyMapForBuilder = new LinkedHashMap<>();
-			    
+
 			    if (sourcePathInfosForBuilder.concatRequired()) {
 				propMemberDefBuilder.concat(itemSchemas);
 			    } else {
@@ -536,7 +537,7 @@ public class LdpPropertyEncoder {
 
 		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).type(typeForBuilder)
 			    .propertyMap(propertyMapForBuilder).build();
-		    
+
 		    propertyDefs.put(pi.name(), propMemberDef);
 		}
 
@@ -708,10 +709,10 @@ public class LdpPropertyEncoder {
 
 	propMemberDefBuilder.sourcePath(sourcePathInfosForBuilder.commonValueSourcePath().get());
 
-	if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+	ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, sourcePathInfosForBuilder.spis.get(0));
+	propertyMapForBuilder.put("id", idSubProp);
 
-	    ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, sourcePathInfosForBuilder.spis.get(0));
-	    propertyMapForBuilder.put("id", idSubProp);
+	if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
 	    ImmutableFeatureSchema titleSubProp = createTitlePropertyForLinkOrFeatureRef(pi);
 	    propertyMapForBuilder.put("title", titleSubProp);
@@ -723,9 +724,13 @@ public class LdpPropertyEncoder {
 
     private ImmutableFeatureSchema createIdPropertyForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi) {
 
+	ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
+	constraintsBuilder.required(true);
+
 	ImmutableFeatureSchema.Builder idPropBuilder = new ImmutableFeatureSchema.Builder();
+
 	idPropBuilder.name("id").type(ldpProvider.idValueTypeForFeatureRef(pi, spi))
-		.sourcePath(sourcePathProvider.sourcePathFeatureRefId(pi));
+		.sourcePath(sourcePathProvider.sourcePathFeatureRefId(pi)).constraints(constraintsBuilder.build());
 
 	return idPropBuilder.build();
     }
@@ -808,7 +813,7 @@ public class LdpPropertyEncoder {
 		}
 	    }
 
-	    typePropertyDefBuilder.constraintsBuilder()
+	    typePropertyDefBuilder.constraintsBuilder().required(true)
 		    .addAllEnumValues(spis.stream().map(spi -> spi.getRefType()).sorted().collect(Collectors.toList()));
 
 	}

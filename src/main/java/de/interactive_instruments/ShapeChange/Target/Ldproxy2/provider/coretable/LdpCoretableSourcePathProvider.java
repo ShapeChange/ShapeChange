@@ -234,18 +234,14 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 	    // NOTE: Such a situation would actually not be compliant to ISO 19109
 
-	    idSourcePath = pi.name() + ((LdpInfo.collectionIds(pi).size() > 1
-		    || Ldproxy2Target.coretableJsonFeatureRefWithAnyCollectionId) ? "/featureId" : "");
+	    /*
+	     * 2023-11-23 JE: Can be re-activated in the future, when /featureId in
+	     * JSON-encoded references within the coretable approach is affirmed.
+	     */
+//	    idSourcePath = pi.name() + ((LdpInfo.collectionIds(pi).size() > 1
+//		    || Ldproxy2Target.coretableJsonFeatureRefWithAnyCollectionId) ? "/featureId" : "");
 
-	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
-
-	    idSourcePath = Ldproxy2Target.coretableRefColumn;
-
-	} else if (pi.reverseProperty() != null
-		&& Ldproxy2Target.coretableRefRelations.contains(pi.reverseProperty().name())) {
-
-	    idSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + Ldproxy2Target.coretableRefColumn + "]"
-		    + Ldproxy2Target.coretable + "/" + Ldproxy2Target.coretableIdColumn;
+	    idSourcePath = pi.name();
 
 	} else {
 
@@ -287,17 +283,6 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	    String idSourcePath = featureRefIdSourcePath(pi).get();
 
 	    valueSourcePath = "[" + idSourcePath + "=" + Ldproxy2Target.coretableIdColumn + "]"
-		    + Ldproxy2Target.coretable;
-
-	} else if (Ldproxy2Target.coretableRefRelations.contains(pi.name())) {
-
-	    valueSourcePath = "[" + Ldproxy2Target.coretableRefColumn + "=" + Ldproxy2Target.coretableIdColumn + "]"
-		    + Ldproxy2Target.coretable;
-
-	} else if (pi.reverseProperty() != null
-		&& Ldproxy2Target.coretableRefRelations.contains(pi.reverseProperty().name())) {
-
-	    valueSourcePath = "[" + Ldproxy2Target.coretableIdColumn + "=" + Ldproxy2Target.coretableRefColumn + "]"
 		    + Ldproxy2Target.coretable;
 
 	} else {
