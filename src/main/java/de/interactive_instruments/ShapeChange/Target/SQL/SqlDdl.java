@@ -107,6 +107,7 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyCon
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.SpatialIndexStatementFilter;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Statement;
 import de.interactive_instruments.ShapeChange.Target.SQL.structure.Table;
+import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 import de.interactive_instruments.ShapeChange.Util.ea.EAException;
 import de.interactive_instruments.ShapeChange.Util.ea.EARepositoryUtil;
@@ -217,10 +218,12 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static String repSchemaForeignKeyFieldType;
     protected static Multiplicity repSchemaMultiplicity1 = new Multiplicity(1, 1);
 
+    protected static boolean writeSqlEncodingInfos = false;
+    
     /* ------- */
     /* Database model specific fields */
     protected static boolean createDatabaseModel = false;
-
+    
     /* ------ */
     /*
      * Non-static fields
@@ -615,6 +618,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    removeEmptyLinesInDdlOutput = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
+	    
+	    writeSqlEncodingInfos = options.parameterAsBoolean(this.getClass().getName(), SqlConstants.PARAM_WRITE_SQL_ENCODING_INFOS, false);
 
 	    List<String> tvsToRepresent = options.parameterAsStringList(null, "representTaggedValues", null, true,
 		    true);
@@ -1021,6 +1026,18 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			repository = null;
 		    }
 		}
+		
+		if (writeSqlEncodingInfos) {		
+		    File outputDirectoryFile = new File(outputDirectory);
+		    File outputFile = new File(outputDirectoryFile, outputFilename + "_SqlEncodingInfos.xml");
+		    
+		    SqlEncodingInfoVisitor sqlEncInfoVisitor = new SqlEncodingInfoVisitor(this);
+		    sqlEncInfoVisitor.visit(stmts);
+		    sqlEncInfoVisitor.postprocess();
+		    
+		    SqlEncodingInfos sei = sqlEncInfoVisitor.getSqlEncodingInfos();
+		    sei.toXml(outputFile, result);
+		}
 
 		/*
 		 * -- Create DDL(s)
@@ -1323,6 +1340,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	repSchemaMultiplicity1 = new Multiplicity(1, 1);
 
 	createDatabaseModel = false;
+	
+	writeSqlEncodingInfos = false;
     }
 
     @Override

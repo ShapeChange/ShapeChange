@@ -32,8 +32,11 @@
 package de.interactive_instruments.ShapeChange.Model.Generic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+
+import org.junit.platform.commons.util.StringUtils;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Multiplicity;
@@ -630,6 +633,15 @@ public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSour
 
 	if (updateFields) {
 	    updateFieldsForTaggedValue(tvName, tvValue);
+	}
+    }
+
+    public void setTaggedValueIfCurrentlyBlank(String tvName, String tvValue, boolean updateFields) {
+
+	String[] currentValues = this.taggedValuesForTag(tvName);
+
+	if (currentValues.length == 0 || Arrays.asList(currentValues).stream().allMatch(s -> StringUtils.isBlank(s))) {
+	    this.setTaggedValue(tvName, tvValue, updateFields);
 	}
     }
 

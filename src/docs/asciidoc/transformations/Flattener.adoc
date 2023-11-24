@@ -268,12 +268,14 @@ is set to generate configurations that support GML output.
 * Before inheritance structures are actually flattened, all properties that 
 belong to classes within the schemas selected for processing are analyzed:
 If the class that owns the property is a supertype, then the following tags 
-are set on the property: _originalSchemaName_ (with the name of the schema 
+are set on the property (unless they already have a non-blank value): 
+_originalSchemaName_ (with the name of the schema 
 to which the class that owns the property belongs), and _originalInClassName_ 
 (with the name of the class that owns the property). In addition, if the 
 property is an association role, and the value type of the role is a supertype, 
 then tag _originalPropertyName_ is set on the role (with the name of the role 
-as value). Again, these information items can be useful in subsequent 
+as value; unless the tag already has a non-blank value). 
+Again, these information items can be useful in subsequent 
 processing, such as when the xref:../targets/ldproxy2.adoc[ldproxy2 target] 
 is set to generate configurations that support GML output.
 
@@ -323,6 +325,7 @@ Parameters:
 |xref:./Flattener.adoc#codeByTaggedValue[codeByTaggedValue] | Optional
 |===
 
+
 [[rule-trf-cls-flatten-inheritance-add-attributes-at-bottom]]
 ==== rule-trf-cls-flatten-inheritance-add-attributes-at-bottom
 
@@ -333,6 +336,33 @@ association roles that are copied from a supertype to a subtype during the execu
 xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance]
 will be placed at the bottom of the sequence of existing properties,
 instead of at the top.
+
+[[rule-trf-cls-flatten-inheritance-add-attributes-in-sequence]]
+==== rule-trf-cls-flatten-inheritance-add-attributes-in-sequence
+
+(since v2.14.0)
+
+Behavior: If this rule is enabled, then attributes and also
+association roles that are copied from a supertype to a subtype during the execution of
+xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[rule-trf-cls-flatten-inheritance]
+will be be merged into the sequence of existing properties according to their sequence 
+number, instead of at the top.
+
+[NOTE]
+=====
+
+* This rule can be useful in (rare) cases where sequence numbers were chosen in a way
+that prevents conflicts with sequence numbers of subtypes (and other supertypes of 
+these subtypes). In other words, this rule can be useful for cases in which the
+scope of tagged value _sequenceNumber_ is not restricted to a class, but instead
+reaches over multiple classes. Be warned that such an overarching scope can be
+complex to maintain and get right, and that it is NOT the default scope assumed by
+ShapeChange.
+* This rule has lower priority than 
+xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance-add-attributes-at-bottom[rule-trf-cls-flatten-inheritance-add-attributes-at-bottom]
+
+===== 
+
 
 [[rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType]]
 ==== rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType
@@ -997,7 +1027,9 @@ _representsTypeSet_ with value 'true' (NOTE: these tags are added
 during xref:./Flattener.adoc#rule-trf-cls-flatten-inheritance[inheritance flattening], 
 when creating unions that represent 
 supertypes), then tag _originalPropertyName_ is added to the 
-property copy, with the name of property (P1) as value. That information 
+property copy, with the name of property (P1) as value - unless property (P1) 
+has a non-blank value for the tag (if such a value exists, then it is set 
+as the tag value on the property copy). That information 
 is used, for example, by the xref:../targets/ldproxy2.adoc[ldproxy2 target], 
 when creating configuration items for generating GML output.
 ** Name and descriptors of the copy are modified to reflect the

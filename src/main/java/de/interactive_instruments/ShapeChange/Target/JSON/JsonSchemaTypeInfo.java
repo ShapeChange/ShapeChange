@@ -70,6 +70,10 @@ public class JsonSchemaTypeInfo {
     public void setRef(String ref) {
 	this.ref = ref;
     }
+    
+    public boolean hasSimpleType() {
+	return simpleType != null;
+    }
 
     /**
      * @return the simpleType

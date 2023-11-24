@@ -1,0 +1,165 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "DT": {
+      "$anchor": "DT",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "$ref": "https://geojson.org/schema/Point.json"
+        },
+        "att2": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "$ref": "https://geojson.org/schema/LineString.json"
+            }
+          ]
+        }
+      },
+      "required": [
+        "att1",
+        "att2"
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/SCLinkObject"
+            },
+            {
+              "$ref": "https://geojson.org/schema/Point.json"
+            }
+          ]
+        },
+        "attDt": {
+          "$ref": "#DT"
+        },
+        "roleT": {
+          "$ref": "#/$defs/SCLinkObject"
+        },
+        "roleFT2": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SCLinkObject"
+          },
+          "uniqueItems": true
+        },
+        "roleFT3": {
+          "$ref": "#/$defs/SCLinkObject"
+        }
+      },
+      "required": [
+        "att1",
+        "attDt",
+        "roleFT3"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "roleFT1": {
+          "$ref": "#/$defs/SCLinkObject"
+        },
+        "roleExtFT1": {
+          "$ref": "#/$defs/SCLinkObject"
+        },
+        "roleExtFT2": {
+          "$ref": "#/$defs/SCLinkObject"
+        },
+        "roleExtFT3": {
+          "$ref": "#/$defs/SCLinkObject"
+        }
+      },
+      "required": [
+        "roleExtFT1",
+        "roleExtFT2",
+        "roleExtFT3",
+        "roleFT1"
+      ]
+    },
+    "FT2Sub1": {
+      "$anchor": "FT2Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub1Sub1": {
+      "$anchor": "FT2Sub1Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2Sub1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub2": {
+      "$anchor": "FT2Sub2",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "type": "object"
+    },
+    "SCLinkObject": {
+      "title": "link object",
+      "description": "definition of a link object",
+      "type": "object",
+      "required": [
+        "href"
+      ],
+      "properties": {
+        "href": {
+          "type": "string",
+          "description": "Supplies the URI to a remote resource (or resource fragment)."
+        },
+        "rel": {
+          "type": "string",
+          "description": "The type or semantics of the relation."
+        },
+        "type": {
+          "type": "string",
+          "description": "A hint indicating what the media type of the result of dereferencing the link should be."
+        },
+        "hreflang": {
+          "type": "string",
+          "description": "A hint indicating what the language of the result of dereferencing the link should be."
+        },
+        "title": {
+          "type": "string",
+          "description": "Used to label the destination of a link such that it can be used as a human-readable identifier."
+        },
+        "length": {
+          "type": "integer"
+        }
+      }
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object"
+    }
+  }
+}

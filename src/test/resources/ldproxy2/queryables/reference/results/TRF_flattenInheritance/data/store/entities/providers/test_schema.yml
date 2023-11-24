@@ -8,7 +8,6 @@ providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
-nativeTimeZone: Europe/Berlin
 connectionInfo:
   database: FIXME
   host: FIXME
@@ -65,7 +64,7 @@ types:
             type: STRING
             label: Subtype-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/subtype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/subtype/items/{{value}}"
       roleFTtoT_Type:
         type: OBJECT
         objectType: Link
@@ -79,7 +78,7 @@ types:
             type: STRING
             label: Type-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/type/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/type/items/{{value}}"
   subtype:
     sourcePath: /subtype
     type: OBJECT
@@ -109,7 +108,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
   type:
     sourcePath: /type
     type: OBJECT
@@ -139,4 +138,4 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"

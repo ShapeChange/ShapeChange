@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        xmlns:ta="http://example.org/shapechange/schema/test/a"
+        xmlns:tb="http://example.org/shapechange/schema/test/b"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test/b"
+        version="1.0">
+   <import namespace="http://example.org/shapechange/schema/test/a"/>
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="DataType2"
+            substitutionGroup="gml:AbstractObject"
+            type="tb:DataType2Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">DataType2</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="DataType2Type">
+      <sequence>
+         <element minOccurs="0" name="integer" type="integer">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="originalInClassName">DataType2</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyMultiplicity">0..1</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyName">integer</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyValueType">Integer</sc:taggedValue>
+                  <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <complexType name="DataType2PropertyType">
+      <sequence>
+         <element ref="tb:DataType2"/>
+      </sequence>
+   </complexType>
+   <simpleType name="EnumerationType">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">Enumeration</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+         </appinfo>
+      </annotation>
+      <restriction base="string">
+         <enumeration value="val1">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="originalInClassName">Enumeration</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyName">val1</sc:taggedValue>
+                  <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </enumeration>
+         <enumeration value="val2">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="originalInClassName">Enumeration</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyName">val2</sc:taggedValue>
+                  <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType1"
+            substitutionGroup="ta:AbstractSupertype"
+            type="tb:FeatureType1Type">
+      <annotation>
+         <documentation>This is a feature type.</documentation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">FeatureType1</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="ta:AbstractSupertypeType">
+            <sequence>
+               <element name="enum" type="tb:EnumerationType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">MixinC</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">enum</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Enumeration</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="boolean" type="boolean">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">MixinA</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">boolean</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Boolean</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="measure" type="gml:MeasureType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">MixinD</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">measure</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Measure</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" name="string" type="string">
+                  <annotation>
+                     <documentation>This is a string.</documentation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1..*</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">string</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">CharacterString</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" minOccurs="0" name="real" type="double">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">0..*</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">real</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Real</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="geometry" type="gml:PointPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">geometry</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">GM_Point</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="datatype" type="tb:DataType2PropertyType">
+                  <annotation>
+                     <documentation>This is a data type.</documentation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">datatype</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">DataType2</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="role2" type="tb:FeatureType2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">tb:role1</reversePropertyName>
+                        <sc:taggedValue tag="originalInClassName">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">role2</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">FeatureType2</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType2"
+            substitutionGroup="ta:AbstractSupertype"
+            type="tb:FeatureType2Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">FeatureType2</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="FeatureType2Type">
+      <complexContent>
+         <extension base="ta:AbstractSupertypeType">
+            <sequence>
+               <element name="codelist" type="gml:CodeType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">MixinB</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">codelist</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">CodeList</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="boolean" type="boolean">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">MixinA</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">boolean</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Boolean</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="role1"
+                        type="tb:FeatureType1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">tb:role2</reversePropertyName>
+                        <sc:taggedValue tag="originalInClassName">FeatureType2</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">0..*</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">role1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">FeatureType1</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType3"
+            substitutionGroup="tb:FeatureType2"
+            type="tb:FeatureType3Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">FeatureType3</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="FeatureType3Type">
+      <complexContent>
+         <extension base="tb:FeatureType2Type">
+            <sequence>
+               <element name="attFt3" type="integer">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">FeatureType3</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">attFt3</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Integer</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema B</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType3PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType3"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinBPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType2"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinCPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinDPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

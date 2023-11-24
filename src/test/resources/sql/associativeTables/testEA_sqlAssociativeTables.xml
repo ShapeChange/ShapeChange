@@ -109,9 +109,9 @@
       <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
       <targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
       <mapEntries>
-        <MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="tb_extdtinmodel" param="table{representedCategory=datatype}"/>
-        <MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="tb_extdtoutsidemodel" param="table"/>
-        <MapEntry type="ExternalFeatureType" rule="*" targetType="tb_extft" param="table"/>
+        <MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="tb_extdtinmodel" param="table{representedCategory=datatype;primaryKeyColumns=extpk}"/>
+        <MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="tb_extdtoutsidemodel" param="table{primaryKeyColumns=extpk}"/>
+        <MapEntry type="ExternalFeatureType" rule="*" targetType="tb_extft" param="table{primaryKeyColumns=extpk}"/>
       </mapEntries>
       <rules>
         <EncodingRule extends="sql" name="mysql">

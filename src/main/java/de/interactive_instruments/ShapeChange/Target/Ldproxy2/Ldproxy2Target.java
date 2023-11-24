@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,54 +35,28 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
-import de.ii.ldproxy.cfg.LdproxyCfg;
-import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
-import de.ii.ogcapi.features.core.domain.ImmutableFeaturesCollectionQueryables;
-import de.ii.ogcapi.features.core.domain.ImmutableFeaturesCoreConfiguration;
-import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
-import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
-import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
-import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
-import de.ii.ogcapi.foundation.domain.ImmutableFeatureTypeConfigurationOgcApi;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
-import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
-import de.ii.xtraplatform.codelists.domain.CodelistData.ImportType;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelistData;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
-import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
-import de.ii.xtraplatform.features.domain.FeatureSchema;
-import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
-import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
-import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
-import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
-import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
-import de.ii.xtraplatform.features.sql.domain.ConnectionInfoSql.Dialect;
-import de.ii.xtraplatform.features.sql.domain.ImmutableConnectionInfoSql;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
-import de.ii.xtraplatform.features.sql.domain.ImmutableQueryGeneratorSettings;
-import de.ii.xtraplatform.features.sql.domain.ImmutableSqlPathDefaults;
-import de.ii.xtraplatform.geometries.domain.SimpleFeatureGeometry;
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -91,16 +65,24 @@ import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.ShapeChange.XmlNamespace;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
-import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.TargetUtil;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable.LdpCoretableProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider.sql.LdpSqlSourcePathProvider;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.ShapeChange.Target.Ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.ShapeChange.Target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
-import de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
 
 /**
@@ -109,7 +91,8 @@ import de.interactive_instruments.ShapeChange.Util.XMLUtil;
  */
 public class Ldproxy2Target implements SingleTarget, MessageSource {
 
-    protected static Model model = null;
+    public static Model model = null;
+
     private static boolean initialised = false;
     protected static boolean diagnosticsOnly = false;
     protected static int numberOfEncodedSchemas = 0;
@@ -125,91 +108,91 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //     */
 //    protected static String documentationNoValue = null;
 
-    protected static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
-    protected static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
-    protected static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
-    protected static String dateFormat = null; // no default value
-    protected static String dateTimeFormat = null; // no default value
-    protected static String descriptionTemplate = "[[definition]]";
-    protected static String descriptorNoValue = "";
-    protected static boolean enableGmlOutput = false;
-    protected static Force forceAxisOrder = Force.NONE;
-    protected static String foreignKeyColumnSuffix = "";
-    protected static String foreignKeyColumnSuffixDatatype = "";
-    protected static String foreignKeyColumnSuffixCodelist = "";
-    protected static String gmlIdPrefix = null;
-    protected static Integer gmlSfLevel = null;
-    protected static String gmlFeatureCollectionElementName = null;
-    protected static String gmlFeatureMemberElementName = null;
-    protected static boolean gmlSupportsStandardResponseParameters = false;
-    protected static String labelTemplate = "[[alias]]";
-    protected static int maxNameLength = 63;
-    protected static ZoneId nativeTimeZone = ZoneId.systemDefault();
-    protected static String objectIdentifierName = "oid";
-    protected static String primaryKeyColumn = "id";
-    protected static SortedSet<String> queryablesFromConfig = new TreeSet<>();
-    protected static String serviceConfigTemplatePathString = null;
-    protected static String serviceDescription = "FIXME";
-    protected static String serviceLabel = "FIXME";
-    protected static int srid = 4326;
-    protected static String uomTvName = null;
-    protected static XmlEncodingInfos xmlEncodingInfos = new XmlEncodingInfos();
+    public static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
+    public static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
+    public static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
+    public static String dateFormat = null; // no default value
+    public static String dateTimeFormat = null; // no default value
+    public static String descriptionTemplate = "[[definition]]";
+    public static String descriptorNoValue = "";
+    public static boolean enableFragments = false;
+    public static boolean enableFeaturesGml = false;
+    public static boolean enableFeaturesGeoJson = false;
+    public static boolean enableFeaturesJsonFg = false;
+    public static Force forceAxisOrder = Force.NONE;
+    public static String foreignKeyColumnSuffix = "";
+    public static String reflexiveRelationshipFieldSuffix = null;
+    public static String foreignKeyColumnSuffixDatatype = "";
+    public static String foreignKeyColumnSuffixCodelist = "";
+    public static SortedSet<String> genericValueTypes = null;
 
-    protected static SortedSet<String> dbSchemaNames = new TreeSet<String>();
+    public static String collectionIdFormat = "lowerCase";
 
-    protected static boolean isUnitTest = false;
+    public static String labelTemplate = "[[alias]]";
+    public static int maxNameLength = 63;
+    public static ZoneId nativeTimeZone = null;
+    public static String objectIdentifierName = "oid";
+    public static String primaryKeyColumn = "id";
+    public static SortedSet<String> queryablesFromConfig = new TreeSet<>();
+    public static String serviceConfigTemplatePathString = null;
+    public static String serviceDescription = "FIXME";
+    public static String serviceLabel = "FIXME";
+    public static int srid = 4326;
+    public static String uomTvName = null;
+    public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
 
-    protected static String outputDirectory = null;
-    protected static File dataDirectoryFile = null;
-    protected static String mainId = null;
-    protected static PackageInfo mainAppSchema = null;
+    public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
+
+    public static String coretable = "features";
+    public static String coretablePkColumn = "pk";
+    public static String coretableIdColumn = null;
+    public static Type coretableIdColumnLdproxyType = Type.INTEGER;
+    public static String coretableFeatureTypeColumn = "featuretype";
+    public static String coretableGeometryColumn = "geom";
+    /*
+     * 2023-11-23 JE: Can be re-activated in the future, when /featureId in
+     * JSON-encoded references within the coretable approach is affirmed.
+     */
+//    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
+
+    public static String coretableRelationsTable = "references";
+    public static String coretableRefColumn = "ref";
+    public static String coretableRelationNameColumn = "rel";
+    public static String coretableInverseRelationNameColumn = "rel_inv";
+
+    public static boolean isUnitTest = false;
+
+    public static String outputDirectory = null;
+    public static File dataDirectoryFile = null;
+    public static String mainId = null;
+    public static PackageInfo mainAppSchema = null;
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
      * defined for this target.
      */
-    protected static MapEntryParamInfos mapEntryParamInfos = null;
+    public static MapEntryParamInfos mapEntryParamInfos = null;
 
-    protected static List<ClassInfo> typesWithIdentity = new ArrayList<>();
-    protected static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
+    static List<ClassInfo> objectFeatureMixinAndDataTypes = new ArrayList<>();
+    static SortedSet<ClassInfo> codelistsAndEnumerations = new TreeSet<>();
 
-    protected static LdproxyCfg cfg = null;
+    public static LdproxyCfgWriter cfg = null;
+
+    public static LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder = null;
+    public static LdpBuildingBlockFeaturesGeoJsonBuilder bbGeoJsonBuilder = null;
+    public static LdpBuildingBlockFeaturesJsonFgBuilder bbJsonFgBuilder = null;
 
     /* ------ */
     /*
      * Non-static fields
      */
-    protected ShapeChangeResult result = null;
-    protected Options options = null;
+    public ShapeChangeResult result = null;
+    Options options = null;
 
     private PackageInfo schema = null;
     private boolean schemaNotEncoded = false;
 
-    protected SortedMap<String, String> gmlNsabrByNs = new TreeMap<>();
-    protected SortedMap<String, String> gmlObjectTypeNamespacesMap = new TreeMap<>();
-
-    /**
-     * Property transformations, to be added to the FEATURES_HTML building blocks of
-     * type collections in the service configuration.
-     * 
-     * key outer map: top level type; value outer map: map with key: property path,
-     * value: list of property transformations
-     */
-    protected Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
-
-    /**
-     * Property transformations, to be added to the GML building blocks of type
-     * collections in the service configuration.
-     * 
-     * key outer map: top level type; value outer map: map with key: property path,
-     * value: list of property transformations
-     */
-    protected Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> propertyTransformationsForBuildingBlock_Gml_OfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
-
-    protected Map<ClassInfo, List<String>> xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
-
-    protected Map<String, String> gmlFixmeByOriginalSchemaNameMap = new HashMap<>();
-    protected int gmlFixmeCounter = 1;
+    private Map<ClassInfo, LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
 
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
@@ -221,7 +204,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	result = r;
 	diagnosticsOnly = diagOnly;
 
-	if (!isEncoded(schema)) {
+	if (!LdpInfo.isEncoded(schema)) {
 
 	    schemaNotEncoded = true;
 	    result.addInfo(this, 7, schema.name());
@@ -267,6 +250,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //	    documentationNoValue = options.parameter(this.getClass().getName(),
 //		    Ldproxy2Constants.PARAM_DOCUMENTATION_NOVALUE);
 
+	    collectionIdFormat = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT, "lowerCase", false, true);
+
 	    cfgTemplatePath = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
 		    "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml", false, true);
@@ -294,11 +280,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    foreignKeyColumnSuffix = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, "", false, true);
 
+	    reflexiveRelationshipFieldSuffix = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, null, true, true);
+
 	    foreignKeyColumnSuffixDatatype = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, "", false, true);
 
 	    foreignKeyColumnSuffixCodelist = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, "", false, true);
+
+	    genericValueTypes = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES, null, false, true));
 
 	    labelTemplate = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    "[[alias]]", false, true);
@@ -307,8 +299,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, 63);
 
 	    String nativeTimeZoneParamValue = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, ZoneId.systemDefault().toString(), false, true);
-	    nativeTimeZone = ZoneId.of(nativeTimeZoneParamValue);
+		    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, null, false, true);
+	    if (nativeTimeZoneParamValue != null) {
+		nativeTimeZone = ZoneId.of(nativeTimeZoneParamValue);
+	    }
 
 	    objectIdentifierName = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, "oid", false, true);
@@ -340,43 +334,121 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
 
-	    // GML relevant parameters
-
-	    enableGmlOutput = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_GML_OUTPUT,
+	    enableFragments = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_FRAGMENTS,
 		    false);
 
-	    if (enableGmlOutput) {
-		gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
+	    // GML relevant parameters
+
+	    if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_FEATURES_GML)) {
+		enableFeaturesGml = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_FEATURES_GML, false);
+	    } else if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_GML_OUTPUT)) {
+		enableFeaturesGml = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_OUTPUT, false);
+	    }
+
+	    if (enableFeaturesGml) {
+
+		String gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_ID_PREFIX, null, false, true);
-		gmlSfLevel = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_GML_SF_LEVEL,
-			-1);
+		int gmlSfLevel = options.parameterAsInteger(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_SF_LEVEL, -1);
 		uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME,
 			null, false, true);
 
-		gmlFeatureCollectionElementName = options.parameterAsString(this.getClass().getName(),
+		String gmlFeatureCollectionElementName = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME, null, false, true);
 
-		gmlFeatureMemberElementName = options.parameterAsString(this.getClass().getName(),
+		String gmlFeatureMemberElementName = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME, null, false, true);
 
-		gmlSupportsStandardResponseParameters = options.parameterAsBoolean(this.getClass().getName(),
+		boolean gmlSupportsStandardResponseParameters = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, false);
+
+		XmlEncodingInfos xmlEncodingInfos = new XmlEncodingInfos();
 
 		if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
 		    result.addInfo(this, 126);
 		} else {
 		    Element advancedProcessConfigElmt = options.getCurrentProcessConfig()
 			    .getAdvancedProcessConfigurations();
+
 		    List<Element> xeiElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "XmlEncodingInfos");
 
 		    if (xeiElmts.isEmpty()) {
-			result.addInfo(this, 126);
+			result.addInfo(this, 131);
 		    } else {
 			for (Element xeiElmt : xeiElmts) {
 			    xmlEncodingInfos.merge(XmlEncodingInfos.fromXml(xeiElmt));
 			}
 		    }
+
+		    List<Element> seiElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "SqlEncodingInfos");
+
+		    if (seiElmts.isEmpty()) {
+			result.addInfo(this, 132);
+		    } else {
+			for (Element seiElmt : seiElmts) {
+			    sqlEncodingInfos.merge(SqlEncodingInfos.fromXml(seiElmt));
+			}
+		    }
 		}
+
+		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
+			gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
+			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
+	    }
+
+	    enableFeaturesGeoJson = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, false);
+
+	    if (enableFeaturesGeoJson) {
+		bbGeoJsonBuilder = new LdpBuildingBlockFeaturesGeoJsonBuilder();
+	    }
+
+	    enableFeaturesJsonFg = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FEATURES_JSONFG, false);
+
+	    if (enableFeaturesJsonFg) {
+		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder();
+	    }
+
+	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
+
+		coretable = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_CORETABLE,
+			"features", false, true);
+
+		coretablePkColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN, "pk", false, true);
+
+		// WARNING: MUST BE COMPUTED AFTER primaryKeyColumn HAS BEEN COMPUTED!
+		coretableIdColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, primaryKeyColumn, false, true);
+
+		String ldpTypeTmp = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE, "Integer", false, true);
+		coretableIdColumnLdproxyType = Type.valueOf(ldpTypeTmp.toUpperCase(Locale.ENGLISH));
+
+		coretableFeatureTypeColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN, "featuretype", false, true);
+
+		coretableGeometryColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN, "geom", false, true);
+
+//		coretableJsonFeatureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+//			Ldproxy2Constants.PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID, false);
+
+		coretableRefColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, "ref", false, true);
+
+		coretableRelationsTable = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, "references", false, true);
+
+		coretableRelationNameColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN, "rel", false, true);
+
+		coretableInverseRelationNameColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, "rel_inv", false, true);
 	    }
 
 	    // identify map entries defined in the target configuration
@@ -425,7 +497,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
-	    cfg = new LdproxyCfg(dataDirectoryPath);
+	    createStoreDirectory(dataDirectoryPath);
+	    cfg = LdproxyCfgWriter.create(dataDirectoryPath, true);
 	}
 
 	/*
@@ -434,16 +507,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	result.addDebug(this, 10001, pi.name());
     }
 
-    public static boolean isEncoded(Info i) {
-
-	if (i.matches(Ldproxy2Constants.RULE_ALL_NOT_ENCODED)
-		&& i.encodingRule(Ldproxy2Constants.PLATFORM).equalsIgnoreCase("notencoded")) {
-
-	    return false;
-
-	} else {
-
-	    return true;
+    public static void createStoreDirectory(Path dataDirectoryPath) {
+	try {
+	    Files.createDirectories(dataDirectoryPath.resolve("store/entities/providers"));
+	} catch (IOException e) {
+	    /*
+	     * The statement has only been added to avoid the following warning from the
+	     * ldproxy-cfg-lib: [main] WARN de.ii.xtraplatform.store.app.EventStoreDefault -
+	     * Store source FS[store] not found.
+	     */
 	}
     }
 
@@ -454,7 +526,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	if (!isEncoded(ci)) {
+	if (!LdpInfo.isEncoded(ci)) {
 	    result.addInfo(this, 8, ci.name());
 	    return;
 	}
@@ -473,7 +545,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	if (ci.isAbstract()) {
+	if (!enableFragments && ci.isAbstract()) {
 	    MessageContext mc = result.addWarning(this, 20, ci.name());
 	    if (mc != null) {
 		mc.addDetail(this, 0, ci.fullNameInSchema());
@@ -481,7 +553,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	if (!ci.supertypes().isEmpty()) {
+	if (!enableFragments && !ci.supertypes().isEmpty()) {
 	    MessageContext mc = result.addError(this, 103, ci.name());
 	    if (mc != null) {
 		mc.addDetail(this, 0, ci.fullNameInSchema());
@@ -495,23 +567,31 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	 * that is mapped to a simple ldproxy type; if so, ci is a basic type.
 	 */
 
-	/*
-	 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-	 * time being, we keep the approach with type flattening.
-	 */
-	if (ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
+	if (ci.category() == Options.DATATYPE && ci.matches(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci, genericValueTypes)) {
+
+	    result.addInfo(this, 24, ci.name());
+
+	} else if (!enableFragments && ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
 
 	    // ignore here - will be encoded as needed
 
-	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE) {
+	    /*
+	     * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
+	     * time being, we keep the approach with type flattening. 2023-06-23 JE: In
+	     * other words, unions are not supported, but data types are.
+	     */
 
-	    if (typesWithIdentity.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
+	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
+		|| (enableFragments && (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE))) {
+
+	    if (objectFeatureMixinAndDataTypes.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
 		MessageContext mc = result.addError(this, 125, ci.name());
 		if (mc != null) {
 		    mc.addDetail(this, 0, ci.fullNameInSchema());
 		}
 	    } else {
-		typesWithIdentity.add(ci);
+		objectFeatureMixinAndDataTypes.add(ci);
 	    }
 
 	} else if (ci.category() == Options.ENUMERATION || ci.category() == Options.CODELIST) {
@@ -527,7 +607,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	} else {
 
-	    // NOTE: conversion of unions and mixins not supported
+	    /*
+	     * NOTE: conversion of basic types and unions not supported. Conversion of
+	     * mixins only supported if fragments are enabled.
+	     */
 
 	    result.addInfo(this, 17, ci.name());
 	}
@@ -552,7 +635,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    ClassInfo type = model.classById(typeId);
 
-	    if (type == null || !Ldproxy2Target.isEncoded(type) || !model.isInSelectedSchemas(type)) {
+	    if (type == null || !LdpInfo.isEncoded(type) || !model.isInSelectedSchemas(type)) {
 		return false;
 	    } else {
 		if (mapEntryParamInfos.hasParameter(pme, Ldproxy2Constants.ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA)) {
@@ -576,6 +659,50 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	return Optional.ofNullable(options.targetMapEntry(ci.name(), ci.encodingRule(Ldproxy2Constants.PLATFORM)));
     }
 
+    public boolean valueTypeIsMapped(PropertyInfo pi) {
+
+	return valueTypeIsMapped(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean valueTypeIsMapped(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    /**
+     * @param pi - tbd
+     * @return <code>true</code>, if the value type of pi is not mapped, and either
+     *         a) is not encoded, or b) is of an unsupported category; else
+     *         <code>false</code>
+     */
+    public boolean isIgnored(PropertyInfo pi) {
+
+	if (!valueTypeIsMapped(pi)) {
+
+	    if (pi.typeClass() == null || !LdpInfo.isEncoded(pi.typeClass())) {
+		MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return true;
+	    } else if (LdpInfo.unsupportedCategoryOfValue(pi)) {
+		MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, pi.fullNameInSchema());
+		}
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
     @Override
     public void write() {
 
@@ -593,10 +720,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
 
 	if (!diagnosticsOnly) {
-
-	    if (enableGmlOutput) {
-		gmlNsabrByNs.put(mainAppSchema.targetNamespace(), mainAppSchema.xmlns());
-	    }
 
 	    // copy template file
 	    if (StringUtils.isNotBlank(cfgTemplatePath)) {
@@ -629,267 +752,25 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		}
 	    }
 
-	    /*
-	     * ===================================
-	     * 
-	     * BUILD CODELIST AND TYPE DEFINITIONS
-	     * 
-	     * ===================================
-	     */
-
-	    List<ImmutableCodelistData> codelists = new ArrayList<>();
-
-	    for (ClassInfo ci : codelistsAndEnumerations) {
-
-		ImmutableCodelistData icd = createCodelistEntity(ci);
-
-		codelists.add(icd);
+	    LdpProvider provider;
+	    LdpSourcePathProvider sourcePathProvider;
+	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
+		provider = new LdpCoretableProvider();
+		sourcePathProvider = new LdpCoretableSourcePathProvider(this);
+	    } else {
+		provider = new LdpSqlProvider();
+		sourcePathProvider = new LdpSqlSourcePathProvider(this);
 	    }
 
-	    SortedMap<String, FeatureSchema> providerTypeDefinitions = new TreeMap<>();
-	    SortedMap<String, FeatureTypeConfigurationOgcApi> serviceCollectionDefinitions = new TreeMap<>();
+	    LdpConfigBuilder configBuilder = new LdpConfigBuilder(this, cfg, bbGmlBuilder, bbGeoJsonBuilder,
+		    bbJsonFgBuilder, objectFeatureMixinAndDataTypes, codelistsAndEnumerations, provider,
+		    sourcePathProvider);
 
-	    for (ClassInfo ci : typesWithIdentity) {
+	    configBuilder.process();
 
-		String typeDefName = ci.name().toLowerCase(Locale.ENGLISH);
-
-		/*
-		 * Create provider config entry
-		 */
-		LinkedHashMap<String, FeatureSchema> propertyDefs = propertyDefinitions(ci,
-			new ArrayList<PropertyInfo>());
-
-		ImmutableFeatureSchema typeDef = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(typeDefName).objectType(originalClassName(ci)).label(label(ci))
-			.sourcePath("/" + databaseTableName(ci, false)).description(description(ci))
-			.propertyMap(propertyDefs).build();
-
-		if (enableGmlOutput) {
-		    String nsabr = gmlNsabr(gmlXmlNamespace(ci));
-		    if (!nsabr.equals(mainAppSchema.xmlns())) {
-			gmlObjectTypeNamespacesMap.put(originalClassName(ci), nsabr);
-		    }
-		}
-
-		providerTypeDefinitions.put(typeDefName, typeDef);
-
-		/*
-		 * Create service config entry (must be done after provider config entry
-		 * creation, in order for codelist transformation infos to be available for
-		 * inclusion in the service config)
-		 */
-
-		List<ExtensionConfiguration> extensionConfigurations = new ArrayList<>();
-
-		ImmutableFeaturesCoreConfiguration.Builder fcoreBuilder = null;
-
-		if (ci.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)) {
-
-		    SortedSet<String> queryables = new TreeSet<>(queryablesFromConfig);
-
-		    SortedSet<PropertyInfo> queryableProperties = new TreeSet<>();
-
-		    for (PropertyInfo pi : ci.propertiesAll()) {
-			/*
-			 * This would also be the place to check if the property itself has a tagged
-			 * value that marks the property as queryable
-			 */
-			if (queryables.contains(pi.name()) || queryables.contains(originalPropertyName(pi))) {
-			    queryableProperties.add(pi);
-			}
-		    }
-
-		    if (!queryableProperties.isEmpty()) {
-
-			fcoreBuilder = cfg.builder().ogcApiExtension().featuresCore();
-
-			ImmutableFeaturesCollectionQueryables.Builder ifcq = new ImmutableFeaturesCollectionQueryables.Builder();
-
-			for (PropertyInfo pi : queryableProperties) {
-
-			    String queryableName = pi.isAttribute() ? pi.name() : pi.name() + ".title";
-
-			    Type ldpType = ldproxyType(pi);
-			    if (ldpType == Type.GEOMETRY) {
-				ifcq.addSpatial(queryableName);
-			    } else if (ldpType == Type.DATE || ldpType == Type.DATETIME) {
-				ifcq.addTemporal(queryableName);
-			    } else {
-				ifcq.addOther(queryableName);
-			    }
-			}
-
-			fcoreBuilder.queryables(ifcq.build());
-		    }
-		}
-
-		if (fcoreBuilder != null) {
-		    extensionConfigurations.add(fcoreBuilder.build());
-		}
-
-		ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension()
-			.featuresHtml();
-		fhtmlBuilder.featureTitleTemplate(featureTitleTemplate(ci));
-		if (propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass
-			.containsKey(ci)) {
-		    SortedMap<String, List<PropertyTransformation>> featuresHtmlPropertyTransformations = propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass
-			    .get(ci);
-		    fhtmlBuilder.transformations(featuresHtmlPropertyTransformations);
-		}
-		extensionConfigurations.add(fhtmlBuilder.build());
-
-		if (enableGmlOutput) {
-		    ImmutableGmlConfiguration.Builder gmlBuilder = cfg.builder().ogcApiExtension().gml();
-		    if (propertyTransformationsForBuildingBlock_Gml_OfServiceConfigCollectionsByTopLevelClass
-			    .containsKey(ci)) {
-			SortedMap<String, List<PropertyTransformation>> gmlPropertyTransformations = propertyTransformationsForBuildingBlock_Gml_OfServiceConfigCollectionsByTopLevelClass
-				.get(ci);
-			gmlBuilder.transformations(gmlPropertyTransformations);
-		    }
-		    if (xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
-			List<String> xmlAttributeCases = xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass
-				.get(ci);
-			gmlBuilder.addAllXmlAttributes(xmlAttributeCases);
-		    }
-		    extensionConfigurations.add(gmlBuilder.build());
-		}
-
-		ImmutableFeatureTypeConfigurationOgcApi serviceCollDef = new ImmutableFeatureTypeConfigurationOgcApi.Builder()
-			.id(typeDefName).label(typeDefName).addAllExtensions(extensionConfigurations).build();
-
-		serviceCollectionDefinitions.put(typeDefName, serviceCollDef);
-	    }
-
-	    /*
-	     * ================================
-	     * 
-	     * CREATE COMMON GML CONFIGURATION
-	     * 
-	     * ================================
-	     */
-
-	    ImmutableGmlConfiguration.Builder gmlBuilder = null;
-
-	    ImmutableResourcesConfiguration.Builder resourcesBuilder = null;
-
-	    if (enableGmlOutput) {
-
-		gmlBuilder = cfg.builder().ogcApiExtension().gml();
-
-		gmlBuilder.enabled(true);
-
-		SortedMap<String, String> appNamespaces = new TreeMap<>();
-		for (Entry<String, String> e : gmlNsabrByNs.entrySet()) {
-		    appNamespaces.put(e.getValue(), e.getKey());
-		}
-		gmlBuilder.putAllApplicationNamespaces(appNamespaces);
-
-		gmlBuilder.defaultNamespace(mainAppSchema.xmlns());
-
-		String schemaLocationForMainAppSchema = xmlEncodingInfos.getXmlNamespaces().stream()
-			.filter(xn -> xn.getNs().equals(mainAppSchema.targetNamespace()) && xn.hasLocation())
-			.map(xn -> xn.getLocation()).findFirst().orElse(null);
-		if (StringUtils.isBlank(schemaLocationForMainAppSchema)) {
-		    // Assume that the XSD for the main schema is hosted as local resource
-		    resourcesBuilder = cfg.builder().ogcApiExtension().resources();
-		    resourcesBuilder.enabled(true);
-		    schemaLocationForMainAppSchema = "{{serviceUrl}}/resources/" + mainAppSchema.xsdDocument();
-		    if (!schemaLocationForMainAppSchema.toLowerCase(Locale.ENGLISH).endsWith(".xsd")) {
-			schemaLocationForMainAppSchema += ".xsd";
-		    }
-		}
-
-		SortedMap<String, String> schemaLocations = new TreeMap<>();
-		schemaLocations.put(mainAppSchema.xmlns(), schemaLocationForMainAppSchema);
-		for (XmlNamespace xns : xmlEncodingInfos.getXmlNamespaces()) {
-		    if (xns.hasLocation() && gmlNsabrByNs.containsKey(xns.getNs())) {
-			schemaLocations.put(xns.getNs(), xns.getLocation());
-		    }
-		}
-
-		gmlBuilder.putAllSchemaLocations(schemaLocations);
-
-		gmlBuilder.objectTypeNamespaces(gmlObjectTypeNamespacesMap);
-
-		if (StringUtils.isNotBlank(gmlIdPrefix)) {
-		    gmlBuilder.gmlIdPrefix(gmlIdPrefix);
-		}
-		if (gmlSfLevel != null && gmlSfLevel != -1) {
-		    gmlBuilder.gmlSfLevel(gmlSfLevel);
-		}
-		if (StringUtils.isNotBlank(gmlFeatureCollectionElementName)) {
-		    gmlBuilder.featureCollectionElementName(gmlFeatureCollectionElementName);
-		}
-		if (StringUtils.isNotBlank(gmlFeatureMemberElementName)) {
-		    gmlBuilder.featureMemberElementName(gmlFeatureMemberElementName);
-		}
-		gmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
-	    }
-
-	    ImmutableQueryablesConfiguration.Builder queryablesBuilder = null;
-	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)) {
-		queryablesBuilder = cfg.builder().ogcApiExtension().queryables();
-		queryablesBuilder.enabled(true);
-	    }
-
-	    /*
-	     * ================================
-	     * 
-	     * BUILD THE SERVICE CONFIGURATION
-	     * 
-	     * ================================
-	     */
-
-	    List<ExtensionConfiguration> generalExtensionConfigurations = new ArrayList<>();
-	    if (resourcesBuilder != null) {
-		generalExtensionConfigurations.add(resourcesBuilder.build());
-	    }
-	    if (gmlBuilder != null) {
-		generalExtensionConfigurations.add(gmlBuilder.build());
-	    }
-	    if (queryablesBuilder != null) {
-		generalExtensionConfigurations.add(queryablesBuilder.build());
-	    }
-
-	    ImmutableOgcApiDataV2 serviceConfig = cfg.builder().entity().api().id(mainId).entityStorageVersion(2)
-		    .label(serviceLabel).description(serviceDescription).serviceType("OGC_API")
-		    .addAllExtensions(generalExtensionConfigurations).collections(serviceCollectionDefinitions).build();
-
-	    if (isUnitTest) {
-		serviceConfig = serviceConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-			.withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	    }
-
-	    /*
-	     * =================================
-	     * 
-	     * BUILD THE PROVIDER CONFIGURATION
-	     * 
-	     * =================================
-	     */
-
-	    ImmutableConnectionInfoSql connectionInfo = cfg.builder().entity().provider().connectionInfoBuilder()
-		    .dialect(Dialect.PGIS).database("FIXME").host("FIXME").user("FIXME")
-		    .password("FIXME-base64-encoded").schemas(dbSchemaNames).build();
-
-	    ImmutableSqlPathDefaults sourcePathDefaults = cfg.builder().entity().provider().sourcePathDefaultsBuilder()
-		    .primaryKey(primaryKeyColumn).sortKey(primaryKeyColumn).build();
-
-	    ImmutableQueryGeneratorSettings queryGeneration = cfg.builder().entity().provider().queryGenerationBuilder()
-		    .computeNumberMatched(true).build();
-
-	    ImmutableEpsgCrs nativeCrs = cfg.builder().entity().provider().nativeCrsBuilder().code(srid)
-		    .forceAxisOrder(forceAxisOrder).build();
-
-	    ImmutableFeatureProviderSqlData providerConfig = cfg.builder().entity().provider().id(mainId)
-		    .connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
-		    .queryGeneration(queryGeneration).nativeCrs(nativeCrs).nativeTimeZone(nativeTimeZone)
-		    .types(providerTypeDefinitions).build();
-
-	    if (isUnitTest) {
-		providerConfig = providerConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-			.withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	    }
+	    ImmutableFeatureProviderSqlData providerConfig = configBuilder.getProviderConfig();
+	    ImmutableOgcApiDataV2 serviceConfig = configBuilder.getServiceConfig();
+	    List<ImmutableCodelistData> codelists = configBuilder.getCodeLists();
 
 	    // write api
 	    try {
@@ -913,1297 +794,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
     }
 
-    private LinkedHashMap<String, FeatureSchema> propertyDefinitions(ClassInfo currentCi,
-	    List<PropertyInfo> alreadyVisitedPiList) {
-
-	LinkedHashMap<String, FeatureSchema> propertyDefs = new LinkedHashMap<>();
-
-	/*
-	 * DETERMINE SPECIAL PROPERTIES - ONLY RELEVANT FOR TOP-LEVEL CLASS
-	 */
-
-	PropertyInfo identifierPi = null;
-	boolean multipleIdentifierPisEncountered = false;
-	PropertyInfo defaultGeometryPi = null;
-	boolean multipleDefaultGeometriesEncountered = false;
-	PropertyInfo defaultInstantPi = null;
-	boolean multipleDefaultInstantsEncountered = false;
-	PropertyInfo defaultIntervalStartPi = null;
-	boolean multipleDefaultIntervalStartsEncountered = false;
-	PropertyInfo defaultIntervalEndPi = null;
-	boolean multipleDefaultIntervalEndsEncountered = false;
-
-	if (alreadyVisitedPiList.isEmpty()) {
-
-	    for (PropertyInfo pi : currentCi.properties().values()) {
-
-		if (!isEncoded(pi)) {
-		    continue;
-		}
-
-		if (!valueTypeIsMapped(pi)) {
-
-		    if (pi.typeClass() == null || !isEncoded(pi.typeClass())) {
-			MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(),
-				pi.inClass().name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-			continue;
-		    } else if (unsupportedCategoryOfValue(pi)) {
-			MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(),
-				pi.inClass().name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-			continue;
-		    }
-		}
-
-		if (pi.stereotype("identifier")
-			&& currentCi.matches(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE)) {
-
-		    if (!multipleIdentifierPisEncountered) {
-			identifierPi = pi;
-			if (pi.cardinality().maxOccurs > 1) {
-			    MessageContext mc = result.addWarning(this, 104, currentCi.name(), pi.name());
-			    if (mc != null) {
-				mc.addDetail(this, 1, pi.fullNameInSchema());
-			    }
-			}
-		    } else {
-			multipleIdentifierPisEncountered = true;
-			MessageContext mc = result.addError(this, 107, pi.inClass().name(), pi.name(),
-				identifierPi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-		    }
-
-		}
-
-		if (isTrueIgnoringCase(pi.taggedValue("defaultGeometry"))) {
-		    if (!multipleDefaultGeometriesEncountered) {
-			defaultGeometryPi = pi;
-		    } else {
-			multipleDefaultGeometriesEncountered = true;
-			MessageContext mc = result.addError(this, 105, pi.inClass().name(), pi.name(),
-				defaultGeometryPi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-		    }
-		}
-
-		boolean isDefaultInstant = isTrueIgnoringCase(pi.taggedValue("defaultInstant"));
-		boolean isDefaultIntervalStart = isTrueIgnoringCase(pi.taggedValue("defaultIntervalStart"));
-		boolean isDefaultIntervalEnd = isTrueIgnoringCase(pi.taggedValue("defaultIntervalEnd"));
-
-		if (isDefaultInstant && (isDefaultIntervalStart || isDefaultIntervalEnd)) {
-
-		    MessageContext mc = result.addError(this, 106, pi.inClass().name(), pi.name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
-		    }
-
-		} else if (isDefaultInstant) {
-
-		    if (!multipleDefaultInstantsEncountered) {
-			defaultInstantPi = pi;
-		    } else {
-			multipleDefaultInstantsEncountered = true;
-			MessageContext mc = result.addError(this, 108, pi.inClass().name(), pi.name(),
-				defaultInstantPi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-		    }
-
-		} else {
-
-		    if (isDefaultIntervalStart && isDefaultIntervalEnd) {
-
-			MessageContext mc = result.addError(this, 109, pi.inClass().name(), pi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-
-		    } else if (isDefaultIntervalStart) {
-
-			if (!multipleDefaultIntervalStartsEncountered) {
-			    defaultIntervalStartPi = pi;
-			} else {
-			    multipleDefaultIntervalStartsEncountered = true;
-			    MessageContext mc = result.addError(this, 110, pi.inClass().name(), pi.name(),
-				    defaultIntervalStartPi.name());
-			    if (mc != null) {
-				mc.addDetail(this, 1, pi.fullNameInSchema());
-			    }
-			}
-
-		    } else if (isDefaultIntervalEnd) {
-			if (!multipleDefaultIntervalEndsEncountered) {
-			    defaultIntervalEndPi = pi;
-			} else {
-			    multipleDefaultIntervalEndsEncountered = true;
-			    MessageContext mc = result.addError(this, 111, pi.inClass().name(), pi.name(),
-				    defaultIntervalEndPi.name());
-			    if (mc != null) {
-				mc.addDetail(this, 1, pi.fullNameInSchema());
-			    }
-			}
-		    }
-		}
-
-	    }
-
-	    if (identifierPi == null || multipleIdentifierPisEncountered) {
-		ImmutableFeatureSchema identifierMemberDef = new ImmutableFeatureSchema.Builder()
-			.name(objectIdentifierName).sourcePath(primaryKeyColumn).type(Type.INTEGER).role(Role.ID)
-			.build();
-		propertyDefs.put(identifierMemberDef.getName(), identifierMemberDef);
-	    }
-	}
-
-	for (PropertyInfo pi : currentCi.properties().values()) {
-
-	    if (!isEncoded(pi)) {
-		continue;
-	    }
-
-	    if (!valueTypeIsMapped(pi)) {
-
-		if (pi.typeClass() == null || !isEncoded(pi.typeClass())) {
-		    MessageContext mc = result.addError(this, 124, pi.typeInfo().name, pi.name(), pi.inClass().name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
-		    }
-		    continue;
-		} else if (unsupportedCategoryOfValue(pi)) {
-		    MessageContext mc = result.addError(this, 120, pi.typeInfo().name, pi.name(), pi.inClass().name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
-		    }
-		    continue;
-		}
-	    }
-
-	    List<PropertyInfo> nowVisitedList = new ArrayList<>(alreadyVisitedPiList);
-	    nowVisitedList.add(pi);
-
-	    ImmutableFeatureSchema.Builder propMemberDefBuilder = new ImmutableFeatureSchema.Builder();
-
-	    Type ldpType = ldproxyType(pi);
-
-	    if (pi.cardinality().maxOccurs > 1) {
-		if (ldpType == Type.OBJECT) {
-		    propMemberDefBuilder.type(Type.OBJECT_ARRAY);
-		} else if (ldpType == Type.GEOMETRY || pi == identifierPi) {
-		    // no array for geometry and identifier properties
-		    propMemberDefBuilder.type(ldpType);
-		} else {
-		    propMemberDefBuilder.type(Type.VALUE_ARRAY);
-		    propMemberDefBuilder.valueType(ldpType);
-		}
-	    } else {
-		propMemberDefBuilder.type(ldpType);
-	    }
-
-	    if (ldpType == Type.GEOMETRY) {
-		propMemberDefBuilder.geometryType(geometryType(pi));
-	    }
-
-	    if ((ldpType == Type.FLOAT || ldpType == Type.INTEGER) && StringUtils.isNotBlank(uomTvName)
-		    && StringUtils.isNotBlank(pi.taggedValue(uomTvName))) {
-		propMemberDefBuilder.unit(pi.taggedValue(uomTvName).trim());
-	    }
-
-	    Optional<Role> propRole;
-
-	    if (identifierPi != null && !multipleIdentifierPisEncountered && pi == identifierPi) {
-		propRole = Optional.of(Role.ID);
-	    } else if (defaultGeometryPi != null && !multipleDefaultGeometriesEncountered && pi == defaultGeometryPi) {
-		propRole = Optional.of(Role.PRIMARY_GEOMETRY);
-	    } else if (defaultInstantPi != null && !multipleDefaultInstantsEncountered && pi == defaultInstantPi) {
-		propRole = Optional.of(Role.PRIMARY_INSTANT);
-	    } else if (defaultIntervalStartPi != null && !multipleDefaultIntervalStartsEncountered
-		    && pi == defaultIntervalStartPi) {
-		propRole = Optional.of(Role.PRIMARY_INTERVAL_START);
-	    } else if (defaultIntervalEndPi != null && !multipleDefaultIntervalEndsEncountered
-		    && pi == defaultIntervalEndPi) {
-		propRole = Optional.of(Role.PRIMARY_INTERVAL_END);
-	    } else {
-		propRole = Optional.empty();
-	    }
-	    propMemberDefBuilder.role(propRole);
-
-	    Optional<String> sourcePathProperty = sourcePathPropertyLevel(pi, alreadyVisitedPiList);
-
-	    boolean ignoreSourcePathOnPropertyLevel = false;
-
-	    // handle embedded cases (datatype or link properties)
-	    if (isMappedToOrImplementedAsLink(pi)) {
-
-		// IMPORTANT: The object type must be 'Link', NOT 'LINK'!
-		propMemberDefBuilder.objectType("Link");
-
-		ignoreSourcePathOnPropertyLevel = omitSourcePathOnPropertyLevelForLinkObjectProperty(pi);
-
-		LinkedHashMap<String, FeatureSchema> linkPropertyDefs = new LinkedHashMap<>();
-
-		ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
-			.label(pi.typeInfo().name + "-title").type(Type.STRING);
-		List<String> titleSourcePaths = sourcePathsLinkLevelTitle(pi);
-		if (titleSourcePaths.size() == 1) {
-		    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
-		} else {
-		    titlePropBuilder = titlePropBuilder.sourcePaths(titleSourcePaths);
-		}
-
-		linkPropertyDefs.put("title", titlePropBuilder.build());
-
-		ImmutableFeatureSchema.Builder linkPropHrefBuilder = new ImmutableFeatureSchema.Builder();
-		linkPropHrefBuilder.name("href").label(pi.typeInfo().name + "-ID").type(Type.STRING)
-			.sourcePath(sourcePathLinkLevelHref(pi));
-		linkPropHrefBuilder.addAllTransformationsBuilders(
-			new ImmutablePropertyTransformation.Builder().stringFormat(urlTemplateForValueType(pi)));
-		linkPropertyDefs.put("href", linkPropHrefBuilder.build());
-
-		propMemberDefBuilder.propertyMap(linkPropertyDefs);
-
-	    } else if (!isLdproxySimpleType(ldpType)
-		    && (pi.categoryOfValue() == Options.DATATYPE /* || pi.categoryOfValue() == Options.UNION */)) {
-
-		/*
-		 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-		 * time being, we keep the approach with type flattening.
-		 */
-
-		ClassInfo typeCi = pi.typeClass();
-
-		// detect circular dependency in the property path
-		if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == typeCi) || typeCi == currentCi) {
-
-		    ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
-
-		    MessageContext mc = result.addError(this, 117, topType.name(), propertyPath(nowVisitedList));
-		    if (mc != null) {
-			mc.addDetail(this, 0, topType.fullNameInSchema());
-		    }
-
-		    continue;
-
-		} else {
-
-		    LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
-			    nowVisitedList);
-		    propMemberDefBuilder.propertyMap(datatypePropertyDefs);
-
-		    propMemberDefBuilder.objectType(originalClassName(typeCi));
-		    if (enableGmlOutput) {
-			String nsabr = gmlNsabr(gmlXmlNamespace(typeCi));
-			if (!nsabr.equals(mainAppSchema.xmlns())) {
-			    gmlObjectTypeNamespacesMap.put(originalClassName(typeCi), nsabr);
-			}
-		    }
-		}
-	    }
-
-	    if (StringUtils.isNotBlank(pi.initialValue()) && pi.isReadOnly()
-		    && pi.matches(Ldproxy2Constants.RULE_PROP_READONLY)) {
-
-		propMemberDefBuilder.constantValue(constantValue(pi));
-
-	    } else if (!ignoreSourcePathOnPropertyLevel) {
-
-		propMemberDefBuilder.sourcePath(sourcePathProperty);
-	    }
-
-	    // Generate constraints
-	    Optional<ImmutableSchemaConstraints> constraints = Optional.empty();
-	    boolean providerConfigConstraintCreated = false;
-	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
-	    if (pi.cardinality().minOccurs != 0 && !pi.voidable()/* && pi.inClass().category() != Options.UNION */) {
-		/*
-		 * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
-		 * time being, we keep the approach with type flattening.
-		 */
-		providerConfigConstraintCreated = true;
-		constraintsBuilder.required(true);
-	    }
-	    if (pi.cardinality().maxOccurs > 1 && !(pi == identifierPi || pi == defaultGeometryPi)
-		    && ldpType != Type.GEOMETRY) {
-		if (pi.voidable()) {
-		    providerConfigConstraintCreated = true;
-		    constraintsBuilder.minOccurrence(0);
-		} else {
-		    providerConfigConstraintCreated = true;
-		    constraintsBuilder.minOccurrence(pi.cardinality().minOccurs);
-		}
-		if (pi.cardinality().maxOccurs != Integer.MAX_VALUE) {
-		    providerConfigConstraintCreated = true;
-		    constraintsBuilder.maxOccurrence(pi.cardinality().maxOccurs);
-		}
-	    }
-	    if (isEnumerationOrCodelistValueType(pi) && !valueTypeIsMapped(pi)) {
-
-		ClassInfo typeCi = pi.typeClass();
-
-		providerConfigConstraintCreated = true;
-		String codelistId = codelistId(typeCi);
-
-		if (!codelistsAndEnumerations.contains(typeCi)) {
-		    /*
-		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
-		     * from the schemas selected for processing.
-		     */
-		    MessageContext mc = result.addWarning(this, 127, typeCi.name(), codelistId);
-		    if (mc != null) {
-			mc.addDetail(this, 0, typeCi.fullNameInSchema());
-		    }
-		}
-
-		constraintsBuilder.codelist(codelistId);
-
-		if (pi.categoryOfValue() == Options.ENUMERATION
-			&& typeCi.matches(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT)) {
-		    constraintsBuilder.enumValues(enumValues(typeCi));
-		}
-
-		// now create content for inclusion in service config:
-		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
-			.build();
-		addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf,
-			propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass);
-	    }
-
-	    if (providerConfigConstraintCreated) {
-		constraints = Optional.of(constraintsBuilder.build());
-	    }
-	    propMemberDefBuilder.constraints(constraints);
-
-	    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(label(pi))
-		    .description(description(pi)).build();
-	    propertyDefs.put(pi.name(), propMemberDef);
-
-	    // create more service constraint content
-	    if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
-		String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
-		if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
-			    .build();
-		    addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf,
-			    propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass);
-		} else {
-		    MessageContext mc = result.addError(this, 122, pi.name(), pi.taggedValue("ldpRemove"));
-		    if (mc != null) {
-			mc.addDetail(this, 1, pi.fullNameInSchema());
-		    }
-		}
-	    }
-	    if (ldpType == Type.DATE && StringUtils.isNotBlank(dateFormat)) {
-		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			.dateFormat(dateFormat).build();
-		addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf,
-			propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass);
-	    }
-	    if (ldpType == Type.DATETIME && StringUtils.isNotBlank(dateTimeFormat)) {
-		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			.dateFormat(dateTimeFormat).build();
-		addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf,
-			propertyTransformationsForBuildingBlock_FeaturesHtml_OfServiceConfigCollectionsByTopLevelClass);
-	    }
-
-	    if (enableGmlOutput) {
-
-		ClassInfo firstCi = nowVisitedList.get(0).inClass();
-
-		if (gmlRenameRequired(pi, gmlXmlNamespace(firstCi))) {
-
-		    String xmlQNameToUse = gmlQName(pi);
-
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .rename(xmlQNameToUse).build();
-		    addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(firstCi,
-			    propertyPath(nowVisitedList), trf,
-			    propertyTransformationsForBuildingBlock_Gml_OfServiceConfigCollectionsByTopLevelClass);
-		}
-
-		if (gmlAsAttribute(pi)) {
-
-		    List<String> xmlAttributes = xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass
-			    .get(firstCi);
-		    if (xmlAttributes == null) {
-			xmlAttributes = new ArrayList<>();
-			xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.put(firstCi, xmlAttributes);
-		    }
-		    xmlAttributes.add(propertyPath(nowVisitedList));
-		}
-	    }
-	}
-
-	return propertyDefs;
-    }
-
-    /**
-     * @param pi
-     * @return <code>true</code>, if the maximum multiplicity of pi is 1 and either
-     *         the value type of pi is mapped to LINK or the value type does NOT
-     *         have a valid value for tag ldpTitleAttribute; otherwise
-     *         <code>false</code>
-     */
-    private boolean omitSourcePathOnPropertyLevelForLinkObjectProperty(PropertyInfo pi) {
-
-	return (pi.cardinality().maxOccurs == 1 && (isMappedToLink(pi) || !valueTypeHasValidLdpTitleAttributeTag(pi)));
-    }
-
-    private boolean valueTypeHasValidLdpTitleAttributeTag(PropertyInfo pi) {
-
-	ClassInfo typeCi = pi.typeClass();
-	if (typeCi == null) {
-	    return false;
-	} else {
-	    PropertyInfo titleAtt = getTitleAttribute(typeCi);
-	    return titleAtt != null;
-	}
-    }
-
-    /**
-     * @param ci - tbd
-     * @return the attribute of ci whose name is equal to the value of tag
-     *         ldpTitleAttribute on ci
-     */
-    private PropertyInfo getTitleAttribute(ClassInfo ci) {
-
-	PropertyInfo result = null;
-
-	String titleAttName = ci.taggedValue("ldpTitleAttribute");
-	if (StringUtils.isNotBlank(titleAttName)) {
-	    result = ci.property(titleAttName.trim());
-	}
-
-	return result;
-    }
-
-    private boolean gmlAsAttribute(PropertyInfo pi) {
-
-	String originalInClassName = originalInClassName(pi);
-	String originalSchemaName = originalSchemaName(pi);
-	String originalPropertyName = originalPropertyName(pi);
-
-	return xmlEncodingInfos.isXmlAttribute(originalSchemaName, originalInClassName, originalPropertyName);
-    }
-
-    private String gmlQName(PropertyInfo pi) {
-
-	String originalInClassName = originalInClassName(pi);
-	String originalSchemaName = originalSchemaName(pi);
-	String originalPropertyName = originalPropertyName(pi);
-
-	String xmlNamespaceToUse = gmlXmlNamespace(pi);
-
-	String xmlNameToUse = originalPropertyName;
-	Optional<String> xmlNameOpt = xmlEncodingInfos.getXmlName(originalSchemaName, originalInClassName,
-		originalPropertyName);
-	if (xmlNameOpt.isPresent() && !xmlNameOpt.get().equals(originalPropertyName)) {
-	    xmlNameToUse = xmlNameOpt.get();
-	}
-
-	String nsabrToUse = gmlNsabr(xmlNamespaceToUse);
-
-	if (nsabrToUse.equals(mainAppSchema.xmlns())) {
-	    return xmlNameToUse;
-	} else {
-	    return nsabrToUse + ":" + xmlNameToUse;
-	}
-    }
-
-    private String gmlXmlNamespace(ClassInfo ci) {
-
-	String className = originalClassName(ci);
-
-	PackageInfo schemaPkg = model.schemaPackage(ci);
-	String schemaName = schemaPkg == null ? null : schemaPkg.name();
-
-	Optional<String> xmlNsOpt = xmlEncodingInfos.getXmlNamespace(schemaName, className);
-
-	if (xmlNsOpt.isPresent()) {
-	    return xmlNsOpt.get();
-	} else {
-
-	    String targetNamespace = ci.pkg().targetNamespace();
-	    if (StringUtils.isBlank(targetNamespace)) {
-
-		// Note: schemaName can be null - is supported as key by Java HashMap
-		if (gmlFixmeByOriginalSchemaNameMap.containsKey(schemaName)) {
-		    targetNamespace = gmlFixmeByOriginalSchemaNameMap.get(schemaName);
-		} else {
-		    targetNamespace = gmlFixmeForSchema(schemaName);
-		    result.addWarning(this, 129, schemaName == null ? "<no schema found>" : schemaName,
-			    targetNamespace);
-		}
-	    }
-	    return targetNamespace;
-	}
-    }
-
-    private String gmlXmlNamespace(PropertyInfo pi) {
-
-	String originalInClassName = originalInClassName(pi);
-	String originalSchemaName = originalSchemaName(pi);
-	String originalPropertyName = originalPropertyName(pi);
-
-	String piTargetNamespace = pi.inClass().pkg().targetNamespace();
-	Optional<String> xmlNsOpt = xmlEncodingInfos.getXmlNamespace(originalSchemaName,
-		originalInClassName + "::" + originalPropertyName);
-
-	String xmlNamespaceToUse = piTargetNamespace;
-	if (xmlNsOpt.isPresent()) {
-	    if (!xmlNsOpt.get().equals(piTargetNamespace)) {
-		xmlNamespaceToUse = xmlNsOpt.get();
-	    }
-	} else {
-	    if (!originalSchemaName.equals(pi.model().schemaPackage(pi.inClass()).name())) {
-		SortedSet<PackageInfo> originalSchema = model.schemas(originalSchemaName);
-		if (originalSchema.isEmpty() || StringUtils.isBlank(originalSchema.first().targetNamespace())) {
-		    if (gmlFixmeByOriginalSchemaNameMap.containsKey(originalSchemaName)) {
-			xmlNamespaceToUse = gmlFixmeByOriginalSchemaNameMap.get(originalSchemaName);
-		    } else {
-			xmlNamespaceToUse = gmlFixmeForSchema(originalSchemaName);
-			result.addWarning(this, 129, originalSchemaName, xmlNamespaceToUse);
-		    }
-		} else {
-		    xmlNamespaceToUse = originalSchema.first().targetNamespace();
-		}
-	    }
-	}
-
-	return xmlNamespaceToUse;
-    }
-
-    private String gmlNsabr(String xmlNamespace) {
-
-	if (gmlNsabrByNs.containsKey(xmlNamespace)) {
-	    return gmlNsabrByNs.get(xmlNamespace);
-	} else {
-
-	    String nsabrToUse = null;
-
-	    Optional<String> nsabr = xmlEncodingInfos.findNsabr(xmlNamespace);
-	    if (nsabr.isPresent()) {
-		nsabrToUse = nsabr.get();
-	    } else {
-		boolean foundSchemaPackage = false;
-		for (PackageInfo schema : model.schemas(null)) {
-		    if (schema.targetNamespace().equals(xmlNamespace)) {
-			foundSchemaPackage = true;
-			nsabrToUse = schema.xmlns();
-			break;
-		    }
-		}
-		if (!foundSchemaPackage || StringUtils.isBlank(nsabrToUse)) {
-		    String fixme = gmlNewFixme();
-		    result.addWarning(this, 130, xmlNamespace, fixme);
-		    nsabrToUse = fixme;
-		}
-	    }
-
-	    gmlNsabrByNs.put(xmlNamespace, nsabrToUse);
-	    return nsabrToUse;
-	}
-    }
-
-    private String gmlFixmeForSchema(String originalSchemaName) {
-
-	String newFixme = gmlNewFixme();
-	gmlFixmeByOriginalSchemaNameMap.put(originalSchemaName, newFixme);
-	return newFixme;
-    }
-
-    private String gmlNewFixme() {
-	String newFixme = "fixme" + gmlFixmeCounter;
-	gmlFixmeCounter++;
-	return newFixme;
-    }
-
-    private String originalPropertyName(PropertyInfo pi) {
-	String originalPropertyName = pi.taggedValue(Flattener.TV_ORIGINAL_PROPERTY_NAME);
-	if (StringUtils.isBlank(originalPropertyName)) {
-	    originalPropertyName = pi.name();
-	}
-	return originalPropertyName;
-    }
-
-    private String originalSchemaName(PropertyInfo pi) {
-	String originalSchemaName = pi.taggedValue(Flattener.TV_ORIGINAL_SCHEMA_NAME);
-	if (StringUtils.isBlank(originalSchemaName)) {
-	    originalSchemaName = pi.model().schemaPackage(pi.inClass()).name();
-	}
-	return originalSchemaName;
-    }
-
-    private String originalInClassName(PropertyInfo pi) {
-	String originalInClassName = pi.taggedValue(Flattener.TV_ORIGINAL_INCLASS_NAME);
-	if (StringUtils.isBlank(originalInClassName)) {
-	    originalInClassName = originalClassName(pi.inClass());
-	}
-	return originalInClassName;
-    }
-    
-    private String originalClassName(ClassInfo ci) {
-	String originalClassName = ci.taggedValue(Flattener.TV_ORIGINAL_CLASS_NAME);
-	if (StringUtils.isBlank(originalClassName)) {
-	    originalClassName = ci.name();
-	}
-	return originalClassName;
-    }
-    
-    private boolean gmlRenameRequired(PropertyInfo pi, String xmlNamespaceOfRootCollection) {
-
-	String originalInClassName = originalInClassName(pi);
-	String originalSchemaName = originalSchemaName(pi);
-	String originalPropertyName = originalPropertyName(pi);
-
-	Optional<String> xmlNsOpt = xmlEncodingInfos.getXmlNamespace(originalSchemaName,
-		originalInClassName + "::" + originalPropertyName);
-
-	boolean renameRequired = false;
-
-	if (xmlNsOpt.isPresent()) {
-	    if (!xmlNsOpt.get().equals(xmlNamespaceOfRootCollection)) {
-		renameRequired = true;
-	    }
-	} else {
-
-	    PackageInfo piSchema = model.schemaPackage(pi.inClass());
-
-	    if (StringUtils.isNotBlank(piSchema.targetNamespace())
-		    && !piSchema.targetNamespace().equals(xmlNamespaceOfRootCollection)) {
-		renameRequired = true;
-	    } else if (!originalSchemaName.equals(piSchema.name())) {
-		/*
-		 * since different schemas must have different target namespaces, the XML
-		 * namespace for the property changes
-		 */
-		renameRequired = true;
-	    }
-	}
-
-	if (!originalPropertyName.equals(pi.name())) {
-	    renameRequired = true;
-	}
-
-	Optional<String> xmlNameOpt = xmlEncodingInfos.getXmlName(originalSchemaName, originalInClassName,
-		originalPropertyName);
-	if (xmlNameOpt.isPresent() && !xmlNameOpt.get().equals(originalPropertyName)) {
-	    renameRequired = true;
-	}
-
-	return renameRequired;
-    }
-
-    private List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
-
-	List<String> result = new ArrayList<>();
-
-	if (!isMappedToLink(pi) && valueTypeHasValidLdpTitleAttributeTag(pi)) {
-
-	    PropertyInfo titleAtt = getTitleAttribute(pi.typeClass());
-	    if (titleAtt.cardinality().minOccurs == 0) {
-		/*
-		 * PK field shall be listed first, since the last listed sourcePaths "wins", and
-		 * that should be the title attribute, if it exists
-		 */
-		result.add(primaryKeyColumn);
-	    }
-	    result.add(databaseColumnName(titleAtt));
-
-	} else {
-
-	    if (pi.cardinality().maxOccurs == 1) {
-		result.add(databaseColumnName(pi));
-	    } else {
-		result.add(primaryKeyColumn);
-	    }
-	}
-
-	return result;
-    }
-
-    private String sourcePathLinkLevelHref(PropertyInfo pi) {
-
-	if (pi.cardinality().maxOccurs == 1) {
-
-	    if (!isMappedToLink(pi) && valueTypeHasValidLdpTitleAttributeTag(pi)) {
-		return primaryKeyColumn;
-	    } else {
-		return databaseColumnName(pi);
-	    }
-	} else {
-	    return primaryKeyColumn;
-	}
-
-    }
-
-    private void addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(ClassInfo topLevelClass,
-	    String propertyPath, ImmutablePropertyTransformation trf,
-	    Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass) {
-
-	SortedMap<String, List<PropertyTransformation>> serviceConfigTrfsByPropPath;
-	if (propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
-		.containsKey(topLevelClass)) {
-	    serviceConfigTrfsByPropPath = propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
-		    .get(topLevelClass);
-	} else {
-	    serviceConfigTrfsByPropPath = new TreeMap<>();
-	    propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.put(topLevelClass,
-		    serviceConfigTrfsByPropPath);
-	}
-
-	if (serviceConfigTrfsByPropPath.containsKey(propertyPath)) {
-	    serviceConfigTrfsByPropPath.get(propertyPath).add(trf);
-	} else {
-	    List<PropertyTransformation> propTransforms = new ArrayList<>();
-	    propTransforms.add(trf);
-	    serviceConfigTrfsByPropPath.put(propertyPath, propTransforms);
-	}
-    }
-
-    private Iterable<String> enumValues(ClassInfo enumeration) {
-
-	List<String> res = new ArrayList<>();
-
-	for (PropertyInfo pi : enumeration.properties().values()) {
-	    if (StringUtils.isNotBlank(pi.initialValue())) {
-		res.add(pi.initialValue().trim());
-	    } else {
-		res.add(pi.name());
-	    }
-	}
-
-	return res;
-    }
-
-    private boolean unsupportedCategoryOfValue(PropertyInfo pi) {
-
-	return pi.categoryOfValue() == Options.BASICTYPE || pi.categoryOfValue() == Options.MIXIN
-		|| pi.categoryOfValue() == Options.UNKNOWN;
-    }
-
-    private boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
-
-	if (valueTypeIsMapped(pi)) {
-	    return isMappedToLink(pi);
-	} else {
-	    return isTypeWithIdentityValueType(pi);
-	}
-    }
-
-    /**
-     * @param pi                   the property for which to construct the source
-     *                             path on property level
-     * @param alreadyVisitedPiList information about previous steps in the source
-     *                             path; can be analyzed to detect special cases
-     *                             (e.g. lists of data type valued properties)
-     * @return
-     */
-    private Optional<String> sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList) {
-
-	String typeName = pi.typeInfo().name;
-	String typeId = pi.typeInfo().id;
-	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
-
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
-
-	    if (pme.hasTargetType()) {
-
-		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
-
-		    // the target only allows and thus assumes max mult = 1
-		    return Optional.of(databaseColumnName(pi));
-
-		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
-
-		    if (pi.cardinality().maxOccurs == 1) {
-			return Optional.empty();
-		    } else {
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi, alreadyVisitedPiList));
-		    }
-
-		} else {
-
-		    // value type is a simple ldproxy type
-		    if (pi.cardinality().maxOccurs == 1) {
-
-			return Optional.of(databaseColumnName(pi));
-
-		    } else {
-
-			String sortKeyAddition = "{sortKey=" + databaseTableName(pi.inClass(), true) + "}";
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
-			    sortKeyAddition = "";
-			}
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/"
-					+ databaseColumnName(pi));
-		    }
-		}
-
-	    } else {
-		// is checked via target configuration validator (which can be switched off)
-		result.addError(this, 118, typeName);
-		return Optional.of("FIXME");
-	    }
-	}
-
-	ClassInfo typeCi = pi.typeClass();
-
-	if (typeCi == null) {
-
-	    MessageContext mc = result.addError(this, 118, typeName);
-	    if (mc != null) {
-		mc.addDetail(this, 1, pi.fullNameInSchema());
-	    }
-	    return Optional.of("FIXME");
-
-	} else {
-
-	    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
-
-		if (pi.cardinality().maxOccurs == 1) {
-
-		    /*
-		     * Note: Addition of code list foreign key suffix is handled in method
-		     * databaseColumnName(..).
-		     */
-		    return Optional.of(databaseColumnName(pi));
-
-		} else {
-
-		    String sortKeyAddition = "{sortKey=" + databaseTableName(pi.inClass(), true) + "}";
-		    if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
-			sortKeyAddition = "";
-		    }
-
-		    String path1 = "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-			    + "]" + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/";
-		    String path2;
-		    if (typeCi.category() == Options.CODELIST
-			    && typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-			path2 = databaseTableName(typeCi, true);
-		    } else {
-			path2 = databaseColumnName(pi);
-		    }
-
-		    String path = path1 + path2;
-		    return Optional.of(path);
-		}
-
-	    } else if (typeCi.category() == Options.DATATYPE) {
-
-		if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
-
-		    return Optional
-			    .of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi, alreadyVisitedPiList));
-
-		} else {
-
-		    if (pi.cardinality().maxOccurs == 1) {
-
-			return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				+ databaseTableName(typeCi, false));
-		    } else {
-
-			return Optional
-				.of("[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					+ "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
-					+ databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
-					+ databaseTableName(typeCi, false));
-		    }
-		}
-
-	    } else {
-
-		boolean reflexive = pi.inClass().id().equals(pi.typeInfo().id);
-
-		if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
-
-		    // bi-directional association
-		    if (pi.cardinality().maxOccurs > 1 && pi.reverseProperty().cardinality().maxOccurs > 1) {
-
-			// n:m
-
-			if (reflexive) {
-
-			    return Optional.of(
-				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
-					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
-					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
-					    + databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true) + "="
-					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
-
-			} else {
-
-			    return Optional.of(
-				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
-					    + databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
-					    + databaseTableName(typeCi, false));
-			}
-
-		    } else if (pi.cardinality().maxOccurs > 1) {
-
-			// n:1
-
-			if (reflexive) {
-
-			    // no need for a table join in this case
-			    // case p2 from ppt image (n:1 for bi-directional reflexive association)
-			    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				    + databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
-				    + databaseTableName(typeCi, false));
-
-			} else {
-
-			    // case pB from ppt image (n:1 for bi-directional association)
-			    return Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				    + databaseColumnName(pi.reverseProperty()) + "]"
-				    + databaseTableName(typeCi, false));
-			}
-
-		    } else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
-
-			// n:1
-
-			if (reflexive) {
-
-			    // no need for a table join in this case
-			    // case p1 from ppt image (n:1 for bi-directional reflexive association)
-			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
-
-			} else {
-
-			    // case pA from ppt image (n:1 for bi-directional association)
-			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				    + databaseTableName(typeCi, false));
-			}
-
-		    } else {
-
-			// 1:1
-
-			if (reflexive) {
-
-			    // no need for a table join in this case
-			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
-
-			} else {
-
-			    // max mult = 1 on both ends
-			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				    + databaseTableName(typeCi, false));
-			}
-		    }
-
-		} else {
-
-		    // attribute or uni-directional association
-		    if (pi.cardinality().maxOccurs == 1) {
-
-			// n:1
-
-			if (reflexive) {
-
-			    // no need for a table join in this case
-			    return Optional.of(databaseColumnNameReflexiveProperty(pi, false));
-
-			} else {
-
-			    return Optional.of("[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]"
-				    + databaseTableName(typeCi, false));
-			}
-
-		    } else {
-
-			// n:m
-
-			if (reflexive) {
-
-			    return Optional.of(
-				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), false)
-					    + "_" + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true)
-					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
-					    + databaseTableName(typeCi, false) + "_"
-					    + databaseColumnNameReflexiveProperty(pi, true) + "="
-					    + primaryKeyColumn(pi.inClass()) + "]" + databaseTableName(typeCi, false));
-
-			} else {
-
-			    return Optional.of(
-				    "[" + primaryKeyColumn(pi.inClass()) + "=" + databaseTableName(pi.inClass(), true)
-					    + "]" + associativeTableName(pi, alreadyVisitedPiList) + "/["
-					    + databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi) + "]"
-					    + databaseTableName(typeCi, false));
-			}
-		    }
-		}
-	    }
-	}
-    }
-
-    private String primaryKeyColumn(ClassInfo ci) {
-
-	if (ci.matches(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE)) {
-	    for (PropertyInfo pi : ci.properties().values()) {
-		if (pi.stereotype("identifier")) {
-		    return databaseColumnName(pi);
-		}
-	    }
-	}
-
-	return primaryKeyColumn;
-    }
-
-    private String associativeTableName(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList) {
-
-	String result = null;
-
-	/*
-	 * Check case of usage specific data type table first. We need to create table
-	 * names as are created by the SqlDdl target for
-	 * rule-sql-cls-data-types-oneToMany-severalTables. That is the case if the
-	 * owner of pi is a data type that matches that rule.
-	 */
-	ClassInfo piOwnerCi = pi.inClass();
-	if (piOwnerCi != null && piOwnerCi.category() == Options.DATATYPE && model.isInSelectedSchemas(piOwnerCi)
-		&& mapEntry(piOwnerCi).isEmpty()
-		&& piOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
-
-	    /*
-	     * We need to follow the list of already visited properties from the end along
-	     * all properties owned by complex data types in order to construct the table
-	     * name.
-	     */
-	    String suffix = "_" + pi.name();
-	    String tableName = null;
-
-	    for (int i = alreadyVisitedPiList.size() - 1; i >= 0; i--) {
-
-		PropertyInfo previousPi = alreadyVisitedPiList.get(i);
-		ClassInfo prevPiOwnerCi = previousPi.inClass();
-
-		/*
-		 * We also gather the name of the first property (looked at from the end of the
-		 * list of already visited properties) which is not owned by a complex data
-		 * type. That is why the suffix modification is not part of the following
-		 * if-else-test.
-		 */
-		suffix = "_" + previousPi.name() + suffix;
-
-		if (prevPiOwnerCi != null && prevPiOwnerCi.category() == Options.DATATYPE
-			&& model.isInSelectedSchemas(prevPiOwnerCi) && mapEntry(prevPiOwnerCi).isEmpty()
-			&& prevPiOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
-		    /*
-		     * As long as the owner of the currently visited property is a complex data type
-		     * that matches the criteria for creation of several tables, we continue
-		     * iterating through the list of previous properties.
-		     */
-		} else {
-		    tableName = previousPi.inClass().name();
-		    break;
-		}
-	    }
-
-	    result = tableName + suffix;
-
-	} else {
-
-	    if (StringUtils.isNotBlank(pi.taggedValue("associativeTable"))) {
-		result = pi.taggedValue("associativeTable");
-	    } else if (pi.association() != null
-		    && StringUtils.isNotBlank(pi.association().taggedValue("associativeTable"))) {
-		result = pi.association().taggedValue("associativeTable");
-	    } else {
-
-		// tag associativeTable not set or without value -> proceed
-
-		String tableNamePi = determineTableName(pi);
-
-		if (pi.isAttribute() || pi.reverseProperty() == null || !pi.reverseProperty().isNavigable()) {
-
-		    result = tableNamePi;
-
-		} else {
-
-		    // both pi and its reverseProperty are navigable
-
-		    // choose name based on alphabetical order
-		    // take into account the case of a reflexive association
-		    String tableNameRevPi = determineTableName(pi.reverseProperty());
-
-		    if (tableNamePi.compareTo(tableNameRevPi) <= 0) {
-			result = tableNamePi;
-		    } else {
-			result = tableNameRevPi;
-		    }
-		}
-	    }
-	}
-
-	result = StringUtils.substring(result, 0, maxNameLength);
-	return result;
-    }
-
-    private String determineTableName(PropertyInfo pi) {
-
-	String tableName = pi.inClass().name();
-	String propertyName = pi.name();
-	String res = tableName + "_" + propertyName;
-	return res;
-    }
-
-    private String constantValue(PropertyInfo pi) {
-
-	String valueTypeName = pi.typeInfo().name;
-
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(valueTypeName,
-		pi.encodingRule(Ldproxy2Constants.PLATFORM));
-
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, pi.typeInfo().id)) {
-
-	    if (valueTypeName.equalsIgnoreCase("Boolean")) {
-
-		if ("true".equalsIgnoreCase(pi.initialValue().trim())) {
-		    return StringUtils.defaultIfBlank(mapEntryParamInfos.getCharacteristic(valueTypeName,
-			    pi.encodingRule(Ldproxy2Constants.PLATFORM),
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE), "true");
-		} else if ("false".equalsIgnoreCase(pi.initialValue().trim())) {
-		    return StringUtils.defaultIfBlank(mapEntryParamInfos.getCharacteristic(valueTypeName,
-			    pi.encodingRule(Ldproxy2Constants.PLATFORM),
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
-			    Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_FALSE), "false");
-		}
-	    }
-	}
-
-	return pi.initialValue();
-    }
-
-    private String urlTemplateForValueType(PropertyInfo pi) {
-
-	String urlTemplate = null;
-
-	String valueTypeName = pi.typeInfo().name;
-
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(valueTypeName,
-		pi.encodingRule(Ldproxy2Constants.PLATFORM));
-
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, pi.typeInfo().id)
-		&& "LINK".equalsIgnoreCase(pme.getTargetType())) {
-
-	    urlTemplate = mapEntryParamInfos.getCharacteristic(valueTypeName,
-		    pi.encodingRule(Ldproxy2Constants.PLATFORM), Ldproxy2Constants.ME_PARAM_LINK_INFOS,
-		    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE);
-
-	    urlTemplate = urlTemplate.replaceAll("\\(value\\)", "{{value}}").replaceAll("\\(serviceUrl\\)",
-		    "{{serviceUrl}}");
-	}
-
-	if (StringUtils.isBlank(urlTemplate)) {
-	    urlTemplate = "{{serviceUrl}}/collections/" + valueTypeName.toLowerCase(Locale.ENGLISH)
-		    + "/items/{{value}}";
-	}
-
-	return urlTemplate;
-    }
-
-    private String propertyPath(List<PropertyInfo> propertyList) {
-	return propertyList.stream().map(pi -> pi.name()).collect(Collectors.joining("."));
-    }
-
-    private boolean isMappedToLink(PropertyInfo pi) {
-
-	return isMappedToLink(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
-    }
-
-    private boolean isMappedToLink(String typeName, String typeId, String encodingRule) {
-
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
-		&& "LINK".equalsIgnoreCase(pme.getTargetType())) {
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-    private boolean valueTypeIsMapped(PropertyInfo pi) {
-
-	return valueTypeIsMapped(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
-    }
-
-    private boolean valueTypeIsMapped(String typeName, String typeId, String encodingRule) {
-
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-
-	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-    private boolean isLdproxyGeometryType(Type t) {
-	return t == Type.GEOMETRY;
-    }
-
-    private boolean isLdproxySimpleType(Type t) {
-
-	switch (t) {
-	case STRING:
-	case BOOLEAN:
-	case DATE:
-	case DATETIME:
-	case INTEGER:
-	case FLOAT:
-	    return true;
-
-	default:
-	    return false;
-	}
-    }
-
-    private boolean isEnumerationOrCodelistValueType(PropertyInfo pi) {
-	return pi.categoryOfValue() == Options.ENUMERATION || pi.categoryOfValue() == Options.CODELIST;
-    }
-
-    private boolean isTypeWithIdentityValueType(PropertyInfo pi) {
-	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
-    }
-
-    private Type ldproxyType(PropertyInfo pi) {
+    public Type ldproxyType(PropertyInfo pi) {
 
 	return ldproxyType(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
     }
 
-    private Type ldproxyType(String typeName, String typeId, String encodingRule) {
+    public Type ldproxyType(String typeName, String typeId, String encodingRule) {
 
 	Type resType = Type.STRING;
 
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
 	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
 
@@ -2227,10 +827,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    // is the type contained in the schemas selected for processing?
 	    ClassInfo valueType = null;
 	    if (StringUtils.isNotBlank(typeId)) {
-		valueType = model.classById(typeId);
+		valueType = Ldproxy2Target.model.classById(typeId);
 	    }
 	    if (valueType == null && StringUtils.isNotBlank(typeName)) {
-		valueType = model.classByName(typeName);
+		valueType = Ldproxy2Target.model.classByName(typeName);
 	    }
 
 	    if (valueType == null) {
@@ -2238,267 +838,76 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		// The value type was not found in the model
 		result.addError(this, 113, typeName);
 
-	    } else if (!isEncoded(valueType)) {
+	    } else if (!LdpInfo.isEncoded(valueType)) {
 
 		result.addError(this, 114, typeName);
 
-	    } else {
+	    } else if (valueType.category() == Options.ENUMERATION || valueType.category() == Options.CODELIST) {
 
-		if (valueType.category() == Options.ENUMERATION || valueType.category() == Options.CODELIST) {
-
-		    if (!valueType.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)
-			    && StringUtils.isNotBlank(valueType.taggedValue("numericType"))) {
-			resType = ldproxyType(valueType.taggedValue("numericType"), null,
-				valueType.encodingRule(Ldproxy2Constants.PLATFORM));
-		    } else {
-			resType = Type.STRING;
-		    }
+		if (!valueType.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)
+			&& StringUtils.isNotBlank(valueType.taggedValue("numericType"))) {
+		    resType = ldproxyType(valueType.taggedValue("numericType"), null,
+			    valueType.encodingRule(Ldproxy2Constants.PLATFORM));
 		} else {
-		    resType = Type.OBJECT;
+		    resType = Type.STRING;
 		}
+	    } else {
+		resType = Type.OBJECT;
 	    }
 	}
 
 	return resType;
     }
 
-    private Optional<SimpleFeatureGeometry> geometryType(PropertyInfo pi) {
+    public LdpSpecialPropertiesInfo specialPropertiesInfo(ClassInfo ci) {
 
-	String typeName = pi.typeInfo().name;
-	String typeId = pi.typeInfo().id;
-	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+	if (this.specialPropertiesInfoByCi.containsKey(ci)) {
+	    return this.specialPropertiesInfoByCi.get(ci);
+	} else {
+	    LdpSpecialPropertiesInfo specPropInfo = new LdpSpecialPropertiesInfo(ci, this);
+	    this.specialPropertiesInfoByCi.put(ci, specPropInfo);
+	    return specPropInfo;
+	}
+    }
 
-	SimpleFeatureGeometry res = SimpleFeatureGeometry.ANY;
+    public boolean isProcessedType(ClassInfo ci) {
+	return codelistsAndEnumerations.contains(ci) || objectFeatureMixinAndDataTypes.contains(ci);
+    }
 
-	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+    public boolean isMappedToOrImplementedAsLink(PropertyInfo pi) {
+
+	if (valueTypeIsMapped(pi)) {
+	    return isMappedToLink(pi);
+	} else {
+	    return LdpInfo.isTypeWithIdentityValueType(pi);
+	}
+    }
+
+    public boolean isMappedToLink(ClassInfo ci) {
+
+	return isMappedToLink(ci.name(), ci.id(), ci.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean isMappedToLink(PropertyInfo pi) {
+
+	return isMappedToLink(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean isMappedToLink(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
 	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
-		&& "GEOMETRY".equalsIgnoreCase(pme.getTargetType())
-		&& mapEntryParamInfos.hasCharacteristic(typeName, encodingRule,
-			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
-			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE)) {
-
-	    String t = mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
-		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
-		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE);
-
-	    res = SimpleFeatureGeometry.valueOf(t.toUpperCase(Locale.ENGLISH));
-
+		&& "LINK".equalsIgnoreCase(pme.getTargetType())) {
+	    return true;
 	} else {
-	    // is checked via target configuration validator (which can be switched off)
-	    MessageContext mc = result.addError(this, 121, pi.name(), pi.typeInfo().name);
-	    if (mc != null) {
-		mc.addDetail(this, 1, pi.fullNameInSchema());
-	    }
-	}
-
-	return Optional.of(res);
-    }
-
-    private boolean isTrueIgnoringCase(String s) {
-	return StringUtils.isNotBlank(s) && "true".equalsIgnoreCase(s.trim());
-    }
-
-    private Optional<String> featureTitleTemplate(ClassInfo ci) {
-
-	String tv = ci.taggedValue("ldpFeatureTitleTemplate");
-	if (StringUtils.isBlank(tv)) {
-	    return Optional.empty();
-	} else {
-	    return Optional.of(tv.trim());
+	    return false;
 	}
     }
 
-    private ImmutableCodelistData createCodelistEntity(ClassInfo ci) {
-
-	String id = codelistId(ci);
-
-	Optional<String> labelOpt = label(ci);
-	String label;
-	if (labelOpt.isEmpty()) {
-	    MessageContext mc = result.addInfo(this, 102, ci.name());
-	    if (mc != null) {
-		mc.addDetail(this, 1, ci.fullNameInSchema());
-	    }
-	    label = ci.name();
-	} else {
-	    label = labelOpt.get();
-	}
-
-	ImmutableCodelistData icd = cfg.builder().entity().codelist().id(id).label(label)
-		.sourceType(ImportType.TEMPLATES).build();
-
-	if (!ci.properties().isEmpty()) {
-
-	    SortedMap<String, String> entries = new TreeMap<>();
-
-	    for (PropertyInfo pi : ci.properties().values()) {
-
-		String code = null;
-		String targetValue = null;
-
-		if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT)) {
-
-		    targetValue = pi.name();
-
-		    if (StringUtils.isBlank(pi.initialValue())) {
-			MessageContext mc = result.addWarning(this, 100, ci.name(), pi.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-			code = pi.name();
-		    } else {
-			code = pi.initialValue();
-		    }
-		} else if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV)) {
-
-		    if (StringUtils.isBlank(pi.initialValue())) {
-			code = pi.name();
-		    } else {
-			code = pi.initialValue();
-		    }
-
-		    if (StringUtils.isBlank(pi.taggedValue(codeTargetTagName))) {
-			MessageContext mc = result.addWarning(this, 101, ci.name(), pi.name(), codeTargetTagName);
-			if (mc != null) {
-			    mc.addDetail(this, 1, pi.fullNameInSchema());
-			}
-			targetValue = pi.name();
-		    } else {
-			targetValue = pi.taggedValue(codeTargetTagName).trim();
-		    }
-		} else {
-		    code = pi.name();
-		    targetValue = pi.name();
-		}
-
-		if (ci.matches(Ldproxy2Constants.RULE_CLS_CODELIST_APPEND_CODE)) {
-		    targetValue = targetValue + " (" + code + ")";
-		}
-
-		entries.put(code, targetValue);
-	    }
-
-	    icd = icd.withEntries(entries);
-	}
-
-	if (StringUtils.isNotBlank(ci.taggedValue("ldpFallbackValue"))) {
-	    icd = icd.withFallback(ci.taggedValue("ldpFallbackValue").trim());
-	}
-
-	if (isUnitTest) {
-	    icd = icd.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-		    .withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	}
-
-	return icd;
-    }
-
-    private String databaseTableName(ClassInfo ci,
-	    boolean isAssociativeTableContextAndNotReflexiveRelationshipContext) {
-
-	String result = ci.name();
-
-	if (isAssociativeTableContextAndNotReflexiveRelationshipContext) {
-	    result = result + associativeTableColumnSuffix;
-	}
-
-	result = result.toLowerCase(Locale.ENGLISH);
-
-	result = StringUtils.substring(result, 0, maxNameLength);
-
-	return result;
-    }
-
-    private String databaseColumnNameReflexiveProperty(PropertyInfo pi, boolean inAssociativeTable) {
-
-	String suffix = "";
-
-	if (valueTypeIsTypeWithIdentity(pi)) {
-
-	    if (inAssociativeTable) {
-		suffix = suffix + associativeTableColumnSuffix;
-	    } else {
-		suffix = suffix + foreignKeyColumnSuffix;
-	    }
-
-	} else if (pi.categoryOfValue() == Options.DATATYPE) {
-	    suffix = suffix + foreignKeyColumnSuffixDatatype;
-	}
-
-	return databaseColumnName(pi, suffix);
-    }
-
-    private String databaseColumnName(PropertyInfo pi) {
-
-	String suffix = "";
-
-	Type t = ldproxyType(pi);
-
-	if (!(isLdproxySimpleType(t) || isLdproxyGeometryType(t))) {
-
-	    if (valueTypeIsTypeWithIdentity(pi)) {
-		suffix = suffix + foreignKeyColumnSuffix;
-	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
-		suffix = suffix + foreignKeyColumnSuffixDatatype;
-	    }
-
-	} else if (pi.categoryOfValue() == Options.CODELIST
-		&& model.classByIdOrName(pi.typeInfo()).matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-
-	    // Support SqlDdl target parameter foreignKeyColumnSuffixCodelist
-	    suffix = suffix + foreignKeyColumnSuffixCodelist;
-	}
-
-	return databaseColumnName(pi, suffix);
-    }
-
-    private String databaseColumnName(PropertyInfo pi, String suffix) {
-
-	String result = pi.name();
-
-	result = result + suffix;
-
-	result = result.toLowerCase(Locale.ENGLISH);
-
-	result = StringUtils.substring(result, 0, maxNameLength);
-
-	return result;
-    }
-
-    private boolean valueTypeIsTypeWithIdentity(PropertyInfo pi) {
-	return pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT;
-    }
-
-    private String codelistId(ClassInfo ci) {
-	return ci.name().replaceAll("\\W", "_");
-    }
-
-    private Optional<String> label(Info i) {
-
-	if (i != null && StringUtils.isNotBlank(labelTemplate) && i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
-
-	    String label = i.derivedDocumentation(labelTemplate, descriptorNoValue);
-
-	    return StringUtils.isBlank(label) ? Optional.empty() : Optional.of(label);
-
-	} else {
-	    return Optional.empty();
-	}
-    }
-
-    private Optional<String> description(Info i) {
-
-	if (i != null && StringUtils.isNotBlank(descriptionTemplate)
-		&& i.matches(Ldproxy2Constants.RULE_ALL_DOCUMENTATION)) {
-
-	    String description = i.derivedDocumentation(descriptionTemplate, descriptorNoValue);
-
-	    return StringUtils.isBlank(description) ? Optional.empty() : Optional.of(description);
-
-	} else {
-	    return Optional.empty();
-	}
+    public boolean isGenericValueType(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
     }
 
     @Override
@@ -2514,6 +923,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	dbSchemaNames = new TreeSet<String>();
 
+	collectionIdFormat = "lowerCase";
+
 //	documentationTemplate = null;
 //	documentationNoValue = null;
 
@@ -2524,16 +935,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	dateTimeFormat = null; // no default value
 	descriptionTemplate = "[[definition]]";
 	descriptorNoValue = "";
+	enableFragments = false;
 	forceAxisOrder = Force.NONE;
 	foreignKeyColumnSuffix = "";
 	foreignKeyColumnSuffixDatatype = "";
 	foreignKeyColumnSuffixCodelist = "";
+	genericValueTypes = null;
 	labelTemplate = "[[alias]]";
 	maxNameLength = 63;
-	nativeTimeZone = ZoneId.systemDefault();
+	nativeTimeZone = null;
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
 	queryablesFromConfig = new TreeSet<>();
+	reflexiveRelationshipFieldSuffix = "";
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
 	srid = 4326;
@@ -2544,28 +958,42 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	mainId = null;
 	mainAppSchema = null;
 
-	enableGmlOutput = false;
+	enableFeaturesGml = false;
+	enableFeaturesGeoJson = false;
+	enableFeaturesJsonFg = false;
 	uomTvName = null;
-	gmlIdPrefix = null;
-	gmlSfLevel = null;
-	gmlFeatureCollectionElementName = null;
-	gmlFeatureMemberElementName = null;
-	gmlSupportsStandardResponseParameters = false;
-	xmlEncodingInfos = new XmlEncodingInfos();
+	bbGmlBuilder = null;
+	bbGeoJsonBuilder = null;
+	bbJsonFgBuilder = null;
+	sqlEncodingInfos = new SqlEncodingInfos();
 
 	mapEntryParamInfos = null;
 
-	typesWithIdentity = new ArrayList<>();
+	objectFeatureMixinAndDataTypes = new ArrayList<>();
 	codelistsAndEnumerations = new TreeSet<>();
 
 	cfg = null;
+
+	coretable = "features";
+	coretablePkColumn = "pk";
+	coretableIdColumn = null;
+	coretableIdColumnLdproxyType = Type.INTEGER;
+	coretableFeatureTypeColumn = "featuretype";
+	coretableGeometryColumn = "geom";
+//	coretableJsonFeatureRefWithAnyCollectionId = false;
+	coretableRefColumn = "ref";
+	coretableRelationsTable = "references";
+	coretableRelationNameColumn = "rel";
+	coretableInverseRelationNameColumn = "rel_inv";
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
+	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
+	r.addRule(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
 	r.addRule(Ldproxy2Constants.RULE_ALL_QUERYABLES);
 	r.addRule(Ldproxy2Constants.RULE_ALL_SCHEMAS);
@@ -2575,6 +1003,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES);
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);
+	r.addRule(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
     }
@@ -2603,6 +1032,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Context: class '$1$'";
 	case 1:
 	    return "Context: property '$1$'";
+	case 2:
+	    return "Context: schema '$1$'";
 
 	case 3:
 	    return "Context: class Ldproxy2Target";
@@ -2628,13 +1059,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 19:
 	    return "";
 	case 20:
-	    return "Type '$1$' is abstract. Conversion of abstract types is not supported by this target. The type will be ignored. Apply inheritance flattening (a model transformation) in order to handle abstract supertypes.";
+	    return "Type '$1$' is abstract. Conversion of abstract types is only supported by this target if parameter '"
+		    + Ldproxy2Constants.PARAM_FRAGMENTS + "' is set to 'true'. The type will be ignored.";
 	case 21:
 	    return "Value '$1$' of configuration parameter '$2$' does not result in a valid path. Exception message is: $3$";
 	case 22:
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
 	    return "";
+	case 24:
+	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 
 	case 100:
 	    return Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT
@@ -2645,23 +1079,24 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 102:
 	    return "Could not compute a label for codelist/enumeration '$1$'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.";
 	case 103:
-	    return "Type '$1$' has one or more supertypes. Conversion of inheritance relationships is not supported by this target. The relationship will be ignored. Apply inheritance flattening (a model transformation) in order to handle inheritance relationships.";
+	    return "Type '$1$' has one or more supertypes. Conversion of inheritance relationships is only supported by this target if parameter '"
+		    + Ldproxy2Constants.PARAM_FRAGMENTS + "' is set to 'true'. The relationship will be ignored.";
 	case 104:
-	    return "Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
+	    return "??Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
 	case 105:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultGeometry') as default geometry property. So is property '$2$'. Multiple default geometry properties per type are not allowed. None will be marked as default geometry.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultGeometry') as default geometry property. Multiple default geometry properties per type are not allowed. None of the default geometry properties owned by '$1$' will be marked as default geometry.";
 	case 106:
-	    return "Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	    return "??Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 107:
-	    return "Property '$3$' of type '$1$' is marked (via stereotype 'identifier') as identifier property. So is property '$2$'. Multiple identifier properties per type are not allowed. None will be used as identifier (because no informed decision can be made).";
+	    return "??Type '$1$' has multiple identifier properties (i.e., properties with stereotype 'identifier', and taking into account inherited properties). Multiple identifier properties per type definition are not allowed. None of the identifier properties owned by '$1$' will be encoded (because no informed decision can be made).";
 	case 108:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultInstant') as default (temporal) instant property. So is property '$2$'. Multiple default instant properties per type are not allowed. None will be marked as default instant.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultInstant') as default (temporal) instant property. Multiple default instant properties per type are not allowed. None of the default instant properties owned by '$1$' will be marked as default instant.";
 	case 109:
-	    return "Property '$2$' of type '$1$' is marked as default interval start as well as default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	    return "??Property '$2$' of type '$1$' is marked as default interval start as well as default instant and/or default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
 	case 110:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. So is property '$2$'. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
 	case 111:
-	    return "Property '$3$' of type '$1$' is marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. So is property '$2$'. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
+	    return "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
 	case 112:
 	    return "??No target type is defined in map entry for type '$1$'. Assuming ldproxy type 'STRING'.";
 	case 113:
@@ -2679,7 +1114,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 119:
 	    return "??Value type '$1$' of property '$2$' is neither mapped nor found in the model. Is there a typo in value type name? Has the type not been loaded (e.g. by excluding some package during model loading) or removed (e.g. through a transformation)? Setting source path for the property to 'FIXME'.";
 	case 120:
-	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transform (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
+	    return "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transformation (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
 	case 121:
 	    return "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
 	case 122:
@@ -2691,7 +1126,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 125:
 	    return "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
 	case 126:
-	    return "The target configuration does not contain XML encoding infos.";
+	    return "The target configuration does not contain advanced process configuration infos.";
 	case 127:
 	    return "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
 	case 128:
@@ -2702,6 +1137,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??Could not find a schema with name '$1$' in the model, or no target namespace is defined for that schema. XML namespace information for that schema is not available. Using value '$2$' as namespace and nsabr for that schema name.";
 	case 130:
 	    return "??Could not find an abbreviation for XML namespace '$1$' (neither in XmlEncodingInfos, nor in the model). Using value '$2$'.";
+	case 131:
+	    return "The target configuration does not contain XML encoding infos.";
+	case 132:
+	    return "The target configuration does not contain SQL encoding infos.";
+	case 133:
+	    return "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	case 134:
+	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
+	case 135:
+	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

@@ -1,0 +1,135 @@
+---
+id: test_schema
+createdAt: 1000000000000
+lastModified: 1000000000000
+entityStorageVersion: 2
+label: MyServiceLabel
+description: '...'
+enabled: true
+serviceType: OGC_API
+api:
+- buildingBlock: RESOURCES
+  enabled: true
+- buildingBlock: GML
+  enabled: true
+  applicationNamespaces:
+    t: http://example.org/shapechange/schema/test
+  defaultNamespace: t
+  schemaLocations:
+    t: "{{serviceUrl}}/resources/test.xsd"
+  variableObjectElementNames:
+    GenerAttribute:
+      property: dataType
+      mapping:
+        DateAttribute: t:DateAttribute
+        DoubleAttribute: t:DoubleAttribute
+        IntegerAttribute: t:IntegerAttribute
+        StringAttribute: t:StringAttribute
+        UrlAttribute: t:UrlAttribute
+  gmlIdPrefix: _
+- buildingBlock: QUERYABLES
+  enabled: true
+collections:
+  FT1:
+    id: FT1
+    label: FT1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT2:
+    id: FT2
+    label: FT2
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT2Sub1Sub1:
+    id: FT2Sub1Sub1
+    label: FT2Sub1Sub1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT3:
+    id: FT3
+    label: FT3
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+      transformations:
+        attFt3A:
+        - codelist: MyEnumeration
+        attFt3B:
+        - codelist: MyCodelist
+        attFt3C:
+        - codelist: MyEnumeration
+        attFt3D:
+        - codelist: MyCodelist
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT4:
+    id: FT4
+    label: FT4
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+      transformations:
+        attDt3.generAttribute.dataType:
+        - remove: ALWAYS
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
+    - buildingBlock: JSON_FG
+      transformations:
+        attDt3.generAttribute.dataType:
+        - remove: ALWAYS
+        otherGenerAttribute.dataType:
+        - remove: ALWAYS
+        someGenerAttribute.dataType:
+        - remove: ALWAYS
+  FT5:
+    id: FT5
+    label: FT5
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  FT5Sub1:
+    id: FT5Sub1
+    label: FT5Sub1
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG
+  T:
+    id: T
+    label: T
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+    - buildingBlock: GML
+      conformance: NONE
+    - buildingBlock: GEO_JSON
+    - buildingBlock: JSON_FG

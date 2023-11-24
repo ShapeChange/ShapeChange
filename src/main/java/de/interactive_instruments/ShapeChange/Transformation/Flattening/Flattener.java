@@ -104,6 +104,7 @@ import de.interactive_instruments.ShapeChange.Model.Generic.GenericPackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericPropertyInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericTextConstraint;
 import de.interactive_instruments.ShapeChange.Transformation.Transformer;
+import de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer;
 import de.interactive_instruments.ShapeChange.Util.ArcGISUtil;
 import de.interactive_instruments.ShapeChange.Util.docx.DocxUtil;
 
@@ -302,6 +303,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String RULE_TRF_CLS_FLATTEN_REVERSE_INHERITANCE = "rule-trf-cls-flatten-reverse-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE = "rule-trf-cls-flatten-inheritance";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM = "rule-trf-cls-flatten-inheritance-add-attributes-at-bottom";
+    public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_IN_SEQUENCE = "rule-trf-cls-flatten-inheritance-add-attributes-in-sequence";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES = "rule-trf-cls-flatten-inheritance-ignore-arcgis-subtypes";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_ASSOCIATIONROLENAME_USING_CODE_OF_VALUETYPE = "rule-trf-cls-flatten-inheritance-associationRoleNameUsingCodeOfValueType";
     public static final String RULE_TRF_CLS_FLATTEN_INHERITANCE_MERGE_LINKED_DOCUMENTS = "rule-trf-cls-flatten-inheritance-mergeLinkedDocuments";
@@ -453,11 +455,6 @@ public class Flattener implements Transformer, MessageSource {
     // internal tagged values used while flattening inheritance
     public static final String TV_ORIGINAL_ASSOCIATION = "SC_ORIGINAL_ASSOCIATION";
     public static final String TV_ORIGINAL_ASSOCIATION_REFLEXIVE = "SC_ORIGINAL_ASSOCIATION_REFLEXIVE";
-
-    public static final String TV_ORIGINAL_PROPERTY_NAME = "originalPropertyName";
-    public static final String TV_ORIGINAL_CLASS_NAME = "originalClassName";
-    public static final String TV_ORIGINAL_INCLASS_NAME = "originalInClassName";
-    public static final String TV_ORIGINAL_SCHEMA_NAME = "originalSchemaName";
 
     // =============================
     /* internal */
@@ -3023,10 +3020,8 @@ public class Flattener implements Transformer, MessageSource {
 		}
 
 		genModel.updateClassName(genCi, code);
-		
-		if(StringUtils.isBlank(genCi.taggedValue(TV_ORIGINAL_CLASS_NAME))) {
-		    genCi.setTaggedValue(TV_ORIGINAL_CLASS_NAME, oldName, false);
-		}
+
+		genCi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_CLASS_NAME, oldName, false);
 	    }
 	}
 
@@ -3085,10 +3080,8 @@ public class Flattener implements Transformer, MessageSource {
 		if (keepOriginalNameAsCode) {
 		    setCode(genPi, name);
 		}
-		
-		if(StringUtils.isBlank(genPi.taggedValue(TV_ORIGINAL_PROPERTY_NAME))) {
-		    genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, name, false);
-		}
+
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, name, false);
 	    }
 	}
 
@@ -3592,10 +3585,56 @@ public class Flattener implements Transformer, MessageSource {
 			    if (genPi.isDerived()) {
 				copy.setDerived(true);
 			    }
-			    
-			    if("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
+
+			    if ("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
 				    || "true".equals(typeToProcess.taggedValue("representsTypeSet"))) {
-				copy.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME), false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(),
+					    false);
+				}
+
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME), false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+					    genPi.inClass().name(), false);
+				}
+
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY),
+					    false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
+					    genPi.cardinality().toString(), false);
+				}
+
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE),
+					    false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
+					    genPi.typeInfo().name, false);
+				}
+
+				if (StringUtils
+					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME), false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+					    genPi.model().schemaPackage(genPi.inClass()).name(), false);
+				}
 			    }
 
 			    /*
@@ -3703,8 +3742,8 @@ public class Flattener implements Transformer, MessageSource {
 				    }
 				}
 			    }
-			    
-			    if(separatorMapEmpty || StringUtils.isNotBlank(tvNameForCodeValue)) {
+
+			    if (separatorMapEmpty || StringUtils.isNotBlank(tvNameForCodeValue)) {
 
 				/*
 				 * Execute merging of codes as defined before merging of descriptors with
@@ -5296,6 +5335,8 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	boolean addAttributesAtBottom = trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_AT_BOTTOM);
+	boolean addAttributesInSequence = trfConfig
+		.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_ADD_ATTRIBUTES_IN_SEQUENCE);
 
 	/*
 	 * Identify supertypes and leafs in selected schemas. A class is only identified
@@ -5479,9 +5520,10 @@ public class Flattener implements Transformer, MessageSource {
 	     * property (that will be copied down to all subtypes).
 	     */
 	    if (!genPi.inClass().subtypes().isEmpty()) {
-		genPi.setTaggedValue(TV_ORIGINAL_INCLASS_NAME, genPi.inClass().name(), false);
-		genPi.setTaggedValue(TV_ORIGINAL_SCHEMA_NAME, genPi.model().schemaPackage(genPi.inClass()).name(),
-			false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+			genPi.inClass().name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+			genPi.model().schemaPackage(genPi.inClass()).name(), false);
 	    }
 
 	    /*
@@ -5495,7 +5537,7 @@ public class Flattener implements Transformer, MessageSource {
 	     * changes occur.
 	     */
 	    if (!genPi.isAttribute() && !genPi.typeClass().subtypes().isEmpty()) {
-		genPi.setTaggedValue(TV_ORIGINAL_PROPERTY_NAME, genPi.name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(), false);
 	    }
 	}
 
@@ -5568,6 +5610,8 @@ public class Flattener implements Transformer, MessageSource {
 		     */
 		    if (addAttributesAtBottom) {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
+		    } else if (addAttributesInSequence) {
+			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_INSEQUENCE);
 		    } else {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 		    }
@@ -5637,8 +5681,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	/*
 	 * remove inheritance relationships from leaf classes, but keep relationships to
-	 * ArcGIS parent if RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES is
-	 * enabled.
+	 * a) ArcGIS parent if RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES
+	 * is enabled b) supertypes that were not flattened.
 	 */
 	for (GenericClassInfo leafCi : genLeafclassesById.values()) {
 
@@ -5646,8 +5690,8 @@ public class Flattener implements Transformer, MessageSource {
 
 	    for (String supertypeID : leafCi.supertypes()) {
 
-		if (trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
-			&& ArcGISUtil.isArcGISSubtype(leafCi)) {
+		if ((trfConfig.hasRule(RULE_TRF_CLS_FLATTEN_INHERITANCE_IGNORE_ARCGIS_SUBTYPES)
+			&& ArcGISUtil.isArcGISSubtype(leafCi)) || !genSuperclassesById.containsKey(supertypeID)) {
 		    // keep relationship to this supertype
 		    newSupertypes.add(supertypeID);
 		}

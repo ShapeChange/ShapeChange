@@ -546,7 +546,7 @@ public class Definitions implements Target {
 		    ClassInfo ci = i.next();
 		    Document cDocument = documentMap.get(ci.id());
 		    if (cDocument != null) {
-			XMLUtil.writeXml(document, new File(outputDirectory, ci.name() + ".definitions.xml"));
+			XMLUtil.writeXml(cDocument, new File(outputDirectory, ci.name() + ".definitions.xml"));
 			result.addResult(getTargetName(), outputDirectory, ci.name() + ".definitions.xml", ci.qname());
 		    }
 		}

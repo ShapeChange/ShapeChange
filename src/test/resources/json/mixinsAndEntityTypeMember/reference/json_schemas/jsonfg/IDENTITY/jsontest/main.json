@@ -68,11 +68,15 @@
                 },
                 "att2": {
                   "type": "number"
+                },
+              "roleFt2": {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
                 "att1",
-                "att2"
+                "att2",
+              "roleFt2"
               ]
             }
           },
@@ -110,7 +114,23 @@
           "$ref": "#/$defs/MixinB"
         },
         {
-          "type": "object"
+          "type": "object",
+        "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "roleFt1": {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                }
+      },
+              "required": [
+                "roleFt1"
+              ]
+    }
+          },
+    "required": [
+            "properties"
+          ]
         }
       ]
     },

@@ -78,8 +78,12 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS,
 	    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION,
 	    JsonSchemaConstants.PARAM_BY_REFERENCE_FORMAT, JsonSchemaConstants.PARAM_COLLECTION_SCHEMA_FILE_NAME,
+	    JsonSchemaConstants.PARAM_CREATE_SEPARATE_PROPERTY_DEFINITIONS,
 	    JsonSchemaConstants.PARAM_DOCUMENTATION_NOVALUE, JsonSchemaConstants.PARAM_DOCUMENTATION_TEMPLATE,
 	    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, JsonSchemaConstants.PARAM_FEATURE_COLLECTION_ONLY,
+	    JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES,
+	    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, JsonSchemaConstants.PARAM_GENERIC_VALUE_TYPES,
+	    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES,
 	    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS, JsonSchemaConstants.PARAM_INLINEORBYREF_DEFAULT,
 	    JsonSchemaConstants.PARAM_JSON_BASE_URI, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION,
 	    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, JsonSchemaConstants.PARAM_MEASURE_OBJECT_URI,
@@ -155,6 +159,33 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 
 	isValid = isValid
 		&& checkEncodingRestrictionsParameter(JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS);
+
+	List<String> featureRefProfiles = options.parameterAsStringList(this.getClass().getName(),
+		JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES, new String[] { "rel-as-link" }, false, true);
+	if (featureRefProfiles.stream().anyMatch(s -> !("rel-as-link".equalsIgnoreCase(s)
+		|| "rel-as-uri".equalsIgnoreCase(s) || "rel-as-key".equalsIgnoreCase(s)))) {
+
+	    List<String> invalidFeatureRefProfiles = featureRefProfiles.stream()
+		    .filter(s -> !("rel-as-link".equalsIgnoreCase(s) || "rel-as-uri".equalsIgnoreCase(s)
+			    || "rel-as-key".equalsIgnoreCase(s)))
+		    .collect(Collectors.toList());
+	    isValid = false;
+	    result.addError(this, 113, JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES,
+		    StringUtils.join(invalidFeatureRefProfiles, ", "));
+	}
+
+	List<String> featureRefIdTypes = options.parameterAsStringList(this.getClass().getName(),
+		JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, new String[] { "integer" }, false, true);
+	if (featureRefIdTypes.stream()
+		.anyMatch(s -> !("string".equalsIgnoreCase(s) || "integer".equalsIgnoreCase(s)))) {
+
+	    List<String> invalidFeatureRefIdTypes = featureRefIdTypes.stream()
+		    .filter(s -> !("string".equalsIgnoreCase(s) || "integer".equalsIgnoreCase(s)))
+		    .collect(Collectors.toList());
+	    isValid = false;
+	    result.addError(this, 113, JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES,
+		    StringUtils.join(invalidFeatureRefIdTypes, ", "));
+	}
 
 	// ===== JSON Schema annotations =====
 
@@ -431,6 +462,73 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 			mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
 		    }
 		}
+
+	    } else if (characteristicsByParameter.containsKey(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS)) {
+
+		Map<String, String> collectionInfosCharacteristis = characteristicsByParameter
+			.get(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS);
+
+		// uriTemplate is required
+		if (!collectionInfosCharacteristis
+			.containsKey(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE)
+			|| StringUtils.isBlank(collectionInfosCharacteristis
+				.get(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE))) {
+		    isValid = false;
+		    MessageContext mc = result.addError(this, 116,
+			    JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE);
+		    if (mc != null) {
+			mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
+		    }
+
+		} else {
+
+		    String uriTemplate = collectionInfosCharacteristis
+			    .get(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE).trim();
+
+		    if (!uriTemplate.contains("(featureId)")) {
+			isValid = false;
+			MessageContext mc = result.addError(this, 117,
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE, uriTemplate);
+			if (mc != null) {
+			    mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
+			}
+		    }
+		}
+
+		// collection id types must have valid values
+		if (collectionInfosCharacteristis
+			.containsKey(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES)) {
+
+		    String meCharCollectionIdTypes = collectionInfosCharacteristis
+			    .get(JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES);
+
+		    if (StringUtils.isBlank(meCharCollectionIdTypes)) {
+
+			isValid = false;
+			MessageContext mc = result.addError(this, 114, JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS);
+			if (mc != null) {
+			    mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
+			}
+
+		    } else {
+
+			String[] meCollectionIdTypes = StringUtils.split(meCharCollectionIdTypes, ", ");
+			for (String s : meCollectionIdTypes) {
+			    if (!("string".equalsIgnoreCase(s) || "integer".equalsIgnoreCase(s))) {
+				isValid = false;
+				MessageContext mc = result.addError(this, 115,
+					JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS, s);
+				if (mc != null) {
+				    mc.addDetail(this, 1, this.targetConfigInputs, typeRuleKey, targetType);
+				}
+				break;
+			    }
+			}
+		    }
+
+		} else {
+		    // default will apply (integer)
+		}
 	    }
 	}
 
@@ -473,6 +571,24 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    return "Parameter '$1$' is set to '$2$'. This is not a valid value. Details: $3$";
 	case 112:
 	    return "Invalid JSON Schema annotation(s) encountered: $1$";
+	case 113:
+	    return "Parameter '$1$' contains the following invalid values: '$2$'";
+	case 114:
+	    return "Invalid map entry: parameter '$1$' is invalid. Characteristic "
+		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES
+		    + " is defined but has no value.";
+	case 115:
+	    return "Invalid map entry: parameter '$1$' is invalid. Characteristic "
+		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES
+		    + " is defined with invalid value '$2$'. Only use valid values.";
+	case 116:
+	    return "Invalid map entry: parameter '$1$' is invalid. Required characteristic "
+		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
+		    + " is undefined or has no value.";
+	case 117:
+	    return "Invalid map entry: parameter '$1$' is invalid. The value of characteristic "
+		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
+		    + " does not contain the mandatory variable '(featureId)'. The value is: $2$";
 
 	default:
 	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "

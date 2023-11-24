@@ -80,12 +80,16 @@
                 },
                 "att2": {
                   "type": "number"
+                },
+              "roleFt2": {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
                 "@type",
                 "att1",
-                "att2"
+                "att2",
+              "roleFt2"
               ]
             }
           },
@@ -130,10 +134,14 @@
               "properties": {
                 "@type": {
                   "type": "string"
+                },
+              "roleFt1": {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
-                "@type"
+                "@type",
+              "roleFt1"
               ]
             }
           },

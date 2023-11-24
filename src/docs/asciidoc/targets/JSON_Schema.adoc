@@ -149,6 +149,170 @@ In addition to the well-known descriptors (see <<table_descriptors,previous tabl
 For details about configuring JSON Schema annotation elements, see <<Annotations>>.
 
 
+[[rule-json-all-featureRefs]]
+==== rule-json-all-featureRefs
+
+(since v2.14.0)
+
+This conversion rule overrides the default behavior of ShapeChange 
+when encoding property values by reference. The rule is meant to 
+support the encoding of feature references as proposed for 
+_OGC API - Features - Part 5: Schemas_. 
+
+NOTE: The proposal for _OGC API - Features - Part 5: Schemas_ is 
+subject to change, and thus the conversion rule, as implemented, 
+may not fully reflect what is defined by that specification.
+
+The conversion rule supports the following profiles, which define 
+how a feature reference is encoded in actual JSON data:
+
+* rel-as-link - The feature reference is encoded as a link object. 
+ShapeChange automatically creates an _SCLinkObject_ definition in
+every generated JSON Schema where such a feature reference is used.
+The definition only requires the "href" member to be present in 
+actual JSON data.
+* rel-as-uri - Encodes a feature reference as a simple string, with
+the format being defined by target parameter 
+xref:./JSON_Schema.adoc#byReferenceFormat[byReferenceFormat].
+* rel-as-key - Encodes feature references with plain feature identifier,
+possibly adding information about the collection id and a title.
+
+The profile(s) to use are configured via target parameter 
+xref:./JSON_Schema.adoc#featureRefProfiles[featureRefProfiles].
+
+Feature reference schema definitions for profile `rel-as-key` are constructed as follows:
+
+* First, ShapeChange determines if the feature reference is for an
+external collection. This is indicated either via map entry <<Parameter_collectionInfos>>,
+for cases in which the value type of a property is mapped, or via 
+tagged value `collectionUriTemplate` (defined on the property value type).
+If a URI template is available, ShapeChange creates a JSON Schema
+definition for an external feature reference.
+* ShapeChange then determines the collection ids applicable for the
+property value type, i.e., the referenced feature type. If the type is 
+mapped, collection infos must be defined by the map entry. If these infos
+are missing, the by reference encoding will be omitted (with a suitable 
+error message in the log). The collection infos define the collection ids
+via characteristic `collectionIds`. If the type is not mapped, the collection
+ids are given by the names of all non-abstract classes that are in the 
+subtype hierarchy of the type (including the type itself), with these
+names being converted to lower case. Note that in the future, additional
+methods for determining the collection ids can be designed and implemented.
+* The type(s) of feature identifiers in these collections must also be
+determined. For a mapped type, the identifier types are defined by map
+entry characteristic `collectionIdTypes`. For all other cases, the applicable
+identifier types are defined by target parameter 
+xref:./JSON_Schema.adoc#featureRefIdTypes[featureRefIdTypes].
+* With all this information available, ShapeChange can create the right
+schema definition for a feature reference (all such definitions include
+member "x-ogc-role": "reference"; examples are shown below):
+** If a URI template is available:
+*** If the template does not contain variable 
+`{collectionId}`, then a schema for a simple external reference is 
+created. The schema contains a type definition with the determined 
+feature identifier types. The schema also contains the "x-ogc-uriTemplate"
+member, with the template as value.
+*** Otherwise, i.e. the template does contain variable 
+`{collectionId}`, then a more complex external reference schema is created,
+defining a JSON object with required "collectionId" member (whose values
+are restricted if one or more collection ids have been determined before),
+required "featureId" member (whose type definition contains the determined
+feature identifier types), and an optional "title" member (of type string).
+The schema will also contain the "x-ogc-uriTemplate" member, with 
+the template as value.
+** Otherwise, i.e. no URI template is available:
+*** If a single collection id was determined, and target parameter 
+xref:./JSON_Schema.adoc#featureRefWithAnyCollectionId[featureRefWithAnyCollectionId]
+is not set to true, then a schema for a simple feature reference is created.
+The schema contains a type definition with the determined 
+feature identifier types. It also contains the "x-ogc-collectionId"
+member, with the determined collection id as value.
+*** Otherwise, a more complex reference schema is created,
+defining a JSON object with required "collectionId" member (whose values
+are restricted if target parameter 
+xref:./JSON_Schema.adoc#featureRefWithAnyCollectionId[featureRefWithAnyCollectionId]
+is not set to true, and one or more collection ids have been determined before),
+required "featureId" member (whose type definition contains the determined
+feature identifier types), and an optional "title" member (of type string).
+
+*Examples*
+
+_Simple reference schema_:
+
+```json
+{
+  "type": "integer",
+  "x-ogc-role": "reference",
+  "x-ogc-collectionId": "buildings"
+}
+```
+
+_Simple external reference schema_:
+```json
+{
+  "type": "string",
+  "x-ogc-role": "reference",
+  "x-ogc-uriTemplate": "https://example.com/foo/bar/{featureId}"
+}
+```
+
+_Reference schema_:
+```json
+{
+  "type": "object",
+  "x-ogc-role": "reference",
+  "required": [
+    "collectionId",
+    "featureId"
+  ],
+  "properties": {
+    "collectionId": {
+      "type": "string",
+      "enum": [
+        "roads",
+        "railways",
+        "waterways"
+      ]
+    },
+    "featureId": {
+      "type": [
+        "integer",
+        "string"
+      ]
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}
+```
+
+_External reference schema_:
+```json
+{
+  "type": "object",
+  "x-ogc-role": "reference",
+  "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/bar/{featureId}",
+  "required": [
+    "collectionId",
+    "featureId"
+  ],
+  "properties": {
+    "collectionId": {
+      "type": "string"
+    },
+    "featureId": {
+      "type": "integer"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}
+```
+
+
+
 [[rule-json-all-notEncoded]]
 ==== rule-json-all-notEncoded
 
@@ -429,6 +593,11 @@ then the schema restriction for the "geometry" member will define a choice
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
 
+NOTE: (since v2.14.0) If the geometry type of the default geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
+
 [[rule-json-cls-defaultGeometry-singleGeometryProperty]]
 ==== rule-json-cls-defaultGeometry-singleGeometryProperty
 
@@ -448,6 +617,11 @@ then the schema restriction for the "geometry" member will define a choice
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
 
+NOTE: (since v2.14.0) If the geometry type of the default geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
+
 [[rule-json-cls-documentation-enumDescription]]
 ==== rule-json-cls-documentation-enumDescription
 
@@ -462,6 +636,74 @@ member value is a JSON object with annotation members created by applying the
 configured xref:./JSON_Schema.adoc#Annotations[JSON Schema annotations] to the
 enum. Note that if none of the annotation definitions creates an annotation 
 value for the enum, then the JSON object will be empty.
+
+[[rule-json-cls-genericValueType]]
+==== rule-json-cls-genericValueType
+
+(since v2.14.0)
+
+Some domains use constructs like the one shown in 
+<<img_jsonschema_generic_value_types>> 
+to add extension points to their feature types. The generic attributes
+shown in this example contain a name and a (simple) value. They provide
+a specific place for additional key-value-pair based information.
+
+[#img_jsonschema_generic_value_types,reftext='{figure-caption} {counter:figure-num}']
+.Example schema with generic value types
+image::../images/ldp2_specificrules_genericvaluetypes.png[align="center"]
+
+There is a specific solution for supporting such structures in JSON.
+
+The according conversion is enabled using __rule-json-cls-genericValueType__.
+The conversion rule is applied for a \<<dataType>> whose name is contained in the
+(comma-separated) value of target parameter 
+xref:./JSON_Schema.adoc#genericValueTypes[genericValueTypes]. 
+The subtypes will automatically be taken into account as well. 
+For example: `genericValueTypes=GenerAttribute`
+
+The JSON Schema definition for GenerAttribute, in plain JSON encoding, would be as follows:
+
+[source,JSON,linenumbers]
+----
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$defs": {
+    "GenerAttribute": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["string", "integer", "number"]
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ]
+    }
+  }
+}
+----
+
+Only the plain type information from the value types of the common value
+property of the subtypes contributes to the type definition of the according
+JSON property. Any JSON Schema format keywords, defined for such value types,
+are ignored.
+
+NOTE: __rule-json-cls-genericValueType__ only looks for a single attribute that
+is common to all subtypes of the classes identified by target 
+parameter _genericValueTypes_. Additional properties of these subtypes are ignored!
+Also, if multiple common properties exist, all will be ignored (and an error logged)!
+
+The resulting JSON definition of GenerAttribute supports encoding of 
+values for any of the actual subtypes of GenerAttribute.
+
+NOTE: The JSON Schema definition allows for type checks and is more 
+expressive than the definition that would be created by default for just 
+GenerAttribute (with only the "name" attribute defined).
+
 
 [[rule-json-cls-identifierForTypeWithIdentity]]
 ==== rule-json-cls-identifierForTypeWithIdentity
@@ -513,6 +755,38 @@ Also, all identifier properties that are identified by
 _xref:./JSON_Schema.adoc#rule-json-cls-identifierStereotype[rule-json-cls-identifierStereotype]_
 - if also included in the encoding rule - will simply be ignored when
 encoding the type with identity.
+
+[[rule-json-cls-jsonFgGeometry]]
+==== rule-json-cls-jsonFgGeometry
+
+(since v2.14.0)
+
+This rule takes into account the different options for encoding 
+geometry values in JSON-FG features. The primary geometry property 
+(identified via 
+xref:./JSON_Schema.adoc#rule-json-cls-primaryGeometry[rule-json-cls-primaryGeometry], 
+xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-multipleGeometryProperties[rule-json-cls-defaultGeometry-multipleGeometryProperties], 
+or xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-singleGeometryProperty[rule-json-cls-defaultGeometry-singleGeometryProperty]) 
+is encoded as JSON Schema constraints for the geometry and / or place members as follows: 
+
+* If the geometry type of the primary geometry property is one of those defined
+by target parameter xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes]: 
+The JSON Schema constraint for the geometry type is created for both the 
+"geometry" and the "place" member. A null value is allowed for both members.
+* Otherwise: The JSON Schema constraint for the geometry type is only created for
+the "place" member. A null value is only allowed for that member, if the primary
+geometry property is optional.
+** NOTE: In this case, no specific constraints are created for the "geometry" member.
+When publishing data, for example in the GeoJSON compatibility mode, the 
+publisher can thus choose a suitable way of deriving a value for the "geometry"
+member from the geometry that is encoded in the "place" member.
+
+WARNING: At the moment, this rule is only applicable for application schemas that 
+do not define a secondary geometry! Issue 
+https://github.com/ShapeChange/ShapeChange/issues/344[344] documents how the rule
+can be enhanced to support schemas with secondary geometry as well. That approach
+has not been implemented yet.
+
 
 [[rule-json-cls-name-as-anchor]]
 ==== rule-json-cls-name-as-anchor
@@ -668,6 +942,11 @@ then the schema restriction for the "geometry" member will define a choice
 - using the "oneOf" JSON Schema keyword - between a null value and
 the geometry schema definition for the value type of the geometry property
 (e.g., a GeoJSON Polygon in case of the property value type being GM_Surface).
+
+NOTE: If the geometry type of the primary geometry property is NOT
+one of those defined by target parameter 
+xref:./JSON_Schema.adoc#geoJsonCompatibleGeometryTypes[geoJsonCompatibleGeometryTypes],
+then the constraint for the "geometry" member will NOT be created. 
 
 In instance data, the value of the primary geometry property 
 must be encoded within the (GeoJSON) top-level "geometry" member 
@@ -1306,14 +1585,16 @@ Required / Optional: optional
 
 Type: Enum (one of "uri" and "uri-reference")
 
-Default Value: _none_
+Default Value: "uri"
 
 Explanation: Defines the format for the "by reference" encoding
 of a UML property, in case that target parameter
 xref:./JSON_Schema.adoc#byReferenceJsonSchemaDefinition[byReferenceJsonSchemaDefinition]
 is not set.
 
-Applies to Rule(s): _none - default behavior_
+Applies to Rule(s): The parameter applies both for the 
+_default behavior_ of encoding "by reference", as well as for
+xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs].
 
 [[byReferenceJsonSchemaDefinition]]
 ==== byReferenceJsonSchemaDefinition
@@ -1414,6 +1695,112 @@ collections (one per feature type) are not created.
 
 Applies to Rule(s): 
 _xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
+
+[[featureRefIdTypes]]
+==== featureRefIdTypes
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: String - one of "string", "integer", or a (comma-separated)
+combination thereof.
+
+Default Value: "integer"
+
+Explanation: The type of feature identifiers in non-external collection(s).
+
+NOTE: In future, more sophisticated ways of determining the feature 
+identifier type can be designed and implemented.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
+
+
+[[featureRefProfiles]]
+==== featureRefProfiles
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: String - one of "rel-as-link", "rel-as-uri", "rel-as-key", or a (comma-separated)
+combination thereof.
+
+Default Value: "rel-as-link"
+
+Explanation: Defines the profiles to support for encoding 
+feature references. If multiple profiles are chosen, a choice
+using the "oneOf" JSON Schema keyword is created.
+
+WARNING: Pay attention that when "rel-as-uri" and "rel-as-key" are combined,
+then there is a danger of overlapping type definitions, in case that key-based
+references only consist of the feature id and the type of that id also is a
+string. In that case, JSON data may not be valid against the resulting JSON Schema,
+since the oneOf would not be satisfied for each case of a string-encoded feature id.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
+
+[[featureRefWithAnyCollectionId]]
+==== featureRefWithAnyCollectionId
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: True if non-external feature references shall not restrict the value
+of the "collectionId" member, else false.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
+
+
+
+[[genericValueTypes]]
+==== genericValueTypes
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: (comma-separated list of) string(s)
+
+Default Value: _none_
+
+Explanation: Identifies the classes that represent the roots of generic 
+value type inheritance trees, which shall be encoded as defined by
+__rule-json-cls-genericValueType__.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-cls-genericValueType[rule-json-cls-genericValueType]_
+
+[[geoJsonCompatibleGeometryTypes]]
+==== geoJsonCompatibleGeometryTypes
+
+(since v2.14.0)
+
+Required / Optional: optional
+
+Type: (comma-separated list of) String(s)
+
+Default Value: GM_Point, GM_Curve, GM_Surface, GM_MultiPoint, GM_MultiCurve, GM_MultiSurface
+
+Explanation: Set of types (typically from ISO 19107), that are defined 
+as being compatible with GeoJSON geometry types. Geometric properties 
+that have one of these types can be encoded as JSON Schema constraints 
+for the geometry-member.
+
+Applies to Rule(s): 
+
+* _xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-singleGeometryProperty[rule-json-cls-defaultGeometry-singleGeometryProperty]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-multipleGeometryProperties[rule-json-cls-defaultGeometry-multipleGeometryProperties]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-primaryGeometry[rule-json-cls-primaryGeometry]_
+* _xref:./JSON_Schema.adoc#rule-json-cls-jsonFgGeometry[rule-json-cls-jsonFgGeometry]_
 
 [[idMemberEncodingRestrictions]]
 ==== idMemberEncodingRestrictions
@@ -1808,6 +2195,32 @@ Examples:
 
 Supported parameters, their interpretation as well as characteristics
 are described in the following sections.
+
+[[Parameter_collectionInfos]]
+==== Parameter: collectionInfos
+
+Explanation: Provides additional information about the feature
+ collection(s) in which data for the mapped type is stored.
+
+Characteristics:
+
+* collectionIds: Identifiers of the collections in which data for the mapped type
+is stored. Can be a comma-separated list of identifiers, in case that the data may
+be spread across multiple collections (e.g. if the type has subtypes). Can also be
+omitted, which can be useful for cases in which the collection identifiers are not
+fully defined at schema creation time.
+* collectionIdTypes: The type of the feature identifiers used in the collection(s).
+"string", "integer", or a (comma-separated) list thereof. Optional; default is "integer".
+* uriTemplate: This characteristic is required for the map entry parameter _collectionInfos_.
+The value is a URI - typically a URL - template for links that reference the members of 
+OGC API Features collection(s). 
+The template must contain variable `(featureId)`. It may also contain variable `(collectionId)`.
+If the latter variable is not present, then the template must necessarily address only 
+a single collection, and the characteristic `collectionIds` will be ignored by ShapeChange.
+Note that ShapeChange will convert the parentheses of the variables to curly brackets.
+The parentheses are only necessary because the encoding of a map entry parameter 
+uses curly brackets for its characteristics, too.
+
 
 [[Parameter_keywords]]
 ==== Parameter: keywords

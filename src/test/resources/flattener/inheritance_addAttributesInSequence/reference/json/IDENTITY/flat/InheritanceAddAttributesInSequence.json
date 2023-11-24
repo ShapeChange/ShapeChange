@@ -1,0 +1,78 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri_from_config/flat/InheritanceAddAttributesInSequence.json",
+  "$defs": {
+    "FT1": {
+      "type": "object",
+      "properties": {
+        "attributeFT1": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "attributeFT1"
+      ]
+    },
+    "FT2": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MixinA"
+        },
+        {
+          "$ref": "#/$defs/FT1"
+        },
+        {
+          "$ref": "#/$defs/MixinB"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "roleFT2": {
+              "oneOf": [
+                {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                },
+                {
+                  "$ref": "#/$defs/FTX"
+                }
+              ]
+            },
+            "attributeFT2": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "attributeFT2",
+            "roleFT2"
+          ]
+        }
+      ]
+    },
+    "FTX": {
+      "type": "object"
+    },
+    "MixinA": {
+      "type": "object",
+      "properties": {
+        "attMA1": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "attMA1"
+      ]
+    },
+    "MixinB": {
+      "type": "object",
+      "properties": {
+        "attMB1": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "attMB1"
+      ]
+    }
+  }
+}

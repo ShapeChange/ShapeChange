@@ -335,7 +335,7 @@ public class XmlEncodingInfos implements MessageSource {
 	    return "Encountered an exception while writing XML encoding infos to file '$1$'. Exception message is: $2$";
 
 	default:
-	    return "(MapEntries.java) Unknown message with number: " + mnr;
+	    return "(XmlEncodingInfos.java) Unknown message with number: " + mnr;
 	}
 
     }

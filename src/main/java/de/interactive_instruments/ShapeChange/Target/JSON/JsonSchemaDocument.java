@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.Splitter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -88,6 +90,10 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinProperti
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PropertiesKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.RequiredKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.TypeKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcCollectionIdKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcRoleKeyword;
+import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.XOgcUriTemplateKeyword;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 import de.interactive_instruments.ShapeChange.Util.ValueTypeOptions;
 
 /**
@@ -117,12 +123,16 @@ public class JsonSchemaDocument implements MessageSource {
 
     protected SortedMap<String, ClassInfo> classesByName = new TreeMap<>();
     protected SortedMap<ClassInfo, JsonSchema> defSchemaByClass = new TreeMap<>();
+    protected SortedMap<ClassInfo, JsonSchema> propertyDefSchemaByClass = new TreeMap<>();
+    protected SortedMap<ClassInfo, JsonSchema> propertyDefSchemaActualPropertiesSchemaByClass = new TreeMap<>();
     protected SortedMap<ClassInfo, JsonSchema> allOfSchemaByClass = new TreeMap<>();
     protected Map<ClassInfo, JsonSchemaTypeInfo> basicTypeInfoByClass = new HashMap<>();
 
     protected JsonSchema rootSchema = new JsonSchema();
 
     protected AnnotationGenerator annotationGenerator;
+
+    protected boolean generateSCLinkObjectDefinition = false;
 
     public JsonSchemaDocument(PackageInfo representedPackage, Model model, Options options, ShapeChangeResult result,
 	    JsonSchemaTarget jsonSchemaTarget, String schemaId, File jsonSchemaOutputFile,
@@ -218,6 +228,10 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 
 	    addToRootSchema(ci.name(), js);
+
+	    if (JsonSchemaTarget.createSeparatePropertyDefinitions && propertyDefSchemaByClass.containsKey(ci)) {
+		addToRootSchema(ci.name() + "_Properties", propertyDefSchemaByClass.get(ci));
+	    }
 
 	    defSchemaByClass.put(ci, js);
 	}
@@ -680,6 +694,24 @@ public class JsonSchemaDocument implements MessageSource {
 	return jsd == this ? fragmentIdentifier : schemaId + fragmentIdentifier;
     }
 
+    private String jsonSchemaPropertyDefinitionReference(ClassInfo ci) {
+
+	Optional<JsonSchemaDocument> jsdopt = this.jsonSchemaTarget.jsonSchemaDocument(ci);
+
+	if (jsdopt.isEmpty()) {
+
+	    String fixmeRef = "#/FIXME/FIXME_" + ci.name() + "_Properties";
+	    result.addError(this, 136, ci.name(), fixmeRef);
+	    return fixmeRef;
+
+	} else {
+
+	    JsonSchemaDocument jsd = jsdopt.get();
+	    String schemaRef = jsonSchemaDefinitionReference(jsd, ci) + "_Properties";
+	    return schemaRef;
+	}
+    }
+
     private String fragmentIdentifier(JsonSchemaDocument jsd, ClassInfo ci) {
 	return fragmentIdentifier(jsd, ci.name(), ci.matches(JsonSchemaConstants.RULE_CLS_NAME_AS_ANCHOR));
     }
@@ -1123,7 +1155,9 @@ public class JsonSchemaDocument implements MessageSource {
 		|| ci.category() == Options.MIXIN) && !supertypes.isEmpty()) {
 
 	    // add schema definitions for all supertypes
-	    for (ClassInfo supertype : supertypes) {
+	    List<ClassInfo> customSortedSupertypes = applyCustomEncodingOrder(
+		    ci.taggedValue(JsonSchemaConstants.TV_SUPERTYPES_ENCODING_ORDER), supertypes);
+	    for (ClassInfo supertype : customSortedSupertypes) {
 		Optional<JsonSchemaTypeInfo> typeInfo = identifyJsonSchemaTypeForSupertype(supertype,
 			ci.encodingRule(JsonSchemaConstants.PLATFORM));
 
@@ -1175,6 +1209,57 @@ public class JsonSchemaDocument implements MessageSource {
 	handlePrimaryPlaceRestriction(ci, specialPisToMapButNotEncode, jsClassContents);
 	handlePrimaryTimeRestriction(ci, specialPisToMapButNotEncode, jsClassContents);
 
+	JsonSchema jsProperties = jsClassContents;
+
+	/*
+	 * =============
+	 * 
+	 * Handle creation of separate property definitions
+	 * 
+	 * =============
+	 */
+	boolean createPropertyDefinitionReference = false;
+
+	if (JsonSchemaTarget.createSeparatePropertyDefinitions
+		&& (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT)) {
+
+	    createPropertyDefinitionReference = true;
+
+	    /*
+	     * Re-set the jsProperties variable to a new JSON Schema object
+	     */
+	    jsProperties = new JsonSchema();
+	    jsProperties.type(JsonSchemaType.OBJECT);
+
+	    /*
+	     * Create a new JsonSchema with the new jsProperties schema and an allOf (if
+	     * there are relevant supertypes).
+	     */
+	    JsonSchema propertyDefSchema = new JsonSchema();
+
+	    List<JsonSchema> propertyDefAllOfMembers = new ArrayList<>();
+
+	    // convert generalization
+	    if (!supertypes.isEmpty()) {
+
+		// add schema definitions for all supertypes
+		for (ClassInfo supertype : supertypes) {
+		    propertyDefAllOfMembers.add(new JsonSchema().ref(jsonSchemaPropertyDefinitionReference(supertype)));
+		}
+	    }
+
+	    if (!propertyDefAllOfMembers.isEmpty()) {
+		propertyDefAllOfMembers.add(jsProperties);
+		propertyDefSchema
+			.allOf(propertyDefAllOfMembers.toArray(new JsonSchema[propertyDefAllOfMembers.size()]));
+	    } else {
+		propertyDefSchema = jsProperties;
+	    }
+
+	    propertyDefSchemaByClass.put(ci, propertyDefSchema);
+	    propertyDefSchemaActualPropertiesSchemaByClass.put(ci, jsProperties);
+	}
+
 	/*
 	 * =============
 	 * 
@@ -1182,7 +1267,7 @@ public class JsonSchemaDocument implements MessageSource {
 	 * 
 	 * =============
 	 */
-	JsonSchema jsProperties = jsClassContents;
+
 	if (!(ci.category() == Options.DATATYPE || ci.category() == Options.UNION)
 		&& ci.matches(JsonSchemaConstants.RULE_CLS_NESTED_PROPERTIES)) {
 	    /*
@@ -1191,9 +1276,23 @@ public class JsonSchemaDocument implements MessageSource {
 	     * "properties" has no required members, the requirement for "properties" would
 	     * also be removed.
 	     */
-	    jsProperties = new JsonSchema();
-	    jsProperties.type(JsonSchemaType.OBJECT);
-	    jsClassContents.property("properties", jsProperties).required("properties");
+
+	    if (createPropertyDefinitionReference) {
+		jsClassContents.property("properties", new JsonSchema().ref(jsonSchemaPropertyDefinitionReference(ci)))
+			.required("properties");
+	    } else {
+		jsProperties = new JsonSchema();
+		jsProperties.type(JsonSchemaType.OBJECT);
+		jsClassContents.property("properties", jsProperties).required("properties");
+	    }
+
+	} else if (createPropertyDefinitionReference) {
+
+	    /*
+	     * non-nested case where the properties are contained in a separate definition
+	     * and shall be referenced
+	     */
+	    jsClassContents.ref(jsonSchemaPropertyDefinitionReference(ci));
 	}
 
 	/*
@@ -1368,8 +1467,57 @@ public class JsonSchemaDocument implements MessageSource {
 	    }
 	}
 
-	// create property definitions for valueTypeOptions that target properties from
-	// supertypes
+	/*
+	 * =============
+	 * 
+	 * Handle generic value types
+	 * 
+	 * =============
+	 */
+	if (jsonSchemaTarget.isGenericValueType(ci)) {
+
+	    // determine common attribute in subtypes
+	    Optional<String> valuePropNameOpt = GenericValueTypeUtil.commonValuePropertyOfSubtypes(ci);
+
+	    if (valuePropNameOpt.isEmpty()) {
+		result.addError(this, 140, ci.name());
+	    } else {
+
+		String valuePropName = valuePropNameOpt.get();
+
+		/*
+		 * Gather simple type infos from the value properties of all subtypes. Ignore
+		 * non-simple cases (e.g., schema references) and format declarations.
+		 */
+
+		SortedSet<JsonSchemaType> typeSet = new TreeSet<>();
+
+		for (ClassInfo subtype : ci.subtypesInCompleteHierarchy()) {
+		    PropertyInfo subtypeValueProp = subtype.property(valuePropName);
+		    Optional<JsonSchemaTypeInfo> jsti = identifyJsonSchemaType(subtypeValueProp);
+		    if (jsti.isPresent() && jsti.get().hasSimpleType()) {
+			typeSet.add(jsti.get().getSimpleType());
+		    } else {
+			// could be reported in the future
+		    }
+		}
+
+		// add new value property
+		jsProperties
+			.property(valuePropName,
+				new JsonSchema().type(typeSet.toArray(new JsonSchemaType[typeSet.size()])))
+			.required(valuePropName);
+	    }
+	}
+
+	/*
+	 * =============
+	 * 
+	 * create property definitions for valueTypeOptions that target properties from
+	 * supertypes
+	 * 
+	 * =============
+	 */
 	for (String supertypePropertyName : vto.getPropertiesWithValueTypeOptions()) {
 
 	    PropertyInfo supertypePi = ci.property(supertypePropertyName);
@@ -1409,7 +1557,7 @@ public class JsonSchemaDocument implements MessageSource {
 		    && !"inline".equalsIgnoreCase(inlineOrByReference(supertypePi))) {
 
 		byReferenceAllowedForSupertypeProperty = true;
-		supertypePropertyTypeInfos.add(createJsonSchemaTypeInfoForReference());
+		supertypePropertyTypeInfos.addAll(createJsonSchemaTypeInfoForReference(supertypePi));
 	    }
 
 	    // Now add the actual type restrictions
@@ -1463,7 +1611,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    } else {
 		if (isAssociationClassRole) {
 		    createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(valueTypeOptionsByTypeName,
-			    supertypePropertyTypeInfos, identifyJsonSchemaType(supertypePi), supertypePi.name(),
+			    supertypePropertyTypeInfos, identifyJsonSchemaType(supertypePi), supertypePi,
 			    byReferenceAllowedForSupertypeProperty, parentForTypeSchema);
 		} else {
 		    createTypeDefinition(valueTypeOptionsByTypeName, supertypePropertyTypeInfos, parentForTypeSchema);
@@ -1513,23 +1661,53 @@ public class JsonSchemaDocument implements MessageSource {
 	    /*
 	     * Check if "properties" member exists and is empty; if so, remove it (and the
 	     * requirement for it). If the member is not empty, check if it defines required
-	     * properties. If not, remove the requirement for the "properties" member.
+	     * properties. If not, remove the requirement for the "properties" member. While
+	     * doing so, take into account the potential presence of a schema reference to
+	     * an external JSON Schema definition of the properties.
 	     */
 	    Optional<LinkedHashMap<String, JsonSchema>> classPropertiesOpt = jsClassContents.properties();
 	    if (classPropertiesOpt.isPresent()) {
 		LinkedHashMap<String, JsonSchema> classProperties = classPropertiesOpt.get();
 		if (classProperties.containsKey("properties")) {
+
 		    JsonSchema propertiesMemberSchema = classProperties.get("properties");
-		    Optional<LinkedHashMap<String, JsonSchema>> propertiesMemberPropertiesOpt = propertiesMemberSchema
-			    .properties();
-		    if (propertiesMemberPropertiesOpt.isEmpty()) {
-			// remove "properties" member and requirement for it
-			jsClassContents.removeProperty("properties").removeRequired("properties");
-		    } else {
-			Optional<SortedSet<String>> propertiesMemberRequiredOpt = propertiesMemberSchema.required();
+
+		    if (propertyDefSchemaActualPropertiesSchemaByClass.containsKey(ci)) {
+
+			/*
+			 * Case where the properties are defined in a separate definition schema.
+			 * Definitely leave the "properties" member (to take into account the
+			 * possibility of properties inherited from a supertype), but maybe remove the
+			 * requirement for the "properties" member.
+			 */
+			JsonSchema propertyDefSchema = propertyDefSchemaActualPropertiesSchemaByClass.get(ci);
+
+			Optional<SortedSet<String>> propertiesMemberRequiredOpt = propertyDefSchema.required();
 			if (propertiesMemberRequiredOpt.isEmpty() || propertiesMemberRequiredOpt.get().isEmpty()) {
-			    // remove requirement for "properties" member
+			    // remove requirement for "properties" member (within the class definition!)
 			    jsClassContents.removeRequired("properties");
+			}
+
+		    } else {
+
+			/*
+			 * Normal case, where the properties are defined within the class definition
+			 * (for the "properties" member)
+			 */
+
+			Optional<LinkedHashMap<String, JsonSchema>> propertiesMemberPropertiesOpt = propertiesMemberSchema
+				.properties();
+			if (propertiesMemberPropertiesOpt.isEmpty()) {
+
+			    // remove "properties" member and requirement for it
+			    jsClassContents.removeProperty("properties").removeRequired("properties");
+
+			} else {
+			    Optional<SortedSet<String>> propertiesMemberRequiredOpt = propertiesMemberSchema.required();
+			    if (propertiesMemberRequiredOpt.isEmpty() || propertiesMemberRequiredOpt.get().isEmpty()) {
+				// remove requirement for "properties" member
+				jsClassContents.removeRequired("properties");
+			    }
 			}
 		    }
 		}
@@ -1537,6 +1715,45 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return jsClass;
+    }
+
+    private List<ClassInfo> applyCustomEncodingOrder(String encodingOrderInstructions, SortedSet<ClassInfo> classes) {
+
+	List<ClassInfo> res = new ArrayList<>();
+
+	if (StringUtils.isNotBlank(encodingOrderInstructions)) {
+
+	    SortedMap<String, ClassInfo> classByName = new TreeMap<>();
+	    for (ClassInfo ci : classes) {
+		classByName.put(ci.name(), ci);
+	    }
+
+	    Splitter splitter = Splitter.on(',');
+	    splitter = splitter.omitEmptyStrings();
+	    splitter = splitter.trimResults();
+	    List<String> result = splitter.splitToList(encodingOrderInstructions);
+
+	    for (String eoi : result) {
+		if (classByName.containsKey(eoi)) {
+		    res.add(classByName.get(eoi));
+		    classByName.remove(eoi);
+		}
+	    }
+
+	    // now add the remaining classes
+	    for (ClassInfo ci : classByName.values()) {
+		res.add(ci);
+	    }
+
+	} else {
+
+	    // use the original set order
+	    for (ClassInfo ci : classes) {
+		res.add(ci);
+	    }
+	}
+
+	return res;
     }
 
     private void handlePrimaryTimeRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
@@ -1769,9 +1986,9 @@ public class JsonSchemaDocument implements MessageSource {
     private void handleGeometryRestriction(ClassInfo ci, Set<PropertyInfo> specialPisToMapButNotEncode,
 	    JsonSchema jsClassContents) {
 
-	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_GEOMETRY)) {
+	PropertyInfo primaryGeometryPi = null;
 
-	    PropertyInfo primaryGeometryPi = null;
+	if (ci.category() == Options.FEATURE && ci.matches(JsonSchemaConstants.RULE_CLS_PRIMARY_GEOMETRY)) {
 
 	    /*
 	     * First, try to find a direct property that is explicitly marked to be the
@@ -1808,37 +2025,11 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    if (primaryGeometryPi != null) {
-		specialPisToMapButNotEncode.add(primaryGeometryPi);
-		Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryGeometryPi);
-		if (typeInfoOpt.isPresent()) {
-
-		    JsonSchema geomJs = new JsonSchema();
-		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
-		    jsClassContents.property("geometry", geomJs);
-
-		} else {
-		    MessageContext mc = result.addError(this, 128, primaryGeometryPi.name(), ci.name(),
-			    primaryGeometryPi.typeInfo().name);
-		    if (mc != null) {
-			mc.addDetail(this, 1, primaryGeometryPi.fullName());
-		    }
-		}
-
-		if (primaryGeometryPi.cardinality().maxOccurs > 1) {
-		    MessageContext mc = result.addWarning(this, 127, primaryGeometryPi.name(), ci.name());
-		    if (mc != null) {
-			mc.addDetail(this, 1, primaryGeometryPi.fullName());
-		    }
-		}
-	    }
-
 	} else if (ci.category() != Options.UNION && !ci.properties().isEmpty()
 		&& (ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_SINGLEGEOMPROP)
 			|| ci.matches(JsonSchemaConstants.RULE_CLS_DEFAULT_GEOMETRY_MULTIGEOMPROPS))) {
 
 	    Map<PropertyInfo, JsonSchemaTypeInfo> typeInfoByGeometryPi = new HashMap<>();
-	    PropertyInfo directGeometryPi = null;
 	    Set<PropertyInfo> directProperties = new HashSet<>(ci.properties().values());
 
 	    for (PropertyInfo pi : ci.propertiesAll()) {
@@ -1859,7 +2050,7 @@ public class JsonSchemaDocument implements MessageSource {
 				    || "true".equalsIgnoreCase(pi.taggedValue("defaultGeometry")))) {
 
 			if (directProperties.contains(pi)) {
-			    directGeometryPi = pi;
+			    primaryGeometryPi = pi;
 			}
 
 			typeInfoByGeometryPi.put(pi, typeInfo);
@@ -1867,32 +2058,15 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 
-	    if (directGeometryPi != null) {
+	    if (primaryGeometryPi != null) {
 
-		if (typeInfoByGeometryPi.size() == 1) {
+		if (typeInfoByGeometryPi.size() > 1) {
 
-		    // encode the default geometry property
-		    JsonSchema geomJs = new JsonSchema();
-		    specialPropertyValueRestriction(geomJs, directGeometryPi,
-			    typeInfoByGeometryPi.get(directGeometryPi));
-		    jsClassContents.property("geometry", geomJs);
+		    // multiple default geometry properties detected
 
-		    if (directGeometryPi.cardinality().maxOccurs > 1) {
-			MessageContext mc = result.addWarning(this, 117, directGeometryPi.name(), ci.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, directGeometryPi.fullName());
-			}
-		    }
+		    // ensure that none is encoded
+		    primaryGeometryPi = null;
 
-		    /*
-		     * keep track of this property, so that it can be ignored later on when encoding
-		     * the other properties of the class
-		     */
-		    specialPisToMapButNotEncode.add(directGeometryPi);
-
-		} else if (typeInfoByGeometryPi.size() > 1) {
-
-		    // inform about multiple default geometry properties
 		    String geometryPiNames = typeInfoByGeometryPi.keySet().stream().map(pi -> pi.name()).sorted()
 			    .collect(Collectors.joining(", "));
 
@@ -1903,6 +2077,103 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 	    }
 	}
+
+	// Evaluate the primary / default geometry
+	if (primaryGeometryPi != null) {
+
+	    /*
+	     * keep track of this property, so that it can be ignored later on when encoding
+	     * the other properties of the class
+	     */
+	    specialPisToMapButNotEncode.add(primaryGeometryPi);
+
+	    // check cardinality
+	    if (primaryGeometryPi.cardinality().maxOccurs > 1) {
+		MessageContext mc = result.addWarning(this, 127, primaryGeometryPi.name(), ci.name());
+		if (mc != null) {
+		    mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		}
+	    }
+
+	    Optional<JsonSchemaTypeInfo> typeInfoOpt = identifyJsonSchemaType(primaryGeometryPi);
+
+	    if (typeInfoOpt.isEmpty()) {
+
+		MessageContext mc = result.addError(this, 128, primaryGeometryPi.name(), ci.name(),
+			primaryGeometryPi.typeInfo().name);
+		if (mc != null) {
+		    mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		}
+
+	    } else {
+
+		boolean isGeoJsonCompatibleGeometryType = JsonSchemaTarget.geoJsonCompatibleGeometryTypes
+			.contains(primaryGeometryPi.typeInfo().name);
+
+		if (primaryGeometryPi.inClass().matches(JsonSchemaConstants.RULE_CLS_JSON_FG_GEOMETRY)) {
+
+		    // TODO Take into account the secondary geometry!
+
+		    /*
+		     * WARNING: Right now, the logic here only supports schemas with at most one
+		     * geometric property per feature type.
+		     */
+
+		    // encode restriction for the "geometry" member only if the type is compatible
+		    if (isGeoJsonCompatibleGeometryType) {
+
+			createPrimaryGeometryValueRestriction(jsClassContents, "geometry", primaryGeometryPi,
+				typeInfoOpt.get(), true);
+			createPrimaryGeometryValueRestriction(jsClassContents, "place", primaryGeometryPi,
+				typeInfoOpt.get(), true);
+		    } else {
+
+			/*
+			 * Encode the restriction also for the "place" member.
+			 * 
+			 * TODO Take into account the secondary geometry!
+			 */
+
+			createPrimaryGeometryValueRestriction(jsClassContents, "place", primaryGeometryPi,
+				typeInfoOpt.get(), false);
+		    }
+
+		} else if (isGeoJsonCompatibleGeometryType) {
+
+		    JsonSchema geomJs = new JsonSchema();
+		    specialPropertyValueRestriction(geomJs, primaryGeometryPi, typeInfoOpt.get());
+		    jsClassContents.property("geometry", geomJs);
+
+		} else {
+
+		    MessageContext mc = result.addWarning(this, 139, primaryGeometryPi.typeInfo().name,
+			    primaryGeometryPi.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, primaryGeometryPi.fullName());
+		    }
+		}
+	    }
+	}
+    }
+
+    private void createPrimaryGeometryValueRestriction(JsonSchema jsContentSchemaForPrimaryGeometryPropertyRestriction,
+	    String jsonMemberName, PropertyInfo primaryGeometryPi, JsonSchemaTypeInfo jsonSchemaTypeInfo,
+	    boolean alwaysAddNullOption) {
+
+	JsonSchema jsForValueRestriction = new JsonSchema();
+
+	boolean addNullOption = alwaysAddNullOption || isOptional(primaryGeometryPi);
+
+	if (addNullOption) {
+	    // create choice between null and an actual value
+	    jsForValueRestriction.oneOf(new JsonSchema().type(JsonSchemaType.NULL));
+	    jsForValueRestriction.oneOf(new JsonSchema().ref(jsonSchemaTypeInfo.getRef()));
+	} else {
+	    // the property must have an actual value
+	    jsForValueRestriction.ref(jsonSchemaTypeInfo.getRef());
+	}
+
+	jsContentSchemaForPrimaryGeometryPropertyRestriction.property(jsonMemberName, jsForValueRestriction);
     }
 
     /**
@@ -2187,18 +2458,262 @@ public class JsonSchemaDocument implements MessageSource {
 	}
     }
 
-    private JsonSchemaTypeInfo createJsonSchemaTypeInfoForReference() {
+    private List<JsonSchemaTypeInfo> createJsonSchemaTypeInfoForReference(PropertyInfo pi) {
 
-	JsonSchemaTypeInfo byRefInfo = new JsonSchemaTypeInfo();
+	List<JsonSchemaTypeInfo> res = new ArrayList<>();
 
-	if (jsonSchemaTarget.byReferenceJsonSchemaDefinition().isPresent()) {
-	    byRefInfo.setRef(jsonSchemaTarget.byReferenceJsonSchemaDefinition().get());
+	if (pi.matches(JsonSchemaConstants.RULE_ALL_FEATURE_REFS)) {
+
+	    SortedSet<String> refProfiles = JsonSchemaTarget.featureRefProfiles;
+
+	    if (refProfiles.contains("rel-as-uri")) {
+		res.add(createJsonSchemaTypeInfoForRelAsUri());
+	    }
+
+	    if (refProfiles.contains("rel-as-link")) {
+		this.generateSCLinkObjectDefinition = true;
+		JsonSchemaTypeInfo linkInfo = new JsonSchemaTypeInfo();
+		linkInfo.setRef(fragmentIdentifier(this, JsonSchemaConstants.SC_LINK_OBJECT_DEF_NAME, false));
+		res.add(linkInfo);
+	    }
+
+	    if (refProfiles.contains("rel-as-key")) {
+
+		SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
+		String uriTemplate = null;
+		SortedSet<String> collectionIds = new TreeSet<>();
+		boolean skipFeatureRef = false;
+		boolean collectionInfosDefinedByMapEntry = false;
+
+		String valueTypeName = pi.typeInfo().name;
+		ClassInfo typeCi = pi.typeClass();
+
+		if (this.mapEntryParamInfos.getMapEntry(valueTypeName,
+			pi.encodingRule(JsonSchemaConstants.PLATFORM)) != null) {
+
+		    // a map entry is defined for the value type - use it
+
+		    if (this.mapEntryParamInfos.hasParameter(valueTypeName,
+			    pi.encodingRule(JsonSchemaConstants.PLATFORM),
+			    JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS)) {
+
+			collectionInfosDefinedByMapEntry = true;
+
+			// determine feature ref id types
+			String meCharCollectionIdTypes = mapEntryParamInfos.getCharacteristic(valueTypeName,
+				pi.encodingRule(JsonSchemaConstants.PLATFORM),
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS,
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES);
+
+			if (StringUtils.isNotBlank(meCharCollectionIdTypes)) {
+			    String[] meCollectionIdTypes = StringUtils.split(meCharCollectionIdTypes, ", ");
+			    for (String s : meCollectionIdTypes) {
+				if ("string".equalsIgnoreCase(s)) {
+				    featureRefIdTypes.add(JsonSchemaType.STRING);
+				} else if ("integer".equalsIgnoreCase(s)) {
+				    featureRefIdTypes.add(JsonSchemaType.INTEGER);
+				} else {
+				    // is checked by the configuration validator
+				}
+			    }
+			} else {
+			    // use default
+			    featureRefIdTypes.add(JsonSchemaType.INTEGER);
+			}
+
+			// determine uri template
+			String meCharUriTemplate = mapEntryParamInfos.getCharacteristic(valueTypeName,
+				pi.encodingRule(JsonSchemaConstants.PLATFORM),
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS,
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE);
+			if (StringUtils.isNotBlank(meCharUriTemplate)) {
+			    uriTemplate = meCharUriTemplate.trim().replace("(", "{").replace(")", "}");
+			} else {
+			    /*
+			     * No uri template defined in the mapping! Reference via rel-as-key impossible.
+			     * NOTE: This is checked by the configuration validator.
+			     */
+			    skipFeatureRef = true;
+			    result.addError(this, 138, valueTypeName);
+			}
+
+			// determine collection ids
+			String meCharCollectionIds = mapEntryParamInfos.getCharacteristic(valueTypeName,
+				pi.encodingRule(JsonSchemaConstants.PLATFORM),
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS,
+				JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_IDS);
+
+			if (StringUtils.isNotBlank(meCharCollectionIds)) {
+			    String[] meCollectionIds = StringUtils.split(meCharCollectionIds, ", ");
+			    for (String s : meCollectionIds) {
+				collectionIds.add(s);
+			    }
+			} else {
+			    // no collection ids defined by the map entry -> no restriction available
+			}
+
+		    } else {
+			/*
+			 * no collection infos defined in the mapping; reference via rel-as-key not
+			 * possible; not a problem for types that are expected to be encoded inline
+			 * anyways, such as geometry types
+			 */
+			skipFeatureRef = true;
+			result.addInfo(this, 137, valueTypeName);
+		    }
+
+		} else {
+
+		    // no mapping is defined for the value type
+
+		    // determine feature ref id types
+		    featureRefIdTypes = JsonSchemaTarget.featureRefIdTypes;
+
+		    // determine uri template
+		    if (typeCi != null) {
+			String tv = typeCi.taggedValue(JsonSchemaConstants.TV_COLLECTION_URI_TEMPLATE);
+			if (StringUtils.isNotBlank(tv)) {
+			    uriTemplate = tv.trim();
+			}
+		    }
+
+		    // determine collection ids
+		    if (typeCi != null) {
+
+			SortedSet<ClassInfo> typeSet = typeCi.subtypesInCompleteHierarchy();
+			typeSet.add(typeCi);
+			List<ClassInfo> relevantTypes = typeSet.stream().filter(ci -> !ci.isAbstract())
+				.collect(Collectors.toList());
+			for (ClassInfo ci : relevantTypes) {
+			    collectionIds.add(formatCollectionId(ci.name()));
+			}
+
+		    } else {
+			collectionIds.add(formatCollectionId(valueTypeName));
+		    }
+		}
+
+		if (!skipFeatureRef) {
+
+		    /*
+		     * Create the JSON Schema type info
+		     */
+		    JsonSchemaTypeInfo keyInfo = new JsonSchemaTypeInfo();
+		    keyInfo.setKeyword(new XOgcRoleKeyword("reference"));
+
+		    if (StringUtils.isNotBlank(uriTemplate)) {
+
+			// create schema for ref external
+
+			keyInfo.setKeyword(new XOgcUriTemplateKeyword(uriTemplate));
+
+			if (uriTemplate.contains("{collectionId}")) {
+
+			    // create schema for complex feature ref external
+
+			    keyInfo.setKeyword(new TypeKeyword(JsonSchemaType.OBJECT));
+
+			    keyInfo.setKeyword(
+				    new RequiredKeyword(Arrays.asList(new String[] { "collectionId", "featureId" })));
+
+			    PropertiesKeyword props = new PropertiesKeyword();
+
+			    JsonSchema collectionIdSchema = new JsonSchema();
+			    collectionIdSchema.type(JsonSchemaType.STRING);
+			    if (collectionIds.size() > 0 && (collectionInfosDefinedByMapEntry
+				    || !JsonSchemaTarget.featureRefWithAnyCollectionId)) {
+				JsonString[] array = collectionIds.stream().map(s -> new JsonString(s))
+					.toArray(JsonString[]::new);
+				collectionIdSchema.enum_(array);
+			    }
+			    props.put("collectionId", collectionIdSchema);
+
+			    props.put("featureId", new JsonSchema()
+				    .type(featureRefIdTypes.toArray(new JsonSchemaType[featureRefIdTypes.size()])));
+
+			    props.put("title", new JsonSchema().type(JsonSchemaType.STRING));
+
+			    keyInfo.setKeyword(props);
+
+			} else {
+
+			    /*
+			     * Create schema for simple ref external; collection id count is ignored,
+			     * because the URI template does not contain the variable '{collectionId}'.
+			     */
+
+			    keyInfo.setKeyword(new TypeKeyword(featureRefIdTypes));
+			}
+
+		    } else {
+
+			// create schema for ref
+
+			if (collectionIds.size() == 1 && !JsonSchemaTarget.featureRefWithAnyCollectionId) {
+
+			    // create schema for simple feature ref
+
+			    keyInfo.setKeyword(new TypeKeyword(featureRefIdTypes));
+			    keyInfo.setKeyword(new XOgcCollectionIdKeyword(collectionIds.iterator().next()));
+
+			} else {
+
+			    // create schema for complex feature ref
+
+			    keyInfo.setKeyword(new TypeKeyword(JsonSchemaType.OBJECT));
+
+			    keyInfo.setKeyword(
+				    new RequiredKeyword(Arrays.asList(new String[] { "collectionId", "featureId" })));
+
+			    PropertiesKeyword props = new PropertiesKeyword();
+
+			    JsonSchema collectionIdSchema = new JsonSchema();
+			    collectionIdSchema.type(JsonSchemaType.STRING);
+			    if (collectionIds.size() > 0 && !JsonSchemaTarget.featureRefWithAnyCollectionId) {
+				JsonString[] array = collectionIds.stream().map(s -> new JsonString(s))
+					.toArray(JsonString[]::new);
+				collectionIdSchema.enum_(array);
+			    }
+			    props.put("collectionId", collectionIdSchema);
+
+			    props.put("featureId", new JsonSchema()
+				    .type(featureRefIdTypes.toArray(new JsonSchemaType[featureRefIdTypes.size()])));
+
+			    props.put("title", new JsonSchema().type(JsonSchemaType.STRING));
+
+			    keyInfo.setKeyword(props);
+			}
+		    }
+
+		    res.add(keyInfo);
+		}
+	    }
+
 	} else {
-	    byRefInfo.setSimpleType(JsonSchemaType.STRING);
-	    byRefInfo.setKeyword(new FormatKeyword(JsonSchemaTarget.byReferenceFormat));
+
+	    if (jsonSchemaTarget.byReferenceJsonSchemaDefinition().isPresent()) {
+		JsonSchemaTypeInfo byRefInfo = new JsonSchemaTypeInfo();
+		byRefInfo.setRef(jsonSchemaTarget.byReferenceJsonSchemaDefinition().get());
+		res.add(byRefInfo);
+	    } else {
+		res.add(createJsonSchemaTypeInfoForRelAsUri());
+	    }
+
 	}
 
-	return byRefInfo;
+	return res;
+    }
+
+    private String formatCollectionId(String id) {
+	// NOTE: In future, we may have different ways to format the collection id
+	return id.toLowerCase(Locale.ENGLISH);
+    }
+
+    private JsonSchemaTypeInfo createJsonSchemaTypeInfoForRelAsUri() {
+	JsonSchemaTypeInfo res = new JsonSchemaTypeInfo();
+	res.setSimpleType(JsonSchemaType.STRING);
+	res.setKeyword(new FormatKeyword(JsonSchemaTarget.byReferenceFormat));
+	return res;
     }
 
     /**
@@ -2243,7 +2758,7 @@ public class JsonSchemaDocument implements MessageSource {
 		}
 
 		if (addByReferenceOption) {
-		    typeOptions.add(createJsonSchemaTypeInfoForReference());
+		    typeOptions.addAll(createJsonSchemaTypeInfoForReference(pi));
 		}
 	    }
 
@@ -2366,7 +2881,7 @@ public class JsonSchemaDocument implements MessageSource {
 	} else {
 	    if (isAssociationClassRole) {
 		createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(valueTypeOptionsByTypeName, typeOptions,
-			typeInfoOpt, pi.name(), byReferenceAllowed, parentForTypeSchema);
+			typeInfoOpt, pi, byReferenceAllowed, parentForTypeSchema);
 	    } else {
 		createTypeDefinition(valueTypeOptionsByTypeName, typeOptions, parentForTypeSchema);
 	    }
@@ -2566,7 +3081,9 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (otherTypeOption.isReference()) {
 		otherTypeSchema.ref(otherTypeOption.getRef());
 	    } else {
-		otherTypeSchema.type(otherTypeOption.getSimpleType());
+		if (otherTypeOption.hasSimpleType()) {
+		    otherTypeSchema.type(otherTypeOption.getSimpleType());
+		}
 		if (otherTypeOption.hasKeywords()) {
 		    otherTypeSchema.addAll(otherTypeOption.getKeywords());
 		}
@@ -2775,8 +3292,10 @@ public class JsonSchemaDocument implements MessageSource {
     private void createTypeDefinitionWithValueTypeOptionsForAssociationClassRole(
 	    SortedMap<String, JsonSchemaTypeInfo> valueTypeOptionsByTypeName,
 	    List<JsonSchemaTypeInfo> additionalJsonTypeInfosForAssociationRole,
-	    Optional<JsonSchemaTypeInfo> jsonTypeInfoForAssociationRoleValueType, String associationRoleName,
+	    Optional<JsonSchemaTypeInfo> jsonTypeInfoForAssociationRoleValueType, PropertyInfo associationRole,
 	    boolean byReferenceAllowedForAssociationRole, JsonSchema parentForTypeSchema) {
+
+	String associationRoleName = associationRole.name();
 
 	// create schema to restrict association role copy)
 	JsonSchema associationClassRoleCopyRestrictionSchema = new JsonSchema();
@@ -2788,7 +3307,7 @@ public class JsonSchemaDocument implements MessageSource {
 	JsonSchema roleCopyTypeRestrictionSchema = new JsonSchema();
 	List<JsonSchemaTypeInfo> additionalJsonTypes = new ArrayList<>();
 	if (byReferenceAllowedForAssociationRole) {
-	    additionalJsonTypes.add(createJsonSchemaTypeInfoForReference());
+	    additionalJsonTypes.addAll(createJsonSchemaTypeInfoForReference(associationRole));
 	}
 
 	createTypeDefinition(valueTypeOptionsByTypeName, additionalJsonTypes, roleCopyTypeRestrictionSchema);
@@ -2957,6 +3476,10 @@ public class JsonSchemaDocument implements MessageSource {
 
     public void write() {
 
+	if (this.generateSCLinkObjectDefinition) {
+	    generateSCLinkObjectDefinition();
+	}
+
 	JsonSerializationContext context = new JsonSerializationContext();
 
 	JsonValue jValue = this.rootSchema.toJson(context);
@@ -2985,6 +3508,29 @@ public class JsonSchemaDocument implements MessageSource {
 	    e.printStackTrace();
 	}
 
+    }
+
+    private void generateSCLinkObjectDefinition() {
+
+	JsonSchema js = new JsonSchema();
+
+	js.title("link object");
+	js.description("definition of a link object");
+	js.type(JsonSchemaType.OBJECT);
+	js.required("href");
+	js.property("href", new JsonSchema().type(JsonSchemaType.STRING)
+		.description("Supplies the URI to a remote resource (or resource fragment)."));
+	js.property("rel",
+		new JsonSchema().type(JsonSchemaType.STRING).description("The type or semantics of the relation."));
+	js.property("type", new JsonSchema().type(JsonSchemaType.STRING).description(
+		"A hint indicating what the media type of the result of dereferencing the link should be."));
+	js.property("hreflang", new JsonSchema().type(JsonSchemaType.STRING)
+		.description("A hint indicating what the language of the result of dereferencing the link should be."));
+	js.property("title", new JsonSchema().type(JsonSchemaType.STRING).description(
+		"Used to label the destination of a link such that it can be used as a human-readable identifier."));
+	js.property("length", new JsonSchema().type(JsonSchemaType.INTEGER));
+
+	addToRootSchema(JsonSchemaConstants.SC_LINK_OBJECT_DEF_NAME, js);
     }
 
     public void createCollectionDefinitions() {
@@ -3311,7 +3857,7 @@ public class JsonSchemaDocument implements MessageSource {
 	case 116:
 	    return "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not encoded. No type restriction is created for properties with this type as value type.";
 	case 117:
-	    return "Property '$1$' of type '$2$' has been identified as default geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	    return "";
 	case 118:
 	    return "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
 	case 119:
@@ -3331,9 +3877,9 @@ public class JsonSchemaDocument implements MessageSource {
 	case 126:
 	    return "??Cannot add class '$1$' to collection '$2$', because the class has no entity type member.";
 	case 127:
-	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member (and maybe the JSON-FG \"place\" member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.";
 	case 128:
-	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	    return "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member (and maybe the JSON-FG \"place\" member as well). Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
 	case 129:
 	    return "Property '$1$' of type '$2$' has been identified as primary place of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"place\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
 	case 130:
@@ -3348,6 +3894,21 @@ public class JsonSchemaDocument implements MessageSource {
 	    return "The primary interval property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
 	case 135:
 	    return "The primary interval of feature type '$1$' is defined both through an interval property ('$2$') as well as by start and/or end property (start: '$3$', end: '$4$'). This represents an inconsistency. All of these properties will not be encoded, and ignored when encoding the time restriction.";
+	case 136:
+	    return "??JSON Schema document for type '$1$' could not be identified. Property definitions that would reference this type will get a reference to definition '$2$'";
+	case 137:
+	    return "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type, but the mapping does not contain collection infos. The by reference case with 'rel-as-key' encoding is ignored for the property. Consider adding collection infos to the map entry, or a pure inline encoding of the property.";
+	case 138:
+	    return "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type. The map entry contains collection infos, but not the required value for characteristic "
+		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
+		    + ". The by reference case with 'rel-as-key' encoding cannot be created for the property. Add the uri template to the collection infos of the map entry.";
+	case 139:
+	    return "Value type '$1$' of primary geometry property '$2$' is not one of the GeoJSON compatible geometry types defined via target parameter "
+		    + JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES
+		    + ". No restriction will be encoded for the \"geometry\" member.";
+	case 140:
+	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
+
 	default:
 	    return "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;
 	}

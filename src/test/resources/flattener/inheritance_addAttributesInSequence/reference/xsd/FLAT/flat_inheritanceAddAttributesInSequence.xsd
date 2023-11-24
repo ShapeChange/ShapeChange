@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:flat="http://example.org/flattening/inheritanceAddAttributesInSequence"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/flattening/inheritanceAddAttributesInSequence"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="FT1"
+            substitutionGroup="gml:AbstractFeature"
+            type="flat:FT1Type"/>
+   <complexType name="FT1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attributeFT1" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:FT1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT2" substitutionGroup="flat:FT1" type="flat:FT2Type"/>
+   <complexType name="FT2Type">
+      <complexContent>
+         <extension base="flat:FT1Type">
+            <sequence>
+               <element name="roleFT2" type="flat:FTXPropertyType"/>
+               <element name="attributeFT2" type="string"/>
+               <element name="attMB1" type="string"/>
+               <element name="attMA1" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:FT2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FTX"
+            substitutionGroup="gml:AbstractFeature"
+            type="flat:FTXType"/>
+   <complexType name="FTXType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FTXPropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:FTX"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="MixinAUnion"
+            substitutionGroup="gml:AbstractObject"
+            type="flat:MixinAUnionType"/>
+   <complexType name="MixinAUnionType">
+      <choice>
+         <element name="fT2" type="flat:FT2PropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="MixinAUnionPropertyType">
+      <sequence>
+         <element ref="flat:MixinAUnion"/>
+      </sequence>
+   </complexType>
+   <element name="MixinBUnion"
+            substitutionGroup="gml:AbstractObject"
+            type="flat:MixinBUnionType"/>
+   <complexType name="MixinBUnionType">
+      <choice>
+         <element name="fT2" type="flat:FT2PropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="MixinBUnionPropertyType">
+      <sequence>
+         <element ref="flat:MixinBUnion"/>
+      </sequence>
+   </complexType>
+</schema>

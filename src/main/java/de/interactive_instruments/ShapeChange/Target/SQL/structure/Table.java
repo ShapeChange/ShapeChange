@@ -66,6 +66,29 @@ public class Table {
     }
 
     /**
+     * @return can be empty (but not null) or contain 1 or more columns that
+     *         consitute the PK of the table
+     */
+    public List<Column> getPrimaryKeyColumns() {
+
+	for (SqlConstraint constr : getConstraints()) {
+	    if (constr instanceof PrimaryKeyConstraint) {
+		return constr.getColumns();
+	    }
+	}
+
+	List<Column> res = new ArrayList<>();
+	
+	for (Column col : getColumns()) {
+	    if (col.isPrimaryKeyColumn()) {
+		res.add(col);
+	    }
+	}
+
+	return res;
+    }
+
+    /**
      * @return the schema name
      */
     public String getSchemaName() {

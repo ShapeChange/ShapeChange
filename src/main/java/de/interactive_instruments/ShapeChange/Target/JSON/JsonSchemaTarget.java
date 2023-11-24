@@ -45,6 +45,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -86,6 +87,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinLengthKe
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinimumKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MultipleOfKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PatternKeyword;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -162,6 +164,13 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static PackageInfo schemaForFeatureCollection = null;
 
     protected static boolean useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+    protected static boolean createSeparatePropertyDefinitions = false;
+    protected static SortedSet<String> geoJsonCompatibleGeometryTypes = null;
+    protected static SortedSet<String> genericValueTypes = null;
+    protected static SortedSet<String> featureRefProfiles = null;
+    protected static SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
+    protected static boolean featureRefWithAnyCollectionId = false;
 
     /* ------ */
     /*
@@ -346,6 +355,31 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 			"2019-09");
 		jsonSchemaVersion = JsonSchemaVersion.DRAFT_2019_09;
 	    }
+
+	    createSeparatePropertyDefinitions = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_CREATE_SEPARATE_PROPERTY_DEFINITIONS, false);
+	    geoJsonCompatibleGeometryTypes = new TreeSet<>(
+		    options.parameterAsStringList(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES, new String[] { "GM_Point",
+				    "GM_Curve", "GM_Surface", "GM_MultiPoint", "GM_MultiCurve", "GM_MultiSurface" },
+			    false, true));
+	    genericValueTypes = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_GENERIC_VALUE_TYPES, null, false, true));
+	    featureRefProfiles = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES, new String[] { "rel-as-link" }, false, true));
+	    List<String> featureRefIdTypes_ = options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, new String[] { "integer" }, false, true);
+
+	    for (String s : featureRefIdTypes_) {
+		if ("string".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.STRING);
+		} else if ("integer".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.INTEGER);
+		}
+	    }
+
+	    featureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, false);
 
 	    // identify map entries defined in the target configuration
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
@@ -615,6 +649,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	return baseJsonSchemaDefinitionForDataTypes;
     }
 
+    public SortedSet<String> genericValueTypes() {
+	return genericValueTypes;
+    }
+
     public String getEntityTypeName() {
 	return entityTypeName;
     }
@@ -641,6 +679,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public List<AbstractJsonSchemaAnnotationElement> getAnnotationElements() {
 	return annotationElements;
+    }
+
+    public boolean isGenericValueType(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
     }
 
     @Override
@@ -697,6 +740,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    } else {
 		result.addError(this, 20, ci.name(), simpleJsTypeInfo.getSimpleType().getName());
 	    }
+
+	} else if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci, genericValueTypes)) {
+
+	    result.addInfo(this, 24, ci.name());
 
 	} else if (ci.category() == Options.MIXIN || ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
 		|| ci.category() == Options.DATATYPE || ci.category() == Options.ENUMERATION
@@ -1229,12 +1277,20 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	schemaForFeatureCollection = null;
 
 	useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+	createSeparatePropertyDefinitions = false;
+	genericValueTypes = null;
+	geoJsonCompatibleGeometryTypes = null;
+	featureRefProfiles = null;
+	featureRefIdTypes = new TreeSet<>();
+	featureRefWithAnyCollectionId = false;
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule("rule-json-all-documentation");
+	r.addRule("rule-json-all-featureRefs");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
 	r.addRule("rule-json-cls-codelist-link");
@@ -1247,6 +1303,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
 	r.addRule("rule-json-cls-identifierStereotype");
 	r.addRule("rule-json-cls-ignoreIdentifier");
+	r.addRule("rule-json-cls-genericValueType");
+	r.addRule("rule-json-cls-jsonFgGeometry");
 	r.addRule("rule-json-cls-name-as-anchor");
 	r.addRule("rule-json-cls-name-as-entityType");
 	r.addRule("rule-json-cls-name-as-entityType-dataType");
@@ -1335,7 +1393,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
 	    return "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
-
+	case 24:
+	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 	case 101:
 	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
 	case 102:

@@ -8,7 +8,6 @@ providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
-nativeTimeZone: Europe/Berlin
 connectionInfo:
   database: FIXME
   host: FIXME
@@ -44,9 +43,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel2Target:
-        sourcePath: '[_id=featuretype_refrel2source_id]FeatureType_refRel2Target/[featuretype_refrel2target_id=_id]featuretype'
+        sourcePath: "[_id=featuretype_refrel2source_id]FeatureType_refRel2Target/[featuretype_refrel2target_id=_id]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -61,9 +60,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel3Source:
-        sourcePath: '[_id=featuretype_refrel3target_id]FeatureType_refRel3Source/[featuretype_refrel3source_id=_id]featuretype'
+        sourcePath: "[_id=featuretype_refrel3target_id]FeatureType_refRel3Source/[featuretype_refrel3source_id=_id]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -78,9 +77,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel3Target:
-        sourcePath: '[_id=featuretype_refrel3source_id]FeatureType_refRel3Source/[featuretype_refrel3target_id=_id]featuretype'
+        sourcePath: "[_id=featuretype_refrel3source_id]FeatureType_refRel3Source/[featuretype_refrel3target_id=_id]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -95,7 +94,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Source:
         type: OBJECT
         objectType: Link
@@ -111,7 +110,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       refRel4Target:
         type: OBJECT
         objectType: Link
@@ -127,9 +126,9 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       relRef5Source:
-        sourcePath: '[_id=relref5target_fk]featuretype'
+        sourcePath: "[_id=relref5target_fk]featuretype"
         type: OBJECT_ARRAY
         objectType: Link
         constraints:
@@ -144,7 +143,7 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
       relRef5Target:
         type: OBJECT
         objectType: Link
@@ -160,4 +159,4 @@ types:
             type: STRING
             label: FeatureType-ID
             transformations:
-            - stringFormat: '{{serviceUrl}}/collections/featuretype/items/{{value}}'
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"

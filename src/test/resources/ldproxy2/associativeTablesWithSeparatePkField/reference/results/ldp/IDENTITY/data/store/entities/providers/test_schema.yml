@@ -8,7 +8,6 @@ providerSubType: SQL
 nativeCrs:
   code: 4326
   forceAxisOrder: NONE
-nativeTimeZone: Europe/Berlin
 connectionInfo:
   database: FIXME
   host: FIXME
@@ -30,21 +29,21 @@ types:
         type: INTEGER
         role: ID
       pCodelist1:
-        sourcePath: '[_id=featuretype_id]FeatureType_pCodelist1/codelist1_id'
+        sourcePath: "[_id=featuretype_id]FeatureType_pCodelist1/codelist1_id"
         type: VALUE_ARRAY
         valueType: STRING
         constraints:
           codelist: Codelist1
           minOccurrence: 0
       pCodelist2:
-        sourcePath: '[_id=featuretype_id]FeatureType_pCodelist2/pcodelist2'
+        sourcePath: "[_id=featuretype_id]FeatureType_pCodelist2/pcodelist2"
         type: VALUE_ARRAY
         valueType: STRING
         constraints:
           codelist: Codelist2
           minOccurrence: 0
       pString:
-        sourcePath: '[_id=featuretype_id]FeatureType_pString/pstring'
+        sourcePath: "[_id=featuretype_id]FeatureType_pString/pstring"
         type: VALUE_ARRAY
         valueType: STRING
         constraints:

@@ -331,7 +331,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    if (ranges[i].indexOf("..") > 0) {
 		// If it is a range, separated by '..'
 		String[] minmax = ranges[i].split("\\.\\.", 2);
-		lower = Integer.parseInt(minmax[0]);
+		
+		try {
+		    lower = Integer.parseInt(minmax[0]);
+		} catch (NumberFormatException e) {
+			MessageContext mc = document.result.addWarning(null, 1005, minmax[0]);
+			if (mc != null)
+			    mc.addDetail(null, 400, "Property", this.fullName());
+			lower = 0;
+		}
+		
 		if (minmax[1].equals("*") || minmax[1].length() == 0) {
 		    upper = Integer.MAX_VALUE;
 		} else {
@@ -340,7 +349,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		    } catch (NumberFormatException e) {
 			MessageContext mc = document.result.addWarning(null, 1003, minmax[1]);
 			if (mc != null)
-			    mc.addDetail(null, 400, "Class", inClass().fullName());
+			    mc.addDetail(null, 400, "Property", this.fullName());
 			upper = Integer.MAX_VALUE;
 		    }
 		}

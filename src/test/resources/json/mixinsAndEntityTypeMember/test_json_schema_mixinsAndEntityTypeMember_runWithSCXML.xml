@@ -78,8 +78,8 @@
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
             <MapEntry param="" rule="*" targetType="number" type="Number"/>
             <MapEntry param="" rule="*" targetType="number" type="Real"/>
-            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
             <MapEntry param="keywords{format=date}"
                       rule="*"
                       targetType="string"
@@ -174,8 +174,8 @@
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
             <MapEntry param="" rule="*" targetType="number" type="Number"/>
             <MapEntry param="" rule="*" targetType="number" type="Real"/>
-            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
             <MapEntry param="keywords{format=date}"
                       rule="*"
                       targetType="string"
@@ -263,8 +263,8 @@
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
             <MapEntry param="" rule="*" targetType="number" type="Number"/>
             <MapEntry param="" rule="*" targetType="number" type="Real"/>
-            <MapEntry param="" rule="*" targetType="number" type="Measure"/>
-            <MapEntry param="" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
             <MapEntry param="keywords{format=date}"
                       rule="*"
                       targetType="string"

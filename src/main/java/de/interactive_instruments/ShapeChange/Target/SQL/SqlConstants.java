@@ -242,6 +242,8 @@ public class SqlConstants {
     public static final String PARAM_SRID = "srid";
 
     public static final String PARAM_TVS_TO_KEEP = "taggedValuesToKeep";
+    
+    public static final String PARAM_WRITE_SQL_ENCODING_INFOS = "writeSqlEncodingInfos";
 
     /**
      * Flag to indicate that foreign key creation is desired (true); default is
@@ -786,6 +788,9 @@ public class SqlConstants {
      * values (NOTE: check is case-insensitive).
      */
     public static final String ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
+    
+    public static final String ME_PARAM_TABLE_CHARACT_PK_COLUMNS = "primaryKeyColumns";
+    
     public static final String ME_PARAM_TEXTORCHARACTERVARYING = "textOrCharacterVarying";
 
     /**

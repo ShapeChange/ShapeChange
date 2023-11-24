@@ -11,7 +11,7 @@ metadata:
   keywords:
   - keyword_A
   - keyword_B
-  attribution: Your organization, company, or other entity
+  attribution: "Your organization, company, or other entity"
 api:
 - buildingBlock: COLLECTIONS
   additionalLinks:
@@ -77,7 +77,7 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      featureTitleTemplate: '{{atttitle}}'
+      featureTitleTemplate: "{{atttitle}}"
   ts3_type1:
     id: ts3_type1
     label: ts3_type1

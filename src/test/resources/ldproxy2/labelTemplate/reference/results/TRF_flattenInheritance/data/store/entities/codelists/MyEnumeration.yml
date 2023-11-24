@@ -2,7 +2,6 @@
 id: MyEnumeration
 createdAt: 1000000000000
 lastModified: 1000000000000
-entityStorageVersion: 1
 label: MyEnumeration
 entries:
   myEnumA: myEnumA

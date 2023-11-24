@@ -8,7 +8,7 @@
 		<url>https://github.com/ShapeChange/ShapeChange</url>
 		<connection>scm:git:https://github.com/ShapeChange/ShapeChange.git</connection>
 		<developerConnection>scm:git:https://github.com/ShapeChange/ShapeChange.git</developerConnection>
-		<tag>2.11.0</tag>
+		<!-- Tag removed. See https://stackoverflow.com/a/43851298/3469138 -->
 	</scm>
 	<repositories>
 		<repository>
@@ -16,16 +16,16 @@
 			<name>ShapeChange (plus additional components) release repository</name>
 			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
-		<repository>
+		<!--<repository>
 			<id>ii-maven</id>
 			<name>interactive instruments maven snapshots repository</name>
 			<url>https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
-		</repository>
-<!-- 		<repository> -->
-<!-- 			<id>ii-maven-releases</id> -->
-<!-- 			<name>interactive instruments maven releases repository</name> -->
-<!-- 			<url>https://dl.interactive-instruments.de/repository/maven-releases/</url> -->
-<!-- 		</repository>		 -->
+		</repository>-->
+ 		<repository>
+ 			<id>ii-maven-releases</id>
+ 			<name>interactive instruments maven releases repository</name>
+ 			<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>
+ 		</repository>
 	</repositories>
 	<dependencies>
 	<!-- https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
-			<version>3.3.0-SNAPSHOT</version>
+			<version>3.5.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
 		<dependency>
