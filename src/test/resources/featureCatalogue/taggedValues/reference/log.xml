@@ -5,10 +5,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\taggedValues\test_featureCatalogue_taggedValues.qea"/>
     <Info message="Application schema found, package name: 'Test', target namespace: 'http://www.example.org/shapechange/featurecatalogue/taggedValues'"/>
     <Info message="Now processing target 'Feature Catalogue' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

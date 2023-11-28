@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/ldproxy2/queryables/test_ldproxy2_queryables.eapx" />
+			value="src/test/resources/ldproxy2/queryables/test_ldproxy2_queryables.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/xslt2QueryBinding/test_sch_xslt2QueryBinding.EAP" />
+			value="src/test/resources/sch/xslt2QueryBinding/test_sch_xslt2QueryBinding.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema .*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

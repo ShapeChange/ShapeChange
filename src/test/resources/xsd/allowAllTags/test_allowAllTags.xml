@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/xsd/allowAllTags/test_allowAllTags.EAP" />
+			value="src/test/resources/xsd/allowAllTags/test_allowAllTags.qea" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="addTaggedValues" value="*" />
 		<parameter name="sortedSchemaOutput" value="true" />

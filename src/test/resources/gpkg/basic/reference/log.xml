@@ -8,10 +8,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'flattener' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.GeoPackage.GeoPackageTemplate' and @inputs 'flattener' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gpkg\basic\test.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'flattener' for input ID: 'INPUT'."/>
     <ProcessFlowInfo message="========== processing phase =========="/>
     <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

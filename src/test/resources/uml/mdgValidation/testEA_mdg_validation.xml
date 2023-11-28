@@ -8,7 +8,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/mdgValidation/test_mdg_validation.eapx" />
+			value="src/test/resources/uml/mdgValidation/test_mdg_validation.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -80,8 +80,8 @@
 				value="[[documentation]]" />
 			<targetParameter name="omitOutputPackageDateTime"
 				value="true" />
-			<targetParameter name="eapTemplate"
-				value="src/test/resources/uml/mdgValidation/UmlModel_template_mdgValidationTest.eap" />
+			<targetParameter name="eaTemplate"
+				value="src/test/resources/uml/mdgValidation/UmlModel_template_mdgValidationTest.qea" />
 			<mapEntries>
 				<MapEntry type="application schema" rule="*"
 					targetType="ShapeChange::applicationSchema" param="stereotype" />

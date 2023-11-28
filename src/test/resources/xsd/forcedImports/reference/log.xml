@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\forcedImports\test_xsd_forcedImports.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/xsd/forcedImports'"/>
     <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'TRF_FLATTEN_MULT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace' and @inputs 'TRF_FLATTEN_MULT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\representTaggedValues\test_arcgis_representTaggedValues.qea"/>
     <Info message="Now processing transformation 'TRF_FLATTEN_MULT' for input ID: 'INPUT'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-prop-flatten-multiplicity ----------"/>

@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/test_Flattener_flattenTypes_propertyCopyDuplicateBehavior.EAP" />
+			value="src/test/resources/flattener/flattenTypes_propertyCopyDuplicateBehavior/test_Flattener_flattenTypes_propertyCopyDuplicateBehavior.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

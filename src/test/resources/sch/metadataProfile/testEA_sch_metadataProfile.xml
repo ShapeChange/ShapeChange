@@ -15,7 +15,7 @@
 		</packages>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/metadataProfile/test_sch_metadataProfile.eap" />
+			value="src/test/resources/sch/metadataProfile/test_sch_metadataProfile.qea" />
 		<parameter name="ignoreEncodingRuleTaggedValues" value="true" />
 		<parameter name="loadConstraintsForSelectedSchemasOnly"
 			value="true" />

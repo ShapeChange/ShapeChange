@@ -42,7 +42,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel/testEA_sql_databaseModel.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/databaseModel",
+				new String[] { "sql", "qea" }, "testResults/sql/databaseModel",
 				"src/test/resources/sql/databaseModel/reference");
 	}
 
@@ -51,7 +51,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_mergeLinkedDocuments/testEA_sql_databaseModel_mergeLinkedDocuments.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/databaseModel_mergeLinkedDocuments",
 				"src/test/resources/sql/databaseModel_mergeLinkedDocuments/reference");
 	}
@@ -60,7 +60,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 	public void testUniqueConstraint() {
 
 		multiTest("src/test/resources/sql/sqlUnique/testEA_sql_unique.xml",
-				new String[] { "sql", "eap" }, "testResults/sql/sqlUnique",
+				new String[] { "sql", "qea" }, "testResults/sql/sqlUnique",
 				"src/test/resources/sql/sqlUnique/reference");
 	}
 
@@ -69,7 +69,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_singleSchema.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/databaseModel_packageHierarchy/singleSchema",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/singleSchema");
 	}
@@ -79,7 +79,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_packageHierarchy/testEA_sql_databaseModel_packageHierarchy_multipleSchemas.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/databaseModel_packageHierarchy/multipleSchemas",
 				"src/test/resources/sql/databaseModel_packageHierarchy/reference/multipleSchemas");
 	}
@@ -90,7 +90,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 		multiTest(
 				"src/test/resources/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml",
 			new String[] {
-				"sql", "eap" },
+				"sql", "qea" },
 				"testResults/sql/foreignKeyOptions",
 				"src/test/resources/sql/foreignKeyOptions/reference");
 	}
@@ -100,7 +100,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/constraintNameUsingShortName/testEA_sql_constraintNameUsingShortName.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/constraintNameUsingShortName",
 				"src/test/resources/sql/constraintNameUsingShortName/reference");
 	}
@@ -110,7 +110,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/indexNameUsingShortName/testEA_sql_indexNameUsingShortName.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/indexNameUsingShortName",
 				"src/test/resources/sql/indexNameUsingShortName/reference");
 	}
@@ -120,7 +120,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/checkConstraintForRange/testEA_sql_checkConstraintForRange.xml",
-				new String[] { "sql", "eap" },
+				new String[] { "sql", "qea" },
 				"testResults/sql/checkConstraintForRange",
 				"src/test/resources/sql/checkConstraintForRange/reference");
 	}
@@ -130,7 +130,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/databaseModel_representTaggedValues/testEA_sql_representTaggedValues.xml",
-				new String[] { "eap" }, "testResults/sql/representTaggedValues",
+				new String[] { "qea" }, "testResults/sql/representTaggedValues",
 				"src/test/resources/sql/databaseModel_representTaggedValues/reference");
 	}
 	
@@ -139,7 +139,7 @@ public class SQLDatabaseModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/sql/lengthQualifier/testEA_sql_lengthQualifier.xml",
-				new String[] { "sql","eap" }, "testResults/sql/lengthQualifier",
+				new String[] { "sql","qea" }, "testResults/sql/lengthQualifier",
 				"src/test/resources/sql/lengthQualifier/reference");
 	}
 }

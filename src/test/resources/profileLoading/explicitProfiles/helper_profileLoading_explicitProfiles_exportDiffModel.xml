@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileLoading/explicitProfiles/helper_profileLoading_explicitProfiles_diffModel.eap" />
+			value="src/test/resources/profileLoading/explicitProfiles/helper_profileLoading_explicitProfiles_diffModel.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'trf' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'trf' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\propertyMetadataStereotype\test_propertyMetadataStereotype.qea"/>
     <Info message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <Info message="Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/codeLists/CodeListLoader/test_codeListLoader.EAP" />
+			value="src/test/resources/codeLists/CodeListLoader/test_codeListLoader.qea" />
 		<parameter name="appSchemaNameRegex" value=".*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<descriptorSources>

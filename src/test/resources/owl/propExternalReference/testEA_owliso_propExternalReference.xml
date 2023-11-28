@@ -8,7 +8,7 @@
 <!-- 		<parameter name="addTaggedValues" -->
 <!-- 			value="sourceTV,aliasList,informationResourceURI,charTV,numTV" /> -->
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/owl/propExternalReference/test_owliso2.eap" />
+		<parameter name="inputFile" value="src/test/resources/owl/propExternalReference/test_owliso2.qea" />
 		<parameter name="appSchemaName" value="Schema_ruleOwlPropExternalReference"/>
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

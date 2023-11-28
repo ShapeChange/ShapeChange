@@ -2,10 +2,10 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
     <Info message="Now processing transformation 'model' for input ID: 'input'."/>
     <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
       <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>

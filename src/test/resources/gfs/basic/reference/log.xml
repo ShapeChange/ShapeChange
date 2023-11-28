@@ -17,10 +17,10 @@
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.gfs.GfsTemplateTarget' and @inputs 'IDENTITY' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'IDENTITY' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.eapx"/>
-      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.eapx"/>
-      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.eapx"/>
-      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.eapx"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\gfs\basic\test_gfs_basic.qea"/>
       <Warning message="Restriction of property 'attSuper1' in class 'DataTypeSub1' from supertype 'DataTypeSupertype'."/>
       <Warning message="Restriction of property 'attSuper2' in class 'DataTypeSubAbstract' from supertype 'DataTypeSupertype'."/>
       <Warning message="Restriction of property 'attGeom' in class 'FeatureType1' from supertype 'AbstractFeatureType1'."/>

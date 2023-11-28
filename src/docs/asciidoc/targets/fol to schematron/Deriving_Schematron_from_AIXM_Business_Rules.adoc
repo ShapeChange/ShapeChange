@@ -88,7 +88,7 @@ to Schematron] page
   xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd">
   <input id="INPUT">
     <parameter name="inputModelType" value="EA7"/>
-    <parameter name="inputFile" value="./AIXM.eap"/>
+    <parameter name="inputFile" value="./AIXM.qea"/>
     <parameter name="appSchemaNameRegex" value="AIXM|Digital NOTAM Event Specification"/>
     <parameter name="publicOnly" value="true"/>
     <parameter name="checkingConstraints" value="enabled"/>

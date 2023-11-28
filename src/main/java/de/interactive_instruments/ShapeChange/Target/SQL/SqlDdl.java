@@ -219,11 +219,11 @@ public class SqlDdl implements SingleTarget, MessageSource {
     protected static Multiplicity repSchemaMultiplicity1 = new Multiplicity(1, 1);
 
     protected static boolean writeSqlEncodingInfos = false;
-    
+
     /* ------- */
     /* Database model specific fields */
     protected static boolean createDatabaseModel = false;
-    
+
     /* ------ */
     /*
      * Non-static fields
@@ -618,8 +618,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    removeEmptyLinesInDdlOutput = options.parameterAsBoolean(this.getClass().getName(),
 		    SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, false);
-	    
-	    writeSqlEncodingInfos = options.parameterAsBoolean(this.getClass().getName(), SqlConstants.PARAM_WRITE_SQL_ENCODING_INFOS, false);
+
+	    writeSqlEncodingInfos = options.parameterAsBoolean(this.getClass().getName(),
+		    SqlConstants.PARAM_WRITE_SQL_ENCODING_INFOS, false);
 
 	    List<String> tvsToRepresent = options.parameterAsStringList(null, "representTaggedValues", null, true,
 		    true);
@@ -954,52 +955,59 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		String fileName = outputFilename + ".xsd";
 
 		File repXsd = new File(outputDirectory, fileName);
-		    
+
 		XMLUtil.writeXml(visitor.getDocument(), repXsd);
 
 		result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
-		
+
 	    } else {
 
 		// --- Create database model
 
 		if (createDatabaseModel) {
 
-		    String fileNameDM = outputFilename + ".eap";
-		    File eap = new File(outputDirectory, fileNameDM);
+		    String fileNameDM = outputFilename + ".qea";
+		    File eaRepo = new File(outputDirectory, fileNameDM);
 
-		    String eapFilePathByConfig = options.parameter(SqlDdl.class.getName(),
-			    DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH);
+		    String eaRepoFilePathByConfig;
+		    if (options.hasParameter(SqlDdl.class.getName(),
+			    DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH)) {
+			eaRepoFilePathByConfig = options.parameter(SqlDdl.class.getName(),
+				DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH);
+		    } else {
+			eaRepoFilePathByConfig = options.parameter(SqlDdl.class.getName(),
+				DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH);
+		    }
 
-		    if (eapFilePathByConfig != null) {
+		    if (eaRepoFilePathByConfig != null) {
 
-			if (eapFilePathByConfig.toLowerCase().startsWith("http")) {
+			if (eaRepoFilePathByConfig.toLowerCase().startsWith("http")) {
 
-			    // copy eap file from remote URI
+			    // copy ea repo file from remote URI
 			    try {
-				URL eapUrl = new URL(eapFilePathByConfig);
-				FileUtils.copyURLToFile(eapUrl, eap);
-				result.addInfo(this, 30, eapFilePathByConfig, eap.getAbsolutePath());
+				URL eaRepoUrl = new URL(eaRepoFilePathByConfig);
+				FileUtils.copyURLToFile(eaRepoUrl, eaRepo);
+				result.addInfo(this, 30, eaRepoFilePathByConfig, eaRepo.getAbsolutePath());
 			    } catch (MalformedURLException e1) {
-				result.addError(this, 28, eapFilePathByConfig);
+				result.addError(this, 28, eaRepoFilePathByConfig);
 			    } catch (IOException e2) {
 				result.addFatalError(this, 29, e2.getMessage());
 			    }
 
 			} else {
 
-			    result.addInfo(this, 31, eapFilePathByConfig);
-			    eap = new File(eapFilePathByConfig);
+			    result.addInfo(this, 31, eaRepoFilePathByConfig);
+			    eaRepo = new File(eaRepoFilePathByConfig);
 
 			    /*
-			     * In case that the .eap file does not exist yet,
+			     * In case that the EA repo file does not exist yet,
 			     * EARepositoryUtil.openRepository() also takes care of creating the necessary
 			     * directory structure, so no need to do this here.
 			     */
 			}
 		    }
 
-		    Repository repository = EARepositoryUtil.openRepository(eap, true);
+		    Repository repository = EARepositoryUtil.openRepository(eaRepo, true);
 
 		    EARepositoryUtil.setEABatchAppend(repository, true);
 		    EARepositoryUtil.setEAEnableUIUpdates(repository, false);
@@ -1026,15 +1034,15 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			repository = null;
 		    }
 		}
-		
-		if (writeSqlEncodingInfos) {		
+
+		if (writeSqlEncodingInfos) {
 		    File outputDirectoryFile = new File(outputDirectory);
 		    File outputFile = new File(outputDirectoryFile, outputFilename + "_SqlEncodingInfos.xml");
-		    
+
 		    SqlEncodingInfoVisitor sqlEncInfoVisitor = new SqlEncodingInfoVisitor(this);
 		    sqlEncInfoVisitor.visit(stmts);
 		    sqlEncInfoVisitor.postprocess();
-		    
+
 		    SqlEncodingInfos sei = sqlEncInfoVisitor.getSqlEncodingInfos();
 		    sei.toXml(outputFile, result);
 		}
@@ -1178,19 +1186,19 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		+ countTablesRepresentingFeatureTypes + countTablesRepresentingTypes + countTablesRepresentingDataTypes
 		+ countTablesRepresentingCodelists + countTablesRepresentingEnumerations
 		+ countTablesRepresentingUnions;
-	
-	if(countTables != sumTableCategories) {
-	    result.addDebug(this,400,""+sumTableCategories,""+countTables);
+
+	if (countTables != sumTableCategories) {
+	    result.addDebug(this, 400, "" + sumTableCategories, "" + countTables);
 	}
-	result.addDebug(this, 401, ""+countAssociativeTablesRepresentingAssociations);
-	result.addDebug(this, 402, ""+countAssociativeTablesRepresentingAttributes);
-	result.addDebug(this, 403, ""+countDataTypeUsageSpecificTables);
-	result.addDebug(this, 404, ""+countTablesRepresentingFeatureTypes);
-	result.addDebug(this, 405, ""+countTablesRepresentingTypes);
-	result.addDebug(this, 406, ""+countTablesRepresentingDataTypes);
-	result.addDebug(this, 407, ""+countTablesRepresentingCodelists);
-	result.addDebug(this, 408, ""+countTablesRepresentingEnumerations);
-	result.addDebug(this, 409, ""+countTablesRepresentingUnions);
+	result.addDebug(this, 401, "" + countAssociativeTablesRepresentingAssociations);
+	result.addDebug(this, 402, "" + countAssociativeTablesRepresentingAttributes);
+	result.addDebug(this, 403, "" + countDataTypeUsageSpecificTables);
+	result.addDebug(this, 404, "" + countTablesRepresentingFeatureTypes);
+	result.addDebug(this, 405, "" + countTablesRepresentingTypes);
+	result.addDebug(this, 406, "" + countTablesRepresentingDataTypes);
+	result.addDebug(this, 407, "" + countTablesRepresentingCodelists);
+	result.addDebug(this, 408, "" + countTablesRepresentingEnumerations);
+	result.addDebug(this, 409, "" + countTablesRepresentingUnions);
     }
 
     /**
@@ -1340,7 +1348,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	repSchemaMultiplicity1 = new Multiplicity(1, 1);
 
 	createDatabaseModel = false;
-	
+
 	writeSqlEncodingInfos = false;
     }
 
@@ -1469,16 +1477,17 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	case 27:
 	    return "Exception occurred while creating database model. Exception message is: $1$";
 	case 28:
-	    return "URL '$1$' provided for configuration parameter " + DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH
-		    + " is malformed. The data model will be created in a new EAP within the output directory.";
+	    return "URL '$1$' provided for configuration parameter "
+		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
+		    + " is malformed. The data model will be created in a new EA repository within the output directory.";
 	case 29:
-	    return "Exception encountered while copying the data model EAP file defined by configuration parameter "
-		    + DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH
-		    + " to the output directory. The data model will be created in a new EAP within the output directory.";
+	    return "Exception encountered while copying the data model EA repository file defined by configuration parameter "
+		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
+		    + " to the output directory. The data model will be created in a new EA repository within the output directory.";
 	case 30:
-	    return "Copied EAP file for creation of the data model from URL '$1$' to '$2$'.";
+	    return "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
 	case 31:
-	    return "Using local EAP file '$1$' for creation of the data model.";
+	    return "Using local EA repository file '$1$' for creation of the data model.";
 	case 32:
 	    return "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
 
@@ -1494,7 +1503,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	case 402:
 	    return "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
 	case 403:
-	    return "Number of CREATE TABLE statements for datatype usage specific tables: $1$"; 
+	    return "Number of CREATE TABLE statements for datatype usage specific tables: $1$";
 	case 404:
 	    return "Number of CREATE TABLE statements for tables representing feature types: $1$";
 	case 405:
@@ -1507,7 +1516,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    return "Number of CREATE TABLE statements for tables representing enumerations: $1$";
 	case 409:
 	    return "Number of CREATE TABLE statements for tables representing unions: $1$";
-	    
+
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504:

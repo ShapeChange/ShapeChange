@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/codelist2/test_sch_codelist2.EAP" />
+			value="src/test/resources/sch/codelist2/test_sch_codelist2.qea" />
 		<parameter name="appSchemaNameRegex" value=".*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

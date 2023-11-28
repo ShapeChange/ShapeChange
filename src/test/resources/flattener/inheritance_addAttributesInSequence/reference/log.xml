@@ -17,10 +17,10 @@
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'FLAT' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.EAP"/>
-      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.EAP"/>
-      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.EAP"/>
-      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.EAP"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance_addAttributesInSequence\testFlattening.qea"/>
       <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
       <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
       <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>

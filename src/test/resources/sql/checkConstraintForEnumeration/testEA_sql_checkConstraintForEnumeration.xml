@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/checkConstraintForEnumeration/test_sql_checkConstraintForEnumeration.EAP" />
+			value="src/test/resources/sql/checkConstraintForEnumeration/test_sql_checkConstraintForEnumeration.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

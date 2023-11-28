@@ -10,10 +10,10 @@
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\foreignKeyCheckingOptions\test_sql_foreignKeyCheckingOptions.qea"/>
     <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
     <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Determined database system is 'PostgreSQL'."/>

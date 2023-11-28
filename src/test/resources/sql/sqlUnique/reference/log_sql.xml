@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'F_inheritance' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_inheritance' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\sqlUnique\test_sql_unique.qea"/>
     <Info message="Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
@@ -25,6 +25,6 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/sqlUnique/postgres/F_inheritance/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/sqlUnique/postgres/F_inheritance/Test_Schema.eap" target="SQL DDL">Test_Schema.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/sqlUnique/postgres/F_inheritance/Test_Schema.qea" target="SQL DDL">Test_Schema.qea</Result>
   </Results>
 </ShapeChangeResult>

@@ -8,7 +8,7 @@
 		<parameter name="representTaggedValues" value="valueTypeOptions" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/constraintConverter/valueTypeRestrictionToTV/test_ConstraintConverter_valueTypeRestrictionToTV.EAP" />
+			value="src/test/resources/constraintConverter/valueTypeRestrictionToTV/test_ConstraintConverter_valueTypeRestrictionToTV.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema - Exclusion" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

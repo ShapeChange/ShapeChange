@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/oclPathEncoding/test_sch_oclPathEncoding.EAP" />
+			value="src/test/resources/sch/oclPathEncoding/test_sch_oclPathEncoding.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

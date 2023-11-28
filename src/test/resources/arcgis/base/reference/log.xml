@@ -3,9 +3,9 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating transformer with @id 'flattenedModel' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.qea"/>
     <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
       <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
     </Warning>
@@ -18,7 +18,7 @@
     <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
       <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
     </Warning>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\base\test_arcgis_base.qea"/>
     <Info message="Restriction of property 'prop21' in class 'FeatureType2' from supertype 'FeatureType1'."/>
     <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://example.org/shapechange/arcgis/base'"/>
     <Info message="Now processing target 'XML Schema' for input 'input'."/>

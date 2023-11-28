@@ -326,7 +326,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 
     protected static String nameOfTVToDetermineFieldLength = "size";
 
-    private static String absolutePathOfOutputEAPFile;
+    private static String absolutePathOfOutputEaRepositoryFile;
 
     private static String shortNameByTaggedValue;
 
@@ -383,7 +383,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    if (outputFilename == null) {
 		outputFilename = p.name();
 	    }
-	    outputFilename = outputFilename.replace("/", "_").replace(" ", "_") + ".eap";
+	    outputFilename = outputFilename.replace("/", "_").replace(" ", "_") + ".qea";
 
 	    author = options.parameterAsString(this.getClass().getName(), ArcGISWorkspaceConstants.PARAM_EA_AUTHOR,
 		    null, false, true);
@@ -511,11 +511,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    }
 
 	    // connect to EA repository in outputFile
-	    absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
+	    absolutePathOfOutputEaRepositoryFile = outputFile.getAbsolutePath();
 
 	    rep = new Repository();
 
-	    if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
+	    if (!rep.OpenFile(absolutePathOfOutputEaRepositoryFile)) {
 		String errormsg = rep.GetLastError();
 		r.addError(null, 30, errormsg, outputFilename);
 		rep = null;
@@ -3150,7 +3150,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	lengthByClassPropName = new TreeMap<String, Integer>();
 	numericRangeConstraintByPropNameByClassName = new TreeMap<ClassInfo, SortedMap<String, NumericRangeConstraintMetadata>>();
 	nameOfTVToDetermineFieldLength = "size";
-	absolutePathOfOutputEAPFile = null;
+	absolutePathOfOutputEaRepositoryFile = null;
 	shortNameByTaggedValue = null;
 	keepCaseOfRolename = false;
 	foreignKeySuffix = "ID";
@@ -4439,11 +4439,11 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    return "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + " is malformed. Execution will be aborted. Exception message is: '$2$'.";
 	case 7:
-	    return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	    return "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 	case 8:
-	    return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
+	    return "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
 	case 9:
 	    return "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
 	case 10:

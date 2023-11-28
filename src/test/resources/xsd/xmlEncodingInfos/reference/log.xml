@@ -7,10 +7,10 @@
     <Info message="Validation of log parameters completed."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
     <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema A', target namespace: 'http://shapechange.net/test/a'"/>
     <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema B', target namespace: 'http://shapechange.net/test/b'"/>

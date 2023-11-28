@@ -5,10 +5,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_export_scxml_explicitProfileSettings.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/export/scxml'"/>
     <Info message="Now processing target 'Model Export' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

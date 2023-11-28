@@ -61,8 +61,9 @@ import de.interactive_instruments.ShapeChange.Target.SQL.structure.ForeignKeyCon
 public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
-	    DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH, DatabaseModelConstants.PARAM_DB_OWNER,
-	    DatabaseModelConstants.PARAM_DB_VERSION, DatabaseModelConstants.PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE,
+	    DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH, DatabaseModelConstants.PARAM_DATAMODEL_EAP_PATH,
+	    DatabaseModelConstants.PARAM_DB_OWNER, DatabaseModelConstants.PARAM_DB_VERSION,
+	    DatabaseModelConstants.PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE,
 	    DatabaseModelConstants.PARAM_DM_PATTERN_PATH, DatabaseModelConstants.PARAM_EA_AUTHOR,
 	    DatabaseModelConstants.PARAM_EA_STATUS, DatabaseModelConstants.PARAM_ESTABLISH_PACKAGE_HIERARCHY,
 	    DatabaseModelConstants.PARAM_TABLESPACE,
@@ -370,7 +371,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 				SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX);
 		    }
 		}
-		
+
 		if (tableCharacteristics.containsKey(SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS)) {
 
 		    String primaryKeyColumns = tableCharacteristics.get(SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS);

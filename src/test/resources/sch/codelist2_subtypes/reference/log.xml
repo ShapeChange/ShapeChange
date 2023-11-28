@@ -2,10 +2,10 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_subtypes\test_sch_codelist2_subtypes.qea"/>
     <Info message="Application schema found, package name: 'ISO Stub1', target namespace: 'http://example.org/shapechange/sch/codelist2/isoStub1'"/>
     <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <Warning message="XML Schema Target: Code list URI of code list '$2$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list."/>

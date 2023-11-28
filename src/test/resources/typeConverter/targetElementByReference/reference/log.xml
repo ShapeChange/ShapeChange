@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'trf' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\targetElementByReference\test_typeConverter_targetElementByReference.qea"/>
     <Info message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
     <Warning message="Application schema 'MyApplicationSchema' with ID '53' is not associated with an XML Schema document. A default name is used: 'MyApplicationSchema.xsd'."/>
     <Warning message="Association class 'AssociationClass' will be removed.">

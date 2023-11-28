@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/appSchemaMetadata/identifyProfiles/test_schema_metadata.eap" />
+			value="src/test/resources/appSchemaMetadata/identifyProfiles/test_schema_metadata.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/flattener/removeObjectToFeatureTypeRelationships/testFlattening_removeObjectToFeatureTypeNavigability.EAP" />
+			value="src/test/resources/flattener/removeObjectToFeatureTypeRelationships/testFlattening_removeObjectToFeatureTypeNavigability.qea" />
 		<parameter name="appSchemaName" value="TestSchema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="sortedSchemaOutput" value="true" />

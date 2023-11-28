@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\descriptorAnnotation\test_xsd_descriptorAnnotation.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/xsd/descriptorAnnotation'"/>
     <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

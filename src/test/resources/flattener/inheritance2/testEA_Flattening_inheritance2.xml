@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/flattener/inheritance2/test_inheritance2.EAP"/>
+		<parameter name="inputFile" value="src/test/resources/flattener/inheritance2/test_inheritance2.qea"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema.*"/>
 		<parameter name="representTaggedValues" value="sequenceNumber,originalPropertyName,originalInClassName,originalSchemaName"/>
 		<parameter name="publicOnly" value="true"/>

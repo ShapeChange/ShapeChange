@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/oclPropertyMetadata/test_sch_oclPropertyMetadata.EAP" />
+			value="src/test/resources/sch/oclPropertyMetadata/test_sch_oclPropertyMetadata.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

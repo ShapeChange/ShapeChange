@@ -9,10 +9,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_1' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\basic\test_ldproxy2.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'INPUT'."/>
     <ProcessFlowInfo message="========== processing phase =========="/>
     <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

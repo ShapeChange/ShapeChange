@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/ldproxy2/basic/test_ldproxy2.eap" />
+			value="src/test/resources/ldproxy2/basic/test_ldproxy2.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="mainAppSchema" value="Test 1 - Basics" />
 		<parameter name="publicOnly" value="true" />

@@ -2,10 +2,10 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\test_codeAbsenceInModel.qea"/>
     <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/absentCodelistValueValidation'"/>
     <Info message="(Converter.java) Now processing target 'XML Schema' for input 'input'."/>
     <Info message="(Converter.java) Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'input'.&#10;-------------------------------------------------"/>

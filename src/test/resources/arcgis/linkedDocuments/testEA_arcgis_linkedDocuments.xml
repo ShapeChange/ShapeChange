@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/arcgis/linkedDocuments/test_arcgis_linkedDocuments.EAP" />
+			value="src/test/resources/arcgis/linkedDocuments/test_arcgis_linkedDocuments.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="tmpDirectory" value="testResults/arcgis/linkedDocuments/tmp" />
@@ -40,7 +40,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
 			mode="enabled" inputs="LINKEDDOCS">
 			<targetParameter name="workspaceTemplate"
-				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
+				value="src/main/resources/templates/ArcGISWorkspace_template.qea" />
 			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"

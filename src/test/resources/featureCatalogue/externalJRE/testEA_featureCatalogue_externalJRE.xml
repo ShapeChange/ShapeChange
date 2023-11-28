@@ -7,7 +7,7 @@
  <input>
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="inputFile"
-   value="src/test/resources/featureCatalogue/externalJRE/testEA_featureCatalogue_externalJRE.eap"/>
+   value="src/test/resources/featureCatalogue/externalJRE/testEA_featureCatalogue_externalJRE.qea"/>
   <parameter name="appSchemaName" value="Test Schema"/>
   <parameter name="publicOnly" value="true"/>
   <parameter name="checkingConstraints" value="enabled"/>

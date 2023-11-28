@@ -7,7 +7,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/gfs/codelistGml33/test_gfs_codelistGml33.eapx" />
+		<parameter name="inputFile" value="src/test/resources/gfs/codelistGml33/test_gfs_codelistGml33.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema - Codelist" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

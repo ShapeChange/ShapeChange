@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'flattenedModel' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace' and @inputs 'flattenedModel' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes_lengthCorrection\testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.qea"/>
     <Info message="Restriction of property 'form' in class 'Subtype1' from supertype 'ExampleFeature'."/>
     <Info message="Restriction of property 'isActive' in class 'Subtype1' from supertype 'ExampleFeature'."/>
     <Info message="Now processing transformation 'flattenedModel' for input ID: 'input'."/>
@@ -20,7 +20,7 @@
     <Info message="Performed transformation for transformer ID 'flattenedModel' for input ID: 'input'.&#10;-------------------------------------------------"/>
     <Info message="Application schema found, package name: 'Logical 2 Length Correction', target namespace: 'http://example.org/ShapeChange/arcgis/subtypes/byFeature/lengthCorrection'"/>
     <Info message="Now processing target 'ArcGIS Workspace' for input 'flattenedModel'."/>
-    <Info message="Output file 'Logical_2_Length_Correction.eap' already exists in output directory ('testResults/arcgis/subtypesFromFeatureTypes_lengthCorrection/arcgis\flattenedModel'). It will be deleted prior to processing."/>
+    <Info message="Output file 'Logical_2_Length_Correction.qea' already exists in output directory ('testResults/arcgis/subtypesFromFeatureTypes_lengthCorrection/arcgis\flattenedModel'). It will be deleted prior to processing."/>
     <Info message="File has been deleted."/>
     <Info message="=============== Postprocessing ==============="/>
     <Info message="---------- Aligning field length, scale, precision, isNullable of ArcGIS parent and subtypes  ----------"/>

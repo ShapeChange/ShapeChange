@@ -7,7 +7,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/xsd/codeAbsenceInModel/test_codeAbsenceInModel.eap" />
+			value="src/test/resources/xsd/codeAbsenceInModel/test_codeAbsenceInModel.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/diffTarget/basic/test_diff.eap" />
+			value="src/test/resources/diffTarget/basic/test_diff.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -42,7 +42,7 @@
 			mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/diffTarget/basic/results" />
 			<targetParameter name="referenceModelType" value="EA7" />
-			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/basic/test_diff_refModel.eap" />
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/basic/test_diff_refModel.qea" />
 			<targetParameter name="diffElementTypes" value="SELF, NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS" />
 			<targetParameter name="tagPattern" value="(?!sequenceNumber).*" />
 			<targetParameter name="includeModelData" value="false" />

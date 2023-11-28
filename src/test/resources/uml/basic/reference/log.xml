@@ -2,9 +2,9 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
     <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
       <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
     </Warning>
@@ -17,7 +17,7 @@
     <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
       <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
     </Warning>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.eap"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
     <Info message="Application schema found, package name: 'AppSchema1', target namespace: 'http://example.org/shapechange/uml/basic1'"/>
     <Info message="Now processing target 'XML Schema' for input 'input'."/>
     <Info message="Application schema found, package name: 'AppSchema2', target namespace: 'http://example.org/shapechange/uml/basic2'"/>

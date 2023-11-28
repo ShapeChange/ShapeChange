@@ -7,7 +7,7 @@
  <input>
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="inputFile"
-   value="src/test/resources/featureCatalogue/eaTextFormatting/test_featureCatalogue_eaTextFormatting.eap"/>
+   value="src/test/resources/featureCatalogue/eaTextFormatting/test_featureCatalogue_eaTextFormatting.qea"/>
   <parameter name="appSchemaName" value="Test"/>
   <parameter name="publicOnly" value="true"/>
   <parameter name="checkingConstraints" value="enabled"/>

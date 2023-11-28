@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileConstraintTransformer/base/test_profileConstraintTransformer.EAP" />
+			value="src/test/resources/profileConstraintTransformer/base/test_profileConstraintTransformer.qea" />
 		<parameter name="appSchemaNameRegex" value="Profile.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<descriptorSources>

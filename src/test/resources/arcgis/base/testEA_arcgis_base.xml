@@ -8,7 +8,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/arcgis/base/test_arcgis_base.eap" />
+			value="src/test/resources/arcgis/base/test_arcgis_base.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -164,7 +164,7 @@
 			mode="enabled" inputs="flattenedModel">
 
 			<targetParameter name="workspaceTemplate"
-				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
+				value="src/main/resources/templates/ArcGISWorkspace_template.qea" />
 			<targetParameter name="defaultEncodingRule"
 				value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />

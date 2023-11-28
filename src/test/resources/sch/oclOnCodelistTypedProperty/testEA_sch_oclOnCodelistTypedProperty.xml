@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/oclOnCodelistTypedProperty/test_sch_oclOnCodelistTypedProperty.EAP" />
+			value="src/test/resources/sch/oclOnCodelistTypedProperty/test_sch_oclOnCodelistTypedProperty.qea" />
 		<parameter name="appSchemaNameRegex" value=".*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

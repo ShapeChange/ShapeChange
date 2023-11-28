@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/aixmSchemaMerger/basic/test_SBVR_AIXM.eap" />
+		<parameter name="inputFile" value="src/test/resources/aixmSchemaMerger/basic/test_SBVR_AIXM.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema|ExtSchema." />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

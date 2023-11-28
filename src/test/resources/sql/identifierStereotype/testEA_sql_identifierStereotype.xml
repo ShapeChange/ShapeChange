@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/identifierStereotype/test_sql_identifierStereotype.EAP" />
+			value="src/test/resources/sql/identifierStereotype/test_sql_identifierStereotype.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

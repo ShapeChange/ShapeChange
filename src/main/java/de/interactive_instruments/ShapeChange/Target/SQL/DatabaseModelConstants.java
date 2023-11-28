@@ -87,18 +87,19 @@ public class DatabaseModelConstants {
 	public static final String PARAM_DELETE_PREEXISTING_DATAMODEL_PACKAGE = "deletePreExistingDataModelPackage";
 
 	/**
-	 * This optional parameter can be used to provide the path to the EAP file
+	 * This optional parameter can be used to provide the path to the EA repo file
 	 * in which the data model shall be created. If the value is a URL, the file
 	 * will be copied to the output directory. If the value is a path to a local
 	 * file, that file will be used. If the local file (including the directory
 	 * structure) does not exist yet, it will be created. The parameter can be
-	 * used to write data models for different DBMSs into the same EAP file,
-	 * rather than having them written into different EAPs. To achieve this,
-	 * simply specify a local .eap file using this parameter in the SQL DDL
+	 * used to write data models for different DBMSs into the same EA repo file,
+	 * rather than having them written into different EA repos. To achieve this,
+	 * simply specify a local EA repo file using this parameter in the SQL DDL
 	 * target configurations via which the DBMS specific data models are
 	 * created.
 	 * 
 	 */
+	public static final String PARAM_DATAMODEL_EA_REPOSITORY_PATH = "dataModelEaRepositoryPath";
 	public static final String PARAM_DATAMODEL_EAP_PATH = "dataModelEapPath";
 
 	/**

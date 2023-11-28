@@ -8,10 +8,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'nm' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'nm' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\namingModifier\addSuffix1\test_namingModifier_addSuffix.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'nm' for input ID: 'original'."/>
     <ProcessFlowInfo message="---------- now processing: rule-trf-add-suffix ----------"/>
     <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>

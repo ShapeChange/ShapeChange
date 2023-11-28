@@ -244,8 +244,8 @@ public abstract class BasicTest {
 		    } else if (fresExtension.equals("json") && fileFormatsToCheck.contains("json")) {
 			similarJson(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
-		    } else if (fresExtension.equals("eap") && fileFormatsToCheck.contains("eap")) {
-			similarEap(dirResults + File.separator + fres.getName(),
+		    } else if (fresExtension.equals("qea") && fileFormatsToCheck.contains("qea")) {
+			similarEaRepo(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
 		    } else if ((fresExtension.equals("yaml") && fileFormatsToCheck.contains("yaml"))
 			    || (fresExtension.equals("yml") && fileFormatsToCheck.contains("yml"))) {
@@ -616,7 +616,7 @@ public abstract class BasicTest {
 	}
     }
 
-    private void similarEap(String fileName, String referenceFileName) {
+    private void similarEaRepo(String fileName, String referenceFileName) {
 
 	try {
 
@@ -634,11 +634,11 @@ public abstract class BasicTest {
 
 	    boolean similar = differ.similar(file, referenceFile);
 
-	    assertTrue(similar, "EAP output differs from reference result. Result file: " + fileName
+	    assertTrue(similar, "EA repository output differs from reference result. Result file: " + fileName
 		    + " - Reference file: " + referenceFileName + ". Details:\n" + differ.getDiffDetails());
 
 	} catch (Exception e) {
-	    fail("Exception while comparing EAP '" + fileName + "' to reference file '" + referenceFileName
+	    fail("Exception while comparing EA repository '" + fileName + "' to reference file '" + referenceFileName
 		    + "'. Exception message is: " + e.getMessage());
 	}
 

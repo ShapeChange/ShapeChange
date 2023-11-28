@@ -2,7 +2,7 @@
 <ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input>
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/test_diff.eap"/>
+		<parameter name="inputFile" value="src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/test_diff.qea"/>
 		<parameter name="appSchemaNameRegex" value="Test Schema.*"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="enabled"/>
@@ -43,7 +43,7 @@
 			<targetParameter name="producer" value="interactive instruments GmbH"/>	
 			<targetParameter name="xsltPfad" value="src/main/resources/xslt"/>
 			<targetParameter name="referenceModelType" value="EA7"/>
-			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/test_diff_refModel.eap"/>
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/featureCatalogue/derivationOfApplicationSchemaDifferences/test_diff_refModel.qea"/>
 		</Target>
 	</targets>
 </ShapeChangeConfiguration>

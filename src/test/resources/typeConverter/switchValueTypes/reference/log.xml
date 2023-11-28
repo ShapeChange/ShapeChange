@@ -4,10 +4,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'trf' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT trf' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.qea"/>
     <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'"/>
     <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

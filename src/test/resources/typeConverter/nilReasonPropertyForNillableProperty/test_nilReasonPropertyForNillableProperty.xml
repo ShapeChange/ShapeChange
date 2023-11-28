@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-	 <parameter name="inputFile" value="src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/test_nilReasonPropertyForNillableProperty.EAP" />
+	 <parameter name="inputFile" value="src/test/resources/typeConverter/nilReasonPropertyForNillableProperty/test_nilReasonPropertyForNillableProperty.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

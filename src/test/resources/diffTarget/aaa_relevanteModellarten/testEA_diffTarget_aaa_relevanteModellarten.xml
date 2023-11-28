@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa.eapx" />
+			value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -43,7 +43,7 @@
 			mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/diffTarget/aaa_relevanteModellarten/results" />
 			<targetParameter name="referenceModelType" value="EA7" />
-			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.eapx" />
+			<targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.qea" />
 			<targetParameter name="tagPattern" value="AAA:Modellart" />
 			<targetParameter name="tagsToSplit" value="AAA:Modellart|AAA:Grunddatenbestand" />
 			<targetParameter name="includeModelData" value="false" />

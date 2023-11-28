@@ -50,8 +50,8 @@ ShapeChange configuration to run the unit test with the SCXML encoded
 model. This is a mechanism to speed up the processing time of the unit
 tests, and is described in further detail in the ShapeChange
 https://github.com/ShapeChange/ShapeChange/wiki/Developer-Documentation#unit-tests[developer
-documentation]. If the EA repository file is named model.eap or
-model.eapx, then the SCXML model file will be named model.zip. If the
+documentation]. If the EA repository file is named model.qea or
+model.qeax, then the SCXML model file will be named model.zip. If the
 original ShapeChange configuration is named scConfig.xml, then the
 configuration to process the SCXML encoded model will be named
 scConfig_runWithSCXML.xml.

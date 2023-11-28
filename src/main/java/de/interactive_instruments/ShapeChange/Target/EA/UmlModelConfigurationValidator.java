@@ -63,7 +63,8 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
 	    .of(UmlModelConstants.PARAM_EA_AUTHOR, UmlModelConstants.PARAM_EA_STATUS,
-		    UmlModelConstants.PARAM_EAP_TEMPLATE, UmlModelConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
+		    UmlModelConstants.PARAM_EA_TEMPLATE, UmlModelConstants.PARAM_EAP_TEMPLATE,
+		    UmlModelConstants.PARAM_IGNORE_TAGGED_VALUES_REGEX,
 		    UmlModelConstants.PARAM_INCLUDE_ASSOCIATIONEND_OWNERSHIP,
 		    UmlModelConstants.PARAM_MERGE_CONSTRAINT_COMMENTS_INTO_TEXT, UmlModelConstants.PARAM_MODEL_FILENAME,
 		    UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE, UmlModelConstants.PARAM_OMIT_OUTPUT_PACKAGE_DATETIME,
@@ -96,7 +97,7 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 	    String outputDirectory = outputDirectoryBase.trim() + File.separator + modelProviderId;
 
 	    String outputFilename = config.parameterAsString(UmlModelConstants.PARAM_MODEL_FILENAME,
-		    "ShapeChangeExport.eap", false, true);
+		    "ShapeChangeExport.qea", false, true);
 
 	    /*
 	     * Make sure repository file exists
@@ -124,8 +125,8 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 
 	    if (!repfile.exists()) {
 		ex = false;
-		if (!outputFilename.toLowerCase().endsWith(".eap")) {
-		    outputFilename += ".eap";
+		if (!outputFilename.toLowerCase().endsWith(".qea")) {
+		    outputFilename += ".qea";
 		    repfile = new java.io.File(outputFilename);
 		    ex = repfile.exists();
 		}
@@ -136,38 +137,43 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 	    if (!ex) {
 
 		/*
-		 * Either copy EAP template, or create new repository.
+		 * Either copy EA repository template, or create new repository.
 		 */
+		
+		String eaTemplateFilePath;
+		if (config.hasParameter(UmlModelConstants.PARAM_EA_TEMPLATE)) {
+		    eaTemplateFilePath = config.getParameterValue(UmlModelConstants.PARAM_EA_TEMPLATE);
+		} else {
+		    eaTemplateFilePath = config.getParameterValue(UmlModelConstants.PARAM_EAP_TEMPLATE);
+		}
 
-		String eapTemplateFilePath = config.getParameterValue(UmlModelConstants.PARAM_EAP_TEMPLATE);
-
-		if (eapTemplateFilePath != null) {
+		if (eaTemplateFilePath != null) {
 
 		    // copy template file either from remote or local URI
-		    if (eapTemplateFilePath.toLowerCase().startsWith("http")) {
+		    if (eaTemplateFilePath.toLowerCase().startsWith("http")) {
 			try {
-			    URL templateUrl = new URL(eapTemplateFilePath);
+			    URL templateUrl = new URL(eaTemplateFilePath);
 			    FileUtils.copyURLToFile(templateUrl, repfile);
 			    created = true;
 			} catch (MalformedURLException e1) {
-			    result.addError(this, 51, eapTemplateFilePath, e1.getMessage());
+			    result.addError(this, 51, eaTemplateFilePath, e1.getMessage());
 			    isValid = false;
 			} catch (IOException e2) {
 			    result.addError(this, 53, e2.getMessage());
 			    isValid = false;
 			}
 		    } else {
-			File eaptemplate = new File(eapTemplateFilePath);
-			if (eaptemplate.exists()) {
+			File eatemplate = new File(eaTemplateFilePath);
+			if (eatemplate.exists()) {
 			    try {
-				FileUtils.copyFile(eaptemplate, repfile);
+				FileUtils.copyFile(eatemplate, repfile);
 				created = true;
 			    } catch (IOException e) {
 				result.addError(this, 53, e.getMessage());
 				isValid = false;
 			    }
 			} else {
-			    result.addError(this, 52, eaptemplate.getAbsolutePath());
+			    result.addError(this, 52, eatemplate.getAbsolutePath());
 			    isValid = false;
 			}
 		    }
@@ -240,14 +246,14 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 	case 32:
 	    return "Could not create output directory at $1$. Tests with an actual output repository will thus not be performed.";
 	case 51:
-	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EAP_TEMPLATE
+	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + " is malformed. Exception message is: '$2$'.";
 	case 52:
-	    return "EAP template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-		    + UmlModelConstants.PARAM_EAP_TEMPLATE
+	    return "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+		    + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 	case 53:
-	    return "Exception encountered when copying EAP template file to output destination. Message is: $1$.";
+	    return "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
 
 	case 100:
 	    return "The target configuration contains map entries with qualified stereotypes as target types. The following profiles from these map entries are not loaded: $1$. That is only an issue if the actual encoding attempts to use map entries with these profiles.";

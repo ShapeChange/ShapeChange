@@ -2,10 +2,10 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\linkedDocuments\test_arcgis_linkedDocuments.qea"/>
     <Info message="Now processing transformation 'LINKEDDOCS' for input ID: 'INPUT'."/>
     <Info message="---------- now processing: rule-trf-all-prependText ----------"/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>

@@ -46,7 +46,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 	public void testBasicFunctionality() {
 
 		multiTest("src/test/resources/arcgis/base/testEA_arcgis_base.xml",
-				new String[] { "eap" }, "testResults/arcgis/base",
+				new String[] { "qea" }, "testResults/arcgis/base",
 				"src/test/resources/arcgis/base/reference");
 	}
 
@@ -55,7 +55,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/reflexiveRelationship/testEA_arcgis_reflexiveRelationship.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/reflexiveRelationship",
 				"src/test/resources/arcgis/reflexiveRelationship/reference");
 	}
@@ -65,7 +65,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/relationshipClasses/testEA_arcgis_relationshipClasses.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/relationshipClasses",
 				"src/test/resources/arcgis/relationshipClasses/reference");
 	}
@@ -75,7 +75,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/linkedDocuments/testEA_arcgis_linkedDocuments.xml",
-				new String[] { "eap" }, "testResults/arcgis/linkedDocuments",
+				new String[] { "qea" }, "testResults/arcgis/linkedDocuments",
 				"src/test/resources/arcgis/linkedDocuments/reference");
 	}
 
@@ -84,7 +84,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/representTaggedValues/testEA_arcgis_representTaggedValues.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/representTaggedValues",
 				"src/test/resources/arcgis/representTaggedValues/reference");
 	}
@@ -94,7 +94,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/subtypesFromFeatureTypes/testEA_arcgis_subtypesFromFeatureTypes.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/subtypesFromFeatureTypes",
 				"src/test/resources/arcgis/subtypesFromFeatureTypes/reference");
 	}
@@ -104,7 +104,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/subtypesFromFeatureTypes_lengthCorrection/testEA_arcgis_subtypesFromFeatureTypes_lengthCorrection.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/subtypesFromFeatureTypes_lengthCorrection",
 				"src/test/resources/arcgis/subtypesFromFeatureTypes_lengthCorrection/reference");
 	}
@@ -114,7 +114,7 @@ public class ArcGISWorkspaceTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/arcgis/subtypesFromSubtypeSet/testEA_arcgis_subtypesFromSubtypeSet.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/arcgis/subtypesFromSubtypeSet",
 				"src/test/resources/arcgis/subtypesFromSubtypeSet/reference");
 	}

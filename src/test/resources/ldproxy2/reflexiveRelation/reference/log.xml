@@ -9,10 +9,10 @@
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'IDENTITY' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'IDENTITY' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\reflexiveRelation\test_reflexiveRelation.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
     <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

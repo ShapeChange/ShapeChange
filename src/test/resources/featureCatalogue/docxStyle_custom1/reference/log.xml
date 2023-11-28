@@ -4,10 +4,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'IDENTITY' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'IDENTITY' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\featureCatalogue\docxStyle_custom1\test_featureCatalogue_docxStyle_custom1.qea"/>
     <Info message="Now processing transformation 'IDENTITY' for input ID: 'myInputId'."/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <Info message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'myInputId'.&#10;-------------------------------------------------"/>

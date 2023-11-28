@@ -256,7 +256,7 @@ public class DefaultDialog extends JFrame
 				options.setParameter("inputFile", mdl);
 				if (mdl.toLowerCase().endsWith(".xmi")||mdl.toLowerCase().endsWith(".xml"))
 					options.setParameter("inputModelType", "XMI10");
-				else if (mdl.toLowerCase().endsWith(".eap"))
+				else if (mdl.toLowerCase().endsWith(".qea"))
 					options.setParameter("inputModelType", "EA7");
 				else if (mdl.toLowerCase().endsWith(".mdb"))
 					options.setParameter("inputModelType", "GCSR");

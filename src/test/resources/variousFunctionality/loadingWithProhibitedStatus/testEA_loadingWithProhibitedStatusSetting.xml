@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/variousFunctionality/loadingWithProhibitedStatus/test_loadingWithProhibitedStatusSetting.EAP"/>
+		<parameter name="inputFile" value="src/test/resources/variousFunctionality/loadingWithProhibitedStatus/test_loadingWithProhibitedStatusSetting.qea"/>
 		<parameter name="appSchemaName" value="Test"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="prohibitLoadingClassesWithStatusTaggedValue" value="notValid,retired,superseded"/>

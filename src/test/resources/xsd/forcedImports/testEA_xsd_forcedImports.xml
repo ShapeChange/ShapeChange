@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/xsd/forcedImports/test_xsd_forcedImports.EAP" />
+			value="src/test/resources/xsd/forcedImports/test_xsd_forcedImports.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<descriptorSources>

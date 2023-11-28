@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/flattener/homogeneousGeometries_associations/testFlattening_homogeneousGeometry.EAP" />
+			value="src/test/resources/flattener/homogeneousGeometries_associations/testFlattening_homogeneousGeometry.qea" />
 		<parameter name="appSchemaName" value="AppSchema_Test1" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

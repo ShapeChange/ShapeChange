@@ -7,7 +7,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/ldproxy2/complexDatatypes/test_ldproxy2_complexDatatypes.eapx" />
+		<parameter name="inputFile" value="src/test/resources/ldproxy2/complexDatatypes/test_ldproxy2_complexDatatypes.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

@@ -7,10 +7,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\lengthQualifier\test_sql_lengthQualifier.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/lengthQualifier'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Determined database system is 'PostgreSQL'."/>
@@ -52,11 +52,11 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/postgresql/INPUT/database_model_postgresql.sql" target="SQL DDL">database_model_postgresql.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/postgresql/INPUT/database_model_postgresql.eap" target="SQL DDL">database_model_postgresql.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/postgresql/INPUT/database_model_postgresql.qea" target="SQL DDL">database_model_postgresql.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_sqlserver/INPUT/database_model_sqlserver.sql" target="SQL DDL">database_model_sqlserver.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_sqlserver/INPUT/database_model_sqlserver.eap" target="SQL DDL">database_model_sqlserver.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_sqlserver/INPUT/database_model_sqlserver.qea" target="SQL DDL">database_model_sqlserver.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_oracle/INPUT/database_model_oracle.sql" target="SQL DDL">database_model_oracle.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_oracle/INPUT/database_model_oracle.eap" target="SQL DDL">database_model_oracle.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_oracle/INPUT/database_model_oracle.qea" target="SQL DDL">database_model_oracle.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/lengthQualifier/ddl_oracle_noGlobalLengthQualifier/INPUT/database_model_oracle.sql" target="SQL DDL">database_model_oracle.sql</Result>
   </Results>
 </ShapeChangeResult>

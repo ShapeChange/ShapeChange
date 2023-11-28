@@ -8,7 +8,7 @@
 		<parameter name="addTaggedValues"
 			value="sourceTV,aliasList,informationResourceURI,charTV,numTV" />
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/owl/singleOntologyPerSchema/test_owliso.eap" />
+		<parameter name="inputFile" value="src/test/resources/owl/singleOntologyPerSchema/test_owliso.qea" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="oclConstraintTypeRegex" value="OCL" />

@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="testResults/profileTransfer/test2/results/transfer/INPUT/test2_profileTransfer.eap" />
+			value="testResults/profileTransfer/test2/results/transfer/INPUT/test2_profileTransfer.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

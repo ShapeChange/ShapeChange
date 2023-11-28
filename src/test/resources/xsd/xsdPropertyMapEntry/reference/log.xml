@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\xsd\xsdPropertyMapEntry\test_xsdPropertyMapEntry.qea"/>
     <Info message="Application schema found, package name: 'Test Schema1', target namespace: 'http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/1'"/>
     <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <Info message="Application schema found, package name: 'Test Schema2', target namespace: 'http://www.example.org/shapechange/xsd/xsdPropertyMapEntry/2'"/>

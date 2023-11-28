@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="addTaggedValues" value="ontologyNameTV,sourceTV" />
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/owl/multipleOntologiesOnePerPackage/test_owliso.eap" />
+		<parameter name="inputFile" value="src/test/resources/owl/multipleOntologiesOnePerPackage/test_owliso.qea" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="sortedSchemaOutput" value="true" />

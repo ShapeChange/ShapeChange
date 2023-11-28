@@ -7,7 +7,7 @@
  <input id="myInputId">
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="inputFile"
-   value="src/test/resources/featureCatalogue/docxStyle_custom1/test_featureCatalogue_docxStyle_custom1.eap"/>
+   value="src/test/resources/featureCatalogue/docxStyle_custom1/test_featureCatalogue_docxStyle_custom1.qea"/>
   <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
   <parameter name="publicOnly" value="true"/>
   <!-- For UnitTests we omit diagrams, because image size depends on user settings in EA. -->

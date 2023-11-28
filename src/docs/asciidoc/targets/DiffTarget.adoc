@@ -554,7 +554,7 @@ Explanation: currently unused by this target
   mode="enabled">
   <targetParameter name="outputDirectory" value="testResults/diffTarget/aaa_relevanteModellarten/results" />
   <targetParameter name="referenceModelType" value="EA7" />
-  <targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.eapx" />
+  <targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/diffTarget/aaa_relevanteModellarten/test_diff_aaa_refModel.qea" />
   <targetParameter name="tagsToSplit" value="AAA:Modellart|AAA:Grunddatenbestand" />
   <targetParameter name="includeModelData" value="false" />
   <targetParameter name="aaaModel" value="true" />

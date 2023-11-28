@@ -28,15 +28,15 @@ The ShapeChange {project-version} release package can be downloaded https://shap
 
 Additional information, including dependencies:
 
-* Java Version: Java 11
-* Tested EA Version(s): EA 15.2
+* Java Version: Java 11 (tested with 64 bit)
+* Tested EA Version(s): EA 16.1 (both 32 and 64 bit)
 ** NOTE: This field specifies the versions of EA with which the given
 ShapeChange release has been developed and tested. The release will in
 most cases also work with other versions of EA (especially: versions
 prior to the specified version), because the EA API as well as the
 interfaces used by ShapeChange are often - but not always - backwards
-compatible. Versions of EA prior to 7.5 should not be used.
-* EA API included in distribution: EA 15.2.1554
+compatible. However, versions of EA prior to EA 16.0 should not be used.
+* EA API included in distribution: EA 16.1.1628
 ** NOTE: If you are using a different version of EA and experience
 issues when executing ShapeChange, you can try exchanging the eaapi.jar
 in the "lib" folder with the one provided by your version of EA (the
