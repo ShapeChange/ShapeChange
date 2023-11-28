@@ -1,0 +1,116 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri_from_config/t/main.json",
+  "title": "test application schema",
+  "description": "Definition: main package Def  Description: main package Desc",
+  "$defs": {
+    "CL": {
+      "$anchor": "CL",
+      "description": "Definition: CL Def  Description: CL Desc",
+      "code": 0,
+      "type": "string"
+    },
+    "E1": {
+      "$anchor": "E1",
+      "description": "Definition: E1 Def  Description: E1 Desc",
+      "code": 0,
+      "type": "string",
+      "enum": [
+        "e1",
+        "e2"
+      ]
+    },
+    "E2": {
+      "$anchor": "E2",
+      "description": "Definition: E2 Def  Description: E2 Desc",
+      "code": 0,
+      "type": "string",
+      "enum": [
+        "1000",
+        "2000"
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "title": "Feature type one",
+      "description": "Definition: FT1 Def  Description: FT1 Desc",
+      "label": [
+        "alias1",
+        "alias2",
+        "alias3"
+      ],
+      "label2": [
+        "alias1",
+        "alias2",
+        "alias3"
+      ],
+      "code": 10000,
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "att1": {
+              "title": "attribute one",
+              "description": "Definition: att1 Def  Description: att1 Desc",
+              "label": "single alias",
+              "label2": [
+                "single alias"
+              ],
+              "code": 1010,
+              "isDefinedBy": [
+                "http://example.org/view?i\u003datt1a",
+                "http://example.org/view?i\u003datt1b"
+              ],
+              "examples": [
+                "xyz"
+              ],
+              "type": "string"
+            },
+            "att2": {
+              "title": "attribute two",
+              "description": "Definition: [None Specified]  Description: [None Specified]",
+              "unit": "m2",
+              "examples": [
+                "1.1",
+                "2.2",
+                "3"
+              ],
+              "type": "number"
+            }
+          },
+          "required": [
+            "att1",
+            "att2"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "code": 2000,
+      "isDefinedBy": "http://example.org/view?i\u003dFT2",
+      "type": "object"
+    },
+    "T": {
+      "$anchor": "T",
+      "description": "Definition: T Def  Description: T Desc",
+      "code": 0,
+      "type": "object"
+    },
+    "U": {
+      "$anchor": "U",
+      "description": "Definition: U Def  Description: U Desc",
+      "code": 0,
+      "type": [
+        "integer",
+        "boolean"
+      ]
+    }
+  }
+}

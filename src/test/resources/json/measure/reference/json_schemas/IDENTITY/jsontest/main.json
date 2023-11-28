@@ -1,0 +1,70 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "title": "applicationSchema",
+  "description": "Definition: [None Specified]  Description: [None Specified]",
+  "$defs": {
+    "DT": {
+      "$anchor": "DT",
+      "description": "Definition: Notes DT  Description: [None Specified]",
+      "type": "object",
+      "properties": {
+        "attLength": {
+          "description": "Definition: Notes attLength  Description: [None Specified]",
+          "unit": "km",
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "uniqueItems": true
+        },
+        "attMeasure": {
+          "description": "Definition: Notes attMeasure  Description: [None Specified]",
+          "$ref": "http://example.org/jsonschema/measure.json"
+        },
+        "attString": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attMeasure",
+        "attString"
+      ]
+    },
+    "FT": {
+      "$anchor": "FT",
+      "description": "Definition: Notes FT  Description: [None Specified]",
+      "type": "object",
+      "properties": {
+        "attDatatype": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "$ref": "#DT"
+        },
+        "attInteger": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "type": "integer"
+        },
+        "attLength": {
+          "description": "Definition: Notes attLength  Description: [None Specified]",
+          "unit": "m",
+          "type": "number"
+        },
+        "attMeasure": {
+          "description": "Definition: Notes attMeasure  Description: [None Specified]",
+          "type": "array",
+          "items": {
+            "$ref": "http://example.org/jsonschema/measure.json"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "attDatatype",
+        "attInteger",
+        "attLength"
+      ]
+    }
+  }
+}

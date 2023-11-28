@@ -68,8 +68,12 @@ public class TaggedValueNormalizer {
      * 
      * NOTE: defaultGeometry is also used by the ldproxy2 target.
      */
-    protected static final Set<String> jsonTags = Stream.of("jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
-	    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern").collect(Collectors.toSet());
+    protected static final Set<String> jsonTags = Stream
+	    .of("collectionUriTemplate", "jsonFormat", "jsonDocument", "jsonBaseURI", "jsonBaseUri",
+		    "jsonLayerTableURI", "jsonDirectory", "defaultGeometry", "jsonPattern", "jsonId", "minLength",
+		    "minInclusive", "minExclusive", "maxInclusive", "maxExclusive", "unit", "jsonPrimaryGeometry",
+		    "jsonPrimaryPlace", "jsonPrimaryInstant", "jsonPrimaryInterval", "jsonSupertypesEncodingOrder")
+	    .collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the ArcGIS encoding rule
@@ -97,9 +101,9 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the Ldproxy2 target
      */
-    protected static final Set<String> ldp2Tags = Stream
-	    .of("ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate",
-		    "ldpTitleAttribute", "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove")
+    protected static final Set<String> ldp2Tags = Stream.of("ldp2EncodingRule", "ldpCodeTargetValue",
+	    "ldpFallbackValue", "ldpFeatureTitleTemplate", "ldpTitleAttribute", "defaultInstant",
+	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldpGenericValueTypeSuffix", "ldpTypeAttribute")
 	    .collect(Collectors.toSet());
 
     /*
@@ -122,9 +126,11 @@ public class TaggedValueNormalizer {
 	    "toCodelist", "codelistType", "shortName", "codeListSource", "codeListSourceCharset",
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
 	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
-	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "metadataType", "voidReasonType",
-	    "valueTypeOptions", "xsdForcedImports", "pattern", "literalEncodingType", "timeIntervalBoundaryType",
-	    "representsFeatureTypeSet", "representsTypeSet").collect(Collectors.toSet());
+	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "originalClassName",
+	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
+	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
+	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet")
+	    .collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values

@@ -1,0 +1,27 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri/ts9/ts9/test9.json",
+  "$defs": {
+    "TS9_FT1": {
+      "$anchor": "TS9_FT1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "propIdentifier": {
+          "type": "number"
+        },
+        "propA": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "@type",
+        "propA",
+        "propIdentifier"
+      ]
+    }
+  }
+}

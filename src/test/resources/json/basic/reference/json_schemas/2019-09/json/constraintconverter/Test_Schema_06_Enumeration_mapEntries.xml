@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts6/ts6/test6.json#TS6_Enumeration1"
+             type="TS6_Enumeration1"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts6/ts6/test6.json#TS6_Enumeration2"
+             type="TS6_Enumeration2"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts6/ts6/test6.json#TS6_Enumeration3"
+             type="TS6_Enumeration3"/>
+</mapEntries>

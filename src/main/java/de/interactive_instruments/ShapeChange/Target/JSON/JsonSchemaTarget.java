@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +45,14 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Element;
 
 import de.interactive_instruments.ShapeChange.MapEntryParamInfos;
 import de.interactive_instruments.ShapeChange.MessageSource;
@@ -59,6 +61,7 @@ import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ProcessRuleSet;
 import de.interactive_instruments.ShapeChange.RuleRegistry;
 import de.interactive_instruments.ShapeChange.ShapeChangeAbortException;
+import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Info;
@@ -66,6 +69,8 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Target.MapEntries;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
+import de.interactive_instruments.ShapeChange.Target.TargetUtil;
+import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
@@ -82,6 +87,7 @@ import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinLengthKe
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MinimumKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.MultipleOfKeyword;
 import de.interactive_instruments.ShapeChange.Target.JSON.jsonschema.PatternKeyword;
+import de.interactive_instruments.ShapeChange.Util.GenericValueTypeUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -116,12 +122,26 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static String inlineOrByRefDefault = null;
 
     protected static String linkObjectUri = null;
+    protected static String measureObjectUri = "FIXME";
 
     protected static String byReferenceJsonSchemaDefinition = null;
+    protected static String byReferenceFormat = "uri";
 
+    protected static String baseJsonSchemaDefinitionForCollections = null;
     protected static String baseJsonSchemaDefinitionForFeatureTypes = null;
     protected static String baseJsonSchemaDefinitionForObjectTypes = null;
     protected static String baseJsonSchemaDefinitionForDataTypes = null;
+
+    protected static EncodingInfos baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
+    protected static EncodingInfos baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
+    protected static EncodingInfos baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+    protected static String collectionSchemaFileName = null;
+    protected static boolean featureCollectionOnly = false;
+
+    protected static boolean preventUnknownTypesInFeatureCollection = false;
+
+    protected static Optional<EncodingRestrictions> idMemberEncodingRestrictions = Optional.empty();
 
     protected static String objectIdentifierName = "id";
     protected static JsonSchemaType[] objectIdentifierType = new JsonSchemaType[] { JsonSchemaType.STRING };
@@ -133,10 +153,24 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
      */
     protected static MapEntryParamInfos mapEntryParamInfos = null;
     protected static SortedMap<PackageInfo, List<ProcessMapEntry>> mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-    protected static Map<ClassInfo, String> entityTypeMemberPathByCi = new HashMap<>();
+    protected static Map<ClassInfo, EncodingInfos> encodingInfosByCi = new HashMap<>();
 
     protected static SortedMap<PackageInfo, JsonSchemaDocument> jsDocsByPkg = new TreeMap<>();
     protected static Map<ClassInfo, JsonSchemaDocument> jsDocsByCi = new HashMap<>();
+
+    protected static List<AbstractJsonSchemaAnnotationElement> annotationElements = new ArrayList<>();
+
+    protected static boolean createFeatureCollection = false;
+    protected static PackageInfo schemaForFeatureCollection = null;
+
+    protected static boolean useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+    protected static boolean createSeparatePropertyDefinitions = false;
+    protected static SortedSet<String> geoJsonCompatibleGeometryTypes = null;
+    protected static SortedSet<String> genericValueTypes = null;
+    protected static SortedSet<String> featureRefProfiles = null;
+    protected static SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
+    protected static boolean featureRefWithAnyCollectionId = false;
 
     /* ------ */
     /*
@@ -168,6 +202,24 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	} else {
 	    numberOfEncodedSchemas++;
+
+	    /*
+	     * Identify the schema in which to create the "FeatureCollection" definition
+	     * schema.
+	     */
+	    if (schemaForFeatureCollection == null) {
+
+		// try to identify the main schema (just once)
+		if (!initialised) {
+		    schemaForFeatureCollection = TargetUtil.findMainSchemaForSingleTargets(model.selectedSchemas(), o,
+			    r);
+		}
+
+		// otherwise we use the first schema we encounter
+		if (schemaForFeatureCollection == null) {
+		    schemaForFeatureCollection = schema;
+		}
+	    }
 	}
 
 	if (!initialised) {
@@ -189,6 +241,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    prettyPrint = options.parameterAsBoolean(this.getClass().getName(), JsonSchemaConstants.PARAM_PRETTY_PRINT,
 		    true);
 
+	    useAnchorsInLinksToGeneratedSchemaDefinitions = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS, true);
+
 	    entityTypeName = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_ENTITY_TYPE_NAME, "entityType", false, true);
 
@@ -199,15 +254,71 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		    JsonSchemaConstants.PARAM_LINK_OBJECT_URI, "", false, true);
 	    // TODO: set useful default for linkObjectUri
 
+	    measureObjectUri = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_MEASURE_OBJECT_URI, "FIXME", false, true);
+
 	    byReferenceJsonSchemaDefinition = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION, null, false, true);
 
+	    byReferenceFormat = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_BY_REFERENCE_FORMAT, "uri", false, true);
+
+	    baseJsonSchemaDefinitionForCollections = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_COLLECTIONS, null, false, true);
+
 	    baseJsonSchemaDefinitionForFeatureTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForFeatureTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = EncodingInfos
+			.from(options.parameterAsString(this.getClass().getName(),
+				JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_FEATURE_TYPES_ENCODING_INFOS, null,
+				false, true));
+	    }
+
 	    baseJsonSchemaDefinitionForObjectTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForObjectTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForObjectTypes_encodingInfos = EncodingInfos.from(options.parameterAsString(
+			this.getClass().getName(),
+			JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_OBJECT_TYPES_ENCODING_INFOS, null, false, true));
+	    }
+
 	    baseJsonSchemaDefinitionForDataTypes = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES, null, false, true);
+	    if (StringUtils.isNotBlank(baseJsonSchemaDefinitionForDataTypes)
+		    && options.hasParameter(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS)) {
+		// format already checked by validation of the configuration
+		baseJsonSchemaDefinitionForDataTypes_encodingInfos = EncodingInfos.from(options.parameterAsString(
+			this.getClass().getName(),
+			JsonSchemaConstants.PARAM_BASE_JSON_SCHEMA_DEF_DATA_TYPES_ENCODING_INFOS, null, false, true));
+	    }
+
+	    collectionSchemaFileName = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_COLLECTION_SCHEMA_FILE_NAME, null, false, true);
+	    if (StringUtils.isNotBlank(collectionSchemaFileName) && !collectionSchemaFileName.endsWith(".json")) {
+		collectionSchemaFileName = collectionSchemaFileName + ".json";
+	    }
+
+	    featureCollectionOnly = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_COLLECTION_ONLY, false);
+
+	    preventUnknownTypesInFeatureCollection = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS, false);
+
+	    if (options.hasParameter(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS)) {
+		// format already checked by validation of the configuration
+		idMemberEncodingRestrictions = Optional
+			.of(EncodingRestrictions.from(options.parameterAsString(this.getClass().getName(),
+				JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS, null, false, true)));
+	    }
 
 	    objectIdentifierName = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, "id", false, true);
@@ -245,6 +356,31 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		jsonSchemaVersion = JsonSchemaVersion.DRAFT_2019_09;
 	    }
 
+	    createSeparatePropertyDefinitions = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_CREATE_SEPARATE_PROPERTY_DEFINITIONS, false);
+	    geoJsonCompatibleGeometryTypes = new TreeSet<>(
+		    options.parameterAsStringList(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES, new String[] { "GM_Point",
+				    "GM_Curve", "GM_Surface", "GM_MultiPoint", "GM_MultiCurve", "GM_MultiSurface" },
+			    false, true));
+	    genericValueTypes = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_GENERIC_VALUE_TYPES, null, false, true));
+	    featureRefProfiles = new TreeSet<>(options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_PROFILES, new String[] { "rel-as-link" }, false, true));
+	    List<String> featureRefIdTypes_ = options.parameterAsStringList(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ID_TYPES, new String[] { "integer" }, false, true);
+
+	    for (String s : featureRefIdTypes_) {
+		if ("string".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.STRING);
+		} else if ("integer".equalsIgnoreCase(s)) {
+		    featureRefIdTypes.add(JsonSchemaType.INTEGER);
+		}
+	    }
+
+	    featureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, false);
+
 	    // identify map entries defined in the target configuration
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
 
@@ -264,6 +400,25 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		 * Parse all parameter information
 		 */
 		mapEntryParamInfos = new MapEntryParamInfos(result, mapEntries);
+	    }
+
+	    if (options.getCurrentProcessConfig().getAdvancedProcessConfigurations() == null) {
+
+		result.addDebug(this, 12);
+
+	    } else {
+
+		Element advancedProcessConfigElmt = options.getCurrentProcessConfig()
+			.getAdvancedProcessConfigurations();
+
+		// identify annotation elements
+		try {
+		    List<AbstractJsonSchemaAnnotationElement> annotationElmts = AnnotationGenerator
+			    .parseAndValidateJsonSchemaAnnotationElements(advancedProcessConfigElmt);
+		    annotationElements = annotationElmts;
+		} catch (ShapeChangeParseException e) {
+		    result.addError(this, 104, e.getMessage());
+		}
 	    }
 
 	    File outputDirectoryFile = new File(outputDirectory);
@@ -295,13 +450,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	 */
 	result.addDebug(this, 10001, pi.name());
 
-	String jsonBaseUri = schema.taggedValue("jsonBaseUri");
-	if (StringUtils.isBlank(jsonBaseUri)) {
-	    jsonBaseUri = options.parameterAsString(this.getClass().getName(), JsonSchemaConstants.PARAM_JSON_BASE_URI,
-		    "http://example.org/FIXME", false, true);
-	} else {
-	    jsonBaseUri = jsonBaseUri.trim();
-	}
+	String jsonBaseUri = baseUriForSchemaPackage(schema);
 
 	String jsonSubdirectory = identifyJsonDirectory(schema);
 
@@ -333,6 +482,19 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		throw new ShapeChangeAbortException();
 	    }
 	}
+    }
+
+    private String baseUriForSchemaPackage(PackageInfo schemaPi) {
+
+	String jsonBaseUri = schemaPi.taggedValue("jsonBaseUri");
+	if (StringUtils.isBlank(jsonBaseUri)) {
+	    jsonBaseUri = options.parameterAsString(this.getClass().getName(), JsonSchemaConstants.PARAM_JSON_BASE_URI,
+		    "http://example.org/FIXME", false, true);
+	} else {
+	    jsonBaseUri = jsonBaseUri.trim();
+	}
+
+	return jsonBaseUri;
     }
 
     private String jsonDocumentName(PackageInfo pi) {
@@ -399,10 +561,12 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	JsonSchemaDocument jsd;
 	String jsDoc = jsonDocumentName(pi);
 
+	String schemaId = determineSchemaId(pi, jsDoc, jsonBaseUri, jsonSubdirectory);
+
 	if (StringUtils.isNotBlank(jsDoc)) {
 	    result.addDebug(this, 102, jsDoc, pi.name());
-	    jsd = new JsonSchemaDocument(pi, model, options, result, jsDoc, this, jsonBaseUri, jsonSubdirectory,
-		    new File(subDirectoryFile, jsDoc), mapEntryParamInfos);
+	    jsd = new JsonSchemaDocument(pi, model, options, result, this, schemaId, new File(subDirectoryFile, jsDoc),
+		    mapEntryParamInfos, false);
 	    res = true;
 
 	} else {
@@ -412,8 +576,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		result.addWarning(this, 103, pi.name(), jsDoc);
 
 		result.addDebug(this, 102, jsDoc, pi.name());
-		jsd = new JsonSchemaDocument(pi, model, options, result, jsDoc, this, jsonBaseUri, jsonSubdirectory,
-			new File(subDirectoryFile, jsDoc), mapEntryParamInfos);
+		jsd = new JsonSchemaDocument(pi, model, options, result, this, schemaId,
+			new File(subDirectoryFile, jsDoc), mapEntryParamInfos, false);
 		res = true;
 	    }
 	}
@@ -427,6 +591,20 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	}
 
 	return res;
+    }
+
+    private String determineSchemaId(PackageInfo someAppSchemaPackage, String docName, String jsonBaseUri,
+	    String jsonSubdirectory) {
+
+	String result;
+	if (someAppSchemaPackage != null && StringUtils.isNotBlank(someAppSchemaPackage.taggedValue("jsonId"))) {
+	    result = someAppSchemaPackage.taggedValue("jsonId").trim();
+	} else {
+	    result = StringUtils.join(new String[] { StringUtils.removeEnd(jsonBaseUri, "/"),
+		    StringUtils.removeEnd(jsonSubdirectory, "/"), docName }, "/");
+	}
+
+	return result;
     }
 
     public static boolean isEncoded(Info i) {
@@ -471,6 +649,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	return baseJsonSchemaDefinitionForDataTypes;
     }
 
+    public SortedSet<String> genericValueTypes() {
+	return genericValueTypes;
+    }
+
     public String getEntityTypeName() {
 	return entityTypeName;
     }
@@ -493,6 +675,15 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public JsonSchemaType[] objectIdentifierType() {
 	return objectIdentifierType;
+    }
+
+    public List<AbstractJsonSchemaAnnotationElement> getAnnotationElements() {
+	return annotationElements;
+    }
+
+    public boolean isGenericValueType(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
     }
 
     @Override
@@ -550,11 +741,21 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		result.addError(this, 20, ci.name(), simpleJsTypeInfo.getSimpleType().getName());
 	    }
 
+	} else if (ci.category() == Options.DATATYPE && ci.matches(JsonSchemaConstants.RULE_CLS_GENERIC_VALUE_TYPE)
+		&& GenericValueTypeUtil.isSubtypeOfGenericValueType(ci, genericValueTypes)) {
+
+	    result.addInfo(this, 24, ci.name());
+
 	} else if (ci.category() == Options.MIXIN || ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
 		|| ci.category() == Options.DATATYPE || ci.category() == Options.ENUMERATION
 		|| ci.category() == Options.CODELIST) {
 
 	    registerClass(ci, null);
+
+	    if (ci.category() == Options.FEATURE
+		    && ci.matches(JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE)) {
+		createFeatureCollection = true;
+	    }
 
 	} else if (ci.category() == Options.UNION) {
 
@@ -810,6 +1011,11 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    jsTypeInfo.setGeometry(true);
 	}
 
+	// check if the type is a measure type
+	if (mapEntryParamInfos.hasParameter(pme, JsonSchemaConstants.ME_PARAM_MEASURE)) {
+	    jsTypeInfo.setMeasure(true);
+	}
+
 	return jsTypeInfo;
     }
 
@@ -853,6 +1059,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	jsDocsByCi.put(ci, jsd);
     }
 
+    public PackageInfo getSchemaForFeatureCollection() {
+	return schemaForFeatureCollection;
+    }
+
     @Override
     public void write() {
 
@@ -869,13 +1079,71 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return;
 	}
 
-	// get the set of all non-empty json schema documents
-	Set<JsonSchemaDocument> jsdocs = jsDocsByPkg.values().stream().filter(jsd -> jsd.hasClasses())
+	// get the set of all non-empty json schema documents, including the feature
+	// collection document
+	Set<JsonSchemaDocument> jsdocs = jsDocsByPkg.values().stream()
+		.filter(jsd -> jsd.hasClasses() || (createFeatureCollection && jsd.isFeatureCollectionDocument()))
 		.collect(Collectors.toCollection(HashSet::new));
 
-	// create the actual JSON Schema definitions
+	/*
+	 * 1. create the actual JSON Schema definitions
+	 */
 	for (JsonSchemaDocument jsdoc : jsdocs) {
 	    jsdoc.createDefinitions();
+	}
+
+	/*
+	 * 2. compute encoding infos (requires JSON Schema definitions to be created)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.computeEncodingInfos();
+	}
+
+	/*
+	 * 3. apply member restrictions (requires basic encoding infos to be computed
+	 * for all relevant classes)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.applyMemberRestrictions();
+	}
+
+	/*
+	 * 4. create collection definitions (requires encoding infos to be computed for
+	 * all relevant classes)
+	 */
+	if (StringUtils.isNotBlank(collectionSchemaFileName)) {
+
+	    String jsDoc = collectionSchemaFileName;
+	    String jsonSubdirectory = identifyJsonDirectory(schemaForFeatureCollection);
+	    File outputDirectoryFile = new File(outputDirectory);
+	    File subDirectoryFile = new File(outputDirectoryFile, jsonSubdirectory);
+	    String jsonBaseUri = baseUriForSchemaPackage(schemaForFeatureCollection);
+	    String baseSchemaId = determineSchemaId(schemaForFeatureCollection, jsDoc, jsonBaseUri, jsonSubdirectory);
+
+	    String collSchemaId;
+	    if (baseSchemaId.endsWith(".json")) {
+		collSchemaId = baseSchemaId.substring(0, baseSchemaId.lastIndexOf("/") + 1) + collectionSchemaFileName;
+	    } else {
+		collSchemaId = StringUtils.removeEnd(baseSchemaId, "/") + "/" + collectionSchemaFileName;
+	    }
+
+	    JsonSchemaDocument collJsd = new JsonSchemaDocument(null, model, options, result, this, collSchemaId,
+		    new File(subDirectoryFile, jsDoc), mapEntryParamInfos, true);
+	    jsdocs.add(collJsd);
+	    collJsd.createCollectionDefinitions();
+
+	} else {
+	    for (JsonSchemaDocument jsdoc : jsdocs) {
+		jsdoc.createCollectionDefinitions();
+	    }
+	}
+
+	/*
+	 * 5. create map entries (requires encoding infos to be computed, and
+	 * restrictions to be applied)
+	 */
+	for (JsonSchemaDocument jsdoc : jsdocs) {
+	    jsdoc.createMapEntries();
 	}
 
 	if (!diagnosticsOnly) {
@@ -941,6 +1209,21 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	mapEntries.add(me);
     }
 
+    public EncodingInfos getOrCreateEncodingInfos(ClassInfo ci) {
+
+	if (encodingInfosByCi.containsKey(ci)) {
+	    return encodingInfosByCi.get(ci);
+	} else {
+	    EncodingInfos encInfo = new EncodingInfos();
+	    encodingInfosByCi.put(ci, encInfo);
+	    return encInfo;
+	}
+    }
+
+    public Set<ClassInfo> getAllEncodedTypes() {
+	return jsDocsByCi.keySet();
+    }
+
     @Override
     public void reset() {
 
@@ -959,11 +1242,24 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	entityTypeName = null;
 	inlineOrByRefDefault = null;
 	linkObjectUri = null;
+	measureObjectUri = "FIXME";
 	byReferenceJsonSchemaDefinition = null;
+	byReferenceFormat = "uri";
 
+	baseJsonSchemaDefinitionForCollections = null;
 	baseJsonSchemaDefinitionForFeatureTypes = null;
 	baseJsonSchemaDefinitionForObjectTypes = null;
 	baseJsonSchemaDefinitionForDataTypes = null;
+
+	baseJsonSchemaDefinitionForFeatureTypes_encodingInfos = null;
+	baseJsonSchemaDefinitionForObjectTypes_encodingInfos = null;
+	baseJsonSchemaDefinitionForDataTypes_encodingInfos = null;
+
+	collectionSchemaFileName = null;
+	featureCollectionOnly = false;
+	preventUnknownTypesInFeatureCollection = false;
+
+	idMemberEncodingRestrictions = Optional.empty();
 
 	objectIdentifierName = "id";
 	objectIdentifierType = new JsonSchemaType[] { JsonSchemaType.STRING };
@@ -971,58 +1267,77 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	mapEntryParamInfos = null;
 	mapEntriesForEncodedTypesBySchemaPackage = new TreeMap<>();
-	entityTypeMemberPathByCi = new HashMap<>();
+	encodingInfosByCi = new HashMap<>();
+	annotationElements = new ArrayList<>();
 
 	jsDocsByPkg = new TreeMap<>();
 	jsDocsByCi = new HashMap<>();
+
+	createFeatureCollection = false;
+	schemaForFeatureCollection = null;
+
+	useAnchorsInLinksToGeneratedSchemaDefinitions = true;
+
+	createSeparatePropertyDefinitions = false;
+	genericValueTypes = null;
+	geoJsonCompatibleGeometryTypes = null;
+	featureRefProfiles = null;
+	featureRefIdTypes = new TreeSet<>();
+	featureRefWithAnyCollectionId = false;
     }
 
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule("rule-json-all-documentation");
+	r.addRule("rule-json-all-featureRefs");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
 	r.addRule("rule-json-cls-codelist-link");
 	r.addRule("rule-json-cls-codelist-uri-format");
+	r.addRule("rule-json-cls-collectionsBasedOnEntityType");
+	r.addRule("rule-json-cls-collectionsWithTopLevelEntityType");
 	r.addRule("rule-json-cls-defaultGeometry-singleGeometryProperty");
 	r.addRule("rule-json-cls-defaultGeometry-multipleGeometryProperties");
+	r.addRule("rule-json-cls-documentation-enumDescription");
 	r.addRule("rule-json-cls-identifierForTypeWithIdentity");
 	r.addRule("rule-json-cls-identifierStereotype");
 	r.addRule("rule-json-cls-ignoreIdentifier");
+	r.addRule("rule-json-cls-genericValueType");
+	r.addRule("rule-json-cls-jsonFgGeometry");
 	r.addRule("rule-json-cls-name-as-anchor");
 	r.addRule("rule-json-cls-name-as-entityType");
+	r.addRule("rule-json-cls-name-as-entityType-dataType");
 	r.addRule("rule-json-cls-name-as-entityType-union");
 	r.addRule("rule-json-cls-nestedProperties");
+	r.addRule("rule-json-cls-primaryGeometry");
+	r.addRule("rule-json-cls-primaryPlace");
+	r.addRule("rule-json-cls-primaryTime");
+	r.addRule("rule-json-cls-restrictExternalEntityTypeMember");
+	r.addRule("rule-json-cls-restrictExternalIdentifierMember");
 	r.addRule("rule-json-cls-union-propertyCount");
 	r.addRule("rule-json-cls-union-typeDiscriminator");
 	r.addRule("rule-json-cls-valueTypeOptions");
 	r.addRule("rule-json-cls-virtualGeneralization");
 	r.addRule("rule-json-prop-derivedAsReadOnly");
 	r.addRule("rule-json-prop-initialValueAsDefault");
+	r.addRule("rule-json-prop-inlineOrByReferenceTag");
+	r.addRule("rule-json-prop-measure");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-voidable");
-	
-	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson","*",new TreeSet<>(Stream.of(
-		"rule-json-cls-defaultGeometry-singleGeometryProperty",
-		"rule-json-cls-ignoreIdentifier",
-		"rule-json-cls-name-as-anchor",
-		"rule-json-cls-nestedProperties",
-		"rule-json-cls-virtualGeneralization",
-		"rule-json-prop-derivedAsReadOnly",
-		"rule-json-prop-initialValueAsDefault",
-		"rule-json-prop-readOnly",
-		"rule-json-prop-voidable"		
-		).collect(Collectors.toSet())));
+
+	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson", "*", new TreeSet<>(Stream
+		.of("rule-json-cls-defaultGeometry-singleGeometryProperty", "rule-json-cls-ignoreIdentifier",
+			"rule-json-cls-name-as-anchor", "rule-json-cls-nestedProperties",
+			"rule-json-cls-virtualGeneralization", "rule-json-prop-derivedAsReadOnly",
+			"rule-json-prop-initialValueAsDefault", "rule-json-prop-readOnly", "rule-json-prop-voidable")
+		.collect(Collectors.toSet())));
 	r.addRuleSet(defaultGeoJsonPrs);
-	
-	ProcessRuleSet defaultPlainJsonPrs = new ProcessRuleSet("defaultPlainJson","*",new TreeSet<>(Stream.of(
-		"rule-json-cls-name-as-anchor",
-		"rule-json-prop-derivedAsReadOnly",
-		"rule-json-prop-initialValueAsDefault",
-		"rule-json-prop-readOnly",
-		"rule-json-prop-voidable"
-		).collect(Collectors.toSet())));
+
+	ProcessRuleSet defaultPlainJsonPrs = new ProcessRuleSet("defaultPlainJson", "*",
+		new TreeSet<>(Stream.of("rule-json-cls-name-as-anchor", "rule-json-prop-derivedAsReadOnly",
+			"rule-json-prop-initialValueAsDefault", "rule-json-prop-readOnly", "rule-json-prop-voidable")
+			.collect(Collectors.toSet())));
 	r.addRuleSet(defaultPlainJsonPrs);
     }
 
@@ -1056,6 +1371,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	case 10:
 	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
+	case 12:
+	    return "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
 
 	case 15:
 	    return "No map entries provided via the configuration.";
@@ -1076,13 +1393,16 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23:
 	    return "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
-
+	case 24:
+	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 	case 101:
 	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
 	case 102:
 	    return "Creating JSON Schema document '$1$' for package '$2$'.";
 	case 103:
 	    return "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
+	case 104:
+	    return "Invalid JSON Schema annotation(s) encountered (they will be ignored): $1$";
 
 	case 503:
 	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";

@@ -1,0 +1,157 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "Building": {
+      "$anchor": "Building",
+      "allOf": [
+        {
+          "$ref": "#Building_Core"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "BuildingPart": {
+      "$anchor": "BuildingPart",
+      "allOf": [
+        {
+          "$ref": "#Building_Core"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+            }
+              ]
+            },
+            "time": {
+              "type": "object",
+              "required": [
+                "interval"
+              ]
+            },
+              "properties": {
+                "type": "object",
+                  "properties": {
+                "belongsTo": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+            }
+        }
+          }
+        }
+      ]
+    },
+    "Building_Core": {
+      "$anchor": "Building_Core",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polygon.json"
+            }
+              ]
+            },
+            "time": {
+              "oneOf": [
+                {
+                  "type": "null"
+              },
+                {
+                  "type": "object",
+              "required": [
+                    "date"
+              ]
+          },
+                {
+                  "type": "object",
+          "required": [
+                    "timestamp"
+          ]
+        }
+      ]
+            }
+          }
+        }
+      ]
+    },
+    "Parcel": {
+      "$anchor": "Parcel",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polygon.json"
+            },
+            "time": {
+              "allOf": [
+                {
+              "type": "object",
+                  "required": [
+                    "interval"
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "date"
+                      ]
+                },
+                    {
+                      "type": "object",
+                      "required": [
+                        "timestamp"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "hasBuilding": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+            }
+        }
+          }
+        }
+      ]
+    }
+  }
+}

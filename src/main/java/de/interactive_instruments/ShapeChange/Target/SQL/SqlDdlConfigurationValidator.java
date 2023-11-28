@@ -95,15 +95,15 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    SqlConstants.PARAM_REMOVE_EMPTY_LINES_IN_DDL_OUTPUT, SqlConstants.PARAM_SDO_DIM_ELEMENTS,
 	    SqlConstants.PARAM_SEPARATE_CODE_INSERT_STATEMENTS_BY_CODELIST_TYPE,
 	    SqlConstants.PARAM_SEPARATE_SPATIAL_INDEX_STATEMENTS, SqlConstants.PARAM_SHORT_NAME_BY_TAGGED_VALUE,
-	    SqlConstants.PARAM_SIZE, SqlConstants.PARAM_SRID, SqlConstants.PARAM_STATUS, SqlConstants.PARAM_TVS_TO_KEEP)
-	    .collect(Collectors.toSet()));
+	    SqlConstants.PARAM_SIZE, SqlConstants.PARAM_SRID, SqlConstants.PARAM_STATUS, SqlConstants.PARAM_TVS_TO_KEEP,
+	    SqlConstants.PARAM_WRITE_SQL_ENCODING_INFOS).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     // these fields will be initialized when isValid(...) is called
     private ProcessConfiguration config = null;
     private Options options = null;
     private ShapeChangeResult result = null;
-    
+
     private String effectiveDatabaseSystem = "PostgreSQL";
 
     @Override
@@ -132,7 +132,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 
 	DatabaseStrategy databaseStrategy;
 	String databaseSystem = config.getParameterValue(SqlConstants.PARAM_DATABASE_SYSTEM);
-	
+
 	if (databaseSystem == null || "postgresql".equalsIgnoreCase(databaseSystem)) {
 	    databaseStrategy = new PostgreSQLStrategy();
 	} else if ("oracle".equalsIgnoreCase(databaseSystem)) {
@@ -223,7 +223,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    isValid = isValid
 		    & checkForeignKeyReferentialAction(SqlConstants.PARAM_FOREIGN_KEY_ON_DELETE, databaseStrategy);
 	}
-	
+
 	if (config.hasParameter(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE)) {
 	    isValid = isValid
 		    & checkForeignKeyReferentialAction(SqlConstants.PARAM_FOREIGN_KEY_ON_UPDATE, databaseStrategy);
@@ -368,6 +368,18 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 			result.addError(this, 102, typeRuleKey, SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT,
 				SqlConstants.ME_PARAM_TABLE,
 				SqlConstants.ME_PARAM_TABLE_CHARACT_REP_CAT_VALIDATION_REGEX);
+		    }
+		}
+		
+		if (tableCharacteristics.containsKey(SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS)) {
+
+		    String primaryKeyColumns = tableCharacteristics.get(SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS);
+
+		    if (StringUtils.isBlank(primaryKeyColumns)) {
+
+			isValid = false;
+			result.addError(this, 101, typeRuleKey, SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS,
+				SqlConstants.ME_PARAM_TABLE);
 		    }
 		}
 	    }

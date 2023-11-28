@@ -187,5 +187,16 @@ public class FlattenerTest extends BasicTestSCXML {
 		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/test_flattener_nonDefaultGeometryToFeatureType.xml",
 		new String[] { "xsd" }, "testResults/flattening/nonDefaultGeometryToFeatureType",
 		"src/test/resources/flattener/nonDefaultGeometryToFeatureType/reference");
-    }    
+    }   
+    
+    @Test 
+    public void test_flatten_inheritance_addAttributesInSequence() {
+	/*
+	 * Test rule-trf-cls-flatten-inheritance-add-attributes-in-sequence
+	 */
+	multiTest(
+		"src/test/resources/flattener/inheritance_addAttributesInSequence/testEA_Flattening_inheritanceAddAttributesInSequence.xml",
+		new String[] { "xsd", "json" }, "testResults/flattening/inheritanceAddAttributesInSequence",
+		"src/test/resources/flattener/inheritance_addAttributesInSequence/reference");
+    }
 }

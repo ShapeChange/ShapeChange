@@ -387,6 +387,14 @@ xref:../targets/xml schema/Support_for_nillable_and_nilReason.adoc[Support for n
 
 |jsonPattern |class | | |To define the JSON Schema keyword 'pattern' for a basic type modelled in the application schema |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
 
+|jsonPrimaryGeometry |property | | |To identify the primary geometry property of a feature type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-primaryGeometry[rule-json-cls-primaryGeometry]
+
+|jsonPrimaryInstant |property | | |To identify the primary instant property of a feature type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-primaryTime[rule-json-cls-primaryTime]
+
+|jsonPrimaryInterval |property | | |To identify the primary interval properties of a feature type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-primaryTime[rule-json-cls-primaryTime]
+
+|jsonPrimaryPlace |property | | |To identify the primary place property of a feature type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-primaryPlace[rule-json-cls-primaryPlace]
+
 |language |all | | |The default language, if no language information is provided in definitions, descriptions, examples, etc. +
 NOTE: This tagged value is the default source for descriptor 'language'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
 
@@ -400,6 +408,10 @@ xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype
 
 |literalEncodingType |class |enumeration, codeList |OGC UGAS-2020 Engineering Report |Identifies the conceptual type that applies to the enumeration values. |JSON Schema target | 
 
+|maxExclusive |class | | |Define the maximum range (exclusive) of a (numeric) basic type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|maxInclusive |class | | |Define the maximum range (inclusive) of a (numeric) basic type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
 |maxLength |class, property | | |Used to define the maximum length of a string valued attribute. Sometimes also used on classes. |XML Schema and JSON Schema targets |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
 xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype] 
@@ -407,6 +419,12 @@ xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype
 |maxOccurs |property | | |Used to control how many copies of a property are created while flattening multiplicity. |Flattener transformation |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-multiplicity[rule-trf-prop-flatten-multiplicity]
 
 |metadataType |property |propertyMetadata |UGAS-2019 report |Identifies the type of the metadata that can be associated with the property (more specifically, its value(s)). |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-propertyMetadata-stereotype-to-metadata-property[rule-trf-propertyMetadata-stereotype-to-metadata-property] 
+
+|minExclusive |class | | |Define the minimum range (exclusive) of a (numeric) basic type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|minInclusive |class | | |Define the minimum range (inclusive) of a (numeric) basic type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
+
+|minLength |class | | |Define the minimum length of a (string-valued) basic type. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
 
 |name |package, class, property | | |Typically used to define an additional name for a model element. Can be used by the (old) OWS-8 ontology target to define the skos:prefLabel of a skos:ConceptScheme. |Flattener transformation, (old) OWS-8 ontology target |xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[rule-trf-prop-flatten-types] +
 xref:../targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF/OWL target (based on OWS-8 encoding rule)]
@@ -554,6 +572,8 @@ NOTE: Deprecated tagged value 'xmlNamespace' is automatically mapped to 'targetN
 |toCodelist |class |enumeration | |If set to 'false', the enumeration is not converted to a code list by the TypeConverter transformation rule-trf-enumeration-to-codelist. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-enumeration-to-codelist[rule-trf-enumeration-to-codelist] 
 
 |toFeatureType |class | | |Set to 'true', in order for a class being transformed to a feature type by the Type Converter rule-trf-toFeatureType. |TypeConverter transformation |xref:../transformations/Type_Converter.adoc#rule-trf-toFeatureType[rule-trf-toFeatureType] 
+
+|unit |property | | |Identifies the fixed unit of measure of the property. |JSON Schema target |xref:../targets/JSON_Schema.adoc#rule-json-prop-measure[rule-json-prop-measure]
 
 |uomResourceRepresentation |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |MIME type indicating the units dictionary representation. Currently, only one value is specified: \application/gml+xml;version=3.2\ for a GML dictionary (as currently used in the MDR). +
 Default: \application/gml+xml;version=3.2\  | | 

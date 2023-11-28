@@ -46,6 +46,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -73,6 +74,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.ToNumberPolicy;
+
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
@@ -88,7 +93,7 @@ public class TargetOutputProcessor implements MessageSource {
     /**
      * If set to "true", an XSL transformation will be applied to output files
      * created by the target, with one of the following file extensions: xml, xsd,
-     * rdf, owl, sch, trix, html, sql, ddl, ttl, nt, trig, nq. Default is "false".
+     * rdf, owl, sch, trix, html, sql, ddl, ttl, nt, trig, nq, json. Default is "false".
      */
     public static final String PARAM_APPLY_XSLT = "processOutput_applyXslt";
     /**
@@ -294,6 +299,10 @@ public class TargetOutputProcessor implements MessageSource {
 		} else if (fileExtension.matches("(?i)(ttl|nt|trig|nq)")) {
 
 		    addCommentToTextFile(file, "# " + comment);
+
+		} else if (fileExtension.matches("(?i)(json)")) {
+
+		    addCommentToJsonFile(file, comment);
 		}
 	    }
 	}
@@ -459,6 +468,49 @@ public class TargetOutputProcessor implements MessageSource {
 	}
     }
 
+    @SuppressWarnings("unchecked")
+    public void addCommentToJsonFile(File jsonFile, String comment) {
+
+	File directory = jsonFile.getParentFile();
+	File tmpFile = new File(directory, jsonFile.getName() + ".tmp");
+
+	try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jsonFile));
+		BufferedWriter writer = new BufferedWriter(
+		new OutputStreamWriter(new FileOutputStream(tmpFile), "UTF-8"))) {
+
+	    GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
+	    gsonBuilder.setPrettyPrinting();
+	    gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
+	    Gson gson = gsonBuilder.create();
+	    
+	    LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+	    map = (LinkedHashMap<String, Object>) gson.fromJson(bufferedReader, map.getClass());
+	    
+	    LinkedHashMap<String, Object> newMap = (LinkedHashMap<String, Object>) map.clone();
+	    map.clear();
+	    map.put("$comment", comment);
+	    map.putAll(newMap);
+
+	    String newJson = gson.toJson(map);
+
+	    writer.write(newJson);
+	    
+	} catch (IOException e) {
+	    result.addProcessFlowError(this, 21, jsonFile.getAbsolutePath(), e.getMessage());
+	}
+
+	// move tmpFile to jsonFile
+	if (tmpFile.exists()) {
+
+	    try {
+		Files.move(tmpFile.toPath(), jsonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	    } catch (IOException e) {
+		result.addProcessFlowError(this, 10, tmpFile.getAbsolutePath(), jsonFile.getAbsolutePath(),
+			e.getMessage());
+	    }
+	}
+    }
+
     /**
      * @return the common target parameters for output processing
      */
@@ -488,6 +540,8 @@ public class TargetOutputProcessor implements MessageSource {
 	    return "XSLT stylesheet $1$ not found.";
 	case 20:
 	    return "Exception occurred while writing comment to XML file located at '$1$'. Exception message is: '$2$'.";
+	case 21:
+	    return "Exception occurred while writing comment to JSON file located at '$1$'. Exception message is: '$2$'.";
 
 	case 100:
 	    return "---------- Processing output: START ----------";

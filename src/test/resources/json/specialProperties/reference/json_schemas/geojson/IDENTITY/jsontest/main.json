@@ -1,0 +1,136 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "Building": {
+      "$anchor": "Building",
+      "allOf": [
+        {
+          "$ref": "#Building_Core"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "BuildingPart": {
+      "$anchor": "BuildingPart",
+      "allOf": [
+        {
+          "$ref": "#Building_Core"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "extent3d": {
+                  "$ref": "https://beta.schemas.opengis.net/json-fg/geometry-objects.json#/$defs/Polyhedron"
+                },
+                "lifetimeStart": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "lifetimeEnd": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "belongsTo": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "lifetimeStart"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "Building_Core": {
+      "$anchor": "Building_Core",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://geojson.org/schema/Polygon.json"
+            }
+              ]
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "dateOfConstruction": {
+                  "type": "string",
+                  "format": "date"
+                }
+              }
+              }
+          }
+          }
+      ]
+    },
+    "Parcel": {
+      "$anchor": "Parcel",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/Feature.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "geometry": {
+              "$ref": "https://geojson.org/schema/Polygon.json"
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "lifetime": {
+                  "$ref": "https://example.com/schema.json#/$defs/TimePeriod"
+                },
+                "dateOfPublication": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "hasBuilding": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "dateOfPublication",
+                "lifetime"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    }
+  }
+}

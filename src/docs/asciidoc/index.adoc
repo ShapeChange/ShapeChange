@@ -158,6 +158,8 @@
 
 === xref:targets/GeoPackage_Template.adoc[GeoPackage template]
 
+=== xref:targets/gfstemplate.adoc[gfs template]
+
 === xref:targets/JSON_Schema.adoc[JSON Schema]
 
 === xref:targets/JSON_Schema_deprecated.adoc[JSON Schema (deprecated)]

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts5/ts5/test5.json#TS5_Union"
+             type="TS5_Union"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts5/ts5/test5.json#TS5_Union_TypeDiscriminator"
+             type="TS5_Union_TypeDiscriminator"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts5/ts5/test5.json#TS5_Union_TypeDiscriminator_OtherType"
+             type="TS5_Union_TypeDiscriminator_OtherType"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts5/ts5/test5.json#TS5_Union_TypeDiscriminator_OtherTypes"
+             type="TS5_Union_TypeDiscriminator_OtherTypes"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/baseuri/ts5/ts5/test5.json#TS5_Union_TypeDiscriminator_SimpleTypes"
+             type="TS5_Union_TypeDiscriminator_SimpleTypes"/>
+</mapEntries>

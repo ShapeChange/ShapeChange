@@ -1,0 +1,19 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri_from_config/ts2/leafA.json",
+  "$defs": {
+    "TS2_FT5": {
+      "$anchor": "TS2_FT5",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    }
+  }
+}

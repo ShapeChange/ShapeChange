@@ -94,12 +94,12 @@
 				"measure":{
 					"title":"measure",
 					"description":"EAID_EDED054B_D7BB_4460_BDA0_88632A13AAAC",
-					"$ref":"http://shapechange.net/tmp/ows9/json/measure.json"
+					"$ref":"https://shapechange.net/tmp/ows9/json/measure.json"
 				},
 				"length":{
 					"title":"length",
 					"description":"EAID_6DC229D7_0049_48f4_867E_4A95B666F213",
-					"$ref":"http://shapechange.net/tmp/ows9/json/measure.json"
+					"$ref":"https://shapechange.net/tmp/ows9/json/measure.json"
 				},
 				"metadata":{
 					"title":"metadata",

@@ -1,0 +1,31 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri_from_config/ts2/bundle.json",
+  "$defs": {
+    "TS2_FT2": {
+      "$anchor": "TS2_FT2",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    },
+    "TS2_FT3": {
+      "$anchor": "TS2_FT3",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    }
+  }
+}

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element abstract="true"
+            name="DTMid"
+            substitutionGroup="t:DTSuper"
+            type="t:DTMidType"/>
+   <complexType abstract="true" name="DTMidType">
+      <complexContent>
+         <extension base="t:DTSuperType">
+            <sequence>
+               <element name="att" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTMidPropertyType">
+      <sequence>
+         <element ref="t:DTMid"/>
+      </sequence>
+   </complexType>
+   <element name="DTSub1" substitutionGroup="t:DTSuper" type="t:DTSub1Type"/>
+   <complexType name="DTSub1Type">
+      <complexContent>
+         <extension base="t:DTSuperType">
+            <sequence>
+               <element name="att" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTSub1PropertyType">
+      <sequence>
+         <element ref="t:DTSub1"/>
+      </sequence>
+   </complexType>
+   <element name="DTSub2" substitutionGroup="t:DTSuper" type="t:DTSub2Type"/>
+   <complexType name="DTSub2Type">
+      <complexContent>
+         <extension base="t:DTSuperType">
+            <sequence>
+               <element name="attBoolean" type="boolean"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTSub2PropertyType">
+      <sequence>
+         <element ref="t:DTSub2"/>
+      </sequence>
+   </complexType>
+   <element name="DTSub3" substitutionGroup="t:DTMid" type="t:DTSub3Type"/>
+   <complexType name="DTSub3Type">
+      <complexContent>
+         <extension base="t:DTMidType">
+            <sequence>
+               <element name="attString" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTSub3PropertyType">
+      <sequence>
+         <element ref="t:DTSub3"/>
+      </sequence>
+   </complexType>
+   <element name="DTSub4" substitutionGroup="t:DTSuper" type="t:DTSub4Type"/>
+   <complexType name="DTSub4Type">
+      <complexContent>
+         <extension base="t:DTSuperType">
+            <sequence>
+               <element name="att" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTSub4PropertyType">
+      <sequence>
+         <element ref="t:DTSub4"/>
+      </sequence>
+   </complexType>
+   <element abstract="true"
+            name="DTSuper"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DTSuperType"/>
+   <complexType abstract="true" name="DTSuperType">
+      <sequence>
+         <element name="attReal" type="double"/>
+      </sequence>
+   </complexType>
+   <complexType name="DTSuperPropertyType">
+      <sequence>
+         <element ref="t:DTSuper"/>
+      </sequence>
+   </complexType>
+   <element name="FeatureType"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureTypeType"/>
+   <complexType name="FeatureTypeType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attDt" type="t:DTSuperPropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureTypePropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

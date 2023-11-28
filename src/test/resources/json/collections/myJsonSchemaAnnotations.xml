@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JsonSchemaAnnotations xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <annotations>
+    <SimpleAnnotation annotation="title" descriptorOrTaggedValue="alias" noValueBehavior="ignore"/>
+    <TemplateAnnotation annotation="description" valueTemplate="Definition: [[definition]]  Description: [[description]]" noValueValue="[None Specified]" noValueBehavior="populateOnce"/>
+  </annotations>
+</JsonSchemaAnnotations>

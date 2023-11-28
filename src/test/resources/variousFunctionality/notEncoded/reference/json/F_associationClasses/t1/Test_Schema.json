@@ -1,4 +1,5 @@
 {
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "http://example.org/shapechange/schema/json/t1/Test_Schema.json",
   "$defs": {
@@ -15,7 +16,7 @@
               "format": "uri"
             },
             {
-              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/FeatureType3"
+              "$ref": "#/$defs/FeatureType3"
             }
           ]
         }
@@ -50,7 +51,7 @@
               "format": "uri"
             },
             {
-              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/FeatureType3"
+              "$ref": "#/$defs/FeatureType3"
             }
           ]
         }
@@ -82,7 +83,7 @@
               "format": "uri"
             },
             {
-              "$ref": "http://example.org/shapechange/schema/json/t1/Test_Schema.json#/$defs/AssociationClass"
+              "$ref": "#/$defs/AssociationClass"
             }
           ]
         }

@@ -5,6 +5,7 @@ lastModified: 1000000000000
 entityStorageVersion: 2
 label: label
 description: '...'
+enabled: true
 serviceType: OGC_API
 api:
 - buildingBlock: RESOURCES
@@ -17,7 +18,7 @@ api:
     c: http://shapechange.net/test/c
   defaultNamespace: c
   schemaLocations:
-    c: '{{serviceUrl}}/resources/c.xsd'
+    c: "{{serviceUrl}}/resources/c.xsd"
   objectTypeNamespaces:
     DataTypeA: a
     FeatureTypeB: b
@@ -43,10 +44,10 @@ collections:
         - rename: a:att1
         att2.att2:
         - rename: a:att2
-      conformance: NONE
       xmlAttributes:
       - att1
       - att2.att2
+      conformance: NONE
   featuretypec1:
     id: featuretypec1
     label: featuretypec1
@@ -78,15 +79,15 @@ collections:
         - rename: a:att2
         att2_dataTypeC2:
         - rename: att2
-        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC1: 
+        att2_dataTypeC2.dtC2toFTC1_FeatureTypeC1:
         - rename: dtC2toFTC1
         att2_dataTypeC2.dtC2toFTC1_FeatureTypeC2:
         - rename: dtC2toFTC1
-        att2_dataTypeC3: 
+        att2_dataTypeC3:
         - rename: att2
         att2_dataTypeC3.dtC2toFTC1_FeatureTypeC1:
         - rename: dtC2toFTC1
-        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC2: 
+        att2_dataTypeC3.dtC2toFTC1_FeatureTypeC2:
         - rename: dtC2toFTC1
         attMeasure:
         - rename: a:attMeasure
@@ -96,12 +97,12 @@ collections:
         - rename: a:ftAtoTA
         geom:
         - rename: a:geom
-      conformance: NONE
       xmlAttributes:
       - att1.attDataTypeA.att2
-  typea:
-    id: typea
-    label: typea
+      conformance: NONE
+  ta:
+    id: ta
+    label: ta
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
@@ -110,9 +111,9 @@ collections:
         - codelist: CodeListA
     - buildingBlock: GML
       conformance: NONE
-  typeasub:
-    id: typeasub
-    label: typeasub
+  tasub:
+    id: tasub
+    label: tasub
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML

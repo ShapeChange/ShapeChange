@@ -48,13 +48,16 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <!-- NOTE: Restriction of application schemas that are converted! -->
    <targetParameter name="appSchemaNameRegex" value="Test Schema (03|04|08a|09).*"/>
 
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
 
    <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
    <targetParameter name="baseJsonSchemaDefinitionForObjectTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForObjectTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
    <!--   <targetParameter name="baseJsonSchemaDefinitionForDataTypes" value="https://geojson.org/schema/Feature.json"/>-->
 
    <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
@@ -78,6 +81,7 @@
   <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2019-09/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
    <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
@@ -95,6 +99,66 @@
     <EncodingRule name="my201909json" extends="json_basic">
      <rule name="rule-json-cls-basictype"/>
      <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-name-as-entityType-dataType"/>
+     <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
+     <rule name="rule-json-cls-union-propertyCount"/>
+     <rule name="rule-json-prop-voidable"/>
+     <rule name="rule-json-prop-readOnly"/>
+     <rule name="rule-json-prop-derivedAsReadOnly"/>
+     <rule name="rule-json-prop-initialValueAsDefault"/>
+     <rule name="rule-json-cls-valueTypeOptions"/>
+    </EncodingRule>
+
+    <EncodingRule name="myjsonUnionTypeDiscriminator" extends="json_basic">
+     <rule name="rule-json-cls-union-typeDiscriminator"/>
+    </EncodingRule>
+
+    <EncodingRule name="myjsonCodelistUriFormat" extends="json_basic">
+     <rule name="rule-json-cls-codelist-uri-format"/>
+    </EncodingRule>
+    <EncodingRule name="myjsonCodelistLinkObject" extends="json_basic">
+     <rule name="rule-json-cls-codelist-link"/>
+    </EncodingRule>
+   </rules>
+
+   <xi:include href="src/main/resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param=""/>
+    <MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param=""/>
+    <!-- pattern base64 encoded: ^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01])(T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9])))?)?)?|now$ -->
+    <MapEntry type="TM_Instant" rule="*" targetType="string" param="keywords{patternBase64=XlxkezR9KC0oMFsxLTldfDFbMC0yXSkoLSgwWzEtOV18WzEyXVswLTldfDNbMDFdKShUKFswMV1bMC05XXwyWzAtM10pOihbMC01XVswLTldKTooWzAtNV1bMC05XXw2MCkoXC5bMC05XSspPyhafChcK3wtKShbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSkpKT8pPyk/fG5vdyQ=}"/>
+    <!-- pattern base64 encoded: ^(\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01])(T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9])))?)?)?|(\.\.)?|now)\/(\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12][0-9]|3[01])(T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9])))?)?)?|(\.\.)?|now)$ -->
+    <MapEntry type="TM_Period" rule="*" targetType="string" param="keywords{patternBase64=XihcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdylcLyhcZHs0fSgtKDBbMS05XXwxWzAtMl0pKC0oMFsxLTldfFsxMl1bMC05XXwzWzAxXSkoVChbMDFdWzAtOV18MlswLTNdKTooWzAtNV1bMC05XSk6KFswLTVdWzAtOV18NjApKFwuWzAtOV0rKT8oWnwoXCt8LSkoWzAxXVswLTldfDJbMC0zXSk6KFswLTVdWzAtOV0pKSk/KT8pP3woXC5cLik/fG5vdykk}"/>
+   </mapEntries>
+  </Target>
+  
+  <!-- =============================== -->
+  <!-- ====== 2020-12 - JSON ========= -->
+  <!-- =============================== -->
+  <!-- NOTE: Results should be the same as 2019-09 - JSON (except for the schema version) -->
+  <Target class="de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget" mode="enabled" inputs="constraintconverter">
+   <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/2020-12/json"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
+   <targetParameter name="jsonSchemaVersion" value="2020-12"/>
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="linkObjectUri" value="http://shapechange.net/tmp/ugas20/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+
+   <targetParameter name="entityTypeName" value="@type"/>
+
+   <targetParameter name="defaultEncodingRule" value="my202012json"/>
+   <rules>
+
+    <EncodingRule name="json_basic" extends="*">
+     <rule name="rule-json-cls-name-as-anchor"/>
+     <!--     <rule name="rule-json-all-documentation"/>  -->
+    </EncodingRule>
+
+    <EncodingRule name="my202012json" extends="json_basic">
+     <rule name="rule-json-cls-basictype"/>
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-name-as-entityType-dataType"/>
      <rule name="rule-json-cls-defaultGeometry-multipleGeometryProperties"/>
      <rule name="rule-json-cls-union-propertyCount"/>
      <rule name="rule-json-prop-voidable"/>
@@ -208,6 +272,7 @@
 
    <targetParameter name="outputDirectory" value="testResults/json/basic/json_schemas/openapi30/json"/>
    <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="writeMapEntries" value="true"/>
    <targetParameter name="jsonSchemaVersion" value="openapi30"/>
 
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>

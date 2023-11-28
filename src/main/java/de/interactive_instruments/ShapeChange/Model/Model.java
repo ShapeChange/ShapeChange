@@ -40,7 +40,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.Type;
 
 public interface Model {
-    
+
     public static final int STATUS_EADOCUMENT_INITSTART = 101;
     public static final int STATUS_EADOCUMENT_READMODEL = 102;
     public static final int STATUS_EADOCUMENT_ESTABLISHCLASSES = 103;
@@ -162,8 +162,8 @@ public interface Model {
 
     /**
      * 
-     * @return all navigable {@link PropertyInfo} objects contained in the model; can be empty
-     *         but not <code>null</code>.
+     * @return all navigable {@link PropertyInfo} objects contained in the model;
+     *         can be empty but not <code>null</code>.
      */
     public SortedSet<PropertyInfo> properties();
 
@@ -211,6 +211,20 @@ public interface Model {
      *         is <code>null</code> .
      */
     public PackageInfo schemaPackage(ClassInfo ci);
+
+    /**
+     * Identifies the nearest schema or application schema package in which the
+     * given package is a child. A schema is identified using
+     * {@link PackageInfo#isSchema()}, while an application schema is identified
+     * using {@link PackageInfo#isAppSchema()}.
+     * 
+     * @param pi Package to check
+     * @return The package that represents the schema or application schema of the
+     *         given package. If the package is not a child of such a package, then
+     *         the result is <code>null</code>. Will return the given package if it
+     *         is a schema or application schema.
+     */
+    public PackageInfo schemaPackage(PackageInfo pi);
 
     /**
      * @return all packages that represent schemas selected for processing, or are
@@ -264,9 +278,9 @@ public interface Model {
      * Searches for a non-navigable association role within the model. The role must
      * have the given name and be in one of the given classes.
      * 
-     * @param classes one of these classes must be located at one end of
-     *                           the association.
-     * @param roleName           the name of the association role to look up.
+     * @param classes  one of these classes must be located at one end of the
+     *                 association.
+     * @param roleName the name of the association role to look up.
      * @return The association role with the given name, and in the given class, if
      *         it exists - otherwise <code>null</code>
      */

@@ -2,7 +2,6 @@
 id: EnumerationA
 createdAt: 1000000000000
 lastModified: 1000000000000
-entityStorageVersion: 1
 label: EnumerationAAlias
 entries:
   enum1: enum1

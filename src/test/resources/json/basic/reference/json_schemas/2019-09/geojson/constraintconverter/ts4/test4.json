@@ -1,4 +1,5 @@
 {
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://example.org/baseuri/ts4/ts4/test4.json",
   "$defs": {
@@ -27,7 +28,7 @@
       "$anchor": "TS4_FT2",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT1"
+          "$ref": "#TS4_FT1"
         },
         {
           "type": "object",
@@ -48,7 +49,7 @@
       "$anchor": "TS4_FT3",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT2"
+          "$ref": "#TS4_FT2"
         },
         {
           "type": "object",
@@ -69,10 +70,10 @@
       "$anchor": "TS4_FT4",
       "allOf": [
         {
-          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_FT1"
+          "$ref": "#TS4_FT1"
         },
         {
-          "$ref": "https://example.org/baseuri/ts4/ts4/test4.json#TS4_Mixin"
+          "$ref": "#TS4_Mixin"
         },
         {
           "type": "object",

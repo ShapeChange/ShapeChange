@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#CL"
+             type="CL"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#E"
+             type="E"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true;idMemberPath=id;idMemberRequired=true;idMemberTypes=string;idMemberFormats=bar,foo,uuid}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#ExtFTSubtype"
+             type="ExtFTSubtype"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#FT1"
+             type="FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#FT2"
+             type="FT2"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#FT3"
+             type="FT3"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#FT4"
+             type="FT4"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#FT5"
+             type="FT5"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#T"
+             type="T"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#U"
+             type="U"/>
+</mapEntries>

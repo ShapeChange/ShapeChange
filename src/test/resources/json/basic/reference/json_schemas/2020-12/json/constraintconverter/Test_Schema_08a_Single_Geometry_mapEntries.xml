@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#TS8_FT1"
+             type="TS8_FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts8/singleGeometry/ts8single/test8single.json#TS8_FT2"
+             type="TS8_FT2"/>
+</mapEntries>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/test/resources/json/inlineOrByReferenceTag/test_json_schema_inlineOrByReferenceTag.xml"
+                   end="Tue Feb 14 09:02:44 CET 2023"
+                   resultCode="0"
+                   start="Tue Feb 14 09:02:39 CET 2023"
+                   version="2.13.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\inlineOrByReferenceTag\test_json_schema_inlineOrByReferenceTag.eapx"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\inlineOrByReferenceTag\test_json_schema_inlineOrByReferenceTag.eapx"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\inlineOrByReferenceTag\test_json_schema_inlineOrByReferenceTag.eapx"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\inlineOrByReferenceTag\test_json_schema_inlineOrByReferenceTag.eapx"/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'input'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'input'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/inlineOrByReferenceTag/json_schemas/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+   </Results>
+</ShapeChangeResult>

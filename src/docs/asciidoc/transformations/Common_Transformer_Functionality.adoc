@@ -238,6 +238,26 @@ Required / optional: optional
 Default value: _none - the model element is assumed to match this
 filter_
 
+[[Property_value_type_name]]
+====== Property value type name
+
+(since v2.14.0)
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the given model element is a property and the
+name of the value type of the property matches the regular
+expression, this filter criterium evaluates to true. If the model
+element is not a property, the filter automatically evaluates to true.
+Attributes that do not have a value type (e.g., enums and codes) are ignored.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
 [[Application_schema_name]]
 ====== Application schema name
 

@@ -1,0 +1,141 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "$defs": {
+    "DT": {
+      "$anchor": "DT",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "$ref": "https://geojson.org/schema/Point.json"
+        },
+        "att2": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "https://geojson.org/schema/LineString.json"
+            }
+          ]
+        }
+      },
+      "required": [
+        "att1",
+        "att2"
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "att1": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "$ref": "https://geojson.org/schema/Point.json"
+            }
+          ]
+        },
+        "attDt": {
+          "$ref": "#DT"
+        },
+        "roleT": {
+          "type": "string",
+          "format": "uri"
+        },
+        "roleFT2": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "uniqueItems": true
+        },
+        "roleFT3": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "att1",
+        "attDt",
+        "roleFT3"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "roleFT1": {
+          "type": "string",
+          "format": "uri"
+        },
+        "roleExtFT1": {
+          "type": "string",
+          "format": "uri"
+        },
+        "roleExtFT2": {
+          "type": "string",
+          "format": "uri"
+        },
+      "roleExtFT3": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "roleExtFT1",
+        "roleExtFT2",
+        "roleExtFT3",
+        "roleFT1"
+      ]
+    },
+    "FT2Sub1": {
+      "$anchor": "FT2Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub1Sub1": {
+      "$anchor": "FT2Sub1Sub1",
+      "allOf": [
+        {
+          "$ref": "#FT2Sub1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT2Sub2": {
+      "$anchor": "FT2Sub2",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "type": "object"
+    },
+    "T": {
+      "$anchor": "T",
+      "type": "object"
+    }
+  }
+}

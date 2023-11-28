@@ -455,6 +455,7 @@
   <attribute name="modelElementOwnerName" type="string"/>
   <attribute name="modelElementOwnerStereotype" type="string"/>
   <attribute name="propertyValueTypeStereotype" type="string"/>
+  <attribute name="propertyValueTypeName" type="string"/>
   <attribute name="applicationSchemaName" type="string"/>
  </attributeGroup>
  <element name="TaggedValue" type="sc:TaggedValueType"/>
@@ -735,16 +736,13 @@
   </attribute>
   <attribute name="target" type="string" use="required">
    <annotation>
-    <documentation>IRI of the RDFS/OWL class or datatype to which the UML type shall be mapped
-          (e.g. "ex1:A"). Note: the value is expected to be given as a QName, with the namespace
-          prefix matching the namespace abbreviation of a namespace declared in the
-          configuration.</documentation>
+    <documentation>IRI of the RDFS/OWL class or datatype to which the UML type shall be mapped (e.g. "ex1:A"). Note: the value is expected to be given as a QName, with the namespace prefix matching
+     the namespace abbreviation of a namespace declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute default="class" name="targetType">
    <annotation>
-    <documentation>Type of the target (class or datatype) to which the UML type will be
-          mapped.</documentation>
+    <documentation>Type of the target (class or datatype) to which the UML type will be mapped.</documentation>
    </annotation>
    <simpleType>
     <restriction base="string">
@@ -755,8 +753,7 @@
   </attribute>
   <attribute name="rule" type="string" use="optional" default="*">
    <annotation>
-    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
-          the mapping applies to all encoding rules.</documentation>
+    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that the mapping applies to all encoding rules.</documentation>
    </annotation>
   </attribute>
  </complexType>
@@ -775,18 +772,19 @@
   </attribute>
   <attribute name="target" type="string" use="optional">
    <annotation>
-    <documentation>IRI of the RDF/OWL property to which the UML property shall be mapped (e.g. "ex1:propZ"). Can be omitted or empty if the property shall not be encoded. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+    <documentation>IRI of the RDF/OWL property to which the UML property shall be mapped (e.g. "ex1:propZ"). Can be omitted or empty if the property shall not be encoded. Note: the value is expected
+     to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute name="range" type="string">
    <annotation>
-    <documentation>Range to use in class expressions involving the target (RDF/OWL) property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+    <documentation>Range to use in class expressions involving the target (RDF/OWL) property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace
+     abbreviation of a namespace declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute name="rule" type="string" use="optional" default="*">
    <annotation>
-    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that
-          the mapping applies to all encoding rules.</documentation>
+    <documentation>The encoding rule to which this mapping applies. May be “*” to indicate that the mapping applies to all encoding rules.</documentation>
    </annotation>
   </attribute>
  </complexType>
@@ -821,13 +819,13 @@
   </attribute>
   <attribute name="subClassOf" type="string" use="required">
    <annotation>
-    <documentation>IRIs of classes of which UML types with this stereotype shall be subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+    <documentation>IRIs of classes of which UML types with this stereotype shall be subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the
+     namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute name="rule" type="string" use="optional" default="*">
    <annotation>
-    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
-          the parameter applies to all encoding rules.</documentation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that the parameter applies to all encoding rules.</documentation>
    </annotation>
   </attribute>
  </complexType>
@@ -846,13 +844,13 @@
   </attribute>
   <attribute name="subClassOf" type="string" use="required">
    <annotation>
-    <documentation>IRIs of classes of which the UML type shall be a subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+    <documentation>IRIs of classes of which the UML type shall be a subClassOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace
+     prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute name="rule" type="string" use="optional" default="*">
    <annotation>
-    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
-          the parameter applies to all encoding rules.</documentation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that the parameter applies to all encoding rules.</documentation>
    </annotation>
   </attribute>
  </complexType>
@@ -871,18 +869,19 @@
   </attribute>
   <attribute default="false" name="global" type="boolean">
    <annotation>
-    <documentation>Specifies if the UML property shall be encoded as a global
-          property</documentation>
+    <documentation>Specifies if the UML property shall be encoded as a global property</documentation>
    </annotation>
   </attribute>
   <attribute name="subPropertyOf" type="string">
    <annotation>
-    <documentation>IRIs of RDF/OWL properties of which the RDF/OWL implementation of the UML property shall be a subPropertyOf. Multiple IRIs are separated with spaces. Note: the values are expected to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
+    <documentation>IRIs of RDF/OWL properties of which the RDF/OWL implementation of the UML property shall be a subPropertyOf. Multiple IRIs are separated with spaces. Note: the values are expected
+     to be given as QNames, with the namespace prefixes matching the namespace abbreviations of the namespaces declared in the configuration.</documentation>
    </annotation>
   </attribute>
   <attribute name="target" type="string">
    <annotation>
-    <documentation>Name of the target UML property (scoped to a class from the application schema - example: FeatureX::propertyY), whose RDF/OWL implementation will be used to implement this property.</documentation>
+    <documentation>Name of the target UML property (scoped to a class from the application schema - example: FeatureX::propertyY), whose RDF/OWL implementation will be used to implement this
+     property.</documentation>
    </annotation>
   </attribute>
   <attribute name="targetSchema" type="string">
@@ -892,8 +891,7 @@
   </attribute>
   <attribute name="rule" type="string" use="optional" default="*">
    <annotation>
-    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that
-          the parameter applies to all encoding rules.</documentation>
+    <documentation>The encoding rule to which this parameter applies. May be “*” to indicate that the parameter applies to all encoding rules.</documentation>
    </annotation>
   </attribute>
  </complexType>
@@ -999,7 +997,6 @@
   </sequence>
   <attribute name="name" type="string" use="required"/>
  </complexType>
-
  <element name="rdfGeneralProperties">
   <complexType>
    <sequence>
@@ -1012,7 +1009,8 @@
   <sequence>
    <element minOccurs="0" name="namespaceAbbreviation" type="string">
     <annotation>
-     <documentation>Abbreviation of the RDF namespace to which the general property shall belong. Note: the target configuration must contain a namespace definition with a matching abbreviation, or the abbreviation matches one of the ontologies that is created by ShapeChange.</documentation>
+     <documentation>Abbreviation of the RDF namespace to which the general property shall belong. Note: the target configuration must contain a namespace definition with a matching abbreviation, or
+      the abbreviation matches one of the ontologies that is created by ShapeChange.</documentation>
     </annotation>
    </element>
    <element name="name" type="string">
@@ -1023,7 +1021,8 @@
    <choice minOccurs="0">
     <element maxOccurs="1" minOccurs="1" name="domain" type="string">
      <annotation>
-      <documentation>The domain of the general property. The element value is the IRI of an RDF/OWL class. Note: the value is expected to be given as a QName, with the namespace prefix matching a namespace abbreviation of the namespaces declared in the configuration.</documentation>
+      <documentation>The domain of the general property. The element value is the IRI of an RDF/OWL class. Note: the value is expected to be given as a QName, with the namespace prefix matching a
+       namespace abbreviation of the namespaces declared in the configuration.</documentation>
      </annotation>
     </element>
     <element fixed="true" name="domainByUnionOfSubPropertyDomains" type="boolean">
@@ -1034,22 +1033,29 @@
    </choice>
    <element minOccurs="0" name="range" type="string">
     <annotation>
-     <documentation>Range of the general property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+     <documentation>Range of the general property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the
+      configuration.</documentation>
     </annotation>
    </element>
    <element maxOccurs="unbounded" minOccurs="0" name="equivalentProperty" type="string">
     <annotation>
-     <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is equivalent. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
+     <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is equivalent. Note: the value is expected to be given as either 1) a QName, with the
+      namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property,
+      starting with the application schema package, and using '::' as separator).</documentation>
     </annotation>
    </element>
    <element maxOccurs="unbounded" minOccurs="0" name="disjointProperty" type="string">
     <annotation>
-     <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is disjoint. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
+     <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is disjoint. Note: the value is expected to be given as either 1) a QName, with the
+      namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property,
+      starting with the application schema package, and using '::' as separator).</documentation>
     </annotation>
    </element>
    <element maxOccurs="unbounded" minOccurs="0" name="subPropertyOf" type="string">
     <annotation>
-     <documentation>Identifies a UML or RDF/OWL property for which the RDF/OWL implementation of the UML property is a subPropertyOf. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
+     <documentation>Identifies a UML or RDF/OWL property for which the RDF/OWL implementation of the UML property is a subPropertyOf. Note: the value is expected to be given as either 1) a QName, with
+      the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property,
+      starting with the application schema package, and using '::' as separator).</documentation>
     </annotation>
    </element>
    <element maxOccurs="unbounded" minOccurs="0" name="additionalProperty">
@@ -1060,12 +1066,14 @@
      <sequence>
       <element name="property" type="string">
        <annotation>
-        <documentation>Identifies the additional property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration.</documentation>
+        <documentation>Identifies the additional property. Note: the value is expected to be given as a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in
+         the configuration.</documentation>
        </annotation>
       </element>
       <element maxOccurs="unbounded" name="value">
        <annotation>
-        <documentation>Value of the additional property. A simple type if the additional property is a datatype property (@isIRI=false), otherwise an IRI (isIRI=true). A simple value can be tagged with a language identifier (@lang). </documentation>
+        <documentation>Value of the additional property. A simple type if the additional property is a datatype property (@isIRI=false), otherwise an IRI (isIRI=true). A simple value can be tagged
+         with a language identifier (@lang). </documentation>
        </annotation>
        <complexType>
         <simpleContent>
@@ -1092,7 +1100,9 @@
     <sequence>
      <element maxOccurs="unbounded" minOccurs="0" name="inverseProperty" type="string">
       <annotation>
-       <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is inverse. Note: the value is expected to be given as either 1) a QName, with the namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator).</documentation>
+       <documentation>Identifies a UML or RDF/OWL property to which the RDF/OWL implementation of the UML property is inverse. Note: the value is expected to be given as either 1) a QName, with the
+        namespace prefix matching the namespace abbreviation of a namespace declared in the configuration, or 2) the full name of a UML property (i.e. the package qualified name of the UML property,
+        starting with the application schema package, and using '::' as separator).</documentation>
       </annotation>
      </element>
      <element default="" minOccurs="0" name="propertyCharacteristicAxioms" type="sc:ObjectPropertyCharacteristicAxiomList">
@@ -1290,5 +1300,218 @@
     <documentation>true, if the model element is encoded as an XML attribute, false (the default) if it is encoded as an XML element.</documentation>
    </annotation>
   </attribute>
+ </complexType>
+ <element name="SqlEncodingInfos" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:SqlEncodingInfosType"/>
+ <complexType name="SqlEncodingInfosType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="0" name="modelElementEncodings">
+      <complexType>
+       <sequence>
+        <element ref="sc:ModelElementSqlEncodingInfo" maxOccurs="unbounded" minOccurs="1"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="ModelElementSqlEncodingInfo" type="sc:ModelElementSqlEncodingInfoType" abstract="true"/>
+ <complexType name="ModelElementSqlEncodingInfoType">
+  <attribute name="schemaName" type="string" use="required">
+   <annotation>
+    <documentation>Name of the schema to which the model element belongs (in the model encoded by the SqlDdl target).</documentation>
+   </annotation>
+  </attribute>
+  <attribute name="originalSchemaName" type="string">
+   <annotation>
+    <documentation>Name of the schema to which the model element originally belonged. Can be omitted, if the value is the same as schemaName.</documentation>
+   </annotation>
+  </attribute>
+ </complexType>
+ <element name="SqlClassEncodingInfo" type="sc:SqlClassEncodingInfoType" substitutionGroup="sc:ModelElementSqlEncodingInfo"/>
+ <complexType name="SqlClassEncodingInfoType">
+  <complexContent>
+   <extension base="sc:ModelElementSqlEncodingInfoType">
+    <attribute name="className" type="string" use="required">
+     <annotation>
+      <documentation>Class name (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalClassName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the class in the original schema. Can be omitted, if the value is the same as className.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="tableName" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database table that represents the class. Multiple SqlClassEncodingInfo elements may exist with same className but different tableName. That can be the case if
+       the class is represented by multiple, property usage specific tables.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="databaseSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the table is defined. Can be omitted if no particular schema is defined for the table.</documentation>
+     </annotation>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="SqlPropertyEncodingInfo" type="sc:SqlPropertyEncodingInfoType" substitutionGroup="sc:ModelElementSqlEncodingInfo"/>
+ <complexType name="SqlPropertyEncodingInfoType">
+  <complexContent>
+   <extension base="sc:ModelElementSqlEncodingInfoType">
+    <attribute name="propertyName" type="string" use="required">
+     <annotation>
+      <documentation>Property name (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="inClassName" type="string" use="required">
+     <annotation>
+      <documentation>Name of the class that owns the property (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="propertyValueType" type="string" use="required">
+     <annotation>
+      <documentation>Name of the property value type (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="propertyMultiplicity" type="string" use="required">
+     <annotation>
+      <documentation>Multiplicity of the property (in the model encoded by the SqlDdl target).</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the property in the original schema. Can be omitted, if the value is the same as propertyName.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalInClassName" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the class that owned the property in the original schema. Can be omitted, if the value is the same as inClassName.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyValueType" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the property value type in the original schema. Can be omitted, if the value is the same as propertyValueType.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="originalPropertyMultiplicity" type="string" use="optional">
+     <annotation>
+      <documentation>Multiplicity of the property in the original schema. Can be omitted, if the value is the same as propertyMultiplicity.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="sourceTable" type="string" use="required">
+     <annotation>
+      <documentation>Name of the database table that provides the context for the sourcePath.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="sourceTableSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the sourceTable is defined. Can be omitted if no particular schema is defined for the sourceTable.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="valueSourcePath" type="string" use="required">
+     <annotation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the property values in the database. </documentation>
+     </annotation>
+    </attribute>
+    <attribute name="idSourcePath" type="string" use="optional">
+     <annotation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to access the database identifiers, i.e., the primary keys, of property values in the database. Can be omitted
+       for cases in which the property values are simple, such as strings and integers.</documentation>
+     </annotation>
+    </attribute>
+    <attribute default="integer" name="idValueType">
+     <annotation>
+      <documentation>Type of value provided by the idSourcePath, if one is defined. 'integer' is assumed by default.</documentation>
+     </annotation>
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="integer"/>
+       <enumeration value="string"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+    <attribute name="targetTable" type="string" use="optional">
+     <annotation>
+      <documentation>Name of the database table that the source path evaluates to. Can be omitted, if no such table exists - then the source path typically resolves to a simple value contained in a
+       field within the source table, not to a complex value in another table.</documentation>
+     </annotation>
+    </attribute>
+    <attribute name="targetTableSchema" type="string" use="optional">
+     <annotation>
+      <documentation>Identifier of the database schema, in which the targetTable is defined. Can be omitted if no particular schema is defined for the targetTable</documentation>
+     </annotation>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="JsonSchemaAnnotations" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:JsonSchemaAnnotationsType"/>
+ <complexType name="JsonSchemaAnnotationsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="1" name="annotations">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:AbstractJsonSchemaAnnotation"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element abstract="true" name="AbstractJsonSchemaAnnotation" type="sc:AbstractJsonSchemaAnnotationType"/>
+ <complexType name="AbstractJsonSchemaAnnotationType">
+  <attribute name="annotation" type="string" use="required"> </attribute>
+  <attributeGroup ref="sc:modelElementSelectionGroup"/>
+  <attribute default="false" name="arrayValue" type="boolean"> </attribute>
+  <attribute default="ignore" name="noValueBehavior">
+   <simpleType>
+    <restriction base="string">
+     <enumeration value="ignore"/>
+     <enumeration value="populateOnce"/>
+    </restriction>
+   </simpleType>
+  </attribute>
+  <attribute default="" name="noValueValue" type="string"> </attribute>
+ </complexType>
+ <element abstract="false" name="SimpleAnnotation" substitutionGroup="sc:AbstractJsonSchemaAnnotation" type="sc:SimpleAnnotationType"/>
+ <complexType name="SimpleAnnotationType">
+  <complexContent>
+   <extension base="sc:AbstractJsonSchemaAnnotationType">
+    <attribute name="descriptorOrTaggedValue" type="string" use="required"> </attribute>
+    <attribute default="string" name="type">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="string"/>
+       <enumeration value="integer"/>
+       <enumeration value="boolean"/>
+       <enumeration value="number"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="TemplateAnnotation" substitutionGroup="sc:AbstractJsonSchemaAnnotation" type="sc:TemplateAnnotationType"/>
+ <complexType name="TemplateAnnotationType">
+  <complexContent>
+   <extension base="sc:AbstractJsonSchemaAnnotationType">
+    <attribute name="valueTemplate" type="string" use="required"> </attribute>
+    <attribute default="connectInSingleAnnotationValue" name="multiValueBehavior">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="connectInSingleAnnotationValue"/>
+       <enumeration value="createMultipleAnnotationValues"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+    <attribute default=" " name="multiValueConnectorToken" type="string"> </attribute>
+   </extension>
+  </complexContent>
  </complexType>
 </schema>

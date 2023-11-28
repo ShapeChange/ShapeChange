@@ -2198,7 +2198,7 @@
                           <sc:sequenceNumber>3</sc:sequenceNumber>
                           <sc:typeName>Integer</sc:typeName>
                           <sc:isComposition>true</sc:isComposition>
-                          </sc:Property>
+                        </sc:Property>
                       </sc:properties>
                     </sc:Class>
                   </sc:classes>
@@ -9345,8 +9345,16 @@
         <sc:Property>
           <sc:name>role_Sas51455</sc:name>
           <sc:id>Sas51455</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>2</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>2</sc:sequenceNumber>
           <sc:typeId>16370</sc:typeId>
           <sc:typeName>T1_FT1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9363,8 +9371,16 @@
         <sc:Property>
           <sc:name>role_Sas51455</sc:name>
           <sc:id>Sas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_1</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>2</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>2</sc:sequenceNumber>
           <sc:typeId>16372</sc:typeId>
           <sc:typeName>T1_FT1_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9381,8 +9397,16 @@
         <sc:Property>
           <sc:name>role_Sas51455</sc:name>
           <sc:id>Sas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>2</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>2</sc:sequenceNumber>
           <sc:typeId>16373</sc:typeId>
           <sc:typeName>T1_FT1_2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9399,8 +9423,16 @@
         <sc:Property>
           <sc:name>role_Sas51455</sc:name>
           <sc:id>Sas51455_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2_copyForAssociationBetweenClasses_T1_FT2_and_T1_FT1_2_1</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>2</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>2</sc:sequenceNumber>
           <sc:typeId>16404</sc:typeId>
           <sc:typeName>T1_FT1_2_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9421,13 +9453,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870911.3</sc:Value>
+                <sc:Value>2.3</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870911.3</sc:sequenceNumber>
+          <sc:sequenceNumber>2.3</sc:sequenceNumber>
           <sc:typeId>16379</sc:typeId>
           <sc:typeName>T2_FT2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9448,13 +9480,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870911.2</sc:Value>
+                <sc:Value>2.2</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870911.2</sc:sequenceNumber>
+          <sc:sequenceNumber>2.2</sc:sequenceNumber>
           <sc:typeId>16379</sc:typeId>
           <sc:typeName>T2_FT2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9475,13 +9507,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870911.4</sc:Value>
+                <sc:Value>2.4</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870911.4</sc:sequenceNumber>
+          <sc:sequenceNumber>2.4</sc:sequenceNumber>
           <sc:typeId>16379</sc:typeId>
           <sc:typeName>T2_FT2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -9502,13 +9534,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870911.1</sc:Value>
+                <sc:Value>2.1</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870911.1</sc:sequenceNumber>
+          <sc:sequenceNumber>2.1</sc:sequenceNumber>
           <sc:typeId>16379</sc:typeId>
           <sc:typeName>T2_FT2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11089,13 +11121,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.2</sc:Value>
+                <sc:Value>5.2</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.2</sc:sequenceNumber>
+          <sc:sequenceNumber>5.2</sc:sequenceNumber>
           <sc:typeId>16410</sc:typeId>
           <sc:typeName>T5_FT</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11116,13 +11148,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.2</sc:Value>
+                <sc:Value>5.2</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.2</sc:sequenceNumber>
+          <sc:sequenceNumber>5.2</sc:sequenceNumber>
           <sc:typeId>16411</sc:typeId>
           <sc:typeName>T5_FT_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11143,13 +11175,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.2</sc:Value>
+                <sc:Value>5.2</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.2</sc:sequenceNumber>
+          <sc:sequenceNumber>5.2</sc:sequenceNumber>
           <sc:typeId>16412</sc:typeId>
           <sc:typeName>T5_FT_2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11170,13 +11202,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.2</sc:Value>
+                <sc:Value>5.2</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.2</sc:sequenceNumber>
+          <sc:sequenceNumber>5.2</sc:sequenceNumber>
           <sc:typeId>16413</sc:typeId>
           <sc:typeName>T5_FT_2_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11197,13 +11229,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.4</sc:Value>
+                <sc:Value>5.4</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.4</sc:sequenceNumber>
+          <sc:sequenceNumber>5.4</sc:sequenceNumber>
           <sc:typeId>16410</sc:typeId>
           <sc:typeName>T5_FT</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11224,13 +11256,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.4</sc:Value>
+                <sc:Value>5.4</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.4</sc:sequenceNumber>
+          <sc:sequenceNumber>5.4</sc:sequenceNumber>
           <sc:typeId>16411</sc:typeId>
           <sc:typeName>T5_FT_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11251,13 +11283,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.4</sc:Value>
+                <sc:Value>5.4</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.4</sc:sequenceNumber>
+          <sc:sequenceNumber>5.4</sc:sequenceNumber>
           <sc:typeId>16412</sc:typeId>
           <sc:typeName>T5_FT_2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11278,13 +11310,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.4</sc:Value>
+                <sc:Value>5.4</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.4</sc:sequenceNumber>
+          <sc:sequenceNumber>5.4</sc:sequenceNumber>
           <sc:typeId>16413</sc:typeId>
           <sc:typeName>T5_FT_2_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11305,13 +11337,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.3</sc:Value>
+                <sc:Value>5.3</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.3</sc:sequenceNumber>
+          <sc:sequenceNumber>5.3</sc:sequenceNumber>
           <sc:typeId>16410</sc:typeId>
           <sc:typeName>T5_FT</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11332,13 +11364,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.3</sc:Value>
+                <sc:Value>5.3</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.3</sc:sequenceNumber>
+          <sc:sequenceNumber>5.3</sc:sequenceNumber>
           <sc:typeId>16411</sc:typeId>
           <sc:typeName>T5_FT_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11359,13 +11391,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.3</sc:Value>
+                <sc:Value>5.3</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.3</sc:sequenceNumber>
+          <sc:sequenceNumber>5.3</sc:sequenceNumber>
           <sc:typeId>16412</sc:typeId>
           <sc:typeName>T5_FT_2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11386,13 +11418,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.3</sc:Value>
+                <sc:Value>5.3</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.3</sc:sequenceNumber>
+          <sc:sequenceNumber>5.3</sc:sequenceNumber>
           <sc:typeId>16413</sc:typeId>
           <sc:typeName>T5_FT_2_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11413,13 +11445,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.1</sc:Value>
+                <sc:Value>5.1</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.1</sc:sequenceNumber>
+          <sc:sequenceNumber>5.1</sc:sequenceNumber>
           <sc:typeId>16410</sc:typeId>
           <sc:typeName>T5_FT</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11440,13 +11472,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.1</sc:Value>
+                <sc:Value>5.1</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.1</sc:sequenceNumber>
+          <sc:sequenceNumber>5.1</sc:sequenceNumber>
           <sc:typeId>16411</sc:typeId>
           <sc:typeName>T5_FT_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11467,13 +11499,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.1</sc:Value>
+                <sc:Value>5.1</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.1</sc:sequenceNumber>
+          <sc:sequenceNumber>5.1</sc:sequenceNumber>
           <sc:typeId>16412</sc:typeId>
           <sc:typeName>T5_FT_2</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11494,13 +11526,13 @@
             <sc:TaggedValue>
               <sc:name>sequenceNumber</sc:name>
               <sc:values>
-                <sc:Value>-536870910.1</sc:Value>
+                <sc:Value>5.1</sc:Value>
               </sc:values>
             </sc:TaggedValue>
           </sc:taggedValues>
           <sc:cardinality>0..1</sc:cardinality>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870910.1</sc:sequenceNumber>
+          <sc:sequenceNumber>5.1</sc:sequenceNumber>
           <sc:typeId>16413</sc:typeId>
           <sc:typeName>T5_FT_2_1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11523,8 +11555,16 @@
         <sc:Property>
           <sc:name>role_Sas51465</sc:name>
           <sc:id>Sas51465</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>3</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870909</sc:sequenceNumber>
+          <sc:sequenceNumber>3</sc:sequenceNumber>
           <sc:typeId>16416</sc:typeId>
           <sc:typeName>T6_FT1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>
@@ -11547,8 +11587,16 @@
         <sc:Property>
           <sc:name>role_Sas51467</sc:name>
           <sc:id>Sas51467</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>5</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870908</sc:sequenceNumber>
+          <sc:sequenceNumber>5</sc:sequenceNumber>
           <sc:typeId>16418</sc:typeId>
           <sc:typeName>T6_FT3</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>

@@ -1,0 +1,56 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/subpackage.json",
+  "title": "test sub-package",
+  "description": "Definition: subpackage Def  Description: subpackage Desc",
+  "$defs": {
+    "FT3": {
+      "$anchor": "FT3",
+      "description": "Definition: FT3 Def  Description: FT3 Desc",
+      "allOf": [
+        {
+          "$ref": "https://example.org/schemas/main.json#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attDep": {
+              "title": "attribute dep",
+              "description": "Definition: attDep Def  Description: attDep Desc",
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "#FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT5": {
+      "$anchor": "FT5",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "#FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    }
+  }
+}

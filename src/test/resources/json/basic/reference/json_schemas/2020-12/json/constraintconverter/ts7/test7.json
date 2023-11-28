@@ -1,0 +1,24 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri/ts7/ts7/test7.json",
+  "$defs": {
+    "TS7_CodelistLinkObject": {
+      "$anchor": "TS7_CodelistLinkObject",
+      "$ref": "http://shapechange.net/tmp/ugas20/link.json"
+    },
+    "TS7_CodelistNumeric": {
+      "$anchor": "TS7_CodelistNumeric",
+      "type": "number"
+    },
+    "TS7_CodelistString": {
+      "$anchor": "TS7_CodelistString",
+      "type": "string"
+    },
+    "TS7_CodelistUriFormat": {
+      "$anchor": "TS7_CodelistUriFormat",
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

@@ -39,6 +39,5 @@ import com.google.gson.JsonElement;
  */
 public interface JsonValue {
     
-    public JsonElement toGson();
-    
+    public JsonElement toGson();    
 }

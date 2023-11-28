@@ -39,6 +39,7 @@ import java.util.Optional;
  */
 public enum JsonSchemaVersion {
 
+    DRAFT_2020_12("2020-12", "https://json-schema.org/draft/2020-12/schema"),
     DRAFT_2019_09("2019-09", "https://json-schema.org/draft/2019-09/schema"),
     DRAFT_07("draft-07", "http://json-schema.org/draft-07/schema#"),
     OPENAPI_30("OpenApi30",null);

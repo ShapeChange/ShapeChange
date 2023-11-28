@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts1/subdir/test1.json#FT1"
+             type="FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts1/subdir/test1.json#FT2"
+             type="FT2"/>
+</mapEntries>

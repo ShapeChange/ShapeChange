@@ -457,6 +457,29 @@ public abstract class ModelImpl implements Model {
 
 	return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     * <p>
+     * WARNING: This method is intended to be "final", but not actually declared as
+     * such. A depending project can thus extend the method, if absolutely
+     * necessary.
+     */
+    @Override
+    public PackageInfo schemaPackage(PackageInfo pi) {
+
+	PackageInfo p = pi;
+
+	do {
+	    if (p.isSchema() || p.isAppSchema()) {
+		return p;
+	    } else {
+		p = p.owner();
+	    }
+	} while (p != null);
+
+	return null;
+    }
 
     /**
      * {@inheritDoc}

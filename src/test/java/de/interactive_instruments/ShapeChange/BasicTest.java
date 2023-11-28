@@ -225,7 +225,8 @@ public abstract class BasicTest {
 		    if ((fresExtension.equals("xsd") && fileFormatsToCheck.contains("xsd"))
 			    || (fresExtension.equals("xml") && fileFormatsToCheck.contains("xml"))
 			    || (fresExtension.equals("rdf") && fileFormatsToCheck.contains("rdf"))
-			    || (fresExtension.equals("sch") && fileFormatsToCheck.contains("sch"))) {
+			    || (fresExtension.equals("sch") && fileFormatsToCheck.contains("sch"))
+			    || (fresExtension.equals("gfs") && fileFormatsToCheck.contains("gfs"))) {
 			similar(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
 		    } else if (fresExtension.equals("html") && fileFormatsToCheck.contains("html")) {

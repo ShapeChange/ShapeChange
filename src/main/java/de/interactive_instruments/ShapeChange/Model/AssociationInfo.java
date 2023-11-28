@@ -33,13 +33,24 @@
 package de.interactive_instruments.ShapeChange.Model;
 
 public interface AssociationInfo extends Info {
-	public PropertyInfo end1();
 
-	public PropertyInfo end2();
+    /**
+     * @return the association role at the target end of the association, i.e., the
+     *         role which is navigable from the class which is the association
+     *         source (for cases in which direction matters)
+     */
+    public PropertyInfo end1();
 
-	public ClassInfo assocClass();
-	
-	public boolean isReflexive();
-	
-	public boolean isBiDirectional();
+    /**
+     * @return the association role at the source end of the association, i.e., the
+     *         role which is navigable from the class which is the association
+     *         target (for cases in which direction matters)
+     */
+    public PropertyInfo end2();
+
+    public ClassInfo assocClass();
+
+    public boolean isReflexive();
+
+    public boolean isBiDirectional();
 };

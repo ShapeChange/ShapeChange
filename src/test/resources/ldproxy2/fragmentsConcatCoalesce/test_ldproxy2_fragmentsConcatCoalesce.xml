@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/sql/sqlEncodingInfos/test_sqlEncodingInfos.EAP"/>
+		<parameter name="appSchemaName" value="Test"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ldproxy2/fragmentsConcatCoalesce/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" mode="enabled" input="INPUT" id="IDENTITY"/>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer" input="IDENTITY" id="TRF_TV" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="prs">
+					<rule name="rule-trf-taggedValue-createOriginalSchemaInformationTags"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" input="TRF_TV" id="TRF_inheritance" mode="enabled">
+			<parameters>
+				<ProcessParameter name="separatorForPropertyFromUnion" value="_"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="TRF_multiplicity" input="TRF_inheritance" mode="enabled">
+			<parameters>
+				<ProcessParameter name="maxOccurs" value="2"/>
+				<ProcessParameter name="maxMultiplicityThreshold" value="2"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-multiplicity"/>
+					<rule name="rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations"/>
+					<rule name="rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener" id="TRF_END" input="TRF_multiplicity" mode="enabled">
+			<parameters>
+				<ProcessParameter name="flattenObjectTypes" value="false"/>
+				<ProcessParameter name="flattenDataTypesExcludeRegex" value=".*"/>
+				<!-- default of using . is an issue when using ldproxy -->
+				<ProcessParameter name="separatorForPropertyFromNonUnion" value="_"/>
+				<ProcessParameter name="separatorForPropertyFromUnion" value="_"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-types"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="XSDEncRule"/>
+			<targetParameter name="writeXmlEncodingInfos" value="true"/>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+			<rules>
+				<EncodingRule name="XSDEncRule" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes"/>
+				</EncodingRule>
+			</rules>
+			<xsdMapEntries>
+				<XsdMapEntry type="ExternalDatatypeDefinedInModel" xsdEncodingRules="*" xmlType="ext:ExternalDatatypeDefinedInModelType" xmlElement="ext:ExternalDatatypeDefinedInModel"
+					xmlPropertyType="ext:ExternalDatatypeDefinedInModelPropertyType"/>
+				<XsdMapEntry type="ExternalDatatypeDefinedOutsideOfModel" xsdEncodingRules="*" xmlType="ext:ExternalDatatypeDefinedOutsideOfModelType" xmlElement="ext:ExternalDatatypeDefinedOutsideOfModel"
+					xmlPropertyType="ext:ExternalDatatypeDefinedOutsideOfModelPropertyType"/>
+				<XsdMapEntry type="ExternalFeatureType" xsdEncodingRules="*" xmlType="ext:ExternalFeatureTypeType" xmlElement="ext:ExternalFeatureType" xmlPropertyType="ext:ExternalFeatureTypePropertyType"/>
+			</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace nsabr="ext" ns="https://shapechange.net/test/schema/external" location="https://shapechange.net/test/schema/external.xsd"/>
+			</xmlNamespaces>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="TRF_END">
+			<!--<advancedProcessConfigurations>-->
+			<!--	<xi:include href="src/test/resources/ldproxy2/fragmentsConcatCoalesce/reference/xsd/IDENTITY/t_XmlEncodingInfos.xml"/>-->
+			<!--</advancedProcessConfigurations>-->
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/ldproxy_flat"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml"/>
+			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+			 <targetParameter name="descriptionTemplate" value="[[definition]]"/> 
+			 <targetParameter name="descriptorNoValue" value=""/> 
+			<targetParameter name="forceAxisOrder" value="NONE"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
+			<targetParameter name="labelTemplate" value="[[name]]"/>
+			<targetParameter name="maxNameLength" value="63"/>
+			<targetParameter name="objectIdentifierName" value="oid"/>
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="MyServiceLabel" />
+			<!-- 			<targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" /> -->
+			<targetParameter name="srid" value="31467" />
+			
+			<targetParameter name="enableGmlOutput" value="true"/>
+			<targetParameter name="gmlIdPrefix" value="_"/>
+			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything other than sf:FeatureCollection. -->
+			<!-- 			<targetParameter name="gmlSfLevel" value="1"/> -->
+<!--			<targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>-->
+<!--			<targetParameter name="featureMemberElementName" value="wfs:member"/>-->
+<!--			<targetParameter name="supportsStandardResponseParameters" value="true"/>-->
+			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest1"/>
+			<rules>
+				<EncodingRule name="ldptest1">
+					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
+					<rule name="rule-ldp2-all-queryables"/>
+					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
+					<rule name="rule-ldp2-cls-codelist-append-code"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-prop-readOnly"/>
+					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
+			<mapEntries>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
+			</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="TRF_END">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/ldproxy_flat_linkobjects"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml"/>
+			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+			 <targetParameter name="descriptionTemplate" value="[[definition]]"/> 
+			 <targetParameter name="descriptorNoValue" value=""/> 
+			<targetParameter name="forceAxisOrder" value="NONE"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
+			<targetParameter name="labelTemplate" value="[[name]]"/>
+			<targetParameter name="maxNameLength" value="63"/>
+			<targetParameter name="objectIdentifierName" value="oid"/>
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="MyServiceLabel" />
+			<!-- 			<targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" /> -->
+			<targetParameter name="srid" value="31467" />
+			
+			<targetParameter name="enableGmlOutput" value="true"/>
+			<targetParameter name="gmlIdPrefix" value="_"/>
+			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything other than sf:FeatureCollection. -->
+			<!-- 			<targetParameter name="gmlSfLevel" value="1"/> -->
+<!--			<targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>-->
+<!--			<targetParameter name="featureMemberElementName" value="wfs:member"/>-->
+<!--			<targetParameter name="supportsStandardResponseParameters" value="true"/>-->
+			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest3"/>
+			<rules>
+				<EncodingRule name="ldptest3">
+					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-queryables"/>
+					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
+					<rule name="rule-ldp2-cls-codelist-append-code"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-prop-readOnly"/>
+					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
+			<mapEntries>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
+			</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target" mode="enabled" inputs="IDENTITY">
+			<advancedProcessConfigurations>
+				<xi:include href="src/test/resources/sql/sqlEncodingInfos/reference/ddl2/TRF_END/Test_SqlEncodingInfos.xml"/>
+				<xi:include href="src/test/resources/ldproxy2/fragmentsConcatCoalesce/reference/xsd/IDENTITY/t_XmlEncodingInfos.xml"/>
+			</advancedProcessConfigurations>
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/fragmentsConcatCoalesce/results/ldproxy_orig"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="associativeTableColumnSuffix" value="_id"/>
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml"/>
+			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+			 <targetParameter name="descriptionTemplate" value="[[definition]]"/> 
+			 <targetParameter name="descriptorNoValue" value=""/> 
+			<targetParameter name="forceAxisOrder" value="NONE"/>
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+			<targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+			<targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
+			<targetParameter name="labelTemplate" value="[[name]]"/>
+			<targetParameter name="maxNameLength" value="63"/>
+			<targetParameter name="objectIdentifierName" value="oid"/>
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="MyServiceLabel" />
+			<!-- 			<targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" /> -->
+			<targetParameter name="srid" value="31467" />
+			
+			<targetParameter name="enableFragments" value="true"/>			
+			
+			<targetParameter name="enableGmlOutput" value="true"/>
+			<targetParameter name="gmlIdPrefix" value="_"/>
+			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything other than sf:FeatureCollection. -->
+			<!-- 			<targetParameter name="gmlSfLevel" value="1"/> -->
+<!--			<targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>-->
+<!--			<targetParameter name="featureMemberElementName" value="wfs:member"/>-->
+<!--			<targetParameter name="supportsStandardResponseParameters" value="true"/>-->
+			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest2"/>
+			<rules>
+				<EncodingRule name="ldptest2">
+					<rule name="rule-ldp2-all-associativeTablesWithSeparatePkField"/>
+					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
+					<rule name="rule-ldp2-all-queryables"/>
+					<rule name="rule-ldp2-cls-codelist-targetbytaggedvalue"/>
+					<rule name="rule-ldp2-cls-codelist-append-code"/>
+					<rule name="rule-ldp2-cls-codelist-byTable"/>
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-prop-readOnly"/>
+					<rule name="rule-ldp2-cls-data-types-oneToMany-severalTables"/>
+					<rule name="rule-ldp2-cls-identifierStereotype"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml"/>
+			<mapEntries>
+				<MapEntry type="ExternalDatatypeDefinedOutsideOfModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedOutsideOfModel/(value);tableName=tb_extdtoutsidemodel}"/>
+				<MapEntry type="ExternalDatatypeDefinedInModel" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalDatatypeDefinedInModel/(value);tableName=tb_extdtinmodel;representedCategory=datatype}"/>
+				<MapEntry type="ExternalFeatureType" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExternalFeatureType/(value);tableName=tb_extft}"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

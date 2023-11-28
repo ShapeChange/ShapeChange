@@ -1,0 +1,298 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/subpackage.json",
+  "$defs": {
+    "FT3": {
+      "$anchor": "FT3",
+      "allOf": [
+        {
+          "$ref": "https://example.org/schemas/main.json#/$defs/MixinC"
+        },
+        {
+          "$ref": "https://example.org/schemas/main.json#/$defs/FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attDep": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "uniqueItems": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT3Collection": {
+      "$anchor": "FT3Collection",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "if": {
+            "required": [
+              "featureType"
+            ]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT3"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/FT3"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT4"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/FT4"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "required": [
+                    "featureType"
+                  ],
+                  "properties": {
+                    "featureType": {
+                      "const": "FT5"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/FT5"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "not": {
+                    "required": [
+                      "featureType"
+                    ],
+                    "properties": {
+                      "featureType": {
+                        "enum": [
+                          "FT3",
+                          "FT4",
+                          "FT5"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "features"
+                  ],
+                  "properties": {
+                    "features": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/$defs/FT3"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "required": [
+              "features"
+            ],
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT3"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "#/$defs/FT3"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT4"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "#/$defs/FT4"
+                      }
+                    },
+                    {
+                      "if": {
+                        "required": [
+                          "featureType"
+                        ],
+                        "properties": {
+                          "featureType": {
+                            "const": "FT5"
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "#/$defs/FT5"
+                      }
+                    },
+                    {
+                      "if": {
+                        "not": {
+                          "required": [
+                            "featureType"
+                          ],
+                          "properties": {
+                            "featureType": {
+                              "enum": [
+                                "FT3",
+                                "FT4",
+                                "FT5"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "then": {
+                        "$ref": "#/$defs/FT3"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "allOf": [
+        {
+          "$ref": "#/$defs/FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT4Collection": {
+      "$anchor": "FT4Collection",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/FT4"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT5": {
+      "$anchor": "FT5",
+      "allOf": [
+        {
+          "$ref": "#/$defs/FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT5Collection": {
+      "$anchor": "FT5Collection",
+      "allOf": [
+        {
+          "$ref": "https://beta.schemas.opengis.net/json-fg/featurecollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/FT5"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

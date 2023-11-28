@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:ext="http://example.org/shapechange/schema/external"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <annotation>
+      <documentation>test application schema: main package Def
+NOTE main package Desc</documentation>
+   </annotation>
+   <import namespace="http://example.org/shapechange/schema/external"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="ExtFTSubtype"
+            substitutionGroup="ext:ExtFeatureType"
+            type="t:ExtFTSubtypeType"/>
+   <complexType name="ExtFTSubtypeType">
+      <complexContent>
+         <extension base="ext:ExtFeatureTypeType">
+            <sequence>
+               <element name="attExtFTSubtype" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="ExtFTSubtypePropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:ExtFTSubtype"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type">
+      <annotation>
+         <documentation>Feature type one: FT1 Def
+NOTE FT1 Desc</documentation>
+      </annotation>
+   </element>
+   <complexType name="FT1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attMixinA" type="boolean"/>
+               <element name="att1" type="string">
+                  <annotation>
+                     <documentation>attribute one: att1 Def
+NOTE att1 Desc</documentation>
+                  </annotation>
+               </element>
+               <element name="att2" type="gml:MeasureType"/>
+            <element name="roleFt2" type="t:FT2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="FT2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FT2Type"/>
+   <complexType abstract="true" name="FT2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attMixinB" type="string"/>
+            <element name="roleFt1" type="t:FT1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleFt2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT3" substitutionGroup="t:FT2" type="t:FT3Type">
+      <annotation>
+         <documentation>FT3 Def
+NOTE FT3 Desc</documentation>
+      </annotation>
+   </element>
+   <complexType name="FT3Type">
+      <complexContent>
+         <extension base="t:FT2Type">
+            <sequence>
+               <element name="attMixinC" type="double"/>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="attDep"
+                        type="integer">
+                  <annotation>
+                     <documentation>attribute dep: attDep Def
+NOTE attDep Desc</documentation>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT3PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT3"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT4" substitutionGroup="t:FT3" type="t:FT4Type"/>
+   <complexType name="FT4Type">
+      <complexContent>
+         <extension base="t:FT3Type">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT4PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT4"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT5" substitutionGroup="t:FT3" type="t:FT5Type"/>
+   <complexType name="FT5Type">
+      <complexContent>
+         <extension base="t:FT3Type">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT5PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT5"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinAPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:FT1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinBPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:FT2"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinCPropertyType">
+      <choice minOccurs="0">
+         <element ref="t:FT3"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T" substitutionGroup="gml:AbstractGML" type="t:TType">
+      <annotation>
+         <documentation>T Def
+NOTE T Desc</documentation>
+      </annotation>
+   </element>
+   <complexType name="TType">
+      <complexContent>
+         <extension base="gml:AbstractGMLType">
+            <sequence>
+               <element name="attT" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="TPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:T"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

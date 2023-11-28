@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/CurvePositionSpecification"
+             type="CurvePositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/FeaturePlaceRelationship"
+             type="FeaturePlaceRelationship"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/LocationSpecification"
+             type="LocationSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PlaceSpecification"
+             type="PlaceSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PointPositionSpecification"
+             type="PointPositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/PositionSpecification"
+             type="PositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/SurfacePositionSpecification"
+             type="SurfacePositionSpecification"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT1"
+             type="TS10_FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=entityType;entityTypeMemberRequired=true;idMemberPath=@id;idMemberRequired=true;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/baseuri/ts10/ts10/test10.json#/definitions/TS10_FT2"
+             type="TS10_FT2"/>
+</mapEntries>

@@ -202,7 +202,7 @@ public class SqlBuilder implements MessageSource {
 	Column cdPi = null;
 
 	if (refersToTypeRepresentedByTable(pi)) {
-
+	    
 	    String piFieldName = determineTableNameForValueType(pi) + determineForeignKeyColumnSuffix(pi);
 	    String piDocumentation = pi.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
 
@@ -381,7 +381,15 @@ public class SqlBuilder implements MessageSource {
 	String tableName = determineTableNameForValueType(pi);
 	String schemaName = determineSchemaNameForValueType(pi);
 
-	return map(schemaName, tableName);
+	boolean tableAlreadyExisted = existsTable(schemaName, tableName);
+
+	Table t = map(schemaName, tableName);
+
+	if (!tableAlreadyExisted && tableMappingApplies(pi.typeInfo().name, pi.encodingRule("sql"))) {
+	    addDetailsFromTableMapping(t, pi.typeInfo().name, pi.encodingRule("sql"));
+	}
+
+	return t;
     }
 
     /**
@@ -465,7 +473,8 @@ public class SqlBuilder implements MessageSource {
 
 		    if (SqlDdl.createAssociativeTables
 			    && options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql")) == null
-			    && typeCi != null && typeCi.category() == Options.DATATYPE
+			    && typeCi != null && model.isInSelectedSchemas(typeCi)
+			    && typeCi.category() == Options.DATATYPE
 			    && typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES)
 			    && ((typeCi.matches(SqlConstants.RULE_TGT_SQL_CLS_DATATYPES_ONETOMANY_ONETABLE)
 				    && typeCi.matches(
@@ -786,46 +795,66 @@ public class SqlBuilder implements MessageSource {
 	LinkedList<Column> columns = new LinkedList<Column>();
 	table.setColumns(columns);
 
+	boolean reflexive = ai.end1().inClass().id().equals(ai.end2().inClass().id());
+
 	/*
-	 * ensure that reference fields are created in lexicographical order of their
-	 * inClass names
+	 * ensure that reference fields (columns) are created in lexicographical order
+	 * of the names of referenced tables, or in the reflexive case (where the table
+	 * name is the same) the represented property names
 	 */
-	PropertyInfo pi1, pi2;
 
-	if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+	/*
+	 * These properties are the ones represented by column 1 and column 2.
+	 */
+	PropertyInfo column1Pi, column2Pi;
 
-	    pi1 = ai.end1();
-	    pi2 = ai.end2();
-
+	if (reflexive) {
+	    /*
+	     * table name for type as well as foreign key column suffix are identical in
+	     * reflexive association, so no need to check them here; simply compare the
+	     * property names
+	     */
+	    if (ai.end1().name().compareTo(ai.end2().name()) <= 0) {
+		column1Pi = ai.end1();
+		column2Pi = ai.end2();
+	    } else {
+		column1Pi = ai.end2();
+		column2Pi = ai.end1();
+	    }
+	} else if (tableNameEnd1InClass.compareTo(tableNameEnd2InClass) <= 0) {
+	    column1Pi = ai.end2();
+	    column2Pi = ai.end1();
 	} else {
-	    pi1 = ai.end2();
-	    pi2 = ai.end1();
+	    column1Pi = ai.end1();
+	    column2Pi = ai.end2();
 	}
 
-	boolean reflexive = pi1.inClass().id().equals(pi2.inClass().id());
+	ClassInfo column1Ci = column2Pi.inClass();
+	ClassInfo column2Ci = column1Pi.inClass();
 
 	/*
-	 * column 1 references the table that represents pi1.inClass; column 1 therefore
-	 * also represents pi2 (whose value type is pi1.inClass()); it's the other way
-	 * round for column 2
+	 * Column 1 represents column1Pi. The column references the table that
+	 * represents the type of column1Pi. Likewise for column 2.
 	 */
 
 	// add field for first reference
-	String name_1 = determineTableNameForType(pi1.inClass()) + (reflexive ? "_" + pi1.name() : "")
-		+ determineForeignKeyColumnSuffix(pi1);
-	String documentation_1 = pi2.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
-	Column cd1 = createColumn(table, pi2, documentation_1, name_1, SqlDdl.foreignKeyColumnDataType,
+	String name_1 = determineTableNameForType(column1Ci) + (reflexive ? "_" + column1Pi.name() : "")
+		+ determineForeignKeyColumnSuffix(column1Pi);
+	String documentation_1 = column1Pi.derivedDocumentation(SqlDdl.documentationTemplate,
+		SqlDdl.documentationNoValue);
+	Column cd1 = createColumn(table, column1Pi, documentation_1, name_1, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
-	cd1.setReferencedTable(map(pi1.inClass()));
+	cd1.setReferencedTable(map(column1Ci));
 	columns.add(cd1);
 
 	// add field for second reference
-	String name_2 = determineTableNameForType(pi2.inClass()) + (reflexive ? "_" + pi2.name() : "")
-		+ determineForeignKeyColumnSuffix(pi2);
-	String documentation_2 = pi1.derivedDocumentation(SqlDdl.documentationTemplate, SqlDdl.documentationNoValue);
-	Column cd2 = createColumn(table, pi1, documentation_2, name_2, SqlDdl.foreignKeyColumnDataType,
+	String name_2 = determineTableNameForType(column2Ci) + (reflexive ? "_" + column2Pi.name() : "")
+		+ determineForeignKeyColumnSuffix(column2Pi);
+	String documentation_2 = column2Pi.derivedDocumentation(SqlDdl.documentationTemplate,
+		SqlDdl.documentationNoValue);
+	Column cd2 = createColumn(table, column2Pi, documentation_2, name_2, SqlDdl.foreignKeyColumnDataType,
 		SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
-	cd2.setReferencedTable(map(pi2.inClass()));
+	cd2.setReferencedTable(map(column2Ci));
 	columns.add(cd2);
 
 	if (SqlDdl.associativeTablesWithSeparatePkField) {
@@ -855,7 +884,47 @@ public class SqlBuilder implements MessageSource {
 	String tableName = determineTableNameForType(ci);
 	String schemaName = determineSchemaNameForType(ci);
 
-	return map(schemaName, tableName);
+	boolean tableAlreadyExisted = existsTable(schemaName, tableName);
+
+	Table t = map(schemaName, tableName);
+
+	if (!tableAlreadyExisted && tableMappingApplies(ci.name(), ci.encodingRule("sql"))) {
+	    addDetailsFromTableMapping(t, ci.name(), ci.encodingRule("sql"));
+	}
+
+	return t;
+    }
+
+    private void addDetailsFromTableMapping(Table t, String typeName, String encodingRule) {
+
+	// add primary key column(s)
+	if (SqlDdl.mapEntryParamInfos.hasCharacteristic(typeName, encodingRule, SqlConstants.ME_PARAM_TABLE,
+		SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS)) {
+
+	    String mePkColumnsString = SqlDdl.mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
+		    SqlConstants.ME_PARAM_TABLE, SqlConstants.ME_PARAM_TABLE_CHARACT_PK_COLUMNS);
+
+	    String[] pkColumnNames = StringUtils.split(mePkColumnsString);
+
+	    for (String pkColName : pkColumnNames) {
+		Column pkCol = new Column(pkColName, null, t);
+		pkCol.addSpecification("PRIMARY KEY");
+		t.addColumn(pkCol);
+	    }
+	}
+    }
+
+    private boolean tableMappingApplies(String typeName, String encodingRule) {
+	if (SqlDdl.mapEntryParamInfos.hasParameter(typeName, encodingRule, SqlConstants.ME_PARAM_TABLE)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    private boolean existsTable(String schemaName, String tableName) {
+	return this.tables.stream()
+		.anyMatch(t -> StringUtils.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName()));
     }
 
     /**
@@ -1263,15 +1332,12 @@ public class SqlBuilder implements MessageSource {
      */
     private String determineTableNameForValueType(PropertyInfo pi) {
 
-	String valueTypeName = pi.typeInfo().name;
-	String piEncodingRule = pi.encodingRule("sql");
+	ProcessMapEntry pme = options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql"));
 
-	ProcessMapEntry pme = options.targetMapEntry(valueTypeName, piEncodingRule);
+	if (pme != null && SqlDdl.mapEntryParamInfos.hasParameter(pme, SqlConstants.ME_PARAM_TABLE)) {
 
-	if (pme != null
-		&& SqlDdl.mapEntryParamInfos.hasParameter(valueTypeName, piEncodingRule, SqlConstants.ME_PARAM_TABLE)) {
+	    return pme.getTargetType();
 
-	    return SqlDdl.mapEntryParamInfos.getMapEntry(valueTypeName, piEncodingRule).getTargetType();
 	} else {
 
 	    /*
@@ -1280,10 +1346,7 @@ public class SqlBuilder implements MessageSource {
 	     * as fallback.
 	     */
 
-	    ClassInfo valueType = model.classById(pi.typeInfo().id);
-	    if (valueType == null) {
-		valueType = model.classByName(pi.typeInfo().name);
-	    }
+	    ClassInfo valueType = model.classByIdOrName(pi.typeInfo());
 
 	    if (valueType != null) {
 		for (CreateTable ct : this.createTableStatements) {
@@ -2258,18 +2321,21 @@ public class SqlBuilder implements MessageSource {
 
 			    ColumnDataType refColdt = refCol.getDataType();
 
-			    if (refColdt.getName().equals(SqlDdl.databaseStrategy.primaryKeyDataType().getName())) {
-				/*
-				 * We can keep the datatype of col as currently set (e.g. bigint - via
-				 * configuration parameter foreignKeyColumnDatatype).
-				 */
-			    } else {
+			    // NOTE: PK col from table mapping may not have a data type defined
+			    if (refColdt != null) {
+				if (refColdt.getName().equals(SqlDdl.databaseStrategy.primaryKeyDataType().getName())) {
+				    /*
+				     * We can keep the datatype of col as currently set (e.g. bigint - via
+				     * configuration parameter foreignKeyColumnDatatype).
+				     */
+				} else {
 
-				/*
-				 * e.g. for reference to numerically valued code list
-				 */
-				col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
-					refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+				    /*
+				     * e.g. for reference to numerically valued code list
+				     */
+				    col.setDataType(new ColumnDataType(refColdt.getName(), refColdt.getPrecision(),
+					    refColdt.getScale(), refColdt.getLength(), refColdt.getLengthQualifier()));
+				}
 			    }
 			}
 		    }
@@ -2759,7 +2825,7 @@ public class SqlBuilder implements MessageSource {
 
 		    String columnName = ci.name() + determineForeignKeyColumnSuffix(ci);
 
-		    Column dtOwner_cd = createColumn(table, null, null, columnName, SqlDdl.foreignKeyColumnDataType,
+		    Column dtOwner_cd = createColumn(table, pi, null, columnName, SqlDdl.foreignKeyColumnDataType,
 			    SqlConstants.NOT_NULL_COLUMN_SPEC, false, true);
 
 		    // the referenced table must be usage specific
@@ -3337,7 +3403,7 @@ public class SqlBuilder implements MessageSource {
 		    + SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES
 		    + "). Because the rule is not included, the relationship will be ignored.";
 	case 9:
-	    return "Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
+	    return "??Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES
 		    + " is not enabled. Please ensure that map entries are defined for external types used in the schema - or allow referencing of external types in general by enabling "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,12 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,12 +54,12 @@ import de.interactive_instruments.ShapeChange.Options;
 import de.interactive_instruments.ShapeChange.ProcessConfiguration;
 import de.interactive_instruments.ShapeChange.ProcessMapEntry;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.TargetConfiguration;
+import de.interactive_instruments.ShapeChange.XmlNamespace;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.ModelElementXmlEncoding;
 import de.interactive_instruments.ShapeChange.Target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
-import de.interactive_instruments.ShapeChange.TargetConfiguration;
-import de.interactive_instruments.ShapeChange.XmlNamespace;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -67,22 +67,31 @@ import de.interactive_instruments.ShapeChange.XmlNamespace;
  */
 public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
-	    .of(Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_DATE_FORMAT,
-		    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
-		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
-		    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
-		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
-		    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
-		    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
-		    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
-		    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
-		    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
-		    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
-		    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
-		    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT,
+	    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME,
+	    Ldproxy2Constants.PARAM_CORETABLE, Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+	    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE,
+	    Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, Ldproxy2Constants.PARAM_DATE_FORMAT,
+	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
+	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_FEATURES_GEOJSON,
+	    Ldproxy2Constants.PARAM_FEATURES_JSONFG, Ldproxy2Constants.PARAM_FEATURES_GML,
+	    Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX,
+	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST,
+	    Ldproxy2Constants.PARAM_FRAGMENTS, Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES,
+	    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
+	    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
+	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
+	    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+	    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+	    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
+	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
+	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
@@ -123,6 +132,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	// validation of known map entry parameters
 	isValid = isValid && checkMapEntryParameters(mepis);
 
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT);
+
 	isValid = isValid & checkNonNegativeIntegerParameter(Ldproxy2Constants.PARAM_SRID);
 	isValid = isValid & checkNonNegativeIntegerParameter(Ldproxy2Constants.PARAM_MAX_NAME_LENGTH);
 
@@ -161,12 +172,34 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    }
 	}
 
+	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT))) {
+	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT);
+	    if (!("none".equals(paramValue) || "lowerCase".equals(paramValue))) {
+		MessageContext mc = result.addError(this, 110, Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT,
+			paramValue);
+		mc.addDetail(this, 0, targetConfigInputs);
+		isValid = false;
+	    }
+	}
+
 	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_GML_SF_LEVEL))) {
 	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_GML_SF_LEVEL);
 	    if (!("0".equals(paramValue) || "1".equals(paramValue) || "2".equals(paramValue))) {
 		MessageContext mc = result.addError(this, 110, Ldproxy2Constants.PARAM_GML_SF_LEVEL, paramValue);
 		mc.addDetail(this, 0, targetConfigInputs);
 		isValid = false;
+	    }
+	}
+
+	if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE)) {
+
+	    String coretableIdColumnLdproxyType = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE, "Integer", false, true);
+	    if (!("Integer".equalsIgnoreCase(coretableIdColumnLdproxyType)
+		    || "String".equalsIgnoreCase(coretableIdColumnLdproxyType))) {
+		isValid = false;
+		result.addError(this, 100, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+			coretableIdColumnLdproxyType);
 	    }
 	}
 
@@ -390,6 +423,32 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    isValid = isValid & checkParameterRequiredCharacteristicHasValue(characteristicsByParameter,
 			    Ldproxy2Constants.ME_PARAM_LINK_INFOS,
 			    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE, typeRuleKey, targetType);
+
+		    Map<String, String> linkInfosCharacteristics = characteristicsByParameter
+			    .get(Ldproxy2Constants.ME_PARAM_LINK_INFOS);
+
+		    if (linkInfosCharacteristics.containsKey(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT)) {
+
+			String representedCategory = linkInfosCharacteristics
+				.get(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT);
+
+			if (StringUtils.isBlank(representedCategory)) {
+
+			    isValid = false;
+			    result.addError(this, 113, typeRuleKey,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS);
+
+			} else if (!representedCategory
+				.matches(Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX)) {
+
+			    isValid = false;
+			    result.addError(this, 114, typeRuleKey,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS,
+				    Ldproxy2Constants.ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX);
+			}
+		    }
 		}
 	    }
 	}
@@ -506,6 +565,10 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
 	case 112:
 	    return "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
+	case 113:
+	    return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+	case 114:
+	    return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
 
 	default:
 	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

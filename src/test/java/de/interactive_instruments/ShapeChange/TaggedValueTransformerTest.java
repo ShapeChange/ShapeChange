@@ -47,4 +47,15 @@ public class TaggedValueTransformerTest extends BasicTestSCXML {
 				new String[] { "xml" }, "testResults/taggedValueTransformer/taggedValueInheritance/export",
 				"src/test/resources/taggedValueTransformer/taggedValueInheritance/reference/export");
 	}
+	
+	@Test
+	public void testCreateOriginalSchemaInformationTags() {
+		/*
+		 * 
+		 */
+		multiTest(
+				"src/test/resources/taggedValueTransformer/createOriginalSchemaInfoTags/test_createOriginalSchemaInfoTags.xml",
+				new String[] { "xsd" }, "testResults/taggedValueTransformer/createOriginalSchemaInfoTags/xsd",
+				"src/test/resources/taggedValueTransformer/createOriginalSchemaInfoTags/reference/xsd");
+	}
 }

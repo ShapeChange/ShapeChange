@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="DTEncoded"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DTEncodedType"/>
+   <complexType name="DTEncodedType">
+      <sequence>
+         <element name="attDt1" type="integer"/>
+      </sequence>
+   </complexType>
+   <complexType name="DTEncodedPropertyType">
+      <sequence>
+         <element ref="t:DTEncoded"/>
+      </sequence>
+   </complexType>
+   <element name="DTNotEncoded"
+            substitutionGroup="t:DTEncoded"
+            type="t:DTNotEncodedType"/>
+   <complexType name="DTNotEncodedType">
+      <complexContent>
+         <extension base="t:DTEncodedType">
+            <sequence>
+               <element name="attDtNotEncoded" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTNotEncodedPropertyType">
+      <sequence>
+         <element ref="t:DTNotEncoded"/>
+      </sequence>
+   </complexType>
+   <element name="DTSubEncoded"
+            substitutionGroup="t:DTEncoded"
+            type="t:DTSubEncodedType"/>
+   <complexType name="DTSubEncodedType">
+      <complexContent>
+         <extension base="t:DTEncodedType">
+            <sequence>
+               <element name="attDt2" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="DTSubEncodedPropertyType">
+      <sequence>
+         <element ref="t:DTSubEncoded"/>
+      </sequence>
+   </complexType>
+   <simpleType name="EnumerationType">
+      <restriction base="string">
+         <enumeration value="e1"/>
+         <enumeration value="e2"/>
+      </restriction>
+   </simpleType>
+   <simpleType name="EnumerationNotEncodedType">
+      <restriction base="string">
+         <enumeration value="e3"/>
+         <enumeration value="e4"/>
+      </restriction>
+   </simpleType>
+   <element name="FT1" substitutionGroup="gml:AbstractFeature" type="t:FT1Type"/>
+   <complexType name="FT1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attCodeList" type="gml:CodeType"/>
+               <element name="attCodeListNotEncoded" type="gml:CodeType"/>
+               <element name="attDt" type="t:DTEncodedPropertyType"/>
+               <element name="attDtNotEncoded" type="t:DTNotEncodedPropertyType"/>
+               <element name="attEncoded" type="integer"/>
+               <element name="attEnumeration" type="t:EnumerationType"/>
+               <element name="attEnumerationNotEncoded" type="t:EnumerationNotEncodedType"/>
+               <element name="attNotEncoded" type="string"/>
+               <element name="attUnion" type="t:UnionPropertyType"/>
+               <element name="attUnionNotEncoded" type="t:UnionNotEncodedPropertyType"/>
+            <element name="roleToFt2" type="gml:ReferenceType">
+                  <annotation>
+                     <appinfo>
+                        <targetElement xmlns="http://www.opengis.net/gml/3.2">t:FT2</targetElement>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleToFt1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT2" substitutionGroup="gml:AbstractFeature" type="t:FT2Type"/>
+   <complexType name="FT2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attFt" type="integer"/>
+            <element name="roleToFt1" type="gml:ReferenceType">
+                  <annotation>
+                     <appinfo>
+                        <targetElement xmlns="http://www.opengis.net/gml/3.2">t:FT1</targetElement>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:roleToFt2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT2Sub" substitutionGroup="t:FT2" type="t:FT2SubType"/>
+   <complexType name="FT2SubType">
+      <complexContent>
+         <extension base="t:FT2Type">
+            <sequence>
+               <element name="attFtSub" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT2SubPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT2Sub"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FT2SubNotEncoded"
+            substitutionGroup="t:FT2"
+            type="t:FT2SubNotEncodedType"/>
+   <complexType name="FT2SubNotEncodedType">
+      <complexContent>
+         <extension base="t:FT2Type">
+            <sequence>
+               <element name="attFtSubNotEncoded" type="integer"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT2SubNotEncodedPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT2SubNotEncoded"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Union"
+            substitutionGroup="gml:AbstractObject"
+            type="t:UnionType"/>
+   <complexType name="UnionType">
+      <choice>
+         <element name="u1" type="integer"/>
+         <element name="u2" type="integer"/>
+      </choice>
+   </complexType>
+   <complexType name="UnionPropertyType">
+      <sequence>
+         <element ref="t:Union"/>
+      </sequence>
+   </complexType>
+   <element name="UnionNotEncoded"
+            substitutionGroup="gml:AbstractObject"
+            type="t:UnionNotEncodedType"/>
+   <complexType name="UnionNotEncodedType">
+      <choice>
+         <element name="uNE1" type="integer"/>
+         <element name="uNE2" type="integer"/>
+      </choice>
+   </complexType>
+   <complexType name="UnionNotEncodedPropertyType">
+      <sequence>
+         <element ref="t:UnionNotEncoded"/>
+      </sequence>
+   </complexType>
+</schema>

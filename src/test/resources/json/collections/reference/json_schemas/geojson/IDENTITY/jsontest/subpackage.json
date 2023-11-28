@@ -1,0 +1,213 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/subpackage.json",
+  "title": "test sub-package",
+  "description": "Definition: subpackage Def  Description: subpackage Desc",
+  "$defs": {
+    "FT3": {
+      "$anchor": "FT3",
+      "description": "Definition: FT3 Def  Description: FT3 Desc",
+      "allOf": [
+        {
+          "$ref": "https://example.org/schemas/main.json#FT2"
+        },
+        {
+          "type": "object",
+            "properties": {
+              "properties": {
+                "type": "object",
+                  "properties": {
+                  "attDep": {
+                  "title": "attribute dep",
+                  "description": "Definition: attDep Def  Description: attDep Desc",
+                  "type": "array",
+                  "items": {
+                "type": "integer"
+              },
+              "uniqueItems": true
+            }
+          }
+          }
+ }
+        }
+      ]
+      },
+    "FT3Collection": {
+      "$anchor": "FT3Collection",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/FeatureCollection.json"
+        },
+        {
+          "required": [
+            "features"
+          ],
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "if": {
+                      "required": [
+                        "properties"
+                      ],
+                      "properties": {
+                        "properties": {
+                          "required": [
+                            "@type"
+                          ],
+                          "properties": {
+                            "@type": {
+                              "const": "FT3"
+                          }
+                          }
+                        }
+                      }
+                      },
+                    "then": {
+                      "$ref": "#FT3"
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "properties"
+                      ],
+                      "properties": {
+                        "properties": {
+                          "required": [
+                            "@type"
+                          ],
+                          "properties": {
+                            "@type": {
+                              "const": "FT4"
+                          }
+                          }
+                        }
+                      }
+                      },
+                    "then": {
+                      "$ref": "#FT4"
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "properties"
+                      ],
+                      "properties": {
+                        "properties": {
+                          "required": [
+                            "@type"
+                          ],
+                          "properties": {
+                            "@type": {
+                              "const": "FT5"
+                          }
+                          }
+                        }
+                      }
+                      },
+                    "then": {
+                      "$ref": "#FT5"
+                    }
+                  },
+                  {
+                    "if": {
+                      "not": {
+                        "required": [
+                          "properties"
+                        ],
+                        "properties": {
+                          "properties": {
+                            "required": [
+                              "@type"
+                            ],
+                            "properties": {
+                              "@type": {
+                                "enum": [
+                                  "FT3",
+                                  "FT4",
+                                  "FT5"
+                                ]
+                              }
+                            }
+                            }
+                        }
+                        }
+                    },
+                    "then": {
+                      "$ref": "#FT3"
+                    }
+                  }
+                ]
+              }
+              }
+          }
+          }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "#FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+      },
+    "FT4Collection": {
+      "$anchor": "FT4Collection",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/FeatureCollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#FT4"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "FT5": {
+      "$anchor": "FT5",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "#FT3"
+        },
+        {
+          "type": "object"
+        }
+      ]
+      },
+    "FT5Collection": {
+      "$anchor": "FT5Collection",
+      "allOf": [
+        {
+          "$ref": "https://geojson.org/schema/FeatureCollection.json"
+        },
+        {
+          "properties": {
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#FT5"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

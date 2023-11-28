@@ -1,0 +1,222 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri/ts10/ts10/test10.json",
+  "$defs": {
+    "CurvePositionSpecification": {
+      "$anchor": "CurvePositionSpecification",
+      "allOf": [
+        {
+          "$ref": "#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FeaturePlaceRelationship": {
+      "$anchor": "FeaturePlaceRelationship",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "place": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "$ref": "#PlaceSpecification"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@type",
+        "place"
+      ]
+    },
+    "LocationSpecification": {
+      "$anchor": "LocationSpecification",
+      "allOf": [
+        {
+          "$ref": "#PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PlaceSpecification": {
+      "$anchor": "PlaceSpecification",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    },
+    "PointPositionSpecification": {
+      "$anchor": "PointPositionSpecification",
+      "allOf": [
+        {
+          "$ref": "#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "PositionSpecification": {
+      "$anchor": "PositionSpecification",
+      "allOf": [
+        {
+          "$ref": "#PlaceSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "SurfacePositionSpecification": {
+      "$anchor": "SurfacePositionSpecification",
+      "allOf": [
+        {
+          "$ref": "#PositionSpecification"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "TS10_FT1": {
+      "$anchor": "TS10_FT1",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "place": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#FeaturePlaceRelationship"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "place": {
+                      "oneOf": [
+                        {
+                          "$ref": "https://example.org/jsonschema/byreference.json"
+                        },
+                        {
+                          "if": {
+                            "properties": {
+                              "@type": {
+                                "const": "LocationSpecification"
+                              }
+                            }
+                          },
+                          "then": {
+                            "$ref": "#LocationSpecification"
+                          },
+                          "else": {
+                            "if": {
+                              "properties": {
+                                "@type": {
+                                  "const": "PointPositionSpecification"
+                                }
+                              }
+                            },
+                            "then": {
+                              "$ref": "#PointPositionSpecification"
+                            },
+                            "else": false
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "@type",
+        "place"
+      ]
+    },
+    "TS10_FT2": {
+      "$anchor": "TS10_FT2",
+      "allOf": [
+        {
+          "$ref": "#TS10_FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "place": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#FeaturePlaceRelationship"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "place": {
+                          "oneOf": [
+                            {
+                              "$ref": "https://example.org/jsonschema/byreference.json"
+                            },
+                            {
+                              "if": {
+                                "properties": {
+                                  "@type": {
+                                    "const": "PointPositionSpecification"
+                                  }
+                                }
+                              },
+                              "then": {
+                                "$ref": "#PointPositionSpecification"
+                              },
+                              "else": false
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

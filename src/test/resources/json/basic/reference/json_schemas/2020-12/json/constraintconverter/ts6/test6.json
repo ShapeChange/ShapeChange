@@ -1,0 +1,31 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/baseuri/ts6/ts6/test6.json",
+  "$defs": {
+    "TS6_Enumeration1": {
+      "$anchor": "TS6_Enumeration1",
+      "type": "number",
+      "enum": [
+        3.3,
+        2.2
+      ]
+    },
+    "TS6_Enumeration2": {
+      "$anchor": "TS6_Enumeration2",
+      "type": "integer",
+      "enum": [
+        3,
+        2
+      ]
+    },
+    "TS6_Enumeration3": {
+      "$anchor": "TS6_Enumeration3",
+      "type": "string",
+      "enum": [
+        "enum2",
+        "enum1"
+      ]
+    }
+  }
+}

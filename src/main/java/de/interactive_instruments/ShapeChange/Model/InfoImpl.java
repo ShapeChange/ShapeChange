@@ -441,6 +441,11 @@ public abstract class InfoImpl implements Info {
 			s = nov;
 		replacements.put("documentation", s.trim());
 
+		s = this.name();
+		if (s == null || s.trim().isEmpty())
+			s = nov;
+		replacements.put("name", s.trim());
+		
 		s = this.aliasName();
 		if (s == null || s.trim().isEmpty())
 			s = nov;

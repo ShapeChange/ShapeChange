@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/ExtFTSubtype"
+             type="ExtFTSubtype"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/FT1"
+             type="FT1"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/FT2"
+             type="FT2"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#/$defs/FT3"
+             type="FT3"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#/$defs/FT4"
+             type="FT4"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberRequired=false;idMemberTypes=number,string}"
+             rule="*"
+             targetType="https://example.org/schemas/subpackage.json#/$defs/FT5"
+             type="FT5"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/MixinA"
+             type="MixinA"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/MixinB"
+             type="MixinB"/>
+   <MapEntry rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/MixinC"
+             type="MixinC"/>
+   <MapEntry param="encodingInfos{entityTypeMemberPath=properties/@type;entityTypeMemberRequired=true}"
+             rule="*"
+             targetType="https://example.org/schemas/main.json#/$defs/T"
+             type="T"/>
+</mapEntries>

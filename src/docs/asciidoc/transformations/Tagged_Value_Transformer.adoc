@@ -43,6 +43,30 @@ _de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueT
 [[Rules]]
 === Rules
 
+[[rule-trf-taggedValue-createOriginalSchemaInformationTags]]
+==== rule-trf-taggedValue-createOriginalSchemaInformationTags
+
+For all classes and properties of the schemas selected for processing, 
+this rule sets a number of tagged values:
+
+* class:
+  * _originalSchemaName_ - name of the (application) schema package which owns the class
+  * _originalClassName_ - the class name
+* property:
+  * _originalSchemaName_ - name of the (application) schema package which owns the property (more specifically, the class that owns that property)
+  * _originalInClassName_ - name of the class which owns the property
+  * _originalPropertyName_ - the property name
+  * _originalPropertyMultiplicity_ - the property multiplicity
+  * _originalPropertyValueType_ - the property value type
+
+The information is kept by subsequent transformations (like
+xref:./Flattener.adoc[Flattener] rules, which might otherwise set such tags), 
+and can especially be useful for targets which need to encode information 
+about the origin of transformed model elements. An example is the SqlDdl
+target, which can use the information to generate 
+xref:../targets/SQL_DDL.adoc#SQL_Encoding_Infos[SQL encoding infos].
+
+
 [[rule-trf-taggedValue-inheritance]]
 ==== rule-trf-taggedValue-inheritance
 
