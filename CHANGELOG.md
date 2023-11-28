@@ -1,15 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/ShapeChange/ShapeChange/tree/HEAD)
+## [3.0.0](https://github.com/ShapeChange/ShapeChange/tree/3.0.0) (2023-11-28)
 
-[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.14.0...HEAD)
-
-**Merged pull requests:**
-
-- Merge enhancements to ldproxy and JSON Schema targets [\#352](https://github.com/ShapeChange/ShapeChange/pull/352) ([jechterhoff](https://github.com/jechterhoff))
-- upgrade to ldproxy-cfg 3.5 [\#350](https://github.com/ShapeChange/ShapeChange/pull/350) ([azahnen](https://github.com/azahnen))
-- Document parameter outputFilename of ArcGIS Workspace target [\#349](https://github.com/ShapeChange/ShapeChange/pull/349) ([heidivanparys](https://github.com/heidivanparys))
-- gfs template target: improve behavior for not encoding classes [\#334](https://github.com/ShapeChange/ShapeChange/pull/334) ([jechterhoff](https://github.com/jechterhoff))
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.14.0...3.0.0)
 
 ## [2.14.0](https://github.com/ShapeChange/ShapeChange/tree/2.14.0) (2023-11-28)
 
@@ -42,6 +35,15 @@
 - DiffTarget not mentioned in 2.13.0 release notes [\#330](https://github.com/ShapeChange/ShapeChange/issues/330)
 - Library with vulnerability: Commons Text [\#325](https://github.com/ShapeChange/ShapeChange/issues/325)
 - GPKG: schema extension is not registered when model does not contain enumerations [\#322](https://github.com/ShapeChange/ShapeChange/issues/322)
+- Transition to Enterprise Architect \(EA\) v16 [\#295](https://github.com/ShapeChange/ShapeChange/issues/295)
+
+**Merged pull requests:**
+
+- Merge all enhancements and fixes for v2.14 from next into master [\#353](https://github.com/ShapeChange/ShapeChange/pull/353) ([jechterhoff](https://github.com/jechterhoff))
+- Merge enhancements to ldproxy and JSON Schema targets [\#352](https://github.com/ShapeChange/ShapeChange/pull/352) ([jechterhoff](https://github.com/jechterhoff))
+- upgrade to ldproxy-cfg 3.5 [\#350](https://github.com/ShapeChange/ShapeChange/pull/350) ([azahnen](https://github.com/azahnen))
+- Document parameter outputFilename of ArcGIS Workspace target [\#349](https://github.com/ShapeChange/ShapeChange/pull/349) ([heidivanparys](https://github.com/heidivanparys))
+- gfs template target: improve behavior for not encoding classes [\#334](https://github.com/ShapeChange/ShapeChange/pull/334) ([jechterhoff](https://github.com/jechterhoff))
 
 ## [2.13.0](https://github.com/ShapeChange/ShapeChange/tree/2.13.0) (2022-11-17)
 
