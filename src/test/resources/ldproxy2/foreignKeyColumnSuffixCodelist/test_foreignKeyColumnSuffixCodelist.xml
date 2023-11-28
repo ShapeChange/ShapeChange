@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.eap" />
+			value="src/test/resources/ldproxy2/foreignKeyColumnSuffixCodelist/test_foreignKeyColumnSuffixCodelist.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

@@ -7,7 +7,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/linkedDocument/test_uml_linkedDocument.eap" />
+			value="src/test/resources/uml/linkedDocument/test_uml_linkedDocument.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="loadLinkedDocuments" value="true" />
@@ -45,8 +45,8 @@
 			<targetParameter name="eaAuthor" value="Test Author"/>
 			<targetParameter name="omitOutputPackageDateTime"
 				value="true" />
-			<targetParameter name="eapTemplate"
-				value="src/main/resources/templates/UmlModel_template.eap" />
+			<targetParameter name="eaTemplate"
+				value="src/main/resources/templates/UmlModel_template.qea" />
 			<mapEntries>
 				<MapEntry type="application schema" rule="*"
 					targetType="ShapeChange::applicationSchema" param="stereotype" />

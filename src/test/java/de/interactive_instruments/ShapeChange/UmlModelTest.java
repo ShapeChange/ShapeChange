@@ -46,7 +46,7 @@ public class UmlModelTest extends WindowsBasicTest {
 	public void testBasicFunctionality() {
 
 		multiTest("src/test/resources/uml/basic/testEA_uml_basic.xml",
-				new String[] { "eap" }, "testResults/uml/basic",
+				new String[] { "qea" }, "testResults/uml/basic",
 				"src/test/resources/uml/basic/reference");
 	}
 
@@ -55,7 +55,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/linkedDocument/testEA_uml_linkedDocument.xml",
-				new String[] { "eap" }, "testResults/uml/linkedDocument",
+				new String[] { "qea" }, "testResults/uml/linkedDocument",
 				"src/test/resources/uml/linkedDocument/reference");
 	}
 
@@ -64,7 +64,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/connectorEndOwnedByClassifier/test_uml_connectorEndOwnedByClassifier.xml",
-				new String[] { "eap", "xml" },
+				new String[] { "qea", "xml" },
 				"testResults/uml/connectorEndOwnedByClassifier/results",
 				"src/test/resources/uml/connectorEndOwnedByClassifier/reference/results");
 	}
@@ -74,7 +74,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/mergeConstraintCommentsIntoText/test_uml_mergeConstraintCommentsIntoText.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/uml/mergeConstraintCommentsIntoText/results",
 				"src/test/resources/uml/mergeConstraintCommentsIntoText/reference/results");
 	}
@@ -84,7 +84,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/authorAndStatus/test_uml_authorAndStatus.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/uml/authorAndStatus/results",
 				"src/test/resources/uml/authorAndStatus/reference/results");
 	}
@@ -94,7 +94,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/preservePackageHierarchy/test_uml_preservePackageHierarchy.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/uml/preservePackageHierarchy",
 				"src/test/resources/uml/preservePackageHierarchy/reference");
 	}
@@ -104,7 +104,7 @@ public class UmlModelTest extends WindowsBasicTest {
 
 		multiTest(
 				"src/test/resources/uml/mdgValidation/testEA_mdg_validation.xml",
-				new String[] { "eap" },
+				new String[] { "qea" },
 				"testResults/uml/mdgValidation",
 				"src/test/resources/uml/mdgValidation/reference");
 	}

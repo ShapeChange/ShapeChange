@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/gfs/dataTypeSubtypePropsWithSameName/test_gfs_dataTypeSubtypePropsWithSameName.eapx"/>
+		<parameter name="inputFile" value="src/test/resources/gfs/dataTypeSubtypePropsWithSameName/test_gfs_dataTypeSubtypePropsWithSameName.qea"/>
 		<parameter name="appSchemaNameRegex" value="Test.*"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="disabled"/>

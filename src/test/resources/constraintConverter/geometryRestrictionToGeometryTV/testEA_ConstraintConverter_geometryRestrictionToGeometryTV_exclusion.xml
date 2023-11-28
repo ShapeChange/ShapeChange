@@ -8,7 +8,7 @@
 		<parameter name="representTaggedValues" value="geometry" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/test_ConstraintConverter_geometryRestrictionToGeometryTV.EAP" />
+			value="src/test/resources/constraintConverter/geometryRestrictionToGeometryTV/test_ConstraintConverter_geometryRestrictionToGeometryTV.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema - Exclusion" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

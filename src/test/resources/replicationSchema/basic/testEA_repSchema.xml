@@ -8,7 +8,7 @@
   REPLICATION SCHEMA, WHICH IS NOW DEPRECATED. -->
   <input id="INPUT">
     <parameter name="inputModelType" value="EA7"/>
-    <parameter name="inputFile" value="src/test/resources/replicationSchema/basic/test_replicationSchema.EAP"/>
+    <parameter name="inputFile" value="src/test/resources/replicationSchema/basic/test_replicationSchema.qea"/>
     <parameter name="appSchemaNameRegex" value="Test.*"/>
     <parameter name="sortedSchemaOutput" value="true"/>
     <descriptorSources>

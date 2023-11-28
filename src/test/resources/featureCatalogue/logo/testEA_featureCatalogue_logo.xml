@@ -7,7 +7,7 @@
  <input>
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="inputFile"
-   value="src/test/resources/featureCatalogue/logo/test_featureCatalogue_logo.eap"/>
+   value="src/test/resources/featureCatalogue/logo/test_featureCatalogue_logo.qea"/>
   <parameter name="appSchemaName" value="Test"/>
   <parameter name="publicOnly" value="true"/>
   <parameter name="checkingConstraints" value="disabled"/>
@@ -81,7 +81,7 @@
    <targetParameter name="xsltPath" value="src/main/resources/xslt"/>
    <targetParameter name="producer" value="interactive instruments GmbH"/>
    <targetParameter name="referenceModelType" value="EA7"/>
-   <targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/featureCatalogue/logo/test_featureCatalogue_logo_referenceModel.eap"/>
+   <targetParameter name="referenceModelFileNameOrConnectionString" value="src/test/resources/featureCatalogue/logo/test_featureCatalogue_logo_referenceModel.qea"/>
   </Target>
  </targets>
 </ShapeChangeConfiguration>

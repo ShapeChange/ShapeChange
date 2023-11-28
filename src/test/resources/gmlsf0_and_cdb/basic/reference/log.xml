@@ -19,10 +19,10 @@
     <Info message="--- Validating transformer with @id 'TRF_REMOVE_TYPE' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.CDB.CDB' and @inputs 'TRF_TAGGED_VALUES' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\gmlsf0_and_cdb\basic\test_gmlsf0_and_cdb.qea"/>
     <Info message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <Info message="One or more errors encountered in OCL constraint in class 'LocationInfo' : 'Location Identifier Namespace - Allowed Values' ...">

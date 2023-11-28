@@ -6,10 +6,10 @@
     <Info message="--- Validating transformer with @id 'Test6' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'Test8 Test7 Test6' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileLoading\nonExplicitProfiles\test_profileLoading_nonExplicitProfiles.qea"/>
     <Info message="Now processing transformation 'Test8' for input ID: 'INPUT'."/>
     <Info message="------ Start validating profiles in input model."/>
     <Info message="------ End validating profiles in input model."/>

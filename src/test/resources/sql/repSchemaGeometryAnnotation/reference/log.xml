@@ -7,10 +7,10 @@
     <Info message="--- Validating transformer with @id 'F_types' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_name' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\repSchemaGeometryAnnotation\test_repSchemaGeometryAnnotation.qea"/>
     <Info message="Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

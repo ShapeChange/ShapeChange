@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/databaseModel_packageHierarchy/test_sql_databaseModel_packageHierarchy.EAP" />
+			value="src/test/resources/sql/databaseModel_packageHierarchy/test_sql_databaseModel_packageHierarchy.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema1" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

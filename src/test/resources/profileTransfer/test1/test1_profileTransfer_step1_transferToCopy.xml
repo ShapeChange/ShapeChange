@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profileTransfer/test1/test1_profileTransfer.eap" />
+			value="src/test/resources/profileTransfer/test1/test1_profileTransfer.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
@@ -58,7 +58,7 @@
 			mode="enabled" inputs="LOAD_PROFILES">
 			<targetParameter name="outputDirectory"
 				value="testResults/profileTransfer/test1/results/transfer" />
-			<targetParameter name="transferToCopyOfEAP" value="true" />
+			<targetParameter name="transferToCopyOfEARepository" value="true" />
 			<targetParameter name="deleteExistingProfiles" value="true" />
 			<targetParameter name="profilesToTransfer" value="A,C" />
 		</Target>		

@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/xsd/xmlEncodingInfos/test_xmlEncodingInfos.eap" />
+			value="src/test/resources/xsd/xmlEncodingInfos/test_xmlEncodingInfos.qea" />
 		<parameter name="appSchemaNameRegex" value="Cross Schema.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<descriptorSources>						

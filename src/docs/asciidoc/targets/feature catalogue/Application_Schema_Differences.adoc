@@ -52,7 +52,7 @@ can be configured.
   <targetParameter name="versionDate" value="n/a"/>
   <targetParameter name="producer" value="Organization XYZ"/>
   <targetParameter name="referenceModelType" value="EA7"/>
-  <targetParameter name="referenceModelFileNameOrConnectionString" value="referenceModel/refModel.eap"/>
+  <targetParameter name="referenceModelFileNameOrConnectionString" value="referenceModel/refModel.qea"/>
 </Target>
 ----------
 

@@ -8,10 +8,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'model' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.EA.UmlModel' and @inputs 'model' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\uml\mdgValidation\test_mdg_validation.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'model' for input ID: 'input'."/>
     <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <ProcessFlowInfo message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>

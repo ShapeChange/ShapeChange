@@ -152,7 +152,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 		outputDirectory = ".";
 
 	    outputFilename = options.parameterAsString(this.getClass().getName(),
-		    UmlModelConstants.PARAM_MODEL_FILENAME, "ShapeChangeExport.eap", false, true);
+		    UmlModelConstants.PARAM_MODEL_FILENAME, UmlModelConstants.PARAM_MODEL_FILENAME_DEFAULT, false,
+		    true);
 
 	    outputPackageName = options.parameterAsString(this.getClass().getName(),
 		    UmlModelConstants.PARAM_OUTPUT_PACKAGE_NAME, "ShapeChangeOutput", false, true);
@@ -211,8 +212,8 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	    if (!repfile.exists()) {
 		ex = false;
-		if (!outputFilename.toLowerCase().endsWith(".eap")) {
-		    outputFilename += ".eap";
+		if (!outputFilename.toLowerCase().endsWith(".qea")) {
+		    outputFilename += ".qea";
 		    repfile = new java.io.File(outputFilename);
 		    ex = repfile.exists();
 		}
@@ -223,37 +224,43 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    if (!ex) {
 
 		/*
-		 * Either copy EAP template, or create new repository.
+		 * Either copy qea template, or create new repository.
 		 */
 
-		String eapTemplateFilePath = options.parameter(this.getClass().getName(),
-			UmlModelConstants.PARAM_EAP_TEMPLATE);
+		String qeaTemplateFilePath;
+		if (options.hasParameter(this.getClass().getName(), UmlModelConstants.PARAM_EA_TEMPLATE)) {
+		    qeaTemplateFilePath = options.parameter(this.getClass().getName(),
+			    UmlModelConstants.PARAM_EA_TEMPLATE);
+		} else {
+		    qeaTemplateFilePath = options.parameter(this.getClass().getName(),
+			    UmlModelConstants.PARAM_EAP_TEMPLATE);
+		}
 
-		if (eapTemplateFilePath != null) {
+		if (qeaTemplateFilePath != null) {
 
 		    // copy template file either from remote or local URI
-		    if (eapTemplateFilePath.toLowerCase().startsWith("http")) {
+		    if (qeaTemplateFilePath.toLowerCase().startsWith("http")) {
 			try {
-			    URL templateUrl = new URL(eapTemplateFilePath);
+			    URL templateUrl = new URL(qeaTemplateFilePath);
 			    FileUtils.copyURLToFile(templateUrl, repfile);
 			} catch (MalformedURLException e1) {
-			    result.addFatalError(this, 51, eapTemplateFilePath, e1.getMessage());
+			    result.addFatalError(this, 51, qeaTemplateFilePath, e1.getMessage());
 			    throw new ShapeChangeAbortException();
 			} catch (IOException e2) {
 			    result.addFatalError(this, 53, e2.getMessage());
 			    throw new ShapeChangeAbortException();
 			}
 		    } else {
-			File eaptemplate = new File(eapTemplateFilePath);
-			if (eaptemplate.exists()) {
+			File eatemplate = new File(qeaTemplateFilePath);
+			if (eatemplate.exists()) {
 			    try {
-				FileUtils.copyFile(eaptemplate, repfile);
+				FileUtils.copyFile(eatemplate, repfile);
 			    } catch (IOException e) {
 				result.addFatalError(this, 53, e.getMessage());
 				throw new ShapeChangeAbortException();
 			    }
 			} else {
-			    result.addFatalError(this, 52, eaptemplate.getAbsolutePath());
+			    result.addFatalError(this, 52, eatemplate.getAbsolutePath());
 			    throw new ShapeChangeAbortException();
 			}
 		    }
@@ -621,11 +628,11 @@ public class UmlModel implements SingleTarget, MessageSource {
 			String profile = mappingTarget.split("::")[0];
 			if (!profilesWhoseLoadingStatusWasChecked.contains(profile)) {
 			    if (!rep.IsTechnologyLoaded(profile)) {
-				profilesNotLoaded.add(profile);				
+				profilesNotLoaded.add(profile);
 			    }
 			    profilesWhoseLoadingStatusWasChecked.add(profile);
-			}			
-			if(profilesNotLoaded.contains(profile)) {
+			}
+			if (profilesNotLoaded.contains(profile)) {
 			    result.addError(this, 106, profile, stereotype);
 			}
 		    }
@@ -978,14 +985,14 @@ public class UmlModel implements SingleTarget, MessageSource {
 	case 50:
 	    return "Could not write the model, because the target has not been initialized properly.";
 	case 51:
-	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EAP_TEMPLATE
+	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + " is malformed. Execution will be aborted. Exception message is: '$2$'.";
 	case 52:
-	    return "EAP template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
-		    + UmlModelConstants.PARAM_EAP_TEMPLATE
+	    return "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+		    + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 	case 53:
-	    return "Exception encountered when copying EAP template file to output destination. Message is: $1$.";
+	    return "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
 	case 54:
 	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
 
@@ -1002,7 +1009,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 	    return "Generalisation relationship between subtype '$1$' and supertype '$2$' cannot be created because '$3$' is not part of the target model.";
 	case 106:
 	    return "??Profile '$1$', configured to be used in the mapping of stereotype '$2$', is not loaded in the EA repository. The stereotype will not be assigned correctly in the EA repository. Make sure to load the profile into the EA repository that will be used as output file (typically the template file, configured via target parameter '"
-		    + UmlModelConstants.PARAM_EAP_TEMPLATE + "').";
+		    + UmlModelConstants.PARAM_EA_TEMPLATE + "').";
 
 	// 10001-10100: EA exceptions
 	case 10001:

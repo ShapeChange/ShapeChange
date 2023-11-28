@@ -77,16 +77,17 @@ public class UmlModelConstants {
      * Type: String
      *
      * <p>
-     * Default Value: ShapeChangeExport.eap
+     * Default Value: ShapeChangeExport.qea
      *
      * <p>
-     * Explanation: The Enterprise architect EAP file to which the application
+     * Explanation: The Enterprise architect EA repository file to which the application
      * schema(s) are written.
      *
      * <p>
      * Applies to Rule(s): none – default behavior
      */
     public static final String PARAM_MODEL_FILENAME = "modelFilename";
+    public static final String PARAM_MODEL_FILENAME_DEFAULT = "ShapeChangeExport.qea";
 
     /**
      * Alias: none
@@ -188,7 +189,7 @@ public class UmlModelConstants {
      * Default Value: none
      *
      * <p>
-     * Explanation: Path to the EAP template file (can be local or an online
+     * Explanation: Path to the EA template file (can be local or an online
      * resource).
      *
      * <p>
@@ -202,11 +203,12 @@ public class UmlModelConstants {
      * where ShapeChange is executed. In that situation, you would want the UML
      * Profile / MDG loaded into the EA repository to which the model is written.
      * Such a repository can be provided as a template, and configured to be used by
-     * ShapeChange via the parameter eapTemplate.
+     * ShapeChange via the parameter eaTemplate.
      *
      * <p>
      * Applies to Rule(s): none – default behavior
      */
+    public static final String PARAM_EA_TEMPLATE = "eaTemplate";
     public static final String PARAM_EAP_TEMPLATE = "eapTemplate";
 
     /**

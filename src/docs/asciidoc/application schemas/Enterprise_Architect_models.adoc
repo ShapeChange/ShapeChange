@@ -25,14 +25,14 @@ The ShapeChange EA compatibility was developed on EA versions 7.0 and
 7.1, and runs unchanged for later versions. ShapeChange has been used
 with EA up to version 12.0.
 
-A UML model stored in an EA project (EAP file) can be processed by
+A UML model stored in an EA repository can be processed by
 ShapeChange, using the Java API of EA. There is no particular need to 
 export the UML model to some format before processing the UML model.
 
 NOTE: However, if the model content is fix, i.e. it does not change
 anymore (e.g. in case of a particular published version of the model)
 you may want to consider exporting the model to SCXML and to publish
-this additional model format alongside the EAP, for processing with ShapeChange.
+this additional model format alongside the EA repository, for processing with ShapeChange.
 For further details, see xref:./SCXML_models.adoc[this page].
 
 To process Enterprise Architect models with ShapeChange, the steps to do so depend on the version of Java you'd like to use. If you have a 64bit machine, then we recommend using 64bit Java.

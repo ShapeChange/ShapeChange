@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'model' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\scxml\includeConstraintDescriptions\test_scxml_includeConstraintDescriptions.qea"/>
     <Info message="Now processing transformation 'model' for input ID: 'input'."/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>

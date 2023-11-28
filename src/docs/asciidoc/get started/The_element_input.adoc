@@ -21,13 +21,13 @@
 
 The <input> element contains parameters and other information relating
 to the input model.  For example, the following snippet is an <input>
-element referencing a model in EAP format:
+element referencing a model in EA repository format:
 
 [source,xml,linenumbers]
 ----------
 <input>
     <parameter name="inputModelType" value="EA7"/>
-    <parameter name="inputFile" value="mymodel.eapx"/>
+    <parameter name="inputFile" value="mymodel.qea"/>
     <parameter name="appSchemaName" value="My Schema"/>
     <parameter name="publicOnly" value="true"/>
     <parameter name="addTaggedValues" value="size"/>
@@ -531,7 +531,7 @@ Default Value: _none_
 Explanation: This parameter can be used instead of parameter 'inputFile'
 (if both are configured, 'inputFile' will be ignored). It has
 been introduced to take into account that ShapeChange can also connect
-to EA repositories that are not available via an EA project file (.eap)
+to EA repositories that are not available via an EA repository file
 but via a direct connection to a database server or Cloud Service.
 
 The parameter either provides the path to the input file (works for all

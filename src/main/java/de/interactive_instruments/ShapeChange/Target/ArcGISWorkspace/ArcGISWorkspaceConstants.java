@@ -190,19 +190,19 @@ public class ArcGISWorkspaceConstants {
      */
     public static final String PARAM_OUTPUT_DIR = "outputDirectory";
     /**
-     * Optional (defaults to "ArcGISWorkspace.eap") The name of the output file.
-     * ShapeChange will append the file extension '.eap' as suffix if the file name
+     * Optional (defaults to "ArcGISWorkspace.qea") The name of the output file.
+     * ShapeChange will append the file extension '.qea' as suffix if the file name
      * does not already contain it.
      */
     public static final String PARAM_OUTPUT_FILENAME = "outputFilename";
     /**
      * Optional (defaults to
-     * "http://shapechange.net/resources/templates/ArcGISWorkspace_template.eap" ) -
+     * "http://shapechange.net/resources/templates/ArcGISWorkspace_template.qea" ) -
      * Path to the ArcGIS workspace UML model template file (can be local or an
      * online resource).
      */
     public static final String PARAM_WORKSPACE_TEMPLATE = "workspaceTemplate";
-    public static final String WORKSPACE_TEMPLATE_URL = "http://shapechange.net/resources/templates/ArcGISWorkspace_template.eap";
+    public static final String WORKSPACE_TEMPLATE_URL = "http://shapechange.net/resources/templates/ArcGISWorkspace_template.qea";
     /**
      * Optional changes to the default documentation template and the default
      * strings for descriptors without value

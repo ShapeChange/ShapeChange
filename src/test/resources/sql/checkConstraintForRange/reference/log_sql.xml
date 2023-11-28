@@ -5,10 +5,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\checkConstraintForRange\test_sql_checkConstraintForRange.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/checkConstraintForRange'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Determined database system is 'PostgreSQL'."/>
@@ -34,7 +34,7 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/checkConstraintForRange/ddl_postgresql/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/checkConstraintForRange/ddl_postgresql/INPUT/Test_Schema.eap" target="SQL DDL">Test_Schema.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/checkConstraintForRange/ddl_postgresql/INPUT/Test_Schema.qea" target="SQL DDL">Test_Schema.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/checkConstraintForRange/ddl_oracle/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/checkConstraintForRange/ddl_sqlserver/INPUT/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
   </Results>

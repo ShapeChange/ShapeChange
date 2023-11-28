@@ -7,7 +7,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/uml/basic/test_uml_basic.eap" />
+			value="src/test/resources/uml/basic/test_uml_basic.qea" />
 		<parameter name="appSchemaNameRegex" value="AppSchema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -64,8 +64,8 @@
 			<targetParameter name="documentationTemplate" value="[[documentation]]" />
 			<targetParameter name="omitOutputPackageDateTime"
 				value="true" />
-			<targetParameter name="eapTemplate"
-				value="src/main/resources/templates/UmlModel_template.eap" />
+			<targetParameter name="eaTemplate"
+				value="src/main/resources/templates/UmlModel_template.qea" />
 			<mapEntries>
 				<MapEntry type="application schema" rule="*"
 					targetType="ShapeChange::applicationSchema" param="stereotype" />

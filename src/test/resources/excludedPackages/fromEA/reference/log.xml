@@ -7,10 +7,10 @@
     <Info message="Validation of log parameters completed."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\excludedPackages\fromEA\excludedPackages.qea"/>
     <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '1', an additional value '' exists and is ignored.">
       <Detail message="Context: class InfoImpl (subtype: PropertyInfo). Name: enumI1. In class: EnumerationIn"/>
     </Warning>

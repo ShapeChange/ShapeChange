@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/codelist2_codeListRestrictionFromOCL/test_sch_codelist2_codeListRestrictionFromOCL.EAP" />
+			value="src/test/resources/sch/codelist2_codeListRestrictionFromOCL/test_sch_codelist2_codeListRestrictionFromOCL.qea" />
 		<!-- Match all schemas except ISO 19103 -->
 		<parameter name="appSchemaNameRegex" value="^.*(?&lt;!19103)$" />
 		<parameter name="sortedSchemaOutput" value="true" />

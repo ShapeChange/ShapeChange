@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'trf' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'trf' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\constraintConverter\valueTypeRestrictionToTV\test_ConstraintConverter_valueTypeRestrictionToTV.qea"/>
     <Info message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
     <Info message="---------- now processing: rule-trf-cls-constraints-valueTypeRestrictionToTV-exclusion ----------"/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>

@@ -110,7 +110,7 @@ consult the help contents of Enterprise Architect.
 [[Template_File]]
 === Template File
 
-This target requires a template .eap file. Per default, the target
+This target requires a template .qea file. Per default, the target
 retrieves the template from https://shapechange.net/resources/templates/
 However, if desired, another location (online or local file) can also be
 specified via a target configuration parameter. During execution, the
@@ -718,7 +718,7 @@ Required / Optional: optional
 Type: String
 
 Default Value:
-https://shapechange.net/resources/templates/ArcGISWorkspace_template.eap
+https://shapechange.net/resources/templates/ArcGISWorkspace_template.qea
 
 Explanation: Path to the ArcGIS workspace UML model template file (can
 be local or an online resource).
@@ -733,7 +733,7 @@ Applies to Rule(s): _none_ - default behavior
  <Target class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
   inputs="flattenedModel" mode="enabled" xmlns:xi="http://www.w3.org/2001/XInclude">
   <targetParameter name="defaultLength" value="1024"/>
-  <targetParameter name="outputDirectory" value="output/ArcGISWorkspace/eap"/>
+  <targetParameter name="outputDirectory" value="output/ArcGISWorkspace/qea"/>
   <targetParameter name="valueRangeExcludedBoundaryDelta" value="0.001"/>
   <rules>
     <EncodingRule name="ArcGIS">

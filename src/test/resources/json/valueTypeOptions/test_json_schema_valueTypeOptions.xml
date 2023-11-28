@@ -8,7 +8,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.eap" />
+			value="src/test/resources/json/valueTypeOptions/test_json_schema_valueTypeOptions.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

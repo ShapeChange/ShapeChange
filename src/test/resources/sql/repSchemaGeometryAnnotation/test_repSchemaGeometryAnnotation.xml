@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/repSchemaGeometryAnnotation/test_repSchemaGeometryAnnotation.EAP" />
+			value="src/test/resources/sql/repSchemaGeometryAnnotation/test_repSchemaGeometryAnnotation.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="sortedSchemaOutput" value="true" />	
 		<descriptorSources>

@@ -93,7 +93,7 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
 	String outputFilename = config.parameterAsString(ArcGISWorkspaceConstants.PARAM_OUTPUT_FILENAME,
 		"ArcGISWorkspaceConfigurationValidator", false, true);
 
-	outputFilename = outputFilename.replace("/", "_").replace(" ", "_") + ".eap";
+	outputFilename = outputFilename.replace("/", "_").replace(" ", "_") + ".qea";
 
 	File outputDirectoryFile = new File(outputDirectory);
 	boolean exi = outputDirectoryFile.exists();
@@ -176,11 +176,11 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
 	if (isValid) {
 
 	    // connect to EA repository in outputFile
-	    String absolutePathOfOutputEAPFile = outputFile.getAbsolutePath();
+	    String absolutePathOfOutputEaRepositoryFile = outputFile.getAbsolutePath();
 
 	    Repository rep = new Repository();
 
-	    if (!rep.OpenFile(absolutePathOfOutputEAPFile)) {
+	    if (!rep.OpenFile(absolutePathOfOutputEaRepositoryFile)) {
 
 		String errormsg = rep.GetLastError();
 		result.addError(null, 30, errormsg, outputFilename);
@@ -227,11 +227,11 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
 	    return "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + " is malformed. Exception message is: '$2$'.";
 	case 7:
-	    return "EAP with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	    return "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
 	case 8:
-	    return "Exception encountered when copying ArcGIS workspace template EAP file to output destination. Message is: $1$.";
+	    return "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
 
 	// 100-199 MDG related messages
 	case 100:

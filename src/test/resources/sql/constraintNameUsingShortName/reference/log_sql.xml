@@ -4,10 +4,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\constraintNameUsingShortName\test_sql_constraintNameUsingShortName.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
     <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Determined database system is 'PostgreSQL'."/>
@@ -19,8 +19,8 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/postgresql/INPUT/database_model_postgresql.sql" target="SQL DDL">database_model_postgresql.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/postgresql/INPUT/database_model_postgresql.eap" target="SQL DDL">database_model_postgresql.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/postgresql/INPUT/database_model_postgresql.qea" target="SQL DDL">database_model_postgresql.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/oracle/INPUT/database_model_oracle.sql" target="SQL DDL">database_model_oracle.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/oracle/INPUT/database_model_oracle.eap" target="SQL DDL">database_model_oracle.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/constraintNameUsingShortName/oracle/INPUT/database_model_oracle.qea" target="SQL DDL">database_model_oracle.qea</Result>
   </Results>
 </ShapeChangeResult>

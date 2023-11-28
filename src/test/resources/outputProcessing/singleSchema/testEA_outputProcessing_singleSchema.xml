@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/outputProcessing/singleSchema/test_outputProcessing.EAP" />
+			value="src/test/resources/outputProcessing/singleSchema/test_outputProcessing.qea" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

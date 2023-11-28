@@ -17,10 +17,10 @@
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'TRF_END' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
-      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
-      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
-      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.eapx"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\complexDatatypes\test_ldproxy2_complexDatatypes.qea"/>
       <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'INPUT'."/>
       <ProcessFlowInfo message="========== processing phase =========="/>
       <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

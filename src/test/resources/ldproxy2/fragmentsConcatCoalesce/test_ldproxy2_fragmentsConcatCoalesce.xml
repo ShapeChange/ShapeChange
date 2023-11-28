@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/sql/sqlEncodingInfos/test_sqlEncodingInfos.EAP"/>
+		<parameter name="inputFile" value="src/test/resources/sql/sqlEncodingInfos/test_sqlEncodingInfos.qea"/>
 		<parameter name="appSchemaName" value="Test"/>
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="disabled"/>

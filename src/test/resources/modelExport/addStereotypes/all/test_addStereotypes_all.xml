@@ -7,7 +7,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/modelExport/addStereotypes/all/test_addStereotypes.eap" />
+			value="src/test/resources/modelExport/addStereotypes/all/test_addStereotypes.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="addStereotypes" value="*" />
 		<parameter name="publicOnly" value="true" />

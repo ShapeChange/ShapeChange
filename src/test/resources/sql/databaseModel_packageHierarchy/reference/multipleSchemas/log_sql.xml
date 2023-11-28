@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'TRF_INHERITANCE' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'TRF_INHERITANCE' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel_packageHierarchy\test_sql_databaseModel_packageHierarchy.qea"/>
     <Info message="Now processing transformation 'TRF_INHERITANCE' for input ID: 'INPUT'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
@@ -25,6 +25,6 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel_packageHierarchy/multipleSchemas/eap/TRF_INHERITANCE/dm_multipleSchemas.sql" target="SQL DDL">dm_multipleSchemas.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel_packageHierarchy/multipleSchemas/eap/TRF_INHERITANCE/dm_multipleSchemas.eap" target="SQL DDL">dm_multipleSchemas.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel_packageHierarchy/multipleSchemas/eap/TRF_INHERITANCE/dm_multipleSchemas.qea" target="SQL DDL">dm_multipleSchemas.qea</Result>
   </Results>
 </ShapeChangeResult>

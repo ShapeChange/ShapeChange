@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyTypeUsage\test_appSchemaMetadata_identifyTypeUsage.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/appSchemaMetadata/identifyTypeUsage'"/>
     <Info message="Now processing target 'Application Schema Metadata' for input 'INPUT'."/>
     <Info message="One or more classes with direct or indirect use of the type(s) T1_DataTypeB, T1_Union was found."/>

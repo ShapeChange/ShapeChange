@@ -3,10 +3,10 @@
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.FeatureCatalogue.FeatureCatalogue' and @inputs 'trf' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
     <Info message="Application schema found, package name: 'Test_EnumerationConversion_ExternalSchema', target namespace: 'http://test/typeConverter/enumerationToCodelist/external'"/>
     <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <Info message="Application schema found, package name: 'Test_EnumerationConversion', target namespace: 'http://test/typeConverter/enumerationToCodelist'"/>

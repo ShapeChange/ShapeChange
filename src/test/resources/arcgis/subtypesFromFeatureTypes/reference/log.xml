@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'flattenedModel' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace' and @inputs 'flattenedModel' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromFeatureTypes\testEA_arcgis_subtypesFromFeatureTypes.qea"/>
     <Info message="Restriction of property 'form' in class 'Subtype1' from supertype 'ExampleFeature'."/>
     <Info message="Restriction of property 'isActive' in class 'Subtype1' from supertype 'ExampleFeature'."/>
     <Info message="Restriction of property 'numeric' in class 'Subtype1' from supertype 'ExampleFeature'."/>

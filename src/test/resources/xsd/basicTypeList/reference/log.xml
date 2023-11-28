@@ -7,10 +7,10 @@
     <Info message="Validation of log parameters completed."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\basicTypeList\test_xsd_basicTypeList.qea"/>
     <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
     <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
     <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

@@ -7,7 +7,7 @@
   <input>
     <parameter name="inputModelType" value="EA7"/>
     <parameter name="inputFile"
-      value="src/test/resources/xsd/multipleTaggedValuesAndStereotypes/test_multipleTaggedValuesAndStereotypes.eap"/>
+      value="src/test/resources/xsd/multipleTaggedValuesAndStereotypes/test_multipleTaggedValuesAndStereotypes.qea"/>
     <parameter name="representTaggedValues" value="description,designation,language"/>
     <parameter name="appSchemaName" value="Test Schema"/>
     <parameter name="publicOnly" value="true"/>

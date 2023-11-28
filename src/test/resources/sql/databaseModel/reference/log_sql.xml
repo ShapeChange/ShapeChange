@@ -7,10 +7,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_multiplicity' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_multiplicity' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.EAP"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.EAP"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.EAP"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.EAP"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\databaseModel\test_sql_databaseModel.qea"/>
     <Info message="Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
@@ -44,10 +44,10 @@
   </Messages>
   <Results>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/postgresql/F_multiplicity/database_model_postgresql.sql" target="SQL DDL">database_model_postgresql.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/postgresql/F_multiplicity/database_model_postgresql.eap" target="SQL DDL">database_model_postgresql.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/postgresql/F_multiplicity/database_model_postgresql.qea" target="SQL DDL">database_model_postgresql.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_sqlserver/F_multiplicity/database_model_sqlserver.sql" target="SQL DDL">database_model_sqlserver.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_sqlserver/F_multiplicity/database_model_sqlserver.eap" target="SQL DDL">database_model_sqlserver.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_sqlserver/F_multiplicity/database_model_sqlserver.qea" target="SQL DDL">database_model_sqlserver.qea</Result>
     <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_oracle/F_multiplicity/database_model_oracle.sql" target="SQL DDL">database_model_oracle.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_oracle/F_multiplicity/database_model_oracle.eap" target="SQL DDL">database_model_oracle.eap</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/databaseModel/ddl_oracle/F_multiplicity/database_model_oracle.qea" target="SQL DDL">database_model_oracle.qea</Result>
   </Results>
 </ShapeChangeResult>

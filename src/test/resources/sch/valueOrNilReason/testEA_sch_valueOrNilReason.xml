@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sch/valueOrNilReason/test_sch_valueOrNilReason.EAP" />
+			value="src/test/resources/sch/valueOrNilReason/test_sch_valueOrNilReason.qea" />
 		<parameter name="appSchemaNameRegex" value=".*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

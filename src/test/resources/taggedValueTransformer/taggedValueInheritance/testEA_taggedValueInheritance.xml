@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/taggedValueTransformer/taggedValueInheritance/test_taggedValueInheritance.EAP" />
+			value="src/test/resources/taggedValueTransformer/taggedValueInheritance/test_taggedValueInheritance.qea" />
 		<parameter name="appSchemaNameRegex" value="Extension Schema" />
 		<parameter name="addTaggedValues" value="tv1,tv2,tv3,tv4,tvIgnoredInAppendList" />
 		<parameter name="sortedSchemaOutput" value="true" />

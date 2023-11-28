@@ -49,9 +49,9 @@ should add a map entry to the configuration.
 
 NOTE: You also need to ensure that your UML Profile / MDG is available
 and active in the EA environment in which you execute ShapeChange. To do
-so, import the MDG with EA - to a template EAP which is used to write
+so, import the MDG with EA - to a template EA repository which is used to write
 the model (see target parameter
-xref:./UML_model.adoc#eapTemplate[_eapTemplate_])
+xref:./UML_model.adoc#eaTemplate[_eaTemplate_])
 and/or use 'Import To User', i.e. install the MDG locally.
 
 NOTE: Enterprise Architect v15.2 ignores the stereotype 'application schema', i.e. a stereotype
@@ -82,7 +82,7 @@ The following is a sample <Target> definition:
 [source,xml,linenumbers]
 ----------
 <Target class="de.interactive_instruments.ShapeChange.Target.EA.UmlModel" mode="enabled" inputs="Profile">
-  <targetParameter name="modelFilename" value="output/Profile.eap"/>
+  <targetParameter name="modelFilename" value="output/Profile.qea"/>
 </Target>
 ----------
 
@@ -157,10 +157,12 @@ Default Value: _none_
 Explanation: Value for the field 'Status' of an EA element created while
 encoding the UML model.
 
-[[eapTemplate]]
-==== eapTemplate
+[[eaTemplate]]
+==== eaTemplate
 
 (since v2.6.0)
+
++++Alias:+++ eapTemplate (this was the parameter name in ShapeChange v2.x)
 
 +++Required / Optional:+++ optional
 
@@ -168,7 +170,7 @@ encoding the UML model.
 
 +++Default Value+++: _none_
 
-+++Explanation+++: Path to the EAP template file (can be local or an
++++Explanation+++: Path to the EA repository template file (can be local or an
 online resource).
 
 If the output file (location and name are defined by the parameters
@@ -180,7 +182,7 @@ be available, this would fail if it is not configured in the EA
 environment where ShapeChange is executed. In that situation, you would
 want the UML Profile / MDG loaded into the EA repository to which the
 model is written. Such a repository can be provided as a template, and
-configured to be used by ShapeChange via the parameter _eapTemplate_.
+configured to be used by ShapeChange via the parameter _eaTemplate_.
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
@@ -243,9 +245,9 @@ Required / Optional: optional
 
 Type: String
 
-Default Value: ShapeChangeExport.eap
+Default Value: ShapeChangeExport.qea
 
-Explanation: The Enterprise architect EAP file to which the application
+Explanation: The Enterprise architect EA repository file to which the application
 schema(s) are written.
 
 [[omitOutputPackage]]

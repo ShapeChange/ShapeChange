@@ -8,7 +8,7 @@
 		<parameter name="representTaggedValues" value="tvA,tvB" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/commonTransformer/setTaggedValues/common_settaggedvalues.eapx" />
+			value="src/test/resources/commonTransformer/setTaggedValues/common_settaggedvalues.qea" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/indexNameUsingShortName/test_sql_indexNameUsingShortName.EAP" />
+			value="src/test/resources/sql/indexNameUsingShortName/test_sql_indexNameUsingShortName.qea" />
 		<parameter name="addTaggedValues" value="myCode" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />

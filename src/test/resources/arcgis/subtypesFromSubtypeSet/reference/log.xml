@@ -4,10 +4,10 @@
     <Info message="--- Validating transformer with @id 'flattenedModel' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace' and @inputs 'flattenedModel' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\arcgis\subtypesFromSubtypeSet\testEA_arcgis_subtypesFromSubtypeSet.qea"/>
     <Info message="Now processing transformation 'flattenedModel' for input ID: 'input'."/>
     <Info message="========== processing phase =========="/>
     <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

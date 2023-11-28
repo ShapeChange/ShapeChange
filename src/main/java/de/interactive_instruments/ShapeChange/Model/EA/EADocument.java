@@ -196,14 +196,14 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 	} else {
 
-	    /* We have an EAP file. Ensure that it exists */
+	    /* We have an EA repository file. Ensure that it exists */
 
 	    java.io.File repfile = new java.io.File(repositoryFileNameOrConnectionString);
 	    boolean ex = true;
 	    if (!repfile.exists()) {
 		ex = false;
-		if (!repositoryFileNameOrConnectionString.toLowerCase().endsWith(".eap")) {
-		    repositoryFileNameOrConnectionString += ".eap";
+		if (!repositoryFileNameOrConnectionString.toLowerCase().endsWith(".qea")) {
+		    repositoryFileNameOrConnectionString += ".qea";
 		    repfile = new java.io.File(repositoryFileNameOrConnectionString);
 		    ex = repfile.exists();
 		}

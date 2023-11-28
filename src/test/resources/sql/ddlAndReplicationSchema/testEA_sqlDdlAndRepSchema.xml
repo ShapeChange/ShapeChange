@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/ddlAndReplicationSchema/test_sqlDdlAndReplicationSchema.EAP" />
+			value="src/test/resources/sql/ddlAndReplicationSchema/test_sqlDdlAndReplicationSchema.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<descriptorSources>

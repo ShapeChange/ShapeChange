@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/flattener/mediaTypeTypedProperties/test_flatten_mediaTypeTypedProperties.eapx" />
+			value="src/test/resources/flattener/mediaTypeTypedProperties/test_flatten_mediaTypeTypedProperties.qea" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

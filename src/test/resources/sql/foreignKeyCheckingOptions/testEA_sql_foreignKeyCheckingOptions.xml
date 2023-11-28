@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/foreignKeyCheckingOptions/test_sql_foreignKeyCheckingOptions.EAP" />
+			value="src/test/resources/sql/foreignKeyCheckingOptions/test_sql_foreignKeyCheckingOptions.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

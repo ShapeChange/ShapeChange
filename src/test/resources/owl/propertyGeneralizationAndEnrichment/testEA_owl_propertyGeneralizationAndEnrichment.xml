@@ -7,7 +7,7 @@
  <input id="original">
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="inputFile"
-   value="src/test/resources/owl/propertyGeneralizationAndEnrichment/test_owl_propertyGeneralizationAndEnrichment.eap"/>
+   value="src/test/resources/owl/propertyGeneralizationAndEnrichment/test_owl_propertyGeneralizationAndEnrichment.qea"/>
   <parameter name="appSchemaName" value="AppSchema"/>
   <parameter name="publicOnly" value="true"/>
   <parameter name="checkingConstraints" value="disabled"/>

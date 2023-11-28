@@ -52,11 +52,12 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
  */
 public class ProfileTransferEAConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(ProfileTransferEA.PARAM_DELETE_EXISTING_PROFILES, ProfileTransferEA.PARAM_PROCESS_ALL_SCHEMAS,
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
+	    .of(ProfileTransferEA.PARAM_DELETE_EXISTING_PROFILES, ProfileTransferEA.PARAM_PROCESS_ALL_SCHEMAS,
 		    ProfileTransferEA.PARAM_PROFILES_TO_TRANSFER, ProfileTransferEA.PARAM_PWD,
-		    ProfileTransferEA.PARAM_REPO_CONNECTION_STRING, ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY,
-		    ProfileTransferEA.PARAM_USER).collect(Collectors.toSet()));
+		    ProfileTransferEA.PARAM_REPO_CONNECTION_STRING, ProfileTransferEA.PARAM_TRANSFER_TO_EA_REPO_COPY,
+		    ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, ProfileTransferEA.PARAM_USER)
+	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -129,8 +130,14 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
 
 	if (isValid) {
 
-	    boolean transferToCopyOfEAP = config.parameterAsBoolean(ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY,
-		    false);
+	    boolean transferToCopyOfEARepository;
+	    if (config.hasParameter(ProfileTransferEA.PARAM_TRANSFER_TO_EA_REPO_COPY)) {
+		transferToCopyOfEARepository = config
+			.parameterAsBoolean(ProfileTransferEA.PARAM_TRANSFER_TO_EA_REPO_COPY, false);
+	    } else {
+		transferToCopyOfEARepository = config.parameterAsBoolean(ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY,
+			false);
+	    }
 
 	    /*
 	     * Determine if we are dealing with a file or server based repository
@@ -139,14 +146,14 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
 
 		/* We are dealing with a server based repository. */
 
-		if (transferToCopyOfEAP) {
+		if (transferToCopyOfEARepository) {
 		    result.addError(this, 13);
 		    isValid = false;
 		}
 
 	    } else {
 
-		/* We have an EAP file. Ensure that it exists */
+		/* We have an EA repo file. Ensure that it exists */
 
 		File repfile = new File(repoConnectionInfo);
 
@@ -155,8 +162,8 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
 		if (!repfile.exists()) {
 
 		    ex = false;
-		    if (!repoConnectionInfo.toLowerCase().endsWith(".eap")) {
-			repoConnectionInfo += ".eap";
+		    if (!repoConnectionInfo.toLowerCase().endsWith(".qea")) {
+			repoConnectionInfo += ".qea";
 			repfile = new File(repoConnectionInfo);
 			ex = repfile.exists();
 		    }
@@ -172,11 +179,11 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
 		    repoConnectionInfo = repfile.getAbsolutePath();
 		}
 
-		if (transferToCopyOfEAP) {
+		if (transferToCopyOfEARepository) {
 
 		    /*
-		     * EAP file shall be copied. Check that the output directory exists and can be
-		     * written to.
+		     * EA repo file shall be copied. Check that the output directory exists and can
+		     * be written to.
 		     */
 		    String outputDirectory = config.getParameterValue("outputDirectory");
 

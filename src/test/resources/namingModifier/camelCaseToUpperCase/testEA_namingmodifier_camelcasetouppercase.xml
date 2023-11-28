@@ -8,7 +8,7 @@
 		<parameter name="representTaggedValues" value="tvA,tvB" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/namingModifier/camelCaseToUpperCase/test_namingModifier_camelcasetouppercase.eap" />
+			value="src/test/resources/namingModifier/camelCaseToUpperCase/test_namingModifier_camelcasetouppercase.qea" />
 		<parameter name="appSchemaName" value="AppSchema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

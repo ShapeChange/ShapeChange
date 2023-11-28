@@ -3,10 +3,10 @@
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'INPUT' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\applyForeignKeyColumnSuffixesInAssociativeTables\test_sql_applyForeignKeyColumnSuffixesInAssociativeTables.qea"/>
     <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
     <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
     <Info message="Determined database system is 'PostgreSQL'."/>

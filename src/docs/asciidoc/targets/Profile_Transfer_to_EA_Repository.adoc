@@ -42,9 +42,9 @@ xref:./Profile_Transfer_to_EA_Repository.adoc#password[_password_].
 
 Instead of modifying an existing EA repository, the user may want to
 transfer profiles into a copy of the EA repository. That is possible if
-the repository is a local .eap file. For further details, see the
+the repository is a local EA repository file. For further details, see the
 explanation of parameter
-xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEAP[_transferToCopyOfEAP_].
+xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEARepository[_transferToCopyOfEARepository_].
 
 Profiles are transferred to corresponding model elements in the EA
 repository. If no corresponding element can be found, a warning is
@@ -125,9 +125,9 @@ Type: String
 Default Value: the current run directory
 
 Explanation: Only relevant if parameter
-xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEAP[_transferToCopyOfEAP_]
+xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEARepository[_transferToCopyOfEARepository_]
 is "true". In that case, parameter outputDirectory defines the path to
-the folder in which the copy of the EAP file will be created.
+the folder in which the copy of the EA repository file will be created.
 
 Applies to Rule(s): none – default behavior
 
@@ -211,8 +211,10 @@ to an EA repository is given).
 
 Applies to Rule(s): none – default behavior
 
-[[transferToCopyOfEAP]]
-==== transferToCopyOfEAP
+[[transferToCopyOfEARepository]]
+==== transferToCopyOfEARepository
+
+Alias: transferToCopyOfEAP (this was the parameter name in ShapeChange v2.x)
 
 Required / Optional: optional
 
@@ -223,7 +225,7 @@ Default Value: false
 Explanation: By default, profile information is transferred into the EA
 repository that is defined by the configuration. If this target
 parameter is 'true' and if the EA repository defined by the
-configuration is an EA project file (.eap), then that file is copied
+configuration is an EA repository file, then that file is copied
 into the output directory and only the copy will be processed by the
 target.
 
@@ -260,7 +262,7 @@ Applies to Rule(s): none – default behavior
 <Target class="de.interactive_instruments.ShapeChange.Target.ProfileTransfer.ProfileTransferEA"
   mode="enabled" inputs="TRF_X">
   <targetParameter name="outputDirectory" value="results/profileTransfer"/>
-  <targetParameter name="transferToCopyOfEAP" value="true"/>
+  <targetParameter name="transferToCopyOfEARepository" value="true"/>
   <targetParameter name="deleteExistingProfiles" value="true"/>
   <targetParameter name="profilesToTransfer" value="A,C"/>
  </Target>

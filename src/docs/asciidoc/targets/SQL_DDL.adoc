@@ -2070,26 +2070,28 @@ https://www.sqlite.org/foreignkeys.html.
 
 Applies to Rule(s): _none_ - default behavior
 
-[[dataModelEapPath]]
-==== dataModelEapPath
+[[dataModelEaRepositoryPath]]
+==== dataModelEaRepositoryPath
 
 (since v2.5.0)
+
++++Alias:+++ dataModelEapPath (this was the parameter name in ShapeChange v2.x)
 
 +++Required / Optional:+++ optional
 
 +++Type:+++ String
 
-+++Default Value:+++ none (a new EAP would be created in the output
++++Default Value:+++ none (a new EA repository would be created in the output
 directory)
 
 +++Explanation:+++ This parameter can be used to provide the path to the
-EAP file in which the data model shall be created. If the value is a
+EA repository file in which the data model shall be created. If the value is a
 URL, the file will be copied to the output directory. If the value is a
 path to a local file, that file will be used. If the local file
 (including the directory structure) does not exist yet, it will be
 created. The parameter can be used to write data models for different
-DBMSs into the same EAP file, rather than having them written into
-different EAPs. To achieve this, simply specify a local .eap file using
+DBMSs into the same EA repository file, rather than having them written into
+different EA repositories. To achieve this, simply specify a local EA repository file using
 this parameter in the SQL DDL target configurations via which the DBMS
 specific data models are created.
 

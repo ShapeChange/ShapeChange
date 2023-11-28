@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7"/>
-		<parameter name="inputFile" value="src/test/resources/flattener/basic/testFlattening.EAP"/>
+		<parameter name="inputFile" value="src/test/resources/flattener/basic/testFlattening.qea"/>
 		<parameter name="appSchemaName" value="AppSchema"/>
 		<parameter name="publicOnly" value="true"/>
 		<!-- 				<parameter name="checkingConstraints" value="disabled"/> -->

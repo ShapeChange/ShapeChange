@@ -8,7 +8,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/variousFunctionality/notEncoded/test_notEncoded.EAP" />
+			value="src/test/resources/variousFunctionality/notEncoded/test_notEncoded.qea" />
 		<parameter name="appSchemaNameRegex" value="Test.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include

@@ -5,10 +5,10 @@
     <Info message="--- Validating transformer with @id 'C' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'A INPUT C' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\testResults\profileTransfer\test1\results\transfer\LOAD_PROFILES\test1_profileTransfer.qea"/>
     <Info message="Application schema found, package name: 'Test Schema A', target namespace: 'http://example.org/shapechange/profileTransfer/schema/a'"/>
     <Info message="Now processing target 'Model Export' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>

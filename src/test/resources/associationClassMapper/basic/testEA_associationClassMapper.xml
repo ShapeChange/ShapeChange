@@ -7,7 +7,7 @@
 	<input id="original">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/associationClassMapper/basic/test_associationClass_transformation.eap" />
+			value="src/test/resources/associationClassMapper/basic/test_associationClass_transformation.qea" />
 		<parameter name="appSchemaName" value="AppSchema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />

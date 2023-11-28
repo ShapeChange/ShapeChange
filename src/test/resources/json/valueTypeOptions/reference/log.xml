@@ -5,10 +5,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'flattenconstraints' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.JSON.JsonSchemaTarget' and @inputs 'trf_last' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\valueTypeOptions\test_json_schema_valueTypeOptions.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'model' for input ID: 'input'."/>
     <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <ProcessFlowInfo message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>

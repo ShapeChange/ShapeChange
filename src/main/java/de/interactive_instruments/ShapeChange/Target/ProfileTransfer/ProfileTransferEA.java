@@ -82,11 +82,12 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
      * Explanation: By default, profile information is transferred into the EA
      * repository that has originally been loaded by ShapeChange. If this target
      * parameter is 'true' and if the EA repository containing the input model is an
-     * EA project file (.eap), then that file is copied into the output directory
-     * and only the copy will be processed by the target.
+     * EA repository file, then that file is copied into the output directory and
+     * only the copy will be processed by the target.
      * <p>
      * Applies to Rule(s): none – default behavior
      */
+    public static final String PARAM_TRANSFER_TO_EA_REPO_COPY = "transferToCopyOfEARepository";
     public static final String PARAM_TRANSFER_TO_EAP_COPY = "transferToCopyOfEAP";
 
     /**
@@ -322,8 +323,15 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 		username = username == null ? "" : username;
 		password = password == null ? "" : password;
 
-		boolean transferToCopyOfEAP = options.parameterAsBoolean(ProfileTransferEA.class.getName(),
-			ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, false);
+		boolean transferToCopyOfEARepository;
+		if (options.hasParameter(ProfileTransferEA.class.getName(),
+			ProfileTransferEA.PARAM_TRANSFER_TO_EA_REPO_COPY)) {
+		    transferToCopyOfEARepository = options.parameterAsBoolean(ProfileTransferEA.class.getName(),
+			    ProfileTransferEA.PARAM_TRANSFER_TO_EA_REPO_COPY, false);
+		} else {
+		    transferToCopyOfEARepository = options.parameterAsBoolean(ProfileTransferEA.class.getName(),
+			    ProfileTransferEA.PARAM_TRANSFER_TO_EAP_COPY, false);
+		}
 
 		/*
 		 * Determine if we are dealing with a file or server based repository
@@ -332,7 +340,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 		    /* We are dealing with a server based repository. */
 
-		    if (transferToCopyOfEAP) {
+		    if (transferToCopyOfEARepository) {
 			result.addError(this, 13);
 			invalidConfiguration = true;
 
@@ -343,7 +351,7 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 		} else {
 
-		    /* We have an EAP file. Ensure that it exists */
+		    /* We have an EA repo file. Ensure that it exists */
 
 		    File repfile = new File(repoConnectionInfo);
 
@@ -352,8 +360,8 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 		    if (!repfile.exists()) {
 
 			ex = false;
-			if (!repoConnectionInfo.toLowerCase().endsWith(".eap")) {
-			    repoConnectionInfo += ".eap";
+			if (!repoConnectionInfo.toLowerCase().endsWith(".qea")) {
+			    repoConnectionInfo += ".qea";
 			    repfile = new File(repoConnectionInfo);
 			    ex = repfile.exists();
 			}
@@ -364,11 +372,11 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 			result.addError(this, 14, repoConnectionInfo);
 			invalidConfiguration = true;
 
-		    } else if (transferToCopyOfEAP) {
+		    } else if (transferToCopyOfEARepository) {
 
 			/*
-			 * EAP file shall be copied. Check that the output directory exists and can be
-			 * written to.
+			 * EA repo file shall be copied. Check that the output directory exists and can
+			 * be written to.
 			 */
 			String outputDirectory = options.parameter(ProfileTransferEA.class.getName(),
 				"outputDirectory");
@@ -395,13 +403,13 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
 
 			} else {
 
-			    // copy EA project file to output directory
-			    File inputEAP = new File(repoConnectionInfo);
-			    File copyEAP = new File(outputDirectoryFile, inputEAP.getName());
+			    // copy EA repo file to output directory
+			    File inputEARepo = new File(repoConnectionInfo);
+			    File copyEARepo = new File(outputDirectoryFile, inputEARepo.getName());
 
 			    try {
-				FileUtils.copyFile(inputEAP, copyEAP, false);
-				connectionString = copyEAP.getAbsolutePath();
+				FileUtils.copyFile(inputEARepo, copyEARepo, false);
+				connectionString = copyEARepo.getAbsolutePath();
 			    } catch (Exception e) {
 				result.addError(this, 15, e.getMessage());
 				invalidConfiguration = true;

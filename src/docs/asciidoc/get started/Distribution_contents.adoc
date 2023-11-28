@@ -57,8 +57,8 @@ https://shapechange.net/resources/test/test.xmi.
 |test/UMLX13.dtd |DTD referenced from the XMI 1.0 test model. The DTD
 is required to process XMI 1.0 models in ShapeChange.
 
-|test/test.eap |Test model in Enterprise Architect format. This
-is a copy of https://shapechange.net/resources/test/test.eap.
+|test/test.qea |Test model in Enterprise Architect format. This
+is a copy of https://shapechange.net/resources/test/test.qea.
 |===
 
 NOTE: X.Y.Z is a placeholder for the version of ShapeChange that is
@@ -268,7 +268,7 @@ resources to test a ShapeChange installation.
 |DTD referenced from the XMI 1.0 test model. The DTD is required to
 process XMI 1.0 models in ShapeChange.
 
-|https://shapechange.net/resources/test/test.eap[test/test.eap]
+|https://shapechange.net/resources/test/test.qea[test/test.qea]
 |Test model in Enterprise Architect format.
 
 |https://shapechange.net/resources/test/testXMI.xml[test/testXMI.xml]

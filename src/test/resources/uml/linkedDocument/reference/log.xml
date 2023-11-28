@@ -2,10 +2,10 @@
   <Messages>
     <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\linkedDocument\test_uml_linkedDocument.qea"/>
     <Info message="Now processing transformation 'model' for input ID: 'input'."/>
     <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>

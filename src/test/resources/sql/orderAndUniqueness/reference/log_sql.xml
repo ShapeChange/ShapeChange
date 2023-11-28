@@ -8,10 +8,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'F_inheritance' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'F_inheritance' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.EAPX"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.EAPX"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.EAPX"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.EAPX"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\orderAndUniqueness\test_sql_orderAndUniqueness.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
     <ProcessFlowInfo message="========== processing phase =========="/>
     <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>

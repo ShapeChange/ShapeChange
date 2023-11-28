@@ -8,10 +8,10 @@
     <ProcessFlowInfo message="--- Validating transformer with @id 'identity' ..."/>
     <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema' and @inputs 'identity' ..."/>
     <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.eapx"/>
-    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.eapx"/>
-    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.eapx"/>
-    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.eapx"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\commonTransformer\setTaggedValues\common_settaggedvalues.qea"/>
     <ProcessFlowInfo message="Now processing transformation 'identity' for input ID: 'original'."/>
     <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
     <ProcessFlowInfo message="Performed transformation for transformer ID 'identity' for input ID: 'original'.&#10;-------------------------------------------------"/>

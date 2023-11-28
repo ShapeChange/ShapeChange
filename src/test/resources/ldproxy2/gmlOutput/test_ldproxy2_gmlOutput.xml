@@ -7,7 +7,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/ldproxy2/gmlOutput/test_ldproxy2GmlOutput.eap" />
+		<parameter name="inputFile" value="src/test/resources/ldproxy2/gmlOutput/test_ldproxy2GmlOutput.qea" />
 		<parameter name="appSchemaNameRegex" value="Cross Schema.*" />
 		<parameter name="mainAppSchema" value="Cross Schema C" />
 		<parameter name="publicOnly" value="true" />

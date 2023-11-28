@@ -7,7 +7,7 @@
 	<input id="input">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="repositoryFileNameOrConnectionString"
-			value="src/test/resources/ocl/navigatingNonNavigableAssociations/test_navigatingNonNavigableAssociations.eap" />
+			value="src/test/resources/ocl/navigatingNonNavigableAssociations/test_navigatingNonNavigableAssociations.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

@@ -27,7 +27,7 @@ a xref:./Configuration.adoc[configuration file] that defines the parameters of
 transformation, including the format and location of the input file, log
 settings, and output parameters (format and output directory, among
 others).  When the utility is initialized, the appropriate import module
-is first called to read the application schema in UML (whether in EAP, SCXML, 
+is first called to read the application schema in UML (whether in EA repository, SCXML, 
 or another format) into internal memory. The software then processes
 the model. The model can undergo a number of transformations before it
 is turned into one or more target representations (the default being a

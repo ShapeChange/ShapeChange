@@ -8,7 +8,7 @@
 	    <parameter name="addTaggedValues" value="booleanTV"/>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.eap" />
+			value="src/test/resources/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues/test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

@@ -9,10 +9,10 @@
     <Info message="--- Validating transformer with @id 'B_and_C' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport' and @inputs 'D' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\testProfiling_withMetadata.qea"/>
     <Info message="Now processing transformation 'A' for input ID: 'INPUT'."/>
     <Warning message="The multiplicity value defined in the parameter of profile 'A' is (at least partly) outside of the range defined by the multiplicity of property 'a4' in class 'T1_FeatureA'.">
       <Detail message="Context: property Model::Schemas::Test Schema::Test1 multiplicity and navigability::T1_FeatureA::a4"/>

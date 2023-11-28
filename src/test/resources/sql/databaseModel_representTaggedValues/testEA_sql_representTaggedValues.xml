@@ -8,7 +8,7 @@
 		<parameter name="representTaggedValues" value="tv1,tv2,gmlMixin,sequenceNumber" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/databaseModel_representTaggedValues/test_sql_representTaggedValues.EAP" />
+			value="src/test/resources/sql/databaseModel_representTaggedValues/test_sql_representTaggedValues.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />

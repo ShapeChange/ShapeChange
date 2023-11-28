@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/profiling/withProfileMetadata/testProfiling_withMetadata.eap" />
+			value="src/test/resources/profiling/withProfileMetadata/testProfiling_withMetadata.qea" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
 		<parameter name="sortedSchemaOutput" value="true" />

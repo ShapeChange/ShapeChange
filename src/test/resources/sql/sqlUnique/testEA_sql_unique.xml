@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/sql/sqlUnique/test_sql_unique.EAP" />
+			value="src/test/resources/sql/sqlUnique/test_sql_unique.qea" />
 		<parameter name="appSchemaNameRegex" value="Test Schema" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />
@@ -68,7 +68,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.ArcGISWorkspace.ArcGISWorkspace"
 			mode="enabled" inputs="F_inheritance">
 			<targetParameter name="workspaceTemplate"
-				value="src/main/resources/templates/ArcGISWorkspace_template.eap" />
+				value="src/main/resources/templates/ArcGISWorkspace_template.qea" />
 			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
 			<targetParameter name="defaultLength" value="255" />
 			<targetParameter name="outputDirectory"

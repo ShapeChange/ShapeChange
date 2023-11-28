@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="addTaggedValues" value="code" />
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/sql/basic/test_sql.EAP" />
+		<parameter name="inputFile" value="src/test/resources/sql/basic/test_sql.qea" />
 		<parameter name="appSchemaNameRegex" value="Test$" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

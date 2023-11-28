@@ -661,7 +661,7 @@ be part of the documentation.
 === Setting the Spatial Reference System
 
 ShapeChange currently does not set the spatial reference system used by
-the ArcGIS workspace. The SRS is set in the template .eap and can be
+the ArcGIS workspace. The SRS is set in the template .qea and can be
 changed there (before deriving the ArcGIS workspace model) or after
 processing by ShapeChange is complete. The SRS can be set using the
 ArcGIS extension. Simply right-click on the \<<SpatialReference>> class

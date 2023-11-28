@@ -7,7 +7,7 @@
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/test/resources/gmlsf0_and_cdb/basic/test_gmlsf0_and_cdb.eap" />
+			value="src/test/resources/gmlsf0_and_cdb/basic/test_gmlsf0_and_cdb.qea" />
 		<parameter name="ignoreEncodingRuleTaggedValues" value="true" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />

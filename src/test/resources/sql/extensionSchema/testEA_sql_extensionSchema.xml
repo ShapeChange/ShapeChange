@@ -6,7 +6,7 @@
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 src/main/resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
 		<parameter name="inputModelType" value="EA7" />
-		<parameter name="inputFile" value="src/test/resources/sql/extensionSchema/test_sql.EAP" />
+		<parameter name="inputFile" value="src/test/resources/sql/extensionSchema/test_sql.qea" />
 		<parameter name="appSchemaNameRegex" value="Test2.*" />
 		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="src/main/resources/config/StandardAliases.xml" />

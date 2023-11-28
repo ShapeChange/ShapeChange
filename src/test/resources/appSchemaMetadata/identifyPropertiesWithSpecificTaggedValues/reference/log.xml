@@ -4,10 +4,10 @@
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata' and @inputs 'INPUT' ..."/>
     <Info message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata' and @inputs 'INPUT' ..."/>
     <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.eap"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.eap"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.eap"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.eap"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\appSchemaMetadata\identifyPropertiesWithSpecificTaggedValues\test_appSchemaMetadata_identifyPropertiesWithSpecificTaggedValues.qea"/>
     <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/appSchemaMetadata/identifyPropertiesWithSpecificTaggedValues'"/>
     <Info message="Now processing target 'Application Schema Metadata' for input 'INPUT'."/>
     <Info message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Metadata.ApplicationSchemaMetadata' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
