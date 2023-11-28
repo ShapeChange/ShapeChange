@@ -2,10 +2,44 @@
 
 ## [Unreleased](https://github.com/ShapeChange/ShapeChange/tree/HEAD)
 
-[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.13.0...HEAD)
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.14.0...HEAD)
+
+**Merged pull requests:**
+
+- Merge enhancements to ldproxy and JSON Schema targets [\#352](https://github.com/ShapeChange/ShapeChange/pull/352) ([jechterhoff](https://github.com/jechterhoff))
+- upgrade to ldproxy-cfg 3.5 [\#350](https://github.com/ShapeChange/ShapeChange/pull/350) ([azahnen](https://github.com/azahnen))
+- Document parameter outputFilename of ArcGIS Workspace target [\#349](https://github.com/ShapeChange/ShapeChange/pull/349) ([heidivanparys](https://github.com/heidivanparys))
+- gfs template target: improve behavior for not encoding classes [\#334](https://github.com/ShapeChange/ShapeChange/pull/334) ([jechterhoff](https://github.com/jechterhoff))
+
+## [2.14.0](https://github.com/ShapeChange/ShapeChange/tree/2.14.0) (2023-11-28)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.13.0...2.14.0)
+
+**Implemented enhancements:**
+
+- Flattener transformation - Support inheritance flattening, adding attributes in sequence [\#351](https://github.com/ShapeChange/ShapeChange/issues/351)
+- JSON Schema target - support profiles for the encoding of feature references [\#347](https://github.com/ShapeChange/ShapeChange/issues/347)
+- SqlDdl target - support definition of primary key columns in type-to-table mappings [\#342](https://github.com/ShapeChange/ShapeChange/issues/342)
+- SqlDdl target - generate SQL encoding infos [\#341](https://github.com/ShapeChange/ShapeChange/issues/341)
+- Add new model transformation to tag classes and properties with information about original characteristics [\#340](https://github.com/ShapeChange/ShapeChange/issues/340)
+- JsonSchemaTarget: Support additional conversion behavior  [\#337](https://github.com/ShapeChange/ShapeChange/issues/337)
+- JsonSchemaTarget - Support JSON Schema version 2020-12 [\#336](https://github.com/ShapeChange/ShapeChange/issues/336)
+- JsonSchemaTarget - Support the generation of collection schema definitions [\#335](https://github.com/ShapeChange/ShapeChange/issues/335)
+- JsonSchemaTarget - Support restriction of entity type and id members [\#333](https://github.com/ShapeChange/ShapeChange/issues/333)
+- JsonSchemaTarget - Support generation of documentation [\#332](https://github.com/ShapeChange/ShapeChange/issues/332)
+- Add new gfs template target [\#328](https://github.com/ShapeChange/ShapeChange/issues/328)
+
+**Fixed bugs:**
+
+- Error writing logs in v2.13 [\#329](https://github.com/ShapeChange/ShapeChange/issues/329)
+- ldproxy2 target - fix rule-ldp2-cls-data-types-oneToMany-severalTables [\#327](https://github.com/ShapeChange/ShapeChange/issues/327)
 
 **Closed issues:**
 
+- ArcGIS Workspace target: outputFilename not documented [\#348](https://github.com/ShapeChange/ShapeChange/issues/348)
+- ShapeChange-2.9.2 [\#343](https://github.com/ShapeChange/ShapeChange/issues/343)
+- Building code in tag 2.13.0 fails [\#338](https://github.com/ShapeChange/ShapeChange/issues/338)
+- DiffTarget not mentioned in 2.13.0 release notes [\#330](https://github.com/ShapeChange/ShapeChange/issues/330)
 - Library with vulnerability: Commons Text [\#325](https://github.com/ShapeChange/ShapeChange/issues/325)
 - GPKG: schema extension is not registered when model does not contain enumerations [\#322](https://github.com/ShapeChange/ShapeChange/issues/322)
 
@@ -29,11 +63,11 @@
 
 **Fixed bugs:**
 
+- -Dfile.encoding=UTF-8 in the documentation [\#300](https://github.com/ShapeChange/ShapeChange/issues/300)
+- SqlDdl target - Casting error in statement sort [\#296](https://github.com/ShapeChange/ShapeChange/issues/296)
 - Transformations - support setting multiple values for the same tag [\#317](https://github.com/ShapeChange/ShapeChange/issues/317)
 - Fix updating fields while setting \(directly or indirectly\) sequenceNumber tagged values in transformations [\#315](https://github.com/ShapeChange/ShapeChange/issues/315)
 - Flattener transformation - Fix property order when flattening inheritance [\#310](https://github.com/ShapeChange/ShapeChange/issues/310)
-- -Dfile.encoding=UTF-8 in the documentation [\#300](https://github.com/ShapeChange/ShapeChange/issues/300)
-- SqlDdl target - Casting error in statement sort [\#296](https://github.com/ShapeChange/ShapeChange/issues/296)
 
 **Closed issues:**
 
