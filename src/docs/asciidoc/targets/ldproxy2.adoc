@@ -1525,15 +1525,15 @@ The provider configuration for FT4 would contain the definitions listed in
         label: value
         coalesce:
         - sourcePath: value_integer
-          type: INTEGER
+          valueType: INTEGER
         - sourcePath: value_double
-          type: FLOAT
+          valueType: FLOAT
         - sourcePath: value_string
-          type: STRING
+          valueType: STRING
         - sourcePath: value_date
-          type: DATE
+          valueType: DATE
         - sourcePath: value_uri
-          type: STRING
+          valueType: STRING
   otherGenerAttribute:
     type: OBJECT_ARRAY
     objectType: GenerAttribute
@@ -1564,15 +1564,15 @@ The provider configuration for FT4 would contain the definitions listed in
         label: value
         coalesce:
         - sourcePath: value_IntegerAttribute
-          type: INTEGER
+          valueType: INTEGER
         - sourcePath: value_double
-          type: FLOAT
+          valueType: FLOAT
         - sourcePath: value_string
-          type: STRING
+          valueType: STRING
         - sourcePath: value_DateAttribute
-          type: DATE
+          valueType: DATE
         - sourcePath: value_UrlAttribute
-          type: STRING
+          valueType: STRING
 ----
 
 The `sourcePath` values within value.coalesce are constructed using the template

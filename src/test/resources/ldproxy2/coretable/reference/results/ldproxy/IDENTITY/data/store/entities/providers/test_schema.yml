@@ -427,15 +427,15 @@ fragments:
         label: value
         coalesce:
         - sourcePath: value_DateAttribute
-          type: DATE
+          valueType: DATE
         - sourcePath: value_double
-          type: FLOAT
+          valueType: FLOAT
         - sourcePath: value_IntegerAttribute
-          type: INTEGER
+          valueType: INTEGER
         - sourcePath: value_string
-          type: STRING
+          valueType: STRING
         - sourcePath: value_UrlAttribute
-          type: STRING
+          valueType: STRING
   Mixin:
     type: OBJECT
     objectType: Mixin

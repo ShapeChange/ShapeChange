@@ -860,7 +860,7 @@ public class LdpPropertyEncoder {
 			.name("case_" + subtype.name())
 			.sourcePath(
 				sourcePathProvider.sourcePathForValueMemberOfGenericValueType(valuePropName, suffix))
-			.type(ldpType);
+			.valueType(ldpType);
 		coalesceItems.add(item.build());
 	    }
 	    valueMemberDef.coalesce(coalesceItems);
