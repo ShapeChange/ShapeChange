@@ -127,6 +127,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SortedSet<String> genericValueTypes = null;
 
     public static String collectionIdFormat = "lowerCase";
+    
+    public static boolean linearizeCurves = false;
 
     public static String labelTemplate = "[[alias]]";
     public static int maxNameLength = 63;
@@ -335,6 +337,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
 
 	    enableFragments = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_FRAGMENTS,
+		    false);
+	    
+	    linearizeCurves = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_LINEARIZE_CURVES,
 		    false);
 
 	    // GML relevant parameters
@@ -931,6 +936,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixCodelist = "";
 	genericValueTypes = null;
 	labelTemplate = "[[alias]]";
+	linearizeCurves = false;
 	maxNameLength = 63;
 	nativeTimeZone = null;
 	objectIdentifierName = "oid";

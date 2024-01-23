@@ -1,0 +1,62 @@
+---
+id: test_schema
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      att1:
+        sourcePath: att1
+        type: STRING
+        constraints:
+          required: true
+      att2:
+        sourcePath: att2
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      att3:
+        sourcePath: att3
+        type: GEOMETRY
+        geometryType: MULTI_POINT
+        constraints:
+          required: true
+      att4:
+        sourcePath: att4
+        type: GEOMETRY
+        geometryType: POLYGON
+        constraints:
+          required: true
+        linearizeCurves: true
+      att5:
+        sourcePath: att5
+        type: GEOMETRY
+        geometryType: LINE_STRING
+        constraints:
+          required: true
+        linearizeCurves: true

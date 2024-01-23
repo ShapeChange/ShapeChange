@@ -124,4 +124,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/coretable/results",
 			"src/test/resources/ldproxy2/coretable/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_linearizeCurves() {
+		
+		multiTest("src/test/resources/ldproxy2/linearizeCurves/test_ldproxy2LinearizeCurves.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/linearizeCurves/results",
+			"src/test/resources/ldproxy2/linearizeCurves/reference/results");
+	}
 }

@@ -208,8 +208,16 @@ public class LdpPropertyEncoder {
 		    ldpType);
 
 	    Optional<SimpleFeatureGeometry> geometryTypeForBuilder = Optional.empty();
+	    Optional<Boolean> linearizeCurvesOpt = Optional.empty();
 	    if (ldpType == Type.GEOMETRY) {
 		geometryTypeForBuilder = geometryType(pi);
+		if (Ldproxy2Target.linearizeCurves && geometryTypeForBuilder.isPresent()) {
+		    SimpleFeatureGeometry sfg = geometryTypeForBuilder.get();
+		    if (sfg != SimpleFeatureGeometry.POINT && sfg != SimpleFeatureGeometry.MULTI_POINT
+			    && sfg != SimpleFeatureGeometry.NONE) {
+			linearizeCurvesOpt = Optional.of(true);
+		    }
+		}
 	    }
 
 	    Optional<String> unitForBuilder = Optional.empty();
@@ -645,8 +653,8 @@ public class LdpPropertyEncoder {
 		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))
 			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
 			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
-			.geometryType(geometryTypeForBuilder).unit(unitForBuilder).propertyMap(propertyMapForBuilder)
-			.build();
+			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
+			.propertyMap(propertyMapForBuilder).build();
 
 		propertyDefs.put(pi.name(), propMemberDef);
 

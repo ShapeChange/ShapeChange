@@ -1262,6 +1262,10 @@ The `type` member of a property definition depends upon the value type of the pr
 * Otherwise, i.e. the maximum multiplicity of the property is equal to 1:
 ** If the value type is mapped to a simple ldproxy type, then `type` is the target type defined by the map entry.
 ** Otherwise, if the value type is mapped to a geometry type, then `type` is GEOMETRY and an additional `geometryType` member is added, with value as defined by the map entry (via the according characteristic of map entry parameter _geometryInfos_).
+*** If the data store contains curve geometries specified by SQL/MM, 
+such as CircularString and CurvePolygon, target parameter `linearizeCurves` 
+must be set to true. For further details, see 
+https://github.com/interactive-instruments/ldproxy/issues/1119[ldproxy issue 1119].
 ** Otherwise, if the value type is an enumeration or code list, then `type` is STRING or a numeric type, as explained in the <<ldproxy2_schemaconversionrules_types_enumeration_and_codelist>> section.
 ** Otherwise, if the value type is implemented as OBJECT but is not a type with identity (so most likely it is a data type), `type` simply is OBJECT.
 ** Otherwise, if the value type is mapped to LINK, or a type with identity, and:

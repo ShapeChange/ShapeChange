@@ -82,12 +82,13 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX,
 	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST,
 	    Ldproxy2Constants.PARAM_FRAGMENTS, Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES,
-	    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
-	    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
-	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_QUERYABLES,
-	    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
-	    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
-	    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
+	    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_LINEARIZE_CURVES,
+	    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
+	    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
+	    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
+	    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
+	    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
+	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
 	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
 	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
@@ -144,6 +145,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_LABEL_TEMPLATE);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_LINEARIZE_CURVES);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_PK_COLUMN);

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/test/resources/ldproxy2/linearizeCurves/test_ldproxy2LinearizeCurves.xml"
+                   end="Tue Jan 23 16:42:14 CET 2024"
+                   resultCode="0"
+                   start="Tue Jan 23 16:42:05 CET 2024"
+                   version="3.0.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_1' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\linearizeCurves\test_ldproxy2LinearizeCurves.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\linearizeCurves\test_ldproxy2LinearizeCurves.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\linearizeCurves\test_ldproxy2LinearizeCurves.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\linearizeCurves\test_ldproxy2LinearizeCurves.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_1' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'TRF_1'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-prop-flatten-types ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'TRF_1'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results/>
+</ShapeChangeResult>
