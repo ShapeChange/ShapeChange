@@ -35,7 +35,6 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -53,7 +53,7 @@ import org.w3c.dom.Element;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
-import de.ii.xtraplatform.codelists.domain.ImmutableCodelistData;
+import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
@@ -497,26 +497,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
-	    createStoreDirectory(dataDirectoryPath);
-	    cfg = LdproxyCfgWriter.create(dataDirectoryPath, true);
+	    cfg = LdproxyCfgWriter.create(dataDirectoryPath);
 	}
 
 	/*
 	 * Required to be performed for each application schema
 	 */
 	result.addDebug(this, 10001, pi.name());
-    }
-
-    public static void createStoreDirectory(Path dataDirectoryPath) {
-	try {
-	    Files.createDirectories(dataDirectoryPath.resolve("store/entities/providers"));
-	} catch (IOException e) {
-	    /*
-	     * The statement has only been added to avoid the following warning from the
-	     * ldproxy-cfg-lib: [main] WARN de.ii.xtraplatform.store.app.EventStoreDefault -
-	     * Store source FS[store] not found.
-	     */
-	}
     }
 
     @Override
@@ -770,7 +757,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    ImmutableFeatureProviderSqlData providerConfig = configBuilder.getProviderConfig();
 	    ImmutableOgcApiDataV2 serviceConfig = configBuilder.getServiceConfig();
-	    List<ImmutableCodelistData> codelists = configBuilder.getCodeLists();
 
 	    // write api
 	    try {
@@ -780,8 +766,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    cfg.writeEntity(serviceConfig);
 		}
 		cfg.writeEntity(providerConfig);
-		for (ImmutableCodelistData icd : codelists) {
-		    cfg.writeEntity(icd);
+		
+		SortedMap<String,ImmutableCodelist> codelistById = configBuilder.getCodeListMap();
+		for (String codelistId : codelistById.keySet()) {
+		    ImmutableCodelist ic = codelistById.get(codelistId);
+		    cfg.writeValue(ic,codelistId);
 		}
 	    } catch (IOException e) {
 		e.printStackTrace();

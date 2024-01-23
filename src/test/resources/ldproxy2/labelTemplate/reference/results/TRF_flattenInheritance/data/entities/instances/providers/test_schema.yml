@@ -1,0 +1,44 @@
+---
+id: test_schema
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  myfeaturetype:
+    sourcePath: /myfeaturetype
+    type: OBJECT
+    objectType: MyFeatureType
+    label: MyFeatureType
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      myAttribute:
+        sourcePath: myattribute
+        type: INTEGER
+        label: myAttribute
+        constraints:
+          required: true
+      myAttribute2:
+        sourcePath: myattribute2
+        type: STRING
+        label: myAttribute2
+        constraints:
+          codelist: MyEnumeration
+          required: true

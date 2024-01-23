@@ -1,0 +1,418 @@
+---
+id: test_1___basics
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+  - ts1
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      title:
+        sourcePath: title
+        type: STRING
+        constraints:
+          required: true
+      refRel1Target:
+        sourcePath: "[refrel1target_fk=idx]featuretype"
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      refRel2Target:
+        sourcePath: "[idx=featuretype_refrel2source_id]FeatureType_refRel2Target/[featuretype_refrel2target_id=idx]featuretype"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      refRel3Source:
+        sourcePath: "[idx=featuretype_refrel3target_id]FeatureType_refRel3Source/[featuretype_refrel3source_id=idx]featuretype"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      refRel3Target:
+        sourcePath: "[idx=featuretype_refrel3source_id]FeatureType_refRel3Source/[featuretype_refrel3target_id=idx]featuretype"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      refRel4Source:
+        sourcePath: "[refrel4source_fk=idx]featuretype"
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      refRel4Target:
+        sourcePath: "[refrel4target_fk=idx]featuretype"
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      relRef5Source:
+        sourcePath: "[idx=relref5target_fk]featuretype"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      relRef5Target:
+        sourcePath: "[relref5target_fk=idx]featuretype"
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: title
+            type: STRING
+            label: FeatureType-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: FeatureType-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+  ts1_featuretype1:
+    sourcePath: /ts1_featuretype1
+    type: OBJECT
+    objectType: TS1_FeatureType1
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attInteger:
+        sourcePath: attinteger
+        type: INTEGER
+      attCharacterString:
+        sourcePath: attcharacterstring
+        type: STRING
+        constraints:
+          required: true
+      attReal:
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1AttReal{sortKey=ts1_featuretype1_id}/attreal"
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          minOccurrence: 0
+      attLength:
+        sourcePath: "[idx=ts1_featuretype1_id]TS1_FeatureType1_attLength{sortKey=ts1_featuretype1_id}/attlength"
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          required: true
+          minOccurrence: 1
+      attExtDt1:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: attextdt1_fk
+            type: STRING
+            label: ExtDt-title
+          href:
+            sourcePath: attextdt1_fk
+            type: STRING
+            label: ExtDt-ID
+            transformations:
+            - stringFormat: "https://example.org/dt/{{value}}"
+      attExtDt2:
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1ToExtDt/[extdt_id=idx]extdt"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          required: true
+          minOccurrence: 1
+        properties:
+          title:
+            sourcePath: idx
+            type: STRING
+            label: ExtDt-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: ExtDt-ID
+            transformations:
+            - stringFormat: "https://example.org/dt/{{value}}"
+      roleToFt2_1:
+        sourcePath: "[idx=ts1_featuretype1_id]AssocTableTS1FT1FT21/[ts1_featuretype2_id=idx]ts1_featuretype2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePaths:
+            - idx
+            - name
+            type: STRING
+            label: TS1_FeatureType2-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
+      roleToFt2_2:
+        sourcePath: "[roletoft2_2_fk=idx]ts1_featuretype2"
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePaths:
+            - idx
+            - name
+            type: STRING
+            label: TS1_FeatureType2-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
+      roleToFt2_3:
+        sourcePath: "[idx=ts1_featuretype1_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype2_id=idx]ts1_featuretype2"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePaths:
+            - idx
+            - name
+            type: STRING
+            label: TS1_FeatureType2-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
+      roleToFt2_4:
+        sourcePath: "[roletoft2_4_fk=idx]ts1_featuretype2"
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePaths:
+            - idx
+            - name
+            type: STRING
+            label: TS1_FeatureType2-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
+      roleToFt2_5:
+        sourcePath: "[roletoft2_5_fk=idx]ts1_featuretype2"
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePaths:
+            - idx
+            - name
+            type: STRING
+            label: TS1_FeatureType2-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType2-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
+  ts1_featuretype2:
+    sourcePath: /ts1_featuretype2
+    type: OBJECT
+    objectType: TS1_FeatureType2
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      name:
+        sourcePath: name
+        type: STRING
+      roleToFt1_3:
+        sourcePath: "[idx=ts1_featuretype2_id]TS1_FeatureType1_roleToFt2_3/[ts1_featuretype1_id=idx]ts1_featuretype1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType1-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
+      roleToFt1_4:
+        sourcePath: "[idx=roletoft2_4_fk]ts1_featuretype1"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType1-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
+      roleToFt1_5:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: roletoft1_5_fk
+            type: STRING
+            label: TS1_FeatureType1-title
+          href:
+            sourcePath: roletoft1_5_fk
+            type: STRING
+            label: TS1_FeatureType1-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype1/items/{{value}}"
+      roleToMd1:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: roletomd1_fk
+            type: STRING
+            label: MD_Metadata-title
+          href:
+            sourcePath: roletomd1_fk
+            type: STRING
+            label: MD_Metadata-ID
+            transformations:
+            - stringFormat: "https://example.org/metadata/{{value}}"
+      roleToMd2:
+        sourcePath: "[idx=ts1_featuretype2_id]TS1_FeatureType2_roleToMd2/[md_metadata_id=idx]md_metadata"
+        type: OBJECT_ARRAY
+        objectType: Link
+        constraints:
+          minOccurrence: 0
+        properties:
+          title:
+            sourcePath: idx
+            type: STRING
+            label: MD_Metadata-title
+          href:
+            sourcePath: idx
+            type: STRING
+            label: MD_Metadata-ID
+            transformations:
+            - stringFormat: "https://example.org/metadata/{{value}}"

@@ -1,0 +1,6 @@
+---
+label: Alias TS2_Enumeration1
+entries:
+  enum1: https://example.org/e1
+  enum2: https://example.org/e2
+sourceType: TEMPLATES

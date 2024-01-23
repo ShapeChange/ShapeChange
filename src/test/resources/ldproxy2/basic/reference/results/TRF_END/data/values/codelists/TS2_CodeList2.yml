@@ -1,0 +1,7 @@
+---
+label: Alias TS2_Codelist2
+entries:
+  A: codeA (A)
+  B: codeB (B)
+sourceType: TEMPLATES
+fallback: unknown

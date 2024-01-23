@@ -1,0 +1,351 @@
+---
+id: cross_schema_c
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+nativeTimeZone: Europe/Berlin
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretypeb:
+    sourcePath: /featuretypeb
+    type: OBJECT
+    objectType: FeatureTypeB
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      att1:
+        sourcePath: att1
+        type: STRING
+        constraints:
+          required: true
+      att2:
+        sourcePath: "[idx=featuretypeb_id]FeatureTypeB_att2"
+        type: OBJECT
+        objectType: DataTypeA
+        constraints:
+          required: true
+        properties:
+          att1:
+            sourcePath: att1
+            type: STRING
+            constraints:
+              required: true
+          att2:
+            sourcePath: att2
+            type: FLOAT
+            constraints:
+              required: true
+      att3:
+        sourcePath: att3
+        type: STRING
+        constraints:
+          codelist: EnumerationA
+          enum:
+          - enum1
+          - enum2
+          required: true
+  featuretypec1:
+    sourcePath: /featuretypec1
+    type: OBJECT
+    objectType: FeatureTypeC1
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      geom:
+        sourcePath: geom
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      ftAtoTA_TypeA:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: ftatota_typea_fk
+            type: STRING
+            label: TA-title
+          href:
+            sourcePath: ftatota_typea_fk
+            type: STRING
+            label: TA-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ta/items/{{value}}"
+      ftAtoTA_TypeASub:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: ftatota_typeasub_fk
+            type: STRING
+            label: TASub-title
+          href:
+            sourcePath: ftatota_typeasub_fk
+            type: STRING
+            label: TASub-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/tasub/items/{{value}}"
+      attMeasure:
+        sourcePath: attmeasure
+        type: FLOAT
+        unit: km
+        constraints:
+          required: true
+      ftC1toFTB:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: ftc1toftb_fk
+            type: STRING
+            label: FeatureTypeB-title
+          href:
+            sourcePath: ftc1toftb_fk
+            type: STRING
+            label: FeatureTypeB-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretypeb/items/{{value}}"
+  featuretypec2:
+    sourcePath: /featuretypec2
+    type: OBJECT
+    objectType: FeatureTypeC2
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      geom:
+        sourcePath: geom
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      ftAtoTA_TypeA:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: ftatota_typea_fk
+            type: STRING
+            label: TA-title
+          href:
+            sourcePath: ftatota_typea_fk
+            type: STRING
+            label: TA-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/ta/items/{{value}}"
+      ftAtoTA_TypeASub:
+        type: OBJECT
+        objectType: Link
+        properties:
+          title:
+            sourcePath: ftatota_typeasub_fk
+            type: STRING
+            label: TASub-title
+          href:
+            sourcePath: ftatota_typeasub_fk
+            type: STRING
+            label: TASub-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/tasub/items/{{value}}"
+      attMeasure:
+        sourcePath: attmeasure
+        type: FLOAT
+        unit: km
+        constraints:
+          required: true
+      ftC1toFTB:
+        type: OBJECT
+        objectType: Link
+        constraints:
+          required: true
+        properties:
+          title:
+            sourcePath: ftc1toftb_fk
+            type: STRING
+            label: FeatureTypeB-title
+          href:
+            sourcePath: ftc1toftb_fk
+            type: STRING
+            label: FeatureTypeB-ID
+            transformations:
+            - stringFormat: "{{serviceUrl}}/collections/featuretypeb/items/{{value}}"
+      att1:
+        sourcePath: "[idx=featuretypec2_id]FeatureTypeC2_att1"
+        type: OBJECT
+        objectType: DataTypeC1
+        constraints:
+          required: true
+        properties:
+          att1:
+            sourcePath: att1
+            type: BOOLEAN
+            constraints:
+              required: true
+          att2:
+            sourcePath: att2
+            type: INTEGER
+            constraints:
+              required: true
+          attDataTypeA:
+            sourcePath: "[idx=datatypec1_id]FeatureTypeC2_att1_attDataTypeA"
+            type: OBJECT
+            objectType: DataTypeA
+            constraints:
+              required: true
+            properties:
+              att1:
+                sourcePath: att1
+                type: STRING
+                constraints:
+                  required: true
+              att2:
+                sourcePath: att2
+                type: FLOAT
+                constraints:
+                  required: true
+      att2_dataTypeC2:
+        sourcePath: "[idx=featuretypec2_id]FeatureTypeC2_att2_dataTypeC2"
+        type: OBJECT_ARRAY
+        objectType: DataTypeC2
+        label: dataTypeC2
+        constraints:
+          minOccurrence: 0
+        properties:
+          dtC2toFTC1_FeatureTypeC1:
+            type: OBJECT
+            objectType: Link
+            properties:
+              title:
+                sourcePath: dtc2toftc1_featuretypec1_fk
+                type: STRING
+                label: FeatureTypeC1-title
+              href:
+                sourcePath: dtc2toftc1_featuretypec1_fk
+                type: STRING
+                label: FeatureTypeC1-ID
+                transformations:
+                - stringFormat: "{{serviceUrl}}/collections/featuretypec1/items/{{value}}"
+          dtC2toFTC1_FeatureTypeC2:
+            type: OBJECT
+            objectType: Link
+            properties:
+              title:
+                sourcePath: dtc2toftc1_featuretypec2_fk
+                type: STRING
+                label: FeatureTypeC2-title
+              href:
+                sourcePath: dtc2toftc1_featuretypec2_fk
+                type: STRING
+                label: FeatureTypeC2-ID
+                transformations:
+                - stringFormat: "{{serviceUrl}}/collections/featuretypec2/items/{{value}}"
+      att2_dataTypeC3:
+        sourcePath: "[idx=featuretypec2_id]FeatureTypeC2_att2_dataTypeC3"
+        type: OBJECT_ARRAY
+        objectType: DataTypeC3
+        label: dataTypeC3
+        constraints:
+          minOccurrence: 0
+        properties:
+          dtC2toFTC1_FeatureTypeC1:
+            type: OBJECT
+            objectType: Link
+            properties:
+              title:
+                sourcePath: dtc2toftc1_featuretypec1_fk
+                type: STRING
+                label: FeatureTypeC1-title
+              href:
+                sourcePath: dtc2toftc1_featuretypec1_fk
+                type: STRING
+                label: FeatureTypeC1-ID
+                transformations:
+                - stringFormat: "{{serviceUrl}}/collections/featuretypec1/items/{{value}}"
+          dtC2toFTC1_FeatureTypeC2:
+            type: OBJECT
+            objectType: Link
+            properties:
+              title:
+                sourcePath: dtc2toftc1_featuretypec2_fk
+                type: STRING
+                label: FeatureTypeC2-title
+              href:
+                sourcePath: dtc2toftc1_featuretypec2_fk
+                type: STRING
+                label: FeatureTypeC2-ID
+                transformations:
+                - stringFormat: "{{serviceUrl}}/collections/featuretypec2/items/{{value}}"
+          dtC3toFTC2:
+            type: OBJECT
+            objectType: Link
+            constraints:
+              required: true
+            properties:
+              title:
+                sourcePath: dtc3toftc2_fk
+                type: STRING
+                label: FeatureTypeC2-title
+              href:
+                sourcePath: dtc3toftc2_fk
+                type: STRING
+                label: FeatureTypeC2-ID
+                transformations:
+                - stringFormat: "{{serviceUrl}}/collections/featuretypec2/items/{{value}}"
+  ta:
+    sourcePath: /ta
+    type: OBJECT
+    objectType: TypeA
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCodelistA:
+        sourcePath: attcodelista
+        type: STRING
+        constraints:
+          codelist: CodeListA
+          required: true
+  tasub:
+    sourcePath: /tasub
+    type: OBJECT
+    objectType: TypeASub
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCodelistA:
+        sourcePath: attcodelista
+        type: STRING
+        constraints:
+          codelist: CodeListA
+          required: true
+      att1:
+        sourcePath: att1
+        type: BOOLEAN
+        constraints:
+          required: true

@@ -54,8 +54,8 @@ import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableFeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
-import de.ii.xtraplatform.codelists.domain.CodelistData.ImportType;
-import de.ii.xtraplatform.codelists.domain.ImmutableCodelistData;
+import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
+import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
@@ -93,7 +93,7 @@ public class LdpConfigBuilder {
     protected LdproxyCfgWriter cfg;
     protected ImmutableOgcApiDataV2 serviceConfig = null;
     protected ImmutableFeatureProviderSqlData providerConfig = null;
-    protected List<ImmutableCodelistData> codelists = new ArrayList<>();
+    protected SortedMap<String,ImmutableCodelist> codelistById = new TreeMap<>();
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
@@ -144,10 +144,7 @@ public class LdpConfigBuilder {
 	 */
 
 	for (ClassInfo ci : codelistsAndEnumerations) {
-
-	    ImmutableCodelistData icd = createCodelistEntity(ci);
-
-	    codelists.add(icd);
+	    createCodelist(ci);
 	}
 
 	SortedMap<String, FeatureSchema> providerFragmentDefinitions = new TreeMap<>();
@@ -480,11 +477,11 @@ public class LdpConfigBuilder {
 	return this.serviceConfig;
     }
 
-    public List<ImmutableCodelistData> getCodeLists() {
-	return this.codelists;
+    public SortedMap<String,ImmutableCodelist> getCodeListMap() {
+	return this.codelistById;
     }
 
-    private ImmutableCodelistData createCodelistEntity(ClassInfo ci) {
+    private void createCodelist(ClassInfo ci) {
 
 	String id = LdpInfo.codelistId(ci);
 
@@ -500,7 +497,7 @@ public class LdpConfigBuilder {
 	    label = labelOpt.get();
 	}
 
-	ImmutableCodelistData icd = cfg.builder().entity().codelist().id(id).label(label)
+	ImmutableCodelist ic = cfg.builder().value().codelist().label(label)
 		.sourceType(ImportType.TEMPLATES).build();
 
 	if (!ci.properties().isEmpty()) {
@@ -555,19 +552,14 @@ public class LdpConfigBuilder {
 		entries.put(code, targetValue);
 	    }
 
-	    icd = icd.withEntries(entries);
+	    ic = ic.withEntries(entries);
 	}
 
 	if (StringUtils.isNotBlank(ci.taggedValue("ldpFallbackValue"))) {
-	    icd = icd.withFallback(ci.taggedValue("ldpFallbackValue").trim());
+	    ic = ic.withFallback(ci.taggedValue("ldpFallbackValue").trim());
 	}
 
-	if (Ldproxy2Target.isUnitTest) {
-	    icd = icd.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-		    .withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	}
-
-	return icd;
+	this.codelistById.put(id, ic);
     }
 
 }

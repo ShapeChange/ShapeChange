@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.shapechange</groupId>
 	<artifactId>ShapeChange</artifactId>
@@ -7,45 +9,56 @@
 	<scm>
 		<url>https://github.com/ShapeChange/ShapeChange</url>
 		<connection>scm:git:https://github.com/ShapeChange/ShapeChange.git</connection>
-		<developerConnection>scm:git:https://github.com/ShapeChange/ShapeChange.git</developerConnection>
+		<developerConnection>
+			scm:git:https://github.com/ShapeChange/ShapeChange.git</developerConnection>
 		<!-- Tag removed. See https://stackoverflow.com/a/43851298/3469138 -->
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<repositories>
 		<repository>
 			<id>ShapeChange</id>
 			<name>ShapeChange (plus additional components) release repository</name>
 			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
-		<!--<repository>
+		<repository>
 			<id>ii-maven</id>
 			<name>interactive instruments maven snapshots repository</name>
-			<url>https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
-		</repository>-->
- 		<repository>
- 			<id>ii-maven-releases</id>
- 			<name>interactive instruments maven releases repository</name>
- 			<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>
- 		</repository>
+			<url>
+				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
+		</repository>
+		<!-- 		<repository>-->
+		<!-- 			<id>ii-maven-releases</id>-->
+		<!-- 			<name>interactive instruments maven releases repository</name>-->
+		<!--
+		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
+		<!-- 		</repository>-->
 	</repositories>
 	<dependencies>
-	<!-- https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
+		<!--
+		https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
 		<dependency>
-		  <groupId>com.flipkart.zjsonpatch</groupId>
-		  <artifactId>zjsonpatch</artifactId>
-		  <version>0.4.12</version>
-		  <scope>test</scope>
+			<groupId>com.flipkart.zjsonpatch</groupId>
+			<artifactId>zjsonpatch</artifactId>
+			<version>0.4.12</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
-			<version>3.5.0</version>
+			<version>4.0.0-SNAPSHOT</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.11</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.32</version>
+			<version>2.0.11</version>
 			<!-- <scope>test</scope> -->
 		</dependency>
 		<dependency>
@@ -58,7 +71,7 @@
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
@@ -111,30 +124,32 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
 		<dependency>
-		    <groupId>org.xmlunit</groupId>
-		    <artifactId>xmlunit-core</artifactId>
-		    <version>2.9.0</version>
-		    <scope>test</scope>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-core</artifactId>
+			<version>2.9.0</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
 		<dependency>
-		    <groupId>org.xmlunit</groupId>
-		    <artifactId>xmlunit-legacy</artifactId>
-		    <version>2.9.0</version>
-		    <scope>test</scope>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-legacy</artifactId>
+			<version>2.9.0</version>
+			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<!--
+		https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.core</groupId>
-		    <artifactId>jackson-core</artifactId>
-		    <version>2.13.4</version>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.13.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.13.4.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
+		<!--
+		https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
@@ -171,7 +186,8 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>4.1.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
+		<!--
+		https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
 		<dependency>
 			<groupId>org.docx4j</groupId>
 			<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
@@ -231,14 +247,16 @@
 		</dependency>
 	</dependencies>
 	<url>http://shapechange.net/</url>
-	<description>ShapeChange - processing application schemas for geographic information</description>
+	<description>ShapeChange - processing application schemas for geographic
+		information</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<distributionManagement>
 		<repository>
 			<id>ssh-repository</id>
-			<url>scpexe://ec2-18-195-82-157.eu-central-1.compute.amazonaws.com/home/bitnami/apps/wordpress/htdocs/resources/dist</url>
+			<url>
+				scpexe://ec2-18-195-82-157.eu-central-1.compute.amazonaws.com/home/bitnami/apps/wordpress/htdocs/resources/dist</url>
 		</repository>
 	</distributionManagement>
 	<build>
@@ -287,10 +305,12 @@
 					<systemPropertyVariables>
 						<scunittesting>true</scunittesting>
 					</systemPropertyVariables>
-					<!-- The following can be used to exclude Saxon when performing unit 
+					<!-- The following can be used to exclude Saxon when
+					performing unit 
 						tests. -->
 					<!-- <classpathDependencyExcludes> -->
-					<!-- <classpathDependencyExclude>net.sf.saxon:Saxon-HE</classpathDependencyExclude> -->
+					<!--
+					<classpathDependencyExclude>net.sf.saxon:Saxon-HE</classpathDependencyExclude> -->
 					<!-- </classpathDependencyExcludes> -->
 				</configuration>
 			</plugin>
@@ -321,7 +341,8 @@
 							<goal>javadoc</goal>
 						</goals>
 						<configuration>
-							<reportOutputDirectory>${project.build.directory}/gh-pages</reportOutputDirectory>
+							<reportOutputDirectory>
+								${project.build.directory}/gh-pages</reportOutputDirectory>
 							<destDir>javadoc</destDir>
 						</configuration>
 					</execution>
@@ -349,7 +370,8 @@
 				<version>2.2.2</version>
 				<configuration>
 					<sourceDirectory>src/docs/asciidoc</sourceDirectory>
-					<outputDirectory>${project.build.directory}/gh-pages/${project.version}</outputDirectory>
+					<outputDirectory>
+						${project.build.directory}/gh-pages/${project.version}</outputDirectory>
 					<preserveDirectories>true</preserveDirectories>
 					<backend>html5</backend>
 					<doctype>book</doctype>
@@ -383,10 +405,12 @@
 						<configuration>
 							<archive>
 								<manifest>
-									<mainClass>de.interactive_instruments.ShapeChange.Main</mainClass>
+									<mainClass>
+										de.interactive_instruments.ShapeChange.Main</mainClass>
 									<addClasspath>true</addClasspath>
 									<classpathPrefix>lib</classpathPrefix>
-									<!-- Workaround for Maven bug #MJAR-156 (https://issues.apache.org/jira/browse/MJAR-156) -->
+									<!-- Workaround for Maven bug #MJAR-156
+									(https://issues.apache.org/jira/browse/MJAR-156) -->
 									<useUniqueVersions>false</useUniqueVersions>
 								</manifest>
 								<manifestEntries>
@@ -438,7 +462,8 @@
 						</goals>
 						<configuration>
 							<includeEmptyDirs>true</includeEmptyDirs>
-							<outputDirectory>${project.build.directory}/appassembler/test</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/appassembler/test</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/test/resources</directory>
@@ -460,7 +485,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/appassembler/shell</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/appassembler/shell</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/test/resources</directory>
@@ -480,7 +506,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/appassembler/lic</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/appassembler/lic</outputDirectory>
 							<resources>
 								<resource>
 									<directory>/</directory>
@@ -498,7 +525,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/appassembler/test/config</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/appassembler/test/config</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/main/resources/config</directory>
@@ -522,7 +550,8 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/resources</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/resources</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/main/resources</directory>
@@ -545,10 +574,12 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/documentation</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/documentation</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${project.build.directory}/gh-pages/${project.version}</directory>
+									<directory>
+										${project.build.directory}/gh-pages/${project.version}</directory>
 								</resource>
 							</resources>
 						</configuration>
@@ -592,7 +623,8 @@
 						</configuration>
 					</execution>
 					<execution>
-						<!-- create resources.zip which can be uploaded manually to shapechange.net/resources -->
+						<!-- create resources.zip which can be uploaded manually
+						to shapechange.net/resources -->
 						<id>create-resources-zip</id>
 						<phase>package</phase>
 						<goals>
@@ -619,7 +651,8 @@
 				<version>3.1.0</version>
 				<configuration>
 					<serverId>github.com</serverId>
-					<pubScmUrl>scm:git:https://github.com/ShapeChange/ShapeChange.git</pubScmUrl>
+					<pubScmUrl>
+						scm:git:https://github.com/ShapeChange/ShapeChange.git</pubScmUrl>
 					<scmBranch>gh-pages</scmBranch>
 					<checkinComment>Update documentation</checkinComment>
 					<content>${project.build.directory}/gh-pages</content>
@@ -640,7 +673,8 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>3.0.0-M5</version>
 				<configuration>
-					<preparationGoals>clean verify asciidoctor:process-asciidoc scm-publish:publish-scm</preparationGoals>
+					<preparationGoals>clean verify asciidoctor:process-asciidoc
+						scm-publish:publish-scm</preparationGoals>
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
 			</plugin>

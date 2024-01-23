@@ -1,9 +1,0 @@
----
-id: Codelist2
-createdAt: 1000000000000
-lastModified: 1000000000000
-label: Codelist2
-entries:
-  "8000": codeX
-  "9000": codeY
-sourceType: TEMPLATES

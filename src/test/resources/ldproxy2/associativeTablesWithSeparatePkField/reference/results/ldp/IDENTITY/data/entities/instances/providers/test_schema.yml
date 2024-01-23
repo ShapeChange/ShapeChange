@@ -1,0 +1,50 @@
+---
+id: test_schema
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: _id
+  sortKey: _id
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      pCodelist1:
+        sourcePath: "[_id=featuretype_id]FeatureType_pCodelist1/codelist1_id"
+        type: VALUE_ARRAY
+        valueType: STRING
+        constraints:
+          codelist: Codelist1
+          minOccurrence: 0
+      pCodelist2:
+        sourcePath: "[_id=featuretype_id]FeatureType_pCodelist2/pcodelist2"
+        type: VALUE_ARRAY
+        valueType: STRING
+        constraints:
+          codelist: Codelist2
+          minOccurrence: 0
+      pString:
+        sourcePath: "[_id=featuretype_id]FeatureType_pString/pstring"
+        type: VALUE_ARRAY
+        valueType: STRING
+        constraints:
+          minOccurrence: 0

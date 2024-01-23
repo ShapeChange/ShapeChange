@@ -1,0 +1,6 @@
+---
+label: Alias TS2_Codelist1
+entries:
+  codeX: https://example.org/cX
+  codeY: https://example.org/cY
+sourceType: TEMPLATES
