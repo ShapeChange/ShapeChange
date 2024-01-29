@@ -2,30 +2,62 @@
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
                    config="src/test/resources/ldproxy2/titleAttribute/test_ldproxy2.xml"
-                   end="Fri Oct 14 14:43:31 CEST 2022"
+                   end="Mon Jan 29 16:35:48 CET 2024"
                    resultCode="0"
-                   start="Fri Oct 14 14:43:23 CEST 2022"
-                   version="2.12.1-SNAPSHOT">
+                   start="Mon Jan 29 16:35:27 CET 2024"
+                   version="3.0.1-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
       <Info message="Validating input parameters."/>
       <Info message="Validation of input parameters completed."/>
       <Info message="Validating log parameters."/>
       <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_TV2' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_TV1' ..."/>
       <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
       <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_1' ..."/>
-      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_TV1' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
       <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea"/>
       <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea"/>
       <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea"/>
       <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea"/>
-      <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_TV1' for input ID: 'IDENTITY'."/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-taggedValue-inheritance ----------"/>
+      <Info message="Adding tagged value ldpTitleAttribute=text to TS1_FeatureType3SubA.">
+         <Detail xmlns=""
+                 message="Context: supertype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3'"/>
+         <Detail xmlns=""
+                 message="Context: subtype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3SubA'"/>
+      </Info>
+      <Info message="Adding tagged value ldpTitleAttribute=text to TS1_FeatureType3SubB.">
+         <Detail xmlns=""
+                 message="Context: supertype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3'"/>
+         <Detail xmlns=""
+                 message="Context: subtype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3SubB'"/>
+      </Info>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_TV1' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test 2 - Reflexive relationships', target namespace: 'http://shapechange.net/test2'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'."/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_TV1'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_TV2' for input ID: 'TRF_TV1'."/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-taggedValue-createOriginalSchemaInformationTags ----------"/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_TV2' for input ID: 'TRF_TV1'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_1' for input ID: 'TRF_TV2'."/>
       <ProcessFlowInfo message="========== processing phase =========="/>
       <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
       <ProcessFlowInfo message="========== postprocessing phase =========="/>
       <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
-      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_1' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_1' for input ID: 'TRF_TV2'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'TRF_1'."/>
       <ProcessFlowInfo message="========== processing phase =========="/>
       <ProcessFlowInfo message="---------- now processing: rule-trf-prop-flatten-types ----------"/>
@@ -33,10 +65,27 @@
       <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
       <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'TRF_1'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test 2 - Reflexive relationships', target namespace: 'http://shapechange.net/test2'"/>
-      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'TRF_END'."/>
+      <Info message="Determined database system is 'PostgreSQL'."/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'"/>
-      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_END'."/>
-      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'TRF_END'."/>
+      <Info message="Creating associative table to represent association between FeatureType (context property 'refRel2Source') and FeatureType (context property 'refRel2Target'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType_refRel2Target'."/>
+      <Info message="Creating associative table to represent association between FeatureType (context property 'refRel3Source') and FeatureType (context property 'refRel3Target'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType_refRel3Source'."/>
+      <Info message="Creating associative table to represent attribute 'attLength' in class 'TS1_FeatureType1'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'TS1_FeatureType1_attLength'."/>
+      <Warning message=" The type 'Length' was not found in the schema(s) selected for processing or in map entries, or conversion of the category of classes to which the type belongs is generally not supported by the target. It will be mapped to 'unknown'."/>
+      <Info message="Creating associative table to represent association between TS1_FeatureType2 (context property 'roleToFt1_3') and TS1_FeatureType1 (context property 'roleToFt2_3'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'TS1_FeatureType1_roleToFt2_3'."/>
+      <Warning message="Type 'NES_FeatureType1' of property 'roleNotEncoded' in class 'TS1_FeatureType1' is not part of the schema that is being processed, no map entry is defined for it, and rule-sql-cls-references-to-external-types is not enabled. Please ensure that map entries are defined for external types used in the schema - or allow referencing of external types in general by enabling rule-sql-cls-references-to-external-types. Assigning textual type to the property."/>
+      <Info message="Creating associative table to represent association between MD_Metadata (context property 'role_Sas50') and TS1_FeatureType2 (context property 'roleToMd2'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'TS1_FeatureType2_roleToMd2'."/>
+      <Info message="Creating associative table to represent association between TS1_FeatureType3SubA (context property 'role_Sas62') and TS1_FeatureType2 (context property 'roleToFT3_2-TS1_FeatureType3SubA'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'TS1_FeatureType2_roleToFT3_2-TS1_FeatureType3SubA'."/>
+      <Info message="Creating associative table to represent association between TS1_FeatureType3SubB (context property 'role_Sas62') and TS1_FeatureType2 (context property 'roleToFT3_2-TS1_FeatureType3SubB'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'TS1_FeatureType2_roleToFT3_2-TS1_FeatureType3SubB'."/>
+      <Warning message="Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featuretype2_id' for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featur'"/>
+      <Warning message="Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featuretype3suba_id' for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featu0'"/>
+      <Warning message="Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featuretype2_id' for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featur'"/>
+      <Warning message="Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featuretype3subb_id' for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featu0'"/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
    </Messages>
-   <Results/>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/ldproxy2/titleAttribute/results/ddl/TRF_END/Test_1_-_Basics.sql"
+              target="SQL DDL">Test_1_-_Basics.sql</Result>
+   </Results>
 </ShapeChangeResult>

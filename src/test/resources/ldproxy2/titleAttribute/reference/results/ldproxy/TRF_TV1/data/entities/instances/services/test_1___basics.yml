@@ -43,3 +43,15 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
+  ts1_featuretype3suba:
+    id: ts1_featuretype3suba
+    label: ts1_featuretype3suba
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  ts1_featuretype3subb:
+    id: ts1_featuretype3subb
+    label: ts1_featuretype3subb
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML

@@ -38,9 +38,36 @@
       <parameter name="logFile" value="testResults/ldproxy2/titleAttribute/log.xml"/>
    </log>
    <transformers>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform"
+                   id="IDENTITY"
+                   input="INPUT"
+                   mode="enabled"/>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer"
+                   id="TRF_TV1"
+                   input="IDENTITY"
+                   mode="enabled">
+         <parameters>
+            <ProcessParameter name="taggedValueInheritanceGeneralList" value="ldpTitleAttribute"/>
+         </parameters>
+         <rules>
+            <ProcessRuleSet name="taggedValueInheritance">
+               <rule name="rule-trf-taggedValue-inheritance"/>
+            </ProcessRuleSet>
+         </rules>
+      </Transformer>
+      <Transformer class="de.interactive_instruments.ShapeChange.Transformation.TaggedValues.TaggedValueTransformer"
+                   id="TRF_TV2"
+                   input="TRF_TV1"
+                   mode="enabled">
+         <rules>
+            <ProcessRuleSet name="taggedValueInheritance">
+               <rule name="rule-trf-taggedValue-createOriginalSchemaInformationTags"/>
+            </ProcessRuleSet>
+         </rules>
+      </Transformer>
       <Transformer class="de.interactive_instruments.ShapeChange.Transformation.Flattening.Flattener"
                    id="TRF_1"
-                   input="INPUT"
+                   input="TRF_TV2"
                    mode="enabled">
          <rules>
             <ProcessRuleSet name="flattener">
@@ -69,11 +96,455 @@
       </Transformer>
    </transformers>
    <targets>
-      <Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+      <Target class="de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl"
               inputs="TRF_END"
               mode="enabled">
          <targetParameter name="outputDirectory"
-                          value="testResults/ldproxy2/titleAttribute/results"/>
+                          value="testResults/ldproxy2/titleAttribute/results/ddl"/>
+         <targetParameter name="size" value="-1"/>
+         <targetParameter name="srid" value="31467"/>
+         <targetParameter name="createReferences" value="true"/>
+         <targetParameter name="createDocumentation" value="true"/>
+         <targetParameter name="documentationTemplate" value="[[definition]]"/>
+         <targetParameter name="documentationNoValue" value=""/>
+         <targetParameter name="defaultEncodingRule" value="mysql2"/>
+         <targetParameter name="foreignKeyColumnDatatype" value="bigint"/>
+         <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+         <targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt"/>
+         <targetParameter name="foreignKeyColumnSuffixCodelist" value="_fkcl"/>
+         <targetParameter name="reflexiveRelationshipFieldSuffix" value="_REFLEXIVE"/>
+         <targetParameter name="descriptorsForCodelist"
+                          value="alias(columnName=myAlias;size=255),definition(columnName=myDefinition),description(columnName=myDescription)"/>
+         <targetParameter name="codeNameColumnName" value="myName"/>
+         <targetParameter name="codeNameSize" value="50"/>
+         <targetParameter name="writeSqlEncodingInfos" value="true"/>
+         <mapEntries>
+            <MapEntry param="table{primaryKeyColumns=extpk}"
+                      rule="*"
+                      targetType="tb_md_metadata"
+                      type="MD_Metadata"/>
+            <MapEntry param="table{representedCategory=datatype;primaryKeyColumns=extpk}"
+                      rule="*"
+                      targetType="tb_extdt"
+                      type="ExtDt"/>
+         </mapEntries>
+         <rules>
+            <EncodingRule extends="sql" name="mysql2">
+               <rule name="rule-sql-all-associativetables"/>
+               <rule name="rule-sql-all-associativeTablesWithSeparatePkField"/>
+               <rule name="rule-sql-prop-exclude-derived"/>
+               <rule name="rule-sql-cls-data-types"/>
+               <rule name="rule-sql-cls-object-types"/>
+               <rule name="rule-sql-prop-check-constraints-for-enumerations"/>
+               <rule name="rule-sql-cls-data-types-oneToMany-severalTables"/>
+               <rule name="rule-sql-cls-code-lists"/>
+               <rule name="rule-sql-cls-identifierStereotype"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="defaultValue{quoted=true}"
+                      rule="*"
+                      targetType="cond:textOrCharacterVarying"
+                      type="CharacterString"/>
+            <MapEntry param="defaultValue{quoted=true}"
+                      rule="*"
+                      targetType="cond:textOrCharacterVarying"
+                      type="URI"/>
+            <MapEntry param="defaultValue{true=TRUE;false=FALSE;quoted=false}"
+                      rule="*"
+                      targetType="boolean"
+                      type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="numeric" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="numeric" type="Number"/>
+            <MapEntry param="" rule="*" targetType="numeric" type="Real"/>
+            <MapEntry param="" rule="*" targetType="numeric" type="Measure"/>
+            <MapEntry param="defaultValue{quoted=true}"
+                      rule="*"
+                      targetType="date"
+                      type="Date"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="timestamp with time zone"
+                      type="DateTime"/>
+            <MapEntry param="geometry" rule="*" targetType="POINT" type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="MULTIPOINT"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="LINESTRING"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="MULTILINESTRING"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="POLYGON"
+                      type="GM_Surface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="MULTIPOLYGON"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="GEOMETRY"
+                      type="GM_Object"/>
+            <MapEntry param="" rule="*" targetType="smallint" type="Short"/>
+            <MapEntry param="" rule="*" targetType="bigint" type="Long"/>
+            <MapEntry param="" rule="*" targetType="varchar" type="character varying"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+              inputs="TRF_TV1"
+              mode="enabled">
+         <advancedProcessConfigurations>
+            <SqlEncodingInfos>
+               <modelElementEncodings>
+                  <SqlClassEncodingInfo className="TS1_FeatureType1"
+                                        schemaName="Test 1 - Basics"
+                                        tableName="ts1_featuretype1"/>
+                  <SqlClassEncodingInfo className="TS1_FeatureType2"
+                                        schemaName="Test 1 - Basics"
+                                        tableName="ts1_featuretype2"/>
+                  <SqlClassEncodingInfo className="TS1_FeatureType3SubA"
+                                        schemaName="Test 1 - Basics"
+                                        tableName="ts1_featuretype3suba"/>
+                  <SqlClassEncodingInfo className="TS1_FeatureType3SubB"
+                                        schemaName="Test 1 - Basics"
+                                        tableName="ts1_featuretype3subb"/>
+                  <SqlClassEncodingInfo className="FeatureType"
+                                        schemaName="Test 2 - Reflexive relationships"
+                                        tableName="featuretype"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="1"
+                                           propertyName="attCharacterString"
+                                           propertyValueType="CharacterString"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           valueSourcePath="attcharacterstring"/>
+                  <SqlPropertyEncodingInfo idSourcePath="attextdt1_fkdt"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="1"
+                                           propertyName="attExtDt1"
+                                           propertyValueType="ExtDt"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="tb_extdt"
+                                           valueSourcePath="[attextdt1_fkdt=extpk]tb_extdt"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype1_id]assoctablets1ft1toextdt/tb_extdt_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="1..*"
+                                           propertyName="attExtDt2"
+                                           propertyValueType="ExtDt"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="tb_extdt"
+                                           valueSourcePath="[_id=ts1_featuretype1_id]assoctablets1ft1toextdt/[tb_extdt_id=extpk]tb_extdt"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="attInteger"
+                                           propertyValueType="Integer"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           valueSourcePath="attinteger"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="1..*"
+                                           propertyName="attLength"
+                                           propertyValueType="Length"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           valueSourcePath="[_id=ts1_featuretype1_id]ts1_featuretype1_attlength/attlength"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="attReal"
+                                           propertyValueType="Real"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           valueSourcePath="[_id=ts1_featuretype1_id]assoctablets1ft1attreal/attreal"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="name"
+                                           propertyValueType="CharacterString"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           valueSourcePath="name"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="1"
+                                           propertyName="roleNotEncoded"
+                                           propertyValueType="NES_FeatureType1"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           valueSourcePath="rolenotencoded"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft3_1_ts1_featuretype3suba_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           originalPropertyName="roleToFT3_1"
+                                           originalPropertyValueType="TS1_FeatureType3"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFT3_1-TS1_FeatureType3SubA"
+                                           propertyValueType="TS1_FeatureType3SubA"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype3suba"
+                                           valueSourcePath="[roletoft3_1_ts1_featuretype3suba_fk=_id]ts1_featuretype3suba"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft3_1_ts1_featuretype3subb_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           originalPropertyName="roleToFT3_1"
+                                           originalPropertyValueType="TS1_FeatureType3"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFT3_1-TS1_FeatureType3SubB"
+                                           propertyValueType="TS1_FeatureType3SubB"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype3subb"
+                                           valueSourcePath="[roletoft3_1_ts1_featuretype3subb_fk=_id]ts1_featuretype3subb"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletoft3_2_ts1_featuretype3suba/ts1_featuretype3suba_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           originalPropertyName="roleToFT3_2"
+                                           originalPropertyValueType="TS1_FeatureType3"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFT3_2-TS1_FeatureType3SubA"
+                                           propertyValueType="TS1_FeatureType3SubA"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype3suba"
+                                           valueSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletoft3_2_ts1_featuretype3suba/[ts1_featuretype3suba_id=_id]ts1_featuretype3suba"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletoft3_2_ts1_featuretype3subb/ts1_featuretype3subb_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           originalPropertyName="roleToFT3_2"
+                                           originalPropertyValueType="TS1_FeatureType3"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFT3_2-TS1_FeatureType3SubB"
+                                           propertyValueType="TS1_FeatureType3SubB"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype3subb"
+                                           valueSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletoft3_2_ts1_featuretype3subb/[ts1_featuretype3subb_id=_id]ts1_featuretype3subb"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype1_roletoft2_3/ts1_featuretype1_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFt1_3"
+                                           propertyValueType="TS1_FeatureType1"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype1"
+                                           valueSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype1_roletoft2_3/[ts1_featuretype1_id=_id]ts1_featuretype1"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=roletoft2_4_fk]ts1_featuretype1/_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFt1_4"
+                                           propertyValueType="TS1_FeatureType1"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype1"
+                                           valueSourcePath="[_id=roletoft2_4_fk]ts1_featuretype1"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft1_5_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFt1_5"
+                                           propertyValueType="TS1_FeatureType1"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="ts1_featuretype1"
+                                           valueSourcePath="[roletoft1_5_fk=_id]ts1_featuretype1"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype1_id]assoctablets1ft1ft21/ts1_featuretype2_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFt2_1"
+                                           propertyValueType="TS1_FeatureType2"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="ts1_featuretype2"
+                                           valueSourcePath="[_id=ts1_featuretype1_id]assoctablets1ft1ft21/[ts1_featuretype2_id=_id]ts1_featuretype2"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft2_2_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFt2_2"
+                                           propertyValueType="TS1_FeatureType2"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="ts1_featuretype2"
+                                           valueSourcePath="[roletoft2_2_fk=_id]ts1_featuretype2"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype1_id]ts1_featuretype1_roletoft2_3/ts1_featuretype2_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToFt2_3"
+                                           propertyValueType="TS1_FeatureType2"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="ts1_featuretype2"
+                                           valueSourcePath="[_id=ts1_featuretype1_id]ts1_featuretype1_roletoft2_3/[ts1_featuretype2_id=_id]ts1_featuretype2"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft2_4_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFt2_4"
+                                           propertyValueType="TS1_FeatureType2"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="ts1_featuretype2"
+                                           valueSourcePath="[roletoft2_4_fk=_id]ts1_featuretype2"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletoft2_5_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType1"
+                                           propertyMultiplicity="0..1"
+                                           propertyName="roleToFt2_5"
+                                           propertyValueType="TS1_FeatureType2"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype1"
+                                           targetTable="ts1_featuretype2"
+                                           valueSourcePath="[roletoft2_5_fk=_id]ts1_featuretype2"/>
+                  <SqlPropertyEncodingInfo idSourcePath="roletomd1_fk"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="1"
+                                           propertyName="roleToMd1"
+                                           propertyValueType="MD_Metadata"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="tb_md_metadata"
+                                           valueSourcePath="[roletomd1_fk=extpk]tb_md_metadata"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletomd2/tb_md_metadata_id"
+                                           idValueType="integer"
+                                           inClassName="TS1_FeatureType2"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="roleToMd2"
+                                           propertyValueType="MD_Metadata"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype2"
+                                           targetTable="tb_md_metadata"
+                                           valueSourcePath="[_id=ts1_featuretype2_id]ts1_featuretype2_roletomd2/[tb_md_metadata_id=extpk]tb_md_metadata"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType3SubA"
+                                           originalInClassName="TS1_FeatureType3"
+                                           propertyMultiplicity="1"
+                                           propertyName="text"
+                                           propertyValueType="CharacterString"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype3suba"
+                                           valueSourcePath="text"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="TS1_FeatureType3SubB"
+                                           originalInClassName="TS1_FeatureType3"
+                                           propertyMultiplicity="1"
+                                           propertyName="text"
+                                           propertyValueType="CharacterString"
+                                           schemaName="Test 1 - Basics"
+                                           sourceTable="ts1_featuretype3subb"
+                                           valueSourcePath="text"/>
+                  <SqlPropertyEncodingInfo idSourcePath="refrel1target_reflexive"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="1"
+                                           propertyName="refRel1Target"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[refrel1target_reflexive=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=featuretype_refrel2source_id]featuretype_refrel2target/featuretype_refrel2target_id"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="refRel2Target"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[_id=featuretype_refrel2source_id]featuretype_refrel2target/[featuretype_refrel2target_id=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=featuretype_refrel3target_id]featuretype_refrel3source/featuretype_refrel3source_id"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="refRel3Source"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[_id=featuretype_refrel3target_id]featuretype_refrel3source/[featuretype_refrel3source_id=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=featuretype_refrel3source_id]featuretype_refrel3source/featuretype_refrel3target_id"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="refRel3Target"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[_id=featuretype_refrel3source_id]featuretype_refrel3source/[featuretype_refrel3target_id=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="refrel4source_reflexive"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="1"
+                                           propertyName="refRel4Source"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[refrel4source_reflexive=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="refrel4target_reflexive"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="1"
+                                           propertyName="refRel4Target"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[refrel4target_reflexive=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="[_id=relref5target_reflexive]featuretype/_id"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="0..*"
+                                           propertyName="relRef5Source"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[_id=relref5target_reflexive]featuretype"/>
+                  <SqlPropertyEncodingInfo idSourcePath="relref5target_reflexive"
+                                           idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="1"
+                                           propertyName="relRef5Target"
+                                           propertyValueType="FeatureType"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           targetTable="featuretype"
+                                           valueSourcePath="[relref5target_reflexive=_id]featuretype"/>
+                  <SqlPropertyEncodingInfo idValueType="integer"
+                                           inClassName="FeatureType"
+                                           propertyMultiplicity="1"
+                                           propertyName="title"
+                                           propertyValueType="CharacterString"
+                                           schemaName="Test 2 - Reflexive relationships"
+                                           sourceTable="featuretype"
+                                           valueSourcePath="title"/>
+               </modelElementEncodings>
+            </SqlEncodingInfos>
+         </advancedProcessConfigurations>
+         <targetParameter name="outputDirectory"
+                          value="testResults/ldproxy2/titleAttribute/results/ldproxy"/>
          <targetParameter name="sortedOutput" value="true"/>
          <targetParameter name="associativeTableColumnSuffix" value="_id"/>
          <targetParameter name="cfgTemplatePath"
@@ -89,12 +560,14 @@
          <targetParameter name="serviceConfigTemplatePath"
                           value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml"/>
          <targetParameter name="srid" value="4326"/>
+         <targetParameter name="enableFragments" value="true"/>
          <targetParameter name="_unitTestOverride" value="true"/>
          <targetParameter name="defaultEncodingRule" value="ldptest"/>
          <rules>
             <EncodingRule name="ldptest">
                <rule name="rule-ldp2-all-documentation"/>
                <rule name="rule-ldp2-all-schemas"/>
+               <rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
                <rule name="rule-ldp2-cls-codelist-direct"/>
                <rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
                <rule name="rule-ldp2-cls-identifierStereotype"/>
@@ -138,6 +611,7 @@
                <rule name="rule-cdb-all-notEncoded"/>
                <rule name="rule-gpkg-all-notEncoded"/>
                <rule name="rule-ldp2-all-notEncoded"/>
+               <rule name="rule-gfs-all-notEncoded"/>
             </EncodingRule>
             <EncodingRule extends="iso19136_2007" name="citygml-ade">
                <rule name="req-xsd-cls-suppress-supertype"/>
@@ -204,6 +678,7 @@
             <MapEntry param="" rule="*" targetType="STRING" type="Time"/>
             <MapEntry param="" rule="*" targetType="INTEGER" type="Year"/>
             <MapEntry param="" rule="*" targetType="STRING" type="URI"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="URL"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Measure"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Distance"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Length"/>

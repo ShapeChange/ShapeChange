@@ -490,12 +490,13 @@ public class LdpPropertyEncoder {
 				index++;
 
 				ImmutableFeatureSchema.Builder mspBuilder = new ImmutableFeatureSchema.Builder();
+				LinkedHashMap<String, FeatureSchema> propertyMapForMspBuilder = new LinkedHashMap<>();
 
 				mspBuilder.name(pi.name() + "_" + index);
 
 				encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, typeCi,
 					alreadyVisitedPiList, nowVisitedList, currentCi, spi, context, mspBuilder,
-					ldpType, propertyMapForBuilder);
+					ldpType, propertyMapForMspBuilder);
 
 				// determine the correct type for the item schema
 
@@ -505,6 +506,10 @@ public class LdpPropertyEncoder {
 					spi.isTargetsSingleValue(), ldpType);
 
 				mspBuilder.type(typeForMspBuilder);
+				
+				if(!propertyMapForMspBuilder.isEmpty()) {
+				    mspBuilder.propertyMap(propertyMapForMspBuilder);
+				}
 
 				/*
 				 * NOTE: If the property is encoded as a feature reference, the value type is

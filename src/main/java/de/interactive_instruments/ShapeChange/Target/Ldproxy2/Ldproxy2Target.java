@@ -127,7 +127,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SortedSet<String> genericValueTypes = null;
 
     public static String collectionIdFormat = "lowerCase";
-    
+
     public static boolean linearizeCurves = false;
 
     public static String labelTemplate = "[[alias]]";
@@ -338,9 +338,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    enableFragments = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_FRAGMENTS,
 		    false);
-	    
-	    linearizeCurves = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_LINEARIZE_CURVES,
-		    false);
+
+	    linearizeCurves = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_LINEARIZE_CURVES, false);
 
 	    // GML relevant parameters
 
@@ -387,21 +387,28 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    xmlEncodingInfos.merge(XmlEncodingInfos.fromXml(xeiElmt));
 			}
 		    }
-
-		    List<Element> seiElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "SqlEncodingInfos");
-
-		    if (seiElmts.isEmpty()) {
-			result.addInfo(this, 132);
-		    } else {
-			for (Element seiElmt : seiElmts) {
-			    sqlEncodingInfos.merge(SqlEncodingInfos.fromXml(seiElmt));
-			}
-		    }
 		}
 
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
 			gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
 			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
+	    }
+
+	    if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
+		result.addInfo(this, 126);
+	    } else {
+		Element advancedProcessConfigElmt = options.getCurrentProcessConfig()
+			.getAdvancedProcessConfigurations();
+
+		List<Element> seiElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "SqlEncodingInfos");
+
+		if (seiElmts.isEmpty()) {
+		    result.addInfo(this, 132);
+		} else {
+		    for (Element seiElmt : seiElmts) {
+			sqlEncodingInfos.merge(SqlEncodingInfos.fromXml(seiElmt));
+		    }
+		}
 	    }
 
 	    enableFeaturesGeoJson = options.parameterAsBoolean(this.getClass().getName(),
@@ -771,11 +778,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    cfg.writeEntity(serviceConfig);
 		}
 		cfg.writeEntity(providerConfig);
-		
-		SortedMap<String,ImmutableCodelist> codelistById = configBuilder.getCodeListMap();
+
+		SortedMap<String, ImmutableCodelist> codelistById = configBuilder.getCodeListMap();
 		for (String codelistId : codelistById.keySet()) {
 		    ImmutableCodelist ic = codelistById.get(codelistId);
-		    cfg.writeValue(ic,codelistId);
+		    cfg.writeValue(ic, codelistId);
 		}
 	    } catch (IOException e) {
 		e.printStackTrace();
@@ -1121,7 +1128,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 125:
 	    return "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
 	case 126:
-	    return "The target configuration does not contain advanced process configuration infos.";
+	    return "??The target configuration does not contain advanced process configuration infos.";
 	case 127:
 	    return "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
 	case 128:

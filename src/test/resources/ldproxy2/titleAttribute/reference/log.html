@@ -99,7 +99,7 @@ return true;
                <p>Start time:</p>
             </td>
             <td>
-               <p>Fri Oct 14 14:43:23 CEST 2022</p>
+               <p>Mon Jan 29 16:35:27 CET 2024</p>
             </td>
          </tr>
          <tr>
@@ -107,7 +107,7 @@ return true;
                <p>End time:</p>
             </td>
             <td>
-               <p>Fri Oct 14 14:43:31 CEST 2022</p>
+               <p>Mon Jan 29 16:35:48 CET 2024</p>
             </td>
          </tr>
          <tr>
@@ -123,7 +123,7 @@ return true;
                <p>ShapeChange version:</p>
             </td>
             <td>
-               <p>2.12.1-SNAPSHOT</p>
+               <p>3.0.1-SNAPSHOT</p>
             </td>
          </tr>
       </table><a name="messages">
@@ -211,6 +211,30 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
+               <p>--- Validating transformer with @id 'IDENTITY' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating transformer with @id 'TRF_TV2' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating transformer with @id 'TRF_TV1' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
                <p>--- Validating transformer with @id 'TRF_END' ...</p>
             </td>
          </tr>
@@ -227,8 +251,17 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target'
+               <p>--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl'
                   and @inputs 'TRF_END' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target'
+                  and @inputs 'TRF_TV1' ...</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -244,7 +277,7 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.eap</p>
+               <p>Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea</p>
             </td>
          </tr>
          <tr class="Info" style="display:table-row">
@@ -252,7 +285,7 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.eap</p>
+               <p>Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea</p>
             </td>
          </tr>
          <tr class="Info" style="display:table-row">
@@ -260,7 +293,7 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.eap</p>
+               <p>Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea</p>
             </td>
          </tr>
          <tr class="Info" style="display:table-row">
@@ -268,7 +301,7 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.eap</p>
+               <p>Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -276,7 +309,162 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Now processing transformation 'TRF_1' for input ID: 'INPUT'.</p>
+               <p>Now processing transformation 'IDENTITY' for input ID: 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'TRF_TV1' for input ID: 'IDENTITY'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- now processing: rule-trf-taggedValue-inheritance ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Adding tagged value ldpTitleAttribute=text to TS1_FeatureType3SubA.</p>
+               <p><small>Context: supertype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3'</small></p>
+               <p><small>Context: subtype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3SubA'</small></p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Adding tagged value ldpTitleAttribute=text to TS1_FeatureType3SubB.</p>
+               <p><small>Context: supertype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3'</small></p>
+               <p><small>Context: subtype 'Model::Test Model::Test 1 - Basics::TS1_FeatureType3SubB'</small></p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'TRF_TV1' for input ID: 'IDENTITY'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test 2 - Reflexive relationships', target
+                  namespace: 'http://shapechange.net/test2'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target'
+                  for input ID: 'TRF_TV1'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'TRF_TV2' for input ID: 'TRF_TV1'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- now processing: rule-trf-taggedValue-createOriginalSchemaInformationTags
+                  ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'TRF_TV2' for input ID: 'TRF_TV1'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'TRF_1' for input ID: 'TRF_TV2'.</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -316,7 +504,7 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Performed transformation for transformer ID 'TRF_1' for input ID: 'INPUT'.
+               <p>Performed transformation for transformer ID 'TRF_1' for input ID: 'TRF_TV2'.
                   -------------------------------------------------</p>
             </td>
          </tr>
@@ -383,7 +571,15 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+               <p>Now processing target 'SQL DDL' for input 'TRF_END'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Determined database system is 'PostgreSQL'.</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -399,7 +595,142 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Now processing target 'Ldproxy (v2)' for input 'TRF_END'.</p>
+               <p>Now processing target 'SQL DDL' for input 'TRF_END'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between FeatureType (context property
+                  'refRel2Source') and FeatureType (context property 'refRel2Target'). Tagged value
+                  'associativeTable' not set on this association, thus using default naming pattern,
+                  which leads to table name: 'FeatureType_refRel2Target'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between FeatureType (context property
+                  'refRel3Source') and FeatureType (context property 'refRel3Target'). Tagged value
+                  'associativeTable' not set on this association, thus using default naming pattern,
+                  which leads to table name: 'FeatureType_refRel3Source'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent attribute 'attLength' in class 'TS1_FeatureType1'.
+                  Tagged value 'associativeTable' not set on this attribute, thus using default naming
+                  pattern, which leads to table name: 'TS1_FeatureType1_attLength'.</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p> The type 'Length' was not found in the schema(s) selected for processing or in map
+                  entries, or conversion of the category of classes to which the type belongs is generally
+                  not supported by the target. It will be mapped to 'unknown'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between TS1_FeatureType2 (context
+                  property 'roleToFt1_3') and TS1_FeatureType1 (context property 'roleToFt2_3'). Tagged
+                  value 'associativeTable' not set on this association, thus using default naming pattern,
+                  which leads to table name: 'TS1_FeatureType1_roleToFt2_3'.</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p>Type 'NES_FeatureType1' of property 'roleNotEncoded' in class 'TS1_FeatureType1' is
+                  not part of the schema that is being processed, no map entry is defined for it, and
+                  rule-sql-cls-references-to-external-types is not enabled. Please ensure that map entries
+                  are defined for external types used in the schema - or allow referencing of external
+                  types in general by enabling rule-sql-cls-references-to-external-types. Assigning
+                  textual type to the property.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between MD_Metadata (context property
+                  'role_Sas50') and TS1_FeatureType2 (context property 'roleToMd2'). Tagged value 'associativeTable'
+                  not set on this association, thus using default naming pattern, which leads to table
+                  name: 'TS1_FeatureType2_roleToMd2'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between TS1_FeatureType3SubA (context
+                  property 'role_Sas62') and TS1_FeatureType2 (context property 'roleToFT3_2-TS1_FeatureType3SubA').
+                  Tagged value 'associativeTable' not set on this association, thus using default naming
+                  pattern, which leads to table name: 'TS1_FeatureType2_roleToFT3_2-TS1_FeatureType3SubA'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Creating associative table to represent association between TS1_FeatureType3SubB (context
+                  property 'role_Sas62') and TS1_FeatureType2 (context property 'roleToFT3_2-TS1_FeatureType3SubB').
+                  Tagged value 'associativeTable' not set on this association, thus using default naming
+                  pattern, which leads to table name: 'TS1_FeatureType2_roleToFT3_2-TS1_FeatureType3SubB'.</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p>Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featuretype2_id' for
+                  foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featur'</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p>Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featuretype3suba_id'
+                  for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3suba_ts1_featu0'</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p>Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featuretype2_id' for
+                  foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featur'</p>
+            </td>
+         </tr>
+         <tr class="Warning" style="display:table-row">
+            <td>
+               <p>Warning</p>
+            </td>
+            <td>
+               <p>Name 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featuretype3subb_id'
+                  for foreign key constraint is truncated to 'fk_ts1_featuretype2_roletoft3_2_ts1_featuretype3subb_ts1_featu0'</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -407,13 +738,36 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target'
-                  for input ID: 'TRF_END'.
+               <p>Executed target class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' for
+                  input ID: 'TRF_END'.
                   -------------------------------------------------</p>
             </td>
          </tr>
       </table><a name="results">
-         <h2>Results</h2></a><p align="center">No results</p>
+         <h2>Results</h2></a><table border="0">
+         <tr>
+            <th>
+               <p>Target</p>
+            </th>
+            <th>
+               <p>Scope</p>
+            </th>
+            <th>
+               <p>File</p>
+            </th>
+         </tr>
+         <tr>
+            <td>
+               <p>SQL DDL</p>
+            </td>
+            <td>
+               <p></p>
+            </td>
+            <td>
+               <p><a href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/ldproxy2/titleAttribute/results/ddl/TRF_END/Test_1_-_Basics.sql">Test_1_-_Basics.sql</a></p>
+            </td>
+         </tr>
+      </table>
       <hr>
       <p align="center"><small>This report was generated by <a href="http://shapechange.net">ShapeChange</a></small></p>
    </body>
