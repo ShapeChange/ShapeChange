@@ -58,6 +58,12 @@ public interface LdpSourcePathProvider {
     public LdpSourcePathInfos sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
 	    LdpPropertyEncodingContext context);
 
+    /**
+     * @param pi The property for which to retrieve source paths for the title
+     *           property
+     * @return List of applicable source paths, where the first available value
+     *         should win
+     */
     public List<String> sourcePathsLinkLevelTitle(PropertyInfo pi);
 
     public String urlTemplateForValueType(PropertyInfo pi);

@@ -113,9 +113,7 @@ fragments:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - id
-            - "[JSON]properties/attFt2Title"
+            sourcePath: "[JSON]properties/attFt2Title"
             type: STRING
             label: FT2-title
           type:
@@ -204,9 +202,7 @@ fragments:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - id
-            - "[JSON]properties/attFt2Title"
+            sourcePath: "[JSON]properties/attFt2Title"
             type: STRING
             label: FT2-title
           type:

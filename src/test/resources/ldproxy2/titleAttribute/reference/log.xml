@@ -2,9 +2,9 @@
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
                    config="src/test/resources/ldproxy2/titleAttribute/test_ldproxy2.xml"
-                   end="Mon Jan 29 16:35:48 CET 2024"
+                   end="Wed Feb 07 16:06:12 CET 2024"
                    resultCode="0"
-                   start="Mon Jan 29 16:35:27 CET 2024"
+                   start="Wed Feb 07 16:05:55 CET 2024"
                    version="3.0.1-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -18,6 +18,7 @@
       <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
       <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_1' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.SQL.SqlDdl' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_TV1' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' and @inputs 'TRF_TV1' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
       <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\ldproxy2\titleAttribute\test_ldproxy2.qea"/>
@@ -43,6 +44,11 @@
       </Info>
       <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
       <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_TV1' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test 2 - Reflexive relationships', target namespace: 'http://shapechange.net/test2'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'."/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target' for input ID: 'TRF_TV1'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test 2 - Reflexive relationships', target namespace: 'http://shapechange.net/test2'"/>
       <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'TRF_TV1'."/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test 1 - Basics', target namespace: 'http://shapechange.net/test1'"/>

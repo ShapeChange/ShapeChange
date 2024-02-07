@@ -165,9 +165,7 @@ types:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - idx
-            - name
+            sourcePath: name
             type: STRING
             label: TS1_FeatureType2-title
         refType: ts1_featuretype2
@@ -181,9 +179,7 @@ types:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - idx
-            - name
+            sourcePath: name
             type: STRING
             label: TS1_FeatureType2-title
         refType: ts1_featuretype2
@@ -197,9 +193,7 @@ types:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - idx
-            - name
+            sourcePath: name
             type: STRING
             label: TS1_FeatureType2-title
         refType: ts1_featuretype2
@@ -213,9 +207,7 @@ types:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - idx
-            - name
+            sourcePath: name
             type: STRING
             label: TS1_FeatureType2-title
         refType: ts1_featuretype2
@@ -229,9 +221,7 @@ types:
             constraints:
               required: true
           title:
-            sourcePaths:
-            - idx
-            - name
+            sourcePath: name
             type: STRING
             label: TS1_FeatureType2-title
         refType: ts1_featuretype2

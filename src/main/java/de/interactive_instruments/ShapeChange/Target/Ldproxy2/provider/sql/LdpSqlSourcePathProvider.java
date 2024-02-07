@@ -673,21 +673,24 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	return result;
     }
 
+    @Override
     public List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
 
 	List<String> result = new ArrayList<>();
 
 	if (!target.isMappedToLink(pi) && LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
+	    // add the source path for the title attribute first
 	    PropertyInfo titleAtt = LdpInfo.getTitleAttribute(pi.typeClass());
+	    result.add(databaseColumnName(titleAtt));
+
+	    /*
+	     * Secondly, if the title attribute is optional, add a source path for the id
+	     * value as fallback.
+	     */
 	    if (titleAtt.cardinality().minOccurs == 0) {
-		/*
-		 * PK field shall be listed first, since the last listed sourcePaths "wins", and
-		 * that should be the title attribute, if it exists
-		 */
 		result.add(primaryKeyColumn(pi));
 	    }
-	    result.add(databaseColumnName(titleAtt));
 
 	} else {
 

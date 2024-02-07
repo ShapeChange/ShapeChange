@@ -506,8 +506,8 @@ public class LdpPropertyEncoder {
 					spi.isTargetsSingleValue(), ldpType);
 
 				mspBuilder.type(typeForMspBuilder);
-				
-				if(!propertyMapForMspBuilder.isEmpty()) {
+
+				if (!propertyMapForMspBuilder.isEmpty()) {
 				    mspBuilder.propertyMap(propertyMapForMspBuilder);
 				}
 
@@ -764,10 +764,29 @@ public class LdpPropertyEncoder {
 	ImmutableFeatureSchema.Builder titlePropBuilder = new ImmutableFeatureSchema.Builder().name("title")
 		.type(Type.STRING).label(pi.typeInfo().name + "-title");
 	List<String> titleSourcePaths = sourcePathProvider.sourcePathsLinkLevelTitle(pi);
+
+	/*
+	 * 2024-02-07 [JE] multiple source paths no longer works in the feature ref
+	 * encoding (for link objects, it does).
+	 */
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+	    List<String> newTitleSourcePaths = new ArrayList<>();
+	    newTitleSourcePaths.add(titleSourcePaths.get(0));
+	    titleSourcePaths = newTitleSourcePaths;
+	}
+
 	if (titleSourcePaths.size() == 1) {
 	    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
 	} else {
-	    titlePropBuilder = titlePropBuilder.sourcePaths(titleSourcePaths);
+	    List<ImmutableFeatureSchema> titleCoalesceSchemas = new ArrayList<>();
+	    int index = 0;
+	    for (String titleSourcePath : titleSourcePaths) {
+		index++;
+		ImmutableFeatureSchema tcs = (new ImmutableFeatureSchema.Builder()).name("titleSourcePath" + index)
+			.sourcePath(titleSourcePath).build();
+		titleCoalesceSchemas.add(tcs);
+	    }
+	    titlePropBuilder = titlePropBuilder.coalesce(titleCoalesceSchemas);
 	}
 
 	return titlePropBuilder.build();

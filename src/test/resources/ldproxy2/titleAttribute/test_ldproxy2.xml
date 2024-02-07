@@ -174,5 +174,58 @@
 					param="linkInfos{urlTemplate=https://example.org/dt/(value)}" />
 			</mapEntries>
 		</Target>
+		
+		<Target class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+			mode="enabled" inputs="TRF_TV1">
+			
+			<advancedProcessConfigurations>
+				<xi:include href="src/test/resources/ldproxy2/titleAttribute/reference/results/ddl/TRF_END/Test_1_-_Basics_SqlEncodingInfos.xml"/>
+			</advancedProcessConfigurations>
+			
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/titleAttribute/results/ldproxy_linkobjects" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="associativeTableColumnSuffix" value="_id" />
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml" />
+			<targetParameter name="dateFormat" value="dd.MM.yyyy" />
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss" />
+			<!-- <targetParameter name="descriptionTemplate" value="[[definition]]"/> -->
+			<!-- <targetParameter name="descriptorNoValue" value=""/> -->
+			<targetParameter name="forceAxisOrder" value="NONE" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="foreignKeyColumnSuffixDatatype" value="_fkdt" />
+			<!-- <targetParameter name="labelTemplate" value="[[alias]]"/> -->
+			<!-- <targetParameter name="maxNameLength" value="63"/> -->
+			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
+			<!-- <targetParameter name="objectIdentifierName" value="oid"/> -->
+			<targetParameter name="primaryKeyColumn" value="idx" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="label" />
+			<targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" />
+			<targetParameter name="srid" value="4326" />
+			<targetParameter name="enableFragments" value="true"/>
+
+			<targetParameter name="_unitTestOverride" value="true" />
+
+			<targetParameter name="defaultEncodingRule" value="ldptest2" />
+			<rules>
+				<EncodingRule name="ldptest2">
+					<rule name="rule-ldp2-all-documentation" />
+					<rule name="rule-ldp2-all-schemas" />
+					<rule name="rule-ldp2-cls-codelist-direct" />
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint" />
+					<rule name="rule-ldp2-cls-identifierStereotype" />
+					<rule name="rule-ldp2-prop-readOnly" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="src/main/resources/config/StandardRules.xml" />
+
+			<xi:include href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
+			<mapEntries>
+				<MapEntry type="MD_Metadata" rule="*" targetType="LINK"
+					param="linkInfos{urlTemplate=https://example.org/metadata/(value)}" />
+				<MapEntry type="ExtDt" rule="*" targetType="LINK"
+					param="linkInfos{urlTemplate=https://example.org/dt/(value)}" />
+			</mapEntries>
+		</Target>
 	</targets>
 </ShapeChangeConfiguration>

@@ -315,21 +315,24 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 	return Optional.ofNullable(valueSourcePath);
     }
 
+    @Override
     public List<String> sourcePathsLinkLevelTitle(PropertyInfo pi) {
 
 	List<String> result = new ArrayList<>();
 
 	if (!target.isMappedToLink(pi) && LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
+	    // add the source path for the title attribute first
 	    PropertyInfo titleAtt = LdpInfo.getTitleAttribute(pi.typeClass());
+	    result.add("[JSON]properties/" + titleAtt.name());
+
+	    /*
+	     * Secondly, if the title attribute is optional, add a source path for the id
+	     * value as fallback.
+	     */
 	    if (titleAtt.cardinality().minOccurs == 0) {
-		/*
-		 * id column of coretable shall be listed first, since the last listed
-		 * sourcePaths "wins", and that should be the title attribute, if it exists
-		 */
 		result.add(Ldproxy2Target.coretableIdColumn);
 	    }
-	    result.add("[JSON]properties/" + titleAtt.name());
 
 	} else {
 	    result.add(Ldproxy2Target.coretableIdColumn);
