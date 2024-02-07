@@ -378,9 +378,9 @@ comma-separated list of property names; no default value is defined). If at leas
 was found, the target creates a `queryables` member in the QUERYABLES building block 
 in the service configuration of the collection (adding that building block if necessary), with:
 
-* member `included` and an array of the names of all queryable properties. If a queryable association role does NOT match _rule-ldp2-all-linkObjectAsFeatureRef_, then `.title` is added to 
-the role name (meaning that queries will be 
-performed on the `title`-value of the link object that is encoded for an association role).
+* member `included` and an array of the names of all queryable properties. If a queryable association role:
+** does match _rule-ldp2-all-linkObjectAsFeatureRef_, then `.id` is added to the role name (so that queries will be supported on the `id`-value of the referenced feature). In addition, if the value type of the association has a valid title attribute (i.e., it has tag `ldpTitleAttribute` and the tag value identifies a property of the value type [possibly inherited]), another queryable for the association role is added, but this time with a `.title`-suffix.
+** otherwise, link object encoding is assumed, and `.title` is added to the role name (meaning that queries will be performed on the `title`-value of the link object that is encoded for an association role). Note that link objects always have a `title`-property, with either the id of the linked object, or its title.
 * member `pathSeparator` and value DOT. 
 
 NOTE: The differentiation between 'current' and 'original' property name is important when the 

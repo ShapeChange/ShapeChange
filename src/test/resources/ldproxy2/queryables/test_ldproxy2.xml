@@ -41,7 +41,7 @@
 			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
 			mode="enabled" inputs="TRF_flattenInheritance">
 			<targetParameter name="outputDirectory"
-				value="testResults/ldproxy2/queryables/results" />
+				value="testResults/ldproxy2/queryables/results/linkobject" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="queryables" value="attDate,attInt,attPoint,attCharacter,roleFTtoT"/>
 			<targetParameter name="associativeTableColumnSuffix"
@@ -74,11 +74,62 @@
 				value="true" />
 
 			<targetParameter name="defaultEncodingRule"
-				value="ldptest" />
+				value="ldptest1" />
 			<rules>
-				<EncodingRule name="ldptest">
+				<EncodingRule name="ldptest1">
 					<rule name="rule-ldp2-all-queryables" />
 					<rule name="rule-ldp2-all-schemas" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
+		</Target>
+		<Target
+			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+			mode="enabled" inputs="TRF_flattenInheritance">
+			<targetParameter name="outputDirectory"
+				value="testResults/ldproxy2/queryables/results/featureref" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="queryables" value="attDate,attInt,attPoint,attCharacter,roleFTtoT"/>
+			<targetParameter name="associativeTableColumnSuffix"
+				value="_id" />
+<!-- 			<targetParameter name="cfgTemplatePath" -->
+<!-- 				value="src/main/resources/templates/ldproxy2/cfgTemplate.yml" /> -->
+			<targetParameter name="dateFormat" value="dd.MM.yyyy" />
+			<targetParameter name="dateTimeFormat"
+				value="dd.MM.yyyy HH:mm:ss" />
+			<!-- <targetParameter name="descriptionTemplate" value="[[definition]]"/> -->
+			<!-- <targetParameter name="descriptorNoValue" value=""/> -->
+			<targetParameter name="forceAxisOrder" value="NONE" />
+			<targetParameter name="foreignKeyColumnSuffix"
+				value="_fk" />
+<!-- 			<targetParameter -->
+<!-- 				name="foreignKeyColumnSuffixDatatype" value="_fkdt" /> -->
+			<!-- <targetParameter name="labelTemplate" value="[[alias]]"/> -->
+			<!-- <targetParameter name="maxNameLength" value="63"/> -->
+			<!-- <targetParameter name="nativeTimeZone" value="Europe/Berlin"/> -->
+			<!-- <targetParameter name="objectIdentifierName" value="oid"/> -->
+			<targetParameter name="primaryKeyColumn" value="idx" />
+<!-- 			<targetParameter name="serviceDescription" -->
+<!-- 				value="..." /> -->
+<!-- 			<targetParameter name="serviceLabel" value="label" /> -->
+<!-- <targetParameter name="serviceConfigTemplatePath" -->
+<!-- 				value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" /> -->
+			<targetParameter name="srid" value="4326" />
+
+			<targetParameter name="_unitTestOverride"
+				value="true" />
+
+			<targetParameter name="defaultEncodingRule"
+				value="ldptest2" />
+			<rules>
+				<EncodingRule name="ldptest2">
+					<rule name="rule-ldp2-all-queryables" />
+					<rule name="rule-ldp2-all-schemas" />
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
 				</EncodingRule>
 			</rules>
 			<xi:include

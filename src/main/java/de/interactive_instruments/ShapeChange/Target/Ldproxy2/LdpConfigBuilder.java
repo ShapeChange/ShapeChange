@@ -93,7 +93,7 @@ public class LdpConfigBuilder {
     protected LdproxyCfgWriter cfg;
     protected ImmutableOgcApiDataV2 serviceConfig = null;
     protected ImmutableFeatureProviderSqlData providerConfig = null;
-    protected SortedMap<String,ImmutableCodelist> codelistById = new TreeMap<>();
+    protected SortedMap<String, ImmutableCodelist> codelistById = new TreeMap<>();
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
@@ -324,20 +324,39 @@ public class LdpConfigBuilder {
 		     * value that marks the property as queryable
 		     */
 		    if (queryables.contains(pi.name()) || queryables.contains(LdpInfo.originalPropertyName(pi))) {
-			String queryableName;
+
 			if (pi.isAttribute()) {
-			    queryableName = pi.name();
+			    queryableProperties.add(pi.name());
 			} else {
 			    // pi is association role
+
 			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-				// TODO - review, once title encoding for FEATURE REF is possible
-				queryableName = pi.name();
+
+				// a feature ref (object) always has an id property
+				queryableProperties.add(pi.name() + ".id");
+				
+				/*
+				 * a feature ref (object) MAY have a title property with an actual title value
+				 * (not just repeating the id)
+				 */
+				if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+				    queryableProperties.add(pi.name() + ".title");
+				}
+
 			    } else {
-				// assume link encoding (where a .title property is available)
-				queryableName = pi.name() + ".title";
+
+				// assume link encoding
+
+				// not useful to filter on href value
+//				queryableProperties.add(pi.name()+".href");
+
+				/*
+				 * but a link object always has a title (which is either the object id or an
+				 * actual title value)
+				 */
+				queryableProperties.add(pi.name() + ".title");
 			    }
 			}
-			queryableProperties.add(queryableName);
 		    }
 		}
 
@@ -477,7 +496,7 @@ public class LdpConfigBuilder {
 	return this.serviceConfig;
     }
 
-    public SortedMap<String,ImmutableCodelist> getCodeListMap() {
+    public SortedMap<String, ImmutableCodelist> getCodeListMap() {
 	return this.codelistById;
     }
 
@@ -497,8 +516,7 @@ public class LdpConfigBuilder {
 	    label = labelOpt.get();
 	}
 
-	ImmutableCodelist ic = cfg.builder().value().codelist().label(label)
-		.sourceType(ImportType.TEMPLATES).build();
+	ImmutableCodelist ic = cfg.builder().value().codelist().label(label).sourceType(ImportType.TEMPLATES).build();
 
 	if (!ci.properties().isEmpty()) {
 

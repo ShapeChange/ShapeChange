@@ -1,0 +1,119 @@
+---
+id: test_schema
+entityStorageVersion: 2
+createdAt: 1000000000000
+lastModified: 1000000000000
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attDate:
+        sourcePath: attdate
+        type: DATE
+        role: PRIMARY_INSTANT
+        constraints:
+          required: true
+      attInt:
+        sourcePath: attint
+        type: INTEGER
+        constraints:
+          required: true
+      attOther:
+        sourcePath: attother
+        type: FLOAT
+        constraints:
+          required: true
+      attPoint:
+        sourcePath: attpoint
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        constraints:
+          required: true
+      roleFTtoT_Subtype:
+        sourcePath: "[rolefttot_subtype_fk=idx]subtype"
+        type: FEATURE_REF
+        properties:
+          id:
+            sourcePath: idx
+            type: INTEGER
+            constraints:
+              required: true
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: Subtype-title
+        refType: subtype
+      roleFTtoT_Type:
+        sourcePath: rolefttot_type_fk
+        type: FEATURE_REF
+        valueType: INTEGER
+        refType: type
+  subtype:
+    sourcePath: /subtype
+    type: OBJECT
+    objectType: Subtype
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCharacter:
+        sourcePath: attcharacter
+        type: STRING
+        constraints:
+          required: true
+      roleTtoFT:
+        sourcePath: rolettoft_fk
+        type: FEATURE_REF
+        valueType: INTEGER
+        constraints:
+          required: true
+        refType: featuretype
+      attTitle:
+        sourcePath: atttitle
+        type: STRING
+        constraints:
+          required: true
+  type:
+    sourcePath: /type
+    type: OBJECT
+    objectType: Type
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      attCharacter:
+        sourcePath: attcharacter
+        type: STRING
+        constraints:
+          required: true
+      roleTtoFT:
+        sourcePath: rolettoft_fk
+        type: FEATURE_REF
+        valueType: INTEGER
+        constraints:
+          required: true
+        refType: featuretype

@@ -52,15 +52,16 @@ types:
         constraints:
           required: true
       roleFTtoT_Subtype:
+        sourcePath: "[rolefttot_subtype_fk=idx]subtype"
         type: OBJECT
         objectType: Link
         properties:
           title:
-            sourcePath: rolefttot_subtype_fk
+            sourcePath: atttitle
             type: STRING
             label: Subtype-title
           href:
-            sourcePath: rolefttot_subtype_fk
+            sourcePath: idx
             type: STRING
             label: Subtype-ID
             transformations:
@@ -109,6 +110,11 @@ types:
             label: FeatureType-ID
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
+      attTitle:
+        sourcePath: atttitle
+        type: STRING
+        constraints:
+          required: true
   type:
     sourcePath: /type
     type: OBJECT
