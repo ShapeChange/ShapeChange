@@ -102,6 +102,7 @@ public class Ldproxy2Constants {
 
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
+    public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";

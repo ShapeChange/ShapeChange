@@ -356,6 +356,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		String gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_ID_PREFIX, null, false, true);
+		boolean gmlIdOnGeometries = options.parameterAsBoolean(this.getClass().getName(), 
+			Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES, false);
 		int gmlSfLevel = options.parameterAsInteger(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_SF_LEVEL, -1);
 		uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME,
@@ -390,7 +392,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		}
 
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
-			gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
+			gmlIdOnGeometries, gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
 			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
 	    }
 

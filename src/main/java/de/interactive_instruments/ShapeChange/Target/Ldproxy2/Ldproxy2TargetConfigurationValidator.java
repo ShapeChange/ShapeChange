@@ -88,9 +88,9 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
 	    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
 	    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
-	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_OUTPUT,
-	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
-	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES,
+	    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
+	    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));

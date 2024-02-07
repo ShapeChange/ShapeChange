@@ -263,6 +263,7 @@
          <targetParameter name="srid" value="4326"/>
          <targetParameter name="enableGmlOutput" value="true"/>
          <targetParameter name="gmlIdPrefix" value="_"/>
+         <targetParameter name="gmlIdOnGeometries" value="true"/>
          <targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>
          <targetParameter name="featureMemberElementName" value="wfs:member"/>
          <targetParameter name="supportsStandardResponseParameters" value="true"/>

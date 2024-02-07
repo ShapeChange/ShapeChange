@@ -297,7 +297,7 @@ if the namespace definitions in the XML encoding infos define schema locations, 
 provider configuration AND whose XML namespace is different to the default namespace. The name of 
 such an object type is used as key, while the XML namespace abbreviation is used as value.
 * If target parameter _gmlIdPrefix_ is set, its value is used as value of the `gmlIdPrefix` member.
-// * If target parameter _gmlIdOnGeometries_ is set to `true`, then `gmlIdOnGeometries: true` is added. This will add `gml:id` XML attributes when encoding GML geometries.
+* If target parameter _gmlIdOnGeometries_ is set to `true`, then `gmlIdOnGeometries: true` is added. This will add `gml:id` XML attributes when encoding GML geometries.
 * If target parameter _gmlSfLevel_ is set (to one of the allowed values 0, 1, and 2), its value 
 is set as the value of the `gmlSfLevel` member.
 * Likewise, if target parameter _featureCollectionElementName_ is set, its value is used in the 

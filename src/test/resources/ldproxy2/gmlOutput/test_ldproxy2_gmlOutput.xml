@@ -140,6 +140,7 @@
 					
 			<targetParameter name="enableGmlOutput" value="true"/>
 			<targetParameter name="gmlIdPrefix" value="_"/>
+			<targetParameter name="gmlIdOnGeometries" value="true"/>
 			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything other than sf:FeatureCollection. -->
 <!-- 			<targetParameter name="gmlSfLevel" value="1"/> -->
 			<targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>

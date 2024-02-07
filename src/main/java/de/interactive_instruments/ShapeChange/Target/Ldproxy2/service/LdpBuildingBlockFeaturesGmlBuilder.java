@@ -84,6 +84,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected int gmlFixmeCounter = 1;
 
     protected String gmlIdPrefix = null;
+    protected boolean gmlIdOnGeometries = false;
     protected Integer gmlSfLevel = null;
     protected String gmlFeatureCollectionElementName = null;
     protected String gmlFeatureMemberElementName = null;
@@ -97,7 +98,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected ImmutableResourcesConfiguration.Builder scConfigResourcesBuilder = null;
 
     public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, Ldproxy2Target target,
-	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, int gmlSfLevel,
+	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, boolean gmlIdOnGeometries, int gmlSfLevel,
 	    String gmlFeatureCollectionElementName, String gmlFeatureMemberElementName,
 	    boolean gmlSupportsStandardResponseParameters, XmlEncodingInfos xmlEncodingInfos) {
 
@@ -111,6 +112,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	this.model = model;
 
 	this.gmlIdPrefix = gmlIdPrefix;
+	this.gmlIdOnGeometries = gmlIdOnGeometries;
 	this.gmlSfLevel = gmlSfLevel;
 	this.gmlFeatureCollectionElementName = gmlFeatureCollectionElementName;
 	this.gmlFeatureMemberElementName = gmlFeatureMemberElementName;
@@ -370,6 +372,9 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 
 	if (StringUtils.isNotBlank(gmlIdPrefix)) {
 	    scConfigGmlBuilder.gmlIdPrefix(gmlIdPrefix);
+	}
+	if(gmlIdOnGeometries) {
+	    scConfigGmlBuilder.gmlIdOnGeometries(true);
 	}
 	if (gmlSfLevel != null && gmlSfLevel != -1) {
 	    scConfigGmlBuilder.gmlSfLevel(gmlSfLevel);

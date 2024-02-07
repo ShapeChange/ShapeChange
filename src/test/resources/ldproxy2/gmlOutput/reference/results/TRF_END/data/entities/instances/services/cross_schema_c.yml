@@ -28,6 +28,7 @@ api:
   featureMemberElementName: wfs:member
   supportsStandardResponseParameters: true
   gmlIdPrefix: _
+  gmlIdOnGeometries: true
 collections:
   featuretypeb:
     id: featuretypeb
