@@ -65,16 +65,16 @@ public class EnumKeyword extends ArrayList<JsonValue> implements JsonSchemaKeywo
     @Override
     public JsonValue toJson(JsonSerializationContext context) {
 
-	if (this.size() == 1) {
-	    return this.get(0);
-	} else {
+	/*
+	 * The value of this keyword MUST be an array. This array SHOULD have at least
+	 * one element. Elements in the array SHOULD be unique.
+	 */
 
-	    JsonArray arr = new JsonArray();
+	JsonArray arr = new JsonArray();
 
-	    arr.addAll(this);
+	arr.addAll(this);
 
-	    return arr;
-	}
+	return arr;
     }
 
 }

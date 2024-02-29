@@ -69,14 +69,14 @@
                 "att2": {
                   "type": "number"
                 },
-              "roleFt2": {
+                "roleFt2": {
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
                 "att1",
                 "att2",
-              "roleFt2"
+                "roleFt2"
               ]
             }
           },
@@ -115,20 +115,20 @@
         },
         {
           "type": "object",
-        "properties": {
+          "properties": {
             "properties": {
               "type": "object",
               "properties": {
                 "roleFt1": {
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 }
-      },
+              },
               "required": [
                 "roleFt1"
               ]
-    }
+            }
           },
-    "required": [
+          "required": [
             "properties"
           ]
         }

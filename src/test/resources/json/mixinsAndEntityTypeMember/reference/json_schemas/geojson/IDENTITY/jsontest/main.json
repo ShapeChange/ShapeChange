@@ -81,7 +81,7 @@
                 "att2": {
                   "type": "number"
                 },
-              "roleFt2": {
+                "roleFt2": {
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
@@ -89,7 +89,7 @@
                 "@type",
                 "att1",
                 "att2",
-              "roleFt2"
+                "roleFt2"
               ]
             }
           },
@@ -135,13 +135,13 @@
                 "@type": {
                   "type": "string"
                 },
-              "roleFt1": {
+                "roleFt1": {
                   "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
                 "@type",
-              "roleFt1"
+                "roleFt1"
               ]
             }
           },
@@ -407,7 +407,9 @@
                                 ],
                                 "properties": {
                                   "@featureType": {
-                                    "enum": "ExtFTSubtype"
+                                    "enum": [
+                                      "ExtFTSubtype"
+                                    ]
                                   }
                                 }
                               }

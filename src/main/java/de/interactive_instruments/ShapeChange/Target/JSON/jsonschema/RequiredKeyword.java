@@ -48,11 +48,11 @@ public class RequiredKeyword extends TreeSet<String> implements JsonSchemaKeywor
      * 
      */
     private static final long serialVersionUID = 2036720425129844413L;
-    
+
     public RequiredKeyword() {
-	
+
     }
-    
+
     public RequiredKeyword(Collection<String> values) {
 	super();
 	this.addAll(values);
@@ -66,6 +66,11 @@ public class RequiredKeyword extends TreeSet<String> implements JsonSchemaKeywor
     @Override
     public JsonValue toJson(JsonSerializationContext context) {
 
+	/*
+	 * The value of this keyword MUST be an array. Elements of this array, if any,
+	 * MUST be strings, and MUST be unique.
+	 */
+	
 	JsonArray arr = new JsonArray();
 
 	for (String s : this) {
