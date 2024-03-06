@@ -7,5 +7,5 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    # Disable version updates for npm dependencies
+    # Disable actual pull requests for maven dependencies
     open-pull-requests-limit: 0
