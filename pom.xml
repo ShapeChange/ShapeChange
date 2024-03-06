@@ -184,7 +184,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>4.1.0</version>
+			<version>5.2.5</version>
 		</dependency>
 		<!--
 		https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
