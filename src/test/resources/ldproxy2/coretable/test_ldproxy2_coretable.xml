@@ -66,7 +66,8 @@
 			<targetParameter name="coretableGeometryColumn" value="geometry"/>
 			<!-- coretableJsonFeatureRefWithAnyCollectionId deactivated -> future work -->
 <!-- 			<targetParameter name="coretableJsonFeatureRefWithAnyCollectionId" value="true"/> -->
-			<targetParameter name="coretableRefColumn" value="ref"/>
+			<targetParameter name="coretableSourceColumn" value="base_id"/>
+			<targetParameter name="coretableRefColumn" value="related_id"/>
 			<targetParameter name="coretableRelationsTable" value="references"/>
 			<targetParameter name="coretableRelationNameColumn" value="rel"/>
 			<targetParameter name="coretableInverseRelationNameColumn" value="rel_inv"/>

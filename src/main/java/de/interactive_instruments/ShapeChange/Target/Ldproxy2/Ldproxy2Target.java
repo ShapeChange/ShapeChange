@@ -158,6 +158,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
 
     public static String coretableRelationsTable = "references";
+    public static String coretableSourceColumn = null;
     public static String coretableRefColumn = "ref";
     public static String coretableRelationNameColumn = "rel";
     public static String coretableInverseRelationNameColumn = "rel_inv";
@@ -356,7 +357,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		String gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_ID_PREFIX, null, false, true);
-		boolean gmlIdOnGeometries = options.parameterAsBoolean(this.getClass().getName(), 
+		boolean gmlIdOnGeometries = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES, false);
 		int gmlSfLevel = options.parameterAsInteger(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_SF_LEVEL, -1);
@@ -451,6 +452,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 //		coretableJsonFeatureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
 //			Ldproxy2Constants.PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID, false);
+
+		/*
+		 * WARNING: Value of target parameter coretableIdColumn MUST be determined
+		 * BEFORE the value of target parameter coretableSourceColumn is determined.
+		 */
+		coretableSourceColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_SOURCE_COLUMN, coretableIdColumn, false, true);
 
 		coretableRefColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN, "ref", false, true);
@@ -985,6 +993,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	coretableFeatureTypeColumn = "featuretype";
 	coretableGeometryColumn = "geom";
 //	coretableJsonFeatureRefWithAnyCollectionId = false;
+	coretableSourceColumn = null;
 	coretableRefColumn = "ref";
 	coretableRelationsTable = "references";
 	coretableRelationNameColumn = "rel";

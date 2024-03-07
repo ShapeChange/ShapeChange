@@ -1723,7 +1723,7 @@ In the bi-directional case, the class that is the source of the association is t
 of the relationship, and the other class is the target. The association role that is navigable
 from the source is the target role, and the other association role is the source role.
 ** The column that contains the identifier of the source object is defined by target parameter
-_coretableIdColumn_ (like in the coretable itself, see above). 
+_coretableSourceColumn_ (default is the value of target parameter _coretableIdColumn_, as in the coretable itself, see above). 
 ** The column that contains the identifier of the target object is defined by target parameter
 _coretableRefColumn_ (default value is 'ref').
 ** The ldproxy type of both columns is defined by target parameter _coretableIdColumnLdproxyType_

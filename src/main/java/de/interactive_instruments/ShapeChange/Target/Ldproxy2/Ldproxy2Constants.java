@@ -138,6 +138,7 @@ public class Ldproxy2Constants {
      */
 //    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
     
+    public static final String PARAM_CORETABLE_SOURCE_COLUMN = "coretableSourceColumn";
     public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
     public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";
     public static final String PARAM_CORETABLE_RELATION_NAME_COLUMN = "coretableRelationNameColumn";

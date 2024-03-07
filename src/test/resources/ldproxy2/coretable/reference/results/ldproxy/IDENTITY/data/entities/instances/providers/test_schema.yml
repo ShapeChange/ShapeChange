@@ -175,7 +175,7 @@ fragments:
           required: true
         schema: '#/fragments/DT'
       roleT:
-        sourcePath: "[id=id]references{filter=rel='roleT'}/[ref=id]features"
+        sourcePath: "[id=base_id]references{filter=rel='roleT'}/[related_id=id]features"
         type: FEATURE_REF
         label: roleT
         properties:
@@ -190,7 +190,7 @@ fragments:
             label: T-title
         refType: T
       roleFT2:
-        sourcePath: "[id=id]references{filter=rel='roleFT2'}/[ref=id]features"
+        sourcePath: "[id=base_id]references{filter=rel='roleFT2'}/[related_id=id]features"
         type: FEATURE_REF_ARRAY
         label: roleFT2
         constraints:
@@ -214,7 +214,7 @@ fragments:
               - FT2Sub1Sub1
               required: true
       roleFT3:
-        sourcePath: "[id=id]references{filter=rel='roleFT3'}/ref"
+        sourcePath: "[id=base_id]references{filter=rel='roleFT3'}/related_id"
         type: FEATURE_REF
         valueType: STRING
         label: roleFT3
@@ -222,7 +222,7 @@ fragments:
           required: true
         refType: FT3
       roleFT5:
-        sourcePath: "[id=id]references{filter=rel='roleFT5'}/[ref=id]features"
+        sourcePath: "[id=base_id]references{filter=rel='roleFT5'}/[related_id=id]features"
         type: FEATURE_REF
         label: roleFT5
         constraints:
@@ -263,7 +263,7 @@ fragments:
         type: STRING
         label: attFt2Title
       roleFT1:
-        sourcePath: "[id=ref]references{filter=rel_inv='roleFT1'}/id"
+        sourcePath: "[id=related_id]references{filter=rel_inv='roleFT1'}/base_id"
         type: FEATURE_REF
         valueType: STRING
         label: roleFT1
@@ -271,7 +271,7 @@ fragments:
           required: true
         refType: FT1
       roleExtFT1:
-        sourcePath: "[id=id]references{filter=rel='roleExtFT1'}/ref"
+        sourcePath: "[id=base_id]references{filter=rel='roleExtFT1'}/related_id"
         type: FEATURE_REF
         valueType: STRING
         label: roleExtFT1

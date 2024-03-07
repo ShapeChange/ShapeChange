@@ -253,13 +253,13 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 	    if (pi.isAttribute() || !pi.association().isBiDirectional() || pi.association().end2() == pi) {
 
-		refTableSourceIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableSourceIdColumn = Ldproxy2Target.coretableSourceColumn;
 		refTableTargetIdColumn = Ldproxy2Target.coretableRefColumn;
 		relColumnName = Ldproxy2Target.coretableRelationNameColumn;
 
 	    } else {
 
-		refTableTargetIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableTargetIdColumn = Ldproxy2Target.coretableSourceColumn;
 		refTableSourceIdColumn = Ldproxy2Target.coretableRefColumn;
 		relColumnName = Ldproxy2Target.coretableInverseRelationNameColumn;
 
@@ -295,13 +295,13 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 	    if (pi.isAttribute() || !pi.association().isBiDirectional() || pi.association().end2() == pi) {
 
-		refTableSourceIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableSourceIdColumn = Ldproxy2Target.coretableSourceColumn;
 		refTableTargetIdColumn = Ldproxy2Target.coretableRefColumn;
 		relColumnName = Ldproxy2Target.coretableRelationNameColumn;
 
 	    } else {
 
-		refTableTargetIdColumn = Ldproxy2Target.coretableIdColumn;
+		refTableTargetIdColumn = Ldproxy2Target.coretableSourceColumn;
 		refTableSourceIdColumn = Ldproxy2Target.coretableRefColumn;
 		relColumnName = Ldproxy2Target.coretableInverseRelationNameColumn;
 
