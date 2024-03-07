@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -577,7 +578,7 @@ public abstract class BasicTest {
 	try {
 	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
 	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
-	    
+
 	    JsonNode patch = JsonDiff.asJson(rootNodeReference, rootNodeResult);
 	    if (!patch.isEmpty()) {
 		fail("JSON output differs from reference result.\r\n" + "Result file: " + fileName + "\r\n"
@@ -600,7 +601,7 @@ public abstract class BasicTest {
 	try {
 	    JsonNode rootNodeResult = m.readValue(new File(fileName), JsonNode.class);
 	    JsonNode rootNodeReference = m.readValue(new File(referenceFileName), JsonNode.class);
-	    
+
 	    JsonNode patch = JsonDiff.asJson(rootNodeReference, rootNodeResult);
 	    if (!patch.isEmpty()) {
 		fail("YAML output differs from reference result.\r\n" + "Result file: " + fileName + "\r\n"
@@ -663,47 +664,53 @@ public abstract class BasicTest {
 
     private void similarJenaModel(String fileName, String referenceFileName) {
 
-	Model model = ModelFactory.createDefaultModel();
-	model.read(fileName);
+	try {
+	    Model model = ModelFactory.createDefaultModel();
+	    File f = new File(fileName);
+	    model.read(f.toURI().toURL().toExternalForm());
 
-	Model ref = ModelFactory.createDefaultModel();
-	ref.read(referenceFileName);
+	    Model ref = ModelFactory.createDefaultModel();
+	    File rf = new File(referenceFileName);
+	    ref.read(rf.toURI().toURL().toExternalForm());
 
-	if (model.isIsomorphicWith(ref)) {
-	    // fine
-	} else {
+	    if (model.isIsomorphicWith(ref)) {
+		// fine
+	    } else {
 
-	    /*
-	     * FIXME: blank nodes are an issue - they always create a difference
-	     * 
-	     * See http://answers.semanticweb.com/questions/21247/can-we-compare-two
-	     * -rdf-statements-objects
-	     */
-	    // statements in model that aren't in ref
-	    Model modelMinusRef = model.difference(ref);
-	    modelMinusRef.setNsPrefixes(model.getNsPrefixMap());
-	    // statements in ref that aren't in model
-	    Model refMinusModel = ref.difference(model);
-	    refMinusModel.setNsPrefixes(ref.getNsPrefixMap());
+		/*
+		 * FIXME: blank nodes are an issue - they always create a difference
+		 * 
+		 * See http://answers.semanticweb.com/questions/21247/can-we-compare-two
+		 * -rdf-statements-objects
+		 */
+		// statements in model that aren't in ref
+		Model modelMinusRef = model.difference(ref);
+		modelMinusRef.setNsPrefixes(model.getNsPrefixMap());
+		// statements in ref that aren't in model
+		Model refMinusModel = ref.difference(model);
+		refMinusModel.setNsPrefixes(ref.getNsPrefixMap());
 
-	    try {
+		try {
 
-		ByteArrayOutputStream fout1 = new ByteArrayOutputStream();
-		RDFDataMgr.write(fout1, modelMinusRef, RDFFormat.TURTLE_PRETTY);
-		String diff1 = fout1.toString("UTF-8");
+		    ByteArrayOutputStream fout1 = new ByteArrayOutputStream();
+		    RDFDataMgr.write(fout1, modelMinusRef, RDFFormat.TURTLE_PRETTY);
+		    String diff1 = fout1.toString("UTF-8");
 
-		ByteArrayOutputStream fout2 = new ByteArrayOutputStream();
-		RDFDataMgr.write(fout2, refMinusModel, RDFFormat.TURTLE_PRETTY);
-		String diff2 = fout2.toString("UTF-8");
+		    ByteArrayOutputStream fout2 = new ByteArrayOutputStream();
+		    RDFDataMgr.write(fout2, refMinusModel, RDFFormat.TURTLE_PRETTY);
+		    String diff2 = fout2.toString("UTF-8");
 
-		fail("Input and reference model are not isomorphic.\r\n"
-			+ "Statements in input model that are not in the reference model (NOTE: triples involving blank nodes may be false positives):\r\n"
-			+ diff1 + "\r\n\r\n------------\r\n\r\n"
-			+ "Statements in reference model that are not in the input model (NOTE: triples involving blank nodes may be false positives):\r\n"
-			+ diff2);
-	    } catch (Exception e) {
-		fail("Could not compare " + fileName + " and " + referenceFileName);
+		    fail("Input and reference model are not isomorphic.\r\n"
+			    + "Statements in input model that are not in the reference model (NOTE: triples involving blank nodes may be false positives):\r\n"
+			    + diff1 + "\r\n\r\n------------\r\n\r\n"
+			    + "Statements in reference model that are not in the input model (NOTE: triples involving blank nodes may be false positives):\r\n"
+			    + diff2);
+		} catch (Exception e) {
+		    fail("Could not compare " + fileName + " and " + referenceFileName);
+		}
 	    }
+	} catch (MalformedURLException e) {
+	    fail("Could not compare " + fileName + " and " + referenceFileName);
 	}
     }
 

@@ -44,7 +44,7 @@ in the "lib" folder with the one provided by your version of EA (the
 sure to rename your eaapi.jar to the one you wish to replace, otherwise
 ShapeChange-internal links to the jar (especially in the manifest of the
 ShapeChange JAR file) may be broken.
-* Saxon JAR used: Saxon-HE-10.2.jar
+* Saxon JAR used: Saxon-HE-12.4.jar
 ** NOTE: Identifies the version of the Saxon HE jar that is used by the
 ShapeChange release. If you plan to create
 xref:../targets/feature catalogue/Feature_Catalogue.adoc[feature catalogues]

@@ -32,7 +32,7 @@
 
 package de.interactive_instruments.ShapeChange.Model;
 
-import org.junit.platform.commons.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class OperationInfoImpl extends InfoImpl
 		implements OperationInfo {

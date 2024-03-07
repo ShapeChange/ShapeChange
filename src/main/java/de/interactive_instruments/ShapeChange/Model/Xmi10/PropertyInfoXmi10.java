@@ -35,7 +35,7 @@ package de.interactive_instruments.ShapeChange.Model.Xmi10;
 import java.util.List;
 import java.util.Vector;
 
-import org.junit.platform.commons.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 

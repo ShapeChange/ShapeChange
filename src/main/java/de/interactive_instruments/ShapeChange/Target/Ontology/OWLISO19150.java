@@ -49,7 +49,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.RDFWriterI;
 import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -1183,7 +1183,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	    if (rdfFormat.equals(RDFFormat.RDFXML)) {
 
-		RDFWriter writer = ontmodel.getWriter("RDF/XML");
+		RDFWriterI writer = ontmodel.getWriter("RDF/XML");
 		writer.setProperty("xmlbase", om.getName());
 		writer.setProperty("blockRules", rdfXmlWriterBlockRules);
 		writer.setProperty("relativeURIs", "");

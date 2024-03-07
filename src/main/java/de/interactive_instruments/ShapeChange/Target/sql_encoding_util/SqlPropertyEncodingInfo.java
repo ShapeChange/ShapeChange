@@ -35,7 +35,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.junit.platform.commons.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)

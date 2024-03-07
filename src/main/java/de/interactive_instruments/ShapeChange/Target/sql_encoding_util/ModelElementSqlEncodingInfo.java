@@ -33,7 +33,7 @@ package de.interactive_instruments.ShapeChange.Target.sql_encoding_util;
 
 import java.util.Objects;
 
-import org.junit.platform.commons.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)

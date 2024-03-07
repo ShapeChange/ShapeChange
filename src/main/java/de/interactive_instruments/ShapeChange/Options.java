@@ -86,6 +86,7 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralDataPropert
 import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralObjectProperty;
 import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
+import jakarta.xml.bind.DatatypeConverter;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -2505,7 +2506,7 @@ public class Options {
 		    String schema = pcpE.hasAttribute("schema") ? pcpE.getAttribute("schema").trim() : null;
 
 		    boolean global = pcpE.hasAttribute("global")
-			    ? javax.xml.bind.DatatypeConverter.parseBoolean(pcpE.getAttribute("global"))
+			    ? DatatypeConverter.parseBoolean(pcpE.getAttribute("global"))
 			    : false;
 
 		    String subPropertyOf_tmp = pcpE.hasAttribute("subPropertyOf")
