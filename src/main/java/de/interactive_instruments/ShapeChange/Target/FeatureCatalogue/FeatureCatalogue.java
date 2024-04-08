@@ -78,9 +78,9 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.net.WWWFormCodec;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -2748,7 +2748,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		    for (Entry<String, URI> hrefM : hrefMappings.entrySet()) {
 			hrefMappingsList.add(new BasicNameValuePair(hrefM.getKey(), hrefM.getValue().toString()));
 		    }
-		    String hrefMappingsString = URLEncodedUtils.format(hrefMappingsList, XsltWriter.ENCODING_CHARSET);
+		    String hrefMappingsString = WWWFormCodec.format(hrefMappingsList, XsltWriter.ENCODING_CHARSET);
 
 		    /*
 		     * NOTE: surrounding href mapping string with double quotes to avoid issues with
@@ -2766,7 +2766,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 			transformationParametersList
 				.add(new BasicNameValuePair(transParam.getKey(), transParam.getValue()));
 		    }
-		    String transformationParametersString = URLEncodedUtils.format(transformationParametersList,
+		    String transformationParametersString = WWWFormCodec.format(transformationParametersList,
 			    XsltWriter.ENCODING_CHARSET);
 
 		    /*

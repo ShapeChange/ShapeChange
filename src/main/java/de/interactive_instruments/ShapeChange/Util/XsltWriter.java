@@ -49,8 +49,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.WWWFormCodec;
 
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 
@@ -246,7 +246,7 @@ public class XsltWriter {
 			Map<String, URI> hrefMappings = new HashMap<String, URI>();
 
 			if (hrefMappingsString != null) {
-				List<NameValuePair> hrefMappingsList = URLEncodedUtils
+				List<NameValuePair> hrefMappingsList = WWWFormCodec
 						.parse(hrefMappingsString, ENCODING_CHARSET);
 				for (NameValuePair nvp : hrefMappingsList) {
 
@@ -257,7 +257,7 @@ public class XsltWriter {
 			Map<String, String> transformationParameters = new HashMap<String, String>();
 
 			if (transformationParametersString != null) {
-				List<NameValuePair> transParamList = URLEncodedUtils.parse(
+				List<NameValuePair> transParamList = WWWFormCodec.parse(
 						transformationParametersString, ENCODING_CHARSET);
 				for (NameValuePair nvp : transParamList) {
 					transformationParameters.put(nvp.getName(), nvp.getValue());
