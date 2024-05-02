@@ -382,8 +382,18 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
     @Override
     public String sourcePathTypeLevel(ClassInfo ci) {
-	return "/" + Ldproxy2Target.coretable + "{filter=" + Ldproxy2Target.coretableFeatureTypeColumn + "='"
-		+ LdpUtil.formatCollectionId(ci.name()) + "'}";
+
+	String base = "/" + Ldproxy2Target.coretable + "{filter=" + Ldproxy2Target.coretableFeatureTypeColumn + "='"
+		+ LdpUtil.formatCollectionId(ci.name()) + "'";
+
+	if (StringUtils.isNotBlank(Ldproxy2Target.coretableVersion)) {
+	    base = base + " AND " + Ldproxy2Target.coretableVersionColumn + "='" + Ldproxy2Target.coretableVersion
+		    + "'";
+	}
+
+	String result = base + "}";
+
+	return result;
     }
 
     @Override

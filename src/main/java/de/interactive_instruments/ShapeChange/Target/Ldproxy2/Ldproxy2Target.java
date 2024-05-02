@@ -162,6 +162,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String coretableRefColumn = "ref";
     public static String coretableRelationNameColumn = "rel";
     public static String coretableInverseRelationNameColumn = "rel_inv";
+    public static String coretableVersion = null;
+    public static String coretableVersionColumn = "version";
 
     public static boolean isUnitTest = false;
 
@@ -471,6 +473,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		coretableInverseRelationNameColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, "rel_inv", false, true);
+		
+		coretableVersion = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_VERSION, null, false, true);
+		
+		coretableVersionColumn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, "version", false, true);
 	    }
 
 	    // identify map entries defined in the target configuration
@@ -517,6 +525,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		result.addInfo(this, 10002);
 	    }
 
+//	    if(!dataDirectoryFile.exists()) {
+//		dataDirectoryFile.mkdirs();
+//	    }
+	    
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
 	    cfg = LdproxyCfgWriter.create(dataDirectoryPath);
@@ -998,6 +1010,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	coretableRelationsTable = "references";
 	coretableRelationNameColumn = "rel";
 	coretableInverseRelationNameColumn = "rel_inv";
+	coretableVersion = null;
+	coretableVersionColumn = "version";
     }
 
     @Override

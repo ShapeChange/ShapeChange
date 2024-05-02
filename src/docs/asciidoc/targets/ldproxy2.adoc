@@ -1677,6 +1677,13 @@ is 'INTEGER').
 encoded. The name is equal to the ldproxy collection ID for that feature type. 
 The column name is defined via
 target parameter _coretableFeatureTypeColumn_ (default value is 'featuretype').
+* The table may have a column to identify the application schema version that applies to 
+an object. The name of that column is defined by target parameter 
+_coretableVersionColumn_ (default: version). By default, the ldproxy configuration
+created by ShapeChange ignores such a version. In order to generate a provider 
+configuration for a particular application schema version, set target parameter 
+_coretableVersion_ (which does not have a default value) to the corresponding version 
+identifier.
 * The table must have a `properties` column with JSON-encoded value. This column
 is used to encode all object properties, including object references from data types, but
 typically not object references from or between types with identity.

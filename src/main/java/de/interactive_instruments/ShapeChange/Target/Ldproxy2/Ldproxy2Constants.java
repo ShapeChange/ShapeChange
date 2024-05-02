@@ -143,6 +143,8 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";
     public static final String PARAM_CORETABLE_RELATION_NAME_COLUMN = "coretableRelationNameColumn";
     public static final String PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN = "coretableInverseRelationNameColumn";
+    public static final String PARAM_CORETABLE_VERSION = "coretableVersion";
+    public static final String PARAM_CORETABLE_VERSION_COLUMN = "coretableVersionColumn";
 
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
