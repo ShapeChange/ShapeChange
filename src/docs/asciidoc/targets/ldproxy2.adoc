@@ -1093,8 +1093,18 @@ NOTE: The conversion of properties from other kinds of classifiers, especially e
 
 The type definition within an ldproxy feature provider configuration (including any fragment definitions) describes the full encoding of a particular object type. Inlined property values can lead to a complex structure, especially when the type of a property is a complex \<<dataType>>. In order to extract the values for populating the information items of an actual object, ldproxy needs to know the so called source paths. Such a path starts with the name of a database table at the top-level provider type definition. For the properties within a given type definition, the source path construction then depends on the actual representation of the property and its value type within the database. 
 
-The target first tries to look up the source path for a given property in 
-configured <<ldproxy2_sql_encoding_infos,SQL encoding infos>>. 
+The target first tries to look up the source path for a given property in the 
+tagged value _ldpSourcePaths_. Explicitly configuring source paths via tagged values
+is a special case, which can be useful for situations where additional properties
+are added to the model via transformations, for example in order to be used as 
+queryable. The tag value is a list of source paths, separated by the string '|||'. 
+If more than one source path is provided this way, either `concat` or `coalesce` is used
+to encode them (`concat`, if the upper bound of the property multiplicity is greater than
+one, else `coalesce`). Note that this special mechanism has only been tested for attributes
+with simple type (that maps to an ldproxy value type).
+
+The far more common case for determining source paths is via configured 
+<<ldproxy2_sql_encoding_infos,SQL encoding infos>>. 
 If no encoding infos are available, the target constructs the path itself.
 A crucial aspect thereby is the name of the table column that represents the 
 property in the database. Section <<ldproxy2_schemaconversionrules_properties_sourcepaths_columnname>> defines how that name is constructed by the target. With the column name, a statement can be created to access the value(s) of the property. That statement may include table joins. The necessary conversion behavior is defined in section <<ldproxy2_schemaconversionrules_properties_sourcepaths_accesspropertyvalues>>.
@@ -1390,6 +1400,14 @@ If target parameter _uomTaggedValueName_ (without default value) is set, the tar
 with that name on each property whose value type maps to the ldproxy FLOAT or INTEGER type. If the tag 
 exists and has a non-blank value, the member `unit` is added to the property definition in the provider 
 configuration, with the tag value as value.
+
+[[ldproxy2_excluded_scopes]]
+==== Excluded Scopes
+
+If a property has tagged value _ldpExcludedScopes_, with one or more values (comma-separated) 
+from the set of {RETURNABLE, RECEIVABLE, QUERYABLE, SORTABLE} (NOTE: case is ignored while 
+parsing these values, then the member `excludedScopes` is added to the property definition in the 
+provider configuration, with the ldproxy schema scopes defined by the tag value as value.
 
 
 [[ldproxy2_schemaconversionrules_properties_serviceconfig]]

@@ -1174,6 +1174,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
 	case 135:
 	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
+	case 136:
+	    return "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

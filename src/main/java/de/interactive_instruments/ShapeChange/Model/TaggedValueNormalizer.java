@@ -101,9 +101,10 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the Ldproxy2 target
      */
-    protected static final Set<String> ldp2Tags = Stream.of("ldp2EncodingRule", "ldpCodeTargetValue",
-	    "ldpFallbackValue", "ldpFeatureTitleTemplate", "ldpTitleAttribute", "defaultInstant",
-	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldpGenericValueTypeSuffix", "ldpTypeAttribute")
+    protected static final Set<String> ldp2Tags = Stream
+	    .of("ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate",
+		    "ldpTitleAttribute", "defaultInstant", "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove",
+		    "ldpGenericValueTypeSuffix", "ldpTypeAttribute", "ldpSourcePaths", "ldpExcludedScopes")
 	    .collect(Collectors.toSet());
 
     /*

@@ -140,4 +140,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/coretableVersion/results",
 			"src/test/resources/ldproxy2/coretableVersion/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_sourcePathFromTV() {
+		
+		multiTest("src/test/resources/ldproxy2/sourcePathsFromTV/test_sourcePathsFromTV.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/sourcePathsFromTV/results",
+			"src/test/resources/ldproxy2/sourcePathsFromTV/reference/results");
+	}
 }

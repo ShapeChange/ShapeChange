@@ -110,118 +110,130 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 	LdpSpecialPropertiesInfo specialPropInfos = this.target.specialPropertiesInfo(pi.inClass());
 
-	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+	if (StringUtils.isNotBlank(pi.taggedValue("ldpSourcePaths"))) {
 
-	    // property type is mapped
-
-	    if (pme.hasTargetType()) {
-
-		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
-
-		    // the target only allows and thus assumes max mult = 1
-
-		    targetsSingleValue = true;
-
-		    // special handling for primary geometry
-		    if (specialPropInfos != null && specialPropInfos.getDefaultGeometryPiOfCi() == pi) {
-			valueSourcePath = Optional.of(Ldproxy2Target.coretableGeometryColumn);
-		    } else {
-			// value source path is just the property name
-		    }
-
-		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
-
-		    // only feature ref encoding is supported in the coretable approach
-
-		    refUriTemplate = urlTemplateForValueType(pi);
-		    idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
-
-		    idSourcePath = featureRefIdSourcePath(pi);
-
-		    /*
-		     * TODO unclear how url template and variable collection id should work in the
-		     * coretable approach
-		     * 
-		     * TODO Handle case of inheritance for the property value type (differentiate
-		     * mapped and non-mapped subtypes).
-		     */
-
-		} else {
-
-		    // property type is mapped to a simple ldproxy type
-
-		    // value source path is just the property name
-		}
-
-	    } else {
-		// is checked via target configuration validator (which can be switched off)
-		result.addError(msgSource, 118, typeName);
-		valueSourcePath = Optional.of("FIXME");
+	    // use source path(s) defined by tagged value ldpSourcePaths
+	    for (String sourcePathFromTV : super.parseLdpSourcePathsTaggedValue(pi)) {
+		LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, Optional.of(sourcePathFromTV), idValueType,
+			refType, refUriTemplate, targetsSingleValue);
+		spRes.addSourcePathInfo(spi);
 	    }
 
 	} else {
 
-	    // property type is NOT mapped
+	    if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
 
-	    ClassInfo typeCi = pi.typeClass();
+		// property type is mapped
 
-	    if (typeCi == null) {
+		if (pme.hasTargetType()) {
 
-		MessageContext mc = result.addError(msgSource, 118, typeName);
-		if (mc != null) {
-		    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-		}
-		valueSourcePath = Optional.of("FIXME");
+		    if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
 
-	    } else {
+			// the target only allows and thus assumes max mult = 1
 
-		if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
+			targetsSingleValue = true;
 
-		    // value source path is just the property name
+			// special handling for primary geometry
+			if (specialPropInfos != null && specialPropInfos.getDefaultGeometryPiOfCi() == pi) {
+			    valueSourcePath = Optional.of(Ldproxy2Target.coretableGeometryColumn);
+			} else {
+			    // value source path is just the property name
+			}
 
-		} else if (typeCi.category() == Options.DATATYPE) {
+		    } else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
 
-		    // value source path is just the property name
+			// only feature ref encoding is supported in the coretable approach
 
-		} else {
+			refUriTemplate = urlTemplateForValueType(pi);
+			idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
 
-		    // property type is type with identity
+			idSourcePath = featureRefIdSourcePath(pi);
 
-		    SortedSet<String> collectionIds = LdpInfo.collectionIds(pi);
-
-		    idSourcePath = featureRefIdSourcePath(pi);
-		    valueSourcePath = featureRefValueSourcePath(pi);
-
-		    idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
-
-		    if (collectionIds.size() == 1) {
-
-			refType = collectionIds.first();
+			/*
+			 * TODO unclear how url template and variable collection id should work in the
+			 * coretable approach
+			 * 
+			 * TODO Handle case of inheritance for the property value type (differentiate
+			 * mapped and non-mapped subtypes).
+			 */
 
 		    } else {
 
-			featureRefWithMultiCaseEncountered = true;
+			// property type is mapped to a simple ldproxy type
 
-			// TBD: DIFFERENTIATE CASES WITH/OUT URI TEMPLATE?
+			// value source path is just the property name
+		    }
 
-			for (String collectionId : collectionIds) {
+		} else {
+		    // is checked via target configuration validator (which can be switched off)
+		    result.addError(msgSource, 118, typeName);
+		    valueSourcePath = Optional.of("FIXME");
+		}
 
-			    LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath, idValueType,
-				    collectionId, null, targetsSingleValue);
+	    } else {
 
-			    spRes.addSourcePathInfo(spi);
+		// property type is NOT mapped
+
+		ClassInfo typeCi = pi.typeClass();
+
+		if (typeCi == null) {
+
+		    MessageContext mc = result.addError(msgSource, 118, typeName);
+		    if (mc != null) {
+			mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+		    }
+		    valueSourcePath = Optional.of("FIXME");
+
+		} else {
+
+		    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
+
+			// value source path is just the property name
+
+		    } else if (typeCi.category() == Options.DATATYPE) {
+
+			// value source path is just the property name
+
+		    } else {
+
+			// property type is type with identity
+
+			SortedSet<String> collectionIds = LdpInfo.collectionIds(pi);
+
+			idSourcePath = featureRefIdSourcePath(pi);
+			valueSourcePath = featureRefValueSourcePath(pi);
+
+			idValueType = Optional.of(Ldproxy2Target.coretableIdColumnLdproxyType);
+
+			if (collectionIds.size() == 1) {
+
+			    refType = collectionIds.first();
+
+			} else {
+
+			    featureRefWithMultiCaseEncountered = true;
+
+			    // TBD: DIFFERENTIATE CASES WITH/OUT URI TEMPLATE?
+
+			    for (String collectionId : collectionIds) {
+
+				LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath,
+					idValueType, collectionId, null, targetsSingleValue);
+
+				spRes.addSourcePathInfo(spi);
+			    }
 			}
 		    }
 		}
 	    }
-	}
 
-	if ((valueSourcePath.isPresent() || idSourcePath.isPresent()) && !featureRefWithMultiCaseEncountered) {
+	    if ((valueSourcePath.isPresent() || idSourcePath.isPresent()) && !featureRefWithMultiCaseEncountered) {
 
-	    LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
-		    refUriTemplate, targetsSingleValue);
+		LdpSourcePathInfo spi = new LdpSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
+			refUriTemplate, targetsSingleValue);
 
-	    spRes.addSourcePathInfo(spi);
+		spRes.addSourcePathInfo(spi);
+	    }
 	}
 
 	return spRes;

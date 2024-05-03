@@ -51,6 +51,7 @@ import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema.Builder;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
 import de.ii.xtraplatform.features.domain.SchemaBase.Role;
+import de.ii.xtraplatform.features.domain.SchemaBase.Scope;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.geometries.domain.SimpleFeatureGeometry;
@@ -653,6 +654,23 @@ public class LdpPropertyEncoder {
 		 */
 		if (!isEncodedAsFeatureRef(pi)) {
 		    propMemberDefBuilder.valueType(valueTypeForBuilder);
+		}
+
+		if (StringUtils.isNotBlank(pi.taggedValue("ldpExcludedScopes"))) {
+		    for (String s : pi.taggedValue("ldpExcludedScopes").split(",")) {
+			if (!s.isBlank()) {
+			    try {
+				Scope schemaScope = Scope.valueOf(s.trim().toUpperCase(Locale.ENGLISH));
+				propMemberDefBuilder.addExcludedScopes(schemaScope);
+			    } catch (Exception e) {
+				MessageContext mc = result.addError(msgSource, 136, pi.inClass().name(), pi.name(),
+					s.trim());
+				if (mc != null) {
+				    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+				}
+			    }
+			}
+		    }
 		}
 
 		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))

@@ -171,416 +171,429 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	String targetTable = null;
 	boolean targetsSingleValue = pi.cardinality().maxOccurs == 1;
 
-	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
+	if (StringUtils.isNotBlank(pi.taggedValue("ldpSourcePaths"))) {
 
-	    if (pme.hasTargetType()) {
+	    // use source path(s) defined by tagged value ldpSourcePaths
+	    for (String sourcePathFromTV : super.parseLdpSourcePathsTaggedValue(pi)) {
+		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, Optional.of(sourcePathFromTV),
+			idValueType, refType, refUriTemplate, targetsSingleValue, targetTable);
+		spRes.addSourcePathInfo(spi);
+	    }
 
-		if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
+	} else {
 
-		    // the target only allows and thus assumes max mult = 1
-		    valueSourcePath = Optional.of(databaseColumnName(pi));
-		    targetsSingleValue = true;
+	    if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)) {
 
-		} else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
+		if (pme.hasTargetType()) {
 
-		    // property type is mapped to LINK
+		    if ("GEOMETRY".equalsIgnoreCase(pme.getTargetType())) {
 
-		    String tableName = databaseTableNameForMappedValueType(pi);
-		    targetTable = tableName;
+			// the target only allows and thus assumes max mult = 1
+			valueSourcePath = Optional.of(databaseColumnName(pi));
+			targetsSingleValue = true;
 
-		    // TODO: PK Column of target table not yet configurable
-		    // -> define primary key column for table mapping
+		    } else if ("LINK".equalsIgnoreCase(pme.getTargetType())) {
+
+			// property type is mapped to LINK
+
+			String tableName = databaseTableNameForMappedValueType(pi);
+			targetTable = tableName;
+
+			// TODO: PK Column of target table not yet configurable
+			// -> define primary key column for table mapping
 //		    String pkTargetTable = Ldproxy2Target.primaryKeyColumn;
 
-		    refUriTemplate = urlTemplateForValueType(pi);
+			refUriTemplate = urlTemplateForValueType(pi);
 
-		    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 
-			// feature ref encoding
-			if (pi.cardinality().maxOccurs == 1) {
-			    idSourcePath = Optional.of(databaseColumnName(pi));
+			    // feature ref encoding
+			    if (pi.cardinality().maxOccurs == 1) {
+				idSourcePath = Optional.of(databaseColumnName(pi));
 //	an actual value is not available in this case		   
-			    // valueSourcePath = "[" + databaseColumnName(pi) + "=" + pkTargetTable + "]" +
-			    // targetTable;
-			} else {
+				// valueSourcePath = "[" + databaseColumnName(pi) + "=" + pkTargetTable + "]" +
+				// targetTable;
+			    } else {
 
-			    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi, alreadyVisitedPiList);
+				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+					+ associativeTableName(pi, alreadyVisitedPiList);
 
 //				an actual value is not available in this case
 //			    valueSourcePath = baseSourcePath + "/[" + targetTable
 //				    + Ldproxy2Target.associativeTableColumnSuffix + "=" + pkTargetTable + "]"
 //				    + targetTable;
 
-			    idSourcePath = Optional.of(
-				    baseSourcePath + "/" + targetTable + Ldproxy2Target.associativeTableColumnSuffix);
-			}
+				idSourcePath = Optional.of(baseSourcePath + "/" + targetTable
+					+ Ldproxy2Target.associativeTableColumnSuffix);
+			    }
 
-			// TODO determine value type via new map entry characteristic
-			// Right now, we always use Integer for types mapped as LINK
-			idValueType = Optional.of(Type.INTEGER);
+			    // TODO determine value type via new map entry characteristic
+			    // Right now, we always use Integer for types mapped as LINK
+			    idValueType = Optional.of(Type.INTEGER);
+
+			} else {
+
+			    // link object encoding
+
+			    if (pi.cardinality().maxOccurs == 1) {
+				// no source path to add on property level
+			    } else {
+
+				valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+					+ associativeTableName(pi, alreadyVisitedPiList) + "/[" + tableName
+					+ Ldproxy2Target.associativeTableColumnSuffix + "="
+					+ Ldproxy2Target.primaryKeyColumn + "]" + tableName);
+			    }
+			}
 
 		    } else {
 
-			// link object encoding
+			// value type is a simple ldproxy type
 
 			if (pi.cardinality().maxOccurs == 1) {
-			    // no source path to add on property level
+
+			    valueSourcePath = Optional.of(databaseColumnName(pi));
+
 			} else {
 
+			    String sortKeyAddition = "{sortKey="
+				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "}";
+			    if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+				sortKeyAddition = "";
+			    }
 			    valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
 				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi, alreadyVisitedPiList) + "/[" + tableName
-				    + Ldproxy2Target.associativeTableColumnSuffix + "="
-				    + Ldproxy2Target.primaryKeyColumn + "]" + tableName);
+				    + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/"
+				    + databaseColumnName(pi));
 			}
 		    }
 
 		} else {
+		    // is checked via target configuration validator (which can be switched off)
+		    result.addError(msgSource, 118, typeName);
+		    valueSourcePath = Optional.of("FIXME");
+		}
 
-		    // value type is a simple ldproxy type
-		    if (pi.cardinality().maxOccurs == 1) {
+	    } else {
 
-			valueSourcePath = Optional.of(databaseColumnName(pi));
+		// property type is NOT mapped
 
-		    } else {
+		ClassInfo typeCi = pi.typeClass();
 
-			String sortKeyAddition = "{sortKey=" + sqlProviderHelper.databaseTableName(pi.inClass(), true)
-				+ "}";
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
-			    sortKeyAddition = "";
-			}
-			valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				+ associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/"
-				+ databaseColumnName(pi));
+		if (typeCi == null) {
+
+		    MessageContext mc = result.addError(msgSource, 118, typeName);
+		    if (mc != null) {
+			mc.addDetail(msgSource, 1, pi.fullNameInSchema());
 		    }
-		}
+		    valueSourcePath = Optional.of("FIXME");
 
-	    } else {
-		// is checked via target configuration validator (which can be switched off)
-		result.addError(msgSource, 118, typeName);
-		valueSourcePath = Optional.of("FIXME");
-	    }
+		} else {
 
-	} else {
+		    if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
 
-	    // property type is NOT mapped
+			if (pi.cardinality().maxOccurs == 1) {
 
-	    ClassInfo typeCi = pi.typeClass();
+			    /*
+			     * Note: Addition of code list foreign key suffix is handled in method
+			     * databaseColumnName(..).
+			     */
+			    valueSourcePath = Optional.of(databaseColumnName(pi));
 
-	    if (typeCi == null) {
-
-		MessageContext mc = result.addError(msgSource, 118, typeName);
-		if (mc != null) {
-		    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-		}
-		valueSourcePath = Optional.of("FIXME");
-
-	    } else {
-
-		if (typeCi.category() == Options.ENUMERATION || typeCi.category() == Options.CODELIST) {
-
-		    if (pi.cardinality().maxOccurs == 1) {
-
-			/*
-			 * Note: Addition of code list foreign key suffix is handled in method
-			 * databaseColumnName(..).
-			 */
-			valueSourcePath = Optional.of(databaseColumnName(pi));
-
-		    } else {
-
-			String sortKeyAddition = "{sortKey=" + sqlProviderHelper.databaseTableName(pi.inClass(), true)
-				+ "}";
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
-			    sortKeyAddition = "";
-			}
-
-			String path1 = "[" + primaryKeyColumn(pi.inClass()) + "="
-				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				+ associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/";
-			String path2;
-			if (typeCi.category() == Options.CODELIST
-				&& typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
-			    path2 = sqlProviderHelper.databaseTableName(typeCi, true);
 			} else {
-			    path2 = databaseColumnName(pi);
+
+			    String sortKeyAddition = "{sortKey="
+				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "}";
+			    if (pi.matches(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD)) {
+				sortKeyAddition = "";
+			    }
+
+			    String path1 = "[" + primaryKeyColumn(pi.inClass()) + "="
+				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+				    + associativeTableName(pi, alreadyVisitedPiList) + sortKeyAddition + "/";
+			    String path2;
+			    if (typeCi.category() == Options.CODELIST
+				    && typeCi.matches(Ldproxy2Constants.RULE_CLS_CODELIST_BY_TABLE)) {
+				path2 = sqlProviderHelper.databaseTableName(typeCi, true);
+			    } else {
+				path2 = databaseColumnName(pi);
+			    }
+
+			    String path = path1 + path2;
+			    valueSourcePath = Optional.of(path);
 			}
 
-			String path = path1 + path2;
-			valueSourcePath = Optional.of(path);
-		    }
+		    } else if (typeCi.category() == Options.DATATYPE) {
 
-		} else if (typeCi.category() == Options.DATATYPE) {
+			if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
 
-		    if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
+			    targetTable = associativeTableName(pi, alreadyVisitedPiList);
 
-			targetTable = associativeTableName(pi, alreadyVisitedPiList);
+			    valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]" + targetTable);
 
-			valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]" + targetTable);
+			} else {
+
+			    targetTable = sqlProviderHelper.databaseTableName(typeCi, false);
+
+			    if (pi.cardinality().maxOccurs == 1) {
+
+				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+			    } else {
+
+				valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
+					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+					+ associativeTableName(pi, alreadyVisitedPiList) + "/["
+					+ sqlProviderHelper.databaseTableName(typeCi, true) + "="
+					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+			    }
+			}
 
 		    } else {
 
+			// value type is type with identity
+			refType = LdpInfo.configIdentifierName(typeCi);
+			idValueType = Optional.of(determineIdMemberType(typeCi));
 			targetTable = sqlProviderHelper.databaseTableName(typeCi, false);
 
-			if (pi.cardinality().maxOccurs == 1) {
+			if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
 
-			    valueSourcePath = Optional.of(
-				    "[" + databaseColumnName(pi) + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
-			} else {
+			    // bi-directional association
+			    if (pi.cardinality().maxOccurs > 1 && pi.reverseProperty().cardinality().maxOccurs > 1) {
 
-			    valueSourcePath = Optional.of("[" + primaryKeyColumn(pi.inClass()) + "="
-				    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-				    + associativeTableName(pi, alreadyVisitedPiList) + "/["
-				    + sqlProviderHelper.databaseTableName(typeCi, true) + "=" + primaryKeyColumn(typeCi)
-				    + "]" + targetTable);
-			}
-		    }
+				// n:m
 
-		} else {
+				if (LdpInfo.isReflexive(pi)) {
 
-		    // value type is type with identity
-		    refType = LdpInfo.configIdentifierName(typeCi);
-		    idValueType = Optional.of(determineIdMemberType(typeCi));
-		    targetTable = sqlProviderHelper.databaseTableName(typeCi, false);
+				    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
+					    + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
+					    + associativeTableName(pi, alreadyVisitedPiList) + "/";
 
-		    if (pi.reverseProperty() != null && pi.reverseProperty().isNavigable()) {
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional
+						.of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
+							+ "_" + databaseColumnNameReflexiveProperty(pi, true));
+				    }
 
-			// bi-directional association
-			if (pi.cardinality().maxOccurs > 1 && pi.reverseProperty().cardinality().maxOccurs > 1) {
-
-			    // n:m
-
-			    if (LdpInfo.isReflexive(pi)) {
-
-				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
-					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
-					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
-
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional
-					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
-						    + "_" + databaseColumnNameReflexiveProperty(pi, true));
-				}
-
-				valueSourcePath = Optional
-					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
-						+ "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
-						+ primaryKeyColumn(pi.inClass()) + "]" + targetTable);
-
-			    } else {
-
-				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
-
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional
-					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
-				}
-				valueSourcePath = Optional
-					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
-						+ "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
-			    }
-
-			} else if (pi.cardinality().maxOccurs > 1) {
-
-			    // n:1
-
-			    if (LdpInfo.isReflexive(pi)) {
-
-				// case p2 from ppt image (n:1 for bi-directional reflexive association)
-				String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
-					+ targetTable;
-
-				valueSourcePath = Optional.of(sourcePath);
-
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(pi.inClass()));
-				}
-
-			    } else {
-
-				// case pB from ppt image (n:1 for bi-directional association)
-				String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ databaseColumnName(pi.reverseProperty()) + "]" + targetTable;
-
-				valueSourcePath = Optional.of(sourcePath);
-
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(typeCi));
-				}
-			    }
-
-			} else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
-
-			    // n:1
-
-			    if (LdpInfo.isReflexive(pi)) {
-
-				// case p1 from ppt image (n:1 for bi-directional reflexive association)
-
-				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
-
-				if (isImplementedAsFeatureReference(pi)) {
-
-				    // no need for a table join in this case
-				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+				    valueSourcePath = Optional.of(
+					    baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
+						    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+						    + primaryKeyColumn(pi.inClass()) + "]" + targetTable);
 
 				} else {
 
-				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-					// the source path on property level is omitted in this case
-					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
-					valueSourcePath = Optional.empty();
+				    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+					    + associativeTableName(pi, alreadyVisitedPiList) + "/";
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional
+						.of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
 				    }
+				    valueSourcePath = Optional
+					    .of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
+						    + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 				}
 
-			    } else {
+			    } else if (pi.cardinality().maxOccurs > 1) {
 
-				// case pA from ppt image (n:1 for bi-directional association)
+				// n:1
 
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional.of(databaseColumnName(pi));
-				}
-				/*
-				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				 */
-				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
-			    }
+				if (LdpInfo.isReflexive(pi)) {
 
-			} else {
+				    // case p2 from ppt image (n:1 for bi-directional reflexive association)
+				    String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + databaseColumnNameReflexiveProperty(pi.reverseProperty(), false) + "]"
+					    + targetTable;
 
-			    // 1:1
+				    valueSourcePath = Optional.of(sourcePath);
 
-			    if (LdpInfo.isReflexive(pi)) {
-
-				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
-
-				if (isImplementedAsFeatureReference(pi)) {
-
-				    // no need for a table join in this case
-				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(pi.inClass()));
+				    }
 
 				} else {
 
-				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-					// the source path on property level is omitted in this case
-					valueSourcePath = Optional.empty();
+				    // case pB from ppt image (n:1 for bi-directional association)
+				    String sourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + databaseColumnName(pi.reverseProperty()) + "]" + targetTable;
+
+				    valueSourcePath = Optional.of(sourcePath);
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional.of(sourcePath + "/" + primaryKeyColumn(typeCi));
 				    }
 				}
 
-			    } else {
+			    } else if (pi.reverseProperty().cardinality().maxOccurs > 1) {
 
-				// max mult = 1 on both ends
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional.of(databaseColumnName(pi));
-				}
+				// n:1
 
-				/*
-				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				 */
-				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
-			    }
-			}
+				if (LdpInfo.isReflexive(pi)) {
 
-		    } else {
+				    // case p1 from ppt image (n:1 for bi-directional reflexive association)
 
-			// attribute or uni-directional association
+				    valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false)
+					    + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 
-			if (pi.cardinality().maxOccurs == 1) {
+				    if (isImplementedAsFeatureReference(pi)) {
 
-			    // n:1
+					// no need for a table join in this case
+					idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
 
-			    if (LdpInfo.isReflexive(pi)) {
+				    } else {
 
-				valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
+					if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+					    // the source path on property level is omitted in this case
+					    // sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+					    valueSourcePath = Optional.empty();
+					}
+				    }
 
-				if (isImplementedAsFeatureReference(pi)) {
-				    // no need for a table join in this case
-				    idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
 				} else {
 
-				    if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+				    // case pA from ppt image (n:1 for bi-directional association)
 
-					// the source path on property level is omitted in this case
-					// sourcePath = databaseColumnNameReflexiveProperty(pi, false);
-					valueSourcePath = Optional.empty();
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional.of(databaseColumnName(pi));
 				    }
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
+				    valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					    + primaryKeyColumn(typeCi) + "]" + targetTable);
 				}
 
 			    } else {
 
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional.of(databaseColumnName(pi));
+				// 1:1
+
+				if (LdpInfo.isReflexive(pi)) {
+
+				    valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false)
+					    + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
+
+				    if (isImplementedAsFeatureReference(pi)) {
+
+					// no need for a table join in this case
+					idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+
+				    } else {
+
+					if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+					    // the source path on property level is omitted in this case
+					    valueSourcePath = Optional.empty();
+					}
+				    }
+
+				} else {
+
+				    // max mult = 1 on both ends
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional.of(databaseColumnName(pi));
+				    }
+
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
+				    valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					    + primaryKeyColumn(typeCi) + "]" + targetTable);
 				}
-
-				/*
-				 * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
-				 */
-				valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
-					+ primaryKeyColumn(typeCi) + "]" + targetTable);
-
 			    }
 
 			} else {
 
-			    // n:m
+			    // attribute or uni-directional association
 
-			    if (LdpInfo.isReflexive(pi)) {
+			    if (pi.cardinality().maxOccurs == 1) {
 
-				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
-					+ databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
-					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
+				// n:1
 
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional
-					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
-						    + "_" + databaseColumnNameReflexiveProperty(pi, true));
+				if (LdpInfo.isReflexive(pi)) {
+
+				    valueSourcePath = Optional.of("[" + databaseColumnNameReflexiveProperty(pi, false)
+					    + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					// no need for a table join in this case
+					idSourcePath = Optional.of(databaseColumnNameReflexiveProperty(pi, false));
+				    } else {
+
+					if (!LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+
+					    // the source path on property level is omitted in this case
+					    // sourcePath = databaseColumnNameReflexiveProperty(pi, false);
+					    valueSourcePath = Optional.empty();
+					}
+				    }
+
+				} else {
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional.of(databaseColumnName(pi));
+				    }
+
+				    /*
+				     * NOTE: will be omitted if tag ldpTitleAttribute on typeCi has a valid value
+				     */
+				    valueSourcePath = Optional.of("[" + databaseColumnName(pi) + "="
+					    + primaryKeyColumn(typeCi) + "]" + targetTable);
+
 				}
-
-				valueSourcePath = Optional
-					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
-						+ "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
-						+ primaryKeyColumn(pi.inClass()) + "]" + targetTable);
 
 			    } else {
 
-				String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
-					+ sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
-					+ associativeTableName(pi, alreadyVisitedPiList) + "/";
+				// n:m
 
-				if (isImplementedAsFeatureReference(pi)) {
-				    idSourcePath = Optional
-					    .of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
+				if (LdpInfo.isReflexive(pi)) {
+
+				    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + sqlProviderHelper.databaseTableName(pi.inClass(), false) + "_"
+					    + databaseColumnNameReflexiveProperty(pi.reverseProperty(), true) + "]"
+					    + associativeTableName(pi, alreadyVisitedPiList) + "/";
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional
+						.of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, false)
+							+ "_" + databaseColumnNameReflexiveProperty(pi, true));
+				    }
+
+				    valueSourcePath = Optional.of(
+					    baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, false)
+						    + "_" + databaseColumnNameReflexiveProperty(pi, true) + "="
+						    + primaryKeyColumn(pi.inClass()) + "]" + targetTable);
+
+				} else {
+
+				    String baseSourcePath = "[" + primaryKeyColumn(pi.inClass()) + "="
+					    + sqlProviderHelper.databaseTableName(pi.inClass(), true) + "]"
+					    + associativeTableName(pi, alreadyVisitedPiList) + "/";
+
+				    if (isImplementedAsFeatureReference(pi)) {
+					idSourcePath = Optional
+						.of(baseSourcePath + sqlProviderHelper.databaseTableName(typeCi, true));
+				    }
+
+				    valueSourcePath = Optional
+					    .of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
+						    + "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 				}
-
-				valueSourcePath = Optional
-					.of(baseSourcePath + "[" + sqlProviderHelper.databaseTableName(typeCi, true)
-						+ "=" + primaryKeyColumn(typeCi) + "]" + targetTable);
 			    }
 			}
 		    }
 		}
 	    }
-	}
 
-	if (valueSourcePath.isPresent() || idSourcePath.isPresent()) {
+	    if (valueSourcePath.isPresent() || idSourcePath.isPresent()) {
 
-	    LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
-		    refUriTemplate, targetsSingleValue, targetTable);
-	    spRes.addSourcePathInfo(spi);
+		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
+			refUriTemplate, targetsSingleValue, targetTable);
+		spRes.addSourcePathInfo(spi);
+	    }
 	}
 
 	return spRes;
