@@ -67,15 +67,19 @@
           "default": "foo"
         },
         "prop11": {
-          "type": [
-            "number",
-            "null"
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "base/Base_Types.json#/$defs/VoidReasonValue"
+            }
           ]
         },
         "prop12": {
           "oneOf": [
             {
-              "type": "null"
+              "$ref": "base/Base_Types.json#/$defs/VoidReasonValue"
             },
             {
               "type": "array",

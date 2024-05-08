@@ -268,6 +268,7 @@
                           value="http://shapechange.net/tmp/ugas20/link.json"/>
          <targetParameter name="byReferenceJsonSchemaDefinition"
                           value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="schemaDefinitionForVoidable" value="base/Base_Types.json#/$defs/VoidReasonValue"/>
          <targetParameter name="entityTypeName" value="@type"/>
          <targetParameter name="defaultEncodingRule" value="my201909json"/>
          <rules>

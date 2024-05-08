@@ -163,6 +163,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static boolean createFeatureCollection = false;
     protected static PackageInfo schemaForFeatureCollection = null;
 
+    protected static String schemaDefinitionForVoidable = null;
+
     protected static boolean useAnchorsInLinksToGeneratedSchemaDefinitions = true;
 
     protected static boolean createSeparatePropertyDefinitions = false;
@@ -380,6 +382,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    featureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, false);
+
+	    schemaDefinitionForVoidable = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_SCHEMA_DEF_VOIDABLE, null, false, true);
 
 	    // identify map entries defined in the target configuration
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
@@ -1058,6 +1063,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	 */
 	jsDocsByCi.put(ci, jsd);
     }
+    
+    public String getSchemaDefinitionForVoidable() {
+	return schemaDefinitionForVoidable;
+    }
 
     public PackageInfo getSchemaForFeatureCollection() {
 	return schemaForFeatureCollection;
@@ -1275,6 +1284,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	createFeatureCollection = false;
 	schemaForFeatureCollection = null;
+
+	schemaDefinitionForVoidable = null;
 
 	useAnchorsInLinksToGeneratedSchemaDefinitions = true;
 

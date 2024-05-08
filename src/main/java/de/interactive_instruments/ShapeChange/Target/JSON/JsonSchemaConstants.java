@@ -112,6 +112,8 @@ public class JsonSchemaConstants {
 
     public static final String PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS = "preventUnknownTypesInFeatureCollection";
 
+    public static final String PARAM_SCHEMA_DEF_VOIDABLE = "schemaDefinitionForVoidable";
+    
     public static final String PARAM_ID_MEMBER_ENCODING_RESTRICTIONS = "idMemberEncodingRestrictions";
 
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";

@@ -24,13 +24,13 @@
         "place": {
           "oneOf": [
             {
-              "type": "null"
-            },
-            {
               "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
               "$ref": "#PlaceSpecification"
+            },
+            {
+              "$ref": "base/Base_Types.json#/$defs/VoidReasonValue"
             }
           ]
         }
@@ -106,10 +106,10 @@
         "place": {
           "oneOf": [
             {
-              "type": "null"
+              "$ref": "https://example.org/jsonschema/byreference.json"
             },
             {
-              "$ref": "https://example.org/jsonschema/byreference.json"
+              "$ref": "base/Base_Types.json#/$defs/VoidReasonValue"
             },
             {
               "allOf": [
@@ -175,10 +175,10 @@
             "place": {
               "oneOf": [
                 {
-                  "type": "null"
+                  "$ref": "https://example.org/jsonschema/byreference.json"
                 },
                 {
-                  "$ref": "https://example.org/jsonschema/byreference.json"
+                  "$ref": "base/Base_Types.json#/$defs/VoidReasonValue"
                 },
                 {
                   "allOf": [

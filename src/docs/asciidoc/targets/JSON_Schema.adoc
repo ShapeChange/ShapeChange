@@ -1354,6 +1354,11 @@ produced for the property.
 (encoded using the "oneOf" keyword) between a "null" value and an array
 of actual values will be created.
 
+Since v3.1.0: If target parameter _schemaDefinitionForVoidable_ is set,
+a JSON Schema reference is encoded instead of the null value type, with
+the parameter value as reference value.
+
+
 [[Rule_execution_priority_and_dependencies]]
 === Rule execution priority and dependencies
 
@@ -2040,6 +2045,24 @@ Explanation:
 the values of the tagged value with name "<tag>".
 
 Applies to Rule(s): _none_ - this is a common target parameter
+
+[[schemaDefinitionForVoidable]]
+==== schemaDefinitionForVoidable
+
+(since v3.1.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Defines the URI of the JSON Schema definition to
+be used in
+xref:./JSON_Schema.adoc#rule-json-prop-voidable[rule-json-prop-voidable]
+for encoding the voidable case via a schema reference instead of a 
+null value type.
+
 
 [[useAnchorsInLinksToGeneratedSchemaDefinitions]]
 ==== useAnchorsInLinksToGeneratedSchemaDefinitions

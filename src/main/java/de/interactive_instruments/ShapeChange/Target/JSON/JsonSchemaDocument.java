@@ -1567,34 +1567,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    // Take into account voidable
 	    if (supertypePi.voidable() && supertypePi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
-
-		// if maxOccurs == 1, simply add null
-		if (supertypePi.cardinality().maxOccurs == 1) {
-
-		    JsonSchemaTypeInfo nullTypeInfo = new JsonSchemaTypeInfo();
-		    nullTypeInfo.setSimpleType(JsonSchemaType.NULL);
-		    supertypePropertyTypeInfos.add(nullTypeInfo);
-
-		} else {
-
-		    // otherwise, we need to create a real choice between a single null value, and
-		    // the usual type definition
-		    if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
-
-			parentForTypeSchema.nullable(true);
-
-		    } else {
-
-			JsonSchema nullTypeSchemaDef = new JsonSchema();
-			nullTypeSchemaDef.type(JsonSchemaType.NULL);
-
-			JsonSchema nonNullTypeSchemaDef = new JsonSchema();
-
-			parentForTypeSchema.oneOf(nullTypeSchemaDef, nonNullTypeSchemaDef);
-
-			parentForTypeSchema = nonNullTypeSchemaDef;
-		    }
-		}
+		parentForTypeSchema = encodeVoidable(supertypePi, supertypePropertyTypeInfos, parentForTypeSchema,
+			parentForTypeSchema);
 	    }
 
 	    if (supertypePi.cardinality().maxOccurs > 1) {
@@ -2816,35 +2790,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	// Take into account voidable
 	if (pi.voidable() && pi.matches(JsonSchemaConstants.RULE_PROP_VOIDABLE)) {
-
-	    // if maxOccurs == 1 simply add null
-	    if (pi.cardinality().maxOccurs == 1) {
-
-		JsonSchemaTypeInfo nullTypeInfo = new JsonSchemaTypeInfo();
-		nullTypeInfo.setSimpleType(JsonSchemaType.NULL);
-		typeOptions.add(nullTypeInfo);
-
-	    } else {
-
-		// otherwise, we need to create a real choice between a single null value, and
-		// the usual type definition
-
-		if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
-
-		    parentForTypeSchema.nullable(true);
-
-		} else {
-
-		    JsonSchema nullTypeSchemaDef = new JsonSchema();
-		    nullTypeSchemaDef.type(JsonSchemaType.NULL);
-
-		    JsonSchema nonNullTypeSchemaDef = new JsonSchema();
-
-		    jsProp.oneOf(nullTypeSchemaDef, nonNullTypeSchemaDef);
-
-		    parentForTypeSchema = nonNullTypeSchemaDef;
-		}
-	    }
+	    parentForTypeSchema = encodeVoidable(pi, typeOptions, jsProp, parentForTypeSchema);
 	}
 
 	// convert multiplicity
@@ -2942,6 +2888,68 @@ public class JsonSchemaDocument implements MessageSource {
 	}
 
 	return jsProp;
+    }
+
+    /**
+     * @param pi
+     * @param typeOptions         JSON Schema type infos for allowed types to encode
+     *                            the property value
+     * @param jsProp              JSON Schema object which is the basis for
+     *                            representing the JSON Schema constraints and
+     *                            annotations for pi.
+     * @param parentForTypeSchema JSON Schema object which thus far is used to
+     *                            encode the actual value type schema definitions
+     * @return the JSON Schema object which, after encoding voidable, shall be used
+     *         to encode the actual value type schema definitions
+     */
+    private JsonSchema encodeVoidable(PropertyInfo pi, List<JsonSchemaTypeInfo> typeOptions, JsonSchema jsProp,
+	    JsonSchema parentForTypeSchema) {
+
+	String voidableDefSchemaUri = jsonSchemaTarget.getSchemaDefinitionForVoidable();
+
+	// if maxOccurs == 1 simply add JSON Schema constraints for voidable
+	if (pi.cardinality().maxOccurs == 1) {
+
+	    JsonSchemaTypeInfo voidableTypeInfo = new JsonSchemaTypeInfo();
+
+	    if (StringUtils.isNotBlank(voidableDefSchemaUri)) {
+		voidableTypeInfo.setRef(voidableDefSchemaUri);
+	    } else {
+		voidableTypeInfo.setSimpleType(JsonSchemaType.NULL);
+	    }
+
+	    typeOptions.add(voidableTypeInfo);
+	    return parentForTypeSchema;
+
+	} else {
+
+	    /*
+	     * otherwise, we need to create a real choice between a single value that
+	     * represents void value, and the usual type definition
+	     */
+
+	    if (jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+
+		parentForTypeSchema.nullable(true);
+		return parentForTypeSchema;
+
+	    } else {
+
+		JsonSchema voidableSchemaDef = new JsonSchema();
+
+		if (StringUtils.isNotBlank(voidableDefSchemaUri)) {
+		    voidableSchemaDef.ref(voidableDefSchemaUri);
+		} else {
+		    voidableSchemaDef.type(JsonSchemaType.NULL);
+		}
+
+		JsonSchema nonVoidableTypeSchemaDef = new JsonSchema();
+
+		jsProp.oneOf(voidableSchemaDef, nonVoidableTypeSchemaDef);
+
+		return nonVoidableTypeSchemaDef;
+	    }
+	}
     }
 
     private boolean valueTypeIsBasicType(PropertyInfo pi) {

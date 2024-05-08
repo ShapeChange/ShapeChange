@@ -90,7 +90,8 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_NAME, JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_REQUIRED,
 	    JsonSchemaConstants.PARAM_OBJECT_IDENTIFIER_TYPE,
 	    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS,
-	    JsonSchemaConstants.PARAM_PRETTY_PRINT, JsonSchemaConstants.PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS,
+	    JsonSchemaConstants.PARAM_PRETTY_PRINT, JsonSchemaConstants.PARAM_SCHEMA_DEF_VOIDABLE,
+	    JsonSchemaConstants.PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS,
 	    JsonSchemaConstants.PARAM_WRITE_MAP_ENTRIES).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
