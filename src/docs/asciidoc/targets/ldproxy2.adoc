@@ -122,8 +122,7 @@ The following information items are added to the provider configuration file:
 // source: https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/providers and https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/sql.md
 
 * id: the provider name (derived from the main schema, as defined in section <<ldproxy2_schemaconversionrules_schemapackage>>)
-* createdAt and lastModified: receive the integer value for an automatically generated unix time stamp (fixed for UnitTests)
-* entityStorageVersion: 2
+* enabled: true
 * providerType: FEATURE
 * featureProviderType: SQL
 * connectionInfo:
@@ -164,8 +163,6 @@ The following information items are added to the service configuration file:
 // source: https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/services
 
 * id: the service name (derived from the main schema, as defined in section <<ldproxy2_schemaconversionrules_schemapackage>>)
-* createdAt and lastModified: receive the integer value for an automatically generated unix time stamp (fixed for UnitTests)
-* entityStorageVersion: 2
 * label: value of target parameter _serviceLabel_; default is 'FIXME'
 * description: value of target parameter _serviceDescription_; default is 'FIXME'
 * serviceType: OGC_API

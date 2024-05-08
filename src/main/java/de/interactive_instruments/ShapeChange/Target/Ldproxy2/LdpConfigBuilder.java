@@ -444,11 +444,6 @@ public class LdpConfigBuilder {
 		.serviceType("OGC_API").addAllExtensions(generalExtensionConfigurations)
 		.collections(serviceCollectionDefinitions).build();
 
-	if (Ldproxy2Target.isUnitTest) {
-	    serviceConfig = serviceConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-		    .withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	}
-
 	/*
 	 * =================================
 	 * 
@@ -481,11 +476,6 @@ public class LdpConfigBuilder {
 	}
 
 	providerConfig = providerConfigBuilder.build();
-
-	if (Ldproxy2Target.isUnitTest) {
-	    providerConfig = providerConfig.withCreatedAt(Ldproxy2Constants.UNITTEST_UNIX_TIME)
-		    .withLastModified(Ldproxy2Constants.UNITTEST_UNIX_TIME);
-	}
     }
 
     public ImmutableFeatureProviderSqlData getProviderConfig() {

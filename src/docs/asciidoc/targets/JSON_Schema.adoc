@@ -267,6 +267,11 @@ _Reference schema_:
 {
   "type": "object",
   "x-ogc-role": "reference",
+  "x-ogc-collectionId": [
+    "roads",
+    "railways",
+    "waterways"
+  ],
   "required": [
     "collectionId",
     "featureId"

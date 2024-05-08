@@ -1,8 +1,6 @@
 ---
 id: cross_schema_c
-entityStorageVersion: 2
-createdAt: 1000000000000
-lastModified: 1000000000000
+enabled: true
 providerType: FEATURE
 providerSubType: SQL
 nativeCrs:

@@ -1,15 +1,10 @@
 ---
 id: cross_schema_c
-createdAt: 1000000000000
-lastModified: 1000000000000
-entityStorageVersion: 2
 label: label
 description: '...'
 enabled: true
 serviceType: OGC_API
 api:
-- buildingBlock: RESOURCES
-  enabled: true
 - buildingBlock: GML
   enabled: true
   applicationNamespaces:
@@ -29,6 +24,8 @@ api:
   supportsStandardResponseParameters: true
   gmlIdPrefix: _
   gmlIdOnGeometries: true
+- buildingBlock: RESOURCES
+  enabled: true
 collections:
   featuretypeb:
     id: featuretypeb

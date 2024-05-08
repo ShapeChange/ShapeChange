@@ -1,15 +1,10 @@
 ---
 id: test
-createdAt: 1000000000000
-lastModified: 1000000000000
-entityStorageVersion: 2
 label: MyServiceLabel
 description: '...'
 enabled: true
 serviceType: OGC_API
 api:
-- buildingBlock: RESOURCES
-  enabled: true
 - buildingBlock: GML
   enabled: true
   applicationNamespaces:
@@ -19,6 +14,8 @@ api:
     t: "{{serviceUrl}}/resources/test_sql.xsd"
   gmlIdPrefix: _
 - buildingBlock: QUERYABLES
+  enabled: true
+- buildingBlock: RESOURCES
   enabled: true
 collections:
   t1_class1:

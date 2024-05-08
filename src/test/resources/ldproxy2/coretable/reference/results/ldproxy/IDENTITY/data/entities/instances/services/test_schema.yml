@@ -1,15 +1,10 @@
 ---
 id: test_schema
-createdAt: 1000000000000
-lastModified: 1000000000000
-entityStorageVersion: 2
 label: MyServiceLabel
 description: '...'
 enabled: true
 serviceType: OGC_API
 api:
-- buildingBlock: RESOURCES
-  enabled: true
 - buildingBlock: GML
   enabled: true
   applicationNamespaces:
@@ -28,6 +23,8 @@ api:
         UrlAttribute: t:UrlAttribute
   gmlIdPrefix: _
 - buildingBlock: QUERYABLES
+  enabled: true
+- buildingBlock: RESOURCES
   enabled: true
 collections:
   FT1:
