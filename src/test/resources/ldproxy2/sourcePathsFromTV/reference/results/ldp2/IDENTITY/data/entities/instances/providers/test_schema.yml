@@ -1,0 +1,74 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: _id
+  sortKey: _id
+types:
+  featuretype:
+    sourcePath: /featuretype
+    type: OBJECT
+    properties:
+      attBCoalesce:
+        type: STRING
+        coalesce:
+        - sourcePath: attb1
+          type: STRING
+        - sourcePath: attb2
+          type: STRING
+        - sourcePath: attb3
+          type: STRING
+      attCConcat:
+        type: VALUE_ARRAY
+        valueType: INTEGER
+        concat:
+        - sourcePath: attc1
+          type: VALUE_ARRAY
+          valueType: INTEGER
+        - sourcePath: attc2
+          type: VALUE_ARRAY
+          valueType: INTEGER
+        - sourcePath: attc3
+          type: VALUE_ARRAY
+          valueType: INTEGER
+    schema: '#/fragments/featuretype'
+fragments:
+  featuretype:
+    type: OBJECT
+    objectType: FeatureType
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      attA:
+        sourcePath: attafromtv
+        type: BOOLEAN
+        excludedScopes:
+        - RETURNABLE
+        constraints:
+          required: true
+      attBCoalesce:
+        type: STRING
+        excludedScopes:
+        - RECEIVABLE
+        - QUERYABLE
+        constraints:
+          required: true
+      attCConcat:
+        type: VALUE_ARRAY
+        valueType: INTEGER
+        constraints:
+          minOccurrence: 0

@@ -52,7 +52,7 @@
 			<targetParameter name="coretableVersionColumn" value="myversion"/>
 			<targetParameter name="enableFragments" value="true"/>
 			<targetParameter name="_unitTestOverride" value="true"/>
-			<targetParameter name="defaultEncodingRule" value="ldptest1"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest"/>
 			<rules>
 				<EncodingRule name="ldptest">
 					<rule name="rule-ldp2-all-coretable"/>

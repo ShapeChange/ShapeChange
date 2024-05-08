@@ -1,0 +1,54 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 31467
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: pk
+  sortKey: pk
+types:
+  FeatureTypeA:
+    sourcePath: "/features{filter=featuretype='FeatureTypeA' AND myversion='1.1'}"
+    type: OBJECT
+    schema: '#/fragments/FeatureTypeA'
+  FeatureTypeB:
+    sourcePath: "/features{filter=featuretype='FeatureTypeB' AND myversion='1.1'}"
+    type: OBJECT
+    schema: '#/fragments/FeatureTypeB'
+fragments:
+  FeatureTypeA:
+    type: OBJECT
+    objectType: FeatureTypeA
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attA:
+        sourcePath: "[JSON]properties/attA"
+        type: INTEGER
+        constraints:
+          required: true
+  FeatureTypeB:
+    type: OBJECT
+    objectType: FeatureTypeB
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attB:
+        sourcePath: "[JSON]properties/attB"
+        type: STRING
+        constraints:
+          required: true

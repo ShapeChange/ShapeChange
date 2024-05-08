@@ -3,10 +3,11 @@ package de.interactive_instruments.ShapeChange.Target.Ldproxy2.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.LdpInfo;
 import de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Constants;
-import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractLdpSourcePathProvider implements LdpSourcePathProvider {
 

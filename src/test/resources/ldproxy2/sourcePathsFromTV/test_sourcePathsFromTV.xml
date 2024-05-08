@@ -28,7 +28,7 @@
 		<Target
 			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
 			mode="enabled" inputs="IDENTITY">
-			<targetParameter name="outputDirectory" value="testResults/ldproxy2/sourcePathsFromTV/results/ldp" />
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/sourcePathsFromTV/results/ldp1" />
 			<targetParameter name="sortedOutput" value="true" />
 
 			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml" />
@@ -39,10 +39,37 @@
             <targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" />
 			<targetParameter name="srid" value="4326" />
 			<targetParameter name="_unitTestOverride" value="true" />
-			<targetParameter name="defaultEncodingRule" value="myldp" />
+			<targetParameter name="defaultEncodingRule" value="myldp1" />
 			<targetParameter name="primaryKeyColumn" value="_id" />
 			<rules>
-				<EncodingRule name="myldp">
+				<EncodingRule name="myldp1">
+					<rule name="rule-ldp2-all-schemas" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="src/main/resources/config/StandardRules.xml" />
+			<xi:include
+				href="src/main/resources/config/StandardMapEntries_Ldproxy2.xml" />
+		</Target>
+		<Target
+			class="de.interactive_instruments.ShapeChange.Target.Ldproxy2.Ldproxy2Target"
+			mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/sourcePathsFromTV/results/ldp2" />
+			<targetParameter name="sortedOutput" value="true" />
+
+			<targetParameter name="cfgTemplatePath" value="src/main/resources/templates/ldproxy2/cfgTemplate.yml" />
+			<targetParameter name="forceAxisOrder" value="NONE" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="serviceDescription" value="..." />
+			<targetParameter name="serviceLabel" value="label" />
+            <targetParameter name="serviceConfigTemplatePath" value="src/main/resources/templates/ldproxy2/serviceConfigTemplate.yml" />
+			<targetParameter name="srid" value="4326" />
+			<targetParameter name="_unitTestOverride" value="true" />
+			<targetParameter name="defaultEncodingRule" value="myldp2" />
+			<targetParameter name="primaryKeyColumn" value="_id" />
+			<targetParameter name="enableFragments" value="true"/>
+			<rules>
+				<EncodingRule name="myldp2">
 					<rule name="rule-ldp2-all-schemas" />
 				</EncodingRule>
 			</rules>

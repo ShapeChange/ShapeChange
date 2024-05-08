@@ -1094,7 +1094,8 @@ NOTE: The conversion of properties from other kinds of classifiers, especially e
 The type definition within an ldproxy feature provider configuration (including any fragment definitions) describes the full encoding of a particular object type. Inlined property values can lead to a complex structure, especially when the type of a property is a complex \<<dataType>>. In order to extract the values for populating the information items of an actual object, ldproxy needs to know the so called source paths. Such a path starts with the name of a database table at the top-level provider type definition. For the properties within a given type definition, the source path construction then depends on the actual representation of the property and its value type within the database. 
 
 The target first tries to look up the source path for a given property in the 
-tagged value _ldpSourcePaths_. Explicitly configuring source paths via tagged values
+tagged value _ldpSourcePaths_ (Note: this mechanism is available since v3.1.0). 
+Explicitly configuring source paths via tagged values
 is a special case, which can be useful for situations where additional properties
 are added to the model via transformations, for example in order to be used as 
 queryable. The tag value is a list of source paths, separated by the string '|||'. 
@@ -1403,6 +1404,8 @@ configuration, with the tag value as value.
 
 [[ldproxy2_excluded_scopes]]
 ==== Excluded Scopes
+
+(since v3.1.0)
 
 If a property has tagged value _ldpExcludedScopes_, with one or more values (comma-separated) 
 from the set of {RETURNABLE, RECEIVABLE, QUERYABLE, SORTABLE} (NOTE: case is ignored while 

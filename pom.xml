@@ -26,12 +26,12 @@
 			<url>
 				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
 		</repository>
-		<!-- 		<repository>-->
-		<!-- 			<id>ii-maven-releases</id>-->
-		<!-- 			<name>interactive instruments maven releases repository</name>-->
-		<!--
-		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
-		<!-- 		</repository>-->
+<!--		 		<repository>-->
+<!--		 			<id>ii-maven-releases</id>-->
+<!--		 			<name>interactive instruments maven releases repository</name>-->
+		
+<!--		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
+<!--		 		</repository>-->
 	</repositories>
 	<dependencies>
 

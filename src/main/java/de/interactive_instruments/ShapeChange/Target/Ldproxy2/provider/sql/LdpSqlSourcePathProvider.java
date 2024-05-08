@@ -1035,6 +1035,11 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		}
 	    }
 	}
+	
+	if(super.parseLdpSourcePathsTaggedValue(pi).size() > 1) {
+	    // multiple source paths are defined via tagged value
+	    return false;
+	}
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;

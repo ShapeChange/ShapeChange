@@ -586,7 +586,8 @@ public class LdpPropertyEncoder {
 
 			} else {
 
-			    if (sourcePathProvider.multipleSourcePathsUnsupportedinFragments()) {
+			    if (Ldproxy2Target.enableFragments && context.isInFragment()
+				    && sourcePathProvider.multipleSourcePathsUnsupportedinFragments()) {
 				/*
 				 * Multiple source paths found, which is unexpected for this case, but who knows
 				 * if this cannot occur in the future. Thus, better log an appropriate error

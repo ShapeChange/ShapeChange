@@ -1,0 +1,19 @@
+---
+id: test_schema
+label: MyServiceLabel
+description: '...'
+enabled: true
+serviceType: OGC_API
+collections:
+  FeatureTypeA:
+    id: FeatureTypeA
+    label: FeatureTypeA
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
+  FeatureTypeB:
+    id: FeatureTypeB
+    label: FeatureTypeB
+    enabled: true
+    api:
+    - buildingBlock: FEATURES_HTML
