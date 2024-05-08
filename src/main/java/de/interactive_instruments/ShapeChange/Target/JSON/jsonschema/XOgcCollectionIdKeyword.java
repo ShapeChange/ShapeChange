@@ -31,7 +31,6 @@
  */
 package de.interactive_instruments.ShapeChange.Target.JSON.jsonschema;
 
-import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonString;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
 
 /**
@@ -39,10 +38,10 @@ import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonValue;
  *
  */
 public class XOgcCollectionIdKeyword implements JsonSchemaKeyword {
-    
-    private String value;
-    
-    public XOgcCollectionIdKeyword(String value) {
+
+    private JsonValue value;
+
+    public XOgcCollectionIdKeyword(JsonValue value) {
 	this.value = value;
     }
 
@@ -50,14 +49,13 @@ public class XOgcCollectionIdKeyword implements JsonSchemaKeyword {
     public String name() {
 	return "x-ogc-collectionId";
     }
-    
-    public String value() {
+
+    public JsonValue value() {
 	return this.value;
     }
 
     @Override
-    public JsonValue toJson(JsonSerializationContext context) {	
-	return new JsonString(value);
+    public JsonValue toJson(JsonSerializationContext context) {
+	return value;
     }
-
 }

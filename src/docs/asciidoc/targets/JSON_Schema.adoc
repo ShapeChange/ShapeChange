@@ -196,7 +196,9 @@ error message in the log). The collection infos define the collection ids
 via characteristic `collectionIds`. If the type is not mapped, the collection
 ids are given by the names of all non-abstract classes that are in the 
 subtype hierarchy of the type (including the type itself), with these
-names being converted to lower case. Note that in the future, additional
+names being converted to lower case (unless target parameter 
+xref:./JSON_Schema.adoc#lowerCaseCollectionIdsInRelAsKeyProfile[lowerCaseCollectionIdsInRelAsKeyProfile]
+ is set to false). Note that in the future, additional
 methods for determining the collection ids can be designed and implemented.
 * The type(s) of feature identifiers in these collections must also be
 determined. For a mapped type, the identifier types are defined by map
@@ -219,14 +221,14 @@ are restricted if one or more collection ids have been determined before),
 required "featureId" member (whose type definition contains the determined
 feature identifier types), and an optional "title" member (of type string).
 The schema will also contain the "x-ogc-uriTemplate" member, with 
-the template as value.
+the template as value. If one or more collection ids have been determined 
+before, the "x-ogc-collectionId" member is also added, to list these ids.
 ** Otherwise, i.e. no URI template is available:
 *** If a single collection id was determined, and target parameter 
 xref:./JSON_Schema.adoc#featureRefWithAnyCollectionId[featureRefWithAnyCollectionId]
 is not set to true, then a schema for a simple feature reference is created.
 The schema contains a type definition with the determined 
-feature identifier types. It also contains the "x-ogc-collectionId"
-member, with the determined collection id as value.
+feature identifier types.
 *** Otherwise, a more complex reference schema is created,
 defining a JSON object with required "collectionId" member (whose values
 are restricted if target parameter 
@@ -234,6 +236,10 @@ xref:./JSON_Schema.adoc#featureRefWithAnyCollectionId[featureRefWithAnyCollectio
 is not set to true, and one or more collection ids have been determined before),
 required "featureId" member (whose type definition contains the determined
 feature identifier types), and an optional "title" member (of type string).
+*** In both cases, if target parameter 
+xref:./JSON_Schema.adoc#featureRefWithAnyCollectionId[featureRefWithAnyCollectionId]
+is not set to true, and one or more collection ids have been determined 
+before, the "x-ogc-collectionId" member is added, to list these ids.
 
 *Examples*
 
@@ -1922,6 +1928,22 @@ Explanation: Reference to the JSON Schema of the "Link" object.
 
 Applies to Rule(s):
 _xref:./JSON_Schema.adoc#rule-json-cls-codelist-link[rule-json-cls-codelist-link]_
+
+[[lowerCaseCollectionIdsInRelAsKeyProfile]]
+==== lowerCaseCollectionIdsInRelAsKeyProfile
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: true
+
+Explanation: Encode collection identifiers - determined for a property with
+value type that is not mapped - in lower-case.
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
+
 
 [[measureObjectUri]]
 ==== measureObjectUri

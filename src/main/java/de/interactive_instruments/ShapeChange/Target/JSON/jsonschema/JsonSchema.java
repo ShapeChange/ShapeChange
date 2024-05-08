@@ -504,7 +504,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	} else {
 	    keyword = lookup.get();
 	}
-	
+
 	keyword.addAll(Arrays.asList(type));
 
 	return this;
@@ -775,13 +775,13 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 		.map(keyword -> ((NullableKeyword) keyword).value()).findFirst();
     }
 
-    public Optional<String> xOgcCollectionId() {
+    public Optional<JsonValue> xOgcCollectionId() {
 	return this.stream().filter(keyword -> keyword instanceof XOgcCollectionIdKeyword)
 		.map(keyword -> ((XOgcCollectionIdKeyword) keyword).value()).findFirst();
     }
 
-    public JsonSchema xOgcCollectionId(String comment) {
-	this.add(new XOgcCollectionIdKeyword(comment));
+    public JsonSchema xOgcCollectionId(JsonValue value) {
+	this.add(new XOgcCollectionIdKeyword(value));
 	return this;
     }
 
@@ -790,8 +790,8 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 		.map(keyword -> ((XOgcRoleKeyword) keyword).value()).findFirst();
     }
 
-    public JsonSchema xOgcRole(String comment) {
-	this.add(new XOgcRoleKeyword(comment));
+    public JsonSchema xOgcRole(String role) {
+	this.add(new XOgcRoleKeyword(role));
 	return this;
     }
 
@@ -800,8 +800,8 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 		.map(keyword -> ((XOgcUriTemplateKeyword) keyword).value()).findFirst();
     }
 
-    public JsonSchema xOgcUriTemplate(String comment) {
-	this.add(new XOgcUriTemplateKeyword(comment));
+    public JsonSchema xOgcUriTemplate(String template) {
+	this.add(new XOgcUriTemplateKeyword(template));
 	return this;
     }
 

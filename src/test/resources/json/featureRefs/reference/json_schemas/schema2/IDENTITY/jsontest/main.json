@@ -84,7 +84,7 @@
           "type": "string",
           "format": "uri"
         },
-      "roleExtFT3": {
+        "roleExtFT3": {
           "type": "string",
           "format": "uri"
         }

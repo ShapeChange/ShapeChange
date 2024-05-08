@@ -122,6 +122,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static String inlineOrByRefDefault = null;
 
     protected static String linkObjectUri = null;
+    protected static boolean lowerCaseCollectionIdsInRelAsKeyProfile = true;
     protected static String measureObjectUri = "FIXME";
 
     protected static String byReferenceJsonSchemaDefinition = null;
@@ -314,6 +315,9 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    preventUnknownTypesInFeatureCollection = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS, false);
 
+	    lowerCaseCollectionIdsInRelAsKeyProfile = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_LOWER_CASE_COLLID_REL_AS_KEY, true);
+	    
 	    if (options.hasParameter(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS)) {
 		// format already checked by validation of the configuration
@@ -668,6 +672,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     public String getLinkObjectUri() {
 	return linkObjectUri;
+    }
+    
+    public boolean isLowerCaseCollectionIdsInRelAsKeyProfile() {
+	return lowerCaseCollectionIdsInRelAsKeyProfile;
     }
 
     public boolean objectIdentifierRequired() {
@@ -1251,6 +1259,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	entityTypeName = null;
 	inlineOrByRefDefault = null;
 	linkObjectUri = null;
+	lowerCaseCollectionIdsInRelAsKeyProfile = true;
 	measureObjectUri = "FIXME";
 	byReferenceJsonSchemaDefinition = null;
 	byReferenceFormat = "uri";

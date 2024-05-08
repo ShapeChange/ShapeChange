@@ -71,6 +71,7 @@
    <targetParameter name="inlineOrByReferenceDefault" value="byReference"/>
    <targetParameter name="featureRefProfiles" value="rel-as-key"/>
    <targetParameter name="featureRefIdTypes" value="integer"/>
+   <targetParameter name="lowerCaseCollectionIdsInRelAsKeyProfile" value="false"/>
    <targetParameter name="defaultEncodingRule" value="myPlainJson3"/>
    <rules>
     <EncodingRule name="myPlainJson3" extends="defaultPlainJson">

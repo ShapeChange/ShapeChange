@@ -31,7 +31,7 @@
         },
         "roleT": {
           "type": "integer",
-          "x-ogc-collectionId": "t",
+          "x-ogc-collectionId": "T",
           "x-ogc-role": "reference"
         },
         "roleFT2": {
@@ -58,6 +58,11 @@
               "featureId"
             ],
             "type": "object",
+            "x-ogc-collectionId": [
+              "FT2",
+              "FT2Sub1Sub1",
+              "FT2Sub2"
+            ],
             "x-ogc-role": "reference"
           },
           "uniqueItems": true
@@ -80,7 +85,7 @@
       "properties": {
         "roleFT1": {
           "type": "integer",
-          "x-ogc-collectionId": "ft1",
+          "x-ogc-collectionId": "FT1",
           "x-ogc-role": "reference"
         },
         "roleExtFT1": {
@@ -95,7 +100,7 @@
               "enum": [
                 "extft2",
                 "extft2sub1",
-              "extft2sub2"
+                "extft2sub2"
               ]
             },
             "featureId": {
@@ -110,15 +115,20 @@
             "featureId"
           ],
           "type": "object",
+          "x-ogc-collectionId": [
+            "extft2",
+            "extft2sub1",
+            "extft2sub2"
+          ],
           "x-ogc-role": "reference",
           "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/bar/{featureId}"
         },
-      "roleExtFT3": {
+        "roleExtFT3": {
           "properties": {
             "collectionId": {
               "type": "string"
             },
-      "featureId": {
+            "featureId": {
               "type": [
                 "string",
                 "integer"
@@ -129,7 +139,7 @@
             }
           },
           "required": [
-        "collectionId",
+            "collectionId",
             "featureId"
           ],
           "type": "object",

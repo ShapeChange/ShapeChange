@@ -132,10 +132,10 @@
             },
             {
               "type": [
-                    "string",
-                    "integer"
-                  ],
-                "x-ogc-role": "reference",
+                "string",
+                "integer"
+              ],
+              "x-ogc-role": "reference",
               "x-ogc-uriTemplate": "https://example.com/foo/ft3/bar/{featureId}"
             }
           ]
@@ -213,7 +213,7 @@
               "properties": {
                 "collectionId": {
                   "type": "string",
-                "enum": [
+                  "enum": [
                     "extft2",
                     "extft2sub1",
                     "extft2sub2"
@@ -221,7 +221,7 @@
                 },
                 "featureId": {
                   "type": "string"
-                  },
+                },
                 "title": {
                   "type": "string"
                 }
@@ -231,6 +231,11 @@
                 "featureId"
               ],
               "type": "object",
+              "x-ogc-collectionId": [
+                "extft2",
+                "extft2sub1",
+                "extft2sub2"
+              ],
               "x-ogc-role": "reference",
               "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/bar/{featureId}"
             }

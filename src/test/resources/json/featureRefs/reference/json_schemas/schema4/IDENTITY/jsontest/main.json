@@ -100,6 +100,11 @@
                   "featureId"
                 ],
                 "type": "object",
+                "x-ogc-collectionId": [
+                  "ft2",
+                  "ft2sub1sub1",
+                  "ft2sub2"
+                ],
                 "x-ogc-role": "reference"
               }
             ]
@@ -181,7 +186,7 @@
                   "enum": [
                     "extft2",
                     "extft2sub1",
-                  "extft2sub2"
+                    "extft2sub2"
                   ]
                 },
                 "featureId": {
@@ -196,18 +201,23 @@
                 "featureId"
               ],
               "type": "object",
+              "x-ogc-collectionId": [
+                "extft2",
+                "extft2sub1",
+                "extft2sub2"
+              ],
               "x-ogc-role": "reference",
               "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/bar/{featureId}"
             }
           ]
         },
-      "roleExtFT3": {
+        "roleExtFT3": {
           "oneOf": [
             {
               "type": "string",
               "format": "uri"
             },
-      {
+            {
               "$ref": "#/$defs/SCLinkObject"
             },
             {
@@ -226,7 +236,7 @@
                 }
               },
               "required": [
-        "collectionId",
+                "collectionId",
                 "featureId"
               ],
               "type": "object",

@@ -119,6 +119,7 @@ public class JsonSchemaConstants {
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";
 
     public static final String PARAM_LINK_OBJECT_URI = "linkObjectUri";
+    public static final String PARAM_LOWER_CASE_COLLID_REL_AS_KEY = "lowerCaseCollectionIdsInRelAsKeyProfile";
     public static final String PARAM_MEASURE_OBJECT_URI = "measureObjectUri";
 
     /**

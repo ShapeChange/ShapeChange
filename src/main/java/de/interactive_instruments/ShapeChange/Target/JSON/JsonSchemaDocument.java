@@ -73,6 +73,7 @@ import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.PropertyInfo;
 import de.interactive_instruments.ShapeChange.Target.TargetOutputProcessor;
+import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonArray;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonBoolean;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonInteger;
 import de.interactive_instruments.ShapeChange.Target.JSON.json.JsonNumber;
@@ -2520,6 +2521,7 @@ public class JsonSchemaDocument implements MessageSource {
 			if (StringUtils.isNotBlank(meCharCollectionIds)) {
 			    String[] meCollectionIds = StringUtils.split(meCharCollectionIds, ", ");
 			    for (String s : meCollectionIds) {
+				// do not format collection ids (case-sensitive URI part)
 				collectionIds.add(s);
 			    }
 			} else {
@@ -2559,15 +2561,29 @@ public class JsonSchemaDocument implements MessageSource {
 			List<ClassInfo> relevantTypes = typeSet.stream().filter(ci -> !ci.isAbstract())
 				.collect(Collectors.toList());
 			for (ClassInfo ci : relevantTypes) {
-			    collectionIds.add(formatCollectionId(ci.name()));
+			    collectionIds.add(formatCollectionIdForFeatureRefRelAsKey(ci.name()));
 			}
 
 		    } else {
-			collectionIds.add(formatCollectionId(valueTypeName));
+			collectionIds.add(formatCollectionIdForFeatureRefRelAsKey(valueTypeName));
 		    }
 		}
 
 		if (!skipFeatureRef) {
+
+		    Optional<JsonValue> collectionIdsJsonValueOpt;
+
+		    if (collectionIds.size() == 0) {
+			collectionIdsJsonValueOpt = Optional.empty();
+		    } else if (collectionIds.size() == 1) {
+			collectionIdsJsonValueOpt = Optional.of(new JsonString(collectionIds.iterator().next()));
+		    } else {
+			JsonArray arr = new JsonArray();
+			for (String v : collectionIds) {
+			    arr.add(new JsonString(v));
+			}
+			collectionIdsJsonValueOpt = Optional.of(arr);
+		    }
 
 		    /*
 		     * Create the JSON Schema type info
@@ -2596,6 +2612,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    collectionIdSchema.type(JsonSchemaType.STRING);
 			    if (collectionIds.size() > 0 && (collectionInfosDefinedByMapEntry
 				    || !JsonSchemaTarget.featureRefWithAnyCollectionId)) {
+				// do not format collection ids (case-sensitive URI part)
 				JsonString[] array = collectionIds.stream().map(s -> new JsonString(s))
 					.toArray(JsonString[]::new);
 				collectionIdSchema.enum_(array);
@@ -2608,6 +2625,10 @@ public class JsonSchemaDocument implements MessageSource {
 			    props.put("title", new JsonSchema().type(JsonSchemaType.STRING));
 
 			    keyInfo.setKeyword(props);
+
+			    if (collectionIdsJsonValueOpt.isPresent()) {
+				keyInfo.setKeyword(new XOgcCollectionIdKeyword(collectionIdsJsonValueOpt.get()));
+			    }
 
 			} else {
 
@@ -2628,7 +2649,6 @@ public class JsonSchemaDocument implements MessageSource {
 			    // create schema for simple feature ref
 
 			    keyInfo.setKeyword(new TypeKeyword(featureRefIdTypes));
-			    keyInfo.setKeyword(new XOgcCollectionIdKeyword(collectionIds.iterator().next()));
 
 			} else {
 
@@ -2644,7 +2664,8 @@ public class JsonSchemaDocument implements MessageSource {
 			    JsonSchema collectionIdSchema = new JsonSchema();
 			    collectionIdSchema.type(JsonSchemaType.STRING);
 			    if (collectionIds.size() > 0 && !JsonSchemaTarget.featureRefWithAnyCollectionId) {
-				JsonString[] array = collectionIds.stream().map(s -> new JsonString(s))
+				JsonString[] array = collectionIds.stream()
+					.map(s -> new JsonString(s.toLowerCase(Locale.ENGLISH)))
 					.toArray(JsonString[]::new);
 				collectionIdSchema.enum_(array);
 			    }
@@ -2656,6 +2677,10 @@ public class JsonSchemaDocument implements MessageSource {
 			    props.put("title", new JsonSchema().type(JsonSchemaType.STRING));
 
 			    keyInfo.setKeyword(props);
+			}
+
+			if (!JsonSchemaTarget.featureRefWithAnyCollectionId && collectionIdsJsonValueOpt.isPresent()) {
+			    keyInfo.setKeyword(new XOgcCollectionIdKeyword(collectionIdsJsonValueOpt.get()));
 			}
 		    }
 
@@ -2678,9 +2703,13 @@ public class JsonSchemaDocument implements MessageSource {
 	return res;
     }
 
-    private String formatCollectionId(String id) {
+    private String formatCollectionIdForFeatureRefRelAsKey(String id) {
 	// NOTE: In future, we may have different ways to format the collection id
-	return id.toLowerCase(Locale.ENGLISH);
+	if (jsonSchemaTarget.isLowerCaseCollectionIdsInRelAsKeyProfile()) {
+	    return id.toLowerCase(Locale.ENGLISH);
+	} else {
+	    return id;
+	}
     }
 
     private JsonSchemaTypeInfo createJsonSchemaTypeInfoForRelAsUri() {
