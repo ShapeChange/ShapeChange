@@ -60,7 +60,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	ASSOCIATION, CLASS, PACKAGE, PROPERTY, ATTRIBUTE, ASSOCIATIONROLE
     };
 
-    private boolean validated = false;
+    private Boolean isValid = null;
 
     private ModelElementType modelElementType = null;
     private String modelElementStereotype = null;
@@ -103,8 +103,10 @@ public class ModelElementSelectionInfo implements MessageSource {
     }
 
     public void validate() throws ModelElementSelectionParseException {
-
-	validated = true;
+	
+	if(isValid != null && isValid) {
+	    return;
+	}
 
 	List<String> compileErrors = new ArrayList<>();
 
@@ -171,15 +173,17 @@ public class ModelElementSelectionInfo implements MessageSource {
 	}
 
 	if (!compileErrors.isEmpty()) {
+	    isValid = false;
 	    throw new ModelElementSelectionParseException(
 		    "Compiling regular expression(s) of model element selection attribute(s) did not succeed. Issues: "
 			    + StringUtils.join(compileErrors, ", "));
+	} else {
+	    isValid = true;
 	}
     }
 
     public Pattern getModelElementOwnerStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementOwnerStereotypePattern;
     }
 
@@ -189,34 +193,8 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementStereotypePattern;
-    }
-
-    private void raiseNotValidatedIllegalStateException() {
-	/*
-	 * 2021-09-22 JE: We do not want to throw an exception while loading the
-	 * configuration in case that one of the regular expressions does not compile. A
-	 * situation where that would be the case is loading TaggedValue elements within
-	 * a transformer configuration.
-	 * 
-	 * However, afterwards we do want to compile the regexes so that we can use
-	 * them. So there must be a point in time in the code where the compilation
-	 * happens.
-	 * 
-	 * In order to avoid parsing exceptions whenever the pattern objects that result
-	 * from the regexes are accessed, we do the compilation once, via the validate()
-	 * method. For cases in which the ModelElementSelectionInfo is created while
-	 * loading the configuration, validate() should be used during the semantic
-	 * validation of the configuration. In other cases, for example when the
-	 * information is parsed from the sc:advancedProcessConfigurations element,
-	 * validate() should be called directly after parsing. Any process (transformer
-	 * or target) that makes use of model element selection infos in its
-	 * configuration must ensure that they are validated.
-	 */
-	throw new IllegalStateException(
-		"ModelElementSelectionInfo.validate() has not been called. This is an implementation error.");
     }
 
     /**
@@ -225,8 +203,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         filter criterium was not set in the configuration.
      */
     public Pattern getPropertyValueTypeStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return propertyValueTypeStereotypePattern;
     }
 
@@ -236,8 +213,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementNamePattern;
     }
 
@@ -247,8 +223,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getModelElementOwnerNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementOwnerNamePattern;
     }
 
@@ -258,8 +233,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         configuration.
      */
     public ModelElementType getModelElementType() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementType;
     }
 
@@ -269,8 +243,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         criterium was not set in the configuration.
      */
     public Pattern getApplicationSchemaNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return applicationSchemaNamePattern;
     }
 
@@ -279,8 +252,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementName attribute, else <code>false</code>
      */
     public boolean hasModelElementNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementNamePattern != null;
     }
 
@@ -289,8 +261,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementOwnerName attribute, else <code>false</code>
      */
     public boolean hasModelElementOwnerNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementOwnerNamePattern != null;
     }
 
@@ -299,14 +270,12 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementStereotype attribute, else <code>false</code>
      */
     public boolean hasModelElementStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementStereotypePattern != null;
     }
 
     public boolean hasModelElementOwnerStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementOwnerStereotypePattern != null;
     }
 
@@ -315,8 +284,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         propertyValueTypeStereotype attribute, else <code>false</code>
      */
     public boolean hasPropertyValueTypeStereotypePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return propertyValueTypeStereotypePattern != null;
     }
 
@@ -325,8 +293,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         propertyValueTypeName attribute, else <code>false</code>
      */
     public boolean hasPropertyValueTypeNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return propertyValueTypeNamePattern != null;
     }
 
@@ -335,8 +302,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         applicationSchemaName attribute, else <code>false</code>
      */
     public boolean hasApplicationSchemaNamePattern() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return applicationSchemaNamePattern != null;
     }
 
@@ -345,8 +311,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      *         modelElementType attribute, else <code>false</code>
      */
     public boolean hasModelElementType() {
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 	return modelElementType != null;
     }
 
@@ -360,8 +325,7 @@ public class ModelElementSelectionInfo implements MessageSource {
      */
     public boolean matches(Info infoType) {
 
-	if (!validated)
-	    raiseNotValidatedIllegalStateException();
+	validate();
 
 	Options options = infoType.options();
 	ShapeChangeResult result = infoType.result();

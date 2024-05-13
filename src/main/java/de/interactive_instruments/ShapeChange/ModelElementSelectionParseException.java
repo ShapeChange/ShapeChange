@@ -35,7 +35,7 @@ package de.interactive_instruments.ShapeChange;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class ModelElementSelectionParseException extends Exception {
+public class ModelElementSelectionParseException extends IllegalStateException {
 
     private static final long serialVersionUID = 1308913713943343225L;
 
