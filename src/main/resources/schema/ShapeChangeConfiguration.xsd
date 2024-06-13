@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude"
- xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified"
- version="1.1.0b1">
+ xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1"
+ elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.0b1" xmlns:saxon="http://saxon.sf.net/" xmlns:xerces="http://xerces.apache.org">
  <import namespace="http://www.w3.org/2001/XInclude" schemaLocation="w3c/XInclude.xsd"/>
  <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="w3c/xml.xsd"/>
- <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"/>
+ <element name="ShapeChangeConfiguration" type="sc:ShapeChangeConfigurationType"> </element>
  <complexType name="ShapeChangeConfigurationType">
   <choice minOccurs="0" maxOccurs="unbounded">
    <element ref="sc:ShapeChangeConfiguration"/>
@@ -13,9 +13,28 @@
    <element ref="sc:log"/>
    <element ref="sc:transformers"/>
    <element ref="sc:targets"/>
+   <element ref="sc:validators"/>
    <element ref="xi:include"/>
   </choice>
   <attribute ref="xml:base"/>
+  <assert test="
+    every $id in distinct-values((sc:transformers/*/tokenize(string(@validators), '\s+'), sc:targets/*/tokenize(string(@validators), '\s+')))
+     satisfies exists(sc:validators/sc:Validator[string(@id) = $id])"
+   saxon:message="Every ID in a validators XML-attribute must be the ID of a configured Validator element. Check if any validators XML-attribute contains the ID of the input element or of a transformer."
+   xerces:message="Every ID in a validators XML-attribute must be the ID of a configured Validator element. Check if any validators XML-attribute contains the ID of the input element or of a transformer.">
+   <annotation>
+    <documentation>Every ID in a validators XML-attribute must be the ID of a configured Validator element. Check if any validators XML-attribute contains the ID of the input element or of a transformer.</documentation>
+   </annotation>
+  </assert>
+  <assert test="
+    every $id in distinct-values((sc:transformers/*/@input, sc:targets/*/tokenize(string(@inputs), '\s+')))
+     satisfies ($id = 'INPUT' or exists(sc:input[@id = $id]) or exists(sc:transformers/*[@id = $id]))"
+   saxon:message="Every ID in an input or inputs XML-attribute must be the ID of a configured transformer or input element. Check if any input or inputs XML-attribute contains the ID of a validator."
+   xerces:message="Every ID in an input or inputs XML-attribute must be the ID of a configured transformer or input element. Check if any input or inputs XML-attribute contains the ID of a validator.">
+   <annotation>
+    <documentation>Every ID in an input or inputs XML-attribute must be the ID of a configured transformer or input element. Check if any input or inputs XML-attribute contains the ID of a validator.</documentation>
+   </annotation>
+  </assert>  
  </complexType>
  <element name="input">
   <complexType>
@@ -238,6 +257,20 @@
     </choice>
     <attribute name="id" type="ID" use="required"/>
     <attribute name="input" type="IDREF"/>
+    <attribute name="validators" type="IDREFS"/>
+    <assert test="not(@input) or not(@id = @input)" saxon:message="The values of transformer XML-attributes id and input must not be equal (no self-reference)."
+     xerces:message="The values of transformer XML-attributes id and input must not be equal (no self-reference).">
+     <annotation>
+      <documentation>The values of transformer XML-attributes id and input must not be equal (no self-reference).</documentation>
+     </annotation>
+    </assert>
+    <assert test="not(@validators) or (count(tokenize(string(@validators), '\s+')) = count(distinct-values(tokenize(string(@validators), '\s+'))))"
+     saxon:message="The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute."
+     xerces:message="The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute.">
+     <annotation>
+      <documentation>The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute.</documentation>
+     </annotation>
+    </assert>
    </extension>
   </complexContent>
  </complexType>
@@ -249,6 +282,46 @@
   </complexType>
  </element>
  <element name="Transformer" type="sc:TransformerType"/>
+ <element name="validators">
+  <complexType>
+   <sequence maxOccurs="unbounded">
+    <element ref="sc:Validator"/>
+   </sequence>
+  </complexType>
+ </element>
+ <element name="Validator" type="sc:ValidatorType"/>
+ <complexType name="ValidatorType">
+  <complexContent>
+   <extension base="sc:ProcessBaseType">
+    <choice maxOccurs="unbounded" minOccurs="0">
+     <element name="parameters">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessParameter"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="rules">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessRuleSet"/>
+       </choice>
+      </complexType>
+     </element>
+     <element ref="xi:include"/>
+    </choice>
+    <attribute name="id" type="ID" use="required"/>
+    <attribute default="strict" name="validationMode">
+     <simpleType>
+      <restriction base="string">
+       <enumeration value="strict"/>
+       <enumeration value="lax"/>
+      </restriction>
+     </simpleType>
+    </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
  <element name="targets">
   <complexType>
    <choice minOccurs="0" maxOccurs="unbounded">
@@ -559,6 +632,14 @@
   <complexContent>
    <extension base="sc:ProcessBaseType">
     <attribute name="inputs" type="IDREFS"/>
+    <attribute name="validators" type="IDREFS"/>
+    <assert test="not(@validators) or (count(tokenize(string(@validators), '\s+')) = count(distinct-values(tokenize(string(@validators), '\s+'))))"
+     saxon:message="The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute."
+     xerces:message="The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute.">
+     <annotation>
+      <documentation>The values of XML-attribute validators must be unique. Check for duplicate values in the validators XML-attribute.</documentation>
+     </annotation>
+    </assert>
    </extension>
   </complexContent>
  </complexType>
@@ -1511,6 +1592,35 @@
      </simpleType>
     </attribute>
     <attribute default=" " name="multiValueConnectorToken" type="string"> </attribute>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="BasicContentTests" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:BasicContentTestsType"/>
+ <complexType name="BasicContentTestsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="1" name="tests">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:AbstractContentTest"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element abstract="true" name="AbstractContentTest" type="sc:AbstractContentTestType"/>
+ <complexType name="AbstractContentTestType">
+  <attributeGroup ref="sc:modelElementSelectionGroup"/>
+ </complexType>
+ <element abstract="false" name="DescriptorContentTest" substitutionGroup="sc:AbstractContentTest" type="sc:DescriptorContentTestType"/>
+ <complexType name="DescriptorContentTestType">
+  <complexContent>
+   <extension base="sc:AbstractContentTestType">
+    <attribute name="descriptorOrTaggedValue" type="string" use="required"> </attribute>
+    <attribute name="regex" type="string" use="required"> </attribute>
    </extension>
   </complexContent>
  </complexType>

@@ -33,10 +33,8 @@ package de.interactive_instruments.ShapeChange.Model.Generic;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -310,7 +308,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	    this.register(genCi);
 
-	    if(genPi != null) {
+	    if (genPi != null) {
 		genPi.addClass(genCi);
 	    }
 	}
@@ -1454,7 +1452,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	return result;
     }
-    
+
     /**
      * Return all ClassInfo objects contained in the given package and in sub-
      * packages, which do not belong to an app schema different to the one of the
@@ -2972,10 +2970,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	return res;
     }
 
-    /**
-     * @return a (new) set with all associations that connect at least one class from the
-     *         selected schemas; can be empty but not <code>null</code>.
-     */
+    @Override
     public SortedSet<GenericAssociationInfo> selectedSchemaAssociations() {
 
 	SortedSet<GenericPropertyInfo> selGenPis = this.selectedSchemaProperties();
@@ -3458,10 +3453,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    return "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
 	case 30507:
 	    return "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
-	
-	case 30803: //x
+
+	case 30803: // x
 	    return "Exception occurred while reading the model XML. Message is: $1$.";
-	
+
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

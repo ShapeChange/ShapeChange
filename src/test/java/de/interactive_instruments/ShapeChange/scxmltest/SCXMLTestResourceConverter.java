@@ -55,6 +55,7 @@ import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.ShapeChange.TestInstance;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
+import de.interactive_instruments.ShapeChange.Util.XSDUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
@@ -95,6 +96,12 @@ public class SCXMLTestResourceConverter {
 	    if (!tmpDir.exists()) {
 		tmpDir.mkdir();
 	    }
+	    
+	    // validate config, as gatekeeper action:
+	    // 1. validate original config
+	    // 2. validate config, with xincludes resolved
+	    XSDUtil.validate(configPath);
+	    XSDUtil.validate(XMLUtil.loadXml(configPath),true);
 
 	    // load original config, for creation of SCXML export configs
 	    /*
@@ -102,9 +109,9 @@ public class SCXMLTestResourceConverter {
 	     * log, transformers, and targets from the original config will be removed, only
 	     * the input will be kept and a new model export target section added.
 	     */
-
+	    
 	    Document doc1 = XMLUtil.loadXml(configPath);
-
+	    
 	    boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
 
 	    if ("true".equalsIgnoreCase(System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
@@ -117,7 +124,7 @@ public class SCXMLTestResourceConverter {
 		 * Load original config again (it would be incorrect to use doc1, because it may
 		 * have been updated and used as export configuration).
 		 */
-		Document doc2 = XMLUtil.loadXml(configPath);
+		Document doc2 = XMLUtil.loadXml(configPath);		
 		switchModelsToScxml(doc2, configPath);
 	    }
 

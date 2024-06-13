@@ -56,6 +56,7 @@ import de.interactive_instruments.ShapeChange.Model.ClassInfo;
 import de.interactive_instruments.ShapeChange.Model.Model;
 import de.interactive_instruments.ShapeChange.Model.PackageInfo;
 import de.interactive_instruments.ShapeChange.Model.Generic.GenericModel;
+import de.interactive_instruments.ShapeChange.ModelValidation.ModelValidationManager;
 import de.interactive_instruments.ShapeChange.Target.DeferrableOutputWriter;
 import de.interactive_instruments.ShapeChange.Target.SingleTarget;
 import de.interactive_instruments.ShapeChange.Target.Target;
@@ -72,6 +73,7 @@ public class Converter implements MessageSource {
     public static final int STATUS_TARGET_WRITEALL = 204;
     public static final int STATUS_TARGET_DEFERRED_WRITE = 205;
     public static final int STATUS_TRANSFORMER_PROCESS = 206;
+    public static final int STATUS_VALIDATION_START = 207;
 
     /** Result object. */
     protected ShapeChangeResult result = null;
@@ -188,6 +190,7 @@ public class Converter implements MessageSource {
 
 	processConfigs.addAll(options.getTransformerConfigs().values());
 	processConfigs.addAll(options.getTargetConfigurations());
+	processConfigs.addAll(options.getValidatorConfigs().values());
 
 	for (ProcessConfiguration pConfig : processConfigs) {
 
@@ -215,6 +218,11 @@ public class Converter implements MessageSource {
 			TransformerConfiguration tconfig = (TransformerConfiguration) pConfig;
 			result.addProcessFlowInfo(this, 514, tconfig.getId());
 
+		    } else if (pConfig instanceof ValidatorConfiguration) {
+
+			ValidatorConfiguration vconfig = (ValidatorConfiguration) pConfig;
+			result.addProcessFlowInfo(this, 518, vconfig.getId());
+
 		    } else {
 
 			// /*
@@ -238,11 +246,12 @@ public class Converter implements MessageSource {
 		} catch (ClassNotFoundException e) {
 
 		    // that's fine - a ConfigurationValidator is not
-		    // required for a Transformer/Target
+		    // required for a Transformer/Target/Validator
 
 		} catch (Exception e) {
 
-		    result.addProcessFlowWarning(this, 508, pConfig.getClassName(), StringUtils.defaultIfBlank(e.getMessage(), "<not available>"));
+		    result.addProcessFlowWarning(this, 508, pConfig.getClassName(),
+			    StringUtils.defaultIfBlank(e.getMessage(), "<not available>"));
 		}
 	    }
 	}
@@ -537,12 +546,20 @@ public class Converter implements MessageSource {
 		 * execution of deferrable output writers
 		 */
 		processIdsToIgnore.add(trf.getId());
+
+	    } else if (!isValidModel(model, trf.getValidatorIds(), trf.getId(), trf.getInputId())) {
+		/*
+		 * the model that this transformation uses as input did not pass validation -
+		 * thus ignore this transformation in further processing
+		 */
+		processIdsToIgnore.add(trf.getId());
 	    }
 
 	    /*
 	     * only execute the transformer if it shall not be ignored (reason being that
-	     * the transformation is disabled or that one of the transformations that this
-	     * transformation depends upon is disabled or did not succeed)
+	     * the transformation is disabled, that one of the transformations that this
+	     * transformation depends upon is disabled or did not succeed, or that the input
+	     * model did not pass validation)
 	     */
 	    if (!processIdsToIgnore.contains(trf.getId())) {
 
@@ -633,6 +650,30 @@ public class Converter implements MessageSource {
 	}
     }
 
+    private boolean isValidModel(Model model, List<String> validatorIds, String idOrClassName, String modelProviderId)
+	    throws ShapeChangeAbortException {
+
+	/*
+	 * Do not validate the model if no validators are configured, or if all
+	 * validators are disabled.
+	 */
+	if (validatorIds == null || validatorIds.isEmpty() || validatorIds.stream()
+		.allMatch(id -> options.getValidatorConfigs().get(id).getProcessMode() == ProcessMode.disabled)) {
+	    return true;
+	}
+
+	StatusBoard.getStatusBoard().statusChanged(STATUS_VALIDATION_START);
+
+	result.addProcessFlowInfo(this, 519, modelProviderId, idOrClassName);
+
+	ModelValidationManager validationManager = new ModelValidationManager();
+	boolean validationSucceeded = validationManager.isValid(model, validatorIds);
+
+	result.addProcessFlowInfo(this, 520, modelProviderId, idOrClassName);
+
+	return validationSucceeded;
+    }
+
     private void executeTargets(Model model, String modelProviderId, List<TargetConfiguration> targetConfigs)
 	    throws ShapeChangeAbortException, ClassNotFoundException, InstantiationException, IllegalAccessException,
 	    NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
@@ -646,6 +687,10 @@ public class Converter implements MessageSource {
 
 	    if (tgt.getProcessMode().equals(ProcessMode.disabled))
 		continue;
+
+	    if (!isValidModel(model, tgt.getValidatorIds(), tgt.getClassName(), modelProviderId)) {
+		continue;
+	    }
 
 	    // reset options for this target
 	    options.setCurrentProcessConfig(tgt);
@@ -1004,7 +1049,7 @@ public class Converter implements MessageSource {
 	case 507:
 	    return "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
 	case 508:
-	    return "??The ConfigurationValidator for transformer or target class '$1$' was found but could not be loaded. Exception message is: $2$";
+	    return "??The ConfigurationValidator for transformer, target, or validator class '$1$' was found but could not be loaded. Exception message is: $2$";
 	case 509:
 	    return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
 	case 510:
@@ -1024,6 +1069,12 @@ public class Converter implements MessageSource {
 	    return "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
 	case 517:
 	    return "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+	case 518:
+	    return "--- Validating model validator with @id '$1$' ...";
+	case 519:
+	    return "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
+	case 520:
+	    return "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
 
 	case 1012:
 	    return "Application schema found, package name: '$1$', target namespace: '$2$'";

@@ -31,161 +31,170 @@
  */
 package de.interactive_instruments.ShapeChange;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class TargetConfiguration extends ProcessConfiguration {
 
-	private SortedSet<String> inputIds;
-	private List<Namespace> namespaces;
+    private SortedSet<String> inputIds;
 
-	/**
-	 * key: namespace URI; value: Namespace object (with that namespace)
-	 */
-	private Map<String, Namespace> namespaceByNamespace = new HashMap<String, Namespace>();
+    /**
+     * List of validator identifiers.
+     */
+    private List<String> validatorIds;
 
-	/**
-	 * key: namespace abbreviation; value: Namespace object (with that
-	 * abbreviation)
-	 */
-	private Map<String, Namespace> namespaceByAbbreviation = new HashMap<String, Namespace>();
+    private List<Namespace> namespaces;
 
-	/**
-	 * Creates a TargetConfiguration.
-	 * 
-	 * @param className
-	 *            The fully qualified name of the class implementing the target.
-	 * @param processMode
-	 *            The execution mode of the target.
-	 * @param parameters
-	 *            The target parameters. <code>null</code> if no parameters were
-	 *            declared in the configuration.
-	 * @param ruleSets
-	 *            The encoding rule sets declared for the target.
-	 *            <code>null</code> if no rule sets were declared in the
-	 *            configuration.
-	 * @param mapEntries
-	 *            The map entries for the target. <code>null</code> if no map
-	 *            entries were declared in the configuration.
-	 * @param inputIds
-	 *            Set of identifiers referencing either the input model or a
-	 *            transformer.
-	 * @param namespaces
-	 *            List of namespaces for the target. <code>null</code> if no
-	 *            namespaces were declared in the configuration.
-	 * @param advancedProcessConfigurations
-	 *            the 'advancedProcessConfigurations' element from the
-	 *            configuration of the process; <code>null</code> if it is not
-	 *            set there
-	 */
-	public TargetConfiguration(String className, ProcessMode processMode,
-			Map<String, String> parameters,
-			Map<String, ProcessRuleSet> ruleSets,
-			List<ProcessMapEntry> mapEntries, SortedSet<String> inputIds,
-			List<Namespace> namespaces, Element advancedProcessConfigurations) {
+    /**
+     * key: namespace URI; value: Namespace object (with that namespace)
+     */
+    private Map<String, Namespace> namespaceByNamespace = new HashMap<String, Namespace>();
 
-		super(className, processMode, parameters, ruleSets, mapEntries,
-				advancedProcessConfigurations);
-		this.inputIds = inputIds;
+    /**
+     * key: namespace abbreviation; value: Namespace object (with that abbreviation)
+     */
+    private Map<String, Namespace> namespaceByAbbreviation = new HashMap<String, Namespace>();
 
-		this.namespaces = namespaces;
+    /**
+     * Creates a TargetConfiguration.
+     * 
+     * @param className                     The fully qualified name of the class
+     *                                      implementing the target.
+     * @param processMode                   The execution mode of the target.
+     * @param parameters                    The target parameters. <code>null</code>
+     *                                      if no parameters were declared in the
+     *                                      configuration.
+     * @param ruleSets                      The encoding rule sets declared for the
+     *                                      target. <code>null</code> if no rule
+     *                                      sets were declared in the configuration.
+     * @param mapEntries                    The map entries for the target.
+     *                                      <code>null</code> if no map entries were
+     *                                      declared in the configuration.
+     * @param inputIds                      Set of identifiers referencing either
+     *                                      the input model or a transformer.
+     * @param namespaces                    List of namespaces for the target.
+     *                                      <code>null</code> if no namespaces were
+     *                                      declared in the configuration.
+     * @param advancedProcessConfigurations the 'advancedProcessConfigurations'
+     *                                      element from the configuration of the
+     *                                      process; <code>null</code> if it is not
+     *                                      set there
+     * @param validatorIds                  List of validator identifiers.
+     */
+    public TargetConfiguration(String className, ProcessMode processMode, Map<String, String> parameters,
+	    Map<String, ProcessRuleSet> ruleSets, List<ProcessMapEntry> mapEntries, SortedSet<String> inputIds,
+	    List<Namespace> namespaces, Element advancedProcessConfigurations, List<String> validatorIds) {
 
-		if (namespaces != null) {
-			for (Namespace ns : namespaces) {
-				this.namespaceByNamespace.put(ns.getNs(), ns);
-				this.namespaceByAbbreviation.put(ns.getNsabr(), ns);
-			}
-		}
+	super(className, processMode, parameters, ruleSets, mapEntries, advancedProcessConfigurations);
+	this.inputIds = inputIds;
+	this.validatorIds = validatorIds == null ? new ArrayList<String>() : validatorIds;
+
+	this.namespaces = namespaces;
+
+	if (namespaces != null) {
+	    for (Namespace ns : namespaces) {
+		this.namespaceByNamespace.put(ns.getNs(), ns);
+		this.namespaceByAbbreviation.put(ns.getNsabr(), ns);
+	    }
+	}
+    }
+
+    public SortedSet<String> getInputIds() {
+	return inputIds;
+    }
+
+    /**
+     * @return list of validator IDs; can be empty but not <code>null</code>
+     */
+    public List<String> getValidatorIds() {
+	return validatorIds;
+    }
+
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer();
+
+	sb.append("TargetConfiguration:\r\n");
+	sb.append("--- with process configuration:\r\n");
+	sb.append(super.toString());
+	sb.append("\tinputs: " + "\r\n");
+	for (String s : inputIds) {
+	    sb.append("\t\t" + s + "\r\n");
+	}
+	sb.append("\tvalidators: " + StringUtils.join(validatorIds, ", ") + "\r\n");
+	if (namespaces != null) {
+	    sb.append("\tnamespaces: " + "\r\n");
+	    for (Namespace ns : namespaces) {
+
+		sb.append("\t\t(" + ns.getNsabr() + "|" + ns.getNs() + "|"
+			+ (ns.getLocation() != null ? ns.getLocation() : "NA") + ")\r\n");
+	    }
 	}
 
-	public SortedSet<String> getInputIds() {
-		return inputIds;
+	return sb.toString();
+    }
+
+    /**
+     * @return the namespaces, or <code>null</code> if none are defined in the
+     *         target configuration
+     */
+    public List<Namespace> getNamespaces() {
+	return namespaces;
+    }
+
+    /**
+     * @param namespace tbd
+     * @return The abbreviation for the given namespace, or <code>null</code> if the
+     *         namespace is unknown.
+     */
+    public String nsabrForNamespace(String namespace) {
+
+	if (namespaceByNamespace.containsKey(namespace)) {
+	    return namespaceByNamespace.get(namespace).getNsabr();
+	} else {
+	    return null;
 	}
+    }
 
-	public String toString() {
+    /**
+     * @param abbreviation tbd
+     * @return the namespace for the given abbreviation, or <code>null</code> if the
+     *         abbreviation is unknown
+     */
+    public String fullNamespace(String abbreviation) {
 
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("TargetConfiguration:\r\n");
-		sb.append("--- with process configuration:\r\n");
-		sb.append(super.toString());
-		sb.append("\tinputs: " + "\r\n");
-		for (String s : inputIds) {
-			sb.append("\t\t" + s + "\r\n");
-		}
-		if (namespaces != null) {
-			sb.append("\tnamespaces: " + "\r\n");
-			for (Namespace ns : namespaces) {
-
-				sb.append("\t\t(" + ns.getNsabr() + "|" + ns.getNs() + "|"
-						+ (ns.getLocation() != null ? ns.getLocation() : "NA")
-						+ ")\r\n");
-			}
-		}
-
-		return sb.toString();
+	if (namespaceByAbbreviation.containsKey(abbreviation)) {
+	    return namespaceByAbbreviation.get(abbreviation).getNs();
+	} else {
+	    return null;
 	}
+    }
 
-	/**
-	 * @return the namespaces, or <code>null</code> if none are defined in the
-	 *         target configuration
-	 */
-	public List<Namespace> getNamespaces() {
-		return namespaces;
+    public boolean hasNamespaceWithAbbreviation(String abbrev) {
+	return fullNamespace(abbrev) != null;
+    }
+
+    /**
+     * @param namespace tbd
+     * @return the location defined for the namespace (in the configuration) - or
+     *         <code>null</code> if either the namespace or the location is not
+     *         defined in the configuration
+     */
+    public String locationOfNamespace(String namespace) {
+
+	if (namespaceByNamespace.containsKey(namespace)) {
+	    return namespaceByNamespace.get(namespace).getLocation();
+	} else {
+	    return null;
 	}
-
-	/**
-	 * @param namespace tbd
-	 * @return The abbreviation for the given namespace, or <code>null</code> if
-	 *         the namespace is unknown.
-	 */
-	public String nsabrForNamespace(String namespace) {
-
-		if (namespaceByNamespace.containsKey(namespace)) {
-			return namespaceByNamespace.get(namespace).getNsabr();
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * @param abbreviation tbd
-	 * @return the namespace for the given abbreviation, or <code>null</code> if
-	 *         the abbreviation is unknown
-	 */
-	public String fullNamespace(String abbreviation) {
-
-		if (namespaceByAbbreviation.containsKey(abbreviation)) {
-			return namespaceByAbbreviation.get(abbreviation).getNs();
-		} else {
-			return null;
-		}
-	}
-
-	public boolean hasNamespaceWithAbbreviation(String abbrev) {
-		return fullNamespace(abbrev) != null;
-	}
-
-	/**
-	 * @param namespace tbd
-	 * @return the location defined for the namespace (in the configuration) -
-	 *         or <code>null</code> if either the namespace or the location is
-	 *         not defined in the configuration
-	 */
-	public String locationOfNamespace(String namespace) {
-
-		if (namespaceByNamespace.containsKey(namespace)) {
-			return namespaceByNamespace.get(namespace).getLocation();
-		} else {
-			return null;
-		}
-	}
+    }
 }

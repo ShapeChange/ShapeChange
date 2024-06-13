@@ -57,11 +57,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -69,7 +64,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.google.common.base.Splitter;
 
@@ -86,6 +80,7 @@ import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralDataPropert
 import de.interactive_instruments.ShapeChange.Target.Ontology.GeneralObjectProperty;
 import de.interactive_instruments.ShapeChange.Target.Ontology.RdfGeneralProperty;
 import de.interactive_instruments.ShapeChange.Util.XMLUtil;
+import de.interactive_instruments.ShapeChange.Util.XSDUtil;
 import jakarta.xml.bind.DatatypeConverter;
 
 /**
@@ -532,6 +527,10 @@ public class Options {
      * key: 'id' assigned to the transformer; value: the transformer configuration
      */
     private Map<String, TransformerConfiguration> transformerConfigs = null;
+    /**
+     * key: 'id' assigned to the validator; value: the validator configuration
+     */
+    private Map<String, ValidatorConfiguration> validatorConfigs = null;
 
     protected File imageTmpDir = null;
     protected File linkedDocTmpDir = null;
@@ -1367,8 +1366,7 @@ public class Options {
 	}
     }
 
-    public void loadConfiguration() throws ShapeChangeAbortException {
-
+    private InputStream getConfigurationInputStream() throws ShapeChangeAbortException {
 	InputStream configStream = null;
 
 	if (configFile == null) {
@@ -1425,382 +1423,359 @@ public class Options {
 	    }
 	}
 
-	DocumentBuilder builder = null;
-	ShapeChangeErrorHandler handler = null;
+	return configStream;
+    }
+
+    public void loadConfiguration() throws ShapeChangeAbortException {
+
+	// validate configuration
 	try {
-	    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-		    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	    factory.setNamespaceAware(true);
-	    factory.setValidating(true);
-	    factory.setFeature("http://apache.org/xml/features/validation/schema", true);
-	    factory.setIgnoringElementContentWhitespace(true);
-	    factory.setIgnoringComments(true);
-	    factory.setXIncludeAware(true);
-	    factory.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
-	    builder = factory.newDocumentBuilder();
-	    handler = new ShapeChangeErrorHandler();
-	    builder.setErrorHandler(handler);
-	} catch (FactoryConfigurationError e) {
-	    throw new ShapeChangeAbortException("Unable to get a document builder factory.");
-	} catch (ParserConfigurationException e) {
-	    throw new ShapeChangeAbortException("XML Parser was unable to be configured.");
+	    // 1. validate original config (has locator information)
+	    XSDUtil.validate(getConfigurationInputStream());
+	    // 2. validate config, with xincludes resolved (does not have locator
+	    // information)
+	    XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true);
+	} catch (Exception e) {
+	    throw new ShapeChangeAbortException("Invalid configuration file.");
 	}
 
 	// parse file
+
+	Document document;
 	try {
-	    Document document = builder.parse(configStream);
-	    if (handler.errorsFound()) {
-		throw new ShapeChangeAbortException("Invalid configuration file.");
+	    document = XMLUtil.loadXml(getConfigurationInputStream());
+	} catch (Exception e) {
+	    throw new ShapeChangeAbortException("Exception occurred while parsing the configuration file.");
+	}
+
+	/*
+	 * 2018-01-31 JE: uncomment the following to print the configuration as loaded
+	 * by ShapeChange, with xincludes resolved.
+	 */
+	// try {
+	// TransformerFactory tf = TransformerFactory.newInstance();
+	// Transformer transformer = tf.newTransformer();
+	// transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+	// "no");
+	// transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	// transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	// transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+	// "4");
+	//
+	// transformer.transform(new DOMSource(document),
+	// new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+
+	// parse input element specific content
+	NodeList nl = document.getElementsByTagName("input");
+	Element inputElement = (Element) nl.item(0);
+	if (inputElement.hasAttribute("id")) {
+	    inputId = inputElement.getAttribute("id").trim();
+	    if (inputId.length() == 0) {
+		inputId = null;
+	    }
+	} else {
+	    inputId = Options.INPUTELEMENTID;
+	}
+
+	Map<String, String> inputParameters = new HashMap<String, String>();
+	nl = inputElement.getElementsByTagName("parameter");
+	for (int j = 0; j < nl.getLength(); j++) {
+	    Element e = (Element) nl.item(j);
+	    String key = e.getAttribute("name");
+	    String val = e.getAttribute("value");
+	    inputParameters.put(key, val);
+	}
+
+	Map<String, String> stereotypeAliases = new HashMap<String, String>();
+	nl = inputElement.getElementsByTagName("StereotypeAlias");
+	for (int j = 0; j < nl.getLength(); j++) {
+	    Element e = (Element) nl.item(j);
+	    String key = e.getAttribute("alias");
+	    String val = e.getAttribute("wellknown");
+
+	    // case shall be ignored
+	    key = key.toLowerCase();
+	    val = val.toLowerCase();
+
+	    stereotypeAliases.put(key, val);
+	}
+
+	Map<String, String> tagAliases = new HashMap<String, String>();
+	nl = inputElement.getElementsByTagName("TagAlias");
+	for (int j = 0; j < nl.getLength(); j++) {
+	    Element e = (Element) nl.item(j);
+	    String key = e.getAttribute("alias");
+	    String val = e.getAttribute("wellknown");
+
+	    // case not to be ignored for tagged values at the moment
+	    // key = key.toLowerCase();
+	    // val = val.toLowerCase();
+
+	    tagAliases.put(key, val);
+	}
+
+	Map<String, String> descriptorSources = new HashMap<String, String>();
+	nl = inputElement.getElementsByTagName("DescriptorSource");
+	for (int j = 0; j < nl.getLength(); j++) {
+	    Element e = (Element) nl.item(j);
+	    String key = e.getAttribute("descriptor");
+	    String val = e.getAttribute("source");
+
+	    // case shall be ignored for descriptor and source
+	    key = key.toLowerCase();
+	    val = val.toLowerCase();
+
+	    if (val.equals("sc:extract")) {
+		String s = e.getAttribute("token");
+		val += "#" + (s == null ? "" : s);
+	    } else if (val.equals("tag")) {
+		String s = e.getAttribute("tag");
+		val += "#" + (s == null ? "" : s);
+	    }
+
+	    descriptorSources.put(key, val);
+	}
+
+	Map<String, PackageInfoConfiguration> packageInfos = parsePackageInfos(inputElement);
+
+	this.inputConfig = new InputConfiguration(inputId, inputParameters, stereotypeAliases, tagAliases,
+		descriptorSources, packageInfos);
+
+	// parse dialog specific parameters
+	nl = document.getElementsByTagName("dialog");
+	if (nl != null && nl.getLength() != 0) {
+	    for (int k = 0; k < nl.getLength(); k++) {
+		Node node = nl.item(k);
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+		    Element dialogElement = (Element) node;
+		    this.dialogParameters = parseParameters(dialogElement, "parameter");
+		}
+	    }
+	}
+
+	// parse log specific parameters
+	nl = document.getElementsByTagName("log");
+	if (nl != null && nl.getLength() != 0) {
+	    for (int k = 0; k < nl.getLength(); k++) {
+		Node node = nl.item(k);
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+		    Element logElement = (Element) node;
+		    this.logParameters = parseParameters(logElement, "parameter");
+		    if (this.logParameters.containsKey("reportUnrecognizedParametersAsWarnings") && this.logParameters
+			    .get("reportUnrecognizedParametersAsWarnings").equalsIgnoreCase("true")) {
+			this.reportUnrecognizedParametersAsWarnings = true;
+		    }
+		}
+	    }
+	}
+
+	// Load transformer configurations (if any are provided in the
+	// configuration file)
+	this.transformerConfigs = parseTransformerConfigurations(document);
+
+	// Load validator configurations (if any are provided in the
+	// configuration file)
+	this.validatorConfigs = parseValidatorConfigurations(document);
+
+	// Load target configurations
+	this.targetConfigs = parseTargetConfigurations(document);
+
+	this.resetFields();
+
+	// TBD discuss if there's a better way to support rule and
+	// requirements matching for the input model
+	// TBD apparently the matching requires all
+	// applicable encoding rules to be known up front
+	for (TargetConfiguration tgtConfig : targetConfigs) {
+
+	    // System.out.println(tgtConfig);
+	    String className = tgtConfig.getClassName();
+	    ProcessMode mode = tgtConfig.getProcessMode();
+
+	    // set targets and their mode; if a target occurs multiple
+	    // times, keep the enabled one(s)
+	    if (!this.fTargets.containsKey(className)) {
+		addTarget(className, mode);
+
+	    } else {
+		if (this.fTargets.get(className).equals(ProcessMode.disabled)) {
+		    // set targets and their mode; if a target occurs
+		    // multiple times, keep the enabled one(s)
+		    addTarget(className, mode);
+		}
 	    }
 
 	    /*
-	     * 2018-01-31 JE: uncomment the following to print the configuration as loaded
-	     * by ShapeChange, with xincludes resolved.
+	     * ensure that we have all the rules from all non-disabled targets we repeat
+	     * this for the same target (if it is not disabled) to ensure that we get the
+	     * union of all encoding rules
 	     */
-	    // try {
-	    // TransformerFactory tf = TransformerFactory.newInstance();
-	    // Transformer transformer = tf.newTransformer();
-	    // transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-	    // "no");
-	    // transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-	    // transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	    // transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-	    // transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-	    // "4");
-	    //
-	    // transformer.transform(new DOMSource(document),
-	    // new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
-	    // } catch (Exception e) {
-	    // e.printStackTrace();
-	    // }
-
-	    // parse input element specific content
-	    NodeList nl = document.getElementsByTagName("input");
-	    Element inputElement = (Element) nl.item(0);
-	    if (inputElement.hasAttribute("id")) {
-		inputId = inputElement.getAttribute("id").trim();
-		if (inputId.length() == 0) {
-		    inputId = null;
-		}
-	    } else {
-		inputId = Options.INPUTELEMENTID;
-	    }
-
-	    Map<String, String> inputParameters = new HashMap<String, String>();
-	    nl = inputElement.getElementsByTagName("parameter");
-	    for (int j = 0; j < nl.getLength(); j++) {
-		Element e = (Element) nl.item(j);
-		String key = e.getAttribute("name");
-		String val = e.getAttribute("value");
-		inputParameters.put(key, val);
-	    }
-
-	    Map<String, String> stereotypeAliases = new HashMap<String, String>();
-	    nl = inputElement.getElementsByTagName("StereotypeAlias");
-	    for (int j = 0; j < nl.getLength(); j++) {
-		Element e = (Element) nl.item(j);
-		String key = e.getAttribute("alias");
-		String val = e.getAttribute("wellknown");
-
-		// case shall be ignored
-		key = key.toLowerCase();
-		val = val.toLowerCase();
-
-		stereotypeAliases.put(key, val);
-	    }
-
-	    Map<String, String> tagAliases = new HashMap<String, String>();
-	    nl = inputElement.getElementsByTagName("TagAlias");
-	    for (int j = 0; j < nl.getLength(); j++) {
-		Element e = (Element) nl.item(j);
-		String key = e.getAttribute("alias");
-		String val = e.getAttribute("wellknown");
-
-		// case not to be ignored for tagged values at the moment
-		// key = key.toLowerCase();
-		// val = val.toLowerCase();
-
-		tagAliases.put(key, val);
-	    }
-
-	    Map<String, String> descriptorSources = new HashMap<String, String>();
-	    nl = inputElement.getElementsByTagName("DescriptorSource");
-	    for (int j = 0; j < nl.getLength(); j++) {
-		Element e = (Element) nl.item(j);
-		String key = e.getAttribute("descriptor");
-		String val = e.getAttribute("source");
-
-		// case shall be ignored for descriptor and source
-		key = key.toLowerCase();
-		val = val.toLowerCase();
-
-		if (val.equals("sc:extract")) {
-		    String s = e.getAttribute("token");
-		    val += "#" + (s == null ? "" : s);
-		} else if (val.equals("tag")) {
-		    String s = e.getAttribute("tag");
-		    val += "#" + (s == null ? "" : s);
-		}
-
-		descriptorSources.put(key, val);
-	    }
-
-	    Map<String, PackageInfoConfiguration> packageInfos = parsePackageInfos(inputElement);
-
-	    this.inputConfig = new InputConfiguration(inputId, inputParameters, stereotypeAliases, tagAliases,
-		    descriptorSources, packageInfos);
-
-	    // parse dialog specific parameters
-	    nl = document.getElementsByTagName("dialog");
-	    if (nl != null && nl.getLength() != 0) {
-		for (int k = 0; k < nl.getLength(); k++) {
-		    Node node = nl.item(k);
-		    if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element dialogElement = (Element) node;
-			this.dialogParameters = parseParameters(dialogElement, "parameter");
-		    }
-		}
-	    }
-
-	    // parse log specific parameters
-	    nl = document.getElementsByTagName("log");
-	    if (nl != null && nl.getLength() != 0) {
-		for (int k = 0; k < nl.getLength(); k++) {
-		    Node node = nl.item(k);
-		    if (node.getNodeType() == Node.ELEMENT_NODE) {
-			Element logElement = (Element) node;
-			this.logParameters = parseParameters(logElement, "parameter");
-			if (this.logParameters.containsKey("reportUnrecognizedParametersAsWarnings")
-				&& this.logParameters.get("reportUnrecognizedParametersAsWarnings")
-					.equalsIgnoreCase("true")) {
-			    this.reportUnrecognizedParametersAsWarnings = true;
-			}
-		    }
-		}
-	    }
-
-	    // Load transformer configurations (if any are provided in the
-	    // configuration file)
-	    this.transformerConfigs = parseTransformerConfigurations(document);
-
-	    // Load target configurations
-	    this.targetConfigs = parseTargetConfigurations(document);
-
-	    this.resetFields();
-
-	    // TBD discuss if there's a better way to support rule and
-	    // requirements matching for the input model
-	    // TBD apparently the matching requires all
-	    // applicable encoding rules to be known up front
-	    for (TargetConfiguration tgtConfig : targetConfigs) {
-
-		// System.out.println(tgtConfig);
-		String className = tgtConfig.getClassName();
-		ProcessMode mode = tgtConfig.getProcessMode();
-
-		// set targets and their mode; if a target occurs multiple
-		// times, keep the enabled one(s)
-		if (!this.fTargets.containsKey(className)) {
-		    addTarget(className, mode);
-
-		} else {
-		    if (this.fTargets.get(className).equals(ProcessMode.disabled)) {
-			// set targets and their mode; if a target occurs
-			// multiple times, keep the enabled one(s)
-			addTarget(className, mode);
-		    }
+	    if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)) {
+		for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
+		    ruleRegistry.addRuleSet(prs);
 		}
 
 		/*
-		 * ensure that we have all the rules from all non-disabled targets we repeat
-		 * this for the same target (if it is not disabled) to ensure that we get the
-		 * union of all encoding rules
+		 * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
+		 * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
+		 * WONT WORK!!!
 		 */
-		if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)) {
-		    for (ProcessRuleSet prs : tgtConfig.getRuleSets().values()) {
-			ruleRegistry.addRuleSet(prs);
-		    }
-
-		    /*
-		     * looks like we also need parameters like defaultEncodingRule !!! IF THERE ARE
-		     * DIFFERENT DEFAULT ENCODING RULES FOR DIFFERENT TARGETS (WITH SAME CLASS) THIS
-		     * WONT WORK!!!
-		     */
-		    for (String paramName : tgtConfig.getParameters().keySet()) {
-			setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
-		    }
-		}
-
-		// in order for the input model load not to produce warnings,
-		// we also need to load the map entries
-		if (tgtConfig instanceof TargetXmlSchemaConfiguration) {
-
-		    TargetXmlSchemaConfiguration config = (TargetXmlSchemaConfiguration) tgtConfig;
-
-		    // add xml schema namespace information
-		    for (XmlNamespace xns : config.getXmlNamespaces()) {
-			addNamespace(xns.getNsabr(), xns.getNs(), xns.getLocation());
-			// if (xns.getLocation() != null) {
-			addSchemaLocation(xns.getNs(), xns.getLocation());
-			// }
-		    }
-
-		    // add xsd map entries
-		    addXsdMapEntries(config.getXsdMapEntries());
-
-		} else {
-
-		    // add map entries for Target (no need to do this for
-		    // transformers)
-		    for (ProcessMapEntry pme : tgtConfig.getMapEntries()) {
-			addTargetTypeMapEntry(pme);
-		    }
+		for (String paramName : tgtConfig.getParameters().keySet()) {
+		    setParameter(className, paramName, tgtConfig.getParameters().get(paramName));
 		}
 	    }
 
-	    // create "tree"
-	    for (TargetConfiguration tgtConfig : targetConfigs) {
-		for (String inputIdref : tgtConfig.getInputIds()) {
-		    if (inputIdref.equals(getInputId())) {
-			this.inputTargetConfigs.add(tgtConfig);
-		    } else {
-			this.transformerConfigs.get(inputIdref).addTarget(tgtConfig);
-		    }
+	    // in order for the input model load not to produce warnings,
+	    // we also need to load the map entries
+	    if (tgtConfig instanceof TargetXmlSchemaConfiguration) {
+
+		TargetXmlSchemaConfiguration config = (TargetXmlSchemaConfiguration) tgtConfig;
+
+		// add xml schema namespace information
+		for (XmlNamespace xns : config.getXmlNamespaces()) {
+		    addNamespace(xns.getNsabr(), xns.getNs(), xns.getLocation());
+		    // if (xns.getLocation() != null) {
+		    addSchemaLocation(xns.getNs(), xns.getLocation());
+		    // }
+		}
+
+		// add xsd map entries
+		addXsdMapEntries(config.getXsdMapEntries());
+
+	    } else {
+
+		// add map entries for Target (no need to do this for
+		// transformers)
+		for (ProcessMapEntry pme : tgtConfig.getMapEntries()) {
+		    addTargetTypeMapEntry(pme);
 		}
 	    }
+	}
 
-	    for (TransformerConfiguration trfConfig : this.transformerConfigs.values()) {
-		String inputIdref = trfConfig.getInputId();
+	// create "tree"
+	for (TargetConfiguration tgtConfig : targetConfigs) {
+	    for (String inputIdref : tgtConfig.getInputIds()) {
 		if (inputIdref.equals(getInputId())) {
-		    this.inputTransformerConfigs.add(trfConfig);
+		    this.inputTargetConfigs.add(tgtConfig);
 		} else {
-		    this.transformerConfigs.get(inputIdref).addTransformer(trfConfig);
+		    this.transformerConfigs.get(inputIdref).addTarget(tgtConfig);
 		}
 	    }
+	}
 
-	    // Determine constraint creation handling parameters:
-	    String classTypesToCreateConstraintsFor = parameter("classTypesToCreateConstraintsFor");
-	    if (classTypesToCreateConstraintsFor != null) {
-		classTypesToCreateConstraintsFor = classTypesToCreateConstraintsFor.trim();
-		if (classTypesToCreateConstraintsFor.length() > 0) {
-		    String[] stereotypes = classTypesToCreateConstraintsFor.split("\\W*,\\W*");
-		    this.classTypesToCreateConstraintsFor = new HashSet<Integer>();
-		    for (String stereotype : stereotypes) {
-			String sForCons = stereotype.toLowerCase();
-			if (sForCons.equals("enumeration")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ENUMERATION));
-			} else if (sForCons.equals("codelist")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(CODELIST));
-			} else if (sForCons.equals("schluesseltabelle")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OKSTRAKEY));
-			} else if (sForCons.equals("fachid")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OKSTRAFID));
-			} else if (sForCons.equals("datatype")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(DATATYPE));
-			} else if (sForCons.equals("union")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(UNION));
-			} else if (sForCons.equals("featureconcept")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURECONCEPT));
-			} else if (sForCons.equals("attributeconcept")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ATTRIBUTECONCEPT));
-			} else if (sForCons.equals("roleconcept")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ROLECONCEPT));
-			} else if (sForCons.equals("valueconcept")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(VALUECONCEPT));
-			} else if (sForCons.equals("interface")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(MIXIN));
-			} else if (sForCons.equals("basictype")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(BASICTYPE));
-			} else if (sForCons.equals("adeelement")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURE));
-			} else if (sForCons.equals("featuretype")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURE));
-			} else if (sForCons.equals("type")) {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OBJECT));
-			} else {
-			    this.classTypesToCreateConstraintsFor.add(Integer.valueOf(UNKNOWN));
-			}
+	for (TransformerConfiguration trfConfig : this.transformerConfigs.values()) {
+	    String inputIdref = trfConfig.getInputId();
+	    if (inputIdref.equals(getInputId())) {
+		this.inputTransformerConfigs.add(trfConfig);
+	    } else {
+		this.transformerConfigs.get(inputIdref).addTransformer(trfConfig);
+	    }
+	}
+
+	// Determine constraint creation handling parameters:
+	String classTypesToCreateConstraintsFor = parameter("classTypesToCreateConstraintsFor");
+	if (classTypesToCreateConstraintsFor != null) {
+	    classTypesToCreateConstraintsFor = classTypesToCreateConstraintsFor.trim();
+	    if (classTypesToCreateConstraintsFor.length() > 0) {
+		String[] stereotypes = classTypesToCreateConstraintsFor.split("\\W*,\\W*");
+		this.classTypesToCreateConstraintsFor = new HashSet<Integer>();
+		for (String stereotype : stereotypes) {
+		    String sForCons = stereotype.toLowerCase();
+		    if (sForCons.equals("enumeration")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ENUMERATION));
+		    } else if (sForCons.equals("codelist")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(CODELIST));
+		    } else if (sForCons.equals("schluesseltabelle")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OKSTRAKEY));
+		    } else if (sForCons.equals("fachid")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OKSTRAFID));
+		    } else if (sForCons.equals("datatype")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(DATATYPE));
+		    } else if (sForCons.equals("union")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(UNION));
+		    } else if (sForCons.equals("featureconcept")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURECONCEPT));
+		    } else if (sForCons.equals("attributeconcept")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ATTRIBUTECONCEPT));
+		    } else if (sForCons.equals("roleconcept")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(ROLECONCEPT));
+		    } else if (sForCons.equals("valueconcept")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(VALUECONCEPT));
+		    } else if (sForCons.equals("interface")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(MIXIN));
+		    } else if (sForCons.equals("basictype")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(BASICTYPE));
+		    } else if (sForCons.equals("adeelement")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURE));
+		    } else if (sForCons.equals("featuretype")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(FEATURE));
+		    } else if (sForCons.equals("type")) {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(OBJECT));
+		    } else {
+			this.classTypesToCreateConstraintsFor.add(Integer.valueOf(UNKNOWN));
 		    }
 		}
 	    }
+	}
 
-	    String constraintCreationForProperties = parameter("constraintCreationForProperties");
-	    if (constraintCreationForProperties != null) {
-		if (constraintCreationForProperties.trim().equalsIgnoreCase("false")) {
-		    this.constraintCreationForProperties = false;
-		}
+	String constraintCreationForProperties = parameter("constraintCreationForProperties");
+	if (constraintCreationForProperties != null) {
+	    if (constraintCreationForProperties.trim().equalsIgnoreCase("false")) {
+		this.constraintCreationForProperties = false;
 	    }
+	}
 
-	    String ignoreEncodingRuleTaggedValues = parameter(PARAM_IGNORE_ENCODING_RULE_TVS);
+	String ignoreEncodingRuleTaggedValues = parameter(PARAM_IGNORE_ENCODING_RULE_TVS);
 
-	    if (ignoreEncodingRuleTaggedValues != null) {
-		if (ignoreEncodingRuleTaggedValues.trim().equalsIgnoreCase("true")) {
-		    this.ignoreEncodingRuleTaggedValues = true;
-		}
+	if (ignoreEncodingRuleTaggedValues != null) {
+	    if (ignoreEncodingRuleTaggedValues.trim().equalsIgnoreCase("true")) {
+		this.ignoreEncodingRuleTaggedValues = true;
 	    }
+	}
 
-	    String useStringInterning_value = parameter(PARAM_USE_STRING_INTERNING);
+	String useStringInterning_value = parameter(PARAM_USE_STRING_INTERNING);
 
-	    if (useStringInterning_value != null && useStringInterning_value.trim().equalsIgnoreCase("true")) {
-		this.useStringInterning = true;
-	    }
+	if (useStringInterning_value != null && useStringInterning_value.trim().equalsIgnoreCase("true")) {
+	    this.useStringInterning = true;
+	}
 
-	    String dontConstructAssociationNames_value = parameter(PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES);
+	String dontConstructAssociationNames_value = parameter(PARAM_DONT_CONSTRUCT_ASSOCIATION_NAMES);
 
-	    if (dontConstructAssociationNames_value != null
-		    && dontConstructAssociationNames_value.trim().equalsIgnoreCase("true")) {
-		this.dontConstructAssociationNames = true;
-	    }
+	if (dontConstructAssociationNames_value != null
+		&& dontConstructAssociationNames_value.trim().equalsIgnoreCase("true")) {
+	    this.dontConstructAssociationNames = true;
+	}
 
-	    String addTaggedValues_value = parameter("addTaggedValues");
+	String addTaggedValues_value = parameter("addTaggedValues");
 
-	    if (addTaggedValues_value != null && addTaggedValues_value.trim().equals("*")) {
-		this.allowAllTags = true;
-	    }
+	if (addTaggedValues_value != null && addTaggedValues_value.trim().equals("*")) {
+	    this.allowAllTags = true;
+	}
 
-	    String addStereotypes_value = parameter("addStereotypes");
+	String addStereotypes_value = parameter("addStereotypes");
 
-	    if (StringUtils.isNotBlank(addStereotypes_value)) {
+	if (StringUtils.isNotBlank(addStereotypes_value)) {
 
-		if (addStereotypes_value.trim().equals("*")) {
-		    this.allowAllStereotypes = true;
-		} else {
-		    String[] as = StringUtils.split(addStereotypes_value, ",");
-		    for (String s : as) {
-			if (StringUtils.stripToNull(s) != null) {
-			    this.addedStereotypes.add(s.trim());
-			}
+	    if (addStereotypes_value.trim().equals("*")) {
+		this.allowAllStereotypes = true;
+	    } else {
+		String[] as = StringUtils.split(addStereotypes_value, ",");
+		for (String s : as) {
+		    if (StringUtils.stripToNull(s) != null) {
+			this.addedStereotypes.add(s.trim());
 		    }
 		}
 	    }
+	}
 
-	    String language_value = inputConfig.getParameters().get(PARAM_LANGUAGE);
+	String language_value = inputConfig.getParameters().get(PARAM_LANGUAGE);
 
-	    if (language_value != null && !language_value.trim().isEmpty()) {
-		this.language = language_value.trim().toLowerCase();
-	    }
-
-	} catch (SAXException e) {
-	    String m = e.getMessage();
-	    if (m != null) {
-		throw new ShapeChangeAbortException(
-			"Error while loading configuration file: " + System.getProperty("line.separator") + m);
-	    } else {
-		e.printStackTrace(System.err);
-		throw new ShapeChangeAbortException(
-			"Error while loading configuration file: " + System.getProperty("line.separator") + System.err);
-	    }
-	} catch (IOException e) {
-	    String m = e.getMessage();
-	    if (m != null) {
-		throw new ShapeChangeAbortException(
-			"Error while loading configuration file: " + System.getProperty("line.separator") + m);
-	    } else {
-		e.printStackTrace(System.err);
-		throw new ShapeChangeAbortException(
-			"Error while loading configuration file: " + System.getProperty("line.separator") + System.err);
-	    }
+	if (language_value != null && !language_value.trim().isEmpty()) {
+	    this.language = language_value.trim().toLowerCase();
 	}
 
 	MapEntry nsme = namespace("gml");
@@ -2218,6 +2193,9 @@ public class Options {
 			tgtConfigInputs.add(getInputId());
 		    }
 
+		    // get the validator IDs
+		    List<String> tgtValidatorIds = parseValidatorIds(tgtE);
+
 		    Element advancedProcessConfigurations = parseAdvancedProcessConfigurations(tgtE);
 
 		    TargetConfiguration tgtConfig;
@@ -2231,7 +2209,8 @@ public class Options {
 
 			// create target config and add it to list
 			tgtConfig = new TargetConfiguration(tgtConfigName, tgtMode, processParameters, processRuleSets,
-				processMapEntries, tgtConfigInputs, namespaces, advancedProcessConfigurations);
+				processMapEntries, tgtConfigInputs, namespaces, advancedProcessConfigurations,
+				tgtValidatorIds);
 
 		    } else if (tgtType.equals("TargetOwl")) {
 
@@ -2256,7 +2235,7 @@ public class Options {
 				processParameters, processRuleSets, tgtConfigInputs, namespaces,
 				advancedProcessConfigurations, rdfTypeMapEntries, rdfPropertyMapEntries,
 				stereotypeConversionParameters, typeConversionParameters, propertyConversionParameters,
-				descriptorTargets, constraintMappings, generalProperties);
+				descriptorTargets, constraintMappings, generalProperties, tgtValidatorIds);
 
 			tgtConfig = owlConfig;
 
@@ -2271,13 +2250,25 @@ public class Options {
 
 			tgtConfig = new TargetXmlSchemaConfiguration(tgtConfigName, tgtMode, processParameters,
 				processRuleSets, null, xsdMapEntries, xsdPropertyMapEntries, xmlNamespaces,
-				tgtConfigInputs, advancedProcessConfigurations);
+				tgtConfigInputs, advancedProcessConfigurations, tgtValidatorIds);
 		    }
 		    tgtConfigs.add(tgtConfig);
 		}
 	    }
 	}
 	return tgtConfigs;
+    }
+
+    private List<String> parseValidatorIds(Element e) {
+
+	List<String> validatorIds;
+	if (e.hasAttribute("validators")) {
+	    String[] validatorIdsArr = e.getAttribute("validators").split("\\s");
+	    validatorIds = Arrays.asList(validatorIdsArr);
+	} else {
+	    validatorIds = new ArrayList<String>();
+	}
+	return validatorIds;
     }
 
     /**
@@ -3118,12 +3109,15 @@ public class Options {
 					+ trfConfigName + ") which is not allowed.");
 		    }
 
+		    // get the validator IDs
+		    List<String> validatorIds = parseValidatorIds(trfE);
+
 		    Element advancedProcessConfigurations = parseAdvancedProcessConfigurations(trfE);
 
 		    // create transformer config and add it to list
 		    TransformerConfiguration trfConfig = new TransformerConfiguration(trfConfigId, trfConfigName,
 			    trfMode, processParameters, processRuleSets, processMapEntries, taggedValues,
-			    trfConfigInput, advancedProcessConfigurations);
+			    trfConfigInput, advancedProcessConfigurations, validatorIds);
 
 		    trfConfigs.put(trfConfig.getId(), trfConfig);
 		}
@@ -3131,6 +3125,73 @@ public class Options {
 	}
 	return trfConfigs;
 
+    }
+
+    /**
+     * Parses all validator configuration aspects available in the given
+     * ShapeChangeConfiguration document.
+     *
+     * @param configurationDocument
+     * @return map with key: 'id' assigned to the validator, value: the validator
+     *         configuration; can be empty but not <code>null</code>
+     * @throws ShapeChangeAbortException
+     *
+     */
+    private Map<String, ValidatorConfiguration> parseValidatorConfigurations(Document configurationDocument)
+	    throws ShapeChangeAbortException {
+
+	Map<String, ValidatorConfiguration> valConfigs = new HashMap<String, ValidatorConfiguration>();
+
+	NodeList valsNl = configurationDocument.getElementsByTagName("validators");
+
+	for (int i = 0; i < valsNl.getLength(); i++) {
+	    Node valsN = valsNl.item(i);
+	    NodeList valNl = valsN.getChildNodes();
+
+	    // look for all Validator elements in the "validators" Node
+	    for (int j = 0; j < valNl.getLength(); j++) {
+		Node valN = valNl.item(j);
+
+		if (valN.getNodeType() == Node.ELEMENT_NODE) {
+		    Element valE = (Element) valN;
+
+		    // parse content of Validator element
+
+		    // get validator id
+		    String valConfigId = valE.getAttribute("id");
+
+		    // get validator class name
+		    String valConfigName = valE.getAttribute("class");
+
+		    // get process mode
+		    ProcessMode processMode = parseMode(valE);
+
+		    // get validation mode
+		    ValidationMode valMode = ValidationMode.strict;
+		    if (valE.hasAttribute("validationMode")) {
+			String mode = valE.getAttribute("validationMode");
+			valMode = ValidationMode.fromString(mode);
+		    }
+
+		    Map<String, String> processParameters = parseParameters(valE, "ProcessParameter");
+
+		    /*
+		     * now look up all ProcessRuleSet elements, if there are any
+		     */
+		    Map<String, ProcessRuleSet> processRuleSets = parseRuleSets(valE, "ProcessRuleSet", false);
+
+		    Element advancedProcessConfigurations = parseAdvancedProcessConfigurations(valE);
+
+		    // create validator config and add it to list
+		    ValidatorConfiguration valConfig = new ValidatorConfiguration(valConfigId, valConfigName,
+			    processMode, processParameters, processRuleSets, valMode, advancedProcessConfigurations);
+
+		    valConfigs.put(valConfig.getId(), valConfig);
+		}
+	    }
+	}
+	
+	return valConfigs;
     }
 
     /**
@@ -3443,6 +3504,10 @@ public class Options {
 
     public Map<String, TransformerConfiguration> getTransformerConfigs() {
 	return this.transformerConfigs;
+    }
+    
+    public Map<String, ValidatorConfiguration> getValidatorConfigs() {
+	return this.validatorConfigs;
     }
 
     /**

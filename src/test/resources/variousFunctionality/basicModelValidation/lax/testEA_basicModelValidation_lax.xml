@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/src/main/resources/schema/ShapeChangeConfiguration.xsd">
+	<!-- src/main/resources/schema/ShapeChangeConfiguration.xsd -->
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/test/resources/variousFunctionality/basicModelValidation/test_basicModelValidation.qea"/>
+		<parameter name="appSchemaNameRegex" value="Test.*"/>
+		<parameter name="addTaggedValues" value="*"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="loadConstraintsForSelectedSchemasOnly" value="true"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="src/main/resources/config/StandardAliases.xml"/>
+	</input>	
+	<log>
+    <parameter name="reportLevel" value="INFO"/>
+    <parameter name="logFile" value="testResults/variousFunctionality/basicModelValidation/lax/log.xml"/>
+  </log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.ShapeChange.Transformation.Identity.IdentityTransform" id="TRF_END" input="INPUT" validators="valDocumentation valPropertyTaggedValues valEnumTaggedValues" mode="enabled"/>
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.ShapeChange.Target.XmlSchema.XmlSchema" inputs="TRF_END" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/variousFunctionality/basicModelValidation/lax/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="gml33"/>			
+	    <xi:include href="src/main/resources/config/StandardRules.xml"/>
+			<xi:include href="src/main/resources/config/StandardNamespaces.xml"/>
+			<xi:include href="src/main/resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+	</targets>
+	<validators>
+		<Validator id="valDocumentation" class="de.interactive_instruments.ShapeChange.ModelValidation.Basic.BasicModelValidator" mode="enabled" validationMode="lax">
+			<advancedProcessConfigurations>
+				<BasicContentTests>
+					<tests>						
+						<!-- Is the documentation of every feature type, attribute, and enum present? -->
+						<DescriptorContentTest descriptorOrTaggedValue="documentation" regex="^.+$" modelElementType="Class" modelElementStereotype="(?i)featuretype"  />
+						<DescriptorContentTest descriptorOrTaggedValue="documentation" regex="^.+$" modelElementType="Attribute" modelElementOwnerStereotype="(?!(?i)codelist).*" />
+					</tests>
+				</BasicContentTests>
+			</advancedProcessConfigurations>
+		</Validator>
+		<Validator id="valPropertyTaggedValues" class="de.interactive_instruments.ShapeChange.ModelValidation.Basic.BasicModelValidator" mode="enabled" validationMode="lax">
+			<advancedProcessConfigurations>
+				<BasicContentTests>
+					<tests>						
+						<!-- Does every property (excluding enums and codes) have tags inlineOrByReference and sequenceNumber with valid values? -->
+						<DescriptorContentTest descriptorOrTaggedValue="TV:inlineOrByReference" regex="^(inline|byReference|inlineOrByReference)$" modelElementType="Property" modelElementOwnerStereotype="(?!(?i)(enumeration|codelist)).*" />
+						<DescriptorContentTest descriptorOrTaggedValue="TV:sequenceNumber" regex="^\d+$" modelElementType="Property" modelElementOwnerStereotype="(?!(?i)(enumeration|codelist)).*"/>						
+					</tests>
+				</BasicContentTests>
+			</advancedProcessConfigurations>
+		</Validator>
+		<Validator id="valEnumTaggedValues" class="de.interactive_instruments.ShapeChange.ModelValidation.Basic.BasicModelValidator" mode="enabled" validationMode="lax">
+			<advancedProcessConfigurations>
+				<BasicContentTests>
+					<tests>
+						<!-- Does every enum have tagged value 'lesbarerName' with a non-empty value? -->
+						<DescriptorContentTest descriptorOrTaggedValue="TV:lesbarerName" regex="^.+$" modelElementType="Attribute" modelElementOwnerStereotype="(?i)enumeration" />
+					</tests>
+				</BasicContentTests>
+			</advancedProcessConfigurations>
+		</Validator>
+	</validators>
+</ShapeChangeConfiguration>

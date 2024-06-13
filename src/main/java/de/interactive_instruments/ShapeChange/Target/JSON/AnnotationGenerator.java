@@ -44,6 +44,7 @@ import de.interactive_instruments.ShapeChange.ModelElementSelectionInfo;
 import de.interactive_instruments.ShapeChange.ModelElementSelectionParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
+import de.interactive_instruments.ShapeChange.Model.DescriptorAndTagResolver;
 import de.interactive_instruments.ShapeChange.Model.Info;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.MultiValueBehavior;
@@ -72,13 +73,6 @@ public class AnnotationGenerator implements MessageSource {
 
     protected List<AbstractJsonSchemaAnnotationElement> annotationElements;
     protected String language;
-
-    /**
-     * group 0: the whole input string group 1: the string to use as separator of
-     * multiple values; can be <code>null</code> group 2: the name of the tagged
-     * value; cannot be <code>null</code>
-     */
-    protected final Pattern annotationTaggedValuePattern = Pattern.compile("TV(\\(.+?\\))?:(.+)");
 
     public AnnotationGenerator(List<AbstractJsonSchemaAnnotationElement> annotationElements, String language,
 	    ShapeChangeResult result) {
@@ -141,7 +135,7 @@ public class AnnotationGenerator implements MessageSource {
 		 * identify the descriptor or tagged value from the field and get value(s)
 		 */
 		List<String> values = new ArrayList<String>();
-		boolean descRecognized = resolveDescriptor(i, desc, values);
+		boolean descRecognized = DescriptorAndTagResolver.resolveDescriptorOrTag(i, desc, language, values);
 
 		// append the text from the template up until the current find
 		for (StringBuilder b : builders) {
@@ -279,132 +273,7 @@ public class AnnotationGenerator implements MessageSource {
 	return selectionInfo == null || selectionInfo.matches(i);
     }
 
-    protected boolean resolveDescriptor(Info i, String desc, List<String> values) {
-
-	boolean descRecognized = true;
-
-	if (desc.startsWith("TV")) {
-
-	    Matcher m = annotationTaggedValuePattern.matcher(desc);
-
-	    /*
-	     * validation of the configuration already ensured that desc matches
-	     */
-	    m.matches();
-	    String separator = m.group(1);
-	    String tv = m.group(2);
-
-	    String[] tv_values = i.taggedValuesInLanguage(tv, language);
-
-	    if (separator != null) {
-		// exclude leading "(" and trailing ")"
-		separator = separator.substring(1, separator.length() - 1);
-		/*
-		 * match the string separator as if it were a literal pattern
-		 */
-		String quoted_separator = Pattern.quote(separator);
-
-		for (String tv_value : tv_values) {
-		    String[] split = tv_value.split(quoted_separator);
-		    for (String s : split) {
-			if (!s.trim().isEmpty()) {
-			    values.add(s.trim());
-			}
-		    }
-		}
-	    } else {
-		for (String tv_value : tv_values) {
-		    if (!tv_value.trim().isEmpty()) {
-			values.add(tv_value.trim());
-		    }
-		}
-	    }
-
-	} else if (desc.equalsIgnoreCase("name")) {
-
-	    values.add(i.name());
-
-	} else if (desc.equalsIgnoreCase("alias")) {
-
-	    String s = i.aliasName();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("documentation")) {
-
-	    String s = i.documentation();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("definition")) {
-
-	    String s = i.definition();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("description")) {
-
-	    String s = i.description();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("example")) {
-
-	    String[] s = i.examples();
-	    if (s != null && s.length > 0) {
-		for (String ex : s) {
-		    if (ex.trim().length() > 0) {
-			values.add(ex.trim());
-		    }
-		}
-	    }
-
-	} else if (desc.equalsIgnoreCase("legalBasis")) {
-
-	    String s = i.legalBasis();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("dataCaptureStatement")) {
-
-	    String[] s = i.dataCaptureStatements();
-	    if (s != null && s.length > 0) {
-		for (String ex : s) {
-		    if (ex.trim().length() > 0) {
-			values.add(ex.trim());
-		    }
-		}
-	    }
-
-	} else if (desc.equalsIgnoreCase("primaryCode")) {
-
-	    String s = i.primaryCode();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else if (desc.equalsIgnoreCase("globalIdentifier")) {
-
-	    String s = i.globalIdentifier();
-	    if (s != null && !s.trim().isEmpty()) {
-		values.add(s);
-	    }
-
-	} else {
-	    /*
-	     * the field in the template neither identifies a known descriptor nor a tagged
-	     * value
-	     */
-	    descRecognized = false;
-	}
-
-	return descRecognized;
-    }
+    
 
     /**
      * @param advancedProcessConfigElmt the advancedProcessConfigurations element

@@ -37,22 +37,44 @@ import org.junit.jupiter.api.Test;
 @Tag("SCXML")
 public class VariousFunctionalityTest extends BasicTestSCXML {
 
-	
-	@Test
-	public void testNotEncoded() {
-		
-		multiTest("src/test/resources/variousFunctionality/notEncoded/testEA_notEncoded.xml",
-				new String[] { "xsd", "json", "sql" },
-				"testResults/variousFunctionality/notEncoded",
-				"src/test/resources/variousFunctionality/notEncoded/reference");
-	}
-	
-	@Test
-	public void testLoadingWithProhibitedStatusSetting() {
-		
-		multiTest("src/test/resources/variousFunctionality/loadingWithProhibitedStatus/testEA_loadingWithProhibitedStatusSetting.xml",
-				new String[] { "xsd", "html" },
-				"testResults/loadingWithProhibitedStatusSetting/results",
-				"src/test/resources/variousFunctionality/loadingWithProhibitedStatus/reference");
-	}
+    @Test
+    public void testNotEncoded() {
+
+	multiTest("src/test/resources/variousFunctionality/notEncoded/testEA_notEncoded.xml",
+		new String[] { "xsd", "json", "sql" }, "testResults/variousFunctionality/notEncoded",
+		"src/test/resources/variousFunctionality/notEncoded/reference");
+    }
+
+    @Test
+    public void testLoadingWithProhibitedStatusSetting() {
+
+	multiTest(
+		"src/test/resources/variousFunctionality/loadingWithProhibitedStatus/testEA_loadingWithProhibitedStatusSetting.xml",
+		new String[] { "xsd", "html" }, "testResults/loadingWithProhibitedStatusSetting/results",
+		"src/test/resources/variousFunctionality/loadingWithProhibitedStatus/reference");
+    }
+
+    @Test
+    public void testBasicModelValidation_strict_fail() {
+
+	executeAndError(
+		"src/test/resources/variousFunctionality/basicModelValidation/strict_fail/testEA_basicModelValidation_strict_fail.xml",
+		"It is expected that the log contains an error, informing the user about model validation issues.");
+    }
+
+    @Test
+    public void testBasicModelValidation_lax() {
+
+	multiTest("src/test/resources/variousFunctionality/basicModelValidation/lax/testEA_basicModelValidation_lax.xml",
+		new String[] { "xsd" }, "testResults/variousFunctionality/basicModelValidation/lax",
+		"src/test/resources/variousFunctionality/basicModelValidation/lax/reference");
+    }
+    
+    @Test
+    public void testBasicModelValidation_strict_success() {
+
+	multiTest("src/test/resources/variousFunctionality/basicModelValidation/strict_success/testEA_basicModelValidation_strict_success.xml",
+		new String[] { "xsd" }, "testResults/variousFunctionality/basicModelValidation/strict_success",
+		"src/test/resources/variousFunctionality/basicModelValidation/strict_success/reference");
+    }
 }

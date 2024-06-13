@@ -91,6 +91,12 @@ public interface Model {
     public SortedSet<? extends PropertyInfo> selectedSchemaProperties();
 
     /**
+     * @return a (new) set with all associations that connect at least one class
+     *         from the selected schemas; can be empty but not <code>null</code>.
+     */
+    public SortedSet<? extends AssociationInfo> selectedSchemaAssociations();
+
+    /**
      * Return all ClassInfo objects contained in the given package and in sub-
      * packages, which belong to the same targetNamespace as the given package.
      * 

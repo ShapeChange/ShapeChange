@@ -95,6 +95,7 @@ public class TargetOwlConfiguration extends TargetConfiguration {
      * @param descriptorTargets              tbd
      * @param constraintMappings             tbd
      * @param generalProperties              tbd
+     * @param validatorIds                   tbd
      */
     public TargetOwlConfiguration(String className, ProcessMode processMode, Map<String, String> parameters,
 	    Map<String, ProcessRuleSet> ruleSets, SortedSet<String> inputIds, List<Namespace> namespaces,
@@ -105,9 +106,10 @@ public class TargetOwlConfiguration extends TargetConfiguration {
 	    Map<String, List<PropertyConversionParameter>> propertyConversionParameters,
 	    List<DescriptorTarget> descriptorTargets,
 	    SortedMap<ConstraintMapping.ConstraintType, ConstraintMapping> constraintMappings,
-	    List<RdfGeneralProperty> generalProperties) {
+	    List<RdfGeneralProperty> generalProperties, List<String> validatorIds) {
 
-	super(className, processMode, parameters, ruleSets, null, inputIds, namespaces, advancedProcessConfigurations);
+	super(className, processMode, parameters, ruleSets, null, inputIds, namespaces, advancedProcessConfigurations,
+		validatorIds);
 
 	for (String type : rdfTypeMapEntries.keySet()) {
 	    for (RdfTypeMapEntry rtme : rdfTypeMapEntries.get(type)) {

@@ -38,6 +38,8 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Configuration of a transformer.
  * 
@@ -46,177 +48,182 @@ import org.w3c.dom.Element;
  */
 public class TransformerConfiguration extends ProcessConfiguration {
 
-	/**
-	 * Identifier of the process, unique within a ShapeChangeConfiguration.
-	 */
-	private String id;
+    /**
+     * Identifier of the process, unique within a ShapeChangeConfiguration.
+     */
+    private String id;
 
-	/**
-	 * Identifier of the input for this transformer. Can be the identifier of
-	 * the global input model.
-	 */
-	private String inputId;
+    /**
+     * Identifier of the input for this transformer. Can be the identifier of the
+     * global input model.
+     */
+    private String inputId;
 
-	/**
-	 * key: rule of ProcessMapEntry value: map of all ProcessMapEntries defined
-	 * for the rule (key of this map: type, value: ProcessMapEntry)
-	 */
-	private Map<String, Map<String, ProcessMapEntry>> mapEntriesByRule = new HashMap<String, Map<String, ProcessMapEntry>>();
+    /**
+     * List of validator identifiers.
+     */
+    private List<String> validatorIds;
 
-	/**
-	 * List of tagged values defined for the transformer; <code>null</code> if
-	 * none are defined.
-	 */
-	private List<TaggedValueConfigurationEntry> taggedValues;
+    /**
+     * key: rule of ProcessMapEntry value: map of all ProcessMapEntries defined for
+     * the rule (key of this map: type, value: ProcessMapEntry)
+     */
+    private Map<String, Map<String, ProcessMapEntry>> mapEntriesByRule = new HashMap<String, Map<String, ProcessMapEntry>>();
 
-	/**
-	 * Creates a TransformerConfiguration.
-	 * 
-	 * @param id
-	 *            Transformer identifier
-	 * @param className
-	 *            The fully qualified name of the class implementing the
-	 *            process.
-	 * @param processMode
-	 *            The execution mode of the process.
-	 * @param parameters
-	 *            The process parameters. <code>null</code> if no parameters
-	 *            were declared in the configuration.
-	 * @param ruleSets
-	 *            The rule sets declared for the process. <code>null</code> if
-	 *            no rule sets were declared in the configuration.
-	 * @param mapEntries
-	 *            The map entries for the process. <code>null</code> if no map
-	 *            entries were declared in the configuration.
-	 * @param taggedValues
-	 *            The tagged values defined for the transformer.
-	 *            <code>null</code> if no tagged values were declared in the
-	 *            configuration.
-	 * @param inputId
-	 *            identifier of the input for this transformer
-	 * @param advancedProcessConfigurations
-	 *            the 'advancedProcessConfigurations' element from the
-	 *            configuration of the process; <code>null</code> if it is not
-	 *            set there
-	 */
-	public TransformerConfiguration(String id, String className,
-			ProcessMode processMode, Map<String, String> parameters,
-			Map<String, ProcessRuleSet> ruleSets,
-			List<ProcessMapEntry> mapEntries,
-			List<TaggedValueConfigurationEntry> taggedValues, String inputId,
-			Element advancedProcessConfigurations) {
-		super(className, processMode, parameters, ruleSets, mapEntries,
-				advancedProcessConfigurations);
-		this.id = id;
-		this.inputId = inputId;
+    /**
+     * List of tagged values defined for the transformer; <code>null</code> if none
+     * are defined.
+     */
+    private List<TaggedValueConfigurationEntry> taggedValues;
 
-		if (mapEntries != null) {
-			for (ProcessMapEntry mapEntry : mapEntries) {
-				if (!mapEntriesByRule.containsKey(mapEntry.getRule())) {
-					mapEntriesByRule.put(mapEntry.getRule(),
-							new HashMap<String, ProcessMapEntry>());
-				}
-				mapEntriesByRule.get(mapEntry.getRule()).put(mapEntry.getType(),
-						mapEntry);
-			}
+    /**
+     * Creates a TransformerConfiguration.
+     * 
+     * @param id                            Transformer identifier
+     * @param className                     The fully qualified name of the class
+     *                                      implementing the process.
+     * @param processMode                   The execution mode of the process.
+     * @param parameters                    The process parameters.
+     *                                      <code>null</code> if no parameters were
+     *                                      declared in the configuration.
+     * @param ruleSets                      The rule sets declared for the process.
+     *                                      <code>null</code> if no rule sets were
+     *                                      declared in the configuration.
+     * @param mapEntries                    The map entries for the process.
+     *                                      <code>null</code> if no map entries were
+     *                                      declared in the configuration.
+     * @param taggedValues                  The tagged values defined for the
+     *                                      transformer. <code>null</code> if no
+     *                                      tagged values were declared in the
+     *                                      configuration.
+     * @param inputId                       identifier of the input for this
+     *                                      transformer
+     * @param advancedProcessConfigurations the 'advancedProcessConfigurations'
+     *                                      element from the configuration of the
+     *                                      process; <code>null</code> if it is not
+     *                                      set there
+     * @param validatorIds                  List of validator identifiers.
+     */
+    public TransformerConfiguration(String id, String className, ProcessMode processMode,
+	    Map<String, String> parameters, Map<String, ProcessRuleSet> ruleSets, List<ProcessMapEntry> mapEntries,
+	    List<TaggedValueConfigurationEntry> taggedValues, String inputId, Element advancedProcessConfigurations,
+	    List<String> validatorIds) {
+	super(className, processMode, parameters, ruleSets, mapEntries, advancedProcessConfigurations);
+	this.id = id;
+	this.inputId = inputId;
+	this.validatorIds = validatorIds == null ? new ArrayList<String>() : validatorIds;
+
+	if (mapEntries != null) {
+	    for (ProcessMapEntry mapEntry : mapEntries) {
+		if (!mapEntriesByRule.containsKey(mapEntry.getRule())) {
+		    mapEntriesByRule.put(mapEntry.getRule(), new HashMap<String, ProcessMapEntry>());
 		}
-
-		this.taggedValues = taggedValues;
+		mapEntriesByRule.get(mapEntry.getRule()).put(mapEntry.getType(), mapEntry);
+	    }
 	}
 
-	/**
-	 * @return The identifier of the process.
-	 */
-	public String getId() {
-		return id;
+	this.taggedValues = taggedValues;
+    }
+
+    /**
+     * @return The identifier of the process.
+     */
+    public String getId() {
+	return id;
+    }
+
+    /**
+     * @return The identifier of the input for this transformer, for example
+     *         referencing the global model input.
+     */
+    public String getInputId() {
+	return inputId;
+    }
+
+    /**
+     * @return list of validator IDs; can be empty but not <code>null</code>
+     */
+    public List<String> getValidatorIds() {
+	return validatorIds;
+    }
+
+    public String toString() {
+
+	StringBuffer sb = new StringBuffer();
+
+	sb.append("TransformerConfiguration:\r\n");
+	sb.append("\tid: " + id + "\r\n");
+	sb.append("\tinput: " + inputId + "\r\n");
+	sb.append("\tvalidators: " + StringUtils.join(validatorIds, ", ") + "\r\n");
+	sb.append("--- with process configuration:\r\n");
+	sb.append(super.toString());
+
+	return sb.toString();
+    }
+
+    public ProcessMapEntry getMappingForType(String rule, String type) {
+	if (rule == null || type == null)
+	    return null;
+	else {
+	    Map<String, ProcessMapEntry> pme = mapEntriesByRule.get(rule);
+	    if (pme == null) {
+		return null;
+	    } else {
+		return pme.get(type);
+	    }
+	}
+    }
+
+    /**
+     * @param rule Name of the rule that the type mapping must apply to, can be
+     *             <code>null</code> (then any type mapping with the given name is
+     *             fine)
+     * @param type Value of the type in a ProcessMapEntry
+     * 
+     * @return tbd
+     */
+    public boolean hasMappingForType(String rule, String type) {
+
+	if (this.mapEntriesByRule.containsKey(rule)) {
+	    return mapEntriesByRule.get(rule).get(type) != null;
+	} else {
+	    return false;
 	}
 
-	/**
-	 * @return The identifier of the input for this transformer, for example
-	 *         referencing the global model input.
-	 */
-	public String getInputId() {
-		return inputId;
+    }
+
+    public boolean hasTaggedValues() {
+	return taggedValues != null;
+    }
+
+    public List<TaggedValueConfigurationEntry> getTaggedValues() {
+	return taggedValues;
+    }
+
+    /**
+     * @return list of targets that this transformer and all other transformers in
+     *         the tree (where this transformer is the root) have.
+     */
+    public List<TargetConfiguration> getAllTargets() {
+
+	List<TargetConfiguration> targets = new ArrayList<TargetConfiguration>();
+
+	if (this.getTargets() != null) {
+	    targets.addAll(this.getTargets());
 	}
 
-	public String toString() {
-
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("TransformerConfiguration:\r\n");
-		sb.append("\tid: " + id);
-		sb.append("--- with process configuration:\r\n");
-		sb.append(super.toString());
-
-		return sb.toString();
+	if (this.getTransformers() != null) {
+	    for (TransformerConfiguration trfChild : this.getTransformers()) {
+		List<TargetConfiguration> targetsOftrfChild = trfChild.getAllTargets();
+		targets.addAll(targetsOftrfChild);
+	    }
 	}
+	return targets;
+    }
 
-	public ProcessMapEntry getMappingForType(String rule, String type) {
-		if (rule == null || type == null)
-			return null;
-		else {
-			Map<String, ProcessMapEntry> pme = mapEntriesByRule.get(rule);
-			if (pme == null) {
-				return null;
-			} else {
-				return pme.get(type);
-			}
-		}
-	}
+    public boolean hasRule(String ruleID) {
 
-	/**
-	 * @param rule
-	 *            Name of the rule that the type mapping must apply to, can be
-	 *            <code>null</code> (then any type mapping with the given name
-	 *            is fine)
-	 * @param type
-	 *            Value of the type in a ProcessMapEntry
-	 * 
-	 * @return tbd
-	 */
-	public boolean hasMappingForType(String rule, String type) {
-
-		if (this.mapEntriesByRule.containsKey(rule)) {
-			return mapEntriesByRule.get(rule).get(type) != null;
-		} else {
-			return false;
-		}
-
-	}
-
-	public boolean hasTaggedValues() {
-		return taggedValues != null;
-	}
-
-	public List<TaggedValueConfigurationEntry> getTaggedValues() {
-		return taggedValues;
-	}
-
-	/**
-	 * @return list of targets that this transformer and all other transformers
-	 *         in the tree (where this transformer is the root) have.
-	 */
-	public List<TargetConfiguration> getAllTargets() {
-
-		List<TargetConfiguration> targets = new ArrayList<TargetConfiguration>();
-
-		if (this.getTargets() != null) {
-			targets.addAll(this.getTargets());
-		}
-
-		if (this.getTransformers() != null) {
-			for (TransformerConfiguration trfChild : this.getTransformers()) {
-				List<TargetConfiguration> targetsOftrfChild = trfChild
-						.getAllTargets();
-				targets.addAll(targetsOftrfChild);
-			}
-		}
-		return targets;
-	}
-	
-	public boolean hasRule(String ruleID) {
-		
-		return this.getAllRules().contains(ruleID);
-	}
+	return this.getAllRules().contains(ruleID);
+    }
 
 }

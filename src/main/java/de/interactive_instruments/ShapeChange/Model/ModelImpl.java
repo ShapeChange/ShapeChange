@@ -250,6 +250,23 @@ public abstract class ModelImpl implements Model {
 
 	return res;
     }
+    
+    @Override
+    public SortedSet<? extends AssociationInfo> selectedSchemaAssociations() {
+
+	SortedSet<? extends PropertyInfo> selPis = this.selectedSchemaProperties();
+
+	SortedSet<AssociationInfo> res = new TreeSet<>();
+
+	for (PropertyInfo pi : selPis) {
+
+	    if (!pi.isAttribute()) {
+		res.add(pi.association());
+	    }
+	}
+
+	return res;
+    }
 
     @Override
     public SortedSet<ClassInfo> classes() {

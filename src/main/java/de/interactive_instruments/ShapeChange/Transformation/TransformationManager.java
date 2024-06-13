@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -47,8 +48,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.ShapeChange.MessageSource;
 import de.interactive_instruments.ShapeChange.Options;
@@ -105,7 +104,7 @@ public class TransformationManager implements MessageSource {
 	} catch (Exception e) {
 	    throw new ShapeChangeAbortException("Could not load transformer class '" + trfConfig.getClassName()
 		    + " for transformer ID '" + trfConfig.getId() + "'. Exception message is: "
-		    + StringUtils.defaultString(e.getMessage(), "<null>"));
+		    + Objects.toString(e.getMessage(), "<null>"));
 	}
 
 	/*
@@ -366,11 +365,11 @@ public class TransformationManager implements MessageSource {
 	}
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
-	    
+
 	    TaggedValues genCiTVsToSet = determineTaggedValuesToSet(genCi, taggedValues);
-	    
+
 	    genCi.setTaggedValues(genCiTVsToSet, true);
-	    
+
 //	    TaggedValues genCiTVs = genCi.taggedValuesAll();
 //
 //	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
@@ -405,9 +404,9 @@ public class TransformationManager implements MessageSource {
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
 	    TaggedValues genPiTVsToSet = determineTaggedValuesToSet(genPi, taggedValues);
-	    
+
 	    genPi.setTaggedValues(genPiTVsToSet, true);
-	    
+
 //	    TaggedValues genPiTVs = genPi.taggedValuesAll();
 //
 //	    for (TaggedValueConfigurationEntry tvce : taggedValues) {
@@ -442,9 +441,9 @@ public class TransformationManager implements MessageSource {
 	for (GenericAssociationInfo genAi : genModel.selectedSchemaAssociations()) {
 
 	    TaggedValues genAiTVsToSet = determineTaggedValuesToSet(genAi, taggedValues);
-	    
+
 	    genAi.setTaggedValues(genAiTVsToSet, true);
-	    
+
 //	    TaggedValues genAiTVs = genAi.taggedValuesAll();
 //
 //	    for (TaggedValueConfigurationEntry tvce : taggedValues) {

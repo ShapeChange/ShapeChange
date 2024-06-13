@@ -60,6 +60,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.StereotypeConversionParameter;
 import de.interactive_instruments.ShapeChange.TargetOwlConfiguration;
 import de.interactive_instruments.ShapeChange.TypeConversionParameter;
+import de.interactive_instruments.ShapeChange.Model.DescriptorAndTagResolver;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -130,7 +131,6 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	// ===== DescriptorTarget =====
 
-	Pattern descriptorTargetTaggedValuePattern = Pattern.compile("TV(\\(.+?\\))?:(.+)");
 	Pattern templatePattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
 
 	for (DescriptorTarget dt : config.getDescriptorTargets()) {
@@ -143,7 +143,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 		 * Check that if template starts with TV, it matches the regular expression
 		 */
 		if (desc.startsWith("TV")) {
-		    Matcher m = descriptorTargetTaggedValuePattern.matcher(desc);
+		    Matcher m = DescriptorAndTagResolver.taggedValuePattern.matcher(desc);
 		    if (!m.matches()) {
 			result.addError(this, 110, desc, dt.getTarget());
 			isValid = false;

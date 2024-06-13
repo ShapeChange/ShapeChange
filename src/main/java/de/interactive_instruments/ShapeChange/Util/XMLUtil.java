@@ -185,46 +185,74 @@ public class XMLUtil {
 	}
     }
 
+    /**
+     * Load the XML document at the given path. XInclude statements are processed.
+     * Validation is not performed (to validate the document, use one of the methods
+     * of {@link XSDUtil}). For further details, see {@link #loadXml(InputStream)}.
+     * 
+     * @param xmlPath the location of the XML document; either the path to a local
+     *                file, or the URL of an HTTP resource
+     * @return the DOM document parsed from the XML
+     * @throws Exception If an exception occurred, or an error was detected, while
+     *                   loading/parsing the XML document.
+     */
     public static Document loadXml(String xmlPath) throws Exception {
 
-	InputStream xmlStream = null;
+	InputStream xmlStream = inputStreamFromXml(xmlPath);
 
-	File file = new File(xmlPath);
-	if (file == null || !file.exists()) {
-	    try {
-		xmlStream = (new URL(xmlPath)).openStream();
-	    } catch (MalformedURLException e) {
-		throw new Exception("No XML file found at " + xmlPath + " (malformed URL)");
-	    } catch (IOException e) {
-		throw new Exception("No XML file found at " + xmlPath + " (IO exception)");
-	    }
-	} else {
-	    try {
-		xmlStream = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {
-		throw new Exception("No XML file found at " + xmlPath);
-	    }
-	}
 	if (xmlStream == null) {
 	    throw new Exception("No XML file found at " + xmlPath);
 	}
 
+	return loadXml(xmlStream);
+    }
+
+    /**
+     * Load the XML document from the given input stream. XInclude statements are
+     * processed. Validation is NOT performed (to validate the document, use one of
+     * the methods of {@link XSDUtil}).
+     * 
+     * Further details:
+     * 
+     * <ul>
+     * <li>namespace aware: true</li>
+     * <li>ignore ignorable whitespace: true</li>
+     * <li>ignore comments: true</li>
+     * <li>process XInclude statements: true</li>
+     * <li>http://apache.org/xml/features/xinclude/fixup-base-uris: false</li>
+     * </ul>
+     * 
+     * @param xmlStream Input stream with content of an XML document.
+     * @return the DOM document parsed from the XML
+     * @throws Exception If an exception occurred, or an error was detected, while
+     *                   loading/parsing the XML document.
+     */
+    public static Document loadXml(InputStream xmlStream) throws Exception {
+
 	DocumentBuilder builder = null;
-	ShapeChangeErrorHandler handler = null;
+	ShapeChangeErrorHandler handler = new ShapeChangeErrorHandler();
 	try {
+
 	    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
 		    "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
 	    factory.setNamespaceAware(true);
-	    factory.setValidating(true);
-	    factory.setFeature("http://apache.org/xml/features/validation/schema", true);
+
+	    /*
+	     * Do NOT activate validation here. Use a separate validation step instead - see
+	     * class XSDUtil.
+	     */
+//	    factory.setValidating(true);
+//	    factory.setFeature("http://apache.org/xml/features/validation/schema", true);
+
 	    factory.setIgnoringElementContentWhitespace(true);
 	    factory.setIgnoringComments(true);
 	    factory.setXIncludeAware(true);
 	    factory.setFeature("http://apache.org/xml/features/xinclude/fixup-base-uris", false);
 	    builder = factory.newDocumentBuilder();
-	    handler = new ShapeChangeErrorHandler();
 	    builder.setErrorHandler(handler);
+
 	} catch (FactoryConfigurationError e) {
 	    throw new Exception("Unable to get a document builder factory.");
 	} catch (ParserConfigurationException e) {
@@ -235,7 +263,7 @@ public class XMLUtil {
 
 	    Document document = builder.parse(xmlStream);
 	    if (handler.errorsFound()) {
-		throw new Exception("Invalid XML file.");
+		throw new Exception("Errors found while parsing XML file.");
 	    } else {
 		return document;
 	    }
@@ -257,6 +285,40 @@ public class XMLUtil {
 		throw new Exception("Error while loading XML file");
 	    }
 	}
+    }
+
+    /**
+     * Creates an input stream for reading the contents of an XML file at the given
+     * path.
+     * 
+     * @param xmlPath the location of the XML document; either the path to a local
+     *                file, or the URL of an HTTP resource
+     * @return the input stream for reading the content of the XML document
+     * @throws Exception If an exception occurred, while getting the input stream
+     *                   for the XML document.
+     */
+    public static InputStream inputStreamFromXml(String xmlPath) throws Exception {
+
+	InputStream xmlStream = null;
+
+	File file = new File(xmlPath);
+	if (file == null || !file.exists()) {
+	    try {
+		xmlStream = (new URL(xmlPath)).openStream();
+	    } catch (MalformedURLException e) {
+		throw new Exception("No XML file found at " + xmlPath + " (malformed URL)");
+	    } catch (IOException e) {
+		throw new Exception("No XML file found at " + xmlPath + " (IO exception)");
+	    }
+	} else {
+	    try {
+		xmlStream = new FileInputStream(file);
+	    } catch (FileNotFoundException e) {
+		throw new Exception("No XML file found at " + xmlPath);
+	    }
+	}
+
+	return xmlStream;
     }
 
     /**

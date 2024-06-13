@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="DataType1"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DataType1Type"/>
+   <complexType name="DataType1Type">
+      <sequence>
+         <element name="attDT" type="integer"/>
+      </sequence>
+   </complexType>
+   <complexType name="DataType1PropertyType">
+      <sequence>
+         <element ref="t:DataType1"/>
+      </sequence>
+   </complexType>
+   <simpleType name="Enumeration1Type">
+      <annotation>
+         <documentation>Notes Enumeration1</documentation>
+      </annotation>
+      <restriction base="string">
+         <enumeration value="enum1">
+            <annotation>
+               <documentation>Notes enum1</documentation>
+            </annotation>
+         </enumeration>
+         <enumeration value="enum2">
+            <annotation>
+               <documentation>Notes enum2</documentation>
+            </annotation>
+         </enumeration>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureType1Type">
+      <annotation>
+         <documentation>Notes Objektart 1</documentation>
+      </annotation>
+   </element>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="ft1toft2" type="t:FeatureType2PropertyType">
+                  <annotation>
+                     <documentation>Notes Assoziationsrolle ft1toft2</documentation>
+                  </annotation>
+               </element>
+               <element name="att1" type="string">
+                  <annotation>
+                     <documentation>Notes att1</documentation>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureType2Type"/>
+   <complexType name="FeatureType2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Union1"
+            substitutionGroup="gml:AbstractObject"
+            type="t:Union1Type"/>
+   <complexType name="Union1Type">
+      <choice>
+         <element name="attU" type="boolean">
+            <annotation>
+               <documentation>Notes attU</documentation>
+            </annotation>
+         </element>
+      </choice>
+   </complexType>
+   <complexType name="Union1PropertyType">
+      <sequence>
+         <element ref="t:Union1"/>
+      </sequence>
+   </complexType>
+</schema>

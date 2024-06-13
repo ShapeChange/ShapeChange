@@ -94,6 +94,7 @@
 			</exclusions>
 		</dependency>
 
+
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -316,6 +317,12 @@
 			<groupId>mil.nga.geopackage</groupId>
 			<artifactId>geopackage</artifactId>
 			<version>6.6.5</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-nop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 	</dependencies>

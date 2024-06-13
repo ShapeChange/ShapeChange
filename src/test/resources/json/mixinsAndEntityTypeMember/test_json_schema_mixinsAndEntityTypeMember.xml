@@ -127,11 +127,11 @@
 			</rules>
 			<xsdMapEntries>
 				<XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+			 </xsdMapEntries>
 				<xi:include href="src/main/resources/config/StandardMapEntries_iso19136_2007.xml"/>
 				<xi:include href="src/main/resources/config/StandardMapEntries_iso19107.xml"/>
 				<xi:include href="src/main/resources/config/StandardMapEntries_iso19108.xml"/>				
 				<!-- ... more to be added as required -->
-			</xsdMapEntries>
 		</TargetXmlSchema>
  </targets>
 </ShapeChangeConfiguration>

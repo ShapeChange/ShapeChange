@@ -57,6 +57,7 @@ import de.interactive_instruments.ShapeChange.ShapeChangeParseException;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult;
 import de.interactive_instruments.ShapeChange.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.ShapeChange.TargetConfiguration;
+import de.interactive_instruments.ShapeChange.Model.DescriptorAndTagResolver;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.SimpleAnnotationElement;
 import de.interactive_instruments.ShapeChange.Target.JSON.config.TemplateAnnotationElement;
@@ -190,7 +191,6 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 
 	// ===== JSON Schema annotations =====
 
-	Pattern taggedValuePattern = Pattern.compile("TV(\\(.+?\\))?:(.+)");
 	Pattern templatePattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
 
 	if (config.getAdvancedProcessConfigurations() != null) {
@@ -208,7 +208,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 			SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
 			String desc = ann.getDescriptorOrTaggedValue();
 			if (desc.startsWith("TV")) {
-			    Matcher m = taggedValuePattern.matcher(desc);
+			    Matcher m = DescriptorAndTagResolver.taggedValuePattern.matcher(desc);
 			    if (!m.matches()) {
 				result.addError(this, 109, desc, ann.getAnnotation());
 				isValid = false;
@@ -222,7 +222,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 			while (matcher.find()) {
 			    String desc = matcher.group(1).trim();
 			    if (desc.startsWith("TV")) {
-				Matcher m = taggedValuePattern.matcher(desc);
+				Matcher m = DescriptorAndTagResolver.taggedValuePattern.matcher(desc);
 				if (!m.matches()) {
 				    result.addError(this, 110, desc, ann.getAnnotation());
 				    isValid = false;
