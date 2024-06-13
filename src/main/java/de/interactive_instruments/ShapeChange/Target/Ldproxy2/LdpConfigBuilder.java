@@ -332,16 +332,25 @@ public class LdpConfigBuilder {
 
 			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 
-				// a feature ref (object) always has an id property
-				queryableProperties.add(pi.name() + ".id");
-				
+				queryableProperties.add(pi.name());
+
 				/*
-				 * a feature ref (object) MAY have a title property with an actual title value
-				 * (not just repeating the id)
+				 * 2024-06-13 JE: Differentiation of queryables for id and title disabled.
+				 * Queryable thus far only defined for id, which is the default. We will wait
+				 * until the WG for OGC API Features has discussed the matter, and maybe
+				 * extended the queryable mechanics.
 				 */
-				if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-				    queryableProperties.add(pi.name() + ".title");
-				}
+				
+//				// a feature ref (object) always has an id property
+//				queryableProperties.add(pi.name() + ".id");
+//				
+//				/*
+//				 * a feature ref (object) MAY have a title property with an actual title value
+//				 * (not just repeating the id)
+//				 */
+//				if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+//				    queryableProperties.add(pi.name() + ".title");
+//				}
 
 			    } else {
 

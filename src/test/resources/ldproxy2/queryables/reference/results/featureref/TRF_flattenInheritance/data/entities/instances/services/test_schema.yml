@@ -18,9 +18,8 @@ collections:
       - attDate
       - attInt
       - attPoint
-      - roleFTtoT_Subtype.id
-      - roleFTtoT_Subtype.title
-      - roleFTtoT_Type.id
+      - roleFTtoT_Subtype
+      - roleFTtoT_Type
     - buildingBlock: FEATURES_HTML
       transformations:
         attDate:
