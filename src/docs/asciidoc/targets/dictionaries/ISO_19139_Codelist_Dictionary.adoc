@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[ISO_19139_Codelist_Dictionary]]
 = ISO 19139 Codelist Dictionary

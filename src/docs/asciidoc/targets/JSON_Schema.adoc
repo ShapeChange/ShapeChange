@@ -13,6 +13,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[JSON_Schema]]
 = JSON Schema

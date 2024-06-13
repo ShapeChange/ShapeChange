@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[XML_Encoding_Infos]]
 = XML Encoding Infos

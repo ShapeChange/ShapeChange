@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Application_Schema_Metadata]]
 = Application Schema Metadata

@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[GML_32_Encoding_Rule]]
 = GML 3.2 Encoding Rule

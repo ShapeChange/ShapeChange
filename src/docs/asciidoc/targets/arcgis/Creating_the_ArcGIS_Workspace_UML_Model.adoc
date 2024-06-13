@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Creating_the_ArcGIS_Workspace_UML_Model]]
 = Creating the ArcGIS Workspace UML Model

@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[SWE_Common_Data_Model_20_Encoding_Rule]]
 = SWE Common Data Model 2.0 Encoding Rule

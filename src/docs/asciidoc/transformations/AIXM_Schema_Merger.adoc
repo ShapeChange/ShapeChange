@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[AIXM_Schema_Merger]]
 = AIXM Schema Merger

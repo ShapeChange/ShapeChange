@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Deriving_Schematron_from_SBVR_constraints_for_ISO_19109_compliant]]
 = Deriving Schematron from SBVR constraints for ISO 19109 compliant

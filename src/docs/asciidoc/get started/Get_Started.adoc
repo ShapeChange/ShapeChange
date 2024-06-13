@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 :source-highlighter: pygments
 
@@ -28,7 +29,7 @@
 
 :numbered:
 :sectanchors:
-:sectnumlevels: 5
+:sectnumlevels: 5 :nofooter:
 
 
 [[Get_Started]]

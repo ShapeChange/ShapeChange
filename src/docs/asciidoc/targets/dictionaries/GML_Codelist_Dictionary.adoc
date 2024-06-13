@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[GML_Codelist_Dictionary]]
 = GML Codelist Dictionary

@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Pre-Processing_through_Flattening]]
 = Pre-Processing through Flattening

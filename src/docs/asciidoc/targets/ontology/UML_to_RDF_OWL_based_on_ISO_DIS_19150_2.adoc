@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[UML_to_RDFOWL_based_on_ISODIS_19150-2]]
 = UML to RDF/OWL (based on ISO/DIS 19150-2)

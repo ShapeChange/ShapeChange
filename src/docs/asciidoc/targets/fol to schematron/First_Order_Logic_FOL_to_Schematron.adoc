@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[First_Order_Logic_FOL_to_Schematron]]
 = First Order Logic (FOL) to Schematron

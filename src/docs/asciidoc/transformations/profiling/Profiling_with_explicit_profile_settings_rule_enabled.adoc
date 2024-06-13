@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Profiling_with_explicit_profile_settings_rule_enabled]]
 = Profiling with explicit profile settings rule enabled

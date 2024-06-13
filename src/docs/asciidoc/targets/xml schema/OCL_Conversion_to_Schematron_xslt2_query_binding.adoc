@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[OCL_Conversion_to_Schematron_xslt2_query_binding]]
 = OCL Conversion to Schematron (xslt2 query binding)

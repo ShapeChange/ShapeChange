@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[OCL_Conversion_to_Schematron]]
 = OCL Conversion to Schematron

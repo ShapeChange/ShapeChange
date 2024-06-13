@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Validation_of_the_Configuration]]
 = Validation of the Configuration

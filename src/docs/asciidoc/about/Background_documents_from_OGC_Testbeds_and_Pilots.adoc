@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 
 [[Background_documents_from_OGC_Testbeds_and_Pilots]]

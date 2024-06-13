@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Tagged_Value_Transformer]]
 = Tagged Value Transformer

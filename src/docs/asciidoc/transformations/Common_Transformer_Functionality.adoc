@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Common_Transformer_Functionality]]
 = Common Transformer Functionality

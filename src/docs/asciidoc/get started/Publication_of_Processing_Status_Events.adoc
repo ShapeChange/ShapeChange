@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Publication_of_Processing_Status_Events]]
 = Publication of Processing Status Events

@@ -12,6 +12,8 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
+
 
 [[Configuration]]
 = Configuration

@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[ISOTS_19139_Encoding_Rule]]
 = ISO/TS 19139 Encoding Rule

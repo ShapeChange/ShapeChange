@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Non-Standard_Conversion_Rules]]
 = Non-Standard Conversion Rules

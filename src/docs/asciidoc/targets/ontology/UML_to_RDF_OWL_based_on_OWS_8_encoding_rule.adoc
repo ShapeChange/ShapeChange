@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[UML_to_RDFOWL_based_on_OWS-8_encoding_rule]]
 = UML to RDF/OWL (based on OWS-8 encoding rule)

@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Cascading_Style_Sheets_CSS]]
 = Cascading Style Sheets (CSS)

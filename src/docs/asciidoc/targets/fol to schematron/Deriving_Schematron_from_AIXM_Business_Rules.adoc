@@ -12,6 +12,7 @@
 :numbered:
 :sectanchors:
 :sectnumlevels: 5
+:nofooter:
 
 [[Deriving_Schematron_from_AIXM_Business_Rules]]
 = Deriving Schematron from AIXM Business Rules
