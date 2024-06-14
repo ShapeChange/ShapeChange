@@ -36,7 +36,9 @@ GML application schema consisting of a set of XML Schema documents).
 Finally, the processed model is output to the chosen target
 representation(s) as specified in the configuration file, and error,
 warning and informational messages are written to a xref:./The_element_log.adoc[log
-file].
+file]. Before any transformer and target is executed for a given model, 
+xref:./The_element_validators.adoc[validators] can be run to check the 
+model content. 
 
 [[Package_Overview]]
 == Package Overview
@@ -83,6 +85,10 @@ The package de.interactive_instruments.ShapeChange.Target is the main
 extension point on the output side. It specifies an interface for all
 output derived from models, e.g. XML schemas. These are described in
 more detail xref:../targets/Output_Targets.adoc[here].
+
+The package de.interactive_instruments.ShapeChange.ModelValidation 
+contains the interface that model validators need to implement. They 
+are described in more detail xref:../model validators/ModelValidators.adoc[here].
 
 In addition, there are helper packages for specific purposes, e.g.
 processing OCL constraints, using FOP in targets or for a graphical user

@@ -688,13 +688,13 @@ public class Converter implements MessageSource {
 	    if (tgt.getProcessMode().equals(ProcessMode.disabled))
 		continue;
 
-	    if (!isValidModel(model, tgt.getValidatorIds(), tgt.getClassName(), modelProviderId)) {
-		continue;
-	    }
-
 	    // reset options for this target
 	    options.setCurrentProcessConfig(tgt);
 	    options.resetFields();
+	    
+	    if (!isValidModel(model, tgt.getValidatorIds(), tgt.getClassName(), modelProviderId)) {
+		continue;
+	    }
 
 	    // now execute the target
 

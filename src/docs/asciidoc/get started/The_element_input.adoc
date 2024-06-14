@@ -807,6 +807,8 @@ allows to configure where this information is stored in the model.
 
 The list of well-known descriptors is:
 
+[#table_descriptors,reftext='{table-caption} {counter:table-num}']
+.Well-known descriptors
 [cols="1,1,2",options="header"]
 |===
 |Descriptor |Default source |Explanation

@@ -47,6 +47,10 @@ model before target representations are created.
 element*] contains the configurations of each target format, such as XML
 Schema.
 ** NOTE: Even though <targets> is typically used in a ShapeChange configuration, ShapeChange does not actually require the element to be present. An example where <targets> has been omitted is simply loading and thereby checking the input model.
+* The *optional*
+xref:./The_element_validators.adoc[*<validators>
+element*] defines the model validators that can be used by model transformers
+and targets to check requirements on a given model before it is processed.
 * The xref:./The_element_log.adoc[*<log> element*]
 defines logging parameters.
 
@@ -77,6 +81,12 @@ transformations. Targets can be applied on the input model and/or the
 output of transformations. This results in a kind of tree-based
 processing model.
 
+NOTE: Since v3.1.0, model validators can be configured, to validate
+the content of models that are given to transformations and
+targets for processing. These validators can act as gatekeepers,
+only allowing subsequent processing to proceed if validation was
+successful. 
+
 image::../images/tree-based-processing-behavior.png[tree based processing behavior]
 
 A sample configuration stub for the model shown in this diagram can look
@@ -90,7 +100,8 @@ like this:
     </input>
     <transformers>
         <Transformer class="..."
-            id="Transformer1" mode="enabled">
+            id="Transformer1" validators="v1"
+            mode="enabled">
             <!-- ... -->
         </Transformer>
         <Transformer class="..."
@@ -115,7 +126,9 @@ like this:
             <!-- Target 2 ... -->
         </Target>
         <TargetXmlSchema class="..."
-            inputs="Transformer2 Transformer3" mode="enabled">
+            inputs="Transformer2 Transformer3" 
+            validators="v1 v2"
+            mode="enabled">
             <!-- Target 3 ... -->
         </TargetXmlSchema>
         <Target class="..." inputs="Transformer4"
@@ -123,5 +136,15 @@ like this:
             <!-- Target 4 ... -->
         </Target>
     </targets>
+    <validators>
+        <Validator class="..." 
+            id="v1" mode="enabled" validationMode="strict">
+          <!-- Validator v1 ... -->
+        </Validator>
+        <Validator class="..." 
+            id="v2" mode="enabled" validationMode="strict">
+          <!-- Validator v2 ... -->
+        </Validator>
+    </validators>
 </ShapeChangeConfiguration>
 ----------

@@ -3190,7 +3190,7 @@ public class Options {
 		}
 	    }
 	}
-	
+
 	return valConfigs;
     }
 
@@ -3484,6 +3484,12 @@ public class Options {
     }
 
     /**
+     * Set the configuration of the transformer or target that is going to be
+     * processed next. Should NOT be used to set model validator configurations,
+     * because then the parameterization (e.g. regarding schemas selected for
+     * processing) of the process that will be executed on the model that is to be
+     * validated will be obscured.
+     * 
      * @param currentProcessConfig the currentProcessConfig to set
      */
     public void setCurrentProcessConfig(ProcessConfiguration currentProcessConfig) {
@@ -3505,7 +3511,7 @@ public class Options {
     public Map<String, TransformerConfiguration> getTransformerConfigs() {
 	return this.transformerConfigs;
     }
-    
+
     public Map<String, ValidatorConfiguration> getValidatorConfigs() {
 	return this.validatorConfigs;
     }

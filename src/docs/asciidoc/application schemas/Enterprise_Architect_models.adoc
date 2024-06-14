@@ -22,10 +22,6 @@ Enterprise Architect (EA) is a product of SparxSystems Ltd, based in
 Creswick, Australia, and is a software modeling tool designed primarily
 for UML modeling.
 
-The ShapeChange EA compatibility was developed on EA versions 7.0 and
-7.1, and runs unchanged for later versions. ShapeChange has been used
-with EA up to version 12.0.
-
 A UML model stored in an EA repository can be processed by
 ShapeChange, using the Java API of EA. There is no particular need to 
 export the UML model to some format before processing the UML model.

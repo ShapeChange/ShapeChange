@@ -37,8 +37,11 @@ sections.
 
 The XML Schema (XSD) configured in the _xsi:schemaLocation_ attribute of
 the ShapeChange configuration root element is used to check the
-syntactical correctness of the configuration. The latest version of the
-ShapeChange configuration XSD can be found at
+syntactical correctness of the configuration. It also contains assertions
+to check IDs and ID-references in input, inputs and validators
+XML attributes of transformers and targets.
+
+The latest version of the ShapeChange configuration XSD can be found at
 https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd
 
 [[Semantic_Validation]]
@@ -93,13 +96,13 @@ occurrence of an UnsatisfiedLinkError.
 This section documents how specific configuration validators are
 implemented.
 
-Semantic validation of transformers and targets is implemented by
-specific classes that are dynamically instantiated by ShapeChange.
+Semantic validation of transformers, targets, and model validators 
+is implemented by specific classes that are dynamically instantiated by ShapeChange.
 
 * The class must be located in the same package as the
-transformer/target.
-* It must have the same name as the transformer/target, just with the
-suffix 'ConfigurationValidator'.
+transformer/target/model validator.
+* It must have the same name as the transformer/target/model validator, 
+just with the suffix 'ConfigurationValidator'.
 * The class must have a constructor without arguments.
 * The class must implement the interface
 _de.interactive_instruments.ShapeChange.ConfigurationValidator_.

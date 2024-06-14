@@ -18,15 +18,20 @@
 = The element "targets"
 
 The <targets> element contains information on the targets of the
-transformation, of which there may be more than one.  This element has
+workflow.  This element has
 no <parameters>, being instead merely the top-level element under which
-are nested individual <Target> and <TargetXmlSchema> definitions.  See
+are nested individual target definitions.  See
 xref:../targets/Output_Targets.adoc[here] for a full discussion of all
 ShapeChange target formats and their specific configuration options.
 
 For each target listed in the configuration, the processing of the
 target can be switched off by setting the "mode" attribute to
 "disabled". The default value is "enabled".
+
+NOTE: The model(s) to be processed by a target is identified using the
+"inputs" XML attribute. Model validation as a pre-check can be performed
+using the validators identified in XML attribute "validators". Further
+information is provided xref:./Configuration.adoc[here].
 
 A sample <targets> section of a configuration file, containing multiple
 defined targets for the same application schema, might look like the

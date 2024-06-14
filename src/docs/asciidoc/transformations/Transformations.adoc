@@ -61,10 +61,10 @@ optional.  These attributes are as follows:
 |*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
 |*_Explanation_*
 
-|* class* | Required | - |A string representing the fully-qualified
+|*class* | Required | - |A string representing the fully-qualified
 transformer "handler" class (that implements the Transformer interface).
 
-|* mode* | Optional | enabled a|
+|*mode* | Optional | enabled a|
 Whether or not this particular transformer is "turned on".  This allows
 for transformers to be turned on/off at will.  The possible values are:
 
@@ -74,15 +74,20 @@ for transformers to be turned on/off at will.  The possible values are:
 created. However, not all transformers support this mode yet and some
 will treat this mode identical to "enabled".
 
-| *id* | Required | - |Unique identifier of the transformer within the
+|*id* | Required | - |Unique identifier of the transformer within the
 configuration file. This identifier is used by other transformers and/or
 targets to reference the output of the transformer as input for their
 processing tasks.
 
-|* input* | Optional | - (defaults to input model) |References the id of
+|*input* | Optional | - (defaults to input model) |References the id of
 the input model or another transformer. The according model will be
 processed by the transformer. If the attribute is omitted or no value is
 provided, the input model defined in the configuration file is used.
+
+|*validators* | Optional | - |References the ids of
+model validators, which can serve as a gatekeeper for checking a model
+before it is transformed. Further details on model validators are given
+xref:../model validators/ModelValidators.adoc[here].
 |===
 
 [[Transformer_Parameters]]

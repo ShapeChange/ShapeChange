@@ -29,6 +29,8 @@ server interface.
 develop a new model transformation.
 * Creating a new ShapeChange target - This will allow you to derive new
 representations from an application schema.
+* Creating a model validator - If you intend to perform specific
+checks on models that are processed by ShapeChange.
 
 How to use each of the three extension points is described in more
 detail in the following sections.
@@ -155,6 +157,25 @@ other words, an update of the ShapeChange code was needed.
 
 ======
 
+[[Creating_a_new_model_validator]]
+== Creating a new model validator
+
+In ShapeChange, a model validator is used to perform certain checks
+on a given model, before that model is processed by a transformation
+or target. Validation can ensure that all requirements of the subsequent
+process regarding the model are met.
+
+Creating a new model validator requires implementing interface
+https://github.com/ShapeChange/ShapeChange/blob/master/src/main/java/de/interactive_instruments/ShapeChange/ModelValidation/ModelValidator.java[de.interactive_instruments.ShapeChange.ModelValidation.ModelValidator].
+
+The execution of a model validator typically requires information from the
+user, to define which checks shall be performed. That information can be 
+provided via the ShapeChange configuration. More
+specifically, a model validator can have parameters, rules,
+and also a custom (XML based) configuration. The model validators that
+are already supported by ShapeChange may serve as implementation and
+configuration examples.
+
 [[Setting_up_your_development_environment]]
 == Setting up your development environment
 
@@ -199,7 +220,7 @@ with the latest release):
 <dependency>
  <groupId>net.shapechange</groupId>
  <artifactId>ShapeChange</artifactId>
- <version>2.3.0</version>
+ <version>3.0.0</version>
  </dependency>
 ----------
 

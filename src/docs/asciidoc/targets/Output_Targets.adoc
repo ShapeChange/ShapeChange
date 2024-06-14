@@ -107,6 +107,12 @@ input model. If multiple identifiers are provided, the target is
 executed for the output model of each referenced transformer and/or the
 input model. If the attribute is omitted then the target is applied on
 the input model.
+
+|*validators* | Optional | - |References the ids of
+model validators, which can serve as a gatekeeper for checking models
+before they are processed by the target. Further details on model 
+validators are given xref:../model validators/ModelValidators.adoc[here].
+
 |===
 
 [[Target_Parameters]]

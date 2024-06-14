@@ -52,6 +52,8 @@
 
 ==== xref:get started/The_element_targets.adoc[The element targets]
 
+==== xref:get started/The_element_validators.adoc[The element validators]
+
 ==== xref:get started/Validation_of_the_Configuration.adoc[Validation of the configuration]
 
 === xref:get started/Examples.adoc[Examples]
@@ -212,3 +214,8 @@
 ===== xref:targets/xml schema/Support_for_Mixin_Classes.adoc[Support for mixin classes]
 
 ===== xref:targets/xml schema/Support_for_nillable_and_nilReason.adoc[Support for nillable and nilReason]
+
+[[ModelValidators]]
+== xref:model validators/ModelValidators.adoc[Model Validators]
+
+=== xref:model validators/Basic_Model_Validator.adoc[Basic Model Validator]

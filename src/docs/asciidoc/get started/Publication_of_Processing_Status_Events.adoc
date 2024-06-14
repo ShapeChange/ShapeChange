@@ -72,6 +72,9 @@ not provide further information about which transformation is being
 processed. A transformation itself might publish more specific status
 events; the _Profiler_ is an example.
 
+| Converter | STATUS_VALIDATION_START | 207 | Indicates that a
+model validator is being processed.
+
 | FeatureCatalogue | STATUS_WRITE_PDF | 22 |
 
 | FeatureCatalogue | STATUS_WRITE_HTML | 23 |

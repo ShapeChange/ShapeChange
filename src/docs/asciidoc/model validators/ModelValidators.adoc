@@ -1,0 +1,140 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[ModelValidators]]
+= Model Validators
+
+(since v3.1.0)
+
+[[General_Information]]
+== General Information
+
+ShapeChange can apply a number of validators on a model that is used
+as input for a process, i.e. a transformation or a target. 
+Requirements and pre-conditions that the process may have regarding
+a model can thus be checked. It is also possible to perform general
+checks, for example to ensure that descriptors and tags of model 
+elements have valid values.
+
+The log is used to communicate information about failed validation
+checks. Validation can be configured to prevent subsequent processing
+of a model, in case it failed a validation check, or to just provide
+additional information about the model validity, without influencing 
+subsequent processing.
+
+[[Java_Implementation_Details]]
+=== Java Implementation Details
+
+Within the ShapeChange Java framework, each model validator is
+implemented as a Java class.  In keeping with the modularity of
+ShapeChange, each such validator implements the
+de.interactive-instruments.ShapeChange.ModelValidation.ModelValidator
+interface, which contains a method "hook" for validating a given model. 
+The fully-qualified name of this class must be provided in the
+configuration file.
+
+[[Configuration]]
+=== Configuration
+
+Each individual model validator is defined in the configuration file 
+as its own `<Validator>` element.  All `<Validator>` definitions are nested
+under the `<validators>` element.
+
+All `<Validator>` definitions, no matter the actual validator type,
+are configured via XML attributes, parameters, and rules.  
+Structured content can be configured using the `<advancedProcessConfigurations>`
+element.
+
+[[ModelValidator_Attributes]]
+==== Model Validator Attributes
+
+Each `<Validator>` element has four attributes, two required and two
+optional.  These attributes are as follows:
+
+[width="100%",cols="1,1,1,3"]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|* class* | Required | - |A string representing the fully-qualified
+model validator "handler" class (that implements the ModelValidator interface).
+
+|* mode* | Optional | enabled a|
+Whether or not this particular model validator is "turned on".  This allows
+for validators to be turned on/off at will.  The possible values are:
+
+* enabled (the default): The validator is processed.
+* disabled: The validator is not executed.
+* diagnostics-only: The validation is performed, but only diagnostics 
+output is created. Typically, validators do not support this mode. It will
+typically be treated identical to "enabled", just that a failed validation
+will not prevent the execution of the ShapeChange process (transformation
+or target).
+
+| *id* | Required | - |Unique identifier of the model validator within the
+configuration file. The identifier is used by transformers and/or
+targets to reference the relevant validation tasks.
+
+|* validationMode* | Optional | strict a|
+Controls if, in case of failed validation check(s), processing of the 
+validated model - by subsequent transformation(s) and targets - is prevented
+(validationMode = strict) or continues (validationMode = lax). With strict
+validation, failed validation checks are reported as errors. With lax 
+validation, such failures are reported as warnings.
+
+|===
+
+[[ModelValidator_Parameters]]
+==== Model Validator Parameters
+
+In addition to the required attributes, each `<Validator>` may have
+additional parameters defined via `<ProcessParameter>` elements which are
+nested under the `<parameters>` element.
+
+Each model validator type may define its own expected or required
+parameters; the validator-specific subheadings of the subpages will
+describe these for each model validator type.
+
+[[Rules]]
+==== Rules
+
+A `<Validator>` can have a number of `<ProcessRuleSet>` elements (nested
+under the `<rules>` element). They are used to configure the optional
+processing steps to be executed by the validator. Each rule set has a
+required and an optional attribute. These attributes are as follows:
+
+[cols=",,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Explanation_*
+
+|*name* |Required |Identifier of the rule set.
+
+|*extends* |Optional |Can be used to add specific rules to a standard
+process rule set.
+|===
+
+A `<ProcessRuleSet>` can contain a number of `<rule>` elements. Each of them
+identifies (via the value of the required "name" attribute) a specific
+type of processing to be applied by the validator.
+
+Each model validator type can define its own rule sets and rules; the
+validator-specific subheadings of the subpages will describe these for
+each model validator type.
+
+[[Supported_Model_Validator_Types]]
+== Supported Model Validator Types
+
+A list of the currently supported model validators is given xref:../index.adoc#ModelValidators[here].
