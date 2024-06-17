@@ -52,11 +52,11 @@ previously existing supertype is transformed to a mixin type.
 NOTE: All CityGML type that are used as mapping targets must be
 available in the model. The _CityObject type is determined by looking
 for a type with according name that does NOT have stereotype
-\<<ADEElement>>.
+«ADEElement».
 
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive a CityGML ADE from an application schema. For further details,
-see the OGC http://docs.opengeospatial.org/per/17-020r1.html[NAS
+see the OGC https://docs.ogc.org/per/17-020r1.html[NAS
 Profiling Engineering Report] (OGC document number 17-020r1), chapter 9.
 
 [[Parameters]]

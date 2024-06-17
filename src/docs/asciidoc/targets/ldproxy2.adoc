@@ -105,7 +105,7 @@ NOTE: If the resulting value for label or description is blank, i.e. the empty s
 [[ldproxy2_schemaconversionrules_schemapackage]]
 === Schema Packages
 
-Schema packages have the stereotype \<<applicationSchema>>, \<<schema>>, or an alias (e.g. using a specific language, like \<<anwendungsschema>>). An \<<applicationSchema>> package represents an application schema according to ISO 19109. The stereotype \<<schema>> has been introduced for packages that should be treated like application schemas, but do not contain feature types. Such schemas are compliant to ISO 19103; examples are ISO 191xx schemas.
+Schema packages have the stereotype «applicationSchema», «schema», or an alias (e.g. using a specific language, like «anwendungsschema»). An «applicationSchema» package represents an application schema according to ISO 19109. The stereotype «schema» has been introduced for packages that should be treated like application schemas, but do not contain feature types. Such schemas are compliant to ISO 19103; examples are ISO 191xx schemas.
 
 This ldproxy target is a so-called "ShapeChange Single Target", i.e. it converts all xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schemas selected for processing] in one go, rather than handling each of these schemas separately.
 
@@ -820,7 +820,7 @@ In the future, conversion rules can be defined to modify the default naming beha
 
 In the conceptual model, feature and object types represent objects that have identity. That differentiates these types from, for example, data types. Other than that, feature and object types - in the following called _types with identity_ - are encoded as top-level <<ldproxy2_schemaconversionrules_types_featureandobjecttype_providertype,type (and potentially also fragment) definitions within the provider configuration>> as well as <<ldproxy2_schemaconversionrules_types_featureandobjecttype_servicecollection,collection definitions in the service configuration>>.
 
-NOTE: A feature type typically has stereotype \<<featuretype>>, while an object type has stereotype \<<type>>, \<<interface>>, or no stereotype.
+NOTE: A feature type typically has stereotype «featuretype», while an object type has stereotype «type», «interface», or no stereotype.
 
 NOTE: If a map entry is defined for the type, it is not encoded in the provider configuration.
 
@@ -892,8 +892,8 @@ The conceptual model of a type with identity often does not contain a property w
 In ldproxy, each provider type definition must have a property that functions as object identifier.
 
 * If _rule-ldp2-cls-identifierStereotype_ applies to the type, and the type - or one of its supertypes - 
-has an \<<identifier>> property, then that property will be encoded as such an object identifier.
-** NOTE: If the maximum multiplicity of an \<<identifier>> attribute is greater than 1, an error will be logged. Processing will continue, assuming a maximum multiplicity of 1 for the attribute.
+has an «identifier» property, then that property will be encoded as such an object identifier.
+** NOTE: If the maximum multiplicity of an «identifier» attribute is greater than 1, an error will be logged. Processing will continue, assuming a maximum multiplicity of 1 for the attribute.
 * Otherwise, an identifier member is explicitly encoded. The member name is given by target parameter _objectIdentifierName_ (default: "oid"). The value of the sourcePath is the value of target parameter _primaryKeyColumn_ with `type` INTEGER.
 
 The object identifier property will receive member `role` with value ID.
@@ -922,7 +922,7 @@ NOTE: If the primary geometry property has a maximum multiplicity greater than 1
 
 NOTE: Additional geometry properties are encoded like all other UML properties.
 
-NOTE: The ldproxy target expects all geometry properties to have a maximum multiplicity of exactly 1. That is because ldproxy supports multi-geometry types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used in implementations that rely upon the https://www.ogc.org/standards/sfa[Simple Feature Access standard] (such as spatial databases which typically implement the https://www.ogc.org/standards/sfs[Simple Feature Access - Part 2: SQL Option]), but does not define a transformation of a geometry property with max multiplicity greater than 1 to such a multi-geometry type. An according model transformation could be defined and implemented in ShapeChange as a future enhancement. In any case: If the ldproxy target encounters a geometry property with maximum multiplicity greater than 1, it logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
+NOTE: The ldproxy target expects all geometry properties to have a maximum multiplicity of exactly 1. That is because ldproxy supports multi-geometry types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used in implementations that rely upon the https://www.ogc.org/standard/sfa/[Simple Feature Access standard] (such as spatial databases which typically implement the https://www.ogc.org/standard/sfs/[Simple Feature Access - Part 2: SQL Option]), but does not define a transformation of a geometry property with max multiplicity greater than 1 to such a multi-geometry type. An according model transformation could be defined and implemented in ShapeChange as a future enhancement. In any case: If the ldproxy target encounters a geometry property with maximum multiplicity greater than 1, it logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
 
 
 
@@ -951,12 +951,12 @@ NOTE: Additional temporal properties are encoded like all other UML properties.
 [[ldproxy2_schemaconversionrules_types_datatype]]
 ==== Data Type
 
-By default, a \<<dataType>> is not converted to a top-level provider type definition. Instead, 
+By default, a «dataType» is not converted to a top-level provider type definition. Instead, 
 the data type will be encoded as a fragment definition (if fragments are enabled,
 i.e. target parameter _enableFragments_ = `true`), and the type definition for the 
 data type is encoded whenever a property, whose value type is the data type, is encoded.
 
-The following information items are encoded for the type definition of the \<<dataType>>:
+The following information items are encoded for the type definition of the «dataType»:
 
 * type: OBJECT or OBJECT_ARRAY (depending on the multiplicity; for further details, see <<ldproxy2_schemaconversionrules_properties_propertytype>>)
 * objectType: original name of the data type (taken from tagged value _originalClassName_, if present, otherwise it is the class name as found in the - potentially transformed and thus altered - model)
@@ -995,7 +995,7 @@ NOTE: You can transform unions, either flattening them (using the xref:../transf
 
 // https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/codelists
 
-Enumerations and code lists are not converted to top-level provider type definitions. Each \<<enumeration>> / \<<codelist>> that a) is not mapped, b) is not marked to not be encoded, and c) belongs to the schemas selected for processing, is converted to a {id}.yml file in the data/store/entities/codelists folder. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
+Enumerations and code lists are not converted to top-level provider type definitions. Each «enumeration» / «codelist» that a) is not mapped, b) is not marked to not be encoded, and c) belongs to the schemas selected for processing, is converted to a {id}.yml file in the data/store/entities/codelists folder. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
 
 The following information items are encoded within the YAML file:
 
@@ -1089,7 +1089,7 @@ NOTE: The conversion of properties from other kinds of classifiers, especially e
 
 // https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/sql.md#sql-pfad-syntax
 
-The type definition within an ldproxy feature provider configuration (including any fragment definitions) describes the full encoding of a particular object type. Inlined property values can lead to a complex structure, especially when the type of a property is a complex \<<dataType>>. In order to extract the values for populating the information items of an actual object, ldproxy needs to know the so called source paths. Such a path starts with the name of a database table at the top-level provider type definition. For the properties within a given type definition, the source path construction then depends on the actual representation of the property and its value type within the database. 
+The type definition within an ldproxy feature provider configuration (including any fragment definitions) describes the full encoding of a particular object type. Inlined property values can lead to a complex structure, especially when the type of a property is a complex «dataType». In order to extract the values for populating the information items of an actual object, ldproxy needs to know the so called source paths. Such a path starts with the name of a database table at the top-level provider type definition. For the properties within a given type definition, the source path construction then depends on the actual representation of the property and its value type within the database. 
 
 The target first tries to look up the source path for a given property in the 
 tagged value _ldpSourcePaths_ (Note: this mechanism is available since v3.1.0). 
@@ -1161,7 +1161,7 @@ image::../images/ldp2_simple_types_default_source_path_encoding.png[align="cente
 The abbreviations used in <<img_ldproxy2_property_access_simpletypes_default>> (as well as in the following figures) thereby mean the following:
 
 * `{pk_col_A}` - Primary key column in the table that represents type A. The primary key column is defined (in descending order of priority):
-** via the \<<identifier>> property of type A (as described <<ldproxy2_schemaconversionrules_types_featureandobjecttype_identifier,here>>), or 
+** via the «identifier» property of type A (as described <<ldproxy2_schemaconversionrules_types_featureandobjecttype_identifier,here>>), or 
 ** as the value of target parameter _primaryKeyColumn_
 * `{A_table_name}` - Table name for type A, as defined in section  <<ldproxy2_schemaconversionrules_types_database_table_names>>.
 * `{pX_col}` - The name of the column that represents the property pX, as defined in section <<ldproxy2_schemaconversionrules_properties_sourcepaths_columnname>>.
@@ -1371,7 +1371,7 @@ The behavior for encoding the `type` member of a property definition in a provid
 Additional constraints may be added to the provider configuration, based upon the multiplicity and voidability of the property: 
 
 * Constraint `required` is added, with value true, unless the minimum multiplicity of the property is 0 or the property is voidable. 
-** NOTE: A voidable property is a UML property with stereotype \<<voidable>>, or with tagged value _nillable_ = true.
+** NOTE: A voidable property is a UML property with stereotype «voidable», or with tagged value _nillable_ = true.
 * If the maximum multiplicity of the property is greater than 1:
 ** Constraint `minOccurrence` is added, with value being the minimum multiplicity defined for the property. However, if the property is voidable, then the value is set to 0.
 ** Constraint `maxOccurrence` is added, with value being the maximum multiplicity defined for the property. However, the constraint will not be added if the maximum multiplicity is '*'.
@@ -1490,7 +1490,7 @@ image::../images/ldp2_specificrules_genericvaluetypes.png[align="center"]
 There is a specific solution for supporting such structures with ldproxy.
 
 The according conversion is enabled using __rule-ldp2-cls-genericValueType__.
-The conversion rule is applied for a \<<dataType>> whose name is contained in the
+The conversion rule is applied for a «dataType» whose name is contained in the
 (comma-separated) value of target parameter _genericValueTypes_. The subtypes will
 automatically be taken into account (so do not list them in the parameter value). 
 For the example, `genericValueTypes=GenerAttribute` would thus suffice.

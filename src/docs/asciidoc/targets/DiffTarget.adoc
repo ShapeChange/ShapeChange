@@ -162,7 +162,7 @@ The table columns are defined as follows:
 [[Encoding]]
 === Encoding
 
-The output of the target, i.e. the model differences, are encoded in XML, following the XML Schema definition for element 'ModelDiff', as defined in http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd.
+The output of the target, i.e. the model differences, are encoded in XML, following the XML Schema definition for element 'ModelDiff', as defined in https://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd.
 
 A ModelDiff element contains XML attributes that provide information about the software that produced the ModelDiff, as well as the version of that software. In addition, the element may contain the source and target models, encoded as SCXML. By default, these models are not encoded in the ModelDiff. However, by setting target parameter link:#includeModelData[includeModelData] to true, they will be encoded.
 

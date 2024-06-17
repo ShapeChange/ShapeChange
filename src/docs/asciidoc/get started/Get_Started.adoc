@@ -73,7 +73,7 @@ _java -Dfile.encoding=UTF-8 -jar ShapeChange-{project-version}.jar -c https://sh
 
 You should now see the following information message:
 
-_I Application schema found, package name: TestSchema, target namespace: https://shapechange.net/test_
+_I Application schema found, package name: TestSchema, target namespace: \https://shapechange.net/test_
 
 After the execution is complete, you will find
 

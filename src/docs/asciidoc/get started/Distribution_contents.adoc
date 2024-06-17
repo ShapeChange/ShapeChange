@@ -69,8 +69,7 @@ contained in a specific distribution
 == Resources available on shapechange.net
 
 All other resources that are commonly accessed by ShapeChange are
-available on shapechange.net in the
-https://shapechange.net/resources/[resources folder]. These are:
+available on shapechange.net in the resources folder. These are:
 
 [cols="1,1",options="header"]
 |===
@@ -81,8 +80,7 @@ be included in project configuration files using XInclude. More details
 on configuration files are described
 xref:../get started/Configuration.adoc[here]. Example
 configuration files can be found in the
-https://shapechange.net/resources/test/[test folder] and the
-https://shapechange.net/resources/examples/[examples folder].
+https://shapechange.net/resources/test/[test folder].
 
 |https://shapechange.net/resources/config/DescriptorSourcesInspire.xml[config/DescriptorSourcesInspire.xml]
 |(since 2.0.2) An example configuration for the source of descriptive
@@ -97,8 +95,8 @@ double-clicking the JAR file.
 |https://shapechange.net/resources/config/StandardAliases.xml[config/StandardAliases.xml]
 |This file specifies typical aliases for well-known stereotypes and is
 typically included in a project configuration file. This also handles
-different writing styles for stereotype names e.g. \<<featureType>> vs.
-\<<Feature Type>>. Additional aliases may be specified in a project
+different writing styles for stereotype names e.g. «featureType» vs.
+«Feature Type». Additional aliases may be specified in a project
 configuration file.
 
 |https://shapechange.net/resources/config/StandardJsonMapEntries.xml[config/StandardJsonMapEntries.xml]
@@ -134,9 +132,6 @@ configurations - or added to these central mapping files.
 |https://shapechange.net/resources/config/StandardMapEntries_gmlcov.xml[config/StandardMapEntries_gmlcov.xml]
 |Map entries for mapping types from the GMLCOV standard to their
 implementations.
-
-|https://shapechange.net/resources/config/StandardMapEntries_gsip.xml[config/StandardMapEntries_gsip.xml]
-|Map entries for basic types according to the GSIP encoding rule
 
 |https://shapechange.net/resources/config/StandardMapEntries_iso19107-v21.xml[config/StandardMapEntries_iso19107-v21.xml]
 |Map entries for mapping types from ISO 19107 (spatial schema) to their
@@ -229,12 +224,6 @@ descriptor tags and may be included in a project configuration
 file. Additional aliases may be specified in a project configuration
 file.
 
-|https://shapechange.net/resources/dist/[dist] |Folder for
-the ShapeChange distribution files (JAR and ZIP archives).
-
-|https://shapechange.net/resources/example/[example] |Folder
-for examples.
-
 |https://shapechange.net/resources/schema/[schema] |Folder
 for XML Schema documents
 
@@ -289,17 +278,17 @@ result.
 |Log file written during processing the Enterprise Architect test
 model.
 
-|https://shapechange.net/resources/test/ea/test.html[test/ea/test.html]
+|https://shapechange.net/resources/test/ea/INPUT/test.html[test/ea/INPUT/test.html]
 |HTML feature catalogue derived from the Enterprise Architect test
 model. This file is identical to the one created from the XMI 1.o
 test model except for the internal element identifiers.
 
-|https://shapechange.net/resources/test/ea/test.xsd[test/ea/test.xsd]
+|https://shapechange.net/resources/test/ea/INPUT/test.xsd[test/ea/INPUT/test.xsd]
 |GML 3.2 application schema derived from the Enterprise Architect
 test model. This file is identical to the one created from the XMI
 1.o test model.
 
-|https://shapechange.net/resources/test/xmi[test/xmi] |Folder
+|https://shapechange.net/resources/test/xmi/[test/xmi] |Folder
 for sample output created during testing with the XMI 1.o test
 model. The contents of the directory is considered the reference
 result.
@@ -307,12 +296,12 @@ result.
 |https://shapechange.net/resources/test/xmi/log.xml[test/xmi/log.xml]
 |Log file written during processing the XMI 1.o test model.
 
-|https://shapechange.net/resources/test/xmi/test.html[test/xmi/test.html]
+|https://shapechange.net/resources/test/xmi/INPUT/test.html[test/xmi/INPUT/test.html]
 |HTML feature catalogue derived from the XMI 1.o test model. This
 file is identical to the one created from the Enterprise Architect test
 model except for the internal element identifiers.
 
-|https://shapechange.net/resources/test/xmi/test.xsd[test/xmi/test.xsd]
+|https://shapechange.net/resources/test/xmi/INPUT/test.xsd[test/xmi/INPUT/test.xsd]
 |GML 3.2 application schema derived from the XMI 1.o test model.
  This file is identical to the one created from the Enterprise
 Architect test model.

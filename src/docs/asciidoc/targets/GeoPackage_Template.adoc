@@ -21,7 +21,7 @@
 
 This target creates a GeoPackage template from a set of application
 schemas. The resulting GeoPackage is compliant with the
-http://www.geopackage.org/spec120/[OGC GeoPackage Encoding Standard
+https://www.geopackage.org/spec120/[OGC GeoPackage Encoding Standard
 v1.2].
 
 The overall workflow consists of four steps:
@@ -76,7 +76,7 @@ definitions of the values of enumerations, along with the necessary
 tables required by the
 https://www.geopackage.org/spec121/index.html#extension_schema[GeoPackage
 Schema extension]. See also the
-http://www.geopackage.org/guidance/extensions/schema.html[guidance on
+https://www.geopackage.org/guidance/extensions/schema.html[guidance on
 this extension].
 * Spatial Reference System definitions.
 
@@ -136,7 +136,7 @@ normalized as follows: the name is trimmed, converted to lowercase, and
 all whitespace characters are replaced with underscores.
 
 The reason for this normalization approach is a recommendation from the
-http://www.geopackage.org/guidance/getting-started.html[GeoPackage
+https://www.geopackage.org/guidance/getting-started.html[GeoPackage
 getting started guide]: _For maximum interoperability, start your
 database identifiers (table names, column names, etc.) with a lowercase
 character and only use lowercase characters, numbers 0-9, and
@@ -151,7 +151,7 @@ SqlDdl target.
 
 A property is converted as follows:
 
-* If the property has stereotype \<<identifier>> and matches
+* If the property has stereotype «identifier» and matches
 xref:./GeoPackage_Template.adoc#rule-gpkg-cls-identifierStereotype[rule-gpkg-cls-identifierStereotype],
 it is converted to a primary key column of type INTEGER.
 * If the value type is a geometric type, a geometry column is created,
@@ -251,7 +251,7 @@ NONE and SRS code -1.
 NONE and SRS code 0.
 
 For further details, see the chapter
-http://www.geopackage.org/spec120/#spatial_ref_sys[Spatial Reference
+https://www.geopackage.org/spec120/#spatial_ref_sys[Spatial Reference
 Systems] in the GeoPackage standard.
 
 A GeoPackage also supports other SRSs. They just need to be registered
@@ -294,7 +294,7 @@ The following restrictions currently apply to this target:
 
 * Properties with maximum multiplicity greater than one cannot be
 converted. Also, association roles cannot be converted. The
-http://docs.opengeospatial.org/is/18-000/18-000.html[OGC GeoPackage
+https://docs.ogc.org/is/18-000/18-000.html[OGC GeoPackage
 Related Tables Extension] could provide the means to fully convert such
 properties in the future.
 * GeoPackage does not support feature types with multiple geometric
@@ -384,7 +384,7 @@ href="https://shapechange.net/resources/config/StandardRules.xml" />
 [[rule-gpkg-cls-identifierStereotype]]
 ==== rule-gpkg-cls-identifierStereotype
 
-Enables use of stereotype \<<identifier>> on class attributes. If an
+Enables use of stereotype «identifier» on class attributes. If an
 attribute with that stereotype belongs to a class, then the column to
 represent that attribute will be used as primary key (and no extra
 identifier column will be generated).
@@ -491,12 +491,12 @@ Type: String
 
 Default Value: id
 
-Explanation: NOTE: If an \<<identifier>> attribute is defined on a class,
+Explanation: NOTE: If an «identifier» attribute is defined on a class,
 and
 _xref:./GeoPackage_Template.adoc#rule-gpkg-cls-identifierStereotype[rule-gpkg-cls-identifierStereotype]_
 is included in the encoding rule, then ShapeChange will not generate an
 additional identifier column. It will use the column that represents the
-\<<identifier>> attribute as primary key.
+«identifier» attribute as primary key.
 
 Applies to Rule(s): _none_ - default behavior
 
@@ -707,11 +707,11 @@ defining the SRS, e.g. EPSG or epsg.
 the organization; can be equal to the value of srsId.
 * definition (required) - Well-known Text representation of the Spatial
 Reference System following the WKT format defined by
-http://portal.opengeospatial.org/files/?artifact_id=999
+https://portal.opengeospatial.org/files/?artifact_id=999
 * description (optional) - Human readable description of the SRS
 * definition_12_063 (optional) - Well-known Text representation of the
 Spatial Reference System, following the WKT format defined by
-http://docs.opengeospatial.org/is/12-063r5/12-063r5.html
+https://docs.ogc.org/is/12-063r5/12-063r5.html
 
 TIP: The command line tool https://proj.org/apps/projinfo.html[projinfo]
 can be used to retrieve Well-known Text representations in different WKT

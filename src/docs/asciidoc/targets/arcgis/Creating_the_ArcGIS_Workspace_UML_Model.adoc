@@ -38,12 +38,12 @@ table.
 |===
 |Application Schema Stereotype |ArcGIS Model Element
 
-|\<<Application Schema>>, \<<applicationSchema>>, \<<schema>> |Package
-(with stereotype \<<ArcGIS>>)
+|«Application Schema», «applicationSchema», «schema» |Package
+(with stereotype «ArcGIS»)
 
-|\<<bundle>>, \<<leaf>>, or no stereotype |Package with no stereotype,
+|«bundle», «leaf», or no stereotype |Package with no stereotype,
 except for the package that contains all feature classes – that package
-has the stereotype \<<FeatureDataset>>.The package hierarchy is
+has the stereotype «FeatureDataset».The package hierarchy is
 maintained, even though classes are split into separate package
 hierarchies according to their category (features, object classes /
 tables, and domains). The package hierarchy is not reflected in the
@@ -61,32 +61,32 @@ table.
 |===
 |Application Schema Stereotype |ArcGIS Model Element
 
-|\<<featureType>> with no geometry property, and \<<type>> | Class (with
-stereotype \<<ObjectClass>>)
+|«featureType» with no geometry property, and «type» | Class (with
+stereotype «ObjectClass»)
 
-| \<<featureType>> with one geometry property with value type GM_Point
-| Class (with stereotype \<<Point>>)
+| «featureType» with one geometry property with value type GM_Point
+| Class (with stereotype «Point»)
 
-|  \<<featureType>> with one geometry property with value type
-GM_MultiPoint | Class (with stereotype \<<Multipoint)
+|  «featureType» with one geometry property with value type
+GM_MultiPoint | Class (with stereotype «Multipoint)
 
-|  \<<featureType>> with one geometry property with value type GM_Curve
-or GM_MultiCurve | Class (with stereotype \<<Polyline>>)
+|  «featureType» with one geometry property with value type GM_Curve
+or GM_MultiCurve | Class (with stereotype «Polyline»)
 
-|  \<<featureType>> with one geometry property with value type GM_Surface
-or GM_MultiSurface | Class (with stereotype \<<Polygon>>)
+|  «featureType» with one geometry property with value type GM_Surface
+or GM_MultiSurface | Class (with stereotype «Polygon»)
 
-|  \<<featureType>> with one geometry property with other value type
+|  «featureType» with one geometry property with other value type
 | Not supported / will be ignored; schema must be pre-processed.
 
-|  \<<featureType>> with multiple geometry properties | For the first
+|  «featureType» with multiple geometry properties | For the first
 geometry property, see above; all other geometry properties are ignored.
 
-| \<<dataType>> or \<<union>> in the same application schema | Not
+| «dataType» or «union» in the same application schema | Not
 supported / will be ignored; schema must be pre-processed.
 
-| \<<enumeration>> and \<<codeList>> a|
- Class (with stereotype \<<CodedValueDomain>>)
+| «enumeration» and «codeList» a|
+ Class (with stereotype «CodedValueDomain»)
 
 NOTE: The default field type is esriFieldTypeString.
 
@@ -123,7 +123,7 @@ more background on ArcGIS subtypes:
 to be the subtype field. In the ArcGIS technology, this is implemented
 as an integer with a string lookup.
 * It is possible to restrict the other fields of a supertype using a
-specific \<<CodedValueDomain>> for each subtype.
+specific «CodedValueDomain» for each subtype.
 * A subtype may neither extend the set of properties nor redefine the
 geometry type of its supertype.
 * It is also possible to specify default values on a field for each
@@ -131,10 +131,10 @@ subtype, but not at the supertype level.
 * The name of an ArcGIS subtype may include special characters, and thus
 would not follow the naming conventions of ISO 19103.
 * In Enterprise Architect the subtypes are expressed using distinct
-classes with a \<<Subtype>> stereotype, which are related to the parent
-class using a generalisation relationship (with \<<Subtype>> stereotype).
+classes with a «Subtype» stereotype, which are related to the parent
+class using a generalisation relationship (with «Subtype» stereotype).
 * For further details, see the enterprise architect tutorial
-http://www.sparxsystems.com/bin/arcgis-enterprise-architect-uml-modeling-tutorial.pdf[Designing
+https://sparxsystems.com/bin/arcgis-enterprise-architect-uml-modeling-tutorial.pdf[Designing
 ArcGIS Geodatabases with Enterprise Architect], Appendix D.
 
 [[ArcGIS_subtypes_defined_by_a_code_list_or_enumeration]]
@@ -156,15 +156,15 @@ Other attributes of the supertype can be relevant for the creation of
 the fields of the ArcGIS subtypes:
 
 * An attribute with a code list or enumeration as type may lead to the
-creation of subtype specific \<<CodedValueDomain>>s. Each code / enum can
+creation of subtype specific «CodedValueDomain»s. Each code / enum can
 have tagged value _arcgisUsedBySubtypes_. This is a comma-separated list
 of all the subtypes which use that particular code / enum. If at least
 one of the codes / enums defines a subtype restriction, then for each
 ArcGIS subtype, a field that represents the restriction of the attribute
-is created. The type of that field is a \<<CodedValueDomain>> that
+is created. The type of that field is a «CodedValueDomain» that
 contains the codes that apply to that subtype. If restrictions are only
 defined on some of the subtypes, the other subtypes will have fields
-with the original \<<CodedValueDomain>> as type.
+with the original «CodedValueDomain» as type.
 ** NOTE: Since the names of ArcGIS subtypes may contain special
 characters, and tagged value _arcgisUsedBySubtypes_ defines a comma
 separated list of subtype names, commas in subtype names (that are
@@ -213,9 +213,9 @@ image::../../images/ArcGIS_subtypes_from_subtype_set_ArcGIS_workspace_model.png[
 ======
 
 * The classification code list is not represented by a
-\<<CodedValueDomain>> in the ArcGIS workspace model. Instead, it is
+«CodedValueDomain» in the ArcGIS workspace model. Instead, it is
 represented by the ArcGIS subtypes.
-* The ArcGIS workspace UML model does not contain \<<CodedValueDomain>>
+* The ArcGIS workspace UML model does not contain «CodedValueDomain»
 elements for the code lists NumericValue and UnusedCodeList from the
 conceptual model, since they are not used by any fields in the ArcGIS
 workspace model (removal of unused coded value domains is controlled by
@@ -297,45 +297,45 @@ log will inform the user about this situation).
 [[Attribute]]
 ==== Attribute
 
-\<<property>> elements within the application schema that are modelled as
+«property» elements within the application schema that are modelled as
 attributes are converted as described in the following table.
 
 [width="100%",cols="1,2"]
 |===
 |Application Schema Stereotype |ArcGIS Model Element
 
-|\<<property>>, maximum multiplicity > 1, except if value type is
-\<<type>> or \<<featureType>> |Not supported / will be ignored; schema
+|«property», maximum multiplicity > 1, except if value type is
+«type» or «featureType» |Not supported / will be ignored; schema
 must be pre-processed.
 
-|\<<property>>, value is of geometry type (name starts with "GM_")
+|«property», value is of geometry type (name starts with "GM_")
 |Geometry properties are ignored; the stereotype of a feature class
 implies the geometry property and its type.
 
-|\<<property>>, value type is \<<enumeration>> or \<<codeList>> |Attribute
-(\<<Field>>), value type is the coded value domain class.
+|«property», value type is «enumeration» or «codeList» |Attribute
+(«Field»), value type is the coded value domain class.
 
-|\<<property>>, value type is other type specified outside of the
+|«property», value type is other type specified outside of the
 application schema a|
-Attribute (\<<Field>>), type mapping as defined in the following table
+Attribute («Field»), type mapping as defined in the following table
 
 NOTE: If the application schema contains a numeric range constraint for
-the property ShapeChange will create an according \<<RangeDomain>> and
+the property ShapeChange will create an according «RangeDomain» and
 set the type accordingly.
 
-|\<<enum>> a|
-Attribute (\<<DomainCodedValue>>)
+|«enum» a|
+Attribute («DomainCodedValue»)
 
-Per default the initial value defined by the \<<enum>> is used as initial
+Per default the initial value defined by the «enum» is used as initial
 value. Via 
 xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-initialValueByAlias[rule-arcgis-prop-initialValueByAlias]
 this behavior can be changed to set the initial value using the alias of
-the \<<enum>>.
+the «enum».
 
-|\<<property>>, value type is a non-abstract \<<type>> or \<<featureType>>
+|«property», value type is a non-abstract «type» or «featureType»
 in the application schema a|
-Association (\<<RelationshipClass>>) to the corresponding class and
-\<<field>> as described for one to many relationship
+Association («RelationshipClass») to the corresponding class and
+«field» as described for one to many relationship
 xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc#Mapping_of_1n__n1_Relationship[here].
 
 NOTE: Relationship classes can only be linked to non-abstract classes,
@@ -347,7 +347,7 @@ subtype branches of the abstract class.
 
  
 
-Attributes with stereotype \<<Field>> in the ArcGIS workspace model have
+Attributes with stereotype «Field» in the ArcGIS workspace model have
 a specific list of tagged values. The tagged values length, precision
 and scale are determined as follows:
 
@@ -387,7 +387,7 @@ details:
 ==== Association
 
 An association in the application schema is converted to an association
-with stereotype \<<RelationshipClass>> as follows:
+with stereotype «RelationshipClass» as follows:
 
 * in case of a 1:n relationship, see description in
 <<Mapping_of_1n__n1_Relationship,the 1:n relationship section on this
@@ -425,11 +425,11 @@ shows how ISO 19107 geometry types are realized:
 [cols="1,1",options="header"]
 |===
 |ISO 19107 Type |Realization in ArcGIS Workspace
-|GM_Point |\<<Point>> feature class
-|GM_MultiPoint |\<<Multipoint>> feature class
-|GM_Curve |\<<Polyline>> feature class
+|GM_Point |«Point» feature class
+|GM_MultiPoint |«Multipoint» feature class
+|GM_Curve |«Polyline» feature class
 |GM_MultiCurve |
-|GM_Surface |\<<Polygon>> feature class
+|GM_Surface |«Polygon» feature class
 |GM_MultiSurface |
 |all other (e.g. GM_Solid, GM_MultiSolid) |NA
 |===
@@ -439,7 +439,7 @@ shows how ISO 19107 geometry types are realized:
 
 A 1:n /n:1 relationship is converted as follows:
 
-* An association with stereotype \<<RelationshipClass>> is created
+* An association with stereotype «RelationshipClass» is created
 between the source and target of the relationship:
 ** Source: class that represents the "one" end of the relationship
 ** Source role: name of the property with max cardinality 1
@@ -452,7 +452,7 @@ character in lower case)
 feature or object class that represents the source
 ** Tagged value OriginForeignKey: "<source_role_name>ID" attribute in
 the target class (see next list item)
-* Attribute (\<<Field>>) in target class with name "<source_role_name>ID"
+* Attribute («Field») in target class with name "<source_role_name>ID"
 and type esriFieldTypeInteger (Precision: 9)
 
 [[Mapping_of_nm_Relationship]]
@@ -470,7 +470,7 @@ esriFieldTypeInteger (Precision: 9)
 ** name of target property (from application schema, if the property is
 named there, otherwise the name of the target class) + "ID":
 esriFieldTypeInteger (Precision: 9)
-* An association with stereotype \<<RelationshipClass>> is created
+* An association with stereotype «RelationshipClass» is created
 between the source and target of the relationship:
 ** Source role: name of the target property (from the application
 schema), or the name of the target class (from the application schema)
@@ -512,7 +512,7 @@ is one way to at least partially represent a reflexive relationship.
 ==== RangeDomain from OCL
 
 ArcGIS supports range domains for numeric values (classes with
-stereotype \<<RangeDomain>>) which allow to set minimum and maximum
+stereotype «RangeDomain») which allow to set minimum and maximum
 values.
 
 The conversion process identifies numeric range constraints defined for
@@ -553,8 +553,8 @@ implies(viu.value >= 0 and viu.value <= 100)))))+++
 
 Whenever a property in the application schema has a numeric range
 constraint and maps to a numeric type (esriFieldTypeInteger or
-esriFieldTypeDouble), a \<<RangeDomain>> is created and set as the type
-of the \<<field>> that represents the property.
+esriFieldTypeDouble), a «RangeDomain» is created and set as the type
+of the «field» that represents the property.
 
 Range limits in ArcGIS are inclusive. For cases in which the lower
 and/or upper boundary comparison operator is not inclusive, a delta will
@@ -566,7 +566,7 @@ other boundary (currently +/-1000000000).
 NOTE: In order for ShapeChange to process and not dismiss OCL
 constraints while loading the input model, ensure that the configuration
 parameter
-xref:../../get started/The_element_input.adoc#checkingConstraints[checkingConstraints]
+xref:../../get started/The_element_input.adoc#checkingConstraints__constraintLoading[checkingConstraints or constraintLoading]
 for the "input" element is not set to 'disabled' (the default value is
 'enabled').
 
@@ -581,7 +581,7 @@ Within the application schema, OCL constraints can be used to ensure
 that the length of a textual property value does not exceed a specific
 limit. If such an OCL constraint follows a specific pattern, ShapeChange
 can recognize it and use the information to populate the 'length' tagged
-value of the \<<field>> that will represent the property in the ArcGIS
+value of the «field» that will represent the property in the ArcGIS
 model.
 
 ShapeChange identifies a length constraint for a property by finding the
@@ -596,7 +596,7 @@ self.propWithSpecialLength->notEmpty() implies
 NOTE: In order for ShapeChange to process and not dismiss OCL
 constraints while loading the input model, ensure that the configuration
 parameter
-xref:../../get started/The_element_input.adoc#checkingConstraints[checkingConstraints]
+xref:../../get started/The_element_input.adoc#checkingConstraints__constraintLoading[checkingConstraints or constraintLoading]
 for the "input" element is not set to 'disabled' (the default value is
 'enabled').
 
@@ -665,7 +665,7 @@ ShapeChange currently does not set the spatial reference system used by
 the ArcGIS workspace. The SRS is set in the template .qea and can be
 changed there (before deriving the ArcGIS workspace model) or after
 processing by ShapeChange is complete. The SRS can be set using the
-ArcGIS extension. Simply right-click on the \<<SpatialReference>> class
+ArcGIS extension. Simply right-click on the «SpatialReference» class
 (which can be found in the ArcGIS workspace model under 'Model/ArcGIS
 Workspace/Spatial Reference'), then select Extensions > ArcGIS > Set
 Coordinate System; in the dialog that opens, choose the SRS you want.

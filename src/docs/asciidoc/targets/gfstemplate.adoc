@@ -90,7 +90,7 @@ Descriptive information of model elements is irrelevant in gfs templates. Theref
 [[gfstemplate_schemaconversionrules_schemapackage]]
 === Schema Packages
 
-Schema packages have the stereotype \<<applicationSchema>>, \<<schema>>, or an alias (e.g. using a specific language, like \<<anwendungsschema>>). An \<<applicationSchema>> package represents an application schema according to ISO 19109. The stereotype \<<schema>> has been introduced for packages that should be treated like application schemas, but do not contain feature types. Such schemas are compliant to ISO 19103; examples are ISO 191xx schemas.
+Schema packages have the stereotype «applicationSchema», «schema», or an alias (e.g. using a specific language, like «anwendungsschema»). An «applicationSchema» package represents an application schema according to ISO 19109. The stereotype «schema» has been introduced for packages that should be treated like application schemas, but do not contain feature types. Such schemas are compliant to ISO 19103; examples are ISO 191xx schemas.
 
 The gfs template target is a normal "ShapeChange Target". It converts all xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schemas selected for processing] separately, rather than handling all of them in one go. The target creates one gfs template file per schema. The name of a template file is the schema name, in all lower case, and non-word characters replaced by '\_'. The target also creates a registry file with a namespace entry for the processed schemas. The namespace uri value is the value of the target namespace assigned to the schema, typically via tagged value __targetNamespace__ on the schema package. The name of the registry file is `{base name of the gfs file}_gml_registry.xml`. The content of that registry file can be added to the gml_registry file used by the application, such as GDAL (for further details, see https://gdal.org/drivers/vector/gml.html#registry-for-gml-application-schemas) and QGIS. 
 
@@ -234,7 +234,7 @@ When a type, which is subtype of one or more supertypes, is converted, property 
 
 In the conceptual model, feature and object types represent objects that have identity. That differentiates these types from, for example, data types. Other than that, feature and object types - in the following summarily called types with identity - are encoded as `<GMLFeatureClass>` elements.
 
-NOTE: A feature type typically has stereotype \<<featuretype>>, while an object type has stereotype \<<type>>, \<<interface>>, or no stereotype.
+NOTE: A feature type typically has stereotype «featuretype», while an object type has stereotype «type», «interface», or no stereotype.
 
 NOTE: If a map entry is defined for the type, it is not encoded in the provider configuration.
 
@@ -258,13 +258,13 @@ NOTE: ShapeChange supports the notion of mixin type (for further details, see xr
 [[gfstemplate_schemaconversionrules_types_datatype]]
 ==== Data Type
 
-A \<<dataType>> is not converted to a `<GMLFeatureClass>` element. Instead, the type definition for the data type is evaluated whenever a property, whose value type is the data type, is encoded.
+A «dataType» is not converted to a `<GMLFeatureClass>` element. Instead, the type definition for the data type is evaluated whenever a property, whose value type is the data type, is encoded.
  
 
 [[gfstemplate_schemaconversionrules_types_union]]
 ==== Union
 
-A \<<union>> is not converted to a `<GMLFeatureClass>` element. Instead, the type definition for the union is evaluated whenever a property, whose value type is the union, is encoded.
+A «union» is not converted to a `<GMLFeatureClass>` element. Instead, the type definition for the union is evaluated whenever a property, whose value type is the union, is encoded.
 
 
 [[gfstemplate_schemaconversionrules_types_enumeration]]
@@ -342,8 +342,8 @@ NOTE: If the GML data makes use of xlink:href XML attributes for object referenc
 
 The `<Name>` of a property definition is the name of the UML property. There can be situations in which the name is augmented:
 
-* If the UML property P belongs to a \<<dataType>> or \<<union>> type, then the `<Name>` is the list of names of all the UML properties, beginning with a UML property in a type with identity that is at the start of the path to P, and ending at P. The names are concatenated with the separator that is defined by target parameter _propertyNameSeparator_, which uses the underscore ("_") as default.
-* If the value type of a UML property is a \<<dataType>>, and that type is a supertype, the data type is a subtype and the property name occurs multiple times in the whole inheritance hierarchy that the type is a part of, or target parameter _alwaysEncodeDataTypeName_ is equal to, ignoring case, "true", then the paths of the property definitions that are created in that case also include the name of the actual data type that is represented by a given property definition. Examples: `attInTypeWithIdentity_DataTypeOne_attInDatatype`, `attInTypeWithIdentity_DataTypeTwo_attInDatatype`. For further details, see <<gfstemplate_schemaconversionrules_properties_general>>.
+* If the UML property P belongs to a «dataType» or «union» type, then the `<Name>` is the list of names of all the UML properties, beginning with a UML property in a type with identity that is at the start of the path to P, and ending at P. The names are concatenated with the separator that is defined by target parameter _propertyNameSeparator_, which uses the underscore ("_") as default.
+* If the value type of a UML property is a «dataType», and that type is a supertype, the data type is a subtype and the property name occurs multiple times in the whole inheritance hierarchy that the type is a part of, or target parameter _alwaysEncodeDataTypeName_ is equal to, ignoring case, "true", then the paths of the property definitions that are created in that case also include the name of the actual data type that is represented by a given property definition. Examples: `attInTypeWithIdentity_DataTypeOne_attInDatatype`, `attInTypeWithIdentity_DataTypeTwo_attInDatatype`. For further details, see <<gfstemplate_schemaconversionrules_properties_general>>.
 * If the property definition actually represents an XML attribute, then the name of the XML attribute is appended to the otherwise constructed name, using the separator defined by target parameter _xmlAttributeNameSeparator_, which has the value of target parameter _propertyNameSeparator_ as default. Example: `width_uom`. The suffix is omitted in certain situations (as described in other sections), for example in case of a code list valued property and GML 3.3 code list encoding with use of the xlink:href XML attribute. For further details, see <<gfstemplate_schemaconversionrules_properties_general>>.
 ** NOTE: If both _propertyNameSeparator_ and _xmlAttributeNameSeparator_ are undefined in the configuration, the underscore will be used in both cases. If, on the other hand, only _propertyNameSeparator_ is configured, with value "/", then an XML attribute name will also be appended using "/" as separator.
 ** NOTE: XML namespaces are ignored when evaluating XML attribute names. Differentiating multiple attributes with same name on the same XML element therefore is not possible. However, that is another edge case which is unlikely to occur in GML data, and even more unlikely for the XML attributes supported by the current conversion (which essentially are the XML attributes xlink:href and uom).
@@ -356,7 +356,7 @@ The `<Name>` of a property definition is the name of the UML property. There can
 
 The `<ElementPath>` of a property definition is constructed as follows:
 
-* In principal, for any UML property P that is on the property path for which a property definition is constructed, the name of P is appended to the element path. If P is owned by a \<<dataType>> or \<<union>>, then the name of the owning type is put in front of the name of P, using separator "|". Example: `attInTypeWithIdentity|DataType|attInDatatype`.
+* In principal, for any UML property P that is on the property path for which a property definition is constructed, the name of P is appended to the element path. If P is owned by a «dataType» or «union», then the name of the owning type is put in front of the name of P, using separator "|". Example: `attInTypeWithIdentity|DataType|attInDatatype`.
 * If the property definition represents an XML attribute, @{XML attribute name} is appended to the path. Examples: `width@uom`, `buildingPart@href`.
 
 
@@ -370,7 +370,7 @@ The `<Type>` of a property definition - `<PropertyDefn>` or `<GeomPropertyDefn>`
 * If the property definition represents a UML property whose value type is a type with identity, the type is 'FeatureProperty'.
 * If the property definition represents a UML property whose value type is an enumeration or code list, the type is 'String'.
 
-NOTE: A `<PropertyDefn>` only represents a UML property whose value type is \<<dataType>> or \<<union>> if the value type is mapped to a simple type. Otherwise, the gfs template target will drill down into the value type itself and create property definitions for the properties found there, as described in section <<gfstemplate_schemaconversionrules_properties_general>>.
+NOTE: A `<PropertyDefn>` only represents a UML property whose value type is «dataType» or «union» if the value type is mapped to a simple type. Otherwise, the gfs template target will drill down into the value type itself and create property definitions for the properties found there, as described in section <<gfstemplate_schemaconversionrules_properties_general>>.
 
 In addition, if the maximum multiplicity of the represented UML property P is greater than 1, also in case that the property definition is for an XML attribute of an element that encodes the value(s) of P, and taking into account multiplicities along the path to P (if one of these multiplicities is greater than one, then - for the purpose of the gfs template conversion - the maximum multiplicity of the property at the end of the path effectively is greater than 1, too), then:
 

@@ -393,7 +393,7 @@ xref:./JSON_Schema.adoc#linkObjectUri[linkObjectUri].
 With this rule, all code lists are represented by a JSON Schema that
 restricts the type to "string", and states that the "format" is "uri"
 (as defined by
-https://tools.ietf.org/html/draft-handrews-json-schema-validation-02#section-7.3.5[JSON
+https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-validation-02#autoid-46[JSON
 Schema validation, section 7.3.5]).
 
 [[rule-json-cls-collectionsBasedOnEntityType]]
@@ -667,7 +667,7 @@ image::../images/ldp2_specificrules_genericvaluetypes.png[align="center"]
 There is a specific solution for supporting such structures in JSON.
 
 The according conversion is enabled using __rule-json-cls-genericValueType__.
-The conversion rule is applied for a \<<dataType>> whose name is contained in the
+The conversion rule is applied for a «dataType» whose name is contained in the
 (comma-separated) value of target parameter 
 xref:./JSON_Schema.adoc#genericValueTypes[genericValueTypes]. 
 The subtypes will automatically be taken into account as well. 
@@ -837,7 +837,7 @@ to the encoding rule, entity type members can still be created for data types.
 
 An example for the benefit of encoding the type name in JSON objects is
 given in
-http://docs.opengeospatial.org/per/18-091r2.html#JSON_LD[chapter 6 of
+https://docs.ogc.org/per/18-091r2.html#JSON_LD[chapter 6 of
 the OGC Testbed-14: Application Schemas and JSON Technologies
 Engineering Report]: Having a key within a JSON object with a string
 value that identifies the type of the object allows that object to be
@@ -895,7 +895,7 @@ xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc[ontology
 target of ShapeChange] encodes a union as a class, with cardinality
 restrictions to ensure that only one option (defined by the union) is
 used. For further details, also see the
-http://docs.opengeospatial.org/per/16-020.html#rdf_cr_class_union[OGC
+https://docs.ogc.org/per/16-020.html#rdf_cr_class_union[OGC
 Testbed-12 ShapeChange Engineering Report]. This is an argument for
 applying
 _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
@@ -1876,7 +1876,7 @@ Required / Optional: optional
 
 Type: URI
 
-Default Value: http://example.org/FIXME
+Default Value: \http://example.org/FIXME 
 
 Explanation: The base URI, used to construct the value of the "$id"
 members of resulting JSON Schemas.

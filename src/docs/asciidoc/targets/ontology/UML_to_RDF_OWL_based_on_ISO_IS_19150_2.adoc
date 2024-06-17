@@ -24,7 +24,7 @@
 execution of this target requires Java 8 or higher (tested with Java
 8).)#
 
-http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/IS
+https://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/IS
 19150-2] defines rules for mapping ISO geographic information UML models
 to OWL ontologies. This target derives an ontology representation from
 an application schema in UML based upon these rules.
@@ -32,7 +32,7 @@ an application schema in UML based upon these rules.
 NOTE: A number of configuration options and extensions have been
 implemented. They are documented in detail in the _OGC Testbed 12
 ShapeChange Engineering Report_
-(http://docs.opengeospatial.org/per/16-020.html[OGC document number
+(https://docs.ogc.org/per/16-020.html[OGC document number
 16-020]). The report also documents which model transformations may need
 to be applied before executing this target, for example to transform
 association classes. Therefore, if you are looking for a complete
@@ -132,7 +132,7 @@ character as separator).
 [[rule-owl-cls-codelist-19150-2]]
 ==== rule-owl-cls-codelist-19150-2
 
-If this rule is enabled then \<<codeList>> UML classes are converted as
+If this rule is enabled then «codeList» UML classes are converted as
 defined by ISO/IS 19150-2 (section 6.7.2) - except for the SKOS
 collection (for which a
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2-skos-collection[separate
@@ -174,7 +174,7 @@ different.
 
 If this rule is enabled, and the code list (that is converted under
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2])
-actually is an \<<enumeration>> that is treated like a code list under
+actually is an «enumeration» that is treated like a code list under
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[_rule-owl-cls-enumerationAsCodelist_],
 then an OWL ObjectOneOf class expression is defined for the OWL class
 representing the code list. The expression enumerates the named
@@ -197,7 +197,7 @@ subsequent versions of the ontology, we recommend moving the OWL class
 representing the code list to a namespace that is different from the
 application schema ontology namespace. This is explained in more detail
 in the OGC Testbed 12
-http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+https://docs.ogc.org/per/16-020.html[ShapeChange Engineering
 Report] (OGC 16-020).
 * The
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#codeListOwlClassNamespaceForEnumerations[_codeListOwlClassNamespaceForEnumerations_]
@@ -228,7 +228,7 @@ the OWL ontology derived from the application schema.
 
 Background: Communities often already manage their code lists outside of
 the application schema, SKOS being a prominent encoding. In such a case,
-\<<codeList>> UML classes are contained in the application schema without
+«codeList» UML classes are contained in the application schema without
 declaring any specific code values. These classes serve as stubs. They
 can be used as value types for properties. In addition, they can - and
 should - provide links to the resource that represents the code list
@@ -252,10 +252,10 @@ implications on how UML types are loaded. A UML type is loaded as a basic
 type if:
 
 * rule-xsd-cls-basictype is contained in the XSD encoding rule, and 
-the UML type has the stereotype \<<BasicType>>, or
+the UML type has the stereotype «BasicType», or
 * the UML type is an object type, mixin type, or data type and has a
 supertype that is identified as a basic type through:
-** the previous behavior (matching rule-xsd-cls-basictype and having stereotype <<BasicType>>), or
+** the previous behavior (matching rule-xsd-cls-basictype and having stereotype «BasicType»), or
 ** an XSD map entry being defined for the supertype which does not 
 have its xmlTypeType and xmlTypeContent attributes both set to 'complex' - 
 either explicitly or by using the default values, which is 'complex' for both attributes.
@@ -295,7 +295,7 @@ loaded as _mixin types_. A UML type is loaded as a mixin type if:
 
 * rule-xsd-cls-mixin-classes is contained in the XSD encoding rule and:
 ** the tagged value gmlMixin is set to true, or
-** the type has the stereotype \<<type>>, is abstract, and the tagged
+** the type has the stereotype «type», is abstract, and the tagged
 value gmlMixin is not set to false.
 
 For the ontology conversion rules, a _mixin type_ is usually treated as
@@ -310,7 +310,7 @@ of particular UML types.
 ==== rule-owl-cls-encode-objecttypes
 
 ShapeChange treats UML types without stereotype as plain objects with
-identity, called _object types_. UML types with stereotype \<<type>> are
+identity, called _object types_. UML types with stereotype «type» are
 usually also treated this way.
 
 If this rule is enabled, object types will be converted to OWL classes.
@@ -387,7 +387,7 @@ iso19150-2:isAbstract with value set to _true_.
 [[rule-owl-cls-union]]
 ==== rule-owl-cls-union
 
-This rule converts \<<union>> types , preserving their semantics.
+This rule converts «union» types , preserving their semantics.
 
 The approach is based on a logical combination of unqualified
 cardinality constraints. The according class expression ensures that
@@ -411,7 +411,7 @@ expression_. The meaning of this expression is that if a value is given
 for P, then no values may be provided for the other new properties.
 * Combine the intersection class expressions within a single _union
 class expression_. This essentially represents the meaning of the
-\<<union>>: if a value is given for one of the options, then there must
+«union»: if a value is given for one of the options, then there must
 not be values for the other options.
 
 The class expression is added to the OWL class representation of the
@@ -431,7 +431,7 @@ above would still be used - just with owl:minCardinality 0 as
 cardinality restriction for the applicable union property.
 
 For further details, see the OGC Testbed 12
-http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+https://docs.ogc.org/per/16-020.html[ShapeChange Engineering
 Report] (OGC 16-020).
 
 [[rule-owl-cls-unionSets]]
@@ -472,7 +472,7 @@ adjustment after the ontology has been created by ShapeChange).
 
 If this rule is enabled, then each ontology imports the base ontology
 defined by ISO 19150-2 with IRI
-http://def.isotc211.org/iso19150-2/2012/base#
+\https://def.isotc211.org/iso19150-2/2012/base#
 
 [[rule-owl-pkg-ontologyName-appendVersion]]
 ==== rule-owl-pkg-ontologyName-appendVersion
@@ -582,7 +582,7 @@ the configuration (more specifically: in PackageInfo elements) or in the
 tagged value "version" of the package. If no version information is
 found there, the version of the parent package is checked. If the parent
 package has version information, it is used for the child package.
-Because of this, \<<leaf>> packages of an application schema usually have
+Because of this, «leaf» packages of an application schema usually have
 the same version as the application schema. This can be useful if
 ontologies are created for all packages within a given application
 schema.
@@ -604,7 +604,7 @@ the configuration (more specifically: in PackageInfo elements) or in the
 tagged value "version" of the package. If no version information is
 found there, the version of the parent package is checked. If the parent
 package has version information, it is used for the child package.
-Because of this, \<<leaf>> packages of an application schema usually have
+Because of this, «leaf» packages of an application schema usually have
 the same version as the application schema. This can be useful if
 ontologies are created for all packages within a given application
 schema.
@@ -683,8 +683,8 @@ The conversion of UML properties (attributes and navigable association
 roles) into OWL properties is enabled or disabled by respectively
 including or excluding _rule-owl-prop-general_ in the encoding rule.
 
-However, this rule does not apply to UML properties of \<<codeList>> and
-\<<enumeration>> types, because the rules defined to convert those types
+However, this rule does not apply to UML properties of «codeList» and
+«enumeration» types, because the rules defined to convert those types
 specify if and how their properties - i.e., listed values - are
 converted.
 
@@ -829,7 +829,7 @@ encoded with an unqualified cardinality restriction.
 (since v2.7.0)
 
 Enables property enrichment as documented in the _OGC Testbed-14:
-http://docs.opengeospatial.org/per/18-032r2.html[Application
+https://docs.ogc.org/per/18-032r2.html[Application
 Schema-based Ontology Development Engineering Report]_ (OGC 18-032r2).
 
 [[rule-owl-prop-range-global]]
@@ -952,7 +952,7 @@ them.
 which an encoding (to OWL and SKOS) is not available yet and thus shall
 automatically be derived by ShapeChange, for example using
 _rule-owl-cls-codelist-19150-2_.
-** Once the encoding is available, the \<<codeList>> UML classes can be
+** Once the encoding is available, the «codeList» UML classes can be
 transformed into stubs to reference the externally managed encoding.
 This approach supports the transition to an application schema where all
 code lists used by the schema are managed externally. In this case, it
@@ -2011,7 +2011,7 @@ in configuration files.
 (since v2.7.0)
 
 As documented in the OGC Testbed-14:
-http://docs.opengeospatial.org/per/18-032r2.html[Application
+https://docs.ogc.org/per/18-032r2.html[Application
 Schema-based Ontology Development Engineering Report] (OGC 18-032r2),
 ShapeChange supports the creation of new, general RDF/OWL properties.
 Such properties are defined in the configuration using the

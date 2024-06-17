@@ -47,7 +47,7 @@ be xref:../get started/The_element_input.adoc[configured].
 All stereotypes not listed below are ignored.
 
 There is one additional stereotype, that can be applied to all model
-elements, \<<retired>>. It can be used in UML models to indicate that a
+elements, «retired». It can be used in UML models to indicate that a
 model element has been retired and is only left in the model for
 compatibility with previous versions of the model. The stereotype
 currently does not have any impact on the standard ShapeChange output
@@ -67,13 +67,13 @@ subpackages of an application schema, is that no stereotype is applied.
 |===
 |Stereotype |Aliases |Description
 
-|\<<Application Schema>> |\<<applicationSchema>>, \<<requirementsClass>> |An application schema according to ISO 19109 [ISO 19109].
+|«Application Schema» |«applicationSchema», «requirementsClass» |An application schema according to ISO 19109 [ISO 19109].
 
-|\<<bundle>> | |A package that is not an application schema and contains other packages [GSIP]. Usually mapped to no stereotype.
+|«bundle» | |A package that is not an application schema and contains other packages [GSIP]. Usually mapped to no stereotype.
 
-|\<<leaf>> | |A package that is not an application schema and contains no packages. [ISO/TS 19103]. Usually mapped to no stereotype.
+|«leaf» | |A package that is not an application schema and contains no packages. [ISO/TS 19103]. Usually mapped to no stereotype.
 
-|\<<schema>> | |A package that should be treated like \<<Application Schema>> but does not contain feature types.
+|«schema» | |A package that should be treated like «Application Schema» but does not contain feature types.
 
 |===
 
@@ -83,7 +83,7 @@ subpackages of an application schema, is that no stereotype is applied.
 The standard case for classes is that no stereotype is applied; class
 instances are plain objects with identity.
 
-The stereotype \<<abstract>> is used by some models, but should be
+The stereotype «abstract» is used by some models, but should be
 avoided. If a class is abstract, this must be indicated using the UML
 flag for abstractness, not the stereotype. If the stereotype is
 provided, it is ignored by ShapeChange.
@@ -92,13 +92,13 @@ provided, it is ignored by ShapeChange.
 |===
 |Stereotype |Aliases |Description
 
-|\<<ADEElement>> |  |Feature type in an CityGML Application Domain Extension (ADE) that contains only properties that are generic application extensions.
+|«ADEElement» |  |Feature type in an CityGML Application Domain Extension (ADE) that contains only properties that are generic application extensions.
 
-|\<<AIXMExtension>> |  |Type defined in an AIXM extension schema. It extends a specific feature or object type or all feature types usually from the core AIXM schema.
+|«AIXMExtension» |  |Type defined in an AIXM extension schema. It extends a specific feature or object type or all feature types usually from the core AIXM schema.
 
-|\<<attributeConcept>> |  |An attribute concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a dependency to an attribute concept classifier and a property of the same name ShapeChange will use the documentation of the concept as the documentation of the property if the documentation of the property is empty.
+|«attributeConcept» |  |An attribute concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a dependency to an attribute concept classifier and a property of the same name ShapeChange will use the documentation of the concept as the documentation of the property if the documentation of the property is empty.
 
-|\<<BasicType>> |  |Marks a so called basic type, which can have a simple representation in one or more target encodings. It usually is a restriction of CharacterString or Number – or a structured version thereof (e.g. "one two three four" – or any other meaningful combination of such types that is supported by a given encoding).
+|«BasicType» |  |Marks a so called basic type, which can have a simple representation in one or more target encodings. It usually is a restriction of CharacterString or Number – or a structured version thereof (e.g. "one two three four" – or any other meaningful combination of such types that is supported by a given encoding).
 
 NOTE: This stereotype has originally been defined for use with the XML Schema target. 
 
@@ -106,41 +106,41 @@ NOTE: This stereotype has originally been defined for use with the XML Schema ta
 ======
 For use in internal processing ShapeChange currently identifies classes as basic types while loading the model, if:
 
-* rule-xsd-cls-basictype is contained in the XSD encoding rule, and the UML type has the stereotype \<<BasicType>>, or
+* rule-xsd-cls-basictype is contained in the XSD encoding rule, and the UML type has the stereotype «BasicType», or
 * the UML type is an object type, mixin type, or data type and has a supertype that is identified as a basic type through: 
-** the previous behavior (matching rule-xsd-cls-basictype and having stereotype \<<BasicType>>), or
+** the previous behavior (matching rule-xsd-cls-basictype and having stereotype «BasicType»), or
 ** an XSD map entry being defined for the supertype which does not have its xmlTypeType and xmlTypeContent attributes both set to 'complex' – either explicitly or by using the default values, which is 'complex' for both attributes.
 
-Attempting to identify so called basic types in the conceptual model, and especially the use of stereotype \<<BasicType>>, can be an issue if 1) XML Schema is not one of the target encodings (in which case the configuration of an XmlSchema target – potentially disabled - would be necessary to identify basic types while loading the model) and 2) one or more of the targets do not support so called basic types. 
+Attempting to identify so called basic types in the conceptual model, and especially the use of stereotype «BasicType», can be an issue if 1) XML Schema is not one of the target encodings (in which case the configuration of an XmlSchema target – potentially disabled - would be necessary to identify basic types while loading the model) and 2) one or more of the targets do not support so called basic types. 
 ======
 
 RECOMMENDATION: Avoid using this stereotype in your application schema. 
 
 In the future, each target that supports the concept of target-specific basic types should categorize classes as such when the target is executed. The JSON Schema target is an example of how this can be done. Either the model structure is analyzed (e.g. inheritance from a type that is mapped to a basic type), or an encoding specific tagged value is used.
 
-|\<<CodeList>> |\<<conceptScheme>> \<<vocabulary>> |A code list. \<<conceptScheme>> and \<<vocabulary>> have been used to identify collections of enumerated values that may also have relationships like 'narrower'; for encoding purposes these are treated like code lists.
+|«CodeList» |«conceptScheme» «vocabulary» |A code list. «conceptScheme» and «vocabulary» have been used to identify collections of enumerated values that may also have relationships like 'narrower'; for encoding purposes these are treated like code lists.
 
-|\<<DataType>> |\<<request>> \<<response>> | A structured data type without identity [ISO/TS 19103]. The \<<request>> and \<<response>> stereotype were originally used in AFIS-ALKIS-ATKIS to distinguish data types for use in messages of services. For all encoding purposes these are treated as data types and are configured as aliases.
+|«DataType» |«request» «response» | A structured data type without identity [ISO/TS 19103]. The «request» and «response» stereotype were originally used in AFIS-ALKIS-ATKIS to distinguish data types for use in messages of services. For all encoding purposes these are treated as data types and are configured as aliases.
 
-|\<<Enumeration>> |  |An enumeration.
+|«Enumeration» |  |An enumeration.
 
-|\<<FachId>> |  |OKSTRA feature types where instances may be referenced through symbolic links. See the http://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
+|«FachId» |  |OKSTRA feature types where instances may be referenced through symbolic links. See the https://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
 
-|\<<featureConcept>> |  |A feature concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a
+|«featureConcept» |  |A feature concept in a feature concept dictionary (see ISO 19126). If a feature type classifier has a
 dependency to a feature concept classifier of the same name ShapeChange will use the documentation of the concept as the documentation of the feature type if the documentation of the feature type classifier is empty.
 
-|\<<FeatureType>> |\<<feature>> |A feature type [ISO 19136]. Some schemas have used \<<Feature>> so this has been added as an alias.
+|«FeatureType» |«feature» |A feature type [ISO 19136]. Some schemas have used «Feature» so this has been added as an alias.
 
-|\<<Interface>> |  |A type that is not directly instantiable but is used as an abstract collection of operation attribute and relation signatures. This stereotype should usually not be used in application schemas as \<<interface>> classes are on a different conceptual level. In the encoding these will usually be treated as if no stereotype has been set.
+|«Interface» |  |A type that is not directly instantiable but is used as an abstract collection of operation attribute and relation signatures. This stereotype should usually not be used in application schemas as «interface» classes are on a different conceptual level. In the encoding these will usually be treated as if no stereotype has been set.
 
-|\<<Schluesseltabelle>> |  |OKSTRA Schlüsseltabellen. See the http://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
+|«Schluesseltabelle» |  |OKSTRA Schlüsseltabellen. See the https://www.okstra.de/docs/n-dokumente/n0135.pdf[OKSTRA documentation (in German)].
 
-|\<<Type>> | |A standard class instances are plain objects with identity. In the encoding these will usually be treated as if no
-stereotype has been set but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when classes are augmented by profile-specific tagged values. For the purposes of meta-modeling \<<Type>> has been deprecated in UML 2 and \<<Interface>> should be used instead.
+|«Type» | |A standard class instances are plain objects with identity. In the encoding these will usually be treated as if no
+stereotype has been set but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when classes are augmented by profile-specific tagged values. For the purposes of meta-modeling «Type» has been deprecated in UML 2 and «Interface» should be used instead.
 
-|\<<Union>> |  |A structured data type without identity where exactly one of the properties of the type is present in any instance [ISO/TS 19103].
+|«Union» |  |A structured data type without identity where exactly one of the properties of the type is present in any instance [ISO/TS 19103].
 
-|\<<valueConcept>> |  |A nominal value concept in a feature concept dictionary (see ISO 19126). If an enumeration has a dependency to an value concept classifier and an enumerant of the same name ShapeChange will use the documentation of the concept as the documentation of the enumerant if the documentation of the enumerant is empty.
+|«valueConcept» |  |A nominal value concept in a feature concept dictionary (see ISO 19126). If an enumeration has a dependency to an value concept classifier and an enumerant of the same name ShapeChange will use the documentation of the concept as the documentation of the enumerant if the documentation of the enumerant is empty.
 
 |===
 
@@ -153,15 +153,15 @@ The standard case for properties is that no stereotype is applied.
 |===
 |Stereotype |Aliases |Description
 
-|\<<enum>> |\<<enumerationLiteral>> |Typical stereotype for attribute of a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]).
+|«enum» |«enumerationLiteral» |Typical stereotype for attribute of a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]).
 
-|\<<identifier>> |  |An attribute with this stereotype is used to uniquely identify class objects. For database models the attribute represents a primary key field.
+|«identifier» |  |An attribute with this stereotype is used to uniquely identify class objects. For database models the attribute represents a primary key field.
 
-|\<<property>> |  |Typical stereotype for attribute or association role of a class that is not a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when properties are augmented by profile-specific tagged values.
+|«property» |  |Typical stereotype for attribute or association role of a class that is not a code list or enumeration. Usually mapped to no stereotype but can be useful when writing UML models (via the xref:../targets/UML_model.adoc[UmlModel target]) when properties are augmented by profile-specific tagged values.
 
-|\<<version>> |  |If in an application schema an association role ends at a spatial object type this stereotype denotes that the value of the property is meant to be a specific version of the spatial object not the spatial object in general. [INSPIRE]
+|«version» |  |If in an application schema an association role ends at a spatial object type this stereotype denotes that the value of the property is meant to be a specific version of the spatial object not the spatial object in general. [INSPIRE]
 
-|\<<voidable>> |  |If a characteristic of an object is not present |but may be present or applicable in the real world this can be reflected using this stereotype. This is a shorthand notation for a union type of the normal value range with a void/nil value plus an optional reason for the void/nil value. [INSPIRE]
+|«voidable» |  |If a characteristic of an object is not present |but may be present or applicable in the real world this can be reflected using this stereotype. This is a shorthand notation for a union type of the normal value range with a void/nil value plus an optional reason for the void/nil value. [INSPIRE]
 
 |===
 
@@ -169,19 +169,19 @@ The standard case for properties is that no stereotype is applied.
 ==== Stereotypes of dependencies
 
 The standard case for dependencies is that no stereotype is applied. For
-package dependencies without a stereotype,\<<import>> is implied (source:
+package dependencies without a stereotype,«import» is implied (source:
 ISO 19136:2007, section E.2.1.1.1).
 
 [cols="20%,20%,60%",options="header",]
 |===
 |Stereotype |Aliases |Description
-|\<<import>> | |The model elements of the supplier package are imported.
+|«import» | |The model elements of the supplier package are imported.
 |===
 
 NOTE: ShapeChange stores package dependencies without stereotypes. In
 other words, stereotypes on package dependencies are ignored (thus, it
-does not matter if such a dependency has the stereotype \<<import>>,
-\<<include>>, or any other stereotype). ShapeChange determines if an
+does not matter if such a dependency has the stereotype «import»,
+«include», or any other stereotype). ShapeChange determines if an
 application schema has a dependency on a different application schema by
 examining the target namespaces of both packages; if they are different,
 the two packages belong to different application schema - otherwise,
@@ -196,7 +196,7 @@ ShapeChange ignores stereotypes on generalizations.
 [cols="20%,20%,60%",options="header",]
 |===
 |Stereotype |Aliases |Description
-|\<<disjoint>> |  |The constraint added to a set of generalization relationships indicates that an instance of the parent may be an instance of one and only one of the children within the set. This is implicitly assumed to be the case.
+|«disjoint» |  |The constraint added to a set of generalization relationships indicates that an instance of the parent may be an instance of one and only one of the children within the set. This is implicitly assumed to be the case.
 |===
 
 [[Tagged_Values]]
@@ -460,15 +460,15 @@ xref:../targets/SQL_DDL.adoc#rule-sql-cls-code-lists[rule-sql-cls-code-lists]
 
 |ontologyName |package | | |Can be used to define the name of the ontology that is derived from a package. NOTE: Defining the ontology name by tagged value is useful if ontologies shall be derived from multiple schemas, and each shall have a specific ontology name that is defined in the UML model. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-pkg-ontologyName-byTaggedValue[rule-owl-pkg-ontologyName-byTaggedValue]
 
-|owlDisjointProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'disjoint' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+|owlDisjointProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter https://docs.ogc.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'disjoint' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
 
-|owlEquivalentProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'equivalent' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+|owlEquivalentProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter https://docs.ogc.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'equivalent' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
 
-|owlInverseProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'inverse' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+|owlInverseProperties |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter https://docs.ogc.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'inverse' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
 
-|owlLogicalCharacteristics |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axioms 'functional', 'inverse-functional', 'reflexive', 'irreflexive', 'symmetric', 'asymmetric', and 'transitive' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+|owlLogicalCharacteristics |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter https://docs.ogc.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axioms 'functional', 'inverse-functional', 'reflexive', 'irreflexive', 'symmetric', 'asymmetric', and 'transitive' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
 
-|owlSubPropertyOf |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter http://docs.opengeospatial.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'subPropertyOf' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
+|owlSubPropertyOf |property | |OGC Testbed-14: Application Schema-based Ontology Development Engineering Report (OGC 18-032r2) - chapter https://docs.ogc.org/per/18-032r2.html#RDF_PropertyEnrichment[OWL Property Enrichment] |Used to define the OWL property axiom 'subPropertyOf' for the OWL property that represents the UML property with this tagged value. |Ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-prop-propertyEnrichment[rule-owl-prop-propertyEnrichment]
 
 |parent |property, class |class (itself, or that owns the property): codeList, enumeration |OGC Engineering Report OWS-8 Cross Community Interoperability (CCI) Semantic Mediation, OGC document number 11-063r6. See sub-clause 8.1 |Can be used to define hierarchical code lists (as specified in the IMGeo specification in the Netherlands). |(old) OWS-8 ontology target |xref:../targets/ontology/UML_to_RDF_OWL_based_on_OWS_8_encoding_rule.adoc[UML to RDF/OWL target (based on OWS-8 encoding rule) - rule-rdf-prop-parent]
 
@@ -488,7 +488,9 @@ NOTE: This tagged value is the default source for descriptor 'primaryCode'. | |x
 NOTE:  +
 - The Model Export target can be used to export a model, including defined profiles, in SCXML format, for subsequent profile definition via the Profile Management Tool. +
 - The Profile Transfer EA target can be used to write profile definitions into schemas contained in an EA repository. +
-- The Application Schema Metadata target can be used to identify the profiles defined in a schema. |Profiler transformation, Model Export, Profile Transfer EA, and Application Schema Metadata targets |xref:../transformations/profiling/Profiler.adoc xref:../transformations/profiling/Profiling.adoc xref:../targets/Model_Export.adoc[Model export target] +
+- The Application Schema Metadata target can be used to identify the profiles defined in a schema. |Profiler transformation, Model Export, Profile Transfer EA, and Application Schema Metadata targets |xref:../transformations/profiling/Profiler.adoc[Profiler] +
+xref:../transformations/profiling/Profiling.adoc[Profiling] +
+xref:../targets/Model_Export.adoc[Model export target] +
 xref:../targets/Profile_Transfer_to_EA_Repository.adoc[Profile transfer to EA target] +
 xref:../targets/Application_Schema_Metadata.adoc#rule-asm-all-identify-profiles[rule-asm-all-identify-profiles]
 
@@ -497,10 +499,12 @@ NOTE: The tagged value can be set by rule-trf-cls-createGeneralOutOfScopeConstra
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints2[rule-xsd-cls-codelist-constraints2] +
 xref:../transformations/profiling/Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints] 
 
-|rangeMaximum |property, also class (XML Schema and JSON Schema targets) | | |Define the maximum range of the property, or of a basic XML Schema type. |ArcGIS Workspace, SQL, CDB, XML Schema, and JSON Schema targets |xref:../targets/SQL_DDL.adoc#rule-sql-cls-check-constraint-for-range xref:../targets/SQL_DDL.adoc#rule-sql-prop-check-constraint-for-range xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-rangeDomainFromTaggedValues[rule-arcgis-cls-rangeDomainFromTaggedValues] +
+|rangeMaximum |property, also class (XML Schema and JSON Schema targets) | | |Define the maximum range of the property, or of a basic XML Schema type. |ArcGIS Workspace, SQL, CDB, XML Schema, and JSON Schema targets |xref:../targets/SQL_DDL.adoc#rule-sql-cls-check-constraint-for-range[rule-sql-cls-check-constraint-for-range] +
+xref:../targets/SQL_DDL.adoc#rule-sql-prop-check-constraint-for-range[rule-sql-prop-check-constraint-for-range] +
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-rangeDomainFromTaggedValues[rule-arcgis-cls-rangeDomainFromTaggedValues] +
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
-http://docs.opengeospatial.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
+https://docs.ogc.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
 xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
 
 |rangeMinimum |property, also class (XML Schema and JSON Schema targets) | | |Define the minimum range of the property, or of a basic XML Schema type. |ArcGIS Workspace, SQL, CDB, XML Schema, and JSON Schema targets |xref:../targets/SQL_DDL.adoc#rule-sql-cls-check-constraint-for-range[rule-sql-cls-check-constraint-for-range] +
@@ -508,7 +512,7 @@ xref:../targets/SQL_DDL.adoc#rule-sql-prop-check-constraint-for-range[rule-sql-p
 xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-cls-rangeDomainFromTaggedValues[rule-arcgis-cls-rangeDomainFromTaggedValues] +
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-prop-constrainingFacets[rule-xsd-prop-constrainingFacets] +
 xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-basictype[rule-xsd-cls-basictype] +
-http://docs.opengeospatial.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
+https://docs.ogc.org/per/17-020r1.html#CDB_DeriveAttributesDictionary[OGC Testbed-13: NAS Profiling Engineering Report - The CDB Geomatics Attributes Dictionary] +
 xref:../targets/JSON_Schema.adoc#rule-json-cls-basictype[rule-json-cls-basictype]
 
 |recommendedMeasure |attribute | |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Unit recommended for use with this property. The unit must be consistent with the physicalQuantity value. Example: \metre\  | | 
@@ -579,7 +583,7 @@ NOTE: Deprecated tagged value 'xmlNamespace' is automatically mapped to 'targetN
 |uomResourceRepresentation |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |MIME type indicating the units dictionary representation. Currently, only one value is specified: \application/gml+xml;version=3.2\ for a GML dictionary (as currently used in the MDR). +
 Default: \application/gml+xml;version=3.2\  | | 
 
-|uomResourceURI |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Base URI of the units dictionary Example: \http://metadata.ces.mil/mdr/ns/GSIP/uom/\  | | 
+|uomResourceURI |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Base URI of the units dictionary Example: \https://metadata.ces.mil/mdr/ns/GSIP/uom/\  | | 
 
 |uomResourceValuePattern |package |schema, applicationSchema |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Access pattern for the unit, containing the following substitution points:  +
 - \{resource}: The base URI of the units dictionary, to be replaced by the tagged value uomResourceURI from the schema.  +

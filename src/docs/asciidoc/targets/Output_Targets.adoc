@@ -268,7 +268,7 @@ The comment syntax depends upon the file extension:
 * sql|ddl: The comment line starts with '-- '.
 * ttl|nt|trig|nq: The comment line starts with '# '.
 * json: The comment is encoded as a JSON member with key "$comment" (defined 
-by the http://json-schema.org/draft/2020-12/json-schema-core.html#section-8.3[JSON Schema specification]).
+by the https://json-schema.org/draft/2020-12/json-schema-core#section-8.3[JSON Schema specification]).
 
 +++Applies to:+++
 

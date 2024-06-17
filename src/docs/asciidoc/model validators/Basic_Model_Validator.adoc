@@ -29,7 +29,7 @@ IMPORTANT: Only model elements from the schemas selected
 for processing will be tested! The configuration of the actual 
 transformation or target, which provides the execution context
 of the validator, defines which schemas are selected for processing.
-For further details, see the documentation of xref:../transformations/Common_Transformer_Functionality.adoc#Selecting_the_Schemas_to_Process[transformers] and xref:../targets/Output_targets.adoc#Selecting_the_Schemas_to_Process[targets].
+For further details, see the documentation of xref:../transformations/Common_Transformer_Functionality.adoc#Selecting_the_Schemas_to_Process[transformers] and xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[targets].
 
 [[Configuration]]
 == Configuration

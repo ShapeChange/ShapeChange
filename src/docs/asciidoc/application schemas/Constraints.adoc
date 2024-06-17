@@ -66,7 +66,7 @@ and loaded for these elements.
 == Object Constraint Language (OCL)
 
 The standardized means to express constraints for application schema
-elements is OCL. It is a http://www.omg.org/spec/OCL/[standard of the
+elements is OCL. It is a https://www.omg.org/spec/OCL/[standard of the
 Object Management Group (OMG)]. ISO 19103 "identifies the combination of
 UML static structure diagrams with its associated Object Constraint
 Language [...] as the conceptual schema language for specification of

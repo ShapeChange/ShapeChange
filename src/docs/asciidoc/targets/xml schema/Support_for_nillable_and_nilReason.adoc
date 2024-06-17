@@ -21,7 +21,7 @@ There are two extensions related to property elements that may be set to
 nil.
 
 The conversion rule *rule-xsd-prop-nillable* is straightforward and
-converts all properties with stereotype \<<voidable>> or the tagged value
+converts all properties with stereotype «voidable» or the tagged value
 nillable set to 'true' to property elements that are nillable and which
 include a nilReason property in their content model to encode metadata
 about the reason for the nil value.

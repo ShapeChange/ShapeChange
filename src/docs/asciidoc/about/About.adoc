@@ -50,6 +50,6 @@ Information on installation and use of the ShapeChange tool can be
 found xref:../get started/Get_Started.adoc[here].
 
 The source code of ShapeChange is available under
-the http://www.gnu.org/copyleft/gpl.html[GNU General Public License].
+the https://www.gnu.org/licenses/gpl-3.0[GNU General Public License].
 
 image::../images/sc-overview.png[image,title="ShapeChange overview figure"]

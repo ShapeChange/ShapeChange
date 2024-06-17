@@ -54,7 +54,7 @@ catalogue for INSPIRE application schemas is given below.
  <targetParameter name="changeInfo" value="false"/>
  <targetParameter name="outputFormat" value="HTML"/>
  <targetParameter name="name" value="'INSPIRE application schemas'"/>
- <targetParameter name="scope" value="This feature catalogue gives an informative overview of the spatial object types and data types defined in the INSPIRE data specifications. These types are used by data providers for the exchange and classification of spatial objects from data sets that relate to one or several INSPIRE spatial data themes.[NEWLINE]For the normative requirements, please refer to the &lt;a href='http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:EN:PDF'>COMMISSION REGULATION (EU) No 1089/2010 of 23 November 2010 on the interoperability of spatial data sets and services&lt;/a>. For a more detailed description of the application schemas, see the data specification guidance documents at &lt;a href='http://inspire.jrc.ec.europa.eu/index.cfm/pageid/2'>http://inspire.jrc.ec.europa.eu/index.cfm/pageid/2&lt;/a>.[NEWLINE]All application schemas for spatial data themes of Annex II or III are draft schemas."/>
+ <targetParameter name="scope" value="This feature catalogue gives an informative overview of the spatial object types and data types defined in the INSPIRE data specifications. These types are used by data providers for the exchange and classification of spatial objects from data sets that relate to one or several INSPIRE spatial data themes.[NEWLINE]For the normative requirements, please refer to the &lt;a href='https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:EN:PDF'>COMMISSION REGULATION (EU) No 1089/2010 of 23 November 2010 on the interoperability of spatial data sets and services&lt;/a>. For a more detailed description of the application schemas, see the data specification guidance documents at &lt;a href='https://inspire.jrc.ec.europa.eu/index.cfm/pageid/2'>https://inspire.jrc.ec.europa.eu/index.cfm/pageid/2&lt;/a>.[NEWLINE]All application schemas for spatial data themes of Annex II or III are draft schemas."/>
  <targetParameter name="versionNumber" value="n/a (each application schema is versioned separately)"/>
  <targetParameter name="versionDate" value="March 2012"/>
  <targetParameter name="producer" value="European Commission, INSPIRE Drafting Team 'Data Specifications' and Thematic Working Groups"/>
@@ -699,7 +699,7 @@ HTML.
 
 +++Type+++: String
 
-+++Default Value+++: https://shapechange.net/resources/xslt
++++Default Value+++: \https://shapechange.net/resources/xslt
 
 +++Explanation+++: The path (without a trailing "/") where the required
 XSLT files are located.

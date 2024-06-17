@@ -83,7 +83,7 @@ applied to the model.
 
 For example, if the application schema contains classes whose name is a
 SQL keyword (see
-http://www.postgresql.org/docs/current/static/sql-keywords-appendix.html[this
+https://www.postgresql.org/docs/current/sql-keywords-appendix.html[this
 list], for example), the
 xref:../transformations/Naming_Modifier.adoc[Naming
 Modifier] transformation can be applied to change the names of these
@@ -125,7 +125,7 @@ target generates CREATE TABLE statements:
 ** NOTE: Database schema assignment is supported for PostgreSQL DDL via
 xref:./SQL_DDL.adoc#rule-sql-all-schemas[rule-sql-all-schemas]
 * Primary key:
-** If an \<<identifier>> attribute is defined for a type in the
+** If an «identifier» attribute is defined for a type in the
 conceptual schema (see
 xref:./SQL_DDL.adoc#rule-sql-cls-identifierStereotype[_rule-sql-cls-identifierStereotype_])
 then the column that represents that attribute will be the primary key
@@ -444,14 +444,14 @@ The following list shows, which database systems support deferrable constraints,
 
 * Oracle: supported - see the https://docs.oracle.com/database/121/SQLRF/clauses002.htm#SQLRF5218[Oracle 12.1 Database SQL Language Reference]
 * PostgreSQL: supported - see the https://www.postgresql.org/docs/current/sql-createtable.html[PostgreSQL documentation] 
-* SQL Server: not supported - see the https://docs.microsoft.com/en-us/openspecs/sql_standards/ms-tsqliso02/70d6050a-28c7-4fae-a205-200ccb363522[SQL Server Transact-SQL ISO/IEC 9075-2 Standards Support Document]
+* SQL Server: not supported - see the https://learn.microsoft.com/en-us/openspecs/sql_standards/ms-tsqliso02/70d6050a-28c7-4fae-a205-200ccb363522[SQL Server Transact-SQL ISO/IEC 9075-2 Standards Support Document]
 * SQLite: supported - see the https://www.sqlite.org/foreignkeys.html#fk_deferred[SQLite documentation on deferred foreign key constraints].
 
 // https://stackoverflow.com/questions/5300307/not-deferrable-versus-deferrable-initially-immediate
 
 NOTE: According to the Enterprise Architect documentation for database modeling (v15.2), 
-specifically the pages on https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/constraints2.html[database table constraints / indexes] and 
-https://sparxsystems.com/enterprise_architect_user_guide/15.2/model_domains/foreignkeys.html[foreign keys], 
+specifically the pages on https://sparxsystems.com/enterprise_architect_user_guide/16.1/modeling_domains/constraints2.html[database table constraints / indexes] and 
+https://sparxsystems.com/enterprise_architect_user_guide/16.1/modeling_domains/foreignkeys.html[foreign keys], 
 EA database models do not contain constraint checking options.
 
 
@@ -1718,14 +1718,14 @@ Ensures that table creation statements are generated for feature types.
 
 (since v2.4.0)
 
-Enables use of stereotype \<<identifier>> on class attributes. If an
+Enables use of stereotype «identifier» on class attributes. If an
 attribute with that stereotype belongs to a class, then the column to
 represent that attribute will be used as primary key (and no extra
 identifier column will be generated).
 
-NOTE: Multiple \<<identifier>> attributes per class are not supported. In
+NOTE: Multiple «identifier» attributes per class are not supported. In
 such a case, ShapeChange will log a warning and use only one of them as
-primary key. If the maximum multiplicity of an \<<identifier>> attribute
+primary key. If the maximum multiplicity of an «identifier» attribute
 is greater than 1, ShapeChange will log an error.
 
 [[rule-sql-cls-object-types]]
@@ -2239,7 +2239,7 @@ Applies to Rule(s): _none_ - default behavior
 +++Explanation:+++ When creating a database model, ShapeChange loads
 DBMS specific templates into an EA repository (which is either created
 on the fly, or taken from a configured location). These templates add
-\<<DataModel>> packages with specific names to the repository. If such a
+«DataModel» packages with specific names to the repository. If such a
 package already exists, ShapeChange will create another package with the
 same name (but different GUIDs for its contents). This could cause
 confusion. To avoid any confusion, ShapeChange can delete a pre-existing
@@ -2621,11 +2621,11 @@ Default Value: _id
 Explanation: Name for the identifier column when generating table
 creation statements.
 
-NOTE: If an \<<identifier>> attribute is defined on a class, and
+NOTE: If an «identifier» attribute is defined on a class, and
 xref:./SQL_DDL.adoc#rule-sql-cls-identifierStereotype[_rule-sql-cls-identifierStereotype_]
 is included in the encoding rule, then ShapeChange will not generate an
 additional identifier column. It will use the column that represents the
-\<<identifier>> attribute as primary key.
+«identifier» attribute as primary key.
 
 Applies to Rule(s): _none_ - default behavior
 

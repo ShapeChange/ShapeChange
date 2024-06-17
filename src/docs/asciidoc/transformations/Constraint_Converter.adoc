@@ -32,10 +32,10 @@ another) for subsequent processing steps.
 NOTE: This specific transformation has been developed in OGC Testbed 13,
 to support the conversion of an application schema to a schema compliant
 to the GML Simple Feature Level 0 Profile (see the
-http://portal.opengeospatial.org/files/?artifact_id=42729[Geography
+https://portal.opengeospatial.org/files/?artifact_id=42729[Geography
 Markup Language (GML) simple features profile (with Corrigendum) (2.0)],
 OGC document number 10-100r3). For further details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 Some application schemas allow different types of geometries to be

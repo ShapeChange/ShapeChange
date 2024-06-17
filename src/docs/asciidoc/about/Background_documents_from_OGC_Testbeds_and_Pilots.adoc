@@ -18,28 +18,28 @@
 [[Background_documents_from_OGC_Testbeds_and_Pilots]]
 = Background documents from OGC Testbeds and Pilots
 
-The following is a list of documents that are related to ShapeChange and its development. They were created as part of testbeds and pilots in the http://www.opengeospatial.org/ogc/programs/ip[OGC Innovation Program]:
+The following is a list of documents that are related to ShapeChange and its development. They were created as part of testbeds and pilots in the OGC Innovation Program:
 
 * OGC https://portal.ogc.org/files/?artifact_id=5344[Geospatial One-Stop – Transportation Pilot] (2003)
-* OGC Testbed-2: http://portal.opengeospatial.org/files/?artifact_id=8071[Application Schema Development] (2004, OGC document 04-100)
-* OGC Testbed-3: http://portal.opengeospatial.org/files/?artifact_id=12893[Schema Maintenance and Tailoring] (2005, OGC document 05-117)
-* OGC Testbed-3: http://portal.opengeospatial.org/files/?artifact_id=12894[UGAS Tool] (2005, OGC document 05-118)
+* OGC Testbed-2: https://portal.opengeospatial.org/files/?artifact_id=8071[Application Schema Development] (2004, OGC document 04-100)
+* OGC Testbed-3: https://portal.opengeospatial.org/files/?artifact_id=12893[Schema Maintenance and Tailoring] (2005, OGC document 05-117)
+* OGC Testbed-3: https://portal.opengeospatial.org/files/?artifact_id=12894[UGAS Tool] (2005, OGC document 05-118)
 * OGC Testbed-4: https://portal.opengeospatial.org/files/?artifact_id=21628[GSIP Schema Processing] (2007, OGC document 07-028r1)
-* OGC Testbed-5: http://portal.opengeospatial.org/files/?artifact_id=29029[GSIP Schema Processing] (2008, OGC document 08-078r1)
-* OGC Testbed-6: http://portal.opengeospatial.org/files/?artifact_id=34098[UTDS-CityGML Implementation Profile] (2009, OGC document 09-037r1)
+* OGC Testbed-5: https://portal.opengeospatial.org/files/?artifact_id=29029[GSIP Schema Processing] (2008, OGC document 08-078r1)
+* OGC Testbed-6: https://portal.opengeospatial.org/files/?artifact_id=34098[UTDS-CityGML Implementation Profile] (2009, OGC document 09-037r1)
 * OGC Testbed-7: https://portal.opengeospatial.org/files/?artifact_id=50438[Schema Automation Engineering Report] (2010, OGC document 10-088r3)
 * OGC Testbed-8: https://portal.opengeospatial.org/files/?artifact_id=46324[Schema Automation Engineering Report] (2011, OGC document 11-064r3)
 * OGC Testbed-9: https://portal.opengeospatial.org/files/?artifact_id=51784[UML-to-GML-Application-Schema Conversion Engineering Report] (2013, OGC document 12-093)
 * OGC Testbed-9: https://portal.opengeospatial.org/files/?artifact_id=51807[Aviation - AIRM Derivation] (2013, OGC document 12-094)
 * OGC Testbed-11: https://portal.opengeospatial.org/files/?artifact_id=63794[Aviation - Guidance on Using Semantics of Business Vocabulary and Business Rules (SBVR) Engineering Report] (2015, OGC document 15-024r2)
-* OGC Testbed-12: http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering Report] (2016, OGC document 16-020)
-* OGC Testbed-13: http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling Engineering Report] (2017, OGC document 17-020r1)
-* OGC Testbed-14: http://docs.opengeospatial.org/per/18-032r2.html[Application Schema-based Ontology Development Engineering Report] (2018, OGC
+* OGC Testbed-12: https://docs.ogc.org/per/16-020.html[ShapeChange Engineering Report] (2016, OGC document 16-020)
+* OGC Testbed-13: https://docs.ogc.org/per/17-020r1.html[NAS Profiling Engineering Report] (2017, OGC document 17-020r1)
+* OGC Testbed-14: https://docs.ogc.org/per/18-032r2.html[Application Schema-based Ontology Development Engineering Report] (2018, OGC
 document 18-032r2)
-* OGC Testbed-14: http://docs.opengeospatial.org/per/18-091r2.html[Application Schemas and JSON Technologies Engineering Report] (2018, OGC document 18-091r2)
+* OGC Testbed-14: https://docs.ogc.org/per/18-091r2.html[Application Schemas and JSON Technologies Engineering Report] (2018, OGC document 18-091r2)
 * OGC UGAS-2019 Pilot:
 ** link:../media/UGAS19-D100_property_stereotypes.pdf[Property Stereotypes for Metadata]
-** https://www.ogc.org/projects/initiatives/ugas2019[Summary Report]
-* OGC UML-to-GML Application Schema Pilot 2020 (UGAS-2020 - project page: https://www.ogc.org/projects/initiatives/ugas-2020[here]): https://docs.ogc.org/per/20-012.html[OGC UGAS-2020 Engineering Report (OGC 20-012)]
+** https://www.ogc.org/initiatives/ugas2019/[Summary Report]
+* OGC UML-to-GML Application Schema Pilot 2020 (UGAS-2020 - project page: https://www.ogc.org/initiatives/ugas-2020/[here]): https://docs.ogc.org/per/20-012.html[OGC UGAS-2020 Engineering Report (OGC 20-012)]
 
 The first version of ShapeChange was published after the OGC Geospatial One-Stop - Transportation Pilot in 2003. The reports from the pilot have not been published by OGC. OGC members can access them in the OGC Portal.

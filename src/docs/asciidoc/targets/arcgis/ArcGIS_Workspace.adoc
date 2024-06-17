@@ -50,7 +50,7 @@ elements may result in an exception (informing about an invalid type).
 
 For further information on the ArcGIS workspace model and the ArcGIS
 extension for Enterprise Architect, see
-http://www.sparxsystems.com/arcgis/
+https://sparxsystems.com/arcgis/
 
 NOTE: In order to successfully derive an ArcGIS workspace document from
 an application schema, it is important to understand the complete
@@ -171,17 +171,17 @@ The following rules are supported by this target.
 NOTE: Until v2.3.0 this rule had the identifier
 rule-arcgis-prop-precision
 
-If this rule is enabled, then the precision of a \<<field>> with a range
+If this rule is enabled, then the precision of a «field» with a range
 domain as type, or with a simple esri type can be set via the tagged
 value 'precision' (on the property from the conceptual schema that is
-converted to the \<<field>>; the tagged value must contain an integer
+converted to the «field»; the tagged value must contain an integer
 value).
 
 If the rule is not enabled, or the tagged value 'precision' is not set,
 the default behavior applies, which is to set precision to:
 
-* 9 - for a \<<field>> with type esriFieldTypeInteger
-* 10 - for a \<<field>> with type esriFieldTypeDouble
+* 9 - for a «field» with type esriFieldTypeInteger
+* 10 - for a «field» with type esriFieldTypeDouble
 * 0 - for all other cases
 
 [[rule-arcgis-all-relationshipClassNameByTaggedValueOfClasses]]
@@ -204,7 +204,7 @@ length).
 
 (since v2.6.0)
 
-Removes any \<<CodedValueDomain>> from the ArcGIS workspace model that is
+Removes any «CodedValueDomain» from the ArcGIS workspace model that is
 not used as value type in any field of one of the feature or table types
 contained in the model.
 
@@ -229,16 +229,16 @@ UML model.
 
 NOTE: Until v2.3.0 this rule had the identifier rule-arcgis-prop-scale
 
-If this rule is enabled, then the scale of a \<<field>> with a range
+If this rule is enabled, then the scale of a «field» with a range
 domain as type, or with a simple esri type can be set via the tagged
 value 'scale' (on the property from the conceptual schema that is
-converted to the \<<field>>; the tagged value must contain an integer
+converted to the «field»; the tagged value must contain an integer
 value).
 
 If the rule is not enabled, or the tagged value 'scale' is not set, the
 default behavior applies, which is to set precision to:
 
-* 6 - for a \<<field>> with type esriFieldTypeDouble
+* 6 - for a «field» with type esriFieldTypeDouble
 * 0 - for all other cases
 
 [[rule-arcgis-all-subtypes]]
@@ -254,13 +254,13 @@ xref:./Creating_the_ArcGIS_Workspace_UML_Model.adoc#ArcGIS_Subtypes[here].
 
 (since v2.4.0)
 
-Enables use of stereotype \<<identifier>> on class attributes. If an
+Enables use of stereotype «identifier» on class attributes. If an
 attribute with that stereotype belongs to a class, then it will be used
 as primary key (the OBJECTID field will still be generated).
 
-NOTE: Multiple \<<identifier>> attributes per class are not supported. In
+NOTE: Multiple «identifier» attributes per class are not supported. In
 such a case, ShapeChange will log a warning and use only one of them as
-primary key. If the maximum multiplicity of an \<<identifier>> attribute
+primary key. If the maximum multiplicity of an «identifier» attribute
 is greater than 1, ShapeChange will log an error.
 
 WARNING: If the application schema contains an n:1 relationship between
@@ -313,11 +313,11 @@ values also specify a range domain for that property.
 
 (since v2.5.0)
 
-If this rule is included, then for each \<<Field>> that represents a
+If this rule is included, then for each «Field» that represents a
 property from the conceptual model with tagged value _sqlUnique_ equal
 to (ignoring case) 'true' – but not for fields that participate in a
-relationship class, an \<<AttributeIndex>> is created in the element that
-owns the \<<Field>>. The name of the index is the name of the field with
+relationship class, an «AttributeIndex» is created in the element that
+owns the «Field». The name of the index is the name of the field with
 suffix "\_IDX". The index references the field via the tagged value
 "Fields". The tagged values _IsAscending_ and _IsUnique_ are set to
 true.
@@ -332,14 +332,14 @@ further details, see the ArcGIS help.
 (since v2.3.0)
 
 If this rule is enabled, then an initial value of an attribute from the
-conceptual schema will also be set as initial value of the \<<field>>
+conceptual schema will also be set as initial value of the «field»
 that represents that attribute in the resulting ArcGIS workspace model.
 
 [[rule-arcgis-prop-initialValueByAlias]]
 ==== rule-arcgis-prop-initialValueByAlias
 
-If this rule is enabled, the initial value for a \<<DomainCodedValue>>,
-which is an attribute of a \<<CodedValueDomain>> (that results from
+If this rule is enabled, the initial value for a «DomainCodedValue»,
+which is an attribute of a «CodedValueDomain» (that results from
 conversion of enumerations and code lists from the application schema,
 is taken from the alias of the respective enums and codes, rather than
 from the initial value defined in the application schema.
@@ -350,16 +350,16 @@ from the initial value defined in the application schema.
 (since v2.3.0)
 
 If this rule is enabled, then the tagged value IsNullable of non-system
-\<<field>>s in the ArcGIS workspace model are set as follows:
+«field»s in the ArcGIS workspace model are set as follows:
 
 * if the property from the conceptual schema is optional (minimum
-multiplicity < 1), voidable (stereotype \<<voidable>>), or nillable
+multiplicity < 1), voidable (stereotype «voidable»), or nillable
 (tagged value 'nillable'='true') then it will be converted to a
-\<<field>> with 'IsNullable'='true'
+«field» with 'IsNullable'='true'
 * otherwise 'IsNullable'='false'
 
 If this rule is not enabled, then the default behavior applies, which is
-to have 'IsNullable'='true' for all non-system \<<field>>s.
+to have 'IsNullable'='true' for all non-system «field»s.
 
 [[rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType]]
 ==== rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType
@@ -380,14 +380,14 @@ If none of these rules apply, the length will be set to 0.
 
 If this rule is enabled, ShapeChange will use the value of the tagged
 value 'size' (must be an integer) to populate the 'length' tagged value
-of the \<<field>> that will represent the property in the ArcGIS model.
+of the «field» that will represent the property in the ArcGIS model.
 
 NOTE: Only applies to properties that are implemented as fields with
 type esriFieldTypeString. If the value is 0 or empty, unlimited length
 is assumed - unless an OCL constraint exists that restricts the length
 for the property. That also means that this rule has precedence over an
 OCL constraint: if the tagged value 'size' has an integer value > 1,
-then this value will be used as the length in the \<<field>>.
+then this value will be used as the length in the «field».
 
 Parameter(s):
 
@@ -401,7 +401,7 @@ Parameter(s):
 If this rule is enabled, then - for properties with a code list or
 enumeration as value type - ShapeChange will use the value of the tagged
 value 'size' (must be an integer) to populate the 'length' tagged value
-of the \<<field>> that will represent the property in the ArcGIS model.
+of the «field» that will represent the property in the ArcGIS model.
 This rule has higher priority than
 xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType[rule-arcgis-prop-lengthFromCodesOrEnumsOfValueType].
 If none of these rules apply, the length will be set to 0.
@@ -417,17 +417,17 @@ Parameter(s):
 
 If this rule is included, then a reflexive relationship (a property
 whose type is the class that owns the property) is converted to a
-\<<Field>> with a field type suited for storing the ID of the referenced
+«Field» with a field type suited for storing the ID of the referenced
 class (e.g. _esriFieldTypeInteger_ or _esriFieldTypeGUID_). The target
 parameter
 xref:./ArcGIS_Workspace.adoc#reflexiveRelationshipFieldSuffix[_reflexiveRelationshipFieldSuffix_]
 can be used to define a suffix that is added to the name of such a
-\<<Field>>. This field can be used to store the ID of the object that is
+«Field». This field can be used to store the ID of the object that is
 the target of the reflexive relationship.
 
 NOTE: If the reflexive relationship property has max cardinality > 1,
 then this is not represented. ShapeChange will log a warning and convert
-the property to a single \<<Field>>.
+the property to a single «Field».
 
 [[Parameters]]
 === Parameters
@@ -465,7 +465,7 @@ Type: Integer
 Default Value: 255
 
 Explanation: Default length to set in the 'length' tagged value of
-\<<field>>s that have a textual value, in case that the length is not
+«field»s that have a textual value, in case that the length is not
 specified otherwise.
 
 Applies to Rule(s): _none_ - default behavior
@@ -621,7 +621,7 @@ Type: String
 Default Value: size
 
 Explanation: Can be used to configure a different name for the tagged
-value that provides the length of a \<<field>>.
+value that provides the length of a «field».
 
 Applies to Rule(s):
 
@@ -670,7 +670,7 @@ Applies to Rule(s): none – default behavior
 +++Default Value:+++ _none_
 
 +++Explanation:+++ Define the suffix to add when encoding a reflexive
-relationship property as a \<<Field>>.
+relationship property as a «Field».
 
 +++Applies to Rule(s):+++
 xref:./ArcGIS_Workspace.adoc#rule-arcgis-prop-reflexiveRelationshipAsField[rule-arcgis-prop-reflexiveRelationshipAsField]

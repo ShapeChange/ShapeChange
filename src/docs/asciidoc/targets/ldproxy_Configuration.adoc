@@ -25,7 +25,7 @@
 https://interactive-instruments.github.io/ldproxy/[ldproxy] is a
 software tool to share spatial data according to the
 https://www.w3.org/TR/sdw-bp/[W3C/OGC Spatial Data on the Web Best
-Practices] and the https://github.com/opengeospatial/WFS_FES[draft OGC
+Practices] and the https://github.com/opengeospatial/ogcapi-features[draft OGC
 Web Feature Service standard]. ldproxy 1.3.0 supports two data sources:
 OGC Web Feature Services 2.0 and PostgreSQL/PostGIS databases
 (PostgreSQL versions 9.5, 9.6, 10.5; PostGIS version 2.4). The ldproxy
@@ -113,7 +113,7 @@ The value of "$.featureProvider.connectionInfo.host" has to be the
 hostname that is reachable from the ldproxy docker container (see
 below). In a local test environment where the database is on the same
 machine, this would typically be "172.17.0.1" (except on macOS,
-https://docs.docker.com/docker-for-mac/networking/#use-cases-and-workarounds[where
+https://docs.docker.com/desktop/networking/#use-cases-and-workarounds[where
 it is "host.docker.internal"]).
 
 The value of "$.featureProvider.connectionInfo.password" is the base64
@@ -189,7 +189,7 @@ link:#secured[parameter "secured"]), the configuration
 file [underline red]#ExternalAuthConfig# has to be provided, too.
 
 See the
-http://interactive-instruments.github.io/ldproxy/book/07-security.html[ldproxy
+https://interactive-instruments.github.io/ldproxy/book/07-security.html[ldproxy
 documentation] for details.
 
 Example:
@@ -270,10 +270,10 @@ In this example "/home/user/ldproxy_data" has to be the parent directory
 of the "config-store" directory.
 
 The published services are then available at
-http://localhost:7080/rest/services.
+\https://localhost:7080/rest/services.
 
 To change the external URL of a service, see the
-http://interactive-instruments.github.io/ldproxy/book/09-webserver.html[ldproxy
+https://interactive-instruments.github.io/ldproxy/book/09-webserver.html[ldproxy
 documentation]. Public services will typically hide the ldproxy manager.
 In this case, the value of the external URL (JSON path "$.externalUrl"
 in [underline red]#CoreServerConfig#) from "/rest/services" to the new value.
@@ -283,7 +283,7 @@ in [underline red]#CoreServerConfig#) from "/rest/services" to the new value.
 
 If you encounter issues with the deployment, inspect the log files to
 determine the cause of the issue. See the
-http://interactive-instruments.github.io/ldproxy/book/08-logging.html[ldproxy
+https://interactive-instruments.github.io/ldproxy/book/08-logging.html[ldproxy
 documentation].
 
 [[Limitations]]
@@ -297,8 +297,8 @@ the future.
 [[Configuration]]
 == Configuration
 
-[[ClassClass]]
-=== [#Class]#Class#
+[[Class]]
+=== Class
 
 The class for the target implementation is
 _de.interactive_instruments.ShapeChange.Target.Ldproxy.Config_

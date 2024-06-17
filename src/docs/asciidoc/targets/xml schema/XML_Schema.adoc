@@ -55,11 +55,11 @@ models commonly used in the standards developed by ISO/TC
 211. xref:./ISO_TS_19139_Encoding_Rule.adoc[More information...]
 
 The reader is directed to
-the http://portal.opengeospatial.org/files/?artifact_id=20509[GML 3.2],
+the https://portal.opengeospatial.org/files/?artifact_id=20509[GML 3.2],
 https://portal.opengeospatial.org/files/?artifact_id=46568[GML 3.3],
-http://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
+https://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
 Data Model 2.0] and
-http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=32557[ISO/TS
+https://www.iso.org/standard/32557.html[ISO/TS
 19139] standards for further details of the encoding rules therein. In
 addition, ShapeChange supports a number of
 xref:./Non_Standard_Conversion_Rules.adoc[extensions to these
@@ -109,7 +109,7 @@ may be included in configuration files. These are:
 |iso19136_2007_INSPIRE_Extensions |The GML 3.3 encoding rule with
 extensions related to INSPIRE, the Infrastructure for Spatial
 Information in the European Community. The encoding rule is described in
-http://inspire.jrc.ec.europa.eu/documents/Data_Specifications/D2.7_v3.3rc2.pdf[INSPIRE
+https://inspire.jrc.ec.europa.eu/documents/Data_Specifications/D2.7_v3.3rc2.pdf[INSPIRE
 document D2.7].
 
 |iso19136_2007_ShapeChange_1.0_Extensions |The GML 3.2 encoding rule
@@ -124,7 +124,7 @@ with additional rules to create a GML schema based on GML 2.1.
 application schema. This includes support for an extended UML profile.
 OKSTRA is a feature catalogue and application schema for road and
 traffic related data. More information can be found on
-the http://www.okstra.de/umlmodell.html[OKSTRA website.]
+the https://www.okstra.de[OKSTRA website].
 
 |citygml-ade |The GML-3.2-based encoding rule that can be used for
 CityGML Application Domain Extensions (ADEs) using GML 3.1. This
@@ -243,7 +243,7 @@ Code list representations include:
 * application/x.iso19139+xml – An ISO 19139:2007 dictionary
 (gmx:CodeListDictionary or gmx:ML_CodeListDictionary).
 ** NOTE: application/x.iso19139+xml is a preliminary identifier. It uses
-the https://tools.ietf.org/html/rfc6838#section-3.4[unregistered x.
+the https://datatracker.ietf.org/doc/html/rfc6838#section-3.4[unregistered x.
 Tree] as defined by IETF RFC 6838 - Media Type Specifications and
 Registration Procedures.
 

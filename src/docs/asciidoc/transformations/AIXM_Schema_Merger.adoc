@@ -28,16 +28,16 @@ usually done in UML and in ISO application schema. Where usually
 information is added through subtyping, AIXM has the concept of
 extensions. An extension schema is a schema that:
 
-* Can define \<<extension>> classes that extend:
+* Can define «extension» classes that extend:
 ** either a specific feature or object type
 ** or all feature types
-* Can define \<<codelist>> classes that extend code lists from the core
+* Can define «codelist» classes that extend code lists from the core
 schema
 * Can define new code lists as well as feature and object types
 
 The objective of this approach is described in
-the http://www.aixm.aero/gallery/content/public/AIXM51/AIXM_Application_Schema_Generation-1.1.pdf[AIXM
-Application Schema Generation document], section 1.3, as follows:
+the AIXM Application Schema Generation document 
+(no longer publicly available, it looks like), section 1.3, as follows:
 
 _"The core AIXM model provides the definition of standardised
 aeronautical information features. In order to use AIXM for a specific
@@ -53,7 +53,7 @@ Some principles that regulate such extensions include:_
 the definition of the core AIXM XSD element with the same name (for that
 purpose, the AbstractSomeFeatureExtension element is provided in the
 core AIXM XSD). A consequence is that it is not possible to extend
-\<<datatype>> classes. Only \<<codelist>> may be extended._
+«datatype» classes. Only «codelist» may be extended._
 * _An additional feature and objects shall follow the core AIXM
 modelling conventions (stereotypes, naming, data types, etc.)"_
 
@@ -63,7 +63,7 @@ processor is able to ignore unknown extensions to core AIXM features.
 
 With the AIXM extension mechanism, AIXM feature and object types
 conceptually own all the properties that are added to them via
-\<<extension>> types.
+«extension» types.
 
 This transformation merges AIXM extension schemas and the core schema.
 The result of the merging process is a single schema that contains the
@@ -118,7 +118,7 @@ The following parameters are supported by this transformation.
 |*_Type_* |*_Default Value_* |*_Explanation_*
 
 |*coreSchemaTargetNamespace* |(none – default behavior) |Optional
-|String |http://www.aixm.aero/schema/5.1 |The target namespace of the
+|String |\http://www.aixm.aero/schema/5.1 |The target namespace of the
 core AIXM schema.
 
 | | | | | |

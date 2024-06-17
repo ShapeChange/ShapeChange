@@ -23,7 +23,7 @@
 [red]#(NOTE: The target behavior documented on this page has been available up until
 and including to ShapeChange version 2.1.0)#
 
-http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/DIS
+https://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=57466[ISO/DIS
 19150-2] defines rules for mapping ISO geographic information UML models
 to OWL ontologies. This target derives an ontology representation from
 an application schema in UML based upon these rules, with a number of
@@ -33,7 +33,7 @@ When this target was implemented, the ISO standard was a Draft
 International Standard (DIS). A number of comments still had to be
 resolved. The final standard differs from the DIS version (for details,
 see Annex A of the _OGC Testbed 12
-http://docs.opengeospatial.org/per/16-020.html[ShapeChange Engineering
+https://docs.ogc.org/per/16-020.html[ShapeChange Engineering
 Report]_, OGC 16-020). As a result, this target is considered a draft.
 An updated version is available since ShapeChange v2.2.0. Its
 implementation is different to what is described on this page and not

@@ -133,7 +133,7 @@ Constraints are not updated.
 
 (since v2.10.0)
 
-For each property that is nillable (has stereotype \<<voidable>> or
+For each property that is nillable (has stereotype «voidable» or
 tagged value _nillable_ set to 'true'), create a new attribute, as
 follows: First, the void reason type that applies to the nillable
 property is identified: The tagged value _voidReasonType_ of the
@@ -188,7 +188,7 @@ types. All subtypes of these types are also converted to feature types.
 
 (since v2.10.0)
 
-Converts the \<<propertyMetadata>> stereotype (of a UML property) to an
+Converts the «propertyMetadata» stereotype (of a UML property) to an
 additional property, as follows: First, the metadata type that applies
 to the property with the stereotype is identified: The tagged value
 _metadataType_ of the property is checked first. If the tagged value
@@ -311,7 +311,7 @@ xref:./Type_Converter.adoc#rule-trf-dissolveAssociations[rule-trf-dissolveAssoci
 
 +++Explanation+++: Name of the type from the conceptual model, which
 shall be used as metadata type for all properties with stereotype
-\<<propertyMetadata>> that do not define a metadata type via tagged value
+«propertyMetadata» that do not define a metadata type via tagged value
 _metadataType_. The value can be the pure type name, if it is unique
 within the conceptual model. Otherwise, the correct type is identified
 by providing its full name (omitting packages that are outside of the

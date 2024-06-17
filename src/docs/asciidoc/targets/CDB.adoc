@@ -34,7 +34,7 @@ processing.
 
 The process of mapping an application schema into these two dictionaries
 has been developed in OGC Testbed 13, and is documented in the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1), chapter 8.
 
 [[Configuration]]

@@ -31,22 +31,22 @@ The following additional rules for such abstract types are therefore
 supported by ShapeChange:
 
 * If a class is a *specialization* of another class, then this class
-shall have one of the stereotypes \<<featureType>>, \<<dataType>>, no
-stereotype, \<<type>> or \<<interface>>.
+shall have one of the stereotypes «featureType», «dataType», no
+stereotype, «type» or «interface».
 * The class shall have zero or one supertype with the same stereotype
-and zero or more abstract supertypes of the stereotype \<<type>> or
-\<<interface>>.
-* I.e., disregarding classes with stereotype \<<type>> or \<<interface>>,
+and zero or more abstract supertypes of the stereotype «type» or
+«interface».
+* I.e., disregarding classes with stereotype «type» or «interface»,
 a generalization relationship shall be specified only between two
 classes that are either:
-** both feature types (stereotype \<<featureType>>),
+** both feature types (stereotype «featureType»),
 ** both object types (no stereotype), or
-** both data types (stereotype \<<dataType>>).
-* For every class \<<type>> or \<<interface>> all direct or indirect
+** both data types (stereotype «dataType»).
+* For every class «type» or «interface» all direct or indirect
 subtypes shall be either
-** all feature or object types (stereotypes \<<featureType>>, no
-stereotype, \<<type>> or \<<interface>>),
-** all data types (stereotypes \<<dataType>>, \<<type>> or \<<interface>>).
+** all feature or object types (stereotypes «featureType», no
+stereotype, «type» or «interface»),
+** all data types (stereotypes «dataType», «type» or «interface»).
 * All generalization relationships between classes shall have no
 stereotype. The discriminator property of the UML generalization shall
 be blank.
@@ -63,7 +63,7 @@ use case - can be included is
 xref:./Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-mixin-classes-as-group[rule-xsd-cls-mixin-classes-as-group].
 
 NOTE: If rule-xsd-cls-mixin-classes is part of the conversion rules,
-then abstract \<<type>> classes are treated as mixin classes, even if the
+then abstract «type» classes are treated as mixin classes, even if the
 'gmlMixin' tagged value is not set.
 
 By default, mixin classes are not to object elements and their

@@ -95,7 +95,7 @@ _idReplacePattern_.
 === Additional conversion rules
 
 Hierarchical code lists as specified in the
-http://www.geonovum.nl/onderwerpen/bgt-imgeo-standaarden[IMGeo
+https://www.geonovum.nl/geo-standaarden/bgt-imgeo[IMGeo
 specification in the Netherlands] are supported by adding the conversion
 rule "rule-rdf-prop-parent" to the encoding rule. For example:
 

@@ -590,7 +590,7 @@ Parameters:
 [[rule-trf-prop-flatten-codelists]]
 ==== rule-trf-prop-flatten-codelists
 
-Switches the type of each property that is of a \<<codeList>> type to
+Switches the type of each property that is of a «codeList» type to
 CharacterString. Removes the code list classes from the model.
 
 NOTE: Only applies to properties of the application schema(s) selected
@@ -821,7 +821,7 @@ for P, then U will receive that code as well, using "_uom" as suffix.
 * This rule - together with its subrules - is useful to achieve a flat
 representation of measure typed properties.
 * The rule has originally been developed as part of the work in the
-https://www.ogc.org/projects/initiatives/ugas-2020[OGC UML-to-GML
+https://www.ogc.org/initiatives/ugas-2020/[OGC UML-to-GML
 Application Schema Pilot (UGAS-2020)]. See the project report for
 further details on the application of the rule,
 https://docs.ogc.org/per/20-012.html#_measure[section 7.3.2.2.1
@@ -951,7 +951,7 @@ enumeration BooleanWithONINA (enums: false, true, noInformation,
 notApplicable, other) to the model (in the package where the
 BooleanReason resides) and switches all properties in the application
 schema with type BooleanReason to use the type BooleanWithONINA.The
-Flattener also removes all XxxReason \<<union>> classes.
+Flattener also removes all XxxReason «union» classes.
 
 NOTE: Current behavior assumes that properties of type XxxReason are
 attributes, not association roles.
@@ -1106,19 +1106,19 @@ Example 1
 
 ClassA:
 
-* \<<property>> p: ClassB [1..3]
+* «property» p: ClassB [1..3]
 
 ClassB:
 
-* \<<property>> prop1: Integer [1..*]
-* \<<property>> prop2: Boolean [0..3]
+* «property» prop1: Integer [1..*]
+* «property» prop2: Boolean [0..3]
 
 The Flattener will transform this to:
 
 ClassA:
 
-* \<<property>> p.prop1: Integer [1..*]
-* \<<property>> p.prop2: Boolean [0..9]
+* «property» p.prop1: Integer [1..*]
+* «property» p.prop2: Boolean [0..9]
 
 -
 
@@ -1126,19 +1126,19 @@ Example 2
 
 ClassA:
 
-* \<<property>> pA: ClassB
+* «property» pA: ClassB
 
 ClassB (tagged value "omitWhenFlattened"= true):
 
-* \<<property>> pB1: Integer
-* \<<property>> pB2: Boolean
+* «property» pB1: Integer
+* «property» pB2: Boolean
 
 The Flattener will transform this to:
 
 ClassA:
 
-* \<<property>> pB1: Integer
-* \<<property>> pB2: Boolean
+* «property» pB1: Integer
+* «property» pB2: Boolean
 
 As we can see, the names of ClassA properties in the flattened schema do
 not contain the component "pA".
@@ -1161,7 +1161,7 @@ Parameters:
 
 Map Entries:
 
-If a property has a \<<dataType>> or \<<type>> as its type and a process
+If a property has a «dataType» or «type» as its type and a process
 map entry defines a target type for this type, then the type of the
 property is switched to that target type.
 
@@ -1782,7 +1782,7 @@ Default Value: true
 Behavior:
 
 If set to 'false', object type classes (with no stereotype or stereotype
-\<<type>>) will not be flattened by _rule-trf-prop-flatten-types_.
+«type») will not be flattened by _rule-trf-prop-flatten-types_.
 
 Applies to Rule(s)
 
@@ -2103,6 +2103,28 @@ Applies to Rule(s)
 
 * xref:./Flattener.adoc#rule-trf-prop-flatten-measure-typed-properties[rule-trf-prop-flatten-measure-typed-properties]
 
+[[measureUomTaggedValue]]
+==== measureUomTaggedValue
+
+(since v2.10)
+
+Alias: _none_
+
+Type: String
+
+Default Value: _none_
+
+Behavior: Defines the name of the unit of measure tagged value in
+subrule
+_rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix_ of
+xref:./Flattener.adoc#rule-trf-prop-flatten-measure-typed-properties[rule-trf-prop-flatten-measure-typed-properties].
+
+Applies to Rule(s)
+
+* Subrule
+_rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix_ of
+xref:./Flattener.adoc#rule-trf-prop-flatten-measure-typed-properties[rule-trf-prop-flatten-measure-typed-properties]
+
 [[omitHomogeneousGeometriesForTypesWithSingleGeometryProperty]]
 ==== omitHomogeneousGeometriesForTypesWithSingleGeometryProperty
 
@@ -2406,6 +2428,29 @@ _rule-trf-cls-flatten-reverse-inheritance_ to a supertype.
 Applies to Rule(s):
 
 * xref:./Flattener.adoc#rule-trf-cls-flatten-reverse-inheritance[rule-trf-cls-flatten-reverse-inheritance]
+
+[[uomSuffixSeparator]]
+==== uomSuffixSeparator
+
+(since v2.10)
+
+Alias: _none_
+
+Type: String
+
+Default Value: "_"
+
+Behavior: Defines the separator to be put between the name 
+of P and the uom symbol suffix in
+subrule
+_rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix_ of
+xref:./Flattener.adoc#rule-trf-prop-flatten-measure-typed-properties[rule-trf-prop-flatten-measure-typed-properties].
+
+Applies to Rule(s)
+
+* Subrule
+_rule-trf-prop-flatten-measure-typed-properties-fixed-uom-suffix_ of
+xref:./Flattener.adoc#rule-trf-prop-flatten-measure-typed-properties[rule-trf-prop-flatten-measure-typed-properties]
 
 [[Sample_Configurations]]
 === Sample Configurations

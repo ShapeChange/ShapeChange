@@ -217,7 +217,7 @@ or extend the default encoding behavior:
 |===
 |Rule Name |Description
 
-|* rule-all-cls-aixmDatatype* |A \<<datatype>> within an AIXM schema does
+|* rule-all-cls-aixmDatatype* |A «datatype» within an AIXM schema does
 not have its own object element. Within the XML Schema it only has a
 complex type with simple content definition containing a textual value
 (and possibly attribute(s)), but no element.

@@ -36,7 +36,7 @@ Contributors are:
 |Heidi Vanparys |Danish Agency for Data Supply and Efficiency
 |===
 
-ShapeChange is made available under the terms of the http://www.gnu.org/licenses/gpl-3.0.en.html[General Public License
+ShapeChange is made available under the terms of the https://www.gnu.org/licenses/gpl-3.0.en.html[General Public License
 (GPL)].
 
 Package _de.interactive_instruments.ShapeChange_ and its subpackages: ©2002-2021, interactive instruments GmbH

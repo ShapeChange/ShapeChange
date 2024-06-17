@@ -36,10 +36,10 @@ type can be removed using the type removal rule.
 [[Flatten_ONINAs]]
 == Flatten ONINAs
 
-This flattening step removes XxxReason \<<union>> types from the model
+This flattening step removes XxxReason «union» types from the model
 and ensures that nil reason codes (other, noInformation, notApplicable)
 are incorporated in Xxx enumerations. Execution of this flattening rule
-is required for application schema that use the XxxReason \<<union>>
+is required for application schema that use the XxxReason «union»
 modeling construct, and optional otherwise .
 
 [[Flatten_inheritance]]
@@ -81,15 +81,15 @@ in the following flattening step).
 [[Flatten_types]]
 == Flatten types
 
-This flattening step is used to move the contents of \<<dataType>> and
-\<<union>> types into feature and object types. The content of particular
+This flattening step is used to move the contents of «dataType» and
+«union» types into feature and object types. The content of particular
 object types can also be flattened, if desired (for example in the case
 of a complex geometry type model). Type flattening can also apply a type
 mapping, for example to replace the type "Measure" (from ISO 19103) with
 type "Real", or "CI_Citation" with "CharacterString". This further
 reduces the complexity of the model.The flattening step is required in
 case that the application schema contains properties with a value type
-of \<<dataType>> or \<<union>> (or object types, in case they are not
+of «dataType» or «union» (or object types, in case they are not
 omitted from type flattening) that are not mapped to a simple type.
 
 Particularly in the case of flattening the "Measure" type, this mapping
@@ -125,7 +125,7 @@ that complexity by removing unnecessary name components.
 
 If an application schema contains features with properties whose value
 type is a choice between different geometry types (either modelled as a
-\<<union>> or through inheritance) then this choice must be resolved. The
+«union» or through inheritance) then this choice must be resolved. The
 reason is that the ArcGIS workspace model does not support the
 conversion of feature types that can have geometry of different types.
 

@@ -92,8 +92,8 @@ exporting large models, it is advisable to set the parameter.
 [[Configuration]]
 == Configuration
 
-[[ClassClass]]
-=== [#Class]#Class#
+[[Class]]
+=== Class
 
 The class for the target implementation is
 _de.interactive_instruments.ShapeChange.Target.ModelExport.ModelExport_

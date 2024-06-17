@@ -20,7 +20,7 @@
 [[Source]]
 == Source
 
-http://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
+https://portal.opengeospatial.org/files/?artifact_id=41157[SWE Common
 Data Model 2.0]
 
 [[Encoding_Rule_Identifier]]
@@ -57,13 +57,13 @@ attribute.
 * Added support for encoding certain simple-type properties as XML
 attributes by introducing the additional XMI tagged value
 'asXMLAttribute'.
-* Use different base type for \<<Type>> stereotype (Elements are derived
+* Use different base type for «Type» stereotype (Elements are derived
 from swe:AbstractSWE instead of gml:AbstractGML).
 ____
 
 However, in reality the differences are greater and additional
 conversion rules have been added to be able to generate XML Schema that
-reflects the http://schemas.opengis.net/sweCommon/2.0/[XSDs of SWE
+reflects the https://schemas.opengis.net/sweCommon/2.0/[XSDs of SWE
 Common Data Model 2.0] (note that basicTypes.xsd as it is can only be
 constructed manually and not by automated conversion).
 
@@ -112,7 +112,7 @@ as specified by SWE Common Data Model 2.0
 |rule-xsd-cls-standard-swe-property-types |Use the strategy for property
 types as specified by SWE Common Data Model 2.0
 
-|rule-xsd-cls-union-as-group-property-type |Encode \<<union>> types as
+|rule-xsd-cls-union-as-group-property-type |Encode «union» types as
 groups
 
 |rule-xsd-prop-xsdAsAttribute |Support tagged values xsdAsAttribute /
@@ -210,10 +210,10 @@ see rule-xsd-prop-soft-typed.
 [[rule-xsd-cls-union-as-group-property-type]]
 === rule-xsd-cls-union-as-group-property-type
 
-\<<union>> types are encoded as groups and property types reference these
+«union» types are encoded as groups and property types reference these
 groups.
 
-For example, the \<<union>> Quality is
+For example, the «union» Quality is
 
 [source,xml,linenumbers]
 ----------

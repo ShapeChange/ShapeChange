@@ -22,17 +22,17 @@
 
 In the schema conversion rules we use the following definitions:
 
-* *application schema*:  package with stereotype \<<applicationSchema>>
+* *application schema*:  package with stereotype «applicationSchema»
 * *schema*: package with tagged value targetNamespace
-* *feature type*: classifier with the stereotype \<<featureType>>
-* *class*: classifier with no stereotype or the stereotype \<<type>>;
-while classifiers with a stereotype \<<type>> are on a different
+* *feature type*: classifier with the stereotype «featureType»
+* *class*: classifier with no stereotype or the stereotype «type»;
+while classifiers with a stereotype «type» are on a different
 conceptual level than application schemas and it is assumed that these
 are implicitly realized one-to-one as plain classes
-* *data type*: classifier with stereotype \<<dataType>>
-* *union type*: classifier with stereotype \<<union>>
-* *code list*: classifier with stereotype \<<codeList>>
-* *enumeration*: classifier with stereotype \<<enumeration>>
+* *data type*: classifier with stereotype «dataType»
+* *union type*: classifier with stereotype «union»
+* *code list*: classifier with stereotype «codeList»
+* *enumeration*: classifier with stereotype «enumeration»
 
 More information about the stereotypes and the associated tagged values
 is available in the description of

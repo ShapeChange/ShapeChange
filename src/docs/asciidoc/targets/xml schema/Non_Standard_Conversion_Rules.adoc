@@ -32,7 +32,7 @@ conversion rules].
 In addition to the standard definitions, the extended conversion rules
 use the following terms, too:
 
-* *basic type*: classifier with the stereotype \<<BasicType>>
+* *basic type*: classifier with the stereotype «BasicType»
 * *derived property*: property that is marked in the UML model as
 isDerived.
 
@@ -210,7 +210,7 @@ transformation:
 [[rule-xsd-cls-adeelement]]
 ==== rule-xsd-cls-adeelement
 
-For classes with stereotype \<<ADEElement>>, this conversion rule creates
+For classes with stereotype «ADEElement», this conversion rule creates
 global CityGML property elements substitutable for the relevant
 _GenericApplicationPropertyOfXXX element of the CityGML supertype.
 
@@ -238,7 +238,7 @@ defined according to the multiplicity of the property.
 
 Example:
 
-\<<basicType>> TransformationMatrix2x2 has property list: Real [4]
+«basicType» TransformationMatrix2x2 has property list: Real [4]
 \{sequence}
 
 It will be encoded as:
@@ -312,7 +312,7 @@ identifiers:
 * application/x.iso19139+xml – An ISO 19139:2007 dictionary
 (gmx:CodeListDictionary or gmx:ML_CodeListDictionary).
 ** NOTE: application/x.iso19139+xml is a preliminary identifier. It uses
-the https://tools.ietf.org/html/rfc6838#section-3.4[unregistered x.
+the https://datatracker.ietf.org/doc/html/rfc6838#section-3.4[unregistered x.
 Tree] as defined by IETF RFC 6838 - Media Type Specifications and
 Registration Procedures.
 
@@ -432,13 +432,13 @@ be present in the model.
 (since v2.4.0)
 
 Encodes a property with codelist value type as specified by the
-http://portal.opengeospatial.org/files/?artifact_id=42729[GML simple
+https://portal.opengeospatial.org/files/?artifact_id=42729[GML simple
 features profile (OGC document number 10-100r3)], section 8.4.4.14.
 
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive an XML Schema that is compliant to GML-SF level 0. For further
 details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 [[rule-xsd-cls-enum-subtypes]]
@@ -467,7 +467,7 @@ Modifies the behavior of rule-xsd-cls-basictype as follows: According to rule-xs
 [[rule-xsd-cls-local-enumeration]]
 ==== rule-xsd-cls-local-enumeration
 
-\<<enumeration>> and \<<codeList>> classes are by-default converted to
+«enumeration» and «codeList» classes are by-default converted to
 a *named* simpleType (for global scope). If this conversion rule is part
 of an encoding rule, these types are converted to
 an *anonymous* simpleType for local scope.
@@ -524,7 +524,7 @@ also gml:AssociationGroup) either on a general or local scope.
 [[rule-xsd-cls-okstra-fid]]
 ==== rule-xsd-cls-okstra-fid
 
-Supports OKSTRA \<<FachID>> classes
+Supports OKSTRA «FachID» classes
 
 [[rule-xsd-cls-okstra-lifecycle]]
 ==== rule-xsd-cls-okstra-lifecycle
@@ -534,7 +534,7 @@ Supports OKSTRA historisches_Objekt
 [[rule-xsd-cls-okstra-schluesseltabelle]]
 ==== rule-xsd-cls-okstra-schluesseltabelle
 
-Do not convert OKSTRA \<<Schluesseltabelle>> classes to object elements
+Do not convert OKSTRA «Schluesseltabelle» classes to object elements
 and do not process their properties; create a OKSTRA-specific property
 type
 
@@ -544,7 +544,7 @@ type
 (since v2.6.0)
 
 If the direct supertype of a class is mapped to one of the ISO 19139
-namespaces (http://www.isotc211.org/2005/gco, -gmd, -gmx, -gsr, -gss,
+namespaces (https://www.isotc211.org/2005/gco/, -gmd, -gmx, -gsr, -gss,
 -gts), then a gco:isoType attribute is added to the element that
 represents the class. The value of that attribute is the local name of
 the element to which the supertype is mapped.
@@ -558,7 +558,7 @@ by ISO 19139. The rule is included in the named encoding rule
 
 This conversion rule suppresses object elements, local properties and
 property types, if the class has a tagged value 'suppress' with the
-value 'true' or a stereotype \<<ADEElement>>. However, if Schematron
+value 'true' or a stereotype «ADEElement». However, if Schematron
 output is active, any constraints on the class will still be included in
 the Schematron schema.
 
@@ -572,7 +572,7 @@ CharacterString.
 [[rule-xsd-cls-union-asGroup]]
 ==== rule-xsd-cls-union-asGroup
 
-If a \<<Union>> class has a tagged value "gmlAsGroup" with a value of
+If a «Union» class has a tagged value "gmlAsGroup" with a value of
 "true", then the class is encoded as a *global* group which is
 referenced wherever a property is defined that has the union class as
 its value. (Note that this is only valid if it is clear from the context
@@ -607,7 +607,7 @@ element for each feature type represented by the union.
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive an XML Schema that is compliant to GML-SF level 0. For further
 details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 [[rule-xsd-pkg-dgiwgsp]]
@@ -629,9 +629,9 @@ L1_2D, L2_2D, L3_2D, L4_2D, L5_2D, L6_2D, L1_3D, L2_3D, L3_3D, L4_3D,
 L5_3D, L6_3D
 
 |*dgiwgGMLProfileSchema*
-|http://schemas.dgiwg.org/gml/3.2/spatial/1.0/\{X}, with \{X} being one
+|\http://schemas.dgiwg.org/gml/3.2/spatial/1.0/\{X}, with \{X} being one
 of: 2dGeometry.xsd,  3dGeometry.xsd,  2dComplex.xsd,  3dComplex.xsd,
-2dTopology.xsd, 3dTopology.xsd
+2dTopology.xsd, 3dTopology.xsd 
 |===
 
 The resulting import and annotation in the XSD can look like this:
@@ -660,7 +660,7 @@ location at the according entry in the standard XML namespaces.
 
 Creates a schema annotation to indicate the GML-SF compliance level as
 defined by the
-http://portal.opengeospatial.org/files/?artifact_id=42729[GML simple
+https://portal.opengeospatial.org/files/?artifact_id=42729[GML simple
 features profile (OGC document number 10-100r3)], section 7.4. The
 compliance level is read from tagged value _gmlsfComplianceLevel_ on the
 application schema. Furthermore, the rule creates an import for the
@@ -669,7 +669,7 @@ gmlsfLevels.xsd, as defined by GML-SF section 8.3.2.
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive an XML Schema that is compliant to GML-SF level 0. For further
 details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 [[rule-xsd-pkg-schematron]]
@@ -677,14 +677,14 @@ Engineering Report] (OGC document number 17-020r1).
 
 An application schema may contain OCL (Object Constraint Language)
 constraints related to the feature type or its attributes.  On the XML
-level, http://standards.iso.org/ittf/PubliclyAvailableStandards/c040833_ISO_IEC_19757-3_2006(E).zip[Schematron
+level, https://standards.iso.org/ittf/PubliclyAvailableStandards/c040833_ISO_IEC_19757-3_2006(E).zip[Schematron
 (ISO/IEC 19757-3:2006)] is used in most cases to express constraints.
 Schematron is already used by GML to express constraints that cannot be
 represented in XML Schema, and is currently considered the most
 appropriate language to express constraints on the XML level. Tools
 exist to process Schematron constraints and assert the compliance of an
 instance document with the specified constraints,
-e.g. http://schematron.com/front-page/the-schematron-skeleton-implementation/[here].
+e.g. https://github.com/Schematron/schematron[here].
 
 ShapeChange includes a OCL 2.2 parser and Schematron code-generator,
 allowing for a fairly complete range of OCL expressions. The supported
@@ -776,7 +776,7 @@ An attribute "geometry : GM_Point [0..3]" is converted to:
 </element>
 ----------
 
-An attribute "\<<voidable>> event : Event [1..*]" is converted to:
+An attribute "«voidable» event : Event [1..*]" is converted to:
 
 [source,xml,linenumbers]
 ----------
@@ -863,7 +863,7 @@ type gml:ReferenceType.
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive an XML Schema that is compliant to GML-SF level 0. For further
 details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 [[rule-xsd-prop-initialValue]]
@@ -885,12 +885,12 @@ facets according to the tagged values.
 
 (since v2.9.0)
 
-If a property has stereotype \<<propertyMetadata>>, then the XML element
+If a property has stereotype «propertyMetadata», then the XML element
 that represents this property will have an additional, optional XML
 attribute "metadata" of type xs:anyURI. The XML attribute can be used to
 reference a metadata object that applies to the property value.
 
-NOTE: Full background on the property stereotype \<<propertyMetadata>> is
+NOTE: Full background on the property stereotype «propertyMetadata» is
 provided in the document link:../../media/UGAS19-D100_property_stereotypes.pdf[Property Stereotypes for Metadata].
 
 [[rule-xsd-prop-metadata-gmlsf-byReference]]
@@ -906,13 +906,13 @@ properties are encoded as elements with type gml:ReferenceType.
 NOTE: This rule has originally been developed during OGC Testbed 13, to
 derive an XML Schema that is compliant to GML-SF level 0. For further
 details, see the OGC
-http://docs.opengeospatial.org/per/17-020r1.html[NAS Profiling
+https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
 [[rule-xsd-prop-nillable]]
 ==== rule-xsd-prop-nillable
 
-Converts properties with stereotype \<<voidable>> - or alternatively with
+Converts properties with stereotype «voidable» - or alternatively with
 a tagged value nillable set to 'true' - to property elements that are
 nillable.
 

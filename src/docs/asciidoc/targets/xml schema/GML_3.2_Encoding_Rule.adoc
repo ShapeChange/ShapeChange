@@ -20,7 +20,7 @@
 [[Source]]
 == Source
 
-http://portal.opengeospatial.org/files/?artifact_id=20509[GML 3.2, Annex
+https://portal.opengeospatial.org/files/?artifact_id=20509[GML 3.2, Annex
 E]
 
 [[Encoding_Rule_Identifier]]
