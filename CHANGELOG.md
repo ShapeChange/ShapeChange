@@ -1,5 +1,32 @@
 # Changelog
 
+## [3.1.0](https://github.com/ShapeChange/ShapeChange/tree/3.1.0) (2024-06-20)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/3.0.0...3.1.0)
+
+**Implemented enhancements:**
+
+- General - Add model validation feature [\#405](https://github.com/ShapeChange/ShapeChange/issues/405)
+- JSON Schema target - extend rule-json-all-featureRefs for case of rel-as-key profile [\#399](https://github.com/ShapeChange/ShapeChange/issues/399)
+- JSON Schema target - extend rule-json-prop-voidable to encode a JSON Schema definition reference instead of null value type [\#398](https://github.com/ShapeChange/ShapeChange/issues/398)
+- ldproxy2 target - support source paths and excluded scopes defined by tagged value [\#394](https://github.com/ShapeChange/ShapeChange/issues/394)
+- ldproxy2 target - support filtering features by schema version [\#393](https://github.com/ShapeChange/ShapeChange/issues/393)
+- ldproxy2 target - coretable approach: add parameter to control name of source column in references table [\#367](https://github.com/ShapeChange/ShapeChange/issues/367)
+- ldproxy2 target - support GML encoding option gmlIdOnGeometries [\#359](https://github.com/ShapeChange/ShapeChange/issues/359)
+- ldproxy2 target - support queryable definition for feature ref id and title [\#357](https://github.com/ShapeChange/ShapeChange/issues/357)
+- ldproxy2 target - add switch to enable linearization of curves [\#355](https://github.com/ShapeChange/ShapeChange/issues/355)
+
+**Fixed bugs:**
+
+- JsonSchemaTarget generates invalid schema if enum has single entry [\#360](https://github.com/ShapeChange/ShapeChange/issues/360)
+- ldproxy2 target - fix feature ref title encoding \(remove fallback encoding\) [\#358](https://github.com/ShapeChange/ShapeChange/issues/358)
+- ldproxy2 target - fix feature ref encoding in case of concat/coalesce and feature with valid title attribute [\#356](https://github.com/ShapeChange/ShapeChange/issues/356)
+
+**Closed issues:**
+
+- Old version of Saxon [\#361](https://github.com/ShapeChange/ShapeChange/issues/361)
+- Test resources on shapechange.net not yet updated [\#354](https://github.com/ShapeChange/ShapeChange/issues/354)
+
 ## [3.0.0](https://github.com/ShapeChange/ShapeChange/tree/3.0.0) (2023-11-28)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/2.14.0...3.0.0)
@@ -10,11 +37,11 @@
 
 **Implemented enhancements:**
 
-- Flattener transformation - Support inheritance flattening, adding attributes in sequence [\#351](https://github.com/ShapeChange/ShapeChange/issues/351)
-- JSON Schema target - support profiles for the encoding of feature references [\#347](https://github.com/ShapeChange/ShapeChange/issues/347)
 - SqlDdl target - support definition of primary key columns in type-to-table mappings [\#342](https://github.com/ShapeChange/ShapeChange/issues/342)
 - SqlDdl target - generate SQL encoding infos [\#341](https://github.com/ShapeChange/ShapeChange/issues/341)
 - Add new model transformation to tag classes and properties with information about original characteristics [\#340](https://github.com/ShapeChange/ShapeChange/issues/340)
+- Flattener transformation - Support inheritance flattening, adding attributes in sequence [\#351](https://github.com/ShapeChange/ShapeChange/issues/351)
+- JSON Schema target - support profiles for the encoding of feature references [\#347](https://github.com/ShapeChange/ShapeChange/issues/347)
 - JsonSchemaTarget: Support additional conversion behavior  [\#337](https://github.com/ShapeChange/ShapeChange/issues/337)
 - JsonSchemaTarget - Support JSON Schema version 2020-12 [\#336](https://github.com/ShapeChange/ShapeChange/issues/336)
 - JsonSchemaTarget - Support the generation of collection schema definitions [\#335](https://github.com/ShapeChange/ShapeChange/issues/335)
