@@ -18,18 +18,18 @@
 			<name>ShapeChange (plus additional components) release repository</name>
 			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
-		<repository>
-			<id>ii-maven</id>
-			<name>interactive instruments maven snapshots repository</name>
-			<url>
-				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
-		</repository>
-<!--		 		<repository>-->
-<!--		 			<id>ii-maven-releases</id>-->
-<!--		 			<name>interactive instruments maven releases repository</name>-->
+<!--		<repository>-->
+<!--			<id>ii-maven</id>-->
+<!--			<name>interactive instruments maven snapshots repository</name>-->
+<!--			<url>-->
+<!--				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>-->
+<!--		</repository>-->
+		 		<repository>
+		 			<id>ii-maven-releases</id>
+		 			<name>interactive instruments maven releases repository</name>
 		
-<!--		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
-<!--		 		</repository>-->
+		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>
+		 		</repository>
 	</repositories>
 	<dependencies>
 
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>de.interactive_instruments</groupId>
 			<artifactId>ldproxy-cfg</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
+			<version>4.0.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
