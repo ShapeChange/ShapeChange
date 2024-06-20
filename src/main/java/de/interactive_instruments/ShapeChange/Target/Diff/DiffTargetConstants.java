@@ -19,7 +19,7 @@
  * <p>You should have received a copy of the GNU General Public License along with this program. If
  * not, see <http://www.gnu.org/licenses/>.
  *
- * <p>Contact: interactive instruments GmbH Trierer Strasse 70-72 53115 Bonn Germany
+ * <p>Contact: interactive instruments GmbH Bundeskanzlerplatz 2d 53113 Bonn Germany
  */
 package de.interactive_instruments.ShapeChange.Target.Diff;
 

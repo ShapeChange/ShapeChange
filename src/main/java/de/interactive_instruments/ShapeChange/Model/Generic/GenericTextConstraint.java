@@ -34,8 +34,8 @@ import de.interactive_instruments.ShapeChange.Model.TextConstraintImpl;
  *
  * Contact:
  * interactive instruments GmbH
- * Trierer Strasse 70-72
- * 53115 Bonn
+ * Bundeskanzlerplatz 2d
+ * 53113 Bonn
  * Germany
  */
 
