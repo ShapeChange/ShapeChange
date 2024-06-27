@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/sql/outputDdlModification/test_sql_outputDdlModification.zip"/>
+		<parameter name="appSchemaNameRegex" value="Test Schema"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/sql/outputDdlModification/log_sql.xml"/>
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl" mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sql"/>
+			<targetParameter name="outputDirectory" value="testResults/sql/outputDdlModification/ddl"/>
+			<targetParameter name="removeEmptyLinesInDdlOutput" value="true"/>
+			<targetParameter name="fileDdlTop" value="src/integrationtests/sql/outputDdlModification/topAndBottomDdls/top.sql"/>
+			<targetParameter name="fileDdlBottom" value="src/integrationtests/sql/outputDdlModification/topAndBottomDdls/bottom.sql"/>
+			<mapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="CharacterString"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="cond:textOrCharacterVarying" type="URI"/>
+	<MapEntry param="defaultValue{true=TRUE;false=FALSE}" rule="*" targetType="boolean" type="Boolean"/>
+	<MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Decimal"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Number"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Real"/>
+	<MapEntry param="" rule="*" targetType="numeric" type="Measure"/>
+	<MapEntry param="defaultValue{quoted=true}" rule="*" targetType="date" type="Date"/>
+	<MapEntry param="" rule="*" targetType="timestamp with time zone" type="DateTime"/>
+	
+	<MapEntry param="geometry" rule="*" targetType="POINT" type="GM_Point"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOINT" type="GM_MultiPoint"/>
+	<MapEntry param="geometry" rule="*" targetType="LINESTRING" type="GM_Curve"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTILINESTRING" type="GM_MultiCurve"/>
+	<MapEntry param="geometry" rule="*" targetType="POLYGON" type="GM_Surface"/>
+	<MapEntry param="geometry" rule="*" targetType="MULTIPOLYGON" type="GM_MultiSurface"/>
+	<MapEntry param="geometry" rule="*" targetType="GEOMETRY" type="GM_Object"/>
+	
+	<MapEntry param="" rule="*" targetType="smallint" type="Short"/>
+	<MapEntry param="" rule="*" targetType="bigint" type="Long"/>
+	
+	
+	<MapEntry param="" rule="*" targetType="varchar" type="character varying"/>
+</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

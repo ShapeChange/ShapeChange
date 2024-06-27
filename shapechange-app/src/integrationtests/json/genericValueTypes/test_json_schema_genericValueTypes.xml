@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/integrationtests/json/genericValueTypes/genericValueTypes.qea"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <parameter name="addTaggedValues" value="*"/>
+  <parameter name="extractSeparator" value="--"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="ea:alias"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="tag" tag="example"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+<!--  <xi:include href="sc-resources/config/StandardAliases.xml"/>-->
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/json/genericValueTypes/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="model" input="input" mode="enabled"/>
+ </transformers>
+ <targets>
+  <Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget" mode="enabled" inputs="model">   
+   <targetParameter name="outputDirectory" value="testResults/json/genericValueTypes"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
+   <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="genericValueTypes" value="GenerAttribute, GenerAttribute2" />
+   <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
+   <rules>
+    <EncodingRule name="myPlainJson" extends="defaultPlainJson">
+     <rule name="rule-json-cls-genericValueType"/>
+    </EncodingRule>
+   </rules>
+   <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
+  </Target>
+ </targets>
+</ShapeChangeConfiguration>

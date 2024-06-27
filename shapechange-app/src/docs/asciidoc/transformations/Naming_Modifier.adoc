@@ -1,0 +1,336 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Naming_Modifier]]
+= Naming Modifier
+
+[[Introduction]]
+== Introduction
+
+This transformation can be used to modify the names of specific model
+elements in the application schema. The rules section documents
+available behavior.
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for a
+NamingModifier transformation.
+
+[[Class]]
+=== Class
+
+The class for the Naming Modifier implementation is
+_de.interactive_instruments.shapechange.core.transformation.naming.NamingModifier_.
+
+[[Rules]]
+=== Rules
+
+The rules supported by the Naming Modifier transformation are described
+in the following sections.
+
+NOTE: The transformation can be configured without any rule. In that
+case, names within the model will not be modified.
+
+[[rule-trf-add-suffix]]
+==== rule-trf-add-suffix
+
+Dependency on other rule(s): _none_
+
+Behavior: This rule is used to append a suffix (specified via the
+parameter _suffix_) to specific application schema classes and
+properties.
+
+The behavior for selecting the relevant model elements to which the
+suffix is added changes with ShapeChange v2.11.0. Up until and including
+ShapeChange v2.10.0, configuration parameter
+_modelElementNamesToAddSuffixRegex_ was used. If the name of a
+class/property matches the regular expression specified via this
+parameter the suffix is added to the name of the model element. Since
+v2.11.0, the parameter is deprecated. The enhanced mechanism to select
+relevant model elements is by defining
+xref:./Naming_Modifier.adoc#ProcessRuleModelElementSelection[ProcessRuleModelElementSelection]
+elements in the configuration (see the
+xref:./Naming_Modifier.adoc#Sample_Configurations[sample
+configurations] for an example).
+
+NOTE: Either the parameter or at least one
+ProcessRuleModelElementSelection element must be defined for
+rule-trf-add-suffix. If neither or both are defined, the semantic
+validation of the configuration will fail.
+
+Parameter(s):
+
+* xref:./Naming_Modifier.adoc#suffix[suffix]
+* xref:./Naming_Modifier.adoc#modelElementNamesToAddSuffixRegex[modelElementNamesToAddSuffixRegex] (deprecated
+since v2.11.0)
+
+[[rule-trf-camelcase-to-uppercase]]
+==== rule-trf-camelcase-to-uppercase
+
+Available for ShapeChange version: 2.3.0+
+
+Dependency on other rule(s): _none_
+
+Behavior: Updates the names of application schema classes and their
+properties as follows:
+
+* All lower case letters are replaced with upper case letters.
+* If a letter or decimal digit is followed by an upper-case letter, the
+two are separated by an underscore.
+* An underscore in the original name is replaced by two underscores.
+* A decimal digit is kept as-is.
+* If the original name contains a suffix identified by parameter
+_suffixesToIgnore_ then that suffix is kept as-is. If multiple suffixes
+(given by the parameter) match the end of the string, a warning is
+logged and the suffix with greatest length is chosen.
+
+This rule can be useful when Oracle DB naming conventions play a role,
+and when the name transformation shall be reversible.
+
+NOTE: This rule does not modify the names of enums and codes (i.e. the
+properties of enumeration and codelist classes). If these names shall be
+modified as well, add
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase-include-enums[_rule-trf-camelcase-to-uppercase-include-enums_]
+and
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase-include-codes[_rule-trf-camelcase-to-uppercase-include-codes_].
+
+NOTE: The rule only processes tagged values of included classes and
+properties if
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase-include-taggedTalues[rule-trf-camelcase-to-uppercase-include-taggedTalues]
+is enabled. The tags to modify are identified via the configuration
+parameter
+xref:./Naming_Modifier.adoc#camelCaseToUpperCase_taggedValues[camelCaseToUpperCase_taggedValues].
+
+Examples:
+
+* abcDefGhi (parameter _suffixesToIgnore_ not set) -> ABC_DEF_GHI
+* abc_DefGhi (parameter _suffixesToIgnore_ not set) -> ABC__DEF_GHI
+* ABCDefGhi (parameter _suffixesToIgnore_ not set) -> A_B_C_DEF_GHI
+* AbcDEfGHI (parameter _suffixesToIgnore_ not set) -> ABC_D_EF_G_H_I
+* AbcDefGhiID (parameter _suffixesToIgnore_ set to 'ID') ->
+ABC_DEF_GHI_ID
+* AbcDefGHIID (parameter _suffixesToIgnore_ set to 'ID') ->
+ABC_DEF_G_H_I_ID
+* AbcDefGHIID (parameter _suffixesToIgnore_ set to 'ID, GHIID') ->
+ABC_DEF_GHIID
+* AbcDefGhiCL (parameter _suffixesToIgnore_ set to 'CL') ->
+ABC_DEF_GHI_CL
+* abcDefGhi_CL (parameter _suffixesToIgnore_ set to 'CL') ->
+ABC_DEF_GHI__CL
+* Abc1D1efG2HI (parameter _suffixesToIgnore_ not set) ->
+ABC1_D1EF_G2_H_I
+
+Parameter(s):
+
+* xref:./Naming_Modifier.adoc#suffixesToIgnore[suffixesToIgnore]
+
+[[rule-trf-camelcase-to-uppercase-include-codes]]
+==== rule-trf-camelcase-to-uppercase-include-codes
+
+Available for ShapeChange version: 2.3.0+
+
+Dependency on other
+rule(s): xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase[rule-trf-camelcase-to-uppercase]
+
+Behavior: Extends the behavior of rule-trf-camelcase-to-uppercase so
+that the names of codes (i.e. properties of codelists) are modified as
+well.
+
+Parameter(s):
+
+* xref:./Naming_Modifier.adoc#suffixesToIgnore[suffixesToIgnore]
+
+[[rule-trf-camelcase-to-uppercase-include-enums]]
+==== rule-trf-camelcase-to-uppercase-include-enums
+
+Available for ShapeChange version: 2.3.0+
+
+Dependency on other
+rule(s): xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase[rule-trf-camelcase-to-uppercase]
+
+Behavior: Extends the behavior of rule-trf-camelcase-to-uppercase so
+that the names of enums (i.e. properties of enumerations) are modified
+as well.
+
+Parameter(s):
+
+* xref:./Naming_Modifier.adoc#suffixesToIgnore[suffixesToIgnore]
+
+[[rule-trf-camelcase-to-uppercase-include-taggedTalues]]
+==== rule-trf-camelcase-to-uppercase-include-taggedTalues
+
+(since v2.4.0)
+
+Extends the behavior of
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase[rule-trf-camelcase-to-uppercase]
+so that tagged values (identified via parameter
+xref:./Naming_Modifier.adoc#camelCaseToUpperCase_taggedValues[camelCaseToUpperCase_taggedValues])
+of included classes and properties are modified as well.
+
+[[Parameters]]
+=== Parameters
+
+The parameters supported by the Naming Modifier transformation are
+documented in the following sections.
+
+[[camelCaseToUpperCase_taggedValues]]
+==== camelCaseToUpperCase_taggedValues
+
+Comma-separated list of names of tagged values to modify by
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase-include-taggedTalues[rule-trf-camelcase-to-uppercase-include-taggedTalues].
+
+[[modelElementNamesToAddSuffixRegex]]
+==== modelElementNamesToAddSuffixRegex
+
+(deprecated since v2.11.0 - see documentation of rule-trf-add-suffix for
+further details)
+
+Alias: _none_
+
+Required / Optional: Required
+
+Type: String (representing a Java compliant regular expression)
+
+Default Value: _none_
+
+Explanation: The regular expression to identify the application schema
+classes and properties where a suffix shall be appended to the name of
+the model element.
+
+Applies to
+Rule(s): xref:./Naming_Modifier.adoc#rule-trf-add-suffix[rule-trf-add-suffix]
+
+[[suffix]]
+==== suffix
+
+Alias: _none_
+
+Required / Optional: Optional
+
+Type: String
+
+Default Value: "_" (a single underscore)
+
+Explanation: The suffix to add.
+
+Applies to
+Rule(s): xref:./Naming_Modifier.adoc#rule-trf-add-suffix[rule-trf-add-suffix]
+
+[[suffixesToIgnore]]
+==== suffixesToIgnore
+
+Alias: _none_
+
+Required / Optional: Optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Contains a (comma-separated) list of strings that shall be
+ignored by "rule-trf-camelcase-to-uppercase" when they occur as suffix
+in the name of a model element. Note that case matters when the process
+checks if a model element name ends with one of the given strings.
+
+Applies to Rule(s):
+xref:./Naming_Modifier.adoc#rule-trf-camelcase-to-uppercase[rule-trf-camelcase-to-uppercase]
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment none of the Naming Modifier rules use process map entries.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+An <advancedProcessConfigurations> element can be added to the
+<Transformer> element, in order to define additional configuration items
+with complex structure. The following elements can be defined within the
+<advancedProcessConfigurations> of the Naming Modifier.
+
+[[ProcessRuleModelElementSelection]]
+==== ProcessRuleModelElementSelection
+
+Some processing rules may require the selection of model elements to
+which the rule shall be applied. In the case of the Naming Modifier
+transformation, that applies to
+xref:./Naming_Modifier.adoc#rule-trf-add-suffix[rule-trf-add-suffix].
+
+The ProcessRuleModelElementSelection element contains a number of
+attributes, only one of which is required: attribute "rule". In
+addition, there are a number of optional attributes to define the model
+element selection.
+
+[[rule]]
+===== rule
+
+Type: string
+
+Explanation: Identifier of the rule to which this
+ProcessRuleModelElementSelection element applies.
+
+Required / optional: required
+
+Default value: _none_
+
+[[model_element_selection_attributes_]]
+===== model element selection attributes
+
+The attributes to define the model element selection are the same as
+described
+xref:./Common_Transformer_Functionality.adoc#Model_element_filter_criteria[here].
+
+[[Sample_Configurations]]
+=== Sample Configurations
+
+(up until, and including v2.10.0)
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.shapechange.core.transformation.naming.NamingModifier"
+  id="step2" input="step1" mode="enabled">
+  <parameters>
+    <ProcessParameter name="suffix" value="_SUFFIX"/>
+    <ProcessParameter name="modelElementNamesToAddSuffixRegex" value="Feature(2|3)|F(2|3)"/>
+  </parameters>
+  <rules>
+    <ProcessRuleSet name="rules">
+      <rule name="rule-trf-add-suffix"/>
+    </ProcessRuleSet>
+  </rules>
+</Transformer>
+----------
+
+(from v2.11.0 onwards)
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.shapechange.core.transformation.naming.NamingModifier"
+  id="step2" input="step1" mode="enabled">
+  <advancedProcessConfigurations>
+    <ProcessRuleModelElementSelection rule="rule-trf-add-suffix" modelElementName="Feature(2|3)|F(2|3)"/>
+  </advancedProcessConfigurations>
+  <parameters>
+    <ProcessParameter name="suffix" value="_SUFFIX"/>
+  </parameters>
+  <rules>
+    <ProcessRuleSet name="rules">
+      <rule name="rule-trf-add-suffix"/>
+    </ProcessRuleSet>
+  </rules>
+</Transformer>
+----------

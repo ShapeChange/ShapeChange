@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sch/iterator_with_byReference_property/testEA_sch_iterator_with_byReference_property.xml" end="Wed Jun 20 17:09:04 CEST 2018" resultCode="0" start="Wed Jun 20 17:08:45 CEST 2018" version="2.5.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\iterator_with_byReference_property\test_iterator_with_byReference_property.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\iterator_with_byReference_property\test_iterator_with_byReference_property.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\iterator_with_byReference_property\test_iterator_with_byReference_property.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\iterator_with_byReference_property\test_iterator_with_byReference_property.qea"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/iteratorWithByReferenceProperty'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/iterator_with_byReference_property/xsd/INPUT/iteratorWithByReferenceProperty.xsd" scope="http://example.org/shapechange/sch/iteratorWithByReferenceProperty" target="XML Schema">iteratorWithByReferenceProperty.xsd</Result>
+  </Results>
+</ShapeChangeResult>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/profileConstraintTransformer/base/testEA_profileConstraintTransformer.xml" end="Thu Mar 01 17:51:06 CET 2018" resultCode="0" start="Thu Mar 01 17:50:58 CET 2018" version="2.5.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'TRF_PROFILE_CONSTRAINTS' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileConstraintTransformer\base\test_profileConstraintTransformer.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileConstraintTransformer\base\test_profileConstraintTransformer.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileConstraintTransformer\base\test_profileConstraintTransformer.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\profileConstraintTransformer\base\test_profileConstraintTransformer.qea"/>
+    <Info message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'TRF_PROFILE_CONSTRAINTS' for input ID: 'IDENTITY'."/>
+    <Info message="---------- now processing: rule-trf-cls-createGeneralOutOfScopeConstraints ----------"/>
+    <Info message="Base schema class 'B_Enumeration' is tagged as relevant and it contains irrelevant properties (enumB). However, the class is a code list or enumeration. This case is currently not supported. No specific OCL constraints will be created to prohibit these properties.">
+      <Detail message="Context: class 'Base Schema::B_Enumeration'."/>
+    </Info>
+    <Info message="---------- now processing: rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes ----------"/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'TRF_PROFILE_CONSTRAINTS' for input ID: 'IDENTITY'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Profile Schema', target namespace: 'http://example.org/shapechange/profileConstraintTransformer/profileSchema'"/>
+    <Info message="Now processing target 'XML Schema' for input 'TRF_PROFILE_CONSTRAINTS'."/>
+    <Info message="Skipping XML Schema output, as configured."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_PROFILE_CONSTRAINTS'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

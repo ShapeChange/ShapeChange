@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/integrationtests/json/mixinsAndEntityTypeMember/test_json_schema_mixinsAndEntityTypeMember.qea"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <parameter name="addTaggedValues" value="*"/>
+  <parameter name="extractSeparator" value="--"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="ea:alias"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="tag" tag="example"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+<!--  <xi:include href="sc-resources/config/StandardAliases.xml"/>-->
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/json/mixinsAndEntityTypeMember/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="IDENTITY" input="input" mode="enabled"/>
+ </transformers>
+ <targets>
+  <!-- ======= -->
+  <!-- JSON-FG -->
+  <!-- ======= -->
+  <Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">   
+   <targetParameter name="outputDirectory" value="testResults/json/mixinsAndEntityTypeMember/json_schemas/jsonfg"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForCollections" value="https://beta.schemas.opengis.net/json-fg/featurecollection.json"/>
+   <!-- <targetParameter name="preventUnknownTypesInFeatureCollection" value="true"/> -->
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://beta.schemas.opengis.net/json-fg/feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="entityTypeMemberPath=featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
+   <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
+   <targetParameter name="writeMapEntries" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="myJsonFGJson"/>
+   <rules>
+    <EncodingRule name="myJsonFGJson" extends="defaultGeoJson">
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
+     <rule name="rule-json-cls-collectionsWithTopLevelEntityType"/>
+    </EncodingRule>
+   </rules>
+   <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <!-- UnitTest: results in ExtFTSubtype having a restriction to require 'featureType'. -->
+    <MapEntry type="ExtFeatureType" rule="*" targetType="https://example.org/external/schema/definitions.json#ExtFeatureType" param="encodingInfos{entityTypeMemberPath=featureType;entityTypeMemberRequired=false}"/>
+   </mapEntries>
+  </Target>
+  
+  <!-- ======= -->
+  <!-- GeoJSON -->
+  <!-- ======= -->
+  <Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">     
+   <targetParameter name="outputDirectory" value="testResults/json/mixinsAndEntityTypeMember/json_schemas/geojson"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForCollections" value="https://geojson.org/schema/FeatureCollection.json"/>
+   <targetParameter name="preventUnknownTypesInFeatureCollection" value="true"/>
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes" value="https://geojson.org/schema/Feature.json"/>
+   <targetParameter name="baseJsonSchemaDefinitionForFeatureTypes_encodingInfos" value="idMemberPath=id;idMemberTypes=string,number;idMemberRequired=false"/>
+   <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
+   <targetParameter name="writeMapEntries" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="myGeoJson"/>
+   <rules>
+    <EncodingRule name="myGeoJson" extends="defaultGeoJson">
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-restrictExternalEntityTypeMember"/>
+     <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
+    </EncodingRule>
+   </rules>
+   <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <MapEntry type="ExtFeatureType" rule="*" targetType="https://example.org/external/schema/definitions.json#ExtFeatureType" param="encodingInfos{entityTypeMemberPath=properties/@featureType;entityTypeMemberRequired=false}"/>
+   </mapEntries>
+  </Target>
+  
+  <!-- ========== -->
+  <!-- Plain JSON -->
+  <!-- ========== -->
+  <Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">   
+   <targetParameter name="outputDirectory" value="testResults/json/mixinsAndEntityTypeMember/json_schemas/plainjson"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="entityTypeName" value="@type"/>
+   <targetParameter name="useAnchorsInLinksToGeneratedSchemaDefinitions" value="false"/>
+   <targetParameter name="writeMapEntries" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
+   <rules>
+    <EncodingRule name="myPlainJson" extends="defaultPlainJson">
+     <rule name="rule-json-cls-name-as-entityType"/>
+     <rule name="rule-json-cls-restrictExternalEntityTypeMember"/>
+     <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
+    </EncodingRule>
+   </rules>
+   <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
+   <mapEntries>
+    <!-- UnitTest: results in ExtFTSubtype having a restriction to require '@featureType', no additional @type is generated. -->
+    <MapEntry type="ExtFeatureType" rule="*" targetType="https://example.org/external/schema/definitions.json#ExtFeatureType" param="encodingInfos{entityTypeMemberPath=@featureType;entityTypeMemberRequired=false;idMemberPath=id;idMemberTypes=string,number;idMemberFormats=foo,bar;idMemberRequired=false}"/>
+   </mapEntries>
+  </Target>
+  
+  		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/json/mixinsAndEntityTypeMember/xsd"/>			
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="XSDEncRule"/>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<rules>
+				<EncodingRule name="XSDEncRule" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes"/>
+				</EncodingRule>
+			</rules>
+			<xsdMapEntries>
+				<XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+			 </xsdMapEntries>
+				<xi:include href="sc-resources/config/StandardMapEntries_iso19136_2007.xml"/>
+				<xi:include href="sc-resources/config/StandardMapEntries_iso19107.xml"/>
+				<xi:include href="sc-resources/config/StandardMapEntries_iso19108.xml"/>				
+				<!-- ... more to be added as required -->
+		</TargetXmlSchema>
+ </targets>
+</ShapeChangeConfiguration>

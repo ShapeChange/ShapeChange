@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/xsd/xmlEncodingInfos/test_xmlEncodingInfos.xml" end="Tue Aug 23 12:45:15 CEST 2022" resultCode="0" start="Tue Aug 23 12:45:08 CEST 2022" version="2.12.1-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="Validating input parameters."/>
+    <Info message="Validation of input parameters completed."/>
+    <Info message="Validating log parameters."/>
+    <Info message="Validation of log parameters completed."/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\xsd\xmlEncodingInfos\test_xmlEncodingInfos.qea"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema A', target namespace: 'http://shapechange.net/test/a'"/>
+    <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema B', target namespace: 'http://shapechange.net/test/b'"/>
+    <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Cross Schema C', target namespace: 'http://shapechange.net/test/c'"/>
+    <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/xsd/xmlEncodingInfos/INPUT/a.xsd" scope="http://shapechange.net/test/a" target="XML Schema">a.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/xsd/xmlEncodingInfos/INPUT/b.xsd" scope="http://shapechange.net/test/b" target="XML Schema">b.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/xsd/xmlEncodingInfos/INPUT/c.xsd" scope="http://shapechange.net/test/c" target="XML Schema">c.xsd</Result>
+  </Results>
+</ShapeChangeResult>

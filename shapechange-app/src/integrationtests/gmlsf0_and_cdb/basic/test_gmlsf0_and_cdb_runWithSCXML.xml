@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 http://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/gmlsf0_and_cdb/basic/test_gmlsf0_and_cdb.zip"/>
+		<parameter name="ignoreEncodingRuleTaggedValues" value="true"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="enabled"/>
+		<parameter name="sortedOutput" value="true"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="appSchemaNameRegex" value="Test Schema|DoD/IC"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="tag" tag="documentation"/>
+			<DescriptorSource descriptor="alias" source="tag" tag="name"/>
+			<DescriptorSource descriptor="primaryCode" source="tag" tag="primaryCode"/>
+			<DescriptorSource descriptor="definition" source="tag" tag="definition"/>
+			<DescriptorSource descriptor="description" source="tag" tag="description"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+		</descriptorSources>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/gmlsf0_and_cdb/basic/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="IDENTITY" input="INPUT" mode="enabled">
+			<taggedValues>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementType="Property" name="inlineOrByReference" value="inline"/>
+				<TaggedValue applicationSchemaName="DoD/IC" modelElementType="Property" name="inlineOrByReference" value="inline"/>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementName="resourceConstraints" modelElementType="Property" name="maxOccurs" value="1"/>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementName="place" name="maxOccurs" value="1"/>
+			</taggedValues>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.constraints.ConstraintConverter" id="TRF_GEOMETRY_RESTRICTION_TO_GEOMETRY_TAGGEDVALUE" input="IDENTITY" mode="enabled">
+			<parameters>
+				<ProcessParameter name="geometryRepresentationTypes" value="PointPositionInfo = P; CurvePositionInfo = C; SurfacePositionInfo = S"/>
+				<ProcessParameter name="geometryRepresentationConstraintRegex" value=".*Place Representations Disallowed.*"/>
+				<ProcessParameter name="geometryRepresentationValueTypeRegex" value="PlaceInfo"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-cls-constraints-geometryRestrictionToGeometryTV-exclusion"/>
+					<rule name="rule-trf-cls-constraints-geometryRestrictionToGeometryTV-typesWithoutRestriction-byValueTypeMatch"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_CONSTRAINTS" input="TRF_GEOMETRY_RESTRICTION_TO_GEOMETRY_TAGGEDVALUE" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-all-flatten-constraints"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_GEOMETRY_TYPE_INHERITANCE" input="TRF_FLATTEN_CONSTRAINTS" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-cls-flatten-geometryTypeInheritance"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_REMOVE_TYPE" input="TRF_FLATTEN_GEOMETRY_TYPE_INHERITANCE" mode="enabled">
+			<parameters>
+				<ProcessParameter name="removeType" value="Dataset,EntityCollection,FeatureEntityCollection,GeoNameCollection,PhysicalEntityCollection,PropertyMetadata,DataLineage,DataProcessStep,DataSource,DataQuality,PhysicalObjectMetadata,LocationInfo,PhysicalAddressInfo"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-all-removeType"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_REMOVE_MD_INHERITANCE" input="TRF_REMOVE_TYPE" mode="enabled">
+			<parameters>
+				<ProcessParameter name="removeInheritanceIncludeRegex" value="^(MD|CI|EX|LI)_.*$"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-cls-remove-inheritance-relationship"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.descriptors.DescriptorTransformer" id="TRF_REMOVE_VALUE_OR_REASON_DESCRIPTORS" input="TRF_REMOVE_MD_INHERITANCE" mode="enabled">
+			<advancedProcessConfigurations>
+				<DescriptorValue descriptorName="alias" modelElementName="value(s)?OrReason" modelElementType="Property"/>
+				<DescriptorValue descriptorName="definition" modelElementName="value(s)?OrReason" modelElementType="Property"/>
+				<DescriptorValue descriptorName="description" modelElementName="value(s)?OrReason" modelElementType="Property"/>
+			</advancedProcessConfigurations>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-all-updateDescriptors"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_ONINAS" input="TRF_REMOVE_VALUE_OR_REASON_DESCRIPTORS" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-prop-flatten-ONINAs"/>
+					<rule name="rule-trf-prop-flatten-ONINAs-onlyRemoveReasons"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformer" id="TRF_TV_COPY_FROM_VALUE_TYPE" input="TRF_FLATTEN_ONINAS" mode="enabled">
+			<parameters>
+				<ProcessParameter name="taggedValuesToCopy" value="length,pattern,rangeMinimum,rangeMaximum"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-taggedValue-copyFromValueType"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_MAP_TO_SIMPLE_BASE_TYPE" input="TRF_TV_COPY_FROM_VALUE_TYPE" mode="enabled">
+			<parameters>
+				<ProcessParameter name="simpleBaseTypes" value="CharacterString,Integer,Measure,Real"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-all-flatten-type-mapToSimpleBaseType"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY" input="TRF_MAP_TO_SIMPLE_BASE_TYPE" mode="enabled">
+			<parameters>
+				<ProcessParameter name="removeObjectToFeatureNavRegex" value=".*"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-removeObjectToFeatureTypeNavigability"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY_2" input="TRF_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY" mode="enabled">
+			<parameters>
+				<ProcessParameter name="removeObjectToFeatureNavRegex" value="^(Note|LegalConstraints|ResourceConstraints|LivingQuartersAmenity|RRR)$|^(?!.*?Position).*Info$"/>
+				<ProcessParameter name="includeObjectToObjectNavigability" value="true"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-removeObjectToFeatureTypeNavigability"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_REMOVE_NAVIGABILITY_BASED_ON_ISFLATTARGET" input="TRF_REMOVE_OBJECT_TO_FEATURE_TYPE_NAVIGABILITY_2" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-removeNavigabilityBasedOnIsFlatTarget"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.AssociationClassMapper" id="TRF_ASSOCIATION_CLASS_MAPPER" input="TRF_REMOVE_NAVIGABILITY_BASED_ON_ISFLATTARGET" mode="enabled"/>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.typeconversion.TypeConverter" id="TRF_TO_FEATURE_TYPE" input="TRF_ASSOCIATION_CLASS_MAPPER" mode="enabled">
+			<parameters>
+				<ProcessParameter name="toFeatureTypeNameRegex" value="^.*Constraints$"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-toFeatureType"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.typeconversion.TypeConverter" id="TRF_DISSOLVE_ASSOCIATIONS" input="TRF_TO_FEATURE_TYPE" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="typeConversion">
+					<rule name="rule-trf-dissolveAssociations"/>
+					<rule name="rule-trf-dissolveAssociations-keepType"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_INHERITANCE" input="TRF_DISSOLVE_ASSOCIATIONS" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-cls-flatten-inheritance"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_MULTIPLICITY" input="TRF_FLATTEN_INHERITANCE" mode="enabled">
+			<parameters>
+				<ProcessParameter name="maxOccurs" value="2"/>
+				<ProcessParameter name="descriptorModification_propertyIndexNumberSeparator" value="alias{ - }"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-prop-flatten-multiplicity"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_TYPES" input="TRF_FLATTEN_MULTIPLICITY" mode="enabled">
+			<parameters>
+				<ProcessParameter name="descriptorModification_nonUnionSeparator" value="documentation{ : }, alias{ : }, definition{ : }, description{ : }, primaryCode{ : }"/>
+				<ProcessParameter name="descriptorModification_unionSeparator" value="documentation{ : }, alias{ : }, definition{ : }, description{ : }, primaryCode{ : }"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-prop-flatten-types"/>
+					<rule name="rule-trf-prop-flatten-types-ignoreUnionsRepresentingFeatureTypeSets"/>
+					<rule name="rule-trf-prop-flatten-types-removeMappedTypes"/>
+					<rule name="rule-trf-prop-flatten-types-ignoreSelfReferenceByPropertyWithAssociationClassOrigin"/>
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry rule="rule-trf-prop-flatten-types" targetType="CharacterString" type="MD_Identifier"/>
+			</mapEntries>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_HOMOGENEOUS_GEOMETRIES" input="TRF_FLATTEN_TYPES" mode="enabled">
+			<parameters>
+				<ProcessParameter name="separatorForGeometryTypeSuffix" value="_"/>
+				<ProcessParameter name="descriptorModification_geometryTypeSuffixSeparator" value="alias{ : }"/>
+				<ProcessParameter name="descriptorModification_geometryTypeAlias" value="alias{P=Point,C=Curve,S=Surface}"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-prop-flatten-homogeneousgeometries"/>
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry param="P" rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Point" type="GM_Point"/>
+				<ProcessMapEntry param="C" rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Curve" type="GM_Curve"/>
+				<ProcessMapEntry param="S" rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Surface" type="GM_Surface"/>
+			</mapEntries>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" id="TRF_FLATTEN_REMOVE_NAME_COMPONENT" input="TRF_HOMOGENEOUS_GEOMETRIES" mode="enabled">
+			<parameters>
+				<ProcessParameter name="removePropertyNameAndCodeComponent" value="\.value(s)?OrReason,\.place-(curve|surface|point)PositionInfo,\.geometry"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-prop-remove-name-and-code-component"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="TRF_TAGGED_VALUES" input="TRF_FLATTEN_REMOVE_NAME_COMPONENT" mode="enabled">
+			<taggedValues>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementType="Package" name="gmlsfComplianceLevel" value="0"/>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementType="Class" name="noPropertyType" value="true"/>
+				<TaggedValue applicationSchemaName="Test Schema" modelElementType="Property" name="inlineOrByReference" propertyValueTypeStereotype="(?i:FeatureType)" value="byReference"/>
+			</taggedValues>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" inputs="TRF_TAGGED_VALUES" mode="enabled">
+			<targetParameter name="appSchemaName" value="Test Schema"/>
+			<targetParameter name="outputDirectory" value="testResults/gmlsf0_and_cdb/basic/results/xsd_gmlsf0"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="gmlsf"/>
+			<targetParameter name="documentationTemplate" value="[[definition]]"/>
+			<rules>
+				<EncodingRule name="gmlsf">
+					<rule name="req-xsd-cls-generalization-consistent"/>
+					<rule name="rule-xsd-all-naming-gml"/>
+					<rule name="rule-xsd-cls-codelist-asDictionary"/>
+					<rule name="rule-xsd-cls-standard-gml-property-types"/>
+					<rule name="rule-xsd-cls-noPropertyType"/>
+					<rule name="rule-xsd-prop-targetElement"/>
+					<rule name="rule-xsd-prop-inlineOrByReference"/>
+					<rule name="req-xsd-cls-codelist-no-supertypes"/>
+					<rule name="rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed"/>
+					<rule name="rule-xsd-cls-enum-supertypes"/>
+					<rule name="rule-xsd-cls-enum-subtypes"/>
+					<rule name="rule-xsd-cls-local-enumeration"/>
+					<rule name="rule-xsd-cls-basictype"/>
+					<rule name="rule-xsd-cls-mixin-classes-as-group"/>
+					<rule name="rule-xsd-cls-mixin-classes"/>
+					<rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes"/>
+					<rule name="req-xsd-cls-mixin-supertypes-overrule"/>
+					<rule name="rule-xsd-prop-exclude-derived"/>
+					<rule name="rule-xsd-prop-constrainingFacets"/>
+					<rule name="rule-xsd-all-no-documentation"/>
+					<rule name="rule-xsd-pkg-gmlsf"/>
+					<rule name="rule-xsd-cls-codelist-gmlsf"/>
+					<rule name="rule-xsd-prop-featureType-gmlsf-byReference"/>
+					<rule name="rule-xsd-prop-metadata-gmlsf-byReference"/>
+					<rule name="rule-xsd-cls-union-omitUnionsRepresentingFeatureTypeSets"/>
+				</EncodingRule>
+			</rules>
+			<xsdMapEntries>
+				<XsdMapEntry type="CharacterString" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gmlsf"/>
+				<XsdMapEntry type="Integer" xmlPropertyType="integer" xmlType="integer" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="Boolean" xmlPropertyType="boolean" xmlType="boolean" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="Real" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="Date" xmlPropertyType="date" xmlType="date" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="DateTime" xmlPropertyType="dateTime" xmlType="dateTime" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="Decimal" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33 gmlsf"/>
+				<XsdMapEntry type="GM_Object" xmlElement="gml:AbstractGeometry" xmlPropertyType="gml:GeometryPropertyType" xmlType="gml:AbstractGeometryType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gmlsf gml33"/>
+				<XsdMapEntry type="GM_Point" xmlElement="gml:Point" xmlPropertyType="gml:PointPropertyType" xmlType="gml:PointType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gmlsf gml33"/>
+				<XsdMapEntry type="GM_Curve" xmlElement="gml:Curve" xmlPropertyType="gml:CurvePropertyType" xmlType="gml:CurveType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gmlsf gml33"/>
+				<XsdMapEntry type="GM_Surface" xmlElement="gml:Surface" xmlPropertyType="gml:SurfacePropertyType" xmlType="gml:SurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gmlsf gml33"/>
+				<XsdMapEntry type="URN" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="*"/>
+				<XsdMapEntry type="URI" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="*"/>
+				<XsdMapEntry type="URL" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_Metadata" xmlElement="mdb:MD_Metadata" xmlPropertyType="_MP_" xmlType="mdb:MD_Metadata_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Address" xmlElement="cit:CI_Address" xmlPropertyType="_MP_" xmlType="cit:CI_Address_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Citation" xmlElement="cit:CI_Citation" xmlPropertyType="_MP_" xmlType="cit:CI_Citation_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Contact" xmlElement="cit:CI_Contact" xmlPropertyType="_MP_" xmlType="cit:CI_Contact_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_OnlineResource" xmlElement="cit:CI_OnlineResource" xmlPropertyType="_MP_" xmlType="cit:CI_OnlineResource_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Party" xmlElement="cit:CI_Party" xmlPropertyType="_MP_" xmlType="cit:CI_Party_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_PresentationFormCode" xmlElement="cit:CI_PresentationFormCode" xmlPropertyType="_MP_" xmlType="cit:CI_PresentationFormCode_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Responsibility" xmlElement="cit:CI_Responsibility" xmlPropertyType="_MP_" xmlType="cit:CI_Responsibility_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Series" xmlElement="cit:CI_Series" xmlPropertyType="_MP_" xmlType="cit:CI_Series_Type " xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CI_Telephone" xmlElement="cit:CI_Telephone" xmlPropertyType="_MP_" xmlType="cit:CI_Telephone_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="EX_Extent" xmlElement="gex:EX_Extent" xmlPropertyType="_MP_" xmlType="gex:EX_Extent_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="EX_GeographicExtent" xmlElement="gex:AbstractEX_GeographicExtent" xmlPropertyType="_MP_" xmlType="gex:AbstractEX_GeographicExtent_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="EX_BoundingPolygon" xmlElement="gex:EX_BoundingPolygon" xmlPropertyType="_MP_" xmlType="gex:EX_BoundingPolygon_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_BrowseGraphic" xmlElement="mcc:MD_BrowseGraphic" xmlPropertyType="_MP_" xmlType="mcc:MD_BrowseGraphic_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_Identifier" xmlElement="mcc:MD_Identifier" xmlPropertyType="_MP_" xmlType="mcc:MD_Identifier_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_Constraints" xmlElement="mco:MD_Constraints" xmlPropertyType="_MP_" xmlType="mco:MD_Constraints_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_DigitalTransferOptions" xmlElement="mrd:MD_DigitalTransferOptions" xmlPropertyType="_MP_" xmlType="mrd:MD_DigitalTransferOptions_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_DataIdentification" xmlElement="mri:MD_DataIdentification" xmlPropertyType="_MP_" xmlType="mri:MD_DataIdentification_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_Resolution" xmlElement="mri:MD_Resolution" xmlPropertyType="_MP_" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="LI_Lineage" xmlElement="mrl:LI_Lineage" xmlPropertyType="_MP_" xmlType="mrl:LI_Lineage_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="LI_ProcessStep" xmlElement="mrl:LI_ProcessStep" xmlPropertyType="_MP_" xmlType="mrl:LI_ProcessStep_Type" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="MD_CharacterSetCode" xmlPropertyType="lan:MD_CharacterSetCode_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="LanguageCode" xmlPropertyType="lan:LanguageCode_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="CountryCode" xmlPropertyType="lan:Country_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="PT_FreeText" xmlPropertyType="lan:PT_FreeText_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="PT_Locale" xmlPropertyType="lan:PT_Locale_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="LocalisedCharacterString" xmlPropertyType="lan:LocalisedCharacterString_PropertyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 iso19139_2007"/>
+				<XsdMapEntry type="LocalisedCharacterString" xmlPropertyType="gmlxbt:LanguageStringType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="gml33"/>
+			</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace location="http://schemas.opengis.net/gmlsfProfile/2.0/gmlsfLevels.xsd" ns="http://www.opengis.net/gmlsf/2.0" nsabr="gmlsf"/>
+				<XmlNamespace location="http://schemas.opengis.net/gml/3.2.1/gml.xsd" ns="http://www.opengis.net/gml/3.2" nsabr="gml"/>
+			</xmlNamespaces>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.shapechange.core.target.cdb.CDB" inputs="TRF_TAGGED_VALUES" mode="enabled">
+			<advancedProcessConfigurations>
+				<CDBUnitDefinition code="1" symbol="m">
+					<name>meter</name>
+					<alias>metre</alias>
+					<description>To measure a length.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="2" symbol="deg">
+					<name>degree</name>
+					<description>To mesure an angle.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="3" symbol="rad">
+					<name>radian</name>
+					<description>To mesure an angle.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="4" symbol="kph">
+					<name>Kilometer per hour</name>
+					<description>To measure a speed.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="5" symbol="g">
+					<name>gram</name>
+					<description>To measure a mass.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="6" symbol="s">
+					<name>second</name>
+					<description>To measure time.</description>
+				</CDBUnitDefinition>
+				<CDBUnitDefinition code="7" symbol="%">
+					<name>Percentage</name>
+					<description>A value between 0 and 100.</description>
+				</CDBUnitDefinition>
+			</advancedProcessConfigurations>
+			<targetParameter name="outputDirectory" value="testResults/gmlsf0_and_cdb/basic/results/cdb"/>
+			<targetParameter name="outputFilename" value="test"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="cdb"/>
+			<targetParameter name="unitsToIgnore" value="unitless"/>
+			<rules>
+				<EncodingRule extends="*" name="cdb">
+					<rule name="rule-cdb-all-valueTypeTextForUnionRepresentingFeatureSet"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries>
+				<MapEntry param="numericFormat{Floating-Point}" rule="*" targetType="Numeric" type="Numeric"/>
+				<MapEntry param="numericFormat{Floating-Point}" rule="*" targetType="Numeric" type="Real"/>
+				<MapEntry param="numericFormat{Floating-Point}" rule="*" targetType="Numeric" type="Decimal"/>
+				<MapEntry param="numericFormat{Floating-Point}" rule="*" targetType="Numeric" type="Measure"/>
+				<MapEntry param="numericFormat{Integer}" rule="*" targetType="Numeric" type="Integer"/>
+				<MapEntry rule="*" targetType="Boolean" type="Boolean"/>
+				<MapEntry rule="*" targetType="Text" type="CharacterString"/>
+				<MapEntry rule="*" targetType="Text" type="Character"/>
+				<MapEntry rule="*" targetType="Text" type="Date"/>
+				<MapEntry rule="*" targetType="Text" type="DateTime"/>
+				<MapEntry rule="*" targetType="Text" type="LocalName"/>
+				<MapEntry rule="*" targetType="Text" type="ScopedName"/>
+				<MapEntry rule="*" targetType="Text" type="Any"/>
+				<MapEntry rule="*" targetType="Text" type="GM_Point"/>
+				<MapEntry rule="*" targetType="Text" type="GM_Surface"/>
+				<MapEntry rule="*" targetType="Text" type="GM_Curve"/>
+				<MapEntry rule="*" targetType="Text" type="CI_Address"/>
+				<MapEntry rule="*" targetType="Text" type="CI_Contact"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

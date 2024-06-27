@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/typeConverter/enumerationToCodelist/testEA_typeConverter_enumerationToCodelist.xml" end="Thu Nov 16 09:45:54 CET 2017" resultCode="0" start="Thu Nov 16 09:45:44 CET 2017" version="2.3.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' and @inputs 'trf' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\typeConverter\enumerationToCodelist\test_typeConversion.qea"/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion_ExternalSchema', target namespace: 'http://test/typeConverter/enumerationToCodelist/external'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion', target namespace: 'http://test/typeConverter/enumerationToCodelist'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion_ExternalSchema', target namespace: 'http://test/typeConverter/enumerationToCodelist/external'"/>
+    <Info message="Now processing target 'XML Schema' for input 'trf'."/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion', target namespace: 'http://test/typeConverter/enumerationToCodelist'"/>
+    <Info message="Now processing target 'XML Schema' for input 'trf'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'trf'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion_ExternalSchema', target namespace: 'http://test/typeConverter/enumerationToCodelist/external'"/>
+    <Info message="Now processing target 'Feature Catalogue' for input 'trf'."/>
+    <Info message="Application schema found, package name: 'Test_EnumerationConversion', target namespace: 'http://test/typeConverter/enumerationToCodelist'"/>
+    <Info message="Now processing target 'Feature Catalogue' for input 'trf'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'trf'.&#10;-------------------------------------------------"/>
+    <Info message="Executed deferred output write for target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'trf'."/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/typeConversion/enumerationToCodelist/xsd/INPUT/etc_ext.xsd" scope="http://test/typeConverter/enumerationToCodelist/external" target="XML Schema">etc_ext.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/typeConversion/enumerationToCodelist/xsd/INPUT/etc.xsd" scope="http://test/typeConverter/enumerationToCodelist" target="XML Schema">etc.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/typeConversion/enumerationToCodelist/xsd/trf/etc_ext.xsd" scope="http://test/typeConverter/enumerationToCodelist/external" target="XML Schema">etc_ext.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/typeConversion/enumerationToCodelist/xsd/trf/etc.xsd" scope="http://test/typeConverter/enumerationToCodelist" target="XML Schema">etc.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/typeConversion/enumerationToCodelist/fc/trf/test/index.html" target="Feature Catalogue">index.html</Result>
+  </Results>
+</ShapeChangeResult>

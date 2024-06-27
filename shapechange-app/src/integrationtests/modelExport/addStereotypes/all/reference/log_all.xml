@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/modelExport/addStereotypes/test_addStereotypes_all.xml" end="Thu Nov 21 11:21:32 CET 2019" resultCode="0" start="Thu Nov 21 11:21:21 CET 2019" version="2.8.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' and @inputs 'model' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.qea"/>
+    <Debug message="Element 'Class1' has the following stereotype(s) in the input model: 'featureType, Test1, Test2'."/>
+    <Debug message="Stereotype 'featureType' of element 'Class1' normalized to 'featureType'."/>
+    <Debug message="Well-known stereotype 'featuretype' added to element 'Class1'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class1' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class1', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class1'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class1' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class1', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class1'."/>
+    <Debug message="Element 'Class1' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,featuretype'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class1' treated as having 3 well-known stereotype(s): 'Test1,Test2,featuretype'"/>
+    <Debug message="Element 'Class2' has the following stereotype(s) in the input model: 'codeList, Test2, Test1'."/>
+    <Debug message="Stereotype 'codeList' of element 'Class2' normalized to 'codeList'."/>
+    <Debug message="Well-known stereotype 'codelist' added to element 'Class2'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class2' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class2', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class2'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class2' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class2', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class2'."/>
+    <Debug message="Element 'Class2' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,codelist'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class2' treated as having 3 well-known stereotype(s): 'Test1,Test2,codelist'"/>
+    <Debug message="Element 'Class3' has the following stereotype(s) in the input model: 'dataType, Test2, Test1'."/>
+    <Debug message="Stereotype 'dataType' of element 'Class3' normalized to 'dataType'."/>
+    <Debug message="Well-known stereotype 'datatype' added to element 'Class3'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class3' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class3', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class3'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class3' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class3', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class3'."/>
+    <Debug message="Element 'Class3' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,datatype'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class3' treated as having 3 well-known stereotype(s): 'Test1,Test2,datatype'"/>
+    <Debug message="Element 'Class4' has the following stereotype(s) in the input model: 'enumeration, Test1, Test2'."/>
+    <Debug message="Stereotype 'enumeration' of element 'Class4' normalized to 'enumeration'."/>
+    <Debug message="Well-known stereotype 'enumeration' added to element 'Class4'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class4' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class4', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class4'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class4' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class4', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class4'."/>
+    <Debug message="Element 'Class4' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,enumeration'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class4' treated as having 3 well-known stereotype(s): 'Test1,Test2,enumeration'"/>
+    <Debug message="Element 'Class5' has the following stereotype(s) in the input model: 'type, Test2, Test1'."/>
+    <Debug message="Stereotype 'type' of element 'Class5' normalized to 'type'."/>
+    <Debug message="Well-known stereotype 'type' added to element 'Class5'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class5' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class5', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class5'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class5' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class5', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class5'."/>
+    <Debug message="Element 'Class5' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,type'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class5' treated as having 3 well-known stereotype(s): 'Test1,Test2,type'"/>
+    <Debug message="Element 'Class6' has the following stereotype(s) in the input model: 'union, Test2, Test1'."/>
+    <Debug message="Stereotype 'union' of element 'Class6' normalized to 'union'."/>
+    <Debug message="Well-known stereotype 'union' added to element 'Class6'."/>
+    <Debug message="Stereotype 'Test2' of element 'Class6' normalized to 'Test2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test2' of element 'Class6', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test2' is added to element 'Class6'."/>
+    <Debug message="Stereotype 'Test1' of element 'Class6' normalized to 'Test1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'Test1' of element 'Class6', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'Test1' is added to element 'Class6'."/>
+    <Debug message="Element 'Class6' has 3 (well-known or additional) stereotype(s): 'Test1,Test2,union'"/>
+    <Debug message="After taking into account data types and enumerations modelled without the use of stereotypes is element 'Class6' treated as having 3 well-known stereotype(s): 'Test1,Test2,union'"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\modelExport\addStereotypes\test_addStereotypes.qea"/>
+    <Debug message="Checking overloading. Class = 'Class1'; current class = 'Class1'."/>
+    <Debug message="The 'property' with ID '163_166' and name 'prop' was created."/>
+    <Debug message="Checking overloading. Class = 'Class3'; current class = 'Class3'."/>
+    <Debug message="The 'property' with ID '166_167' and name 'enum1' was created."/>
+    <Debug message="Checking overloading. Class = 'Class5'; current class = 'Class5'."/>
+    <Debug message="Checking overloading. Class = 'Class6'; current class = 'Class6'."/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Debug message="Creating GenericModel..."/>
+    <Debug message="Element 'Model' has the following stereotype(s) in the input model: ''."/>
+    <Debug message="Stereotype '' of element 'Model' normalized to ''."/>
+    <Debug message="No well-known stereotype found for stereotype '' of element 'Model', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '' is added to element 'Model'."/>
+    <Debug message="Element 'Model' has 0 (well-known or additional) stereotype(s): ''"/>
+    <Debug message="Element 'Test Model' has the following stereotype(s) in the input model: ''."/>
+    <Debug message="Stereotype '' of element 'Test Model' normalized to ''."/>
+    <Debug message="No well-known stereotype found for stereotype '' of element 'Test Model', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '' is added to element 'Test Model'."/>
+    <Debug message="Element 'Test Model' has 0 (well-known or additional) stereotype(s): ''"/>
+    <Debug message="Element 'Test Schema' has the following stereotype(s) in the input model: 'applicationSchema'."/>
+    <Debug message="Stereotype 'applicationSchema' of element 'Test Schema' normalized to 'application schema'."/>
+    <Debug message="Well-known stereotype 'application schema' added to element 'Test Schema'."/>
+    <Debug message="Element 'Test Schema' has 1 (well-known or additional) stereotype(s): 'application schema'"/>
+    <Debug message="Element 'enum1' has the following stereotype(s) in the input model: 'ps1'."/>
+    <Debug message="Stereotype 'ps1' of element 'enum1' normalized to 'ps1'."/>
+    <Debug message="No well-known stereotype found for stereotype 'ps1' of element 'enum1', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'ps1' is added to element 'enum1'."/>
+    <Debug message="Element 'enum1' has 1 (well-known or additional) stereotype(s): 'ps1'"/>
+    <Debug message="Element 'prop' has the following stereotype(s) in the input model: 'ps2'."/>
+    <Debug message="Stereotype 'ps2' of element 'prop' normalized to 'ps2'."/>
+    <Debug message="No well-known stereotype found for stereotype 'ps2' of element 'prop', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype 'ps2' is added to element 'prop'."/>
+    <Debug message="Element 'prop' has 1 (well-known or additional) stereotype(s): 'ps2'"/>
+    <Debug message="...done."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Debug message="Releasing model created by processing step: input"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/addStereotypes'"/>
+    <Info message="Now processing target 'Model Export' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

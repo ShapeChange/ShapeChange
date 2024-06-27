@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="SCXML"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/integrationtests/openapi/basic/test_openapi_basic.zip"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="enabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="none"/>
+   <DescriptorSource descriptor="definition" source="none"/>
+   <DescriptorSource descriptor="description" source="none"/>
+   <DescriptorSource descriptor="example" source="none"/>
+   <DescriptorSource descriptor="legalBasis" source="none"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+   <DescriptorSource descriptor="language" source="none"/>
+  </descriptorSources>
+  <stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/openapi/basic/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="model" input="input" mode="enabled"/>
+ </transformers>
+ <targets>
+
+  <Target class="de.interactive_instruments.shapechange.core.target.openapi.OpenApiDefinition" inputs="model" mode="enabled">
+   <advancedProcessConfigurations>
+    <OpenApiConfigItems>
+     <conformanceClasses>      
+      <ConformanceClass overlay="sc-resources/openapi/overlays/features-1-10-core.json" uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core"/>
+      <ConformanceClass overlay="sc-resources/openapi/overlays/features-1-10-geojson.json" uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson"/>
+      <ConformanceClass overlay="sc-resources/openapi/overlays/features-1-10-html.json" uri="http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html"/>
+      <ConformanceClass overlay="sc-resources/openapi/overlays/features-2-10-crs.json" param="http://www.opengis.net/def/crs/OGC/1.3/CRS84 http://www.opengis.net/def/crs/EPSG/0/4326 http://www.opengis.net/def/crs/EPSG/0/3395" uri="http://www.opengis.net/spec/ogcapi-features-2/1.0/conf/crs"/>      
+     </conformanceClasses>
+     <queryParameters>
+      <QueryParameter appliesToPhase="pre-feature-identification" name="f" overlay="src/integrationtests/openapi/basic/config/f.json"/>
+      <QueryParameter appliesToPhase="finalization" name="string" overlay="src/integrationtests/openapi/basic/config/string.json"/>
+     </queryParameters>
+    </OpenApiConfigItems>
+   </advancedProcessConfigurations>
+   <targetParameter name="outputDirectory" value="testResults/openapi/basic"/>
+   <targetParameter name="outputFilename" value="openapi.json"/>
+   <targetParameter name="baseTemplate" value="sc-resources/openapi/overlays/default-template.json"/>
+   <targetParameter name="jsonSchemasBaseLocation" value="https://example.org/schemas/json"/>
+   <targetParameter name="jsonSchemaVersion" value="openapi30"/>  
+   <targetParameter name="collections" value="FeatureType1, FeatureType2, TS2_FT2, TS2_FT3, TS2_FT4"/>
+   <targetParameter name="defaultEncodingRule" value="myopenapi"/>
+   <rules>
+    <EncodingRule name="myopenapi">
+     <rule name="rule-openapi-all-explicit-collections"/>
+
+
+    </EncodingRule>
+   </rules>   
+  </Target>
+  
+  
+  
+  
+ </targets>
+</ShapeChangeConfiguration>

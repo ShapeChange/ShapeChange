@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sql/databaseSchemas/test_sql_databaseSchemas.xml" end="Thu Aug 20 15:30:52 CEST 2020" resultCode="0" start="Thu Aug 20 15:30:46 CEST 2020" version="2.9.2-SNAPSHOT">
+  <Messages>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
+    <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\databaseSchemas\test_sql_databaseSchemas.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\databaseSchemas\test_sql_databaseSchemas.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\databaseSchemas\test_sql_databaseSchemas.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\sql\databaseSchemas\test_sql_databaseSchemas.qea"/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Determined database system is 'PostgreSQL'."/>
+    <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 2', target namespace: 'http://example.org/shapechange/schema/test2'"/>
+    <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+    <Info message="Creating associative table to represent association between TypeS1 (context property 'roleTS1toFTS1') and FeatureTypeS1 (context property 'roleFTS1toTS1'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureTypeS1_roleFTS1toTS1'."/>
+    <Info message="Creating associative table to represent association between TypeS1 (context property 'roleTS1toFTS1') and FeatureTypeS1 (context property 'roleFTS1toTS1'). Tagged value 'sqlSchema' not set on this association, thus using default naming pattern, which leads to database schema name: 's1'."/>
+    <Info message="Creating associative table to represent attribute 'attDTS2' in class 'FeatureTypeS2'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureTypeS2_attDTS2'."/>
+    <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/sql/databaseSchemas/ddl/postgres/INPUT/Test_Schema_1.sql" target="SQL DDL">Test_Schema_1.sql</Result>
+  </Results>
+</ShapeChangeResult>

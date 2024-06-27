@@ -1,0 +1,435 @@
+<html xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result">
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ShapeChange result</title>
+    <style type="text/css">
+body
+{
+background-color:#f4f6fe;
+}
+h1
+{
+font-family:Arial, Helvetica, sans-serif;
+font-size:24px;
+color:#151B8D;
+text-align:center;
+}
+h2, h3, h4
+{
+font-family:Arial, Helvetica, sans-serif;
+color:#151B8D;
+text-align:center;
+}
+a:link 
+{
+color:#325595;
+text-decoration:none;
+border-bottom:1px dotted; 
+outline: none;
+}
+a:hover
+{
+border-bottom:1px solid;
+color:#325595;
+}
+p, li
+{
+font-family:Arial, Helvetica, sans-serif;
+font-size:14px;
+margin-top: 0px;
+margin-bottom: 4px;
+}
+.small
+{
+font-size:10px;
+}
+table
+{
+font-family:Arial, Helvetica, sans-serif;
+border-style:none;
+border-collapse:collapse;
+border:0px;
+padding:0px;
+margin-left: auto;
+margin-right: auto;
+}
+tr
+{
+vertical-align:top;
+}
+td
+{
+border:1px solid #98bf21;
+padding:5px 20px 5px 20px;
+}
+</style>
+    <script language="JavaScript" type="text/javascript">
+function toggleMe(a)
+{
+var list = document.getElementsByClassName(a);
+
+if(!list)return true;
+
+for (var i=0; i<list.length;i++) {
+  if(list[i].style.display=="none")
+  {
+  list[i].style.display="table-row"
+  }
+  else
+  {
+  list[i].style.display="none"
+  }
+}
+
+return true;
+}
+</script>
+  </head>
+  <body>
+    <h1>ShapeChange result</h1>
+    <table>
+      <tr>
+        <td>
+          <p>Result:</p>
+        </td><td>
+          <p>Conversion Completed</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>Start time:</p>
+        </td><td>
+          <p>Thu Aug 11 10:20:37 CEST 2022</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>End time:</p>
+        </td><td>
+          <p>Thu Aug 11 10:20:45 CEST 2022</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>Configuration file:</p>
+        </td><td>
+          <p>src/integrationtests/flattener/inheritance2/testEA_Flattening_inheritance2.xml</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>ShapeChange version:</p>
+        </td><td>
+          <p>2.12.1-SNAPSHOT</p>
+        </td>
+      </tr>
+    </table>
+    <a name="messages">
+      <h2>Messages</h2>
+    </a>
+    <div id="menu">
+      <p align="center">Click on the following buttons to toggle log messages of the according category.</p>
+      <table>
+        <tbody>
+          <tr>
+            <th>Process Flow</th><th>Process Execution</th>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowDebug')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Debug</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Debug')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Debug</a></td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowInfo')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Info</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Info')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Info</a></td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowWarning')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Warning</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Warning')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Warning</a></td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Error</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Error')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Error</a></td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowFatalError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Fatal Error</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('FatalError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Fatal Error</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    </div>
+    <table border="0">
+      <tr>
+        <th>
+          <p>Severity</p>
+        </th><th>
+          <p>Message</p>
+        </th>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- Semantic validation of ShapeChange configuration: START ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Validating input parameters.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Validation of input parameters completed.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Validating log parameters.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Validation of log parameters completed.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating transformer with @id 'IDENTITY' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating transformer with @id 'step1' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'IDENTITY step1' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' and @inputs 'step1' ...</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance2\test_inheritance2.EAP</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance2\test_inheritance2.EAP</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance2\test_inheritance2.EAP</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="Info">
+        <td>
+          <p>Info</p>
+        </td><td>
+          <p>Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\flattener\inheritance2\test_inheritance2.EAP</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing transformation 'IDENTITY' for input ID: 'INPUT'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/flattening/inheritance2'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'XML Schema' for input 'IDENTITY'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'IDENTITY'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing transformation 'step1' for input ID: 'IDENTITY'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>========== processing phase ==========</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- now processing: rule-trf-cls-flatten-inheritance ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>========== postprocessing phase ==========</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Performed transformation for transformer ID 'step1' for input ID: 'IDENTITY'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/flattening/inheritance2'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'XML Schema' for input 'step1'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'step1'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/flattening/inheritance2'</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Now processing target 'Model Export' for input 'step1'.</p>
+        </td>
+      </tr>
+      <tr style="display:table-row" class="ProcessFlowInfo">
+        <td>
+          <p>ProcessFlowInfo</p>
+        </td><td>
+          <p>Executed target class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' for input ID: 'step1'.
+-------------------------------------------------</p>
+        </td>
+      </tr>
+    </table>
+    <a name="results">
+      <h2>Results</h2>
+    </a>
+    <table border="0">
+      <tr>
+        <th>
+          <p>Target</p>
+        </th><th>
+          <p>Scope</p>
+        </th><th>
+          <p>File</p>
+        </th>
+      </tr>
+      <tr>
+        <td>
+          <p>XML Schema</p>
+        </td><td>
+          <p>http://shapechange.net/test/flattening/inheritance2</p>
+        </td><td>
+          <p>
+            <a href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/flattening/inheritance2/results/xsd/IDENTITY/flat.xsd">flat.xsd</a>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p>XML Schema</p>
+        </td><td>
+          <p>http://shapechange.net/test/flattening/inheritance2</p>
+        </td><td>
+          <p>
+            <a href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/flattening/inheritance2/results/xsd/step1/flat.xsd">flat.xsd</a>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <hr>
+    <p align="center">
+      <small>This report was generated by <a href="http://shapechange.net">ShapeChange</a></small>
+    </p>
+  </body>
+</html>

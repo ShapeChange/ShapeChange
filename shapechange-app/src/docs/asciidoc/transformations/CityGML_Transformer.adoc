@@ -1,0 +1,100 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[CityGML_Transformer]]
+= CityGML Transformer
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation supports rules to convert an application schema into
+a CityGML ADE.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.shapechange.core.transformation.citygml.CityGMLTransformer_
+
+[[Rules]]
+=== Rules
+
+[[rule-trf-CityGML-createADE]]
+==== rule-trf-CityGML-createADE
+
+(since v2.4.0)
+
+Feature types for which a mapping to a CityGML type is defined (either
+via tagged value _cityGmlTargetType_ or via map entries of the
+transformer configuration – both options use QNames to identify a
+CityGML type) receive that type as new supertype. All other feature
+types receive the CityGML type __CityObject_ as new supertype. Any
+previously existing supertype is transformed to a mixin type.
+
+NOTE: All CityGML type that are used as mapping targets must be
+available in the model. The _CityObject type is determined by looking
+for a type with according name that does NOT have stereotype
+«ADEElement».
+
+NOTE: This rule has originally been developed during OGC Testbed 13, to
+derive a CityGML ADE from an application schema. For further details,
+see the OGC https://docs.ogc.org/per/17-020r1.html[NAS
+Profiling Engineering Report] (OGC document number 17-020r1), chapter 9.
+
+[[Parameters]]
+=== Parameters
+
+At the moment no parameters are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+This transformation does not make use of the advanced process
+configuration facility.
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer
+  class="de.interactive_instruments.shapechange.core.transformation.citygml.CityGMLTransformer"
+  id="TRF_CREATE_ADE" input="IDENTITY" mode="enabled">
+  <rules>
+   <ProcessRuleSet name="trf">
+    <rule name="rule-trf-CityGML-createADE"/>
+   </ProcessRuleSet>
+  </rules>
+  <mapEntries>
+   <ProcessMapEntry type="AircraftHangar" targetType="bldg:Building"
+    rule="rule-trf-CityGML-createADE"/>
+   <ProcessMapEntry type="Apron" targetType="tran:TrafficArea" rule="rule-trf-CityGML-createADE"/>
+   <ProcessMapEntry type="Bench" targetType="frn:CityFurniture" rule="rule-trf-CityGML-createADE"/>
+   <ProcessMapEntry type="Billboard" targetType="frn:CityFurniture" rule="rule-trf-CityGML-createADE"/>
+   <ProcessMapEntry type="Building" targetType="bldg:Building" rule="rule-trf-CityGML-createADE"/>
+  </mapEntries>
+ </Transformer>
+----------

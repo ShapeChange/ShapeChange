@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+  <input>
+    <parameter name="inputModelType" value="EA7" />
+    <parameter name="inputFile" value="src/integrationtests/xsd/propNoTargetElement/test_prop.qea" />
+    <parameter name="appSchemaNameRegex" value="(Test Schema)|(Test Schema 2)" />
+    <parameter name="publicOnly" value="true" />
+    <parameter name="checkingConstraints" value="disabled" />
+    <parameter name="sortedSchemaOutput" value="true" />
+    <xi:include href="sc-resources/config/StandardAliases.xml" />
+  </input>
+  <log>
+    <parameter name="reportLevel" value="INFO" />
+    <parameter name="logFile" value="testResults/xsd/propNoTargetElement/log.xml" />
+  </log>
+  <targets>
+    <TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+      <targetParameter name="outputDirectory" value="testResults/xsd/propNoTargetElement" />
+      <targetParameter name="sortedOutput" value="true" />
+      <targetParameter name="defaultEncodingRule" value="xsd2" />
+      <xi:include href="sc-resources/config/StandardRules.xml" />
+      <rules>
+        <!-- as iso19136_2007 but without rule-xsd-prop-targetElement -->
+        <EncodingRule name="xsd2" extends="*">
+          <rule name="req-xsd-cls-generalization-consistent" />
+          <rule name="rule-xsd-all-naming-gml" />
+          <rule name="rule-xsd-cls-global-enumeration" />
+          <rule name="rule-xsd-cls-codelist-asDictionary" />
+          <rule name="rule-xsd-cls-standard-gml-property-types" />
+          <rule name="rule-xsd-cls-noPropertyType" />
+          <rule name="rule-xsd-cls-byValuePropertyType" />
+          <rule name="rule-xsd-pkg-gmlProfileSchema" />
+          <rule name="rule-xsd-prop-reverseProperty" />
+          <rule name="rule-xsd-prop-defaultCodeSpace" />
+          <rule name="rule-xsd-prop-inlineOrByReference" />
+        </EncodingRule>
+      </rules>
+      <xi:include href="sc-resources/config/StandardNamespaces.xml" />
+      <xi:include href="sc-resources/config/StandardMapEntries.xml" />
+      <xsdMapEntries>
+        <XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple" />
+      </xsdMapEntries>
+    </TargetXmlSchema>
+  </targets>
+</ShapeChangeConfiguration>

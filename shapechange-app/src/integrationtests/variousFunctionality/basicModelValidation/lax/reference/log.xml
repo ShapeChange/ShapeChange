@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/variousFunctionality/basicModelValidation/lax/testEA_basicModelValidation_lax.xml"
+                   end="Thu Jun 13 10:33:01 CEST 2024"
+                   resultCode="0"
+                   start="Thu Jun 13 10:32:52 CEST 2024"
+                   version="3.0.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating model validator with @id 'valEnumTaggedValues' ..."/>
+      <ProcessFlowInfo message="--- Validating model validator with @id 'valDocumentation' ..."/>
+      <ProcessFlowInfo message="--- Validating model validator with @id 'valPropertyTaggedValues' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\src\test\resources\variousFunctionality\basicModelValidation\test_basicModelValidation.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\src\test\resources\variousFunctionality\basicModelValidation\test_basicModelValidation.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\src\test\resources\variousFunctionality\basicModelValidation\test_basicModelValidation.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\src\test\resources\variousFunctionality\basicModelValidation\test_basicModelValidation.qea"/>
+      <ProcessFlowInfo message="Now validating input model 'INPUT' of transformation/target with id/class 'TRF_END'."/>
+      <Info message="---------- Executing model validator 'valDocumentation' ----------"/>
+      <Warning message="Descriptor content test failed (descriptorOrTaggedValue 'documentation', regex '^.+$', value '').">
+         <Detail xmlns="" message="Context: Model::Schemas::Test Schema::FeatureType2"/>
+      </Warning>
+      <Warning message="Descriptor content test failed (descriptorOrTaggedValue 'documentation', regex '^.+$', value '').">
+         <Detail xmlns="" message="Context: Model::Schemas::Test Schema::DataType1::attDT"/>
+      </Warning>
+      <Info message="---------- Executing model validator 'valPropertyTaggedValues' ----------"/>
+      <Warning message="Descriptor content test failed (descriptorOrTaggedValue 'TV:sequenceNumber', regex '^\d+$', value '').">
+         <Detail xmlns="" message="Context: Model::Schemas::Test Schema::Union1::attU"/>
+      </Warning>
+      <Warning message="Descriptor content test failed (descriptorOrTaggedValue 'TV:sequenceNumber', regex '^\d+$', value 'abc').">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::FeatureType1::ft1toft2"/>
+      </Warning>
+      <Info message="---------- Executing model validator 'valEnumTaggedValues' ----------"/>
+      <Warning message="Descriptor content test failed (descriptorOrTaggedValue 'TV:lesbarerName', regex '^.+$', value '').">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::Enumeration1::enum1"/>
+      </Warning>
+      <ProcessFlowInfo message="Validated input model 'INPUT' of transformation/target with id/class 'TRF_END'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'TRF_END'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/testResults/variousFunctionality/basicModelValidation/lax/results/xsd/TRF_END/test.xsd"
+              scope="http://example.org/shapechange/schema/test"
+              target="XML Schema">test.xsd</Result>
+   </Results>
+</ShapeChangeResult>

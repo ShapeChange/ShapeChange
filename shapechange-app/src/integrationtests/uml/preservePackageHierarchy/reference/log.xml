@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/uml/preservePackageHierarchy/test_uml_preservePackageHierarchy.xml" end="Thu Apr 30 15:07:12 CEST 2020" resultCode="0" start="Thu Apr 30 15:06:33 CEST 2020" version="2.9.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\preservePackageHierarchy\test_uml_preservePackageHierarchy.qea"/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema1', target namespace: 'http://example.org/shapechange/uml/preservePackageHierarchy/1'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Application schema found, package name: 'AppSchema2', target namespace: 'http://example.org/shapechange/uml/preservePackageHierarchy/2'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Application schema found, package name: 'AppSchema3', target namespace: 'http://example.org/shapechange/uml/preservePackageHierarchy/3'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.ea.target.uml.UmlModel' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results/>
+</ShapeChangeResult>

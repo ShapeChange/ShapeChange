@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile" value="src/integrationtests/profiling/testProfiling.qea" />
+		<parameter name="appSchemaNameRegex" value="Test8.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/profiling/constraintValidation/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="A" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="A" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<rule
+						name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" />
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="B" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="B" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<rule
+						name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" />
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			inputs="A B INPUT" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/profiling/constraintValidation/results/ocl" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="gml33-with-schematron" />
+			<targetParameter name="schematronExtension.matches.namespace"
+				value="fn:http://www.w3.org/2005/xpath-functions" />
+			<targetParameter name="schematronExtension.matches.function"
+				value="matches($object$,$pattern$)" />
+			<rules>
+				<EncodingRule extends="gml33" name="gml33-with-schematron">
+					<rule name="rule-xsd-pkg-schematron" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.fol2schematron.FOL2Schematron"
+			mode="enabled" inputs="A B INPUT">
+			<targetParameter name="outputDirectory"
+				value="testResults/profiling/constraintValidation/results/fol" />
+			<targetParameter name="defaultEncodingRule" value="gml33-with-schematron" />
+			<rules>
+				<EncodingRule extends="gml33" name="gml33-with-schematron">
+					<rule name="rule-xsd-pkg-schematron" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

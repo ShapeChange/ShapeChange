@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/json/featureRefs/test_json_schema_featureRefs.xml"
+                   end="Thu Aug 17 10:44:51 CEST 2023"
+                   resultCode="0"
+                   start="Thu Aug 17 10:44:44 CEST 2023"
+                   version="2.13.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\featureRefs\test_json_schema_featureRefs.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\featureRefs\test_json_schema_featureRefs.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\featureRefs\test_json_schema_featureRefs.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\featureRefs\test_json_schema_featureRefs.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'input'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'input'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <Info message="A property with value type 'GM_Curve' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type, but the mapping does not contain collection infos. The by reference case with 'rel-as-key' encoding is ignored for the property. Consider adding collection infos to the map entry, or a pure inline encoding of the property."/>
+      <Info message="A property with value type 'GM_Point' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type, but the mapping does not contain collection infos. The by reference case with 'rel-as-key' encoding is ignored for the property. Consider adding collection infos to the map entry, or a pure inline encoding of the property."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/featureRefs/json_schemas/schema1/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/featureRefs/json_schemas/schema2/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/featureRefs/json_schemas/schema3/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/featureRefs/json_schemas/schema4/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/featureRefs/json_schemas/schema5/IDENTITY/jsontest/main.json"
+              target="JSON Schema">main.json</Result>
+   </Results>
+</ShapeChangeResult>

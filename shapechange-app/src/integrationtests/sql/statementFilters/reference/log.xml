@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sql/statementFilters/testEA_sql_statementFilters.xml" end="Tue Dec 19 15:41:57 CET 2017" resultCode="0" start="Tue Dec 19 15:41:49 CET 2017" version="2.4.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'F_inheritance' ..."/>
+    <Info message="--- Validating transformer with @id 'F_multiplicity' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'F_multiplicity' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'F_multiplicity' ..."/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'F_multiplicity' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\statementFilters\test_sql_statementFilters.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\statementFilters\test_sql_statementFilters.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\statementFilters\test_sql_statementFilters.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\statementFilters\test_sql_statementFilters.qea"/>
+    <Info message="Now processing transformation 'F_inheritance' for input ID: 'INPUT'."/>
+    <Info message="========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+    <Info message="========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'F_inheritance' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'F_multiplicity' for input ID: 'F_inheritance'."/>
+    <Info message="========== processing phase =========="/>
+    <Info message="---------- now processing: rule-trf-prop-flatten-multiplicity ----------"/>
+    <Info message="========== postprocessing phase =========="/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'F_multiplicity' for input ID: 'F_inheritance'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/statementFilters'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'F_multiplicity'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'F_multiplicity'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/statementFilters'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'F_multiplicity'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'F_multiplicity'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/statementFilters'"/>
+    <Info message="Now processing target 'SQL DDL' for input 'F_multiplicity'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'F_multiplicity'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_postgresql/F_multiplicity/Test_Schema_spatial.sql" target="SQL DDL">Test_Schema_spatial.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_postgresql/F_multiplicity/Test_Schema_inserts_codelistType_2.sql" target="SQL DDL">Test_Schema_inserts_codelistType_2.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_postgresql/F_multiplicity/Test_Schema_inserts_codelistType_3.sql" target="SQL DDL">Test_Schema_inserts_codelistType_3.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_postgresql/F_multiplicity/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_oracle/F_multiplicity/Test_Schema_spatial.sql" target="SQL DDL">Test_Schema_spatial.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_oracle/F_multiplicity/Test_Schema_inserts_codelistType_2.sql" target="SQL DDL">Test_Schema_inserts_codelistType_2.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_oracle/F_multiplicity/Test_Schema_inserts_codelistType_3.sql" target="SQL DDL">Test_Schema_inserts_codelistType_3.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_oracle/F_multiplicity/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_sqlserver/F_multiplicity/Test_Schema_spatial.sql" target="SQL DDL">Test_Schema_spatial.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_sqlserver/F_multiplicity/Test_Schema_inserts_codelistType_2.sql" target="SQL DDL">Test_Schema_inserts_codelistType_2.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_sqlserver/F_multiplicity/Test_Schema_inserts_codelistType_3.sql" target="SQL DDL">Test_Schema_inserts_codelistType_3.sql</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/statementFilters/ddl_sqlserver/F_multiplicity/Test_Schema.sql" target="SQL DDL">Test_Schema.sql</Result>
+  </Results>
+</ShapeChangeResult>

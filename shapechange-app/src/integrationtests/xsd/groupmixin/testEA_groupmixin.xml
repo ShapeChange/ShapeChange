@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/xsd/groupmixin/test_groupmixin.qea"/>
+		<parameter name="appSchemaName" value="NAS"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/xsd/groupmixin/log_groupmixin.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/xsd/groupmixin"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="mixintest"/>
+			<rules>
+			<EncodingRule name="mixintest" extends="gml33">
+            <rule name="rule-xsd-cls-basictype"/>
+            <rule name="rule-xsd-cls-union-direct"/>
+            <rule name="rule-xsd-prop-att-map-entry"/>
+            <rule name="rule-xsd-all-tagged-values"/>
+            <rule name="rule-xsd-cls-mixin-classes"/>
+            <rule name="rule-xsd-cls-mixin-classes-as-group"/>
+            <rule name="req-xsd-cls-mixin-supertypes-overrule"/>
+            <rule name="rule-xsd-cls-mixin-classes-non-mixin-supertypes"/>
+         </EncodingRule>
+         </rules>
+         <xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

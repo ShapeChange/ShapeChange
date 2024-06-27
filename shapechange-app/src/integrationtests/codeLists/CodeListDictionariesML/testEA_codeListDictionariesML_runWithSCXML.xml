@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/codeLists/CodeListDictionariesML/test_codeListDictionariesML.zip"/>
+		<parameter name="appSchemaNameRegex" value=".*"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="tag" tag="documentation"/>
+			<DescriptorSource descriptor="alias" source="none"/>
+			<DescriptorSource descriptor="definition" source="none"/>
+			<DescriptorSource descriptor="description" source="none"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+			<DescriptorSource descriptor="globalIdentifier" source="none"/>
+		</descriptorSources>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/codeLists/CodeListDictionariesML/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="IDENTITY" input="INPUT" mode="enabled"/>
+	</transformers>
+	<targets>
+		
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionariesML" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="appSchemaName" value="Test Schema 2"/>
+			<targetParameter name="outputDirectory" value="testResults/codeLists/CodeListDictionariesML/results/singleLanguage"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="infoURL" value="http://example.org/info"/>
+			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <XmlNamespace location="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>
+  <XmlNamespace location="http://www.w3.org/1999/xlink.xsd" ns="http://www.w3.org/1999/xlink" nsabr="xlink"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.2.1/gml.xsd" ns="http://www.opengis.net/gml/3.2" nsabr="gml"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdBaseTypes.xsd" ns="http://www.opengis.net/gml/3.3/xbt" nsabr="gmlxbt"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/geometryCompact.xsd" ns="http://www.opengis.net/gml/3.3/ce" nsabr="gmlce"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/tin.xsd" ns="http://www.opengis.net/gml/3.3/tin" nsabr="gmltin"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRef.xsd" ns="http://www.opengis.net/gml/3.3/lr" nsabr="gmllr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefTowardsReferent.xsd" ns="http://www.opengis.net/gml/3.3/lrtr" nsabr="gmllrtr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffset.xsd" ns="http://www.opengis.net/gml/3.3/lro" nsabr="gmllro"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffsetVector.xsd" ns="http://www.opengis.net/gml/3.3/lrov" nsabr="gmllrov"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/referencableGrid.xsd" ns="http://www.opengis.net/gml/3.3/rgrid" nsabr="gmlrgrid"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd" ns="http://www.opengis.net/gml/3.3/exr" nsabr="gmlexr"/>
+  
+  <XmlNamespace ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/" nsabr="gmldgiwgsp"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlsfProfile/2.0/gmlsfLevels.xsd" ns="http://www.opengis.net/gmlsf/2.0" nsabr="gmlsf"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd" ns="http://www.isotc211.org/2005/gmd" nsabr="gmd"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd" ns="http://www.isotc211.org/2005/gco" nsabr="gco"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd" ns="http://www.opengis.net/gmlcov/1.0" nsabr="gmlcov"/>
+  <XmlNamespace location="http://schemas.opengis.net/om/2.0/observation.xsd" ns="http://www.opengis.net/om/2.0" nsabr="om"/>
+  <XmlNamespace location="http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd" ns="http://www.opengis.net/sampling/2.0" nsabr="sam"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd" ns="http://www.opengis.net/samplingSpatial/2.0" nsabr="sams"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd" ns="http://www.opengis.net/samplingSpecimen/2.0" nsabr="spec"/>
+  <XmlNamespace location="http://schemas.geosciml.org/cgiutilities/3.0/cgiUtilities.xsd" ns="http://xmlns.geosciml.org/Utilities/3.0" nsabr="cgu"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geosciml-core/3.0/geosciml-core.xsd" ns="http://xmlns.geosciml.org/GeoSciML-Core/3.0" nsabr="gsml"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geotime/3.0/geologicTime.xsd" ns="http://xmlns.geosciml.org/GeologicTime/3.0" nsabr="gt"/>
+  <XmlNamespace location="http://schemas.geosciml.org/borehole/3.0/borehole.xsd" ns="http://xmlns.geosciml.org/Borehole/3.0" nsabr="gbh"/>
+  <XmlNamespace location="http://schemas.geosciml.org/laboratoryanalysis-specimen/3.0/laboratoryAnalysis-Specimen.xsd" ns="http://xmlns.geosciml.org/LaboratoryAnalysis-Specimen/3.0" nsabr="glab"/>
+  <XmlNamespace location="http://schemas.geosciml.org/physicalproperties/3.0/physicalProperties.xsd" ns="http://xmlns.geosciml.org/PhysicalProperties/3.0" nsabr="gpp"/>
+  <XmlNamespace location="http://schemas.geosciml.org/temporalreferencesystem/3.0/trs.xsd" ns="http://xmlns.geosciml.org/TemporalReferenceSystem/3.0" nsabr="trs"/>
+  <XmlNamespace location="http://schemas.opengis.net/sweCommon/2.0/swe.xsd" ns="http://www.opengis.net/swe/2.0" nsabr="swe"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd" ns="http://www.isotc211.org/2005/gmx" nsabr="gmx"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gsr/gsr.xsd" ns="http://www.isotc211.org/2005/gsr" nsabr="gsr"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd" ns="http://www.isotc211.org/2005/gss" nsabr="gss"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gts/gts.xsd" ns="http://www.isotc211.org/2005/gts" nsabr="gts"/>
+  <XmlNamespace ns="http://www.w3.org/2001/XMLSchema-instance" nsabr="xsi"/>
+  
+</xmlNamespaces>
+		</TargetXmlSchema>
+		
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionariesML" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="clPackageName" value="filterTest"/>
+			<targetParameter name="noNewlineOmit" value="true"/>
+			<targetParameter name="outputDirectory" value="testResults/codeLists/CodeListDictionariesML/results/singleLanguage_filterTest"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			
+			<targetParameter name="defaultEncodingRule" value="myrule"/>
+			<rules>
+				<EncodingRule name="myrule">
+					<rule name="rule-cldml-prop-codeListAndCodeNameAsGmlId"/>
+				</EncodingRule>
+			</rules>
+			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <XmlNamespace location="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>
+  <XmlNamespace location="http://www.w3.org/1999/xlink.xsd" ns="http://www.w3.org/1999/xlink" nsabr="xlink"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.2.1/gml.xsd" ns="http://www.opengis.net/gml/3.2" nsabr="gml"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdBaseTypes.xsd" ns="http://www.opengis.net/gml/3.3/xbt" nsabr="gmlxbt"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/geometryCompact.xsd" ns="http://www.opengis.net/gml/3.3/ce" nsabr="gmlce"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/tin.xsd" ns="http://www.opengis.net/gml/3.3/tin" nsabr="gmltin"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRef.xsd" ns="http://www.opengis.net/gml/3.3/lr" nsabr="gmllr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefTowardsReferent.xsd" ns="http://www.opengis.net/gml/3.3/lrtr" nsabr="gmllrtr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffset.xsd" ns="http://www.opengis.net/gml/3.3/lro" nsabr="gmllro"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffsetVector.xsd" ns="http://www.opengis.net/gml/3.3/lrov" nsabr="gmllrov"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/referencableGrid.xsd" ns="http://www.opengis.net/gml/3.3/rgrid" nsabr="gmlrgrid"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd" ns="http://www.opengis.net/gml/3.3/exr" nsabr="gmlexr"/>
+  
+  <XmlNamespace ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/" nsabr="gmldgiwgsp"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlsfProfile/2.0/gmlsfLevels.xsd" ns="http://www.opengis.net/gmlsf/2.0" nsabr="gmlsf"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd" ns="http://www.isotc211.org/2005/gmd" nsabr="gmd"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd" ns="http://www.isotc211.org/2005/gco" nsabr="gco"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd" ns="http://www.opengis.net/gmlcov/1.0" nsabr="gmlcov"/>
+  <XmlNamespace location="http://schemas.opengis.net/om/2.0/observation.xsd" ns="http://www.opengis.net/om/2.0" nsabr="om"/>
+  <XmlNamespace location="http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd" ns="http://www.opengis.net/sampling/2.0" nsabr="sam"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd" ns="http://www.opengis.net/samplingSpatial/2.0" nsabr="sams"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd" ns="http://www.opengis.net/samplingSpecimen/2.0" nsabr="spec"/>
+  <XmlNamespace location="http://schemas.geosciml.org/cgiutilities/3.0/cgiUtilities.xsd" ns="http://xmlns.geosciml.org/Utilities/3.0" nsabr="cgu"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geosciml-core/3.0/geosciml-core.xsd" ns="http://xmlns.geosciml.org/GeoSciML-Core/3.0" nsabr="gsml"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geotime/3.0/geologicTime.xsd" ns="http://xmlns.geosciml.org/GeologicTime/3.0" nsabr="gt"/>
+  <XmlNamespace location="http://schemas.geosciml.org/borehole/3.0/borehole.xsd" ns="http://xmlns.geosciml.org/Borehole/3.0" nsabr="gbh"/>
+  <XmlNamespace location="http://schemas.geosciml.org/laboratoryanalysis-specimen/3.0/laboratoryAnalysis-Specimen.xsd" ns="http://xmlns.geosciml.org/LaboratoryAnalysis-Specimen/3.0" nsabr="glab"/>
+  <XmlNamespace location="http://schemas.geosciml.org/physicalproperties/3.0/physicalProperties.xsd" ns="http://xmlns.geosciml.org/PhysicalProperties/3.0" nsabr="gpp"/>
+  <XmlNamespace location="http://schemas.geosciml.org/temporalreferencesystem/3.0/trs.xsd" ns="http://xmlns.geosciml.org/TemporalReferenceSystem/3.0" nsabr="trs"/>
+  <XmlNamespace location="http://schemas.opengis.net/sweCommon/2.0/swe.xsd" ns="http://www.opengis.net/swe/2.0" nsabr="swe"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd" ns="http://www.isotc211.org/2005/gmx" nsabr="gmx"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gsr/gsr.xsd" ns="http://www.isotc211.org/2005/gsr" nsabr="gsr"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd" ns="http://www.isotc211.org/2005/gss" nsabr="gss"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gts/gts.xsd" ns="http://www.isotc211.org/2005/gts" nsabr="gts"/>
+  <XmlNamespace ns="http://www.w3.org/2001/XMLSchema-instance" nsabr="xsi"/>
+  
+</xmlNamespaces>
+		</TargetXmlSchema>
+		
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionariesML" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="languages" value="de en"/>
+			<targetParameter name="defaultLang" value="en"/>
+			<targetParameter name="outputDirectory" value="testResults/codeLists/CodeListDictionariesML/results/multiLanguage"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="localeRef_en" value="http://example.org/locale/ref/en"/>
+			<targetParameter name="localeRef_de" value="http://example.org/locale/ref/de"/>
+			<targetParameter name="infoURL" value="http://example.org/info"/>
+			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <XmlNamespace location="http://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>
+  <XmlNamespace location="http://www.w3.org/1999/xlink.xsd" ns="http://www.w3.org/1999/xlink" nsabr="xlink"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.2.1/gml.xsd" ns="http://www.opengis.net/gml/3.2" nsabr="gml"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdBaseTypes.xsd" ns="http://www.opengis.net/gml/3.3/xbt" nsabr="gmlxbt"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/geometryCompact.xsd" ns="http://www.opengis.net/gml/3.3/ce" nsabr="gmlce"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/tin.xsd" ns="http://www.opengis.net/gml/3.3/tin" nsabr="gmltin"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRef.xsd" ns="http://www.opengis.net/gml/3.3/lr" nsabr="gmllr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefTowardsReferent.xsd" ns="http://www.opengis.net/gml/3.3/lrtr" nsabr="gmllrtr"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffset.xsd" ns="http://www.opengis.net/gml/3.3/lro" nsabr="gmllro"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/linearRefOffsetVector.xsd" ns="http://www.opengis.net/gml/3.3/lrov" nsabr="gmllrov"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/referencableGrid.xsd" ns="http://www.opengis.net/gml/3.3/rgrid" nsabr="gmlrgrid"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.3/extdEncRule.xsd" ns="http://www.opengis.net/gml/3.3/exr" nsabr="gmlexr"/>
+  
+  <XmlNamespace ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/" nsabr="gmldgiwgsp"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlsfProfile/2.0/gmlsfLevels.xsd" ns="http://www.opengis.net/gmlsf/2.0" nsabr="gmlsf"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd" ns="http://www.isotc211.org/2005/gmd" nsabr="gmd"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gco/gco.xsd" ns="http://www.isotc211.org/2005/gco" nsabr="gco"/>
+  <XmlNamespace location="http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd" ns="http://www.opengis.net/gmlcov/1.0" nsabr="gmlcov"/>
+  <XmlNamespace location="http://schemas.opengis.net/om/2.0/observation.xsd" ns="http://www.opengis.net/om/2.0" nsabr="om"/>
+  <XmlNamespace location="http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd" ns="http://www.opengis.net/sampling/2.0" nsabr="sam"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd" ns="http://www.opengis.net/samplingSpatial/2.0" nsabr="sams"/>
+  <XmlNamespace location="http://schemas.opengis.net/samplingSpecimen/2.0/specimen.xsd" ns="http://www.opengis.net/samplingSpecimen/2.0" nsabr="spec"/>
+  <XmlNamespace location="http://schemas.geosciml.org/cgiutilities/3.0/cgiUtilities.xsd" ns="http://xmlns.geosciml.org/Utilities/3.0" nsabr="cgu"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geosciml-core/3.0/geosciml-core.xsd" ns="http://xmlns.geosciml.org/GeoSciML-Core/3.0" nsabr="gsml"/>
+  <XmlNamespace location="http://schemas.geosciml.org/geotime/3.0/geologicTime.xsd" ns="http://xmlns.geosciml.org/GeologicTime/3.0" nsabr="gt"/>
+  <XmlNamespace location="http://schemas.geosciml.org/borehole/3.0/borehole.xsd" ns="http://xmlns.geosciml.org/Borehole/3.0" nsabr="gbh"/>
+  <XmlNamespace location="http://schemas.geosciml.org/laboratoryanalysis-specimen/3.0/laboratoryAnalysis-Specimen.xsd" ns="http://xmlns.geosciml.org/LaboratoryAnalysis-Specimen/3.0" nsabr="glab"/>
+  <XmlNamespace location="http://schemas.geosciml.org/physicalproperties/3.0/physicalProperties.xsd" ns="http://xmlns.geosciml.org/PhysicalProperties/3.0" nsabr="gpp"/>
+  <XmlNamespace location="http://schemas.geosciml.org/temporalreferencesystem/3.0/trs.xsd" ns="http://xmlns.geosciml.org/TemporalReferenceSystem/3.0" nsabr="trs"/>
+  <XmlNamespace location="http://schemas.opengis.net/sweCommon/2.0/swe.xsd" ns="http://www.opengis.net/swe/2.0" nsabr="swe"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd" ns="http://www.isotc211.org/2005/gmx" nsabr="gmx"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gsr/gsr.xsd" ns="http://www.isotc211.org/2005/gsr" nsabr="gsr"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gss/gss.xsd" ns="http://www.isotc211.org/2005/gss" nsabr="gss"/>
+  <XmlNamespace location="http://schemas.opengis.net/iso/19139/20070417/gts/gts.xsd" ns="http://www.isotc211.org/2005/gts" nsabr="gts"/>
+  <XmlNamespace ns="http://www.w3.org/2001/XMLSchema-instance" nsabr="xsi"/>
+  
+</xmlNamespaces>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

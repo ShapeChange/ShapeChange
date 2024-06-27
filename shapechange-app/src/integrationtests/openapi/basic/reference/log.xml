@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/openapi/basic/test_openapi_basic.xml" end="Fri Apr 17 16:11:30 CEST 2020" resultCode="0" start="Fri Apr 17 16:11:16 CEST 2020" version="2.9.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.openapi.OpenApiDefinition' and @inputs 'model' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\openapi\basic\test_openapi_basic.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\openapi\basic\test_openapi_basic.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\openapi\basic\test_openapi_basic.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\openapi\basic\test_openapi_basic.qea"/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema 01', target namespace: 'http://shapechange.net/test'"/>
+    <Info message="Now processing target 'OpenAPI Definition' for input 'model'."/>
+    <Info message="Application schema found, package name: 'Test Schema 02', target namespace: 'http://example.org/shapechange/json/schema2'"/>
+    <Info message="Now processing target 'OpenAPI Definition' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.openapi.OpenApiDefinition' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/openapi/basic/model/openapi.json" target="OpenAPI Definition">openapi.json</Result>
+  </Results>
+</ShapeChangeResult>

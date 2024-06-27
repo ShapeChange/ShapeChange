@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/sql/indexNameUsingShortName/test_sql_indexNameUsingShortName.qea" />
+		<parameter name="addTaggedValues" value="myCode" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="sc:extract"
+				token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/sql/indexNameUsingShortName/log_sql.xml" />
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="PostgreSQL" />
+			<targetParameter name="defaultEncodingRule" value="customRule1" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/indexNameUsingShortName/postgresql" />
+			<targetParameter name="outputFilename" value="database_model_postgresql" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="dbOwner" value="public" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<targetParameter name="shortNameByTaggedValue"
+				value="shortName" />
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<rules>
+				<EncodingRule name="customRule1" extends="sql">
+					<rule name="rule-sql-all-indexNameUsingShortName" />
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+				<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="Oracle" />
+			<targetParameter name="defaultEncodingRule" value="customRule2" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/indexNameUsingShortName/oracle" />
+			<targetParameter name="outputFilename" value="database_model_oracle" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="dbOwner" value="public" />
+			<targetParameter name="shortNameByTaggedValue"
+				value="myCode" />
+			<rules>
+				<EncodingRule name="customRule2" extends="sql">
+					<rule name="rule-sql-all-indexNameUsingShortName" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardSqlMapEntries-Oracle.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

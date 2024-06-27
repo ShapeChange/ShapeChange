@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile" value="src/integrationtests/aixmSchemaMerger/basic/test_SBVR_AIXM.qea" />
+		<parameter name="appSchemaNameRegex" value="AppSchema|ExtSchema." />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="folConstraintTypeRegex" value="SBVR" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="isAIXM" value="true" />
+		<packages>
+			<PackageInfo packageName="ExtSchemaA"
+				ns="http://shapechange.net/test/sbvr2schematron/extA" nsabr="a"
+				xsdDocument="ext_a.xsd" version="1.0" />
+			<PackageInfo packageName="ExtSchemaB"
+				ns="http://shapechange.net/test/sbvr2schematron/extB" nsabr="b"
+				xsdDocument="ext_b.xsd" version="1.0" />
+			<PackageInfo packageName="ExtSchemaC"
+				ns="http://shapechange.net/test/sbvr2schematron/extC" nsabr="c"
+				xsdDocument="ext_c.xsd" version="1.0" />
+			<PackageInfo packageName="ExtSchemaD"
+				ns="http://shapechange.net/test/sbvr2schematron/extD" nsabr="d"
+				xsdDocument="ext_d.xsd" version="1.0" />
+
+		</packages>
+		<stereotypeAliases>
+			<StereotypeAlias wellknown="" alias="object" />
+			<StereotypeAlias wellknown="" alias="message" />
+			<StereotypeAlias wellknown="Union" alias="choice" />
+			<StereotypeAlias wellknown="FeatureType" alias="feature" />
+			<StereotypeAlias wellknown="AIXMExtension" alias="extension" />
+		</stereotypeAliases>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/fol/fromSbvr/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.aixm.AIXMSchemaMerger"
+			input="INPUT" id="step1" mode="enabled">
+			<parameters>
+				<ProcessParameter name="coreSchemaTargetNamespace"
+					value="http://shapechange.net/test/sbvr2schematron" />
+			</parameters>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.constraints.ConstraintLoader"
+			input="step1" id="step2" mode="enabled">
+			<parameters>
+				<ProcessParameter name="constraintExcelFile"
+					value="src/integrationtests/aixmSchemaMerger/basic/test_SBVR_rules.xlsx" />
+			</parameters>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.constraints.ConstraintParserAndValidator"
+			input="step2" id="step3" mode="enabled" />
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.fol2schematron.FOL2Schematron"
+			mode="enabled" inputs="step3">
+			<targetParameter name="outputDirectory" value="testResults/fol/fromSbvr/sch" />
+			<targetParameter name="defaultEncodingRule" value="aixm" />
+			<rules>
+				<EncodingRule extends="iso19136_2007" name="aixm">
+					<rule name="rule-all-cls-aixmDatatype" />
+					<rule name="rule-all-prop-uomAsAttribute" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" -->
+<!-- 			mode="enabled" inputs="step3"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/fol/fromSbvr/html" /> -->
+<!-- 			<targetParameter name="outputFilename" value="testSbvr" /> -->
+<!-- 			<targetParameter name="sortedOutput" value="true" /> -->
+<!-- 			<targetParameter name="includeVoidable" value="false" /> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false" /> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML" /> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl" /> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'" /> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..." /> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a" /> -->
+<!-- 			<targetParameter name="versionDate" value="n/a" /> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH" /> -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

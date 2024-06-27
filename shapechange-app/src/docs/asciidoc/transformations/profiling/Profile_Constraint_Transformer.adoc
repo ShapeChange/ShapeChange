@@ -1,0 +1,368 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Profile_Constraint_Transformer]]
+= Profile Constraint Transformer
+
+(since v2.6.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation creates OCL constraints in a profile schema to
+restrict the content of a base schema. The base schema is another
+application schema for which the profile is defined.
+
+NOTE: This corresponds to the second way of creating a profile, as
+documented xref:./Profiling.adoc[here].
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.shapechange.core.transformation.profiling.ProfileConstraintTransformer_
+
+[[Transformation_Rules]]
+=== Transformation Rules
+
+[[rule-trf-cls-createGeneralOutOfScopeConstraints]]
+==== rule-trf-cls-createGeneralOutOfScopeConstraints
+
+(since v2.6.0)
+
+This rule creates OCL constraints to prohibit base schema classes and
+their properties that are generally out of scope / irrelevant.
+
+[NOTE]
+======
+
+* Base schemas are identified via the parameters
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaName[_baseSchemaName_],
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNameRegex[_baseSchemaNameRegex_],
+and
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNamespaceRegex[_baseSchemaNamespaceRegex_].
+* A class or a property of the base schema is out of scope / irrelevant
+if it does not belong to the profile whose name is given by the
+parameter
+xref:./Profile_Constraint_Transformer.adoc#profileName[_profileName_].
+* OCL constraints are not directly defined on a base schema class. They
+are created on a subtype of the base schema class, and that subtype
+belongs to a separate profile schema (identified via parameter
+xref:./Profile_Constraint_Transformer.adoc#profileSchemaName[_profileSchemaName_]).
+OCL constraints are not created for enumerations and code lists.
+
+======
+
+An OCL constraint to prohibit an irrelevant base schema class:
+
+* Is defined on a suppressed (i.e. having tagged value suppress=true)
+subtype in the profile schema. If such a subtype does not exist yet, it
+is created (with name prefix defined via the parameter
+xref:./Profile_Constraint_Transformer.adoc#subtypeNamePrefix[_subtypeNamePrefix_]).
+* The constraint is defined as follows:
+** Name: \{base schema class name} + "_prohibited"
+** Status: "Approved"
+** Expression: +++"/*" + \{base schema class name} + " is prohibited.*/+++
+inv: self->isEmpty()"
+* Note, however, that the constraint is not created if:
+** The base schema class is abstract.
+** The base schema class has a direct subtype in the profile schema
+(identified via parameter
+xref:./Profile_Constraint_Transformer.adoc#profileSchemaName[_profileSchemaName_])
+without tagged value suppress=true. In that case, the base schema class
+is relevant, i.e. not out-of-scope, since it is part of an inheritance
+hierarchy for an unsuppressed class of the profile schema. A warning
+will be logged to describe the situation.
+
+An OCL constraint to prohibit an irrelevant property of a relevant base
+schema class:
+
+* Is defined for each class in the class hierarchy of the base class,
+i.e. the base class itself and all its direct and indirect subtypes that
+1) are not abstract, 2) are relevant, and 3) belong to the base schema.
+However, as mentioned before, the constraint is not directly defined on
+the base class itself. Instead, it is defined on existing unsuppressed
+subtypes in the profile schema. It is also defined on a subtype in the
+profile schema that is suppressed. If such a subtype does not exist yet,
+it is created (with name prefix defined via the parameter
+xref:./Profile_Constraint_Transformer.adoc#subtypeNamePrefix[_subtypeNamePrefix_]).
+** However, the creation of an unsuppressed subtype as well as the
+addition of the constraint to this type is dismissed if
+xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[_rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes_]
+also applies, the base schema class has at least one direct unsuppressed
+subtype, and the name of the type does not match
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaClassesNotToBeProhibitedRegex[_baseSchemaClassesNotToBeProhibitedRegex_]
+(if defined by the configuration).
+* The constraint is defined as follows:
+** Name: \{name of the irrelevant property} + "_prohibited"
+** Status: "Approved"
+** Expression: +++"/*" + \{name of the irrelevant property } + " is
+prohibited.*/ inv: self." + \{name of the irrelevant property } + "
+->isEmpty()"+++
+
+NOTE: The transformation rule will also add tagged value
+_prohibitedInProfile_ with value 'true' to an irrelevant base class and
+irrelevant properties of a relevant base class. This tagged value can be
+of interest for subsequent processing steps, for example when creating
+Schematron assertions. Property value checks should not be generated for
+an XML element that represents a type which is prohibited, or for a
+property that is prohibited.
+xref:../../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-all-propertyAssertion-ignoreProhibited[_rule-xsd-all-propertyAssertion-ignoreProhibited_]
+can be used in such a case; it reads the tagged value.
+
+[[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]]
+==== rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes
+
+(since v2.6.0)
+
+This rule creates OCL constraints to prohibit relevant base schema
+classes that:
+
+. are not abstract,
+. are relevant (i.e., they belong to the profile identified via the
+parameter
+xref:./Profile_Constraint_Transformer.adoc#profileName[_profileName_]),
+. are neither a code list nor enumeration,
+. have at least one direct subtype in the profile schema (which is
+identified via the parameter
+xref:./Profile_Constraint_Transformer.adoc#profileSchemaName[_profileSchemaName_])
+that is not suppressed (tagged value suppress not set or not equal to
+true), and
+. have names that do not match parameter
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaClassesNotToBeProhibitedRegex[_baseSchemaClassesNotToBeProhibitedRegex_]
+(if defined by the configuration).
+
+NOTE: Base schemas are identified via the parameters
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaName[_baseSchemaName_],
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNameRegex[_baseSchemaNameRegex_],
+and
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNamespaceRegex[_baseSchemaNamespaceRegex_].
+
+An OCL constraint to prohibit such a base schema class:
+
+* Is defined on a suppressed (i.e. having tagged value suppress=true)
+subtype in the profile schema. If such a subtype does not exist yet, it
+is created (with name prefix defined via the parameter
+xref:./Profile_Constraint_Transformer.adoc#subtypeNamePrefix[_subtypeNamePrefix_]).
+* The constraint is defined as follows:
+** Name: \{base schema class name} + "_prohibited"
+** Status: "Approved"
+** Expression: +++"/*" + \{base schema class name} + " is prohibited. Use
+(one of) the following type(s) instead: " + \{list of the names of the
+direct unsuppressed subtypes from the profile schema} + "*/ inv:
+self->isEmpty()"+++
+
+NOTE: The transformation rule will also add tagged value
+_prohibitedInProfile_ with value 'true' to an irrelevant base class.
+This tagged value can be of interest for subsequent processing steps,
+for example when creating Schematron assertions. Property value checks
+should not be generated for an XML element that represents a type which
+is prohibited.
+xref:../../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-all-propertyAssertion-ignoreProhibited[_rule-xsd-all-propertyAssertion-ignoreProhibited_]
+can be used in such a case; it reads the tagged value.
+
+[[Parameters]]
+=== Parameters
+
+[[baseSchemaClassesNotToBeProhibitedRegex]]
+==== baseSchemaClassesNotToBeProhibitedRegex
+
+(since v2.6.0)
+
++++Type+++: String (with Java compliant regular expression)
+
++++Default Value+++: _none_
+
++++Explanation+++: If this parameter is set, then base schema types
+whose name matches the regular expression, and which would usually be
+prohibited as per
+xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes],
+will not be prohibited. This can be useful if certain types from the
+base schema are in fact used by the profile as-is, and thus shall not
+become prohibited.
+
+This also influences the creation of prohibited constraints for
+properties of this base type as per
+xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints].
+Since
+rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes
+would usually prohibit the use of the base type, such constraints would
+only be created for its subtypes (in the profile schema). However, if
+this parameter is set and the base type name matches the regular
+expression defined by the parameter, constraints to prohibit the use of
+properties from the base type will also be created for that base type.
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[baseSchemaName]]
+==== baseSchemaName
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: If this parameter is set, the name of a schema must
+be equal to the value of this parameter, in order to be considered a
+base schema.
+
+NOTE: To be considered a base schema, a schema must match the
+requirements of parameter _baseSchemaName_ (if defined in the
+configuration), parameter
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNameRegex[_baseSchemaNameRegex_]
+(if defined in the configuration), and
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNamespaceRegex[_baseSchemaNamespaceRegex_]
+(if defined in the configuration).
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[baseSchemaNameRegex]]
+==== baseSchemaNameRegex
+
+(since v2.6.0)
+
++++Type+++: String (with Java compliant regular expression)
+
++++Default Value+++: _none_
+
++++Explanation+++: If this parameter is set, the name of a schema must
+match the regular expression defined by the parameter value, in order to
+be considered a base schema.
+
+NOTE: To be considered a base schema, a schema must match the
+requirements of parameter
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaName[_baseSchemaName_]
+(if defined in the configuration), parameter _baseSchemaNameRegex_ (if
+defined in the configuration), and
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNamespaceRegex[_baseSchemaNamespaceRegex_]
+(if defined in the configuration).
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[baseSchemaNamespaceRegex]]
+==== baseSchemaNamespaceRegex
+
+(since v2.6.0)
+
++++Type+++: String (with Java compliant regular expression)
+
++++Default Value+++: _none_
+
++++Explanation+++: If this parameter is set, the target namespace of a
+schema must match the regular expression defined by the parameter value,
+in order to be considered a base schema.
+
+NOTE: To be considered a base schema, a schema must match the
+requirements of parameter
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaName[_baseSchemaName_]
+(if defined in the configuration), parameter
+xref:./Profile_Constraint_Transformer.adoc#baseSchemaNameRegex[_baseSchemaNameRegex_]
+(if defined in the configuration), and _baseSchemaNamespaceRegex_ (if
+defined in the configuration).
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[profileName]]
+==== profileName
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Name of the profile that a base schema class or
+property must belong to in order to be considered relevant / not out of
+scope.
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes
+
+[[profileSchemaName]]
+==== profileSchemaName
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Name of the schema in which restrictions of base
+schema types will be created in form of OCL constraints on subtypes of
+the base schema types.
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[subtypeNamePrefix]]
+==== subtypeNamePrefix
+
+(since v2.6.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Prefix that will be added to names of suppressed
+subtypes created by the transformation rules.
+
++++Applies to Rule(s)+++:
+
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-createGeneralOutOfScopeConstraints[rule-trf-cls-createGeneralOutOfScopeConstraints]
+* xref:./Profile_Constraint_Transformer.adoc#rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes[rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes]
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Transformer
+class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileConstraintTransformer"
+id="TRF_PROFILE_CONSTRAINTS" input="TRF_PROFILE_LOADER" mode="enabled">
+<parameters>
+<ProcessParameter name="baseSchemaName" value="ISO 19115 Edition 1 (Corrigendum 1)"/>
+<ProcessParameter name="profileSchemaName" value="Metadata Profile"/>
+<ProcessParameter name="profileName" value="Profile_X"/>
+<ProcessParameter name="subtypeNamePrefix" value="MDP_"/>
+</parameters>
+<rules>
+<ProcessRuleSet name="trf">
+<rule name="rule-trf-cls-createGeneralOutOfScopeConstraints"/>
+<rule name="rule-trf-cls-prohibitBaseSchemaTypesWithDirectUnsuppressedProfileSchemaSubtypes"/>
+</ProcessRuleSet>
+</rules>
+</Transformer>
+----------
