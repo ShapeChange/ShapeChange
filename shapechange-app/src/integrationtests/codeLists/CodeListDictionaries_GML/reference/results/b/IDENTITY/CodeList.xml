@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Dictionary xmlns="http://www.opengis.net/gml/3.2"
+            xmlns:gml="http://www.opengis.net/gml/3.2"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            gml:id="CodeList"
+            xsi:schemaLocation="http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+   <description>Documentation code list</description>
+   <identifier codeSpace="urn:test">CodeList</identifier>
+   <name>CodeList</name>
+   <name codeSpace="alias">Alias CodeList</name>
+   <name codeSpace="name">TV name of CodeList</name>
+   <dictionaryEntry>
+      <Definition gml:id="CodeList_A">
+         <description>Documentation codeA</description>
+         <identifier codeSpace="urn:test">CodeList:A</identifier>
+         <name>codeA</name>
+         <name codeSpace="alias">Alias codeA</name>
+         <name codeSpace="initialValue">A</name>
+         <name codeSpace="name">TV name of codeA</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="CodeList_B">
+         <description>Documentation codeB</description>
+         <identifier codeSpace="urn:test">CodeList:B</identifier>
+         <name>codeB</name>
+         <name codeSpace="alias">Alias codeB</name>
+         <name codeSpace="initialValue">B</name>
+         <name codeSpace="name">TV name of codeB</name>
+      </Definition>
+   </dictionaryEntry>
+</Dictionary>

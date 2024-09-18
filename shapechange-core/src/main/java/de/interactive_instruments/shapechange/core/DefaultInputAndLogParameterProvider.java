@@ -56,8 +56,8 @@ public class DefaultInputAndLogParameterProvider implements InputAndLogParameter
 	    "representTaggedValues", "repositoryFileNameOrConnectionString", "scxmlXsdLocation",
 	    "skipSemanticValidationOfShapeChangeConfiguration", "sortedOutput", "sortedSchemaOutput",
 	    "taggedValueImplementation", "tmpDirectory", "transformer", "username and password", "useStringInterning",
-	    "loadDiagrams", "sortDiagramsByName", "packageDiagramRegex", "classDiagramRegex")
-	    .collect(Collectors.toSet()));
+	    "loadDiagrams", "skipModelLoadingIfProcessingIsOnlyInputTransformations", "sortDiagramsByName",
+	    "packageDiagramRegex", "classDiagramRegex").collect(Collectors.toSet()));
 
     protected List<Pattern> regexesForAllowedInputParametersWithDynamicNames = null;
 

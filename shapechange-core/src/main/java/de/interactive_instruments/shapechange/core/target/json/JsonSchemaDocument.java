@@ -2781,6 +2781,31 @@ public class JsonSchemaDocument implements MessageSource {
 			}
 		    }
 
+		} else if (pi.matches(JsonSchemaConstants.RULE_PROP_SPECIFIC_CHECKS_FOR_SUPERTYPE_VALUED_PROPERTIES)
+			&& typeInfoOpt.isPresent() && typeInfoOpt.get().isReference() && pi.typeClass() != null
+			&& pi.typeClass().subtypesInCompleteHierarchy().stream().anyMatch(st -> !st.isAbstract())) {
+
+		    ClassInfo typeCi = pi.typeClass();
+
+		    SortedSet<ClassInfo> relTypes = new TreeSet<>();
+		    SortedSet<ClassInfo> subtypes = typeCi.subtypesInCompleteHierarchy();
+		    if (!typeCi.isAbstract()) {
+			relTypes.add(typeCi);
+		    }
+		    for (ClassInfo st : subtypes) {
+			if (!st.isAbstract()) {
+			    relTypes.add(st);
+			}
+		    }
+		    for (ClassInfo rt : relTypes) {
+			Optional<JsonSchemaTypeInfo> jstdOpt = identifyJsonSchemaType(rt.name(), rt.id(),
+				pi.encodingRule(JsonSchemaConstants.PLATFORM));
+
+			if (jstdOpt.isPresent()) {
+			    valueTypeOptionsByTypeName.put(rt.name(), jstdOpt.get());
+			}
+		    }
+
 		} else {
 
 		    if (typeInfo.isMeasure() && pi.matches(JsonSchemaConstants.RULE_PROP_MEASURE)) {

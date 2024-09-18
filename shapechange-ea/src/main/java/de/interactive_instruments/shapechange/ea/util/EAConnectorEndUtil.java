@@ -66,6 +66,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
     public static void addTaggedValue(ConnectorEnd end, EATaggedValue tv) throws EAException {
 
 	Collection<RoleTag> cTV = end.GetTaggedValues();
+	cTV.Refresh();
 
 	String name = tv.getName();
 	List<String> values = tv.getValues();
@@ -130,6 +131,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	} else {
 
 	    Collection<RoleTag> cTV = end.GetTaggedValues();
+	    cTV.Refresh();
 
 	    for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
 
@@ -362,6 +364,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
     public static String taggedValue(ConnectorEnd end, String tvName) {
 
 	org.sparx.Collection<org.sparx.RoleTag> tvs = end.GetTaggedValues();
+	tvs.Refresh();
 
 	for (org.sparx.RoleTag tv : tvs) {
 
@@ -415,6 +418,62 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
     }
 
     /**
+     * Updates the tagged values with given name (which can be a fully qualified
+     * name) in the tagged values of the given attribute. Does NOT delete those
+     * tagged values. NOTE: This method is especially useful when setting tagged
+     * values that are defined by an MDG / UML Profile, since these tagged values
+     * cannot be created programmatically (they are created by EA - for further
+     * details, see http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * 
+     * @param ce                the connector end in which the tagged values shall
+     *                          be updated
+     * @param name              (fully qualified or unqualified) name of the tagged
+     *                          value to update, must not be <code>null</code>
+     * @param value             value of the tagged value to update, can be
+     *                          <code>null</code>
+     * @param createAsMemoField If set to <code>true</code>, the value shall be
+     *                          encoded using a &lt;memo&gt; field, regardless of
+     *                          the actual length of the value.
+     * @throws EAException If updating the attribute did not succeed, this exception
+     *                     contains the error message.
+     */
+    public static void updateTaggedValue(ConnectorEnd ce, String name, String value, boolean createAsMemoField)
+	    throws EAException {
+
+	boolean isQualifiedName = name.contains("::");
+
+	Collection<RoleTag> cTV = ce.GetTaggedValues();
+	cTV.Refresh();
+
+	for (short i = 0; i < cTV.GetCount(); i++) {
+
+	    RoleTag tv = cTV.GetAt(i);
+
+	    if ((isQualifiedName && tv.GetFQName().equalsIgnoreCase(name)) || tv.GetTag().equalsIgnoreCase(name)) {
+
+		if (createAsMemoField || value.length() > 255) {
+
+		    if (StringUtils.isBlank(value)) {
+			tv.SetValue("<memo>");
+		    } else {
+			tv.SetValue("<memo>$ea_notes=" + value);
+		    }
+
+		} else {
+		    tv.SetValue(value);
+		}
+
+		if (!tv.Update()) {
+		    throw new EAException(createMessage(message(102), name,
+			    StringUtils.defaultIfBlank(ce.GetRole(), "<noname>"), value, tv.GetLastError()));
+		}
+	    }
+	}
+
+	cTV.Refresh();
+    }
+
+    /**
      * Sets the given tagged values in the given connector end. If tagged values
      * with the same name as the given ones already exist, they will be deleted.
      * Then the tagged values will be added.
@@ -444,6 +503,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
 
 	Collection<RoleTag> tvs = elmt.GetTaggedValues();
+	tvs.Refresh();
 
 	for (short i = 0; i < tvs.GetCount(); i++) {
 
@@ -512,7 +572,19 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	return name.trim();
     }
 
-    public static boolean isNavigable(ConnectorEnd ce, Connector con) {
+    /**
+     * Determine if the connector end is navigable.
+     * 
+     * @param ce         the connector end to investigate
+     * @param con        the connector to which the end belongs
+     * @param ignoreName <code>true</code>, if the name of the connector end should
+     *                   be ignored when determining navigability, else
+     *                   <code>false</code> (then, a connector end without name or a
+     *                   name starting with 'role_' is deemed not navigable)
+     * @return <code>true</code>, if the connector end is navigable or if
+     *         navigability is unspecified; else <code>false</code>
+     */
+    public static boolean isNavigable(ConnectorEnd ce, Connector con, boolean ignoreName) {
 
 	boolean nav = ce.GetIsNavigable();
 
@@ -531,6 +603,20 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 	}
 
 	return nav;
+    }
+
+    /**
+     * Checks if StereotypeEx of the connector end contains one of the given
+     * stereotypes. The containment check is performed using case-insensitive
+     * matching!
+     * 
+     * @param ce         tbd
+     * @param stereotype list of stereotypes to check for
+     * @return <code>true</code>, if StereotypeEx of the connector end contains one
+     *         of the given stereotypes; else <code>false</code>.
+     */
+    public static boolean hasStereotype(ConnectorEnd ce, String... stereotype) {
+	return hasStereotype(ce.GetStereotypeEx(), stereotype);
     }
 
     public static String message(int mnr) {

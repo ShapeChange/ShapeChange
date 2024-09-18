@@ -84,7 +84,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
     protected Repository repository = null;
 
     /** Character endcoding */
-    protected final String characterEncoding = "Windows-1252";
+    protected final String characterEncoding = "UTF-8";
 
     /** Caches for all classes and packages */
     // Id to classes ...

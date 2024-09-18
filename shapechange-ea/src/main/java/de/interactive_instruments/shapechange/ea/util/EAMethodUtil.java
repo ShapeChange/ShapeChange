@@ -152,6 +152,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 		} else {
 
 			Collection<MethodTag> cTV = m.GetTaggedValues();
+			cTV.Refresh();
 
 			for (EATaggedValue tv : tvs) {
 
@@ -206,6 +207,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 			throws EAException {
 
 		Collection<Parameter> parameters = m.GetParameters();
+		parameters.Refresh();
 
 		Parameter param = parameters.AddNew(name, "");
 
@@ -227,7 +229,6 @@ public class EAMethodUtil extends AbstractEAUtil {
 	public static Parameter getFirstParameter(Method m) {
 
 		Collection<Parameter> params = m.GetParameters();
-
 		params.Refresh();
 
 		if (params.GetCount() > 0) {
@@ -251,6 +252,7 @@ public class EAMethodUtil extends AbstractEAUtil {
 		SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
 
 		Collection<MethodTag> tvs = meth.GetTaggedValues();
+		tvs.Refresh();
 
 		for (short i = 0; i < tvs.GetCount(); i++) {
 

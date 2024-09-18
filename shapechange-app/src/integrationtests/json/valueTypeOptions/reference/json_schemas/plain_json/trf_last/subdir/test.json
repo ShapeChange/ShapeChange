@@ -20,7 +20,53 @@
               "format": "uri"
             },
             {
-              "$ref": "https://example.org/external/schema/definitions.json#FT2"
+              "if": {
+                "properties": {
+                  "entityType": {
+                    "const": "FT2"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "https://example.org/external/schema/definitions.json#FT2"
+              },
+              "else": {
+                "if": {
+                  "properties": {
+                    "@type": {
+                      "const": "FTSub1_1"
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "https://example.org/external/schema/definitions.json#FTSub1_1"
+                },
+                "else": {
+                  "if": {
+                    "properties": {
+                      "@type": {
+                        "const": "FTSub2"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "https://example.org/external/schema/definitions.json#FTSub2"
+                  },
+                  "else": {
+                    "if": {
+                      "properties": {
+                        "@type": {
+                          "const": "FTSub3"
+                        }
+                      }
+                    },
+                    "then": {
+                      "$ref": "https://example.org/external/schema/definitions.json#FTSub3"
+                    },
+                    "else": false
+                  }
+                }
+              }
             }
           ]
         }

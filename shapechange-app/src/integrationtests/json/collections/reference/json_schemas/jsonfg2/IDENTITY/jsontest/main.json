@@ -71,11 +71,16 @@
                   "title": "attribute two",
                   "description": "Definition: [None Specified]  Description: [None Specified]",
                   "type": "number"
+                },
+                "roleFT1toFT2": {
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "$ref": "https://example.org/jsonschema/byreference.json"
                 }
               },
               "required": [
                 "att1",
-                "att2"
+                "att2",
+                "roleFT1toFT2"
               ]
             }
           },
@@ -93,7 +98,24 @@
           "$ref": "https://beta.schemas.opengis.net/json-fg/feature.json"
         },
         {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "roleFT2toFT1": {
+                  "description": "Definition: [None Specified]  Description: [None Specified]",
+                  "$ref": "https://example.org/jsonschema/byreference.json"
+                }
+              },
+              "required": [
+                "roleFT2toFT1"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
         }
       ]
     },

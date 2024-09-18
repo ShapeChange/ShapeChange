@@ -43,141 +43,141 @@ import de.interactive_instruments.shapechange.core.model.Transformer;
  * Default implementation for loading models. Recognized model types are EA7,
  * XMI, and SCXML (as well as GCSR, for backwards compatibility).
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DefaultModelProvider implements ModelProvider, MessageSource {
 
-	private ShapeChangeResult result;
-	private Options options;
+    private ShapeChangeResult result;
+    private Options options;
 
-	public DefaultModelProvider(ShapeChangeResult result, Options options) {
-		this.result = result;
-		this.options = options;
+    public DefaultModelProvider(ShapeChangeResult result, Options options) {
+	this.result = result;
+	this.options = options;
+    }
+
+    @Override
+    public Model getModel(String modelType, String repoFileNameOrConnectionString, String username, String password,
+	    boolean isLoadingInputModel, String inputModelTransformer) throws ShapeChangeAbortException {
+
+	if (StringUtils.isBlank(repoFileNameOrConnectionString)) {
+	    result.addFatalError(this, 24);
+	    throw new ShapeChangeAbortException();
 	}
 
-	@Override
-	public Model getModel(String modelType,
-			String repoFileNameOrConnectionString, String username,
-			String password, boolean isLoadingInputModel, String inputModelTransformer)
-			throws ShapeChangeAbortException {
+	String user = username == null ? "" : username;
+	String pwd = password == null ? "" : password;
 
-		if (StringUtils.isBlank(repoFileNameOrConnectionString)) {
-			result.addFatalError(this, 24);
-			throw new ShapeChangeAbortException();
+	// Support original model type codes
+	if (modelType == null) {
+	    result.addFatalError(this, 26);
+	    throw new ShapeChangeAbortException();
+	} else if (modelType.equalsIgnoreCase("ea7")) {
+	    modelType = "de.interactive_instruments.shapechange.ea.model.EADocument";
+	} else if (modelType.equalsIgnoreCase("xmi10")) {
+	    modelType = "de.interactive_instruments.shapechange.core.model.xmi10.Xmi10Document";
+	} else if (modelType.equalsIgnoreCase("gcsr")) {
+	    modelType = "gov.nga.ShapeChange.Model.GCSR.GCSRModel";
+	} else if (modelType.equalsIgnoreCase("scxml")) {
+	    modelType = "de.interactive_instruments.shapechange.core.model.generic.GenericModel";
+	} else {
+	    result.addInfo(this, 27, modelType);
+	}
+
+	if (isLoadingInputModel && StringUtils.isNotBlank(inputModelTransformer)) {
+
+	    try {
+		Class<?> theClass = Class.forName(inputModelTransformer);
+		Transformer t = (Transformer) theClass.getConstructor().newInstance();
+		t.initialise(options, result, repoFileNameOrConnectionString);
+		t.transform();
+		t.shutdown();
+	    } catch (Exception e) {
+		e.printStackTrace();
+		throw new ShapeChangeAbortException();
+	    }
+	}
+
+	Model m = null;
+
+	if (isLoadingInputModel && options.isSkipModelLoadingIfProcessingIsOnlyInputTransformations()) {    
+	    result.addProcessFlowInfo(this,28);
+	} else {
+
+	    // Get model object from reflection API
+	    Class<?> theClass;
+
+	    try {
+
+		theClass = Class.forName(modelType);
+		if (theClass == null) {
+		    result.addFatalError(this, 17, modelType);
+		    throw new ShapeChangeAbortException();
 		}
 
-		String user = username == null ? "" : username;
-		String pwd = password == null ? "" : password;
+		m = (Model) theClass.getConstructor().newInstance();
 
-		// Support original model type codes
-		if (modelType == null) {
-			result.addFatalError(this, 26);
-			throw new ShapeChangeAbortException();
-		} else if (modelType.equalsIgnoreCase("ea7")) {
-			modelType = "de.interactive_instruments.shapechange.ea.model.EADocument";
-		} else if (modelType.equalsIgnoreCase("xmi10")) {
-			modelType = "de.interactive_instruments.shapechange.core.model.xmi10.Xmi10Document";
-		} else if (modelType.equalsIgnoreCase("gcsr")) {
-			modelType = "gov.nga.ShapeChange.Model.GCSR.GCSRModel";
-		} else if (modelType.equalsIgnoreCase("scxml")) {
-			modelType = "de.interactive_instruments.shapechange.core.model.generic.GenericModel";
+		if (m != null) {
+
+		    if (user.length() == 0) {
+			m.initialise(result, options, repoFileNameOrConnectionString);
+		    } else {
+			m.initialise(result, options, repoFileNameOrConnectionString, user, pwd);
+		    }
+
+		    m.loadInformationFromExternalSources(isLoadingInputModel);
+
+		    // Prepare and check model
+		    m.postprocessAfterLoadingAndValidate();
+
 		} else {
-			result.addInfo(this, 27, modelType);
+		    result.addFatalError(this, 17, modelType);
+		    throw new ShapeChangeAbortException();
 		}
 
-		if (isLoadingInputModel && StringUtils.isNotBlank(inputModelTransformer)) {
-
-			try {
-				Class<?> theClass = Class.forName(inputModelTransformer);
-				Transformer t = (Transformer) theClass.getConstructor()
-						.newInstance();
-				t.initialise(options, result, repoFileNameOrConnectionString);
-				t.transform();
-				t.shutdown();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ShapeChangeAbortException();
-			}
-		}
-
-		Model m = null;
-
-		// Get model object from reflection API
-		Class<?> theClass;
-
-		try {
-
-			theClass = Class.forName(modelType);
-			if (theClass == null) {
-				result.addFatalError(this, 17, modelType);
-				throw new ShapeChangeAbortException();
-			}
-
-			m = (Model) theClass.getConstructor().newInstance();
-
-			if (m != null) {
-
-				if (user.length() == 0) {
-					m.initialise(result, options,
-							repoFileNameOrConnectionString);
-				} else {
-					m.initialise(result, options,
-							repoFileNameOrConnectionString, user, pwd);
-				}
-
-				m.loadInformationFromExternalSources(isLoadingInputModel);
-
-				// Prepare and check model
-				m.postprocessAfterLoadingAndValidate();
-
-			} else {
-				result.addFatalError(this, 17, modelType);
-				throw new ShapeChangeAbortException();
-			}
-
-		} catch (ClassNotFoundException e) {
-			result.addFatalError(this, 17, modelType);
-			throw new ShapeChangeAbortException();
-		} catch (IllegalArgumentException | InstantiationException
-				| InvocationTargetException | NoSuchMethodException e) {
-			result.addFatalError(this, 19, modelType);
-			throw new ShapeChangeAbortException();
-		} catch (IllegalAccessException e) {
-			result.addFatalError(this, 20, modelType);
-			throw new ShapeChangeAbortException();
-		}
-
-		return m;
+	    } catch (ClassNotFoundException e) {
+		result.addFatalError(this, 17, modelType);
+		throw new ShapeChangeAbortException();
+	    } catch (IllegalArgumentException | InstantiationException | InvocationTargetException
+		    | NoSuchMethodException e) {
+		result.addFatalError(this, 19, modelType);
+		throw new ShapeChangeAbortException();
+	    } catch (IllegalAccessException e) {
+		result.addFatalError(this, 20, modelType);
+		throw new ShapeChangeAbortException();
+	    }
 	}
 
-	@Override
-	public String message(int mnr) {
+	return m;
+    }
 
-		/*
-		 * NOTE: A leading ?? in a message text suppresses multiple appearance
-		 * of a message in the output.
-		 */
-		switch (mnr) {
+    @Override
+    public String message(int mnr) {
 
-		case 17:
-			return "Unknown model type: '$1$'.";
-		case 19:
-			return "Model object could not be instantiated: '$1$'.";
-		case 20:
-			return "Model object could not be accessed: '$1$'.";
-		case 24:
-			return "Repository filename or connection string was not provided. Cannot connect to a repository.";
-		case 26:
-			return "Model type not provided.";
-		case 27:
-			return "Using custom model implementation: '$1$'.";
+	/*
+	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
+	 * message in the output.
+	 */
+	switch (mnr) {
 
-		default:
-			return "(" + this.getClass().getName()
-					+ ") Unknown message with number: " + mnr;
-		}
+	case 17:
+	    return "Unknown model type: '$1$'.";
+	case 19:
+	    return "Model object could not be instantiated: '$1$'.";
+	case 20:
+	    return "Model object could not be accessed: '$1$'.";
+	case 24:
+	    return "Repository filename or connection string was not provided. Cannot connect to a repository.";
+	case 26:
+	    return "Model type not provided.";
+	case 27:
+	    return "Using custom model implementation: '$1$'.";
+	case 28:
+	    return "Loading of input model is skipped. No model transformations or targets are configured.";
+	    
+	default:
+	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
+    }
 
 }

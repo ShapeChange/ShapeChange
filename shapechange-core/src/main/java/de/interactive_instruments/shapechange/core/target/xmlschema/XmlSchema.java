@@ -1406,6 +1406,7 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-prop-gmlArrayProperty");
 	r.addRule("rule-xsd-prop-gmlListProperty");
 	r.addRule("rule-xsd-prop-qualified-associations");
+	r.addRule("rule-xsd-prop-referencedCodeList");
 	r.addRule("rule-xsd-prop-targetCodeListURI");
 	r.addRule("rule-xsd-prop-valueOrNilReason-constraints");
 	r.addRule("rule-xsd-all-no-documentation");

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tb="https://example.org/test/b"
+        elementFormDefault="qualified"
+        targetNamespace="https://example.org/test/b"
+        version="1.0"><!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <simpleType name="CodeListBType">
+      <union memberTypes="tb:CodeListBEnumerationType tb:CodeListBOtherType"/>
+   </simpleType>
+   <simpleType name="CodeListBEnumerationType">
+      <restriction base="string"/>
+   </simpleType>
+   <simpleType name="CodeListBOtherType">
+      <restriction base="string">
+         <pattern value="other: \w{2,}"/>
+      </restriction>
+   </simpleType>
+</schema>

@@ -1018,6 +1018,20 @@ role is converted to (Parcel is a feature type):
 </element>
 ----------
 
+[[rule-xsd-prop-referencedCodeList]]
+==== rule-xsd-prop-referencedCodeList
+
+(since v4.0.0)
+
+For a property with a code list as value type, add an
+appinfo element with the QName of the codelist.
+
+The name and namespace of the appinfo element are determined 
+via target parameters:
+
+* referencedCodeListAnnotationName (default value is 'referencedCodeList')
+* referencedCodeListAnnotationNamespace (default value is 'http://www.w3.org/2001/XMLSchema')
+
 [[rule-xsd-prop-targetCodeListURI]]
 ==== rule-xsd-prop-targetCodeListURI
 

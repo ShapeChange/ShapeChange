@@ -60,14 +60,15 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	    XmlSchemaConstants.PARAM_DEFAULT_CODELIST_VALUE_PATTERN, XmlSchemaConstants.PARAM_DEFAULT_VOID_REASON_TYPE,
 	    XmlSchemaConstants.PARAM_OKSTRA, XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_BASE_TYPE,
 	    XmlSchemaConstants.PARAM_OKSTRA_KEY_VALUE_PROPERTY_TYPE, XmlSchemaConstants.PARAM_OKSTRA_OBJECT_REF_TYPE,
-	    XmlSchemaConstants.PARAM_REPRESENT_DESCRIPTORS, XmlSchemaConstants.PARAM_SCH_FILENAME_TEMPLATE,
-	    XmlSchemaConstants.PARAM_SCH_QUERY_BINDING, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_POSTFIX,
-	    XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX, XmlSchemaConstants.PARAM_SEGMENT_SCH,
-	    XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT, XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION,
-	    XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION, XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION,
-	    XmlSchemaConstants.PARAM_ENUM_STYLE, XmlSchemaConstants.PARAM_BASIC_TYPE_STYLE, 
-	    XmlSchemaConstants.PARAM_SCHEMATRON, XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES,
-	    XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS)
+	    XmlSchemaConstants.PARAM_REF_CODELIST_ANNOTATION_NAME,
+	    XmlSchemaConstants.PARAM_REF_CODELIST_ANNOTATION_NAMESPACE, XmlSchemaConstants.PARAM_REPRESENT_DESCRIPTORS,
+	    XmlSchemaConstants.PARAM_SCH_FILENAME_TEMPLATE, XmlSchemaConstants.PARAM_SCH_QUERY_BINDING,
+	    XmlSchemaConstants.PARAM_SCH_XLINK_HREF_POSTFIX, XmlSchemaConstants.PARAM_SCH_XLINK_HREF_PREFIX,
+	    XmlSchemaConstants.PARAM_SEGMENT_SCH, XmlSchemaConstants.PARAM_SKIP_XML_SCHEMA_OUTPUT,
+	    XmlSchemaConstants.PARAM_SUPPRESSED_TYPE_INTERPRETATION, XmlSchemaConstants.PARAM_INCLUDE_DOCUMENTATION,
+	    XmlSchemaConstants.PARAM_REALISATION_LIKE_GENERALISATION, XmlSchemaConstants.PARAM_ENUM_STYLE,
+	    XmlSchemaConstants.PARAM_BASIC_TYPE_STYLE, XmlSchemaConstants.PARAM_SCHEMATRON,
+	    XmlSchemaConstants.PARAM_INCLUDE_DERIVED_PROPERTIES, XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS)
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = Stream
 	    .of(Pattern.compile("^schematronExtension\\.(\\w+?)\\.function|schematronExtension\\.(\\w+?)\\.namespace$"))
@@ -165,7 +166,7 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 		isValid = false;
 	    }
 	}
-	
+
 	return isValid;
     }
 

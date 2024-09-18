@@ -235,7 +235,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	eaPropertyId = ci.id();
 	eaPropertyId += "_";
 	eaPropertyId += "A" + connectorId;
-	
+
 	// Property name
 	eaName = ce.GetRole();
 	if (eaName != null)
@@ -248,10 +248,10 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	// Type info
 	typeInfo.id = "unknown";
 	typeInfo.name = typeName;
-		
+
 	// Multiplicity
 	setMultiplicity(eaConnectorEnd);
-	
+
 	// Analyse qualifiers
 	setQualifiers(eaConnectorEnd);
 
@@ -300,7 +300,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     }
 
     private void setQualifiers(ConnectorEnd ce) {
-	
+
 	String qualifierString = ce.GetQualifier();
 	if (qualifierString != null && !qualifierString.isEmpty()) {
 	    qualifiers = new Vector<Qualifier>();
@@ -331,16 +331,16 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    if (ranges[i].indexOf("..") > 0) {
 		// If it is a range, separated by '..'
 		String[] minmax = ranges[i].split("\\.\\.", 2);
-		
+
 		try {
 		    lower = Integer.parseInt(minmax[0]);
 		} catch (NumberFormatException e) {
-			MessageContext mc = document.result.addWarning(null, 1005, minmax[0]);
-			if (mc != null)
-			    mc.addDetail(null, 400, "Property", this.fullName());
-			lower = 0;
+		    MessageContext mc = document.result.addWarning(null, 1005, minmax[0]);
+		    if (mc != null)
+			mc.addDetail(null, 400, "Property", this.fullName());
+		    lower = 0;
 		}
-		
+
 		if (minmax[1].equals("*") || minmax[1].length() == 0) {
 		    upper = Integer.MAX_VALUE;
 		} else {
@@ -413,7 +413,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    // pos);
 	}
     }
-    
+
     private StructuredNumber createStructuredNumberForAssociationRole(String s) {
 	if (s != null && s.length() > 0) {
 	    return new StructuredNumber(s);
@@ -619,7 +619,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
      */
     public boolean isDerived() {
 	if (isDerivedCache == null) {
-	    isDerivedCache = Boolean.valueOf(eaAttribute != null ? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
+	    isDerivedCache = Boolean
+		    .valueOf(eaAttribute != null ? eaAttribute.GetIsDerived() : eaConnectorEnd.GetDerived());
 	}
 	return isDerivedCache;
     } // isDerived()
@@ -633,7 +634,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    isNavigableCache = Boolean.valueOf(true);
 	    // Attributes always are.
 	    if (!isAttribute()) {
-		isNavigableCache = EAConnectorEndUtil.isNavigable(eaConnectorEnd, associationInfo.eaConnector);
+		isNavigableCache = EAConnectorEndUtil.isNavigable(eaConnectorEnd, associationInfo.eaConnector, false);
 	    }
 	}
 	return isNavigableCache;
@@ -821,7 +822,7 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     } // validateTaggedValuesCache()
 
     public void taggedValue(String tag, String value) {
-	
+
 	if (eaAttribute != null) {
 	    boolean upd = false;
 	    for (AttributeTag tv : eaAttribute.GetTaggedValues()) {

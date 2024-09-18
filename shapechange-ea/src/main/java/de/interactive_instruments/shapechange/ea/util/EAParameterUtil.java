@@ -69,6 +69,7 @@ public class EAParameterUtil extends AbstractEAUtil {
 		SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
 
 		Collection<ParamTag> tvs = att.GetTaggedValues();
+		tvs.Refresh();
 
 		for (short i = 0; i < tvs.GetCount(); i++) {
 

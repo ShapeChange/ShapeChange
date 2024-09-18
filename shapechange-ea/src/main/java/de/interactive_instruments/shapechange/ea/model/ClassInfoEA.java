@@ -366,7 +366,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 			 */
 			ConnectorEnd otherEnd = clientId.toString().equals(this.id()) ? conn.GetSupplierEnd()
 				: conn.GetClientEnd();
-			if (EAConnectorEndUtil.isNavigable(otherEnd, conn)) {
+			if (EAConnectorEndUtil.isNavigable(otherEnd, conn, false)) {
 
 			    PropertyInfoEA roleAsAttribute = new PropertyInfoEA(document, this, otherEnd, connid,
 				    otherEndClass.GetName());

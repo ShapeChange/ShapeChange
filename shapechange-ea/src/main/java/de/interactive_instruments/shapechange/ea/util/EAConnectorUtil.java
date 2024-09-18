@@ -36,10 +36,13 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.sparx.Attribute;
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorTag;
 import org.sparx.Element;
+import org.sparx.Repository;
 
 import de.interactive_instruments.shapechange.core.model.TaggedValues;
 
@@ -48,6 +51,44 @@ import de.interactive_instruments.shapechange.core.model.TaggedValues;
  *
  */
 public class EAConnectorUtil extends AbstractEAUtil {
+
+    /**
+     * Constructs a string with information about the connector, for example useful
+     * for logging.
+     * 
+     * @param conn the connector for which to create an informational string
+     * @param rep  the repository in which the connector exists
+     * @return Templated string (meta type is only present if it is different than
+     *         type; subtype only if it is present; 'NA' is used as default for meta
+     *         type, type, and subtype): '(' + 'meta type: ' + {meta type} + ', ' +
+     *         'type: ' + {type} + ', subtype: ' + {subtype} + ') ' + {source
+     *         element name} + '---' + {target element name}
+     */
+    public static String connectorInfo(Connector conn, Repository rep) {
+
+	String sourceElementName = rep.GetElementByID(conn.GetClientID()).GetName();
+	String targetElementName = rep.GetElementByID(conn.GetSupplierID()).GetName();
+
+	String connMetaType = StringUtils.defaultIfBlank(conn.GetMetaType(), "NA");
+	String connType = StringUtils.defaultIfBlank(conn.GetType(), "NA");
+	String connSubtype = StringUtils.defaultIfBlank(conn.GetSubtype(), "NA");
+
+	String connectorInfo = "(";
+
+	if (!connMetaType.equals(connType)) {
+	    connectorInfo += "meta type: " + connMetaType + ", ";
+	}
+
+	connectorInfo += "type: " + connType;
+
+	if (!connSubtype.equals("NA")) {
+	    connectorInfo += ", subtype: " + connSubtype;
+	}
+
+	connectorInfo += ") " + sourceElementName + "---" + targetElementName;
+
+	return connectorInfo;
+    }
 
     /**
      * Adds the given tagged value to the tagged values of the given connector, NOT
@@ -65,6 +106,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
     public static void addTaggedValue(Connector con, EATaggedValue tv) throws EAException {
 
 	Collection<ConnectorTag> cTV = con.GetTaggedValues();
+	cTV.Refresh();
 
 	String name = tv.getName();
 	String type = "";
@@ -115,6 +157,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	} else {
 
 	    Collection<ConnectorTag> cTV = con.GetTaggedValues();
+	    cTV.Refresh();
 
 	    for (EATaggedValue tv : tvs) {
 
@@ -168,6 +211,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	} else {
 
 	    Collection<ConnectorTag> cTV = con.GetTaggedValues();
+	    cTV.Refresh();
 
 	    for (Entry<String, List<String>> e : tvs.asMap().entrySet()) {
 
@@ -374,6 +418,7 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	SortedMap<String, EATaggedValue> result = new TreeMap<String, EATaggedValue>();
 
 	Collection<ConnectorTag> tvs = conn.GetTaggedValues();
+	tvs.Refresh();
 
 	for (short i = 0; i < tvs.GetCount(); i++) {
 
@@ -430,7 +475,6 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	boolean isQualifiedName = name.contains("::");
 
 	Collection<ConnectorTag> cTV = con.GetTaggedValues();
-
 	cTV.Refresh();
 
 	for (short i = 0; i < cTV.GetCount(); i++) {
@@ -486,6 +530,20 @@ public class EAConnectorUtil extends AbstractEAUtil {
 	    result = -1;
 	}
 	return result;
+    }
+
+    /**
+     * Checks if StereotypeEx of the connector contains one of the given
+     * stereotypes. The containment check is performed using case-insensitive
+     * matching!
+     * 
+     * @param con        Connector to check
+     * @param stereotype list of stereotypes to check for
+     * @return <code>true</code>, if StereotypeEx of the connector contains one of
+     *         the given stereotypes; else <code>false</code>.
+     */
+    public static boolean hasStereotype(Connector con, String... stereotype) {
+	return hasStereotype(con.GetStereotypeEx(), stereotype);
     }
 
     public static String message(int mnr) {

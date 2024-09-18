@@ -1345,6 +1345,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-prop-measure");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-voidable");
+	
+	r.addRule("rule-json-prop-specificChecksForSupertypeValuedProperties");
 
 	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson", "*", new TreeSet<>(Stream
 		.of("rule-json-cls-defaultGeometry-singleGeometryProperty", "rule-json-cls-ignoreIdentifier",

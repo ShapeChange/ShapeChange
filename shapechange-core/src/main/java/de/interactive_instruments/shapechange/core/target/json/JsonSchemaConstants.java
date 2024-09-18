@@ -178,5 +178,7 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_COLLECTIONS_WITH_TOP_LEVEL_ENTITY_TYPE = "rule-json-cls-collectionsWithTopLevelEntityType";
 
     public static final String RULE_CLS_JSON_FG_GEOMETRY = "rule-json-cls-jsonFgGeometry";
+        
+    public static final String RULE_PROP_SPECIFIC_CHECKS_FOR_SUPERTYPE_VALUED_PROPERTIES = "rule-json-prop-specificChecksForSupertypeValuedProperties";
 
 }

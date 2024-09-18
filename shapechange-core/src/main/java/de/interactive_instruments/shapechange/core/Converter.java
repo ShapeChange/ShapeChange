@@ -297,37 +297,43 @@ public class Converter implements MessageSource {
 
 	try {
 
-	    if (model == null) {
+	    if (model == null && options.isSkipModelLoadingIfProcessingIsOnlyInputTransformations()) {
+		/*
+		 * no conversion since there are no transformations and targets and thus the
+		 * model was not loaded
+		 */		
+	    } else if (model == null) {
 		result.addProcessFlowFatalError(this, 14);
 		throw new ShapeChangeAbortException();
-	    }
-
-	    // simply return if no schema is selected for processing
-	    SortedSet<? extends PackageInfo> selectedSchema = model.selectedSchemas();
-
-	    if (selectedSchema == null || selectedSchema.isEmpty()) {
-
-		result.addProcessFlowWarning(this, 507);
-		release(model);
-
 	    } else {
 
-		// at first run any targets that directly reference the input
-		// model
-		this.executeTargets(model, options.getInputId(), options.getInputTargetConfigs());
+		// simply return if no schema is selected for processing
+		SortedSet<? extends PackageInfo> selectedSchema = model.selectedSchemas();
 
-		// now recursively execute the transformations (and associated
-		// targets) defined for the input model
-		this.executeTransformations(model, options.getInputTransformerConfigs());
+		if (selectedSchema == null || selectedSchema.isEmpty()) {
 
-		/*
-		 * do this before executing deferrable output writers to free memory (important
-		 * in case of very large models)
-		 */
-		release(model);
+		    result.addProcessFlowWarning(this, 507);
+		    release(model);
 
-		// now write outputs for any DeferrableOutputWriter
-		this.executeDeferrableOutputWriters(options.getTargetConfigurations());
+		} else {
+
+		    // at first run any targets that directly reference the input
+		    // model
+		    this.executeTargets(model, options.getInputId(), options.getInputTargetConfigs());
+
+		    // now recursively execute the transformations (and associated
+		    // targets) defined for the input model
+		    this.executeTransformations(model, options.getInputTransformerConfigs());
+
+		    /*
+		     * do this before executing deferrable output writers to free memory (important
+		     * in case of very large models)
+		     */
+		    release(model);
+
+		    // now write outputs for any DeferrableOutputWriter
+		    this.executeDeferrableOutputWriters(options.getTargetConfigurations());
+		}
 	    }
 
 	} catch (Exception e) {
@@ -691,7 +697,7 @@ public class Converter implements MessageSource {
 	    // reset options for this target
 	    options.setCurrentProcessConfig(tgt);
 	    options.resetFields();
-	    
+
 	    if (!isValidModel(model, tgt.getValidatorIds(), tgt.getClassName(), modelProviderId)) {
 		continue;
 	    }
@@ -1075,7 +1081,7 @@ public class Converter implements MessageSource {
 	    return "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
 	case 520:
 	    return "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
-
+		    
 	case 1012:
 	    return "Application schema found, package name: '$1$', target namespace: '$2$'";
 

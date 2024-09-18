@@ -50,8 +50,12 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 public class CodelistDictionariesConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
-	    .of(CodelistDictionaries.PARAM_ENUMERATIONS, CodelistDictionaries.PARAM_GMLID,
-		    CodelistDictionaries.PARAM_IDENTIFIER, CodelistDictionaries.PARAM_NAMES)
+	    .of(CodelistDictionaries.PARAM_ADD_STYLESHEET_PROCESSING_INSTRUCTION, CodelistDictionaries.PARAM_CODELISTS,
+		    CodelistDictionaries.PARAM_DEFINITION_GMLID_TEMPLATE,
+		    CodelistDictionaries.PARAM_DEFINITION_GMLIDENTIFIER_TEMPLATE,
+		    CodelistDictionaries.PARAM_ENUMERATIONS, CodelistDictionaries.PARAM_FIXED_IDENTIFIER_CODESPACE,
+		    CodelistDictionaries.PARAM_GMLID, CodelistDictionaries.PARAM_IDENTIFIER,
+		    CodelistDictionaries.PARAM_NAMES, CodelistDictionaries.PARAM_NAME_SOURCES_TO_ADD_AS_CODESPACE)
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 

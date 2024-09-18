@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 sc-resources/schema/ShapeChangeConfiguration.xsd">
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
  <input id="input">
   <parameter name="inputModelType" value="EA7"/>
   <parameter name="repositoryFileNameOrConnectionString" value="src/integrationtests/json/collections/test_json_schema_collections.qea"/>
@@ -108,6 +108,7 @@
    <targetParameter name="outputDirectory" value="testResults/json/collections/json_schemas/geojson"/>
    <targetParameter name="sortedOutput" value="true"/>
    <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
    <targetParameter name="baseJsonSchemaDefinitionForCollections" value="https://geojson.org/schema/FeatureCollection.json"/>
    <targetParameter name="preventUnknownTypesInFeatureCollection" value="true"/>
@@ -122,6 +123,7 @@
      <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-restrictExternalEntityTypeMember"/>
      <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
+     <rule name="rule-json-prop-specificChecksForSupertypeValuedProperties"/>
     </EncodingRule>
    </rules>
    <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
@@ -140,7 +142,9 @@
    <targetParameter name="outputDirectory" value="testResults/json/collections/json_schemas/plainjson"/>
    <targetParameter name="sortedOutput" value="true"/>
    <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
+   <targetParameter name="inlineOrByReferenceDefault" value="inlineOrByReference"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="preventUnknownTypesInFeatureCollection" value="true"/>
    <targetParameter name="entityTypeName" value="@type"/>
    <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
    <rules>
@@ -150,6 +154,7 @@
      <rule name="rule-json-cls-name-as-entityType"/>
      <rule name="rule-json-cls-restrictExternalEntityTypeMember"/>
      <rule name="rule-json-cls-collectionsBasedOnEntityType"/>
+     <rule name="rule-json-prop-specificChecksForSupertypeValuedProperties"/>
     </EncodingRule>
    </rules>
    <xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>

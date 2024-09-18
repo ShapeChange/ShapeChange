@@ -1351,6 +1351,37 @@ With this rule, the JSON Schema definition of a UML property that is
 read only or fixed will include the "readOnly" annotation with JSON
 value true.
 
+////
+
+[[rule-json-prop-specificChecksForSupertypeValuedProperties]]
+==== rule-json-prop-specificChecksForSupertypeValuedProperties
+
+(since v4.0.0)
+
+For properties that satisfy all of the following conditions:
+
+* the value type may be encoded inline,
+* no specific list of value type options are defined for the property
+via <<rule-json-cls-valueTypeOptions>>,
+* the value type is not mapped to a simple type,
+* a JSON Schema definition exists (defined via map entries, or generated
+by the target) for the value type, 
+* the value type has a non-abstract subtype
+
+a set of restrictions is created, using an if-then-else construct.
+The restrictions ensure that based upon the set of non-abstract subtypes
+of the value type (including that type, if it is non-abstract, too), 
+type specific JSON Schema references are used in the validation. That
+enables a form of value type specific checks, which otherwise is
+not possible with JSON Schema.
+
+The mechanism depends on the presence of a type identifying member in
+property values, and thus _rule-json-prop-specificChecksForSupertypeValuedProperties_ should always
+be used in combination
+with rule <<rule-json-cls-name-as-entityType>>.
+
+////
+
 [[rule-json-prop-voidable]]
 ==== rule-json-prop-voidable
 

@@ -422,6 +422,38 @@ public class XsdDocument implements MessageSource {
 			addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 		    }
 		}
+		if (ci.category() == Options.CODELIST && propi.matches("rule-xsd-prop-referencedCodeList")) {
+
+		    String annotationName = options.parameterAsString(XmlSchema.class.getName(),
+			    XmlSchemaConstants.PARAM_REF_CODELIST_ANNOTATION_NAME, "referencedCodeList", false, true);
+		    String annotationNamespace = options.parameterAsString(XmlSchema.class.getName(),
+			    XmlSchemaConstants.PARAM_REF_CODELIST_ANNOTATION_NAMESPACE, Options.W3C_XML_SCHEMA, false,
+			    true);
+		    String annotationNamespacePrefix = options.nsabrForNamespace(annotationNamespace);
+
+		    if (e2 == null) {
+			e2 = document.createElementNS(Options.W3C_XML_SCHEMA, "appinfo");
+		    }
+
+		    String annotationQName;
+		    if (StringUtils.isNotBlank(annotationNamespacePrefix)
+			    && !annotationNamespace.equals(Options.W3C_XML_SCHEMA)) {
+			annotationQName = annotationNamespacePrefix + ":" + annotationName;
+			addImport(annotationNamespacePrefix, annotationNamespace);
+		    } else {
+			annotationQName = annotationName;
+		    }
+
+		    Element e3 = document.createElementNS(annotationNamespace, annotationQName);
+		    e2.appendChild(e3);
+		    e3.appendChild(document.createTextNode(ci.qname()));
+
+		    String codelistNsabr = ci.pkg().xmlns();
+		    String codelistNs = ci.pkg().targetNamespace();
+		    if (StringUtils.isNotBlank(codelistNsabr) && StringUtils.isNotBlank(codelistNs)) {
+			addImport(codelistNsabr, codelistNs);
+		    }
+		}
 	    }
 	    if (info.matches("rule-xsd-prop-reverseProperty") && options.GML_NS.equals("http://www.opengis.net/gml/3.2")
 		    && propi.reverseProperty() != null && propi.reverseProperty().isNavigable()) {
@@ -4378,7 +4410,7 @@ public class XsdDocument implements MessageSource {
 	try {
 	    String fname = outputDirectory + "/" + name;
 	    new File(fname).getCanonicalPath();
-	    
+
 	    XMLUtil.writeXml(document, new File(fname));
 	} catch (ShapeChangeException ioe) {
 	    result.addError(null, 171, name);

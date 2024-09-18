@@ -63,6 +63,7 @@ import de.interactive_instruments.shapechange.core.target.Target;
 public class Definitions implements Target {
 
     public static final String DEF_NS = "http://www.interactive-instruments.de/ShapeChange/Definitions/0.5";
+    public static final String DEF_NSABR = "def";
 
     public static final String PARAM_STYLE = "style";
     public static final String PARAM_INSTANCE_VIEW = "instanceView";
@@ -128,11 +129,11 @@ public class Definitions implements Target {
 		"type='text/xsl' href='./ShapeChangeDefinitions.xsl'");
 	document.appendChild(proci);
 
-	root = document.createElementNS(DEF_NS, "ApplicationSchemaDefinition");
+	root = document.createElementNS(DEF_NS, DEF_NSABR + "ApplicationSchemaDefinition");
 	document.appendChild(root);
 	addAttribute(document, root, "gml:id", "_");
 	addAttribute(document, root, "xmlns:gml", options.GML_NS);
-	addAttribute(document, root, "xmlns:def", DEF_NS);
+	addAttribute(document, root, "xmlns:" + DEF_NSABR, DEF_NS);
 	addAttribute(document, root, "xmlns:xlink", "http://www.w3.org/1999/xlink");
 	addAttribute(document, root, "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	addAttribute(document, root, "xsi:schemaLocation", DEF_NS + " ShapeChangeDefinitions.xsd");
@@ -143,16 +144,16 @@ public class Definitions implements Target {
 
 	String s = pi.derivedDocumentation(documentationTemplate, documentationNoValue);
 	if (s != null && !s.isEmpty()) {
-	    e1 = document.createElementNS(options.GML_NS, "description");
+	    e1 = document.createElementNS(options.GML_NS, "gml:description");
 	    e1.appendChild(document.createTextNode(s));
 	    root.appendChild(e1);
 	}
-	e1 = document.createElementNS(options.GML_NS, "identifier");
+	e1 = document.createElementNS(options.GML_NS, "gml:identifier");
 	e1.appendChild(document.createTextNode(
 		"urn:x-shapechange:def:applicationSchema:" + namingAuthority + "::" + pi.xmlns() + ":" + pi.version()));
 	addAttribute(document, e1, "codeSpace", "http://www.interactive-instruments.de/ShapeChange");
 	root.appendChild(e1);
-	e1 = document.createElementNS(options.GML_NS, "name");
+	e1 = document.createElementNS(options.GML_NS, "gml:name");
 	e1.appendChild(document.createTextNode(pi.name()));
 	root.appendChild(e1);
     }
@@ -221,7 +222,7 @@ public class Definitions implements Target {
 
 	if (schema) {
 
-	    Element e1 = document.createElementNS(options.GML_NS, "dictionaryEntry");
+	    Element e1 = document.createElementNS(options.GML_NS, "gml:dictionaryEntry");
 	    root.appendChild(e1);
 	    Element e2 = createTypeDefinition(pi, document, ci, t);
 	    e1.appendChild(e2);
@@ -245,7 +246,7 @@ public class Definitions implements Target {
 
 	    documentMap.put(ci.id(), cDocument);
 
-	    Element e1 = document.createElementNS(options.GML_NS, "dictionaryEntry");
+	    Element e1 = document.createElementNS(options.GML_NS, "gml:dictionaryEntry");
 	    addAttribute(document, e1, "xlink:href", "urn:x-shapechange:def:" + t + ":" + namingAuthority + "::"
 		    + pi.xmlns() + ":" + pi.version() + ":" + ci.name());
 	    root.appendChild(e1);
@@ -254,19 +255,19 @@ public class Definitions implements Target {
 
     private Element createTypeDefinition(PackageInfo asi, Document lDocument, ClassInfo ci, String t) {
 
-	Element e1 = lDocument.createElementNS(DEF_NS, "TypeDefinition");
+	Element e1 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":TypeDefinition");
 	addAttribute(lDocument, e1, "gml:id", ci.id());
 
 	Element e2;
 
 	String s = ci.derivedDocumentation(documentationTemplate, documentationNoValue);
 	if (s != null && !s.isEmpty()) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "description");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:description");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e1.appendChild(e2);
 	}
 
-	e2 = lDocument.createElementNS(options.GML_NS, "identifier");
+	e2 = lDocument.createElementNS(options.GML_NS, "gml:identifier");
 	e2.appendChild(lDocument.createTextNode("urn:x-shapechange:def:" + t + ":" + namingAuthority + "::"
 		+ ci.pkg().xmlns() + ":" + ci.pkg().version() + ":" + ci.name()));
 	addAttribute(lDocument, e2, "codeSpace", DEF_NS);
@@ -274,7 +275,7 @@ public class Definitions implements Target {
 
 	s = ci.taggedValue("Title");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/title");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e1.appendChild(e2);
@@ -282,7 +283,7 @@ public class Definitions implements Target {
 
 	s = ci.taggedValue("primaryCode");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/primaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e1.appendChild(e2);
@@ -290,13 +291,13 @@ public class Definitions implements Target {
 
 	s = ci.taggedValue("secondaryCode");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/secondaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e1.appendChild(e2);
 	}
 
-	e2 = lDocument.createElementNS(options.GML_NS, "name");
+	e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/name");
 	e2.appendChild(lDocument.createTextNode(ci.name()));
 	e1.appendChild(e2);
@@ -312,7 +313,7 @@ public class Definitions implements Target {
 	    }
 	}
 
-	e2 = lDocument.createElementNS(DEF_NS, "classification");
+	e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":classification");
 	e2.appendChild(lDocument.createTextNode(t));
 	e1.appendChild(e2);
 
@@ -324,7 +325,7 @@ public class Definitions implements Target {
 		int cate = ei.category();
 		if (ei.pkg() != null && ei.inSchema(asi) && (cate == Options.FEATURE || cate == Options.OBJECT
 			|| cate == Options.MIXIN || cate == Options.DATATYPE || cate == Options.BASICTYPE)) {
-		    e2 = lDocument.createElementNS(DEF_NS, "supertypeRef");
+		    e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":supertypeRef");
 		    String t0 = "featureType";
 		    if (cate == Options.OBJECT) {
 			t0 = "objectType";
@@ -338,7 +339,7 @@ public class Definitions implements Target {
 		    addAttribute(lDocument, e2, "xlink:href", "urn:x-shapechange:def:" + t0 + ":" + namingAuthority
 			    + "::" + ei.pkg().xmlns() + ":" + ei.pkg().version() + ":" + ei.name());
 		} else {
-		    e2 = lDocument.createElementNS(DEF_NS, "supertypeName");
+		    e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":supertypeName");
 		    e2.appendChild(lDocument.createTextNode(ei.name()));
 		}
 		e1.appendChild(e2);
@@ -348,8 +349,9 @@ public class Definitions implements Target {
 	String[] tags = options.parameter("representTaggedValues").split("\\,");
 	for (int i = 0; i < tags.length; i++) {
 	    s = ci.taggedValue(tags[i].trim());
-	    if (StringUtils.isNotBlank(s) && !tags[i].trim().equals("primaryCode") && !tags[i].trim().equals("secondaryCode")) {
-		e2 = lDocument.createElementNS(DEF_NS, "taggedValue");
+	    if (StringUtils.isNotBlank(s) && !tags[i].trim().equals("primaryCode")
+		    && !tags[i].trim().equals("secondaryCode")) {
+		e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":taggedValue");
 		addAttribute(lDocument, e2, "tag", tags[i].trim());
 		e2.appendChild(lDocument.createTextNode(s));
 		e1.appendChild(e2);
@@ -366,20 +368,20 @@ public class Definitions implements Target {
 	if (propi.isRestriction())
 	    return null;
 
-	Element e = lDocument.createElementNS(options.GML_NS, "dictionaryEntry");
-	Element e3 = lDocument.createElementNS(DEF_NS, "PropertyDefinition");
+	Element e = lDocument.createElementNS(options.GML_NS, "gml:dictionaryEntry");
+	Element e3 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":PropertyDefinition");
 	addAttribute(lDocument, e3, "gml:id", propi.id());
 	e.appendChild(e3);
 
 	Element e2;
 	String s = propi.derivedDocumentation(documentationTemplate, documentationNoValue);
 	if (s != null && !s.isEmpty()) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "description");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:description");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e3.appendChild(e2);
 	}
 
-	e2 = lDocument.createElementNS(options.GML_NS, "identifier");
+	e2 = lDocument.createElementNS(options.GML_NS, "gml:identifier");
 	e2.appendChild(lDocument.createTextNode("urn:x-shapechange:def:propertyType:" + namingAuthority + "::"
 		+ ci.pkg().xmlns() + ":" + ci.pkg().version() + ":" + ci.name() + ":" + propi.name()));
 	addAttribute(lDocument, e2, "codeSpace", DEF_NS);
@@ -387,7 +389,7 @@ public class Definitions implements Target {
 
 	s = propi.taggedValue("Title");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/title");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e3.appendChild(e2);
@@ -395,7 +397,7 @@ public class Definitions implements Target {
 
 	s = propi.taggedValue("primaryCode");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/primaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e3.appendChild(e2);
@@ -403,13 +405,13 @@ public class Definitions implements Target {
 
 	s = propi.taggedValue("secondaryCode");
 	if (StringUtils.isNotBlank(s)) {
-	    e2 = lDocument.createElementNS(options.GML_NS, "name");
+	    e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	    addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/secondaryCode");
 	    e2.appendChild(lDocument.createTextNode(s));
 	    e3.appendChild(e2);
 	}
 
-	e2 = lDocument.createElementNS(options.GML_NS, "name");
+	e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 	addAttribute(lDocument, e2, "codeSpace", DEF_NS + "/name");
 	e2.appendChild(lDocument.createTextNode(propi.name()));
 	e3.appendChild(e2);
@@ -425,20 +427,20 @@ public class Definitions implements Target {
 	    for (Iterator<PropertyInfo> k = ei.properties().values().iterator(); k.hasNext();) {
 		PropertyInfo vi = k.next();
 
-		e2 = lDocument.createElementNS(options.GML_NS, "dictionaryEntry");
+		e2 = lDocument.createElementNS(options.GML_NS, "gml:dictionaryEntry");
 		e3.appendChild(e2);
 
-		Element e4 = lDocument.createElementNS(DEF_NS, "ListedValueDefinition");
+		Element e4 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":ListedValueDefinition");
 		addAttribute(lDocument, e4, "gml:id", propi.id() + "_" + vi.id());
 		e2.appendChild(e4);
 
 		s = vi.derivedDocumentation(documentationTemplate, documentationNoValue);
 		if (s != null && !s.isEmpty()) {
-		    e2 = lDocument.createElementNS(options.GML_NS, "description");
+		    e2 = lDocument.createElementNS(options.GML_NS, "gml:description");
 		    e2.appendChild(lDocument.createTextNode(s));
 		    e4.appendChild(e2);
 		}
-		e2 = lDocument.createElementNS(options.GML_NS, "identifier");
+		e2 = lDocument.createElementNS(options.GML_NS, "gml:identifier");
 		if (vi.initialValue() != null) {
 		    e2.appendChild(lDocument.createTextNode("urn:x-shapechange:def:propertyType:" + namingAuthority
 			    + "::" + ci.pkg().xmlns() + ":" + ci.pkg().version() + ":" + ci.name() + ":" + propi.name()
@@ -450,14 +452,14 @@ public class Definitions implements Target {
 		}
 		addAttribute(lDocument, e2, "codeSpace", "http://www.interactive-instruments.de/ShapeChange");
 		e4.appendChild(e2);
-		e2 = lDocument.createElementNS(options.GML_NS, "name");
+		e2 = lDocument.createElementNS(options.GML_NS, "gml:name");
 		e2.appendChild(lDocument.createTextNode(vi.name()));
 		e4.appendChild(e2);
 	    }
 	}
 
 	Multiplicity m = propi.cardinality();
-	e2 = lDocument.createElementNS(DEF_NS, "cardinality");
+	e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":cardinality");
 	if (m.minOccurs == m.maxOccurs) {
 	    e2.appendChild(lDocument.createTextNode(m.minOccurs + ""));
 	} else if (m.maxOccurs == Integer.MAX_VALUE || m.maxOccurs == -1) {
@@ -470,7 +472,7 @@ public class Definitions implements Target {
 	if (ei != null && ei.pkg() != null && ei.inSchema(asi)
 		&& (cate == Options.FEATURE || cate == Options.OBJECT || cate == Options.MIXIN
 			|| cate == Options.DATATYPE || cate == Options.BASICTYPE || cate == Options.UNION)) {
-	    e2 = lDocument.createElementNS(DEF_NS, "valueTypeRef");
+	    e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":valueTypeRef");
 	    String t0 = "featureType";
 	    if (cate == Options.OBJECT) {
 		t0 = "objectType";
@@ -486,12 +488,12 @@ public class Definitions implements Target {
 	    addAttribute(lDocument, e2, "xlink:href", "urn:x-shapechange:def:" + t0 + ":" + namingAuthority + "::"
 		    + ei.pkg().xmlns() + ":" + ei.pkg().version() + ":" + ei.name());
 	} else {
-	    e2 = lDocument.createElementNS(DEF_NS, "valueTypeName");
+	    e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":valueTypeName");
 	    e2.appendChild(lDocument.createTextNode(propi.typeInfo().name));
 	}
 	e3.appendChild(e2);
 
-	e2 = lDocument.createElementNS(DEF_NS, "type");
+	e2 = lDocument.createElementNS(DEF_NS, DEF_NSABR + ":type");
 	if (propi.isAttribute()) {
 	    e2.appendChild(lDocument.createTextNode("attribute"));
 	} else {
@@ -546,8 +548,10 @@ public class Definitions implements Target {
 		    ClassInfo ci = i.next();
 		    Document cDocument = documentMap.get(ci.id());
 		    if (cDocument != null) {
-			XMLUtil.writeXml(cDocument, new File(outputDirectory, ci.name() + ".definitions.xml"));
-			result.addResult(getTargetName(), outputDirectory, ci.name() + ".definitions.xml", ci.qname());
+			String fileName = ci.name() + ".definitions.xml";
+//			String fileName = ci.pkg().xmlns() + "_" + ci.name() + ".xml";
+			XMLUtil.writeXml(cDocument, new File(outputDirectory, fileName));
+			result.addResult(getTargetName(), outputDirectory, fileName, ci.qname());
 		    }
 		}
 	    }

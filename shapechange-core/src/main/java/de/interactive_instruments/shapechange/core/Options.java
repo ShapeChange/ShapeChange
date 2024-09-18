@@ -71,6 +71,7 @@ import de.interactive_instruments.shapechange.core.target.featurecatalogue.Featu
 import de.interactive_instruments.shapechange.core.target.ontology.GeneralDataProperty;
 import de.interactive_instruments.shapechange.core.target.ontology.GeneralObjectProperty;
 import de.interactive_instruments.shapechange.core.target.ontology.RdfGeneralProperty;
+import de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
 import de.interactive_instruments.shapechange.core.AIXMSchemaInfos.AIXMSchemaInfo;
@@ -196,6 +197,7 @@ public class Options {
      */
     public static final String PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG = "skipSemanticValidationOfShapeChangeConfiguration";
 
+    public static final String PARAM_SKIP_MODEL_LOADING_IF_PROCESSING_IS_ONLY_INPUT_TRANSFORMATIONS = "skipModelLoadingIfProcessingIsOnlyInputTransformations";
     /**
      * If set to “array”, ShapeChange will use a memory optimized implementation of
      * tagged values when processing the model.Use this option when processing very
@@ -1366,6 +1368,39 @@ public class Options {
 	}
     }
 
+    private String getConfigurationSystemId() {
+
+	String systemId = null;
+
+	if (configFile == null) {
+
+	    // load minimal configuration, if no configuration file has been
+	    // provided
+	    String minConfigFile = "/config/minimal.xml";
+	    InputStream configStream = getClass().getResourceAsStream(minConfigFile);
+	    if (configStream != null) {
+		try {
+		    configStream.close();
+		} catch (IOException e) {
+		    // ignore
+		}
+		systemId = getClass().getResource(minConfigFile).toString();
+	    } else {
+		minConfigFile = "sc-resources" + minConfigFile;
+		File file = new File(minConfigFile);
+		if (file.exists())
+		    systemId = minConfigFile;
+		else {
+		    systemId = "http://shapechange.net/resources/config/minimal.xml";
+		}
+	    }
+	} else {
+	    systemId = configFile;
+	}
+
+	return systemId;
+    }
+
     private InputStream getConfigurationInputStream() throws ShapeChangeAbortException {
 	InputStream configStream = null;
 
@@ -1431,10 +1466,10 @@ public class Options {
 	// validate configuration
 	try {
 	    // 1. validate original config (has locator information)
-	    XSDUtil.validate(getConfigurationInputStream());
+	    XSDUtil.validate(getConfigurationInputStream(), getConfigurationSystemId());
 	    // 2. validate config, with xincludes resolved (does not have locator
 	    // information)
-	    XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true);
+	    XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true, getConfigurationSystemId());
 	} catch (Exception e) {
 	    throw new ShapeChangeAbortException("Invalid configuration file.");
 	}
@@ -1926,7 +1961,8 @@ public class Options {
 	for (TargetConfiguration tgtConfig : targetConfigs) {
 
 	    if (!tgtConfig.getProcessMode().equals(ProcessMode.disabled)
-		    && tgtConfig instanceof TargetXmlSchemaConfiguration && !(currentProcessConfig != null
+		    && tgtConfig instanceof TargetXmlSchemaConfiguration
+		    && tgtConfig.getClassName().equals(XmlSchema.class.getName()) && !(currentProcessConfig != null
 			    && currentProcessConfig instanceof TargetXmlSchemaConfiguration)) {
 
 		countXmlSchemaConfigs++;
@@ -3826,5 +3862,18 @@ public class Options {
 	    value = parameter("constraintLoading");
 	}
 	return value == null || !value.equalsIgnoreCase("disabled");
+    }
+
+    public boolean hasTransformerConfigurations() {
+	return this.transformerConfigs != null && !this.transformerConfigs.isEmpty();
+    }
+
+    public boolean hasTargetConfigurations() {
+	return this.targetConfigs != null && !this.targetConfigs.isEmpty();
+    }
+
+    public boolean isSkipModelLoadingIfProcessingIsOnlyInputTransformations() {
+	return parameterAsBoolean(null, Options.PARAM_SKIP_MODEL_LOADING_IF_PROCESSING_IS_ONLY_INPUT_TRANSFORMATIONS,
+		false) && !hasTransformerConfigurations() && !hasTargetConfigurations();
     }
 }

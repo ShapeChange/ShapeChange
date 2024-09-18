@@ -116,6 +116,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	Package eaParentPkg = rep.GetPackageByID(eaParentPkgId);
 
 	Collection<Package> pkgs = eaParentPkg.GetPackages();
+	pkgs.Refresh();
 
 	for (short i = 0; i < pkgs.GetCount(); i++) {
 
@@ -137,6 +138,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
     public static Package findPackage(Repository rep, String name) {
 
 	Collection<org.sparx.Package> models = rep.GetModels();
+	models.Refresh();
 
 	for (short i = 0; i < models.GetCount(); i++) {
 
@@ -164,6 +166,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	Package eaParentPkg = rep.GetPackageByID(eaParentPkgId);
 
 	Collection<Package> pkgs = eaParentPkg.GetPackages();
+	pkgs.Refresh();
 
 	for (short i = 0; i < pkgs.GetCount(); i++) {
 
@@ -200,6 +203,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		Package eaParentPkg = rep.GetPackageByID(eaPkg.GetParentID());
 		pkgs = eaParentPkg.GetPackages();
 	    }
+	    
+	    pkgs.Refresh();
 
 	    for (short i = 0; i < pkgs.GetCount(); i++) {
 
@@ -232,6 +237,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	Element c1 = rep.GetElementByID(c1ElementId);
 
 	Collection<Connector> c1Cons = c1.GetConnectors();
+	c1Cons.Refresh();
 
 	Connector con = c1Cons.AddNew("", "Generalization");
 
@@ -259,6 +265,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
     public static Connector createEAGeneralization(Repository rep, Element c1, Element c2) throws EAException {
 
 	Collection<Connector> c1Cons = c1.GetConnectors();
+	c1Cons.Refresh();
 
 	Connector con = c1Cons.AddNew("", "Generalization");
 
@@ -352,6 +359,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	Package eaPkg = rep.GetPackageByID(eaPkgId);
 
 	Collection<Element> elements = eaPkg.GetElements();
+	elements.Refresh();
 
 	Element e = elements.AddNew(className, type);
 
@@ -381,6 +389,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	Package eaParentPkg = rep.GetPackageByID(eaParentPkgId);
 
 	Collection<Package> eaParentPkgs = eaParentPkg.GetPackages();
+	eaParentPkgs.Refresh();
 
 	Package eaPkg = eaParentPkgs.AddNew(pi.name(), "Package");
 

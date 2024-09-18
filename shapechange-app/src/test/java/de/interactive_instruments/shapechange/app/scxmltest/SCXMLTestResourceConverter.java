@@ -58,8 +58,7 @@ import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SCXMLTestResourceConverter {
@@ -83,7 +82,7 @@ public class SCXMLTestResourceConverter {
     String suffix_configToExportModel = "_exportModel";
     String suffix_configRunWithSCXML = "_runWithSCXML";
 
-    File tmpDir = new File("scxmlTmpDir");
+    File tmpDir = null;
 
     public String updateSCXMLTestResources(String configPath) throws Exception {
 
@@ -93,53 +92,67 @@ public class SCXMLTestResourceConverter {
 
 	} else {
 
-	    if (!tmpDir.exists()) {
-		tmpDir.mkdir();
-	    }
-	    
-	    // validate config, as gatekeeper action:
-	    // 1. validate original config
-	    // 2. validate config, with xincludes resolved
-	    XSDUtil.validate(configPath);
-	    XSDUtil.validate(XMLUtil.loadXml(configPath),true);
+	    try {
 
-	    // load original config, for creation of SCXML export configs
-	    /*
-	     * WARNING: The in-memory document will be updated if SCXML really is created!
-	     * log, transformers, and targets from the original config will be removed, only
-	     * the input will be kept and a new model export target section added.
-	     */
-	    
-	    Document doc1 = XMLUtil.loadXml(configPath);
-	    
-	    boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
+		tmpDir = createTmpDir(configPath);
 
-	    if ("true".equalsIgnoreCase(System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
-		    && notPureScxmlTest) {
+		// validate config, as gatekeeper action:
+		// 1. validate original config
+		// 2. validate config, with xincludes resolved
+		XSDUtil.validate(configPath);
+		XSDUtil.validate(XMLUtil.loadXml(configPath), true, configPath);
 
-		// create SCXML based models
-		createScxml(doc1, configPath);
-
+		// load original config, for creation of SCXML export configs
 		/*
-		 * Load original config again (it would be incorrect to use doc1, because it may
-		 * have been updated and used as export configuration).
+		 * WARNING: The in-memory document will be updated if SCXML really is created!
+		 * log, transformers, and targets from the original config will be removed, only
+		 * the input will be kept and a new model export target section added.
 		 */
-		Document doc2 = XMLUtil.loadXml(configPath);		
-		switchModelsToScxml(doc2, configPath);
-	    }
 
-	    String pathToRelevantConfig;
-	    if (notPureScxmlTest) {
-		pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
-		System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
-	    } else {
-		pathToRelevantConfig = configPath;
-		System.out.println(
-			"Unit test execution uses (original) SCXML based configuration " + pathToRelevantConfig);
-	    }
+		Document doc1 = XMLUtil.loadXml(configPath);
 
-	    return pathToRelevantConfig;
+		boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
+
+		if ("true".equalsIgnoreCase(System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
+			&& notPureScxmlTest) {
+
+		    // create SCXML based models
+		    createScxml(doc1, configPath);
+
+		    /*
+		     * Load original config again (it would be incorrect to use doc1, because it may
+		     * have been updated and used as export configuration).
+		     */
+		    Document doc2 = XMLUtil.loadXml(configPath);
+		    switchModelsToScxml(doc2, configPath);
+		}
+
+		String pathToRelevantConfig;
+		if (notPureScxmlTest) {
+		    pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
+		    System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
+		} else {
+		    pathToRelevantConfig = configPath;
+		    System.out.println(
+			    "Unit test execution uses (original) SCXML based configuration " + pathToRelevantConfig);
+		}
+
+		return pathToRelevantConfig;
+
+	    } finally {
+		if (tmpDir.exists()) {
+		    FileUtils.deleteQuietly(tmpDir);
+		}
+	    }
 	}
+    }
+
+    private File createTmpDir(String configPath) {
+	File f = new File(FilenameUtils.getPathNoEndSeparator(configPath) + "_scxmlTmpDir" + File.separator);
+	if (!f.exists()) {
+	    f.mkdir();
+	}
+	return f;
     }
 
     private void switchModelsToScxml(Document configDoc, String configPath) throws Exception {

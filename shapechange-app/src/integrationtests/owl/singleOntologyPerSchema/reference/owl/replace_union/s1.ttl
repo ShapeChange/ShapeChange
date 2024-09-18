@@ -526,7 +526,7 @@ s1:T5_Class1.t5c1p1  a         owl:DatatypeProperty ;
         rdfs:comment           "property_constraint_text (FIXME): Text of property_constraint_text" ;
         rdfs:domain            s1:T5_Class1 ;
         rdfs:range             xsd:integer ;
-        iso19150-2:constraint  "property_constraint_ocl (): comment property_constraint_ocl --- OCL expression: /* comment property_constraint_ocl */\r\ninv: self.t5c1p1 > 10" .
+        iso19150-2:constraint  "property_constraint_ocl ( ): comment property_constraint_ocl --- OCL expression: /* comment property_constraint_ocl */\r\ninv: self.t5c1p1 > 10" .
 
 s1:TP5_Class2.tp5c2p3
         a            owl:ObjectProperty ;

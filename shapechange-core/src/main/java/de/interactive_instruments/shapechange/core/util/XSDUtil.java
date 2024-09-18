@@ -43,6 +43,7 @@ import javax.xml.validation.Validator;
 import org.w3c.dom.Document;
 
 import de.interactive_instruments.shapechange.core.ShapeChangeErrorHandler;
+import shadow.org.apache.commons.lang3.StringUtils;
 
 /**
  * Provides utility methods for performing XML Schema validation.
@@ -73,7 +74,7 @@ public class XSDUtil {
 	    throw new Exception("No XML file found at " + xmlPath);
 	}
 
-	validate(xmlStream);
+	validate(xmlStream, xmlPath);
     }
 
     /**
@@ -86,10 +87,16 @@ public class XSDUtil {
      * For further details, see {@link #validate(Source, boolean)}.
      * 
      * @param xmlStream Input stream with content of an XML document.
+     * @param systemId  The system identifier for the source from which the XML
+     *                  stream was loaded. It is optional (so can be
+     *                  <code>null</code>).The application can use a system
+     *                  identifier, for example, to resolve relative URIs and paths
+     *                  (like schema paths) and to include in error messages and
+     *                  warnings.
      * @throws Exception If a validation error was detected. Note that validation
      *                   errors are logged. They are not part of the exception.
      */
-    public static void validate(InputStream xmlStream) throws Exception {
+    public static void validate(InputStream xmlStream, String systemId) throws Exception {
 
 	/*
 	 * 2024-06-11 JE: We want locator infos (line and column numbers) in validation
@@ -99,6 +106,9 @@ public class XSDUtil {
 	 */
 //	Source source = new SAXSource(new InputSource(xmlStream));
 	Source source = new StreamSource(xmlStream);
+	if (StringUtils.isNotBlank(systemId)) {
+	    source.setSystemId(systemId);
+	}
 
 	validate(source, false);
     }
@@ -116,14 +126,23 @@ public class XSDUtil {
      * @param xincludesResolved <code>true</code>, if XInclude statements have been
      *                          resolved in the given DOM document, else
      *                          <code>false</code>.
+     * @param systemId          The system identifier for the document. It is
+     *                          optional (so can be <code>null</code>).The
+     *                          application can use a system identifier, for
+     *                          example, to resolve relative URIs and paths (like
+     *                          schema paths) and to include in error messages and
+     *                          warnings.
+     * 
      * @throws Exception If a validation error was detected. Note that validation
      *                   errors are logged. They are not part of the exception.
      */
-    public static void validate(Document domDocument, boolean xincludesResolved) throws Exception {
+    public static void validate(Document domDocument, boolean xincludesResolved, String systemId) throws Exception {
 
 	// NOTE: Will (typically) not have locator infos (line and column numbers)!
 	Source source = new DOMSource(domDocument);
-
+	if (StringUtils.isNotBlank(systemId)) {
+	    source.setSystemId(systemId);
+	}
 	validate(source, xincludesResolved);
     }
 
@@ -131,6 +150,9 @@ public class XSDUtil {
      * Performs XSD 1.1 validation on the given XML source. The schema file(s)
      * identified using the xsi:schemaLocation attribute within the source is used
      * for validation.
+     * <p>
+     * The systemId needs to be defined on the source, in order for validation on
+     * XML schemas with relative location to succeed!
      * <p>
      * Whether or not locator information is available in validation messages
      * depends upon the type of source (a DOM source typically does not have locator

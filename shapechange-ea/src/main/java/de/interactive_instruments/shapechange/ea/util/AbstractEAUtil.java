@@ -31,55 +31,72 @@
  */
 package de.interactive_instruments.shapechange.ea.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public abstract class AbstractEAUtil {
 
-	public static String createMessage(String m, String p1) {
-		String _p1 = p1 == null ? "" : p1;
-		return m.replace("$1$", _p1);
-	}
+    public static String createMessage(String m, String p1) {
+	String _p1 = p1 == null ? "" : p1;
+	return m.replace("$1$", _p1);
+    }
 
-	public static String createMessage(String m, String p1, String p2) {
-		String _p1 = p1 == null ? "" : p1;
-		String _p2 = p2 == null ? "" : p2;
-		return m.replace("$1$", _p1).replace("$2$", _p2);
-	}
+    public static String createMessage(String m, String p1, String p2) {
+	String _p1 = p1 == null ? "" : p1;
+	String _p2 = p2 == null ? "" : p2;
+	return m.replace("$1$", _p1).replace("$2$", _p2);
+    }
 
-	public static String createMessage(String m, String p1, String p2,
-			String p3) {
-		String _p1 = p1 == null ? "" : p1;
-		String _p2 = p2 == null ? "" : p2;
-		String _p3 = p3 == null ? "" : p3;
-		return m.replace("$1$", _p1).replace("$2$", _p2).replace("$3$", _p3);
-	}
+    public static String createMessage(String m, String p1, String p2, String p3) {
+	String _p1 = p1 == null ? "" : p1;
+	String _p2 = p2 == null ? "" : p2;
+	String _p3 = p3 == null ? "" : p3;
+	return m.replace("$1$", _p1).replace("$2$", _p2).replace("$3$", _p3);
+    }
 
-	public static String createMessage(String m, String p1, String p2,
-			String p3, String p4) {
-		String _p1 = p1 == null ? "" : p1;
-		String _p2 = p2 == null ? "" : p2;
-		String _p3 = p3 == null ? "" : p3;
-		String _p4 = p4 == null ? "" : p4;
-		return m.replace("$1$", _p1).replace("$2$", _p2).replace("$3$", _p3)
-				.replace("$4$", _p4);
-	}
+    public static String createMessage(String m, String p1, String p2, String p3, String p4) {
+	String _p1 = p1 == null ? "" : p1;
+	String _p2 = p2 == null ? "" : p2;
+	String _p3 = p3 == null ? "" : p3;
+	String _p4 = p4 == null ? "" : p4;
+	return m.replace("$1$", _p1).replace("$2$", _p2).replace("$3$", _p3).replace("$4$", _p4);
+    }
 
-	/**
-	 * @param stereotypes tbd
-	 * @return comma separated list of the set of given stereotypes
-	 */
-	public static String stereotypesCSV(Set<String> stereotypes) {
-		String res = "";
-		if (stereotypes != null)
-			for (String s : stereotypes) {
-				res += (res.isEmpty() ? "" : ",");
-				res += s;
-			}
-		return res;
+    /**
+     * @param stereotypes tbd
+     * @return comma separated list of the set of given stereotypes
+     */
+    public static String stereotypesCSV(Set<String> stereotypes) {
+	String res = "";
+	if (stereotypes != null)
+	    for (String s : stereotypes) {
+		res += (res.isEmpty() ? "" : ",");
+		res += s;
+	    }
+	return res;
+    }
+
+    protected static boolean hasStereotype(String stereotypeEx, String[] stereotypesToCompare) {
+	List<String> stereotypeExList = new ArrayList<>();
+	for (String st : stereotypeEx.split(",")) {
+	    if (StringUtils.isNotBlank(st)) {
+		stereotypeExList.add(st.trim());
+	    }
 	}
+	for (String stIn : stereotypesToCompare) {
+	    for (String stEx : stereotypeExList) {
+		if (stEx.equalsIgnoreCase(stIn)) {
+		    return true;
+		}
+	    }
+	}
+	return false;
+    }
 }
