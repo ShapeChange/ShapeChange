@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/featureCatalogue/umlDiagrams/testCatalogue_frameHtml.qea" />
+		<parameter name="appSchemaName" value="Test Schema" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="tmpDirectory" value="testResults/html/frame_with_images/tmpdir" />
+		<parameter name="loadDiagrams" value="true" />
+		<parameter name="packageDiagramRegex" value="[\w|\W]*NAME[\w|\W]*" />
+		<parameter name="classDiagramRegex" value="Context: NAME[\w|\W]*" />
+		<parameter name="representTaggedValues" value="TagX,TagY,TagZ"/>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/featureCatalogue/htmlframe_with_images/log.xml" />
+	</log>
+	<transformers>
+	    <Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" 
+	    mode="enabled" id="IDENTITY">
+	    <xi:include href="src/integrationtests/featureCatalogue/umlDiagrams/taggedValues.xml" />
+	    </Transformer>
+	</transformers>
+	<targets>
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue"
+			mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/featureCatalogue/htmlframe_with_images" />
+			<targetParameter name="outputFilename" value="test" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="inheritedProperties" value="false" />
+			<targetParameter name="outputFormat" value="FRAMEHTML" />
+			<targetParameter name="includeDiagrams" value="true" />
+			<targetParameter name="includeDiagramDocumentation" value="true" />
+			<targetParameter name="xsltPfad" value="sc-resources/xslt"/>			
+			<targetParameter name="xslTransformerFactory"
+				value="net.sf.saxon.TransformerFactoryImpl" />
+			<targetParameter name="name" value="'Test application schema'" />
+			<targetParameter name="scope" value="This feature catalogue ..." />
+			<targetParameter name="versionNumber" value="n/a" />
+			<targetParameter name="versionDate" value="n/a" />
+			<targetParameter name="producer" value="interactive instruments GmbH" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

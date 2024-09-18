@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/xsd/propertyOptions/test_prop.qea"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ea/log_prop.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/xsd/propertyOptions"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+			<xsdMapEntries>
+				<XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+			</xsdMapEntries>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue"
+			mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/xsd/propertyOptions"/>
+			<targetParameter name="outputFilename" value="test_prop"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="inheritedProperties" value="false"/>
+			<targetParameter name="outputFormat" value="HTML"/>
+			<targetParameter name="name" value="'Test application schema'"/>
+			<targetParameter name="scope" value="This feature catalogue ..."/>
+			<targetParameter name="versionNumber" value="n/a"/>
+			<targetParameter name="versionDate" value="n/a"/>
+			<targetParameter name="producer" value="interactive instruments GmbH"/>
+			<targetParameter name="xsltPfad" value="sc-resources/xslt"/>
+			<targetParameter name="xslhtmlFile" value="html.xsl"/>
+		</Target>
+<!-- 		<Target class="de.interactive_instruments.shapechange.ea.target.uml.UmlModel" -->
+<!-- 			mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/ea/prop"/> -->
+<!-- 			<targetParameter name="modelFilename" value="test_prop_out.qea"/> -->
+<!-- 			<targetParameter name="eaAuthor" value="Test Author"/> -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

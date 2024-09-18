@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        xmlns:ta="http://example.org/shapechange/schema/test/a"
+        xmlns:tb="http://example.org/shapechange/schema/test/b"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test/a"
+        version="1.0">
+   <import namespace="http://example.org/shapechange/schema/test/b"/>
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element abstract="true"
+            name="AbstractSupertype"
+            substitutionGroup="gml:AbstractFeature"
+            type="ta:AbstractSupertypeType">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">AbstractSupertype</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType abstract="true" name="AbstractSupertypeType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element minOccurs="0" name="integer" type="integer">
+                  <annotation>
+                     <documentation>This is an integer.</documentation>
+                     <appinfo>
+                        <sc:taggedValue tag="originalInClassName">AbstractSupertype</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyMultiplicity">0..1</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyName">integer</sc:taggedValue>
+                        <sc:taggedValue tag="originalPropertyValueType">Integer</sc:taggedValue>
+                        <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractSupertypePropertyType">
+      <sequence minOccurs="0">
+         <element ref="ta:AbstractSupertype"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="DataType"
+            substitutionGroup="gml:AbstractObject"
+            type="ta:DataTypeType">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="originalClassName">DataType</sc:taggedValue>
+            <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="DataTypeType">
+      <sequence>
+         <element name="dtAtt1" type="double">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="originalInClassName">DataType</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyMultiplicity">1</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyName">dtAtt1</sc:taggedValue>
+                  <sc:taggedValue tag="originalPropertyValueType">Real</sc:taggedValue>
+                  <sc:taggedValue tag="originalSchemaName">Test Schema A</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <complexType name="DataTypePropertyType">
+      <sequence>
+         <element ref="ta:DataType"/>
+      </sequence>
+   </complexType>
+   <complexType name="MixinAPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+         <element ref="tb:FeatureType2"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

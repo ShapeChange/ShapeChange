@@ -1,0 +1,448 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Replication_XML_Schema]]
+= Replication XML Schema
+
+[red]#This target is work in progress.#
+
+[red]#NOTE: Since ShapeChange v2.4.0, the functionality to create a
+replication schema has been merged into the
+xref:./SQL_DDL.adoc[SQL DDL target].#
+
+A replication (XML) schema defines the structure of datasets that are
+distributed by a data publisher to replicate the application schema data
+in his database. The replication schema uses a simple structure that is
+usually quite similar to the database schema created by the
+xref:./SQL_DDL.adoc[SQL DDL target]. This simple
+structure is achieved by the same flattening process which is applied on
+the application schema. Due to the similar structure of the replication
+and database schemas, a data publisher can easily publish changes to his
+database, allowing authorized parties to replicate the content of the
+publishers database.
+
+The replication schema defines feature and object types of a (flattened)
+application schema. These types as well as their properties are
+annotated with global identifier information. Global identifiers allow
+the consumer of a replication dataset to automatically relate the
+content of a replication XML document (i.e., an XML instance that is
+valid against the replication schema) to the types and properties of the
+original application schema.
+
+[[Pre-Processing_Flattening]]
+== Pre-Processing: Flattening
+
+A number of flattening rules must be executed to simplify an application
+schema before a replication schema can be created:
+
+* *rule-trf-cls-flatten-inheritance* - inheritance structures must
+completely be removed
+* *rule-trf-prop-flatten-types* - complex types must be flattened,
+unless the type is a feature or object type or a type mapping is defined
+for it
+
+NOTE: In order to be similar / almost equal to the schema that is used
+for deriving SQL DDL, additional rules like
+_rule-trf-prop-flatten-multiplicity_ and _rule-trf-all-flatten-name_ are
+usually executed as well.
+
+NOTE: The flattening rules and parameters are documented in detail on
+the xref:../transformations/Flattener.adoc[Flattener
+transformation] page.
+
+[[Replication_Schema_Derivation]]
+== Replication Schema Derivation
+
+The replication schema is derived as follows:
+
+* One replication schema file is created for each conceptual schema that
+has been selected for processing:
+** The file encoding is UTF-8.
+** The file name is automatically computed from the name of the
+conceptual schema package.
+** The XML namespace prefix defined for the conceptual schema is used
+for the replication schema as well.
+** The target namespace defined for the conceptual schema is used for
+the replication schema as well. However, it can be modified by appending
+a suffix. The value of this suffix can be defined via the configuration
+(see parameter link:#targetNamespaceSuffix[targetNamespaceSuffix]).
+* Feature and object types are converted to global elements and complex
+types.
+* Mixins, unions, datatypes and codelists are ignored. The former three
+should be flattened before executing this target.
+* Enumerations are converted to global simple types, like for GML
+application schemas.
+** NOTE: Enumerations may reside in another schema/namespace and are
+usually not flattened. The target can create imports of replication
+schemas (derived from other application schemas), if these schemas are
+contained in the input model.
+* Properties of feature and object types are converted to elements:
+** In the order defined by the conceptual schema. This order is
+primarily determined by the sequence numbers defined in the conceptual
+schema, but to some extent also depends on the flattening applied to the
+schema.
+** Derived properties can be ignored by enabling the according encoding
+rule (see
+link:#rule-rep-prop-exclude-derived[rule-rep-prop-exclude-derived]).
+** The property name defines the name of the element. However, in case
+of a property with feature or object value type, a suffix can be
+appended to the name (see
+parameters link:#suffixForPropertiesWithFeatureValueType[suffixForPropertiesWithFeatureValueType]
+and link:#suffixForPropertiesWithObjectValueType[suffixForPropertiesWithObjectValueType]).
+** minOccurs and maxOccurs are set according to the multiplicity of the
+property. However, if required minOccurs can be set to zero for all
+elements that represent properties from the conceptual schema (via
+link:#rule-rep-prop-optional[rule-rep-prop-optional]).
+** The type of the element is:
+*** as defined by the MapEntry if one exists for the value type (for
+example, if 'CharacterString' is the value type of a property then it is
+usually mapped to 'string')
+*** string if the value type of the property is a feature type, object
+type, or codelist of the conceptual schema
+*** the simple type created for an enumeration of the conceptual schema,
+if the value type is that enumeration
+** Length restrictions can be added to elements with type string (via
+link:#rule-rep-prop-maxLength-from-size[rule-rep-prop-maxLength-from-size]).
+* An element (with type 'string) to encode the identifier of a feature
+or object type can automatically be added at the top of the list of
+encoded properties (via
+link:#rule-rep-cls-generate-objectidentifier[rule-rep-cls-generate-objectidentifier]).
+* Global identifiers (if loaded from the input model - see
+link:#Loading_Global_Identifiers[Loading Global Identifiers] for further
+details) are added via _appinfo_ annotations to each element
+representing a feature or object type or a property.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.shapechange.core.target.replicationschema.ReplicationXmlSchema_
+
+[[Loading_Global_Identifiers]]
+=== Loading Global Identifiers
+
+By default ShapeChange does not load global identifiers of model
+elements. Set the input parameter _loadGlobalIdentifiers_ to true in
+order to load these identifiers (see link:#Sample_Configuration[sample
+configuration]).
+
+[[Encoding_Rules]]
+=== Encoding Rules
+
+The following optional rules are supported by this target.
+
+[[rule-rep-cls-generate-objectidentifier]]
+==== rule-rep-cls-generate-objectidentifier
+
+Behavior:
+
+If this rule is enabled, an object identifier will be added to feature
+and object types. The element will be created as first content element
+inside of a data entity, with XML Schema type xs:string. The element
+will be required and not nillable. The name of the element can be
+configured via parameter "objectIdentifierFieldName".
+
+Parameters:
+
+[cols=",",]
+|===
+|*_Parameter Name_* |*_Required / Optional (for Execution of Rule)_*
+
+|* link:#objectIdentifierFieldName[objectIdentifierFieldName]*
+| Optional
+|===
+
+[[rule-rep-prop-exclude-derived]]
+==== rule-rep-prop-exclude-derived
+
+Behavior:
+
+If this rule is enabled derived properties will be ignored.
+
+Parameters:
+
+_none_
+
+[[rule-rep-prop-maxLength-from-size]]
+==== rule-rep-prop-maxLength-from-size
+
+Behavior:
+
+If this rule is enabled then properties with specific value types
+receive a length restriction.
+
+The types are identified by map entries: a map entry must identify the
+value type in its 'type' attribute and have a 'param' attribute with
+value 'maxLengthFromSize'.
+
+Whenever a property has an according value type its maxLength is
+determined by the setting of the 'size' tagged value on the property or
+the global target parameter 'size'. The tagged value takes precedence
+over the target parameter. If neither tagged value nor target parameter
+are set, no maxLength restriction is created.
+
+Parameters:
+
+[cols=",",]
+|===
+|*_Parameter Name_* |*_Required / Optional (for Execution of Rule)_*
+|* link:#size[size]* | Optional
+|===
+
+[[rule-rep-prop-optional]]
+==== rule-rep-prop-optional
+
+Behavior:
+
+If this rule is enabled all elements that represent properties from the
+conceptual schema will have minOccurs=0. This does not apply to elements
+that were generated by the target, for example object identifier
+elements.
+
+Parameters:
+
+_none_
+
+[[Parameters]]
+=== Parameters
+
+The parameters supported by this target are described in the following
+sections.
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
+Alias: _none_
+
+Type: String
+
+Default Value: _none_
+
+Behavior:
+
+The identifier of the default encoding rule governing the derivation of
+the replication schema.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[objectIdentifierFieldName]]
+==== objectIdentifierFieldName
+
+Alias: _none_
+
+Type: String
+
+Default Value: "id"
+
+Behavior:
+
+Name of the field that contains the identifier of the object for which a
+data entity contains information.
+
+Applies to Rule(s):
+
+* link:#rule-rep-cls-generate-objectidentifier[rule-rep-cls-generate-objectidentifier]
+
+[[outputDirectory]]
+==== outputDirectory
+
+Alias: _none_
+
+Type: String
+
+Default Value: _the current run directory_
+
+Behavior:
+
+The path to the folder in which the resulting replication schema file
+will be created.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[size]]
+==== size
+
+Alias: _none_
+
+Type: positive integer
+
+Default Value: _none_
+
+Behavior:
+
+Size for elements representing textual properties with limited length,
+to be used in case that the property represented by the element does not
+have a 'size' tagged value; by default an element with textual type does
+not have a size/length restriction.
+
+Applies to Rule(s):
+
+* link:#rule-rep-prop-maxLength-from-size[rule-rep-prop-maxLength-from-size]
+
+[[suffixForPropertiesWithFeatureValueType]]
+==== suffixForPropertiesWithFeatureValueType
+
+Alias: _none_
+
+Type: String
+
+Default Value: _the empty string_
+
+Behavior:
+
+Supports setting a suffix that will be appended to the name of
+properties that reference feature types.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[suffixForPropertiesWithObjectValueType]]
+==== suffixForPropertiesWithObjectValueType
+
+Alias: _none_
+
+Type: String
+
+Default Value: _the empty string_
+
+Behavior:
+
+Supports setting a suffix that will be appended to the name of
+properties that reference object types.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[targetNamespaceSuffix]]
+==== targetNamespaceSuffix
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: false
+
+Behavior:
+
+Supports setting a suffix that will be appended to the target namespace
+of the replication schema that is produced by the target.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[Map_Entries]]
+=== Map Entries
+
+<mapEntries> contain individual <MapEntry> elements, which for this
+target contain information for mapping specific types (classes) from the
+UML model to the (Replication) XML Schema.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<mapEntries>
+  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="CharacterString"/>
+  <MapEntry param="maxLengthFromSize" rule="*" targetType="string" type="URI"/>
+  <MapEntry rule="*" targetType="boolean" type="Boolean"/>
+  <MapEntry rule="*" targetType="integer" type="Integer"/>
+  <MapEntry rule="*" targetType="string" type="GM_Point"/>
+</mapEntries>
+----------
+
+A <MapEntry> element contains the following attributes:
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+|Attribute Name |Required / Optional |Explanation
+
+|*type* |Required |The unqualified UML type/class name to be mapped.
+Should be unique within the model (if it is not unique, this can lead to
+unexpected results).
+
+|*rule* |Required |The encoding rule to which this mapping applies. May
+be "*" to indicate that the mapping applies to all encoding rules.
+
+|*targetType* |Required |Name of the type to use in the replication
+schema.
+
+|*param* |Optional a|
+A parameter for the mapping. Allowed values and their interpretation are
+as follows:
+
+* maxLengthFromSize:
+** Used if _rule-rep-prop-maxLength-from-size_ is enabled.
+** Should only be defined on map entries that map to 'string'.
+** Ensures that the XML Schema definition for the mapped type is a
+string with a _maxLength_ restriction. The maxLength value for the
+encoding of a given property is determined by the tagged value 'size' of
+that property or the configuration parameter 'size'.
+
+|===
+
+The file
+https://shapechange.net/resources/config/StandardMapEntries_ReplicationSchema.xml[StandardMapEntries_ReplicationSchema.xml]
+defines mappings for a number of types of the ISO Harmonized Model when
+deriving a replication schema. It can be included in ShapeChange
+configuration files (via XInclude). Additional XInclude files, or
+individual <MapEntry> elements added to the <mapEntries> section of the
+configuration file, may be used to define mappings for further UML
+types.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<input id="INPUT">
+  ...
+  <parameter name="addTaggedValues" value="size"/>
+  <parameter name="loadGlobalIdentifiers" value="true"/>
+  ...
+</input>
+----------
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.core.target.replicationschema.ReplicationXmlSchema"
+  inputs="F_name" mode="enabled">
+  <targetParameter name="defaultEncodingRule" value="replicationSchema"/>
+  <targetParameter name="outputDirectory" value="testResults/repSchema/repXsd"/>
+  <targetParameter name="size" value="1024"/>
+  <targetParameter name="targetNamespaceSuffix" value="/rep"/>
+  <targetParameter name="objectIdentifierFieldName" value="myid"/>
+  <targetParameter name="suffixForPropertiesWithFeatureOrObjectValueType" value="_fk"/>
+  <rules>
+    <EncodingRule name="replicationSchema">
+      <rule name="rule-rep-prop-optional"/>
+      <rule name="rule-rep-prop-exclude-derived"/>
+      <rule name="rule-rep-cls-generate-objectidentifier"/>
+      <rule name="rule-rep-prop-maxLength-from-size"/>
+    </EncodingRule>
+  </rules>
+  <xi:include href="sc-resources/config/StandardMapEntries_ReplicationSchema.xml"/>
+</Target>
+----------

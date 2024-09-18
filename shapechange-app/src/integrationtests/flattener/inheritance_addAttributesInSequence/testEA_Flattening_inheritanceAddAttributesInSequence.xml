@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/flattener/inheritance_addAttributesInSequence/testFlattening.qea" />
+		<parameter name="appSchemaName"
+			value="InheritanceAddAttributesInSequence" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="excludedPackages"
+			value="BBR,AppSchema,ExternalSchema,ISO TC 211" />
+		<xi:include
+			href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/flattening/inheritanceAddAttributesInSequence/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform"
+			id="IDENTITY" input="INPUT" mode="enabled" />
+
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+			input="IDENTITY" id="FLAT" mode="enabled">
+			<parameters>
+				<ProcessParameter
+					name="flattenInheritanceIncludeRegex"
+					value="^Mixin.*$" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+					<rule
+						name="rule-trf-cls-flatten-inheritance-add-attributes-in-sequence" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			inputs="FLAT" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/flattening/inheritanceAddAttributesInSequence/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule"
+				value="XSDEncRule" />
+			<rules>
+				<EncodingRule name="XSDEncRule" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardRules.xml" />
+			<xi:include
+				href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include
+				href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget"
+			mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory"
+				value="testResults/flattening/inheritanceAddAttributesInSequence/json" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="jsonSchemaVersion"
+				value="2020-12" />
+			<targetParameter name="jsonBaseUri"
+				value="https://example.org/baseuri_from_config" />
+			<targetParameter name="linkObjectUri"
+				value="http://shapechange.net/tmp/ugas20/link.json" />
+			<targetParameter
+				name="byReferenceJsonSchemaDefinition"
+				value="https://example.org/jsonschema/byreference.json" />
+
+			<targetParameter name="defaultEncodingRule"
+				value="my202012json" />
+			<rules>
+
+				<EncodingRule name="my202012json">
+					<rule name="rule-json-prop-readOnly" />
+				</EncodingRule>
+			</rules>
+
+			<xi:include
+				href="sc-resources/config/StandardMapEntries_JSON.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

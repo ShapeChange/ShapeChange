@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" xmlns:t="http://example.org/shapechange/schema/test" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/schema/test" version="1.0">
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <simpleType name="EnumerationType">
+    <restriction base="string">
+      <enumeration value="a"/>
+      <enumeration value="b"/>
+    </restriction>
+  </simpleType>
+  <element name="FT_A" substitutionGroup="gml:AbstractFeature" type="t:FT_AType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="tvA">A</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FT_AType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="a" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="tvB">B</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="x" type="boolean"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_APropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT_A"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FT_B" substitutionGroup="gml:AbstractFeature" type="t:FT_BType"/>
+  <complexType name="FT_BType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="x" type="t:FT_APropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="tvB">B</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FT_BPropertyType">
+    <sequence minOccurs="0">
+      <element ref="t:FT_B"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

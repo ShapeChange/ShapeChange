@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/json/genericValueTypes/test_json_schema_genericValueTypes.xml"
+                   end="Mon Nov 06 11:30:32 CET 2023"
+                   resultCode="0"
+                   start="Mon Nov 06 11:30:26 CET 2023"
+                   version="2.13.1-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'model' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' and @inputs 'model' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\genericValueTypes\genericValueTypes.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\genericValueTypes\genericValueTypes.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\genericValueTypes\genericValueTypes.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\json\genericValueTypes\genericValueTypes.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'model' for input ID: 'input'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'JSON Schema' for input 'model'."/>
+      <Warning message="Package 'Test Schema' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package 'Test Schema' will be associated with JSON Schema document 'Test_Schema.json'."/>
+      <Info message="Type 'BooleanAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'DateAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'DoubleAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'IntegerAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'MeasureAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'StringAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <Info message="Type 'UrlAttribute' is subtype of a generic value type, and will be encoded as such."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget' for input ID: 'model'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/json/genericValueTypes/model/t/Test_Schema.json"
+              target="JSON Schema">Test_Schema.json</Result>
+   </Results>
+</ShapeChangeResult>

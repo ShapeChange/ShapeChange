@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+  xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+  <input id="INPUT">
+    <parameter name="inputModelType" value="EA7"/>
+    <parameter name="inputFile" value="src/integrationtests/sql/geometryParameters/test_sqlGeometryParameters.qea"/>
+    <parameter name="appSchemaName" value="Test"/>
+    <parameter name="sortedSchemaOutput" value="true"/>
+    <xi:include href="sc-resources/config/StandardAliases.xml"/>
+  </input>
+  <log>
+    <parameter name="reportLevel" value="INFO"/>
+    <parameter name="logFile" value="testResults/sql/geometryParameters/log_sql.xml"/>
+  </log>
+  <transformers>
+    <Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+      id="F_inheritance" input="INPUT" mode="enabled">
+      <rules>
+        <ProcessRuleSet name="flattener">
+          <rule name="rule-trf-cls-flatten-inheritance"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+      id="F_multiplicity" input="F_inheritance" mode="enabled">
+      <parameters>
+        <ProcessParameter name="maxOccurs" value="3"/>
+        <ProcessParameter name="flattenObjectTypes" value="false"/>
+        <ProcessParameter name="maxMultiplicityThreshold" value="3"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="flattener">
+          <rule name="rule-trf-prop-flatten-multiplicity"/>
+          <rule name="rule-trf-prop-flatten-multiplicity-keepBiDirectionalAssociations"/>
+          <rule name="rule-trf-prop-flatten-multiplicity-withMaxMultiplicityThreshold"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+      id="F_types" input="F_multiplicity" mode="enabled">
+      <parameters>
+        <ProcessParameter name="flattenObjectTypes" value="false"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="flattener">
+          <rule name="rule-trf-prop-flatten-types"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+    <Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+      id="F_name" input="F_types" mode="enabled">
+      <parameters>
+        <ProcessParameter name="targetNamespaceSuffix" value="/flat"/>
+      </parameters>
+      <rules>
+        <ProcessRuleSet name="flattener">
+          <rule name="rule-trf-all-flatten-name"/>
+        </ProcessRuleSet>
+      </rules>
+    </Transformer>
+  </transformers>
+  <targets>
+<!--     <Target class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" -->
+<!--       inputs="F_name" mode="enabled"> -->
+<!--       <targetParameter name="outputDirectory" value="testResults/sql/geometryParameters/fc"/> -->
+<!--       <targetParameter name="outputFilename" value="test"/> -->
+<!--       <targetParameter name="sortedOutput" value="true"/> -->
+<!--       <targetParameter name="inheritedProperties" value="false"/> -->
+<!--       <targetParameter name="outputFormat" value="FRAMEHTML"/> -->
+<!--       <targetParameter name="xslTransformerFactory" value="net.sf.saxon.TransformerFactoryImpl"/> -->
+<!--       <targetParameter name="name" value="'Test application schema'"/> -->
+<!--       <targetParameter name="scope" value="This feature catalogue ..."/> -->
+<!--       <targetParameter name="versionNumber" value="n/a"/> -->
+<!--       <targetParameter name="versionDate" value="n/a"/> -->
+<!--       <targetParameter name="producer" value="interactive instruments GmbH"/> -->
+<!--       <targetParameter name="xsltPath" value="sc-resources/xslt"/> -->
+<!--     </Target> -->
+    <Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl" inputs="F_name"
+      mode="enabled">
+      <targetParameter name="outputDirectory" value="testResults/sql/geometryParameters/ddl_with_SDO_DIM_ARRAY"/>
+      <targetParameter name="size" value="-1"/>
+      <targetParameter name="srid" value="31467"/>
+      <targetParameter name="idColumnName" value="testobjectidentifier" />
+      <targetParameter name="createReferences" value="true"/>
+      <targetParameter name="createDocumentation" value="true"/>
+      <targetParameter name="documentationTemplate" value="[[definition]]" />
+      <targetParameter name="documentationNoValue" value="" />
+      <targetParameter name="defaultEncodingRule" value="mysql"/>
+      <targetParameter name="foreignKeyColumnSuffix" value="_fk"/>
+      <targetParameter name="databaseSystem" value="Oracle"/> 
+      <targetParameter name="sdoDimElements" value="(dim1,-1,1,1.1)(dim2,-2,2.2,2)(dim3,-3.3,3,3)"/>     
+      <rules>
+        <EncodingRule extends="sql" name="mysql">
+          <rule name="rule-sql-all-associativetables"/>
+          <rule name="rule-sql-cls-object-types"/>
+        </EncodingRule>
+      </rules>
+      <xi:include href="sc-resources/config/StandardSqlMapEntries-Oracle.xml"/>
+    </Target>
+  </targets>
+</ShapeChangeConfiguration>

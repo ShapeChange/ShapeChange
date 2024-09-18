@@ -1,0 +1,374 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/schemas/main.json",
+  "title": "test application schema",
+  "description": "Definition: main package Def  Description: main package Desc",
+  "$defs": {
+    "CL": {
+      "$anchor": "CL",
+      "description": "Definition: CL Def  Description: CL Desc",
+      "type": "string"
+    },
+    "E": {
+      "$anchor": "E",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "type": "string",
+      "enum": [
+        "e1",
+        "e2"
+      ]
+    },
+    "ExtFTSubtype": {
+      "$anchor": "ExtFTSubtype",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "allOf": [
+        {
+          "$ref": "https://example.org/external/schema/definitions.json#ExtFeatureType"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attExtFTSubtype": {
+              "description": "Definition: [None Specified]  Description: [None Specified]",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "attExtFTSubtype"
+          ]
+        },
+        {
+          "required": [
+            "@featureType"
+          ]
+        }
+      ]
+    },
+    "ExtFTSubtypeCollection": {
+      "$anchor": "ExtFTSubtypeCollection",
+      "type": "array",
+      "items": {
+        "$ref": "#ExtFTSubtype"
+      }
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "title": "Feature type one",
+      "description": "Definition: FT1 Def  Description: FT1 Desc",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "att1": {
+          "title": "attribute one",
+          "description": "Definition: att1 Def  Description: att1 Desc",
+          "type": "string"
+        },
+        "att2": {
+          "title": "attribute two",
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "type": "number"
+        },
+        "roleFT1toFT2": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "if": {
+                "properties": {
+                  "@type": {
+                    "const": "FT3"
+                  }
+                }
+              },
+              "then": {
+                "$ref": "https://example.org/schemas/subpackage.json#FT3"
+              },
+              "else": {
+                "if": {
+                  "properties": {
+                    "@type": {
+                      "const": "FT4"
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "https://example.org/schemas/subpackage.json#FT4"
+                },
+                "else": {
+                  "if": {
+                    "properties": {
+                      "@type": {
+                        "const": "FT5"
+                      }
+                    }
+                  },
+                  "then": {
+                    "$ref": "https://example.org/schemas/subpackage.json#FT5"
+                  },
+                  "else": false
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "@type",
+        "att1",
+        "att2",
+        "roleFT1toFT2"
+      ]
+    },
+    "FT1Collection": {
+      "$anchor": "FT1Collection",
+      "type": "array",
+      "items": {
+        "$ref": "#FT1"
+      }
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "description": "Definition: [None Specified]  Description: [None Specified]",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        },
+        "roleFT2toFT1": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "oneOf": [
+            {
+              "$ref": "https://example.org/jsonschema/byreference.json"
+            },
+            {
+              "$ref": "#FT1"
+            }
+          ]
+        }
+      },
+      "required": [
+        "@type",
+        "roleFT2toFT1"
+      ]
+    },
+    "FT2Collection": {
+      "$anchor": "FT2Collection",
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT3"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT3"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT4"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT4"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT5"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT5"
+            }
+          },
+          {
+            "if": {
+              "not": {
+                "required": [
+                  "@type"
+                ],
+                "properties": {
+                  "@type": {
+                    "enum": [
+                      "FT3",
+                      "FT4",
+                      "FT5"
+                    ]
+                  }
+                }
+              }
+            },
+            "then": {
+              "$ref": "#FT2"
+            }
+          }
+        ]
+      }
+    },
+    "FeatureCollection": {
+      "$anchor": "FeatureCollection",
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "@featureType"
+              ],
+              "properties": {
+                "@featureType": {
+                  "const": "ExtFTSubtype"
+                }
+              }
+            },
+            "then": {
+              "$ref": "#ExtFTSubtype"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT1"
+                }
+              }
+            },
+            "then": {
+              "$ref": "#FT1"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT3"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT3"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT4"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT4"
+            }
+          },
+          {
+            "if": {
+              "required": [
+                "@type"
+              ],
+              "properties": {
+                "@type": {
+                  "const": "FT5"
+                }
+              }
+            },
+            "then": {
+              "$ref": "https://example.org/schemas/subpackage.json#FT5"
+            }
+          },
+          {
+            "if": {
+              "not": {
+                "oneOf": [
+                  {
+                    "required": [
+                      "@featureType"
+                    ],
+                    "properties": {
+                      "@featureType": {
+                        "enum": [
+                          "ExtFTSubtype"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "required": [
+                      "@type"
+                    ],
+                    "properties": {
+                      "@type": {
+                        "enum": [
+                          "FT1",
+                          "FT3",
+                          "FT4",
+                          "FT5"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "then": false
+          }
+        ]
+      }
+    },
+    "T": {
+      "$anchor": "T",
+      "description": "Definition: T Def  Description: T Desc",
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "@type"
+      ]
+    },
+    "U": {
+      "$anchor": "U",
+      "description": "Definition: U Def  Description: U Desc",
+      "type": [
+        "integer",
+        "boolean"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sch/codelist2_codeListRestrictionFromOCL/testEA_sch_codelist2_codeListRestrictionFromOCL.xml" end="Fri May 18 13:22:28 CEST 2018" resultCode="0" start="Fri May 18 13:22:09 CEST 2018" version="2.5.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating transformer with @id 'TRF_CONSTRAINT_CONVERTER' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_codeListRestrictionFromOCL\test_sch_codelist2_codeListRestrictionFromOCL.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_codeListRestrictionFromOCL\test_sch_codelist2_codeListRestrictionFromOCL.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_codeListRestrictionFromOCL\test_sch_codelist2_codeListRestrictionFromOCL.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2_codeListRestrictionFromOCL\test_sch_codelist2_codeListRestrictionFromOCL.qea"/>
+    <Info message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'TRF_CONSTRAINT_CONVERTER' for input ID: 'IDENTITY'."/>
+    <Info message="---------- now processing: rule-trf-cls-constraints-codeListRestrictionToTV ----------"/>
+    <Info message="Code list restriction identified for type restriction constraint 'att1_is_CodeListS1' of class 'FeatureTypeS1_1'. Property 'att1' is restricted to code list 'CodeListS1'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att2_is_CodeListS2' of class 'FeatureTypeS1_1'. Property 'att2' is restricted to code list 'CodeListS2'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att1_is_CodeListS1' of class 'FeatureTypeS1_2'. Property 'att1' is restricted to code list 'CodeListS1'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att2_is_CodeListS2' of class 'FeatureTypeS1_2'. Property 'att2' is restricted to code list 'CodeListS2'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att1_is_CodeListS1' of class 'FeatureTypeS1_3'. Property 'att1' is restricted to code list 'CodeListS1'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att2_is_CodeListS2' of class 'FeatureTypeS1_3'. Property 'att2' is restricted to code list 'CodeListS2'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att1_is_CodeListS1' of class 'FeatureTypeS2_2'. Property 'att1' is restricted to code list 'CodeListS1'."/>
+    <Info message="Code list restriction identified for type restriction constraint 'att2_is_CodeListS2' of class 'FeatureTypeS2_2'. Property 'att2' is restricted to code list 'CodeListS2'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'TRF_CONSTRAINT_CONVERTER' for input ID: 'IDENTITY'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'ISO Base Schema', target namespace: 'http://example.org/shapechange/sch/codelist2/isoBaseSchema'"/>
+    <Info message="Now processing target 'XML Schema' for input 'TRF_CONSTRAINT_CONVERTER'."/>
+    <Info message="Application schema found, package name: 'Test Schema1', target namespace: 'http://example.org/shapechange/sch/codelist2/codeListRestriction/1'"/>
+    <Info message="Now processing target 'XML Schema' for input 'TRF_CONSTRAINT_CONVERTER'."/>
+    <Info message="Application schema found, package name: 'Test Schema2', target namespace: 'http://example.org/shapechange/sch/codelist2/codeListRestriction/2'"/>
+    <Info message="Now processing target 'XML Schema' for input 'TRF_CONSTRAINT_CONVERTER'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_CONSTRAINT_CONVERTER'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_codeListRestrictionFromOCL/xsd/TRF_CONSTRAINT_CONVERTER/isoBase.xsd" scope="http://example.org/shapechange/sch/codelist2/isoBaseSchema" target="XML Schema">isoBase.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_codeListRestrictionFromOCL/xsd/TRF_CONSTRAINT_CONVERTER/testCodelist2_codeListRestriction1.xsd" scope="http://example.org/shapechange/sch/codelist2/codeListRestriction/1" target="XML Schema">testCodelist2_codeListRestriction1.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2_codeListRestrictionFromOCL/xsd/TRF_CONSTRAINT_CONVERTER/testCodelist2_codeListRestriction2.xsd" scope="http://example.org/shapechange/sch/codelist2/codeListRestriction/2" target="XML Schema">testCodelist2_codeListRestriction2.xsd</Result>
+  </Results>
+</ShapeChangeResult>

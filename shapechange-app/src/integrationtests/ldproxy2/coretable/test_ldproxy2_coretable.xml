@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/ldproxy2/coretable/test_ldproxy2_coretable.qea"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/ldproxy2/coretable/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" mode="enabled" input="INPUT" id="IDENTITY"/>
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" inputs="IDENTITY" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/coretable/results/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="XSDEncRule"/>
+			<targetParameter name="writeXmlEncodingInfos" value="true"/>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+			<rules>
+				<EncodingRule name="XSDEncRule" extends="iso19136_2007">
+					<rule name="rule-xsd-cls-mixin-classes"/>
+				</EncodingRule>
+			</rules>
+			<xsdMapEntries>
+				<XsdMapEntry type="ExtFT1" xsdEncodingRules="*" xmlType="ext:ExtFT1Type" xmlElement="ext:ExtFT1" xmlPropertyType="ext:ExtFT1PropertyType"/>
+				<XsdMapEntry type="ExtFT2" xsdEncodingRules="*" xmlType="ext:ExtFT2Type" xmlElement="ext:ExtFT2" xmlPropertyType="ext:ExtFT2PropertyType"/>
+				<XsdMapEntry type="ExtFT3" xsdEncodingRules="*" xmlType="ext:ExtFT3Type" xmlElement="ext:ExtFT3" xmlPropertyType="ext:ExtFT3PropertyType"/>
+				<XsdMapEntry type="URI" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="*"/>
+			</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace nsabr="ext" ns="https://shapechange.net/test/schema/external" location="https://shapechange.net/test/schema/external.xsd"/>
+			</xmlNamespaces>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target" mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/coretable/results/ldproxy"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="cfgTemplatePath" value="sc-resources/templates/ldproxy2/cfgTemplate.yml"/>
+			<targetParameter name="dateFormat" value="dd.MM.yyyy"/>
+			<targetParameter name="dateTimeFormat" value="dd.MM.yyyy HH:mm:ss"/>
+			<targetParameter name="descriptionTemplate" value="[[definition]]"/>
+			<targetParameter name="descriptorNoValue" value=""/>
+			<targetParameter name="forceAxisOrder" value="NONE"/>
+			<targetParameter name="labelTemplate" value="[[name]]"/>
+			<targetParameter name="objectIdentifierName" value="oid"/>
+			<targetParameter name="serviceDescription" value="..."/>
+			<targetParameter name="serviceLabel" value="MyServiceLabel"/>
+			<!-- <targetParameter name="serviceConfigTemplatePath" value="sc-resources/templates/ldproxy2/serviceConfigTemplate.yml" 
+				/> -->
+			<targetParameter name="collectionIdFormat" value="none"/>
+			<targetParameter name="srid" value="31467"/>
+			<targetParameter name="coretable" value="features"/>
+			<targetParameter name="coretableIdColumn" value="id"/>
+			<targetParameter name="coretableIdColumnLdproxyType" value="string"/>
+			<targetParameter name="coretableFeatureTypeColumn" value="featuretype"/>
+			<targetParameter name="coretableGeometryColumn" value="geometry"/>
+			<!-- coretableJsonFeatureRefWithAnyCollectionId deactivated -> future work -->
+<!-- 			<targetParameter name="coretableJsonFeatureRefWithAnyCollectionId" value="true"/> -->
+			<targetParameter name="coretableSourceColumn" value="base_id"/>
+			<targetParameter name="coretableRefColumn" value="related_id"/>
+			<targetParameter name="coretableRelationsTable" value="references"/>
+			<targetParameter name="coretableRelationNameColumn" value="rel"/>
+			<targetParameter name="coretableInverseRelationNameColumn" value="rel_inv"/>
+			<targetParameter name="enableFragments" value="true"/>
+			<targetParameter name="enableFeaturesGml" value="true"/>
+			<targetParameter name="enableFeaturesGeoJson" value="true"/>
+			<targetParameter name="enableFeaturesJsonFg" value="true"/>
+			<targetParameter name="gmlIdPrefix" value="_"/>
+			<!-- Do not set gmlSfLevel if featureCollectionElementName is set to anything 
+				other than sf:FeatureCollection. -->
+			<!-- <targetParameter name="gmlSfLevel" value="1"/> -->
+			<!-- <targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/> -->
+			<!-- <targetParameter name="featureMemberElementName" value="wfs:member"/> -->
+			<!-- <targetParameter name="supportsStandardResponseParameters" value="true"/> -->
+			<targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
+			<targetParameter name="genericValueTypes" value="GenerAttribute"/>
+			<targetParameter name="_unitTestOverride" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="ldptest1"/>
+			<rules>
+				<EncodingRule name="ldptest1">
+					<rule name="rule-ldp2-all-documentation"/>
+					<rule name="rule-ldp2-all-coretable"/>
+					<rule name="rule-ldp2-all-linkObjectAsFeatureRef"/>
+					<rule name="rule-ldp2-all-queryables"/>
+					<rule name="rule-ldp2-cls-enumeration-enum-constraint"/>
+					<rule name="rule-ldp2-cls-genericValueType"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries_Ldproxy2.xml"/>
+			<mapEntries>
+				<MapEntry type="ExtFT1" rule="*" targetType="LINK" param="linkInfos{urlTemplate=https://example.org/external/ExtFT1/(value)}"/>
+			</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget" mode="enabled" inputs="IDENTITY">
+			<targetParameter name="outputDirectory" value="testResults/ldproxy2/coretable/results/json_schema"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="inlineOrByReferenceDefault" value="byReference"/>
+			<targetParameter name="featureRefProfiles" value="rel-as-key"/>
+			<targetParameter name="defaultEncodingRule" value="myGeoJson"/>
+			<rules>
+				<EncodingRule name="myGeoJson" extends="defaultGeoJson">
+					<rule name="rule-json-all-featureRefs"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardMapEntries_JSON.xml"/>
+			<mapEntries>
+				<MapEntry type="ExtFT1" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT1"
+					param="collectionInfos{uriTemplate=https://example.com/foo/extft1/bar/(featureId);collectionIdTypes=integer}"/>
+				<!--<MapEntry type="ExtFT2" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
+					param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string}"/>
+				<MapEntry type="ExtFT3" rule="*" targetType="https://example.org/extschema/schema.json#/$defs/ExtFT3"
+					param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/baz/(featureId);collectionIdTypes=string,integer}"/>-->
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

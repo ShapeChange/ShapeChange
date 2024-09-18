@@ -1,0 +1,270 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Profile_Transfer_to_EA_Repository]]
+= Profile Transfer to EA Repository
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+The _ProfileTransferEA_ target writes profile information into an EA
+repository. This can be useful when one or more profiles have been
+defined using the Profile Management Tool (PMT) and these profiles need
+to be made available in a model contained in an EA repository, for
+example to execute specific queries.
+
+[[Description]]
+== Description
+
+The _ProfileTransferEA_ target can be used to transfer profile
+information that has been loaded by ShapeChange into an EA repository.
+
+The connection to the EA repository is defined either in the input or in
+the target configuration, via the parameters
+xref:./Profile_Transfer_to_EA_Repository.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_],
+xref:./Profile_Transfer_to_EA_Repository.adoc#username[_username_],
+and
+xref:./Profile_Transfer_to_EA_Repository.adoc#password[_password_].
+
+Instead of modifying an existing EA repository, the user may want to
+transfer profiles into a copy of the EA repository. That is possible if
+the repository is a local EA repository file. For further details, see the
+explanation of parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEARepository[_transferToCopyOfEARepository_].
+
+Profiles are transferred to corresponding model elements in the EA
+repository. If no corresponding element can be found, a warning is
+logged.
+
+By default, the transfer only applies to non-prohibited model elements
+in schemas selected for processing (which are primarily configured via
+the input parameters
+xref:../get started/The_element_input.adoc#appSchemaName[_appSchemaName_],
+xref:../get started/The_element_input.adoc#appSchemaNameRegex[_appSchemaNameRegex_],
+and
+xref:../get started/The_element_input.adoc#appSchemaNamespaceRegex[_appSchemaNamespaceRegex_]).
+For details on non-prohibited classes, see the explanation of input
+parameter
+xref:../get started/The_element_input.adoc#prohibitLoadingClassesWithStatusTaggedValue[_prohibitLoadingClassesWithStatusTaggedValue_].
+This can be extended to all schemas, via the parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#processAllSchemas[_processAllSchemas_].
+
+By default, all profiles from corresponding elements of the input model
+are transferred. The set of profiles to transfer can be restricted by
+setting the parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#profilesToTransfer[_profilesToTransfer_].
+
+Furthermore, profile information that is transferred is merged with
+existing profile information. This behavior can be changed via the
+parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#deleteExistingProfiles[_deleteExistingProfiles_]
+(for further details, see the explanation of the parameter).
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.shapechange.ea.target.profiletransfer.ProfileTransferEA_
+
+[[Conversion_Rules]]
+=== Conversion Rules
+
+This target does not have any specific conversion rules.
+
+[[Parameters]]
+=== Parameters
+
+[[deleteExistingProfiles]]
+==== deleteExistingProfiles
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: By default, profiles that are transferred are merged with
+existing profiles of a model element in the EA repository. Merging means
+that only the profiles with names that match one of the names of
+profiles to be transferred will be overwritten - all other profiles of
+the model element will be kept.
+
+If this parameter is set to true, any previously existing profiles of a
+model element from the EA repository that is eligible for profile
+transfer (see  parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#processAllSchemas[_processAllSchemas_])
+are deleted before profiles are transferred to it (even if no
+corresponding model elements could be found in the input model).
+
+Applies to Rule(s): none – default behavior
+
+[[outputDirectory]]
+==== outputDirectory
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: the current run directory
+
+Explanation: Only relevant if parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#transferToCopyOfEARepository[_transferToCopyOfEARepository_]
+is "true". In that case, parameter outputDirectory defines the path to
+the folder in which the copy of the EA repository file will be created.
+
+Applies to Rule(s): none – default behavior
+
+[[processAllSchemas]]
+==== processAllSchemas
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: By default, profiles are transferred only for
+non-prohibited classes (and their properties) from schemas that are
+selected for processing. If this parameter is set to true, profiles are
+transferred for non-prohibited classes (and their properties) from all
+schemas. For details on non-prohibited classes, see the explanation of
+input parameter
+xref:../get started/The_element_input.adoc#prohibitLoadingClassesWithStatusTaggedValue[_prohibitLoadingClassesWithStatusTaggedValue_].
+
+Applies to Rule(s): none – default behavior
+
+[[profilesToTransfer]]
+==== profilesToTransfer
+
+Required / Optional: optional
+
+Type: String (comma separated list of values)
+
+Default Value: all profiles
+
+Explanation: Names of profiles to be transferred.
+
+Applies to Rule(s): none – default behavior
+
+[[password]]
+==== password
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Explanation: If the target parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_]
+is set, and the connection requires a username and password, set the
+password with this target parameter.
+
+NOTE: If the parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_]
+is not set in the target configuration, the target will fully rely on
+the information provided in the input configuration. In other words,
+then there is no need to set the parameter _password_ in the target
+configuration.
+
+Applies to Rule(s): none – default behavior
+
+[[repositoryFileNameOrConnectionString]]
+==== repositoryFileNameOrConnectionString
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: defaults to the value of the input parameters
+xref:../get started/The_element_input.adoc#inputFile[_inputFile_]
+and
+xref:../get started/The_element_input.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_]
+(the former has higher priority than the latter).
+
+Explanation: If this parameter is set in the target configuration, it
+provides the connection info of the EA repository to which profiles
+shall be transferred. If the parameter is not set, the target will
+transfer the profiles into the model that is defined in the input
+configuration of ShapeChange (for further details on this parameter, see
+the explanation for the input parameter
+xref:../get started/The_element_input.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_];
+keep in mind that the target will assume / requires that the connection
+to an EA repository is given).
+
+Applies to Rule(s): none – default behavior
+
+[[transferToCopyOfEARepository]]
+==== transferToCopyOfEARepository
+
+Alias: transferToCopyOfEAP (this was the parameter name in ShapeChange v2.x)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: By default, profile information is transferred into the EA
+repository that is defined by the configuration. If this target
+parameter is 'true' and if the EA repository defined by the
+configuration is an EA repository file, then that file is copied
+into the output directory and only the copy will be processed by the
+target.
+
+Applies to Rule(s): none – default behavior
+
+[[username]]
+==== username
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Explanation: If the target parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_]
+is set, and the connection requires a username and password, set the
+username with this target parameter.
+
+NOTE: If the parameter
+xref:./Profile_Transfer_to_EA_Repository.adoc#repositoryFileNameOrConnectionString[_repositoryFileNameOrConnectionString_]
+is not set in the target configuration, the target will fully rely on
+the information provided in the input configuration. In other words,
+then there is no need to set the parameter _username_ in the target
+configuration.
+
+Applies to Rule(s): none – default behavior
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.ea.target.profiletransfer.ProfileTransferEA"
+  mode="enabled" inputs="TRF_X">
+  <targetParameter name="outputDirectory" value="results/profileTransfer"/>
+  <targetParameter name="transferToCopyOfEARepository" value="true"/>
+  <targetParameter name="deleteExistingProfiles" value="true"/>
+  <targetParameter name="profilesToTransfer" value="A,C"/>
+ </Target>
+----------

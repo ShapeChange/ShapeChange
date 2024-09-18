@@ -1,0 +1,118 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Code_List_Loader]]
+= Code List Loader
+
+(since v2.6.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation provides rules with which code lists contained in
+the model can be populated with information. Typically, the codes of a
+code list are managed outside of an application schema. That means that
+even though the application schema content may be fixed in a specific
+version of the schema, the codes of the code lists that are used by the
+schema can vary. Externally managed code lists are typically modelled
+without any codes.
+
+A use case where the transformation is useful is encoding a code list in
+a specific format, like an ISO 19139 code list dictionary. The
+transformation loads the codes of a code list from its authoritative
+source. Subsequent ShapeChange processes, like the
+xref:../targets/dictionaries/ISO_19139_Codelist_Dictionary.adoc[ISO 19139
+Codelist Dictionary target], can then derive a dictionary in the
+required format. The same workflow can be used to update the dictionary
+at any time.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.shapechange.core.transformation.adding.CodeListLoader_
+
+[[Transformation_Rules]]
+=== Transformation Rules
+
+[[rule-trf-cls-loadCodes]]
+==== rule-trf-cls-loadCodes
+
+This rule loads codes from authoritative code list sources into the
+model. The transformation looks at each code list contained in the
+schemas selected for processing. If the code list defines the source,
+then the codes will be retrieved from the source and added to the code
+list. The source is defined by tagged value _codeListSource_, which
+provides a link to a remote or local resource in a specific
+representation. The representation is defined via tagged value
+_codeListSourceRepresentation_. At the moment, the following
+representation is supported:
+
+* Representation:
+** ID: application/x.iso639_2
+** Definition: The CSV-based list of ISO 639-2 language codes, as
+published by the
+https://www.loc.gov/standards/iso639-2/ascii_8bits.html[Library of
+Congress]. Codes are loaded as follows: The code name is the alpha-3
+code (bibliographic, in case that both a bibliographic and a
+terminologic code are available). The english name is used as the
+definition and documentation of the code.
+
+Additional representations can be added in the future.
+
+The tagged value _codeListSourceCharset_ can be used to define the
+character set of the resource. This information is used to correctly
+read the code list resource. If the tagged value is blank, then UTF-8 is
+used by default. You can use one of the character sets supported by
+Java. For further details, see the documentation of the Java class
+https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html[Charset]
+and its method
+https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html#forName-java.lang.String-[forName(String
+charsetName)].
+
+[[Parameters]]
+=== Parameters
+
+At the moment no parameters are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+This transformation does not make use of the advanced process
+configuration facility.
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Transformer class="de.interactive_instruments.shapechange.core.transformation.adding.CodeListLoader"
+ id="TRF_CL_LOADER" input="IDENTITY" mode="enabled">
+ <rules>
+  <ProcessRuleSet name="cl_loader_rules">
+   <rule name="rule-trf-cls-loadCodes"/>
+  </ProcessRuleSet>
+ </rules>
+</Transformer>
+----------

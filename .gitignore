@@ -14,13 +14,17 @@
 
 # Maven
 /target/
+/shapechange-app/sc-resources/
+/shapechange-app/target/
+/shapechange-core/target/
+/shapechange-ea/target/
 
 # Tests
-testResults/
-scxmlTmpDir/
-/test.xsd
-/log.html
-/log.xml
+shapechange-app/testResults/
+shapechange-app/scxmlTmpDir/
+shapechange-app/test.xsd
+shapechange-app/log.html
+shapechange-app/log.xml
 
 # VS Code
 *.code-workspace

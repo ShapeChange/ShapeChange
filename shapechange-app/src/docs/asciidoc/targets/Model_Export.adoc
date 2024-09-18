@@ -1,0 +1,385 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Model_Export]]
+= Model Export
+
+(since v2.4.0)
+
+[[Introduction]]
+== Introduction
+
+ShapeChange loads a UML model into an internal representation. This
+internal model can be transformed, and target representations can be
+derived from it (e.g. XML Schemas).
+
+The _ModelExport_ target exports the internal model to a ShapeChange
+specific XML format: SCXML. The format can be loaded by ShapeChange and
+other tools, for example the
+https://github.com/ShapeChange/ProfileManagementTool[_ShapeChange
+Profile Management Tool (PMT)_].
+
+[[Description]]
+== Description
+
+By default, this target exports the full model, with all profiles
+defined by the schemas selected for processing. Conversion rules and the
+parameter
+xref:./Model_Export.adoc#exportProfilesFromWholeModel[_exportProfilesFromWholeModel_]
+can modify that behavior. Likewise, the set of tagged values to export
+can be controlled via the parameter
+xref:./Model_Export.adoc#ignoreTaggedValuesRegex[_ignoreTaggedValuesRegex_].
+
+WARNING: The default value of that parameter is "(profiles)", so by
+default the "profiles" tagged value will not be exported!
+
+Another aspect that requires consideration when exporting a model is the
+way that profiles are defined in it. ShapeChange supports two profile
+definition behaviors: explicit and non-explicit (for further details,
+see the xref:../transformations/profiling/Profiler.adoc[Profiler]).
+Profile definitions in an exported model must be explicit. Consequently,
+if the profile definitions of a model are not explicit, they need to be
+converted before exporting the model – unless profiles shall be omitted
+completely. +
+By default, the _ModelExport_ target assumes that the profile
+definitions in the model are explicit. By setting parameter
+xref:./Model_Export.adoc#profilesInModelSetExplicitly[_profilesInModelSetExplicitly_]
+to false, the target can be configured to convert profile definitions.
+In that case, the target will gather the names of all profiles defined
+in the model, and assign this set of profiles to each class without a
+profile assignment. Alternatively, the profile names can explicitly be
+configured via the configuration parameter
+xref:./Model_Export.adoc#profilesForClassesWithoutExplicitProfileAssignments[_profilesForClassesWithoutExplicitProfileAssignments_].
+Properties without profile assignment receive the profiles of their
+class.
+
+The XML format supports attributes and elements that are specifically
+designed to support editing model profiles with the PMT. The PMT
+differentiates between packages that are editable and those that are not
+editable. Typically, external schemas like the ISO schemas are not the
+subject of profiling. In that case, packages with ISO schemas would be
+set as not editable. By default, the ModelExport target marks all
+packages that do not belong to schemas selected for processing
+(primarily via the input parameters _appSchemaName_,
+_appSchemaNameRegex_, and _appSchemaNamespaceRegex_) as not editable.
+That can be changed
+via xref:./Model_Export.adoc#rule-exp-pkg-allPackagesAreEditable[_rule-exp-pkg-allPackagesAreEditable_].
+
+The target exports the model into an XML file (the name and location of
+the export file are defined via the parameters
+xref:./Model_Export.adoc#outputFilename[outputFilename]
+and
+xref:./Model_Export.adoc#outputDirectory[outputDirectory]).
+If the parameter
+xref:./Model_Export.adoc#zipOutput[_zipOutput_] is
+set to true, then the XML file will be put into a ZIP archive. This is
+useful for large export files that shall be processed with the PMT. When
+exporting large models, it is advisable to set the parameter.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.shapechange.core.target.modelexport.ModelExport_
+
+[[Conversion_Rules]]
+=== Conversion Rules
+
+[[rule-exp-all-omitDescriptors]]
+==== rule-exp-all-omitDescriptors
+
+(since v2.9.0)
+
+If this rule is included, descriptors of model elements will not be
+encoded.
+
+Parameter(s): _none_
+
+[[rule-exp-all-omitExistingProfiles]]
+==== rule-exp-all-omitExistingProfiles
+
+By default, existing profiles are exported. With this rule, that
+behavior can be changed to omit existing profiles.
+
+This rule has higher priority than
+xref:./Model_Export.adoc#rule-exp-all-restrictExistingProfiles[_rule-exp-all-restrictExistingProfiles_].
+
+Parameter(s): _none_
+
+[[rule-exp-all-restrictExistingProfiles]]
+==== rule-exp-all-restrictExistingProfiles
+
+By default, existing profiles are exported. With this rule, that
+behavior can be changed to restrict the set of profiles that are
+exported.
+
+The target parameter
+xref:./Model_Export.adoc#profilesToExport[_profilesToExport_]
+contains a (comma-separated) list of names of the profiles that shall be
+exported.
+
+This rule has lower priority than
+xref:./Model_Export.adoc#rule-exp-all-omitExistingProfiles[_rule-exp-all-omitExistingProfiles_].
+
+Parameter(s):
+
+* xref:./Model_Export.adoc#profilesToExport[profilesToExport]
+
+[[rule-exp-pkg-allPackagesAreEditable]]
+==== rule-exp-pkg-allPackagesAreEditable
+
+By default, packages that do not belong to the schemas selected for
+processing are marked as not editable. If this rule is enabled, all
+packages are exported as editable.
+
+Parameter(s): _none_
+
+[[rule-exp-prop-suppressIsNavigable]]
+==== rule-exp-prop-suppressIsNavigable
+
+(since v2.9.0)
+
+By default, navigability of a property is encoded within the
+sc:isNavigable element. The element is omitted if navigability is true
+(since that is the reasonable default for attributes, which typically
+represent the bulk of properties within an application schema). Thus,
+sc:isNavigable is typically only set if navigability is false.
+
+However: In UML 1, property navigability indicated property ownership. A
+navigable association role was always owned by a class. In UML 2.4+,
+that convention is deprecated. In UML 2.4+, ownership and navigability
+are separate concepts, and navigability does not have much useful
+meaning anymore. For UML 1 and UML 2 based schemas, where ownership is
+not explicitly defined, ownership is derived from property navigability.
+Since the sc:isNavigable element is optional, without a default value,
+SCXML supports use cases where the schema explicitly models property
+ownership and navigability is not used at all. However, ShapeChange
+encodes navigability by default, and this default behavior supports use
+cases where ownership is defined through navigability.
+
+If this rule is included in the encoding rule, then sc:isNavigable
+elements will not be created, which supports creating SCXML for use
+cases where ownership is modeled explicitly and not defined implicitly
+through navigability.
+
+Parameter(s): _none_
+
+[[Parameters]]
+=== Parameters
+
+[[exportProfilesFromWholeModel]]
+==== exportProfilesFromWholeModel
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: By default, profiles are exported only for classes (and
+their properties) from schemas that are selected for processing. If this
+parameter is set to true, profiles are exported for all model classes
+(and their properties).
+
+Applies to Rule(s): none – default behavior
+
+[[ignoreTaggedValuesRegex]]
+==== ignoreTaggedValuesRegex
+
+Required / Optional: optional
+
+Type: String (with regular expression)
+
+Default Value: (profiles)
+
+Explanation: A tagged value whose name matches the regular expression
+defined by this parameter will not be exported.
+
+Applies to Rule(s): none – default behavior
+
+[[includeConstraintDescriptions]]
+==== includeConstraintDescriptions
+
+(since v2.9.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If true, descriptive information of OCL and FOL constraints
+is encoded in <description> elements. If false (the default behavior,
+for backwards-compatibility reasons), no <description> elements will be
+created for constraints.
+
+Applies to Rule(s): none – default behavior
+
+[[outputDirectory]]
+==== outputDirectory
+
+Required / Optional: Required
+
+Type: String
+
+Default Value: the current run directory
+
+Explanation: The path to the folder in which the model export file will
+be created.
+
+Applies to Rule(s): none – default behavior
+
+[[outputFilename]]
+==== outputFilename
+
+Required / Optional: Required
+
+Type: String
+
+Default Value: ModelExport
+
+Explanation: The name of the model export file (without file extension).
+
+Applies to Rule(s): none – default behavior
+
+[[profilesInModelSetExplicitly]]
+==== profilesInModelSetExplicitly
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: true
+
+Explanation: Indicates if profile definitions in the input model are
+explicitly set (true) or not (false). If they are not, then profile
+inheritance would apply, which is converted during the export (see
+parameter
+xref:./Model_Export.adoc#profilesForClassesWithoutExplicitProfileAssignments[_profilesForClassesWithoutExplicitProfileAssignments_])
+unless
+xref:./Model_Export.adoc#rule-exp-all-omitExistingProfiles[_rule-exp-all-omitExistingProfiles_]
+is enabled.
+
+Applies to Rule(s): none – default behavior
+
+[[profilesForClassesWithoutExplicitProfileAssignments]]
+==== profilesForClassesWithoutExplicitProfileAssignments
+
+Required / Optional: optional
+
+Type: String (comma separated list of values)
+
+Default Value: all profiles defined in the model
+
+Explanation: Names of profiles that will be set for classes that do not
+belong to a specific profile. This is relevant in case that the profiles
+are not set explicitly in the model (parameter
+xref:./Model_Export.adoc#profilesInModelSetExplicitly[_profilesInModelSetExplicitly_]
+is false) and if _rule-exp-all-omitExistingProfiles_ is not enabled.
+
+Applies to Rule(s): none – default behavior
+
+[[profilesToExport]]
+==== profilesToExport
+
+Required / Optional: required
+
+Type: String (comma separated list of values)
+
+Default Value: none
+
+Explanation: Names of profiles to export
+
+Applies to Rule(s):
+xref:./Model_Export.adoc#rule-exp-all-restrictExistingProfiles[_rule-exp-all-restrictExistingProfiles_]
+
+[[schemaLocation]]
+==== schemaLocation
+
+(since v2.8.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: http://shapechange.net/resources/schema/ShapeChangeExportedModel.xsd
+
+Explanation: The location of the XML Schema that shall be referenced by
+the xsi:schemaLocation attribute, which will be added to the root of the
+generated SCXML file. Note that the namespace, which is the first part
+of the xsi:schemaLocation, will not be changed by this parameter. Only
+the schema location is changed.
+
+Applies to Rule(s): none – default behavior
+
+[[suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning]]
+==== suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning
+
+(since v2.9.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If true, then the following property characteristics will
+not be encoded for codes/enums, because they do not have semantic
+meaning (for a code/enum):
+
+* isOrdered
+* isUnique
+* isAggregation
+* isComposition
+* isOwned.
+
+Applies to Rule(s): none – default behavior
+
+[[zipOutput]]
+==== zipOutput
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: Defines if the output should be compressed in a zip file
+(true) or not (false).
+
+Applies to Rule(s): none – default behavior
+
+[[Configuration_Example]]
+== Configuration Example
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.core.target.modelexport.ModelExport" mode="enabled">
+ <targetParameter name="outputDirectory" value="results/modelexport"/>
+ <targetParameter name="outputFilename" value="schema_export"/>
+ <targetParameter name="sortedOutput" value="true"/>
+ <targetParameter name="defaultEncodingRule" value="export"/>
+ <rules>
+ <EncodingRule name="export">
+ <rule name="rule-exp-all-omitExistingProfiles"/>
+ <rule name="rule-exp-pkg-allPackagesAreEditable"/>
+ </EncodingRule>
+ </rules>
+</Target>
+----------

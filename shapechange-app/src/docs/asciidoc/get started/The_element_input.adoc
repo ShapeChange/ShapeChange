@@ -1,0 +1,948 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[The_element_input]]
+= The element "input"
+
+[[Overview]]
+== Overview
+
+The <input> element contains parameters and other information relating
+to the input model.  For example, the following snippet is an <input>
+element referencing a model in EA repository format:
+
+[source,xml,linenumbers]
+----------
+<input>
+    <parameter name="inputModelType" value="EA7"/>
+    <parameter name="inputFile" value="mymodel.qea"/>
+    <parameter name="appSchemaName" value="My Schema"/>
+    <parameter name="publicOnly" value="true"/>
+    <parameter name="addTaggedValues" value="size"/>
+    <xi:include href="https://shapechange.net/resources/config/StandardAliases.xml"/>
+</input>
+----------
+
+[[Parameters]]
+== Parameters
+
+The following subsections document the parameters recognized for the
+<input> element.
+
+[[addTaggedValues]]
+=== addTaggedValues
+
+Default Value: <blank>
+
+Explanation: A comma-separated list of additional tagged values that
+should be included when reading the model into memory. ShapeChange
+recognizes a set of well-known tagged values, but at runtime it may be
+desirable to include others, depending on the input model.
+
+NOTE (since v2.7.0): If '*' is set as parameter value, then all tagged
+values will be loaded from the model.
+
+[[addStereotypes]]
+=== addStereotypes
+
+(since v2.9.0)
+
+Default Value: <blank>
+
+Explanation: A comma-separated list of additional stereotypes that
+should be included when reading the model into memory. ShapeChange
+recognizes a set of well-known stereotypes, but at runtime it may be
+desirable to include others, depending on the input model. If '*' is set
+as parameter value, then all stereotypes will be loaded from the model.
+
+NOTE:
+
+* Any stereotype loaded from the model will first be normalized, i.e.
+mapped according to the
+xref:./The_element_input.adoc#Stereotype_aliases[stereotype
+aliases] defined in the configuration.
+* A well-known stereotype is typically converted to lower-case.
+
+[[applyDescriptorSourcesWhenLoadingScxml]]
+=== applyDescriptorSourcesWhenLoadingScxml
+
+(since v2.9.0)
+
+Default Value: false
+
+Explanation: Set this parameter to "true" in order to apply descriptor
+sources defined in the input configuration, whenever SCXML is loaded
+(i.e. as input model, but also by transformations and targets).
+
+[[appSchemaName]]
+=== appSchemaName
+
+Default Value: <blank>
+
+Explanation: A string containing the name of the application schema to
+be transformed (if there is more than one in the input model, and only
+one output is desired). The default value of <blank> will result in all
+incoming application schemas being transformed.
+
+[[appSchemaNameRegex]]
+=== appSchemaNameRegex
+
+Default Value: <blank>
+
+Explanation: A regular expression used to limit the schemas to be
+processed. A schema will only be processed if its name matches the
+pattern contained in this parameter.
+
+[[appSchemaNamespaceRegex]]
+=== appSchemaNamespaceRegex
+
+Default Value: <blank>
+
+Explanation: A regular expression used to limit the schemas to be
+processed. A schema will only be processed if its namespace matches the
+pattern contained in this parameter.
+
+[[checkingConstraints__constraintLoading]]
+=== checkingConstraints / constraintLoading
+
+NOTE: Alias "constraintLoading" available since v2.9.0.
+
+Default Value: enabled
+
+Explanation: (up until ShapeChange v2.8.0, valid for EA7 input only) If
+the parameter is not "disabled", the OCL constraints in the model are
+analyzed and tested, regardless of whether they are used in the further
+execution.
+
+[[classTypesToCreateConstraintsFor]]
+=== classTypesToCreateConstraintsFor
+
+Default Value: if the parameter is not configured, constraints are
+considered for all class categories
+
+Explanation: (up until ShapeChange v2.8.0, valid for EA7 input only) If
+this optional parameter is used in the configuration, constraints are
+only created for the class types/categories identified by this parameter
+(in a comma-separated list of class stereotypes, for example
+"featuretype,type" - the list of class stereotypes is available
+xref:../application schemas/UML_profile.adoc#Stereotypes_of_classes[here]).
+
+[[constraintCreationForProperties]]
+=== constraintCreationForProperties
+
+Default Value: true
+
+Explanation: (up until ShapeChange v2.8.0, valid for EA7 input only) If
+the parameter is "false", constraints defined for properties (attributes
+and association roles) will not be created.
+
+[[constraintExcelFile]]
+=== constraintExcelFile
+
+Default Value: <blank>
+
+Explanation: Location of an excel file with First Order Logic
+constraints of source type 'SBVR' that shall be loaded into the input
+model before postprocessing it.
+
+[[dontConstructAssociationNames]]
+=== dontConstructAssociationNames
+
+(since v2.2.0)
+
+Default Value: false
+
+Explanation: If an association has no name, ShapeChange generates a name
+for it while loading the model. The default name is constructed by
+concatenating the names of the classes at both ends of the association.
+In some cases, missing association names should not automatically be
+generated. For these cases, set this parameter to 'true'.
+
+[[excludedPackages]]
+=== excludedPackages
+
+Default Value: <blank>
+
+Explanation: Comma-separated list of package names to exclude when
+loading the model. Direct and indirect subpackages will also be ignored.
+This can be useful to speed up loading the model (especially from EA
+repositories - not so much from SCXML), for example when excluding ISO
+packages.
+
+More specifically, the behavior of this parameter (since ShapeChange
+v2.11) is as follows:
+
+* If a class C belongs to an excluded package, it will not be loaded.
+** All attributes and navigable roles that belong to class C will not be
+loaded, either.
+** Any attribute whose value type is class C will internally receive
+type.id 'unknown'.
+** An association between class C and a class D that is loaded (in other
+words, D does not belong to an excluded package) will be removed.
+However, if D has a navigable association role whose value type is C,
+then that role will be turned into an attribute (with type.id
+'unknown').
+** If class C is an association class, and the according association is
+between classes that do not belong to excluded packages, then the
+association will be loaded as a simple association (not as an
+association class).
+* Assoziations between classes from excluded packages will not be
+loaded.
+** The roles of the association will thus also not be loaded.
+** If such an association is an association class, i.e. there is a class
+that is linked to the association in an association class relationship,
+and that class does not belong to an excluded package, then the class
+will still be loaded.
+* An inheritance relationship between a class E that is excluded and a
+class F that is not excluded will not be created (because E will not be
+present in the model once the loading process has been finished).
+
+[[extractSeparator]]
+=== extractSeparator
+
+(since 2.0.2)
+
+Default Value: --
+
+Explanation: The start and end part of any separator used to split the
+documentation of a model element. See "Descriptor sources" below for
+additional information.
+
+[[folConstraintTypeRegex]]
+=== folConstraintTypeRegex
+
+Default Value: (SBVR)
+
+Explanation: (Valid for EA7 input only) The EA constraint types that are
+treated as First Order Logic (FOL) constraints. A value of "" will
+ensure that constraints are not recognized as FOL constraints.
+Constraints whose type is not recognized will be converted to text
+constraints without parsing. NOTE: Processing of First Order Logic
+constraints is in beta status
+
+[[id]]
+=== id
+
+Default Value: INPUT
+
+Explanation: This optional parameter (configured via an XML attribute)
+determines how transformers and especially targets can reference the
+input model (in the transformer's "input" / target's "inputs"
+parameter).
+
+[[ignoreEncodingRuleTaggedValues]]
+=== ignoreEncodingRuleTaggedValues
+
+Default Value: false
+
+Explanation: True, if xxxEncodingRule tagged values shall be ignored
+(because the model is wrong and needs cleanup), else false.
+
+[[ignoreTaggedValues]]
+=== ignoreTaggedValues
+
+(since v2.13.0)
+
+Type: String (of comma-separated values)
+
+Default Value: _none_
+
+Explanation: Define the names of tags (i.e., tagged values), which shall be 
+ignored (one could also say 'dropped') while loading a model. 
+
+NOTE: This mechanism is applied after tag renaming (e.g. due to
+application of <<Tag_aliases,tag aliases>>, and renaming of deprecated tags), 
+and application of input parameters <<addTaggedValues>> and <<representTaggedValues>>.
+
+
+[[inputFile]]
+=== inputFile
+
+Default Value: https://shapechange.net/resources/test/test.xmi
+
+Explanation: The path to the input file, relative to the working
+directory. For XMI 1.0 models, URLs are supported, too.
+
+[[inputModelType]]
+=== inputModelType
+
+Default Value: XMI10
+
+Explanation: A string describing the format of the application schema to
+be transformed. The current options are:
+
+* *XMI10*: a UML model in XMI 1.0 format
+* *EA7*: an Enterprise Architect project file, supported are versions
+7.5 and later
+* *GCSR*: a GCSR model contained in a Microsoft Access Database (MDB)
+* *SCXML*: a model in a ShapeChange specific XML format. The
+xref:../targets/Model_Export.adoc[Model Export target] can
+create SCXML from any model that was loaded by ShapeChange. Loading a
+model from (SC)XML is fast. It is significantly faster than reading the
+model from an EA repository. This is useful when processing the same
+model multiple times.
+
+NOTE: Since v2.9.0, it is also possible to provide the fully qualified
+name of a Java class that implements the Model interface (i.e.
+de.interactive_instruments.shapechange.core.model.Model.java).
+
+NOTE: Loading a model from an EA repository requires execution with
+32bit Java, due to the dependency on the 32bit EA API. For all other
+input model types, 64bit Java can be used - unless processing (a
+transformation or a target) requires accessing an EA repository via the
+EA API (then 32bit Java must be used). 32bit Java processes can only be
+executed with a limited amount of main memory (one or two gigabytes).
+Typically, this is not an issue. However, for very large models with
+hundreds of classes, and a processing workflow that greatly increases
+the size of the model (e.g. through copies of models created while
+flattening the model), this limitation can be significant. In such a
+case, a workaround is to load the model with 32bit Java from the EA
+repository, export it to SCXML, and then execute ShapeChange again using
+64bit Java and loading the model from SCXML.
+
+
+[[isAIXM]]
+=== isAIXM
+
+Default Value: false
+
+Explanation: A boolean value indicating if AIXM schemas are being
+processed, which requires special treatment (due to the AIXM extension
+mechanism and because AIXM feature types are dynamic features).
+
+[[kmlReferenceType]]
+=== kmlReferenceType
+
+Default Value: alternate
+
+Explanation: (Valid for GCSR input only) A text string that indicates
+how KML reference strings should be represented. (Add more information.)
+
+[[language]]
+=== language
+
+(since 2.0.2)
+
+Default Value: en
+
+Explanation: The language to use in case descriptors for model elements
+like definitions or aliases are multilingual. Use two letter language
+codes.
+
+[[loadConstraintsForSelectedSchemasOnly]]
+=== loadConstraintsForSelectedSchemasOnly
+
+(since 2.0.2)
+
+Default Value: false
+
+Explanation: Set this input parameter to 'true' if constraints shall
+only be loaded for classes and properties from the schemas selected for
+processing (and ignoring all constraints from other packages).Don't make
+use of this parameter if one of the classes from the selected schema
+packages extends another class from an external package (e.g. an ISO
+package) and needs to inherit constraints from that class!This parameter
+is primarily a convenience mechanism to avoid loading and parsing
+constraints from external packages (especially ISO packages) that are
+irrelevant for processing. So on the one hand this can speed up model
+loading. On the other hand, it can prevent messages about constraints
+that were parsed from the elements of an external package from appearing
+in the log.
+
+[[loadLinkedDocuments]]
+=== loadLinkedDocuments
+
+(since v2.5.0)
+
++++Type:+++ Boolean (true or false)
+
++++Default Value:+++ false
+
++++Explanation:+++ (valid only for EA7 input) Set to 'true' to load
+linked documents for classes in schemas selected for processing.
+
+NOTE:
+
+* ShapeChange will store the linked documents in subdirectory
+"linkedDocuments" of the directory defined via the input parameter
+xref:./The_element_input.adoc#tmpDirectory[_tmpDirectory_].
+* A linked document is a .docx file that typically provides an extensive
+amount of formatted documentation. The creation of a database model is
+an example of where linked documentation plays a role.
+
+[[mainAppSchema]]
+=== mainAppSchema
+
+(available since v2.4.0)
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: During a single execution of ShapeChange, a single or
+multiple application schemas can be processed. The relevant input
+parameters for controlling which schemas are selected for processing by
+ShapeChange are:
+xref:./The_element_input.adoc#appSchemaName[_appSchemaName_],
+xref:./The_element_input.adoc#appSchemaNameRegex[_appSchemaNameRegex_],
+and
+xref:./The_element_input.adoc#appSchemaNamespaceRegex[_appSchemaNamespaceRegex_].
+
+Some ShapeChange targets process one schema at a time, and generate a
+result for each schema. However, ShapeChange also has targets, so called
+SingleTargets, which gather information from all schemas selected for
+processing, and generate a combined result for all these schemas.
+Examples of SingleTargets are: the SQL DDL target and the ArcGIS
+Workspace target.
+
+If multiple schemas have been selected for processing, ShapeChange may
+need to get information from a specific schema, like target namespace,
+XML namespace abbreviation, and version. For output processing, version
+information can be important. By adding the _mainAppSchema_ parameter to
+the input configuration, with the name of one of the application schemas
+that were selected for processing as value, ShapeChange will get this
+information from that schema.
+
+[[navigatingNonNavigableAssociationsWhenParsingOcl]]
+=== navigatingNonNavigableAssociationsWhenParsingOcl
+
+(available since v2.10.0)
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: By default, the ShapeChange OCL parser does not
+support navigating across non-navigable association roles, which is an
+optional feature according to the OCL standard. By setting the value of
+this parameter to true, navigation across non-navigable association
+roles while loading the input model is enabled.
+
+NOTE: Since by default non-navigable association roles are ignored when
+parsing OCL expressions, the parameter must be set on any process where
+OCL constraints are parsed, i.e. also when performing a transformation.
+Therefore, this parameter is also
+xref:../transformations/Common_Transformer_Functionality.adoc#Parsing_and_Validating_Constraints[documented
+as a common transformation parameter].
+
+[[oclConstraintTypeRegex]]
+=== oclConstraintTypeRegex
+
+Default Value: (OCL|Invariant)
+
+Explanation: (Valid for EA7 input only) The EA constraint types that are
+treated as OCL constraints. A value of "" will ensure that constraints
+are not recognized as OCL constraints. Constraints whose type is not
+recognized will be converted to text constraints without parsing.
+
+[[onlyDeferrableOutputWrite]]
+=== onlyDeferrableOutputWrite
+
+Default Value: false
+
+Explanation: If set to 'true' (ignoring case), ShapeChange will only
+execute the output writing routine of targets that implement the
+DeferrableOutputWriter interface, like the FeatureCatalogue target. This
+can be used to only transform the temporary XML with feature catalogue
+information in a separate ShapeChange run. That run does no longer need
+to read the UML model and can thus be executed using 64bit Java, which
+supports bigger heap sizes that may be required to transform large XML
+files.
+
+NOTE: This is an expert setting that is primarily used for debugging.
+
+[[prohibitLoadingClassesWithStatusTaggedValue]]
+=== prohibitLoadingClassesWithStatusTaggedValue
+
+(since v2.4.0)
+
+Default Value: notValid, retired, superseded
+
+NOTE: The default only applies if the parameter is configured with empty
+value. If the parameter is missing in the configuration, it is ignored
+and the default does not apply (in that case, non-valid model elements
+would be loaded). This behavior has been implemented to support loading
+of other models that use tagged value _status_, but with different
+meaning.
+
+Explanation: Comma separated list of values that, if one of them is
+being set as the 'status' tagged value of a class, will lead to the
+class not being loaded.
+
+[[publicOnly]]
+=== publicOnly
+
+Default Value: true
+
+Explanation: A Boolean value indicating whether or not only those
+elements with public visibility are to be mapped to GML, which is
+appropriate for application schemas that will be used for data encodings
+that are shared across application boundaries. If "false", all elements
+will be mapped.
+
+[[representTaggedValues]]
+=== representTaggedValues
+
+Type: String (of comma-separated values)
+
+Default Value: <blank>
+
+Explanation: A list of additional tagged values that should not only be
+read into memory, but also output (if appropriate).
+
+Applies to the following targets:
+
+* XmlSchema: The tagged values are represented via <appInfo>
+annotations. This is a ShapeChange-specific extension to the standard
+encoding rules; see
+xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-all-tagged-values[here].
+* FeatureCatalogue (since v2.5.1): The tagged values of a model element
+will be represented. Applies to the following output formats: DOCX,
+HTML, FRAMEHTML. Note, however, that due to the specific representation
+of code lists in these formats, the tagged values of code lists and
+their codes are not represented.
+* SqlDdl (since v2.6.0): Applies to the database UML model output.
+Requires that
+xref:../targets/SQL_DDL.adoc#rule-sql-all-databaseModel[rule-sql-all-databaseModel]
+and
+xref:../targets/SQL_DDL.adoc#rule-sql-all-representTaggedValues[rule-sql-all-representTaggedValues]
+are included in the encoding rule.
+* ArcGIS Workspace (since v2.6.0): Requires that
+xref:../targets/arcgis/ArcGIS_Workspace.adoc#rule-arcgis-all-representTaggedValues[rule-arcgis-all-representTaggedValues]
+is included in the encoding rule.
+
+[[repositoryFileNameOrConnectionString]]
+=== repositoryFileNameOrConnectionString
+
+Default Value: _none_
+
+Explanation: This parameter can be used instead of parameter 'inputFile'
+(if both are configured, 'inputFile' will be ignored). It has
+been introduced to take into account that ShapeChange can also connect
+to EA repositories that are not available via an EA repository file
+but via a direct connection to a database server or Cloud Service.
+
+The parameter either provides the path to the input file (works for all
+model types) or it provides the connection string to an EA repository
+(database server or Cloud Service). In order to create such a connection
+string, open EA and go to "Open Project...". There you will find a list
+of recently opened projects. Right-click the repository you wish to
+process with ShapeChange, then "Edit connection string", copy the value
+and set it as the parameter value.
+
+[NOTE]
+======
+If you are using an encrypted connection string, certain
+characters with special meaning in XML must be escaped in the string
+before setting it in the ShapeChange configuration:
+
+* ampersand (&) is escaped to \&amp;
+* double quotes (") are escaped to \&quot;
+** No need to escape double quotes if the quotes around the XML
+attribute value are single quotes.
+* single quotes (') are escaped to \&apos;
+** No need to escape single quotes if the quotes around the XML
+attribute value are double quotes.
+* less than (<) is escaped to \&lt;
+* greater than (>) is escaped to \&gt;
+======
+
+[[scxmlXsdLocation]]
+=== scxmlXsdLocation
+
+(since 2.9.0)
+
+Default Value: _none_
+
+Explanation: This parameter can be used ot provide the location (as a
+URL or a file path) of an XML Schema to validate SCXML. If this
+parameter is not set, ShapeChange will parse SCXML without validating
+it.
+
+[[skipSemanticValidationOfShapeChangeConfiguration]]
+=== skipSemanticValidationOfShapeChangeConfiguration
+
+(since 2.2.0)
+
+Default Value: false
+
+Explanation: If 'true', semantic validation of the ShapeChange
+configuration will not be performed (further details can be found
+xref:./Validation_of_the_Configuration.adoc[here]).
+
+[[sortedOutput]]
+=== sortedOutput
+
+Default Value: false
+
+Explanation: If "false", the types in a schema will be processed in
+random order. If "true", the types will be processed alphabetically. If
+"taggedValue=<tag>", the types will be processed in the order of the
+values of the tagged value with name "<tag>".
+
+[[taggedValueImplementation]]
+=== taggedValueImplementation
+
+Default Value: <blank>
+
+Explanation: If set to "array", ShapeChange will use a memory optimized
+implementation of tagged values when processing the model.Use this
+option when processing very large models. ShapeChange can process 100+MB
+sized models without problem. However, if processing involves many
+transformations and target derivations you may hit a memory limit, which
+is determined by the maximum amount of memory you can assign to the Java
+process in which ShapeChange is running. On Windows machines that were
+used for development, that limit was near 1.1GB.
+
+[[tmpDirectory]]
+=== tmpDirectory
+
+Default Value: temp
+
+Explanation: Path to the temporary directory to store temporary files
+(like diagram images), as necessary to execute a ShapeChange
+configuration. The path is either relative to the folder where
+ShapeChange is executed in, or absolute. NOTE: This folder is NOT
+deleted when the ShapeChange run is complete.
+
+[[transformer]]
+=== transformer
+
+Default Value: <blank>
+
+Explanation: (valid for EA7 input only) The full, qualified name of a
+class that will be used to transform the input model in some
+user-defined way, before the transformation into the target format
+occurs.This class must implement the
+_de.interactive_instruments.shapechange.core.model.Transformer_ interface.
+
+[[username_and_password]]
+=== username and password
+
+Default Value: _none_
+
+Explanation: If required to access the model (typically an EA
+repository), provide your username and password.
+
+* If you do not set these parameters in the configuration, or if you did
+not set them correctly, you will be prompted by EA to provide the
+correct values via a dialog.
+* If the connection is to a Cloud Service, you may also need to
+explicitly set the username and password in the connection string
+(replace the "*" with the correct value(s)).
+
+[[useStringInterning]]
+=== useStringInterning
+
+Default Value: false
+
+Explanation: If set to "true", ShapeChange will use string interning to
+reduce the memory footprint.
+
+[[Diagram_Image_Loading]]
+== Diagram Image Loading
+
+The following parameters are used to control if and how diagram images
+are loaded from the input model.
+
+NOTE: [red]#At the moment this feature is only supported for EA input models,
+and only for package and logical diagrams for selected application
+schema.#
+
+[cols="2,1,1,1,3",options="header"]
+|===
+
+|Parameter Name |Required / Optional |Type |Default Value |Explanation
+
+|loadDiagrams |Optional |Boolean |false |Set to 'true' to
+load diagram images.
+
+|sortDiagramsByName |Optional |Boolean |true |Set to 'false'
+(or something other than 'true') to prevent diagrams from being sorted
+by their name. If sorting by name is disabled then the order of diagrams
+will be the order in which they were loaded (e.g. the order in which
+they appear in the project browser of Enterprise Architect).
+
+|packageDiagramRegex |Optional |String |NAME (the reserved
+keyword that will be replaced by the package name) |Regular expression
+to control which package (or logical - i.e. class) diagrams get assigned
+to a package. If the name of such a diagram contained in a package
+matches the expression (with the occurrence(s) of 'NAME' having been
+replaced with the name of that package) then the diagram will be
+assigned to the package.
+
+|classDiagramRegex |Optional |String |NAME (the reserved
+keyword that will be replaced by the class name) |Regular expression
+to control which logical (i.e. class) diagrams get assigned to a class.
+For each logical diagram contained in a package, the expression is
+evaluated for each class that is also contained in that package. If the
+name of the logical diagram matches the expression (with the
+occurrence(s) of 'NAME' having been replaced with the name of a given
+class) then the diagram will be assigned to that class.
+
+|===
+
+[[Stereotype_aliases]]
+== Stereotype aliases
+
+ShapeChange relies on a set of well-known stereotypes in order to
+understand and be able to manipulate incoming application schemas. The
+page on the xref:../application schemas/UML_profile.adoc[UML profile
+supported by ShapeChange] contains more information about this topic.
+
+A given application schema may not use these exact stereotypes.  In this
+case, a <StereotypeAlias> element can be used to map the incoming
+application schema's stereotypes to their well-known equivalents. 
+Example:
+
+[source,xml,linenumbers]
+----------
+<StereotypeAlias wellknown="FeatureType" alias="Feature" />
+----------
+
+The <StereotypeAlias> element contains two required attributes, as
+above:
+
+[cols="1,3",options="header",]
+|===
+|Attribute name |Explanation
+
+|alias |String specifying the alias for the well-known stereotype.
+
+|wellknown |The name of the well-known stereotype, from the list
+given in the description of the UML profile.
+
+|===
+
+The file
+https://shapechange.net/resources/config/StandardAliases.xml[StandardAliases.xml]
+contains a set of standard <StereotypeAlias> elements, and is typically
+included in each configuration file via XInclude.  Additional
+<StereotypeAlias> elements can be added as needed, directly to the
+configuration file or in a separate module.
+
+[[Tag_aliases]]
+== Tag aliases
+
+(since 2.0.2)
+
+ShapeChange can be configured to treat multiple tags related to the
+description of model elements as equivalent, e.g. for use in feature
+catalogues (descriptors).
+
+The <TagAlias> element can be used to map the incoming application
+schema's tags to their equivalents that are referenced elsewhere (e.g.
+in targets or the definition of the descriptor sources).  Example:
+
+[source,xml,linenumbers]
+----------
+<TagAlias wellknown="example" alias="eksempel"/>
+<TagAlias wellknown="description" alias="note"/>
+<TagAlias wellknown="legalBasis" alias="lovgrundlag"/>
+<TagAlias wellknown="alias" alias="alternativtNavn"/>
+----------
+
+Like the <StereotypeAlias>, the <TagAlias> element contains two required
+attributes, as above:
+
+[cols="1,3",options="header"]
+|===
+|Attribute name |Explanation
+
+|alias |String specifying the alias of the well-known tag name.
+
+|wellknown |The tag name that represents the mapping target.
+
+|===
+
+NOTE: ShapeChange has a set of hard-coded tag names, which are commonly
+referred to as the set of well-known tagged values. That set can be
+extended via the input parameters
+xref:./The_element_input.adoc#addTaggedValues[addTaggedValues]
+and
+xref:./The_element_input.adoc#representTaggedValues[representTaggedValues].
+The 'wellknown' tag of a <TagAlias> must be one of these tags. Multiple
+<TagAlias> elements can be defined to map different tags to the same
+well-known tag.
+
+The
+file https://shapechange.net/resources/config/StandardTagAliases.xml[StandardTagAliases.xml] contains
+a set of standard <TagAlias> elements, and is typically included in each
+configuration file via XInclude. Additional <TagAlias> elements can be
+added as needed, directly to the configuration file or in a separate
+module.
+
+[[Descriptor_sources]]
+== Descriptor sources
+
+(since 2.0.2)
+
+It is common practice to include various descriptive information about
+each model element in the UML model. For example, aliases, codes,
+definitions, descriptions, etc. are often distinguished and various
+output need to treat each of these descriptors separately. UML tools
+typically provide a single documentation/notes field for
+this. Enterprise Architect is no different, except that it has a
+specific field for an alias.
+
+In practice, communities have addressed this in different ways. One
+option is to use a tag for each descriptor. Another is to put all
+descriptors in the notes field and use fixed separator strings to
+distinguish the different descriptors. To support the different
+approaches, ShapeChange supports a set of well-known descriptors and
+allows to configure where this information is stored in the model.
+
+The list of well-known descriptors is:
+
+[#table_descriptors,reftext='{table-caption} {counter:table-num}']
+.Well-known descriptors
+[cols="1,1,2",options="header"]
+|===
+|Descriptor |Default source |Explanation
+|alias |the alias field in EA7 models |otherwise tag 'alias', an
+alternative, human-readable name for the model element
+
+|dataCaptureStatement |tag 'dataCaptureStatement' |a statement
+describing how to capture instances of this model element from the
+real-world
+
+|definition |all text from the documentation until the first
+separator |the normative specification of the model element
+
+|description |none |additional informative information about the
+model element
+
+|documentation |the notes field in EA7 models, otherwise tag
+'documentation' or tag 'description' |a documentation field per model
+element that includes one or more descriptors, typically the notes field
+of the UML tool
+
+|example |tag 'example' |an example illustrating the model element
+
+|globalIdentifier |ea:guidtoxml |the globally unique identifier of
+the model element; that is, unique across models
+
+|language |tag 'language' |the default language, if no language
+information is provided in definitions, descriptions, examples, etc.
+
+|legalBasis |tag 'legalBasis' |the legal basis for the model
+element
+
+|primaryCode |tag 'primaryCode' |the primary code for this model
+element
+|===
+
+NOTE: Many target parameters define a template for constructing
+a string, which uses specific markings for descriptors, to be replaced 
+with the actual descriptor value(s). An example is the 
+xref:../targets/xml schema/XML_Schema.adoc#documentationTemplate[documentationTemplate]
+parameter of the XML Schema target. An example of using the descriptor
+'alias' in such a template is: "\[[alias]]". Since ShapeChange v2.14.0,
+the value 'name' can be used as well (i.e., "\[[name]]"). This adds the
+name of the UML model element to the resulting string.
+
+Examples:
+
+[source,xml,linenumbers]
+----------
+<DescriptorSource descriptor="documentation" source="ea:notes"/>
+<DescriptorSource descriptor="primaryCode" source="ea:alias"/>
+<DescriptorSource descriptor="example" source="tag" tag="example"/>
+<DescriptorSource descriptor="definition" source="sc:extract" token="PROLOG"/>
+<DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+----------
+
+A <DescriptorSource> element contains two required attributes and two
+conditional attributes, as above:
+
+[cols="1,3",options="header"]
+|===
+|Attribute name |Explanation
+|descriptor |The name of the well-known descriptor, see the list
+above. This attribute is required.
+
+|source |String specifying the source for the descriptor. Valid
+values are: 'ea:notes' for the notes field in EA7 models, 'ea:alias' for
+the alias field in EA7 models, 'ea:guidtoxml' for the GUID of an EA
+model element (in the form used in XMI/XML), 'tag' for a tagged value, 
+'none' for unused descriptors, 'sc:extract' for extracting the
+descriptor from the documentation. This attribute is required.
+
+|tag |The tag to use. This attribute is required for source='tag'.
+
+|token |The token part of the separator that marks the start of the
+descriptor in the documentation. Separators are constructed as a
+concatenation of the extract separator (see the list of parameters
+above), whitespace, the token, whitespace and the extract separator. For
+example, the extract separator '--' and the token 'Description' specify
+the following separator string: '-- Description --'. The value 'PROLOG'
+is a special value that extracts everything from the start of the
+documentation field until the first separator. This attribute is
+required for source='sc:extract'.
+
+|===
+
+The
+file https://shapechange.net/resources/config/DescriptorSourcesInspire.xml[DescriptorSourcesINSPIRE.xml] contains
+as an example the standard <DescriptorSource> elements as used in
+INSPIRE application schemas. It may be included in a configuration file
+via XInclude.
+
+[[PackageInfo_definitions]]
+== PackageInfo definitions
+
+ShapeChange allows for two ways to specify that an incoming UML package
+should be understood to represent (or correspond to) an application
+schema in GML.  The first is via the "targetNamespace" tagged value,
+which will be discussed later.  The second is via a <PackageInfo>
+element under the <input> portion of the configuration file. This is
+useful, if for some reason the source model cannot be amended to include
+additional tagged values as required by the encoding rules.
+
+The <PackageInfo> element specifies the namespace (and abbreviation),
+XSD document, and version for a package corresponding to a GML
+application schema (which ShapeChange will output as an XML Schema
+document). It is a single element with attributes:
+
+[source,xml,linenumbers]
+----------
+<packages>
+  <PackageInfo packageName="My Application Schema" ns="http://example.com/app" nsabr="app" xsdDocument="app.xsd" version="1.0"/>
+</packages>
+----------
+
+The attributes for the <PackageInfo> element as as follows:
+
+[cols="1,3",options="header"]
+|===
+|Attribute name |Explanation
+|packageName |(Required) The name of the package/schema.  This
+must correspond to the name of the package within the UML model.
+
+|ns |The namespace URL of the schema. This attribute corresponds to
+the tagged value 'targetNamespace' of an application schema package.
+
+|nsabr |The namespace abbreviation. This attribute corresponds
+to the tagged value 'xmlns' of an application schema package.
+
+|xsdDocument |The desired filename of the output XML Schema
+document. This attribute corresponds to the tagged value
+'xsdDocument' of an application schema package.
+
+|version |The version of the application schema. This attribute
+corresponds to the tagged value 'version' of an application schema
+package.
+|===

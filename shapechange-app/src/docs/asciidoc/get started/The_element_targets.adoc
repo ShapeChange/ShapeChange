@@ -1,0 +1,65 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[The_element_targets]]
+= The element "targets"
+
+The <targets> element contains information on the targets of the
+workflow.  This element has
+no <parameters>, being instead merely the top-level element under which
+are nested individual target definitions.  See
+xref:../targets/Output_Targets.adoc[here] for a full discussion of all
+ShapeChange target formats and their specific configuration options.
+
+For each target listed in the configuration, the processing of the
+target can be switched off by setting the "mode" attribute to
+"disabled". The default value is "enabled".
+
+NOTE: The model(s) to be processed by a target is identified using the
+"inputs" XML attribute. Model validation as a pre-check can be performed
+using the validators identified in XML attribute "validators". Further
+information is provided xref:./Configuration.adoc[here].
+
+A sample <targets> section of a configuration file, containing multiple
+defined targets for the same application schema, might look like the
+following:
+
+[source,xml,linenumbers]
+----------
+<targets>
+    <TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+           …contents snipped…
+    </TargetXmlSchema>
+    <Target class="de.interactive_instruments.shapechange.core.target.ontology.RDF" mode="enabled">
+        <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB" />
+        <targetParameter name="language" value="en" />
+        <targetParameter name="taggedValueForTitle" value="name" />
+        <targetParameter name="taggedValueForCode" value="nsgAlphaCode" />
+    </Target>
+    <Target class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" mode="disabled">
+        <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB" />
+    </Target>
+    <Target class="de.interactive_instruments.shapechange.core.target.kml.XSLT" mode="enabled">
+        <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB" />
+    </Target>
+    <Target class="de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries" mode="disabled">
+        <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB" />
+    </Target>
+    <Target class="de.interactive_instruments.shapechange.core.target.mapping.Excel" mode="disabled">
+        <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB" />
+    </Target>
+</targets>
+----------

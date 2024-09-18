@@ -1,0 +1,58 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Examples]]
+= Examples
+
+[[Overview]]
+== Overview
+
+This page references examples of the application of ShapeChange.
+
+[[Unit_Tests]]
+== Unit Tests
+
+The ShapeChange unit tests represent the most complete and up-to-date
+source of examples, both of ShapeChange configurations for a) loading a
+model, transforming it, and deriving target representations, and b) UML
+models (mostly as EA repositories, but also in SCXML).
+
+The unit tests can be found in our GitHub repository at
+https://github.com/ShapeChange/ShapeChange/tree/master/src/integrationtests.
+If you are looking for examples of a certain parameter, rule,
+transformation, or target, simply perform a search over the contents of
+these resources (in .xml files), searching for either the name of the
+parameter or rule, or the fully qualified class name of the
+transformation or target (as defined in the documentation of that
+ShapeChange process).
+
+NOTE: You may end up finding two configuration files per unit test. In
+that case, you can just look at the file whose name does NOT end with
+_runWithSCXML.xml.
+
+BACKGROUND: ShapeChange unit tests that were originally developed for a
+UML model within an EA repository (for ease of modelling) often have
+additional files in their respective folders, that represent the UML
+model in SCXML (ShapeChange XML - for encoding a UML model in XML) and a
+ShapeChange configuration to run the unit test with the SCXML encoded
+model. This is a mechanism to speed up the processing time of the unit
+tests, and is described in further detail in the ShapeChange
+https://github.com/ShapeChange/ShapeChange/wiki/Developer-Documentation#unit-tests[developer
+documentation]. If the EA repository file is named model.qea or
+model.qeax, then the SCXML model file will be named model.zip. If the
+original ShapeChange configuration is named scConfig.xml, then the
+configuration to process the SCXML encoded model will be named
+scConfig_runWithSCXML.xml.

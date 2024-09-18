@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/scxml/stereotypeNormalization/scxml.xml"/>
+		<parameter name="scxmlXsdLocation" value="sc-resources/schema/ShapeChangeExportedModel.xsd"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="dontConstructAssociationNames" value="true"/>
+		<stereotypeAliases>
+			<StereotypeAlias wellknown="Application Schema" alias="myApplicationSchema" />
+			<StereotypeAlias wellknown="FeatureType" alias="myFeaturetype" />	
+			<StereotypeAlias wellknown="" alias="abstract" />
+			<StereotypeAlias wellknown="CodeList" alias="conceptScheme" />
+			<StereotypeAlias wellknown="CodeList" alias="vocabulary" />
+			<StereotypeAlias wellknown="DataType" alias="request" />
+			<StereotypeAlias wellknown="DataType" alias="response" />			
+			<StereotypeAlias wellknown="Type" alias="interface" />
+			<StereotypeAlias wellknown="valueConcept" alias="attributeValueConcept" />
+			<StereotypeAlias wellknown="" alias="property" />
+			<StereotypeAlias wellknown="" alias="enum" />
+		</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/scxml/stereotypeNormalization/log.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			  <targetParameter name="outputDirectory" value="testResults/scxml/stereotypeNormalization/results/xsd"/>
+			  <targetParameter name="sortedOutput" value="true"/>
+			  <targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+			  <xi:include href="sc-resources/config/StandardRules.xml"/>
+			  <xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			  <xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+			 </TargetXmlSchema>
+		 <Target class="de.interactive_instruments.shapechange.core.target.modelexport.ModelExport"
+	              mode="enabled">
+	         <targetParameter name="outputDirectory" value="testResults/scxml/stereotypeNormalization/results/scxml"/>
+	         <targetParameter name="outputFilename" value="export"/>
+	         <targetParameter name="sortedOutput" value="true"/>
+	         <targetParameter name="defaultEncodingRule" value="export"/>
+	         <rules>
+	            <EncodingRule name="export">
+	            	<rule name="rule-exp-pkg-allPackagesAreEditable"/>
+	            </EncodingRule>
+	         </rules>
+	      </Target>
+	</targets>
+</ShapeChangeConfiguration>

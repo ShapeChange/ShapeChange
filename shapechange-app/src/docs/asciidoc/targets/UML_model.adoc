@@ -1,0 +1,441 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[UML_model]]
+= UML model
+
+[[Scope]]
+== Scope
+
+This target writes the selected application schemas to an Enterprise
+Architect model file, more specifically to a new "class view" package
+(with name following the pattern "ShapeChangeOutput-" + <timestamp>)
+added to the first model package found in that file. The capability is
+mainly useful for generating a physical model of schemas that have been
+processed using one or more
+xref:../transformations/Transformations.adoc[transformations].
+
+[[Stereotype_mappings]]
+== Stereotype mappings
+
+(Since v2.6.0)
+
+You should use stereotype mappings to ensure that the model elements
+written to the UML model are assigned to the correct UML Profile / MDG.
+
+Without such a mapping, EA may automatically map the stereotype written
+by ShapeChange to a stereotype from an arbitrary UML Profile / MDG. The
+mapping is based on equality (ignoring case) of the unqualified
+stereotype name. The mapping performed by EA can lead to undesired
+results. For example, the stereotype 'featuretype' (which is one of the
+xref:../application schemas/UML_profile.adoc#Stereotypes[stereotypes
+that are well-known to ShapeChange]) could be mapped to the stereotype
+'FeatureType' of the GML MDG, resulting in an element with qualified
+stereotype 'GML::FeatureType'. If, instead, you wanted to ensure that it
+is mapped to stereotype 'featureType' from your UML Profile / MDG, you
+should add a map entry to the configuration.
+
+NOTE: You also need to ensure that your UML Profile / MDG is available
+and active in the EA environment in which you execute ShapeChange. To do
+so, import the MDG with EA - to a template EA repository which is used to write
+the model (see target parameter
+xref:./UML_model.adoc#eaTemplate[_eaTemplate_])
+and/or use 'Import To User', i.e. install the MDG locally.
+
+NOTE: Enterprise Architect v15.2 ignores the stereotype 'application schema', i.e. a stereotype
+with this name is not created in the model. Such a case can occur if you
+run ShapeChange with standard stereotype aliases, resulting in the application
+schema package having the well-known stereotype 'application schema'. It is 
+unclear why EA behaves this way; maybe it is due to the stereotype definition of
+the built-in GML MDG technology, which defines 'application schema' as alias
+for the 'ApplicationSchema' stereotype. If you map 'application schema' to a different
+name, such as 'applicationSchema', the stereotype should be created by EA.
+'applicationSchema'
+
+For further details on configuring these mappings, see the
+xref:./UML_model.adoc#Map_Entries[Map Entries
+section], and especially the information about param _stereotype._
+
+[[Configuration]]
+== Configuration
+
+[[Overview]]
+=== Overview
+
+The Enterprise Architect UML model target in ShapeChange is configured
+using the standard <Target> element.
+
+The following is a sample <Target> definition:
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.ea.target.uml.UmlModel" mode="enabled" inputs="Profile">
+  <targetParameter name="modelFilename" value="output/Profile.qea"/>
+</Target>
+----------
+
+As for all targets, the "inputs" attribute may be used to specify that a
+model that is the result of a
+xref:../transformations/Transformations.adoc[transformation] is used as
+input model for this target.
+
+[[Parameters]]
+=== Parameters
+
+[[documentationNoValue]]
+==== documentationNoValue
+
+(since v2.0.2)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Explanation: If a descriptor is used in the documentation template, but
+has no value, this parameter will be used. See
+xref:../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
+[[documentationTemplate]]
+==== documentationTemplate
+
+(since v2.0.2)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: \[[definition]]
+
+Explanation: The template for the documentation that is placed in the
+notes field in the EA model. The patterns "\[[descriptor]]" will be
+replaced by the value of the descriptor, or the value of
+documentationNoValue, if the descriptor has no value for the model
+element. See
+xref:../get started/The_element_input.adoc#Descriptor_sources[here]
+for more information about descriptors.
+
+[[eaAuthor]]
+==== eaAuthor
+
+(since v2.9.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Value for the field 'Author' of an EA element created while
+encoding the UML model.
+
+[[eaStatus]]
+==== eaStatus
+
+(since v2.9.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: Value for the field 'Status' of an EA element created while
+encoding the UML model.
+
+[[eaTemplate]]
+==== eaTemplate
+
+(since v2.6.0)
+
++++Alias:+++ eapTemplate (this was the parameter name in ShapeChange v2.x)
+
++++Required / Optional:+++ optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: Path to the EA repository template file (can be local or an
+online resource).
+
+If the output file (location and name are defined by the parameters
+outputDirectory and modelFilename) does not exist, the default behavior
+of this target is to create a new EA repository.
+
+However, if writing the model requires a specific UML Profile / MDG to
+be available, this would fail if it is not configured in the EA
+environment where ShapeChange is executed. In that situation, you would
+want the UML Profile / MDG loaded into the EA repository to which the
+model is written. Such a repository can be provided as a template, and
+configured to be used by ShapeChange via the parameter _eaTemplate_.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+[[ignoreTaggedValuesRegex]]
+==== ignoreTaggedValuesRegex
+
+(since 2.9.0)
+
+Required / Optional: optional
+
+Type: String (with regular expression)
+
+Default Value: _none_
+
+Explanation: A tagged value that matches the regular expression defined
+by this parameter will not be written to the EA repository.
+
+[[includeAssociationOwnership]]
+==== includeAssociationOwnership
+
+(since 2.9.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If set to true, then ownership of an association role will
+be encoded. A role is either owned by the association or by a class (the
+class at the other end of the association). In a UML class diagram,
+ownership by the class is depicted by small filled dot at the
+association role.
+
+[[mergeConstraintCommentsIntoText]]
+==== mergeConstraintCommentsIntoText
+
+(since 2.9.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: Set this parameter to true, to merge any comment defined
+for an OCL constraint into the constraint text. ShapeChange supports
+comments in OCL constraints within java-like comment delimiters: /* and
+*/. Comments may be added to or defined for an OCL constraint via an
+external source, such as a model transformation or in SCXML via the
+<description> element of an <OclConstraint> element. Merging means that
+any comment which is not already contained in the text of the OCL
+constraint will be prepended to the constraint text, within java-like
+comment delimiters.
+
+[[modelFilename]]
+==== modelFilename
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: ShapeChangeExport.qea
+
+Explanation: The Enterprise architect EA repository file to which the application
+schema(s) are written.
+
+[[omitOutputPackage]]
+==== omitOutputPackage
+
+(since v2.10.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: Can be used to prevent the addition of a new class view
+package as child of the root model (package). That new package is
+typically added by ShapeChange to store the output of the target
+execution.
+
+[[omitOutputPackageDateTime]]
+==== omitOutputPackageDateTime
+
+(since v2.5.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: Can be used to prevent the addition of the timestamp to the
+new class view package that is added to the model by ShapeChange.
+
+[[outputDirectory]]
+==== outputDirectory
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: none
+
+Explanation: The path to the folder in which the resulting UML model
+will be created.
+
+[[outputPackageName]]
+==== outputPackageName
+
+(since v2.10.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: ShapeChangeOutput
+
+Explanation: Define the name of the output package that will be added by
+ShapeChange as child of the root model package (unless parameter
+xref:./UML_model.adoc#omitOutputPackage[omitOutputPackage]
+is set to true). The current date and time will be added to that name
+(unless parameter
+xref:./UML_model.adoc#omitOutputPackageDateTime[omitOutputPackageDateTime]
+is set to true).
+
+[[preservePackageHierarchy]]
+==== preservePackageHierarchy
+
+(since v2.10.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: If set to true, the package hierarchy within schemas
+selected for processing, and also above such schemas, is preserved.
+
+NOTE: If set to true, and parameter
+xref:./UML_model.adoc#omitOutputPackage[omitOutputPackage]
+is also true, ShapeChange will check if the root package P_S of the
+model that is being processed has the same name as the root model
+package P_M of the EA repository to which the target writes. In that
+case, the root model package P_M will be used as-is, and no additional
+package will be created to represent P_S.
+
+[[synchronizeStereotypes]]
+==== synchronizeStereotypes
+
+(since v2.10.0)
+
+Required / Optional: optional
+
+Type: Boolean
+
+Default Value: false
+
+Explanation: true, if stereotypes from UML profiles (defined using
+stereotype map entries) shall automatically be synchronized at the end of
+processing, else false.
+
+[[Map_Entries]]
+=== Map Entries
+
+<mapEntries> contain individual <MapEntry> elements, which for this
+target contain information for mapping specific stereotypes.
+
+Example:
+
+[source,xml,linenumbers]
+----------
+<mapEntries>
+ <MapEntry type="application schema" rule="*" targetType="ShapeChange::applicationSchema"
+ param="stereotype"/>
+ <MapEntry type="featuretype" rule="*" targetType="ShapeChange::featureType" param="stereotype"/>
+ <MapEntry type="type" rule="*" targetType="ShapeChange::type" param="stereotype"/>
+ <MapEntry type="datatype" rule="*" targetType="ShapeChange::dataType" param="stereotype"/>
+ <MapEntry type="union" rule="*" targetType="ShapeChange::union" param="stereotype"/>
+ <MapEntry type="codelist" rule="*" targetType="ShapeChange::codeList" param="stereotype"/>
+ <MapEntry type="enumeration" rule="*" targetType="ShapeChange::enumeration" param="stereotype"/>
+ <MapEntry type="property" rule="*" targetType="ShapeChange::property" param="stereotype"/>
+ <MapEntry type="enum" rule="*" targetType="ShapeChange::enum" param="stereotype"/>
+</mapEntries>
+----------
+
+A <MapEntry> element contains the attributes described in the following
+sections.
+
+[[type]]
+==== type
+
+Required / Optional: Required
+
+Explanation: Typically the UML type/class name to be mapped, however:
+
+* The target currently does not perform a mapping of the UML type/class
+name.
+* Since v2.6.0, the target can map the name of a stereotype. The 'type'
+of a stereotype mapping (indicated by attribute 'param' having the value
+'stereotype') must be one of the
+xref:../application schemas/UML_profile.adoc#Stereotypes[stereotypes
+that are well-known to ShapeChange].
+
+[[rule]]
+==== rule
+
+Required / Optional: Required
+
+Explanation: The encoding rule to which this mapping applies. May be "*"
+to indicate that the mapping applies to all encoding rules.
+
+[[targetType]]
+==== targetType
+
+Required / Optional: Required
+
+Explanation: Mapping target for the model element identified by
+attribute 'type'. If the map entry is a stereotype mapping (indicated by
+attribute 'param' having the value 'stereotype'), the target typically
+is a qualified name of a stereotype, following the pattern
+\{YourProfile}::\{targetStereotype}.
+
+[[param]]
+==== param
+
+Required / Optional: Optional
+
+Explanation: Defines one or more parameters for the mapping.
+
+Each parameter has a name. A list of parameters is separated by commas.
+Each parameter can also have characteristics defined for it, providing
+even further information for the conversion. Characteristics for a
+parameter are provided within curly braces. A characteristic is either
+provided by identifier only, or by a key-value pair, with the key being
+the identifier of the characteristic.
+
+Example(s):
+
+* stereotype
+
+Supported parameters, their interpretation as well as characteristics
+are described in the following sections.
+
+[[Parameter_stereotype]]
+===== Parameter: stereotype
+
+(since v2.6.0)
+
+Explanation: Identifies the map entry as a stereotype mapping.
+
+Characteristics: _none_

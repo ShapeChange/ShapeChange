@@ -1,0 +1,152 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[UML_to_RDFOWL_based_on_OWS-8_encoding_rule]]
+= UML to RDF/OWL (based on OWS-8 encoding rule)
+
+[[Overview]]
+== Overview
+
+The basic schema conversion rules have been documented in the
+https://portal.opengeospatial.org/files/?artifact_id=46342[OGC
+Engineering Report "OWS-8 Cross Community Interoperability (CCI)
+Semantic Mediation", OGC document number 11-063r6]. See sub-clause 8.1.
+
+The conversion rules have been amended to support hierarchical code
+lists.
+
+Ontologies are created as RDF/XML documents.
+
+[[Target_Configuration]]
+== Target Configuration
+
+The <Target> element definition for the Ontology target is a standard
+ShapeChange target. An example is given below:
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.core.target.ontology.RDF" mode="enabled">
+  <targetParameter name="outputDirectory" value="./NAS_v1_3_MDB/rtf"/>
+  <targetParameter name="language" value="en"/>
+  <targetParameter name="taggedValueForTitle" value="name"/>
+  <targetParameter name="taggedValueForCode" value="nsgAlphaCode"/>
+</Target>
+----------
+
+[[Dependencies]]
+=== Dependencies
+
+The Ontology target is standalone; it can be run independently of a
+<TargetXmlSchema> definition in the configuration file.
+
+[[Class]]
+=== Class
+
+The class for the Target implementation is
+_de.interactive_instruments.shapechange.core.target.ontology.RDF._
+
+[[Parameters]]
+=== Parameters
+
+The <targetParameters> recognized for RDF/OWL include the following:
+
+[cols="1,1,3",options="header"]
+|===
+|Parameter Name |Default Value |Explanation
+
+|*outputDirectory* |<the current run directory> |The path to which the
+RDF file will be written.
+
+|*language* |"en" |The language code to be used to populate the
+"xml:lang" attribute.
+
+|*taggedValueForTitle* |null |Name of the tagged value whose contents
+are to be used as the label. If null, then element name will be used.
+
+|*taggedValueForCode* |null |Name of the tagged value whose contents are
+to be used as an alternative label. If it is null, <altLabel> will not
+be used.
+
+|*codeListOnly* |false |If 'true' only convert code lists to SKOS
+concept schemes.
+
+|*idReplacePattern* |null |A regular pattern that can be used to remove
+certain characters from identifers. An example pattern might be
+'[\s/,_:\-]+' to remove whitespace and other separators from names.
+
+|*idReplaceChar* |"-" |The character to be used for all occurrences of
+_idReplacePattern_.
+|===
+
+[[Additional_conversion_rules]]
+=== Additional conversion rules
+
+Hierarchical code lists as specified in the
+https://www.geonovum.nl/geo-standaarden/bgt-imgeo[IMGeo
+specification in the Netherlands] are supported by adding the conversion
+rule "rule-rdf-prop-parent" to the encoding rule. For example:
+
+[source,xml,linenumbers]
+----
+<EncodingRulename="imgeo"extends="*">
+   <rule name="rule-rdf-prop-parent"/>
+</EncodingRule>
+----
+
+[[Sample_Output]]
+== Sample Output
+
+The output of the RDF/OWL target is an ontology in XML. The filename
+will follow that of the application schema name, with ".rdf" appended.
+
+The following is sample output from the RDF/OWL target:
+
+[source,xml,linenumbers]
+----------
+<Class
+  rdf:about="http://metadata.dod.mil/mdr/ns/GSIP/2.0/nas#VehicleBarrierTransportationSystemCodeMeta"
+  xmlns="http://www.w3.org/2002/07/owl#">
+  <subClassOf rdf:resource="http://metadata.dod.mil/mdr/ns/GSIP/2.0/nas#DatatypeMeta"
+    xmlns="http://www.w3.org/2000/01/rdf-schema#"/>
+  <label xml:lang="en" xmlns="http://www.w3.org/2000/01/rdf-schema#">Vehicle Barrier Transportation
+    System Code(s) or Reason; with Metadata</label>
+  <description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    xmlns="http://purl.org/dc/elements/1.1/">Vehicle Barrier Transportation System Code(s) or
+    Reason; with Metadata: A sequence of coded domain values denoting the transportation system
+    type(s) of a vehicle barrier, accompanied by the reason that the value may be absent and
+    associated metadata.</description>
+</Class>
+----------
+
+[source,xml,linenumbers]
+----------
+<DatatypeProperty
+  rdf:about="http://metadata.dod.mil/mdr/ns/GSIP/2.0/nas#VehicleBarrierTransportationSystemCodeMeta.valuesOrReason"
+  xmlns="http://www.w3.org/2002/07/owl#">
+  <description rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    xmlns="http://purl.org/dc/elements/1.1/">Enumerant Values or Reason: Either a sequence of coded
+    domain values denoting the transportation system type(s) of a vehicle barrier or the reason that
+    the sequence is absent.</description>
+  <label xml:lang="en" xmlns="http://www.w3.org/2000/01/rdf-schema#">Enumerant Values or
+    Reason</label>
+  <domain
+    rdf:resource="http://metadata.dod.mil/mdr/ns/GSIP/2.0/nas#VehicleBarrierTransportationSystemCodeMeta"
+    xmlns="http://www.w3.org/2000/01/rdf-schema#"/>
+  <range
+    rdf:resource="http://metadata.dod.mil/mdr/ns/GSIP/2.0/nas#SequenceVehicleBarrierTransportationSystemCodeReason"
+    xmlns="http://www.w3.org/2000/01/rdf-schema#"/>
+</DatatypeProperty>
+----------

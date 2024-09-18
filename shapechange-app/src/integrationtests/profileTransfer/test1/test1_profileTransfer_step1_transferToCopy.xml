@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/profileTransfer/test1/test1_profileTransfer.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema A" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="none" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/profileTransfer/test1/results/log_transfer.xml" />
+	</log>	
+	<transformers>
+	<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="LOAD_PROFILES" mode="enabled">
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileTransfer/test1" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="profiles.xml" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading">					
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		</transformers>
+	<targets>
+		<Target
+			class="de.interactive_instruments.shapechange.ea.target.profiletransfer.ProfileTransferEA"
+			mode="enabled" inputs="LOAD_PROFILES">
+			<targetParameter name="outputDirectory"
+				value="testResults/profileTransfer/test1/results/transfer" />
+			<targetParameter name="transferToCopyOfEARepository" value="true" />
+			<targetParameter name="deleteExistingProfiles" value="true" />
+			<targetParameter name="profilesToTransfer" value="A,C" />
+		</Target>		
+	</targets>
+</ShapeChangeConfiguration>

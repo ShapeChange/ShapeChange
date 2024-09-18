@@ -1,0 +1,212 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Application_Schema_Metadata]]
+= Application Schema Metadata
+
+This target can be used to gather information about application schemas
+(more specifically: the schemas that are selected for processing).
+
+NOTE: At the moment the target only supports a limited set of metadata -
+reporting of additional useful metadata can be added in the future.
+
+[[Configuration]]
+== Configuration
+
+[[Class]]
+=== Class
+
+The class for the target implementation is
+_de.interactive_instruments.shapechange.core.target.metadata.ApplicationSchemaMetadata_
+
+[[Encoding_Rules]]
+=== Encoding Rules
+
+The following rules are supported by this target.
+
+[[rule-asm-all-identify-profiles]]
+==== rule-asm-all-identify-profiles
+
+If this rule is enabled, the target identifies the names of all profiles
+to which schema elements belong (NOTE: Only for the schemas that are
+selected for processing).
+
+[[rule-asm-all-identifyPropertiesWithSpecificTaggedValues]]
+==== rule-asm-all-identifyPropertiesWithSpecificTaggedValues
+
+(since 2.9.0)
+
+This rule identifies all properties (maybe including inherited ones, if
+parameter link:#inheritedProperties[inheritedProperties] is true) of a
+class that have tagged values whose name matches a regular expression
+defined by parameter link:#tagNameRegex[tagNameRegex]. The optional
+parameter link:#tagValueRegex[tagValueRegex] can be used to restrict the
+tags to only those whose values match the regular expression defined by
+that parameter.
+
+[[rule-asm-all-identifyTypeUsage]]
+==== rule-asm-all-identifyTypeUsage
+
+(since 2.8.0)
+
+This rule identifies which feature and object types directly or
+indirectly make use (as property value type) of one or more of the union
+or data types defined by target parameter
+xref:./Application_Schema_Metadata.adoc#typesForTypeUsageIdentification[_typesForTypeUsageIdentification_].
+
+[[Parameters]]
+=== Parameters
+
+The parameters supported by this target are described in the following
+sections.
+
+[[defaultEncodingRule]]
+==== defaultEncodingRule
+
+Alias: _none_
+
+Type: String
+
+Default Value: _none_
+
+Behavior:
+
+The identifier of the default encoding rule governing the derivation of
+the application schema metadata.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[inheritedProperties]]
+==== inheritedProperties
+
+(since 2.9.0)
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: _false_
+
+Behavior:
+
+If true, then the output per class will not only contain the direct
+properties of the class but also the inherited properties.
+
+Applies to Rule(s):
+
+* link:#rule-asm-all-identifyPropertiesWithSpecificTaggedValues[rule-asm-all-identifyPropertiesWithSpecificTaggedValues]
+
+[[tagNameRegex]]
+==== tagNameRegex
+
+(since 2.9.0)
+
+Alias: _none_
+
+Type: String (with regular expression)
+
+Default Value: _none_
+
+Behavior: Regular expression to match the name of tagged values that
+shall be reported.
+
+Applies to Rule(s):
+
+* link:#rule-asm-all-identifyPropertiesWithSpecificTaggedValues[rule-asm-all-identifyPropertiesWithSpecificTaggedValues]
+
+[[tagValueRegex]]
+==== tagValueRegex
+
+(since 2.9.0)
+
+Alias: _none_
+
+Type: String (with regular expression)
+
+Default Value: _none_
+
+Behavior: If set, then all values of a tag whose name matches parameter
+link:#tagNameRegex[tagNameRegex] must match this regular expression, in
+order for the tagged value to be reported.
+
+Applies to Rule(s):
+
+* link:#rule-asm-all-identifyPropertiesWithSpecificTaggedValues[rule-asm-all-identifyPropertiesWithSpecificTaggedValues]
+
+[[typesForTypeUsageIdentification]]
+==== typesForTypeUsageIdentification
+
+Alias: _none_
+
+Type: String
+
+Default Value: _none_
+
+Behavior:
+
+Required parameter for
+xref:./Application_Schema_Metadata.adoc#rule-asm-all-identifyTypeUsage[rule-asm-all-identifyTypeUsage].
+Multiple (union or data) type names are separated by commas.
+
+Applies to Rule(s):
+
+* xref:./Application_Schema_Metadata.adoc#rule-asm-all-identifyTypeUsage[_rule-asm-all-identifyTypeUsage_]
+
+[[outputDirectory]]
+==== outputDirectory
+
+Alias: _none_
+
+Type: String
+
+Default Value: _the current run directory_
+
+Behavior:
+
+The path to the folder in which the output file (an XML file structured
+according to
+https://shapechange.net/resources/schema/ShapeChangeApplicationSchemaMetadata.xsd[this
+schema]) will be created.
+
+Applies to Rule(s):
+
+* _none - default behavior_
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment, no specific map entries have been defined for this
+target.
+
+[[Sample_Configuration]]
+=== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Target class="de.interactive_instruments.shapechange.core.target.metadata.ApplicationSchemaMetadata"
+  mode="enabled">
+  <targetParameter name="outputDirectory" value="testResults/schema_metadata"/>
+  <targetParameter name="sortedOutput" value="true"/>
+  <targetParameter name="defaultEncodingRule" value="metadata"/>
+  <rules>
+    <EncodingRule name="metadata">
+      <rule name="rule-asm-all-identify-profiles"/>
+    </EncodingRule>
+  </rules>
+</Target>
+----------

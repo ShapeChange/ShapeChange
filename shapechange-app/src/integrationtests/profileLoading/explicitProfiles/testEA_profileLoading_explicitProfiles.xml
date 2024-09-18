@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/profileLoading/explicitProfiles/test_profileLoading_explicitProfiles.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema A" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes" />
+			<DescriptorSource descriptor="alias" source="ea:alias" />
+			<DescriptorSource descriptor="definition" source="sc:extract"
+				token="Definition" />
+			<DescriptorSource descriptor="description" source="none" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis" source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language" source="none" />
+			<DescriptorSource descriptor="globalIdentifier"
+				source="none" />
+		</descriptorSources>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/profileLoading/explicitProfiles/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="Test1" mode="enabled">
+
+			<!-- Test 1 -->
+			<!-- + process selected schemas only -->
+			<!-- + delete profiles (Test Schema, External Schema) -->
+			<!-- ++ That will delete the profiles in whole model -->
+			<!-- + do NOT validate loaded models -->
+			<!-- + do NOT diff models -->
+			<!-- + load model 1 -->
+			<!-- ++ load all profiles -->
+			<!-- ++ contains profiles for Test Schema and External Schema (profile 
+				will only be loaded for Test Schema) -->
+			<!-- ++ NOTE: easy to validate test result since profiles from model were 
+				deleted -->
+			<!-- + load model 2 -->
+			<!-- ++ load all profiles -->
+			<!-- ++ contains profiles for Test Schema only -->
+			<!-- ++ overwrite model 1 setting (for Subtype) -->
+			<!-- + validate profile in resulting model -->
+
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileLoading/explicitProfiles/models_to_load" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="model(1|2).xml" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test1">
+					<rule
+						name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles" />
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="Test2" mode="enabled">
+
+			<!-- Test 2 -->
+			<!-- + process selected schemas only (Test Schema) -->
+			<!-- + validate input model -->
+			<!-- ++ should not result in warnings related to ISO schema -->
+			<!-- + validate loaded model -->
+			<!-- + do NOT diff models -->
+			<!-- + load model 1 -->
+			<!-- ++ load all profiles -->
+			<!-- ++ contains profiles for Test Schema and External Schema -->
+			<!-- ++ profiles from the external schema will not be loaded, since it 
+				does not belong to the schemas selected for processing -->
+			<!-- + validate profile in resulting model -->
+			<!-- ++ should not result in warnings related to ISO schema -->
+
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileLoading/explicitProfiles/models_to_load" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="model1.xml" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test2">
+					<rule
+						name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles" />
+					<rule name="rule-trf-profileLoader-validateLoadedModelProfiles" />
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="Test3" mode="enabled">
+
+			<!-- Test 3 -->
+			<!-- + process all schemas (-> still Test Schema only selected for processing) -->
+			<!-- + validate input and loaded models -->
+			<!-- ++ will result in warnings related to ISO schema -->
+			<!-- + do NOT diff models -->
+			<!-- + load model 1 -->
+			<!-- ++ load all profiles -->
+			<!-- ++ contains profiles for Test Schema and External Schema -->
+			<!-- ++ profiles from the external schema will be loaded -->
+			<!-- + validate profile in resulting model -->
+			<!-- ++ will result in warnings related to ISO schema -->
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileLoading/explicitProfiles/models_to_load" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="model1.xml" />
+				<ProcessParameter name="processAllSchemas"
+					value="true" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test3">
+					<rule
+						name="rule-trf-profileLoader-preProcessing-validateInputModelProfiles" />
+					<rule name="rule-trf-profileLoader-validateLoadedModelProfiles" />
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="Test4" mode="enabled">
+
+			<!-- Test 4 -->
+			<!-- + process selected schemas only -->
+			<!-- + delete profiles (Test Schema) -->
+			<!-- ++ will delete profiles in whole model -->
+			<!-- + do NOT validate loaded models -->
+			<!-- + diff loaded models -->
+			<!-- ++ load model 3 (remove, change, and add some model elements; also 
+				modify documentation) -->
+			<!-- ++ does not contain any profile -> we only want to test the diff 
+				functionality -->
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileLoading/explicitProfiles/models_to_load" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="model3.xml" />
+				<!-- <ProcessParameter name="diffElementTypes" -->
+				<!-- value="CLASS,ENUM,MULTIPLICITY,PROPERTY,NAME,STEREOTYPE,SUPERTYPE,SUBPACKAGE,VALUETYPE" 
+					/> -->
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test4">
+					<rule
+						name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles" />
+					<rule name="rule-trf-profileLoader-diffModels" />
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.ProfileLoader"
+			id="Test5" mode="enabled">
+
+			<!-- Test 5 -->
+			<parameters>
+				<ProcessParameter name="directoryWithProfilesToLoad"
+					value="src/integrationtests/profileLoading/explicitProfiles/models_to_load" />
+				<ProcessParameter name="regexToFilterProfilesToLoad"
+					value="model1.xml" />
+				<ProcessParameter name="profilesToLoad" value="C" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profileLoading_test5">
+					<rule
+						name="rule-trf-profileLoader-preProcessing-deleteInputModelProfiles" />
+					<rule
+						name="rule-trf-profileLoader-postProcessing-validateResultingModelProfiles" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.modelexport.ModelExport"
+			mode="enabled" inputs="Test1 Test2 Test3 Test4 Test5">
+			<targetParameter name="outputDirectory"
+				value="testResults/profileLoading/explicitProfiles/results" />
+			<targetParameter name="outputFilename" value="export" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="export" />
+			<targetParameter name="exportProfilesFromWholeModel"
+				value="true" />
+			<rules>
+				<EncodingRule name="export">
+					<rule name="rule-exp-pkg-allPackagesAreEditable" />
+				</EncodingRule>
+			</rules>
+		</Target>
+		<!-- <Target -->
+		<!-- class="de.interactive_instruments.shapechange.core.target.modelexport.ModelExport" -->
+		<!-- mode="enabled"> -->
+		<!-- <targetParameter name="outputDirectory" -->
+		<!-- value="testResults/profileLoading/explicitProfiles" /> -->
+		<!-- <targetParameter name="outputFilename" value="export" /> -->
+		<!-- <targetParameter name="sortedOutput" value="true" /> -->
+		<!-- <targetParameter name="defaultEncodingRule" value="export" /> -->
+		<!-- <targetParameter name="exportProfilesFromWholeModel" value="true" 
+			/> -->
+		<!-- <rules> -->
+		<!-- <EncodingRule name="export"> -->
+		<!-- <rule name="rule-exp-pkg-allPackagesAreEditable" /> -->
+		<!-- </EncodingRule> -->
+		<!-- </rules> -->
+		<!-- </Target> -->
+	</targets>
+</ShapeChangeConfiguration>

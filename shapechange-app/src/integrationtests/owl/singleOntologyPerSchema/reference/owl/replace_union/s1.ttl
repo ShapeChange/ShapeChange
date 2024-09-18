@@ -1,0 +1,632 @@
+@prefix ce:    <http://my.org/enumerations#> .
+@prefix iso19150-2: <http://def.isotc211.org/iso19150/-2/2012/base#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix gsp:   <http://www.opengis.net/ont/geosparql#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix s1:    <http://ontology.base.uri/s1#> .
+@prefix ex1:   <http://example.org/1#> .
+
+s1:TP6_Class1.tp6p1  a      owl:DatatypeProperty ;
+        rdfs:domain         s1:TP6_Class1 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propB , ex1:propA .
+
+s1:T6_Class2  a          owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:T6_Class2.t6c2p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:T6_Class2.t6c2p1
+                         ] .
+
+s1:T4_Class1  a          owl:Class ;
+        rdfs:subClassOf  ex1:D , ex1:C , gsp:Feature .
+
+s1:TP1_Class1.t1c1p2  a  owl:ObjectProperty ;
+        rdfs:domain  s1:TP1_Class1 ;
+        rdfs:range   s1:TP1_Class5 .
+
+s1:TP4_Class4  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:p2
+                         ] .
+
+s1:T3_Animal  a          owl:Class ;
+        rdfs:subClassOf  gsp:Feature .
+
+s1:T6_Union2  a          owl:Class ;
+        rdfs:subClassOf  [ a            owl:Class ;
+                           owl:unionOf  ( [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                   owl:Class ;
+                                                                    owl:intersectionOf  ( [ a                   owl:Restriction ;
+                                                                                            owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                                            owl:onProperty      s1:T6_Union2.t6u3p1
+                                                                                          ]
+                                                                                          [ a                   owl:Restriction ;
+                                                                                            owl:maxCardinality  "5"^^xsd:nonNegativeInteger ;
+                                                                                            owl:onProperty      s1:T6_Union2.t6u3p1
+                                                                                          ]
+                                                                                        )
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u3p2
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u2p2
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u3p1
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u3p2
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u2p2
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u3p1
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Union2.t6u3p2
+                                                                  ]
+                                                                  [ a                   owl:Restriction ;
+                                                                    owl:maxCardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty      s1:T6_Union2.t6u2p2
+                                                                  ]
+                                                                )
+                                          ]
+                                        )
+                         ] .
+
+s1:TP5_Class1.tp5c1p5
+        a            owl:DatatypeProperty ;
+        rdfs:domain  s1:TP5_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:T2_Subtype_2  a       owl:Class ;
+        rdfs:subClassOf  s1:T2_Supertype_B .
+
+s1:TP5_Class2  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP5_Class2.tp5c2p1
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class2.tp5c2p2
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class2.tp5c2p3
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "4"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class2.tp5c2p5
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "2"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class2.tp5c2p5
+                         ] .
+
+s1:TP3_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   ex1:prop2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   ex1:prop1
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   ex1:propCommon
+                         ] .
+
+s1:TP5_Class2.tp5c2p4
+        a            owl:ObjectProperty ;
+        rdfs:domain  s1:TP5_Class2 ;
+        rdfs:range   s1:TP5_Class1 .
+
+s1:TP6_Class2.tp6p2  a      owl:DatatypeProperty ;
+        rdfs:domain         s1:TP6_Class2 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propC .
+
+s1:TP1_Class4.t1c4p1  a  owl:ObjectProperty ;
+        rdfs:domain  s1:TP1_Class4 ;
+        rdfs:range   s1:TP1_Class3 .
+
+s1:TP7_Class1.tp7c1p2
+        a                           owl:ObjectProperty ;
+        rdfs:domain                 s1:TP7_Class1 ;
+        rdfs:range                  s1:TP7_Class2 ;
+        iso19150-2:aggregationType  "partOfCompositeAggregation" .
+
+s1:T6_Class1.t6u1p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:integer .
+
+s1:T6_Class1.t6u3p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:double .
+
+s1:TP1_Class3  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP1_Class3.t1c3p1
+                         ] .
+
+s1:T2_Supertype_B  a  owl:Class .
+
+s1:T6_Union2.t6u3p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Union2 ;
+        rdfs:range   xsd:double .
+
+s1:T6_Class2.t6c2p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class2 ;
+        rdfs:range   xsd:integer .
+
+s1:T3_Mosquito  a        owl:Class ;
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
+
+s1:TP4_Class2  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:p1
+                         ] .
+
+s1:TP2_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP2_Class1.t2c1p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP2_Class1.t2c1p1
+                         ] .
+
+s1:TP2_Class1.t2c1p2  a   owl:ObjectProperty ;
+        rdfs:comment      "TV char: B, TV num: 1" , "TV char: C, TV num: 2" , "TV char: A, TV num: 3" , "TV char: A, TV num: 1" , "TV char: A, TV num: 2" , "TV char: C, TV num: 1" , "TV char: B, TV num: 2" , "TV char: C, TV num: 3" , "TV char: B, TV num: 3" ;
+        rdfs:domain       s1:TP2_Class1 ;
+        rdfs:isDefinedBy  <http://information.resource.uri/p2> ;
+        rdfs:label        "p2 alias"@en ;
+        rdfs:range        s1:TP2_Class2 ;
+        skos:altLabel     "p2 alias2"@en , "p3 alias2"@en , "p2 alias1"@en ;
+        skos:note         "TV char: A, B, C, TV num: 1, 2, 3" ;
+        skos:prefLabel    "p2 name tagged value"@en .
+
+s1:TP5_Class1.tp5c1p3
+        a            owl:DatatypeProperty ;
+        rdfs:domain  s1:TP5_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:TP1_Class3.t1c3p1  a  owl:ObjectProperty ;
+        rdfs:domain  s1:TP1_Class3 ;
+        rdfs:range   gsp:Geometry .
+
+s1:TP7_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP7_Class1.tp7c1p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP7_Class1.tp7c1p3
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP7_Class1.tp7c1p1
+                         ] .
+
+s1:T8_Class1.t8c1p2  a  owl:ObjectProperty ;
+        rdfs:domain  s1:T8_Class1 ;
+        rdfs:range   owl:Class .
+
+s1:T3_IndianElephant  a  owl:Class ;
+        rdfs:subClassOf  s1:T3_Elephant , gsp:Feature .
+
+s1:T6_Class1.t6c1p2  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:string .
+
+s1:TP5_Class2.tp5c2p2
+        a            owl:ObjectProperty ;
+        rdfs:domain  s1:TP5_Class2 ;
+        rdfs:range   s1:TP5_Class1 .
+
+s1:T3_AfricanElephant
+        a                 owl:Class ;
+        rdfs:subClassOf   s1:T3_Elephant , gsp:Feature ;
+        owl:disjointWith  s1:T3_IndianElephant .
+
+s1:TP6_Class1.tp6p2  a      owl:DatatypeProperty ;
+        rdfs:domain         s1:TP6_Class1 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propC .
+
+s1:T6_Class3  a  owl:Class .
+
+<http://ontology.base.uri/s1>
+        a            owl:Ontology ;
+        dct:source   "source by tagged value"@en ;
+        owl:imports  <http://my.org/enumerations> , <http://example.org/1> , <http://www.opengis.net/ont/geosparql> .
+
+s1:T1_NonAbstract_Class
+        a                owl:Class ;
+        rdfs:subClassOf  gsp:Feature .
+
+s1:T7_Class1  a          owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:T7_Class1.t7c1p1
+                         ] .
+
+s1:TP3_Class2  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   ex1:propCommon
+                         ] .
+
+s1:TP1_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP1_Class1.t1c1p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP1_Class1.t1c1p1
+                         ] .
+
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( s1:T3_Elephant s1:T3_Fish s1:T3_Mosquito )
+] .
+
+s1:T1_Abstract_Class  a        owl:Class ;
+        rdfs:subClassOf        gsp:Feature ;
+        iso19150-2:isAbstract  true .
+
+s1:TP1_Class2.t1c2p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:TP1_Class2 ;
+        rdfs:range   xsd:boolean .
+
+s1:TP5_Class2.tp5c2p5
+        a            owl:ObjectProperty ;
+        rdfs:domain  s1:TP5_Class2 ;
+        rdfs:range   s1:TP5_Class1 .
+
+s1:TP6_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class1.tp6p3
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class1.tp6p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class1.tp6p1
+                         ] .
+
+s1:TP6_Class2.tp6p3  a      owl:DatatypeProperty ;
+        rdfs:domain         s1:TP6_Class2 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propD .
+
+s1:TP7_Class1.tp7c1p3
+        a                           owl:ObjectProperty ;
+        rdfs:domain                 s1:TP7_Class1 ;
+        rdfs:range                  s1:TP7_Class2 ;
+        iso19150-2:aggregationType  "partOfSharedAggregation" .
+
+s1:p1   a                owl:DatatypeProperty , rdf:Property ;
+        rdfs:label       "Alias c3p1"@en ;
+        rdfs:range       xsd:double ;
+        skos:definition  "definition c3p1"@en .
+
+s1:TP5_Class1.tp5c1p1
+        a            owl:DatatypeProperty ;
+        rdfs:domain  s1:TP5_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:T6_Class1.t6u1p2  a  owl:ObjectProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   s1:T6_Class3 .
+
+s1:T6_Class1.t6u3p2  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:TP1_Class4  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP1_Class4.t1c4p1
+                         ] .
+
+s1:T6_Union2.t6u2p2  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Union2 ;
+        rdfs:range   xsd:string .
+
+s1:T6_Union2.t6u3p2  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:T6_Union2 ;
+        rdfs:range   xsd:boolean .
+
+s1:T6_Class2.t6c2p2  a  owl:ObjectProperty ;
+        rdfs:domain  s1:T6_Class2 ;
+        rdfs:range   s1:T6_Union2 .
+
+s1:T6_Class1  a          owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a            owl:Class ;
+                           owl:unionOf  ( [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                   owl:Class ;
+                                                                    owl:intersectionOf  ( [ a                   owl:Restriction ;
+                                                                                            owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                                            owl:onProperty      s1:T6_Class1.t6u3p1
+                                                                                          ]
+                                                                                          [ a                   owl:Restriction ;
+                                                                                            owl:maxCardinality  "5"^^xsd:nonNegativeInteger ;
+                                                                                            owl:onProperty      s1:T6_Class1.t6u3p1
+                                                                                          ]
+                                                                                        )
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u3p2
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u3p1
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u3p2
+                                                                  ]
+                                                                )
+                                          ]
+                                        )
+                         ] ;
+        rdfs:subClassOf  [ a            owl:Class ;
+                           owl:unionOf  ( [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                   owl:Restriction ;
+                                                                    owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty      s1:T6_Class1.t6u1p1
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u1p2
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ a                   owl:Class ;
+                                            owl:intersectionOf  ( [ a                owl:Restriction ;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u1p1
+                                                                  ]
+                                                                  [ a                owl:Restriction ;
+                                                                    owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                                                                    owl:onProperty   s1:T6_Class1.t6u1p2
+                                                                  ]
+                                                                )
+                                          ]
+                                        )
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:T6_Class1.t6c1p2
+                         ] .
+
+s1:TP1_Class1.t1c1p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:TP1_Class1 ;
+        rdfs:range   xsd:string .
+
+s1:TP4_Class3  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:p1
+                         ] .
+
+s1:TP7_Class2.tp7c2p1
+        a                           owl:ObjectProperty ;
+        rdfs:domain                 s1:TP7_Class2 ;
+        rdfs:range                  s1:TP7_Class1 ;
+        iso19150-2:associationName  "My Association Name" ;
+        owl:inverseOf               s1:TP7_Class1.tp7c1p1 .
+
+s1:TP2_Class2  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature .
+
+s1:T7_Class1.t7c1p1  a  owl:ObjectProperty ;
+        rdfs:domain  s1:T7_Class1 ;
+        rdfs:range   ce:T7_Enumeration1 .
+
+s1:TP5_Class1.tp5c1p4
+        a            owl:DatatypeProperty ;
+        rdfs:domain  s1:TP5_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:T2_Subtype_1  a        owl:Class ;
+        rdfs:subClassOf   s1:T2_Supertype_B , s1:T2_Supertype_A , gsp:Feature ;
+        owl:disjointWith  s1:T2_Subtype_2 .
+
+s1:TP7_Class2  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP7_Class2.tp7c2p1
+                         ] .
+
+s1:TP5_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "4"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class1.tp5c1p5
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "2"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class1.tp5c1p5
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:minCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class1.tp5c1p3
+                         ] ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:maxCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty      s1:TP5_Class1.tp5c1p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP5_Class1.tp5c1p1
+                         ] .
+
+s1:T8_Class1  a          owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:T8_Class1.t8c1p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:T8_Class1.t8c1p1
+                         ] .
+
+s1:T5_Class1.t5c1p1  a         owl:DatatypeProperty ;
+        rdfs:comment           "property_constraint_text (FIXME): Text of property_constraint_text" ;
+        rdfs:domain            s1:T5_Class1 ;
+        rdfs:range             xsd:integer ;
+        iso19150-2:constraint  "property_constraint_ocl ( ): comment property_constraint_ocl --- OCL expression: /* comment property_constraint_ocl */\r\ninv: self.t5c1p1 > 10" .
+
+s1:TP5_Class2.tp5c2p3
+        a            owl:ObjectProperty ;
+        rdfs:domain  s1:TP5_Class2 ;
+        rdfs:range   s1:TP5_Class1 .
+
+s1:TP6_Class2.tp6p1  a  owl:DatatypeProperty ;
+        rdfs:domain  s1:TP6_Class2 ;
+        rdfs:range   xsd:boolean .
+
+s1:TP7_Class1.tp7c1p1
+        a                           owl:ObjectProperty ;
+        rdfs:domain                 s1:TP7_Class1 ;
+        rdfs:range                  s1:TP7_Class2 ;
+        iso19150-2:associationName  "My Association Name" ;
+        owl:inverseOf               s1:TP7_Class2.tp7c2p1 .
+
+s1:T3_Fish  a            owl:Class ;
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
+
+s1:T3_Elephant  a        owl:Class ;
+        rdfs:subClassOf  s1:T3_Animal , gsp:Feature .
+
+s1:TP6_Class1.tp6p3  a      owl:DatatypeProperty ;
+        rdfs:domain         s1:TP6_Class1 ;
+        rdfs:range          xsd:boolean ;
+        rdfs:subPropertyOf  ex1:propD .
+
+s1:T5_Class1  a                owl:Class ;
+        rdfs:comment           "class_constraint_text (Approved): Text of class_constraint_text" ;
+        rdfs:subClassOf        gsp:Feature ;
+        rdfs:subClassOf        [ a                owl:Restriction ;
+                                 owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                                 owl:onProperty   s1:T5_Class1.t5c1p1
+                               ] ;
+        iso19150-2:constraint  "class_constraint_sbvr (Approved): Each T5_Class1 shall have t5c1p1 higher-than 20." , "class_constraint_ocl (Approved): comment class_constraint_ocl --- OCL expression: /* comment class_constraint_ocl */\r\ninv: self.t5c1p1 > 20" .
+
+s1:TP1_Class2  a         owl:Class ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP1_Class2.t1c2p1
+                         ] .
+
+s1:T2_Supertype_A  a     owl:Class ;
+        rdfs:subClassOf  gsp:Feature .
+
+s1:TP6_Class2  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class2.tp6p3
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class2.tp6p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:TP6_Class2.tp6p1
+                         ] .
+
+s1:TP4_Class1  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:p2
+                         ] ;
+        rdfs:subClassOf  [ a                owl:Restriction ;
+                           owl:cardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onProperty   s1:p1
+                         ] .
+
+s1:TP2_Class1.t2c1p1  a   owl:DatatypeProperty ;
+        rdfs:comment      "TV char: B, TV num: 1" , "TV char: A, TV num: 1" , "TV char: C, TV num: 2" , "TV char: A, TV num: 2" , "TV char: B, TV num: 3" , "TV char: C, TV num: 1" , "TV char: C, TV num: 3" , "TV char: A, TV num: 3" , "TV char: B, TV num: 2" ;
+        rdfs:domain       s1:TP2_Class1 ;
+        rdfs:isDefinedBy  <http://information.resource.uri/p1> ;
+        rdfs:label        "p1 alias"@en ;
+        rdfs:range        xsd:integer ;
+        skos:altLabel     "p1 alias 2"@en , "p1 alias3"@en , "p1 alias1"@en ;
+        skos:note         "TV char: A, B, C, TV num: 1, 2, 3" ;
+        skos:prefLabel    "p1 name"@en .
+
+s1:p2   a                owl:ObjectProperty ;
+        rdfs:label       "alias c1p2"@en ;
+        rdfs:range       s1:TP4_Class2 ;
+        skos:definition  "definition c1p2"@en .
+
+s1:TP5_Class1.tp5c1p2
+        a            owl:DatatypeProperty ;
+        rdfs:domain  s1:TP5_Class1 ;
+        rdfs:range   xsd:boolean .
+
+s1:T8_Class1.t8c1p1  a  owl:ObjectProperty ;
+        rdfs:domain  s1:T8_Class1 ;
+        rdfs:range   owl:Class .
+
+s1:TP5_Class2.tp5c2p1
+        a            owl:ObjectProperty ;
+        rdfs:domain  s1:TP5_Class2 ;
+        rdfs:range   s1:TP5_Class1 .
+
+s1:TP1_Class5  a         owl:Class ;
+        rdfs:subClassOf  gsp:Feature .

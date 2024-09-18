@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+ xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="input">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="repositoryFileNameOrConnectionString" value="src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/createOriginalSchemaInfoTags.qea"/>
+  <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="disabled"/>
+  <parameter name="dontConstructAssociationNames" value="true"/>
+  <parameter name="representTaggedValues" value="originalClassName, originalInClassName, originalPropertyName, originalPropertyMultiplicity, originalPropertyValueType, originalSchemaName"/>
+  <xi:include href="sc-resources/config/StandardAliases.xml"/>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/taggedValueTransformer/createOriginalSchemaInfoTags/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform" id="IDENTITY" input="input" mode="enabled"/>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformer" input="IDENTITY" id="TRF_TV" mode="enabled">
+   <rules>
+    <ProcessRuleSet name="prs">
+     <rule name="rule-trf-taggedValue-createOriginalSchemaInformationTags"/>
+    </ProcessRuleSet>
+   </rules>
+  </Transformer>
+  <Transformer class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener" input="TRF_TV" id="TRF_FLAT" mode="enabled">
+   <parameters>
+    <ProcessParameter name="targetNamespaceSuffix" value="/flat"/>
+    <ProcessParameter name="maxOccurs" value="2"/>
+    <ProcessParameter name="flattenObjectTypes" value="false"/>
+    <ProcessParameter name="flattenDataTypesExcludeRegex" value=".*"/>
+   </parameters>
+   <rules>
+    <ProcessRuleSet name="prs">
+     <rule name="rule-trf-cls-flatten-inheritance"/>
+     <rule name="rule-trf-prop-flatten-multiplicity"/>
+     <rule name="rule-trf-prop-flatten-types"/>
+    </ProcessRuleSet>
+   </rules>
+  </Transformer>
+ </transformers>
+ <targets>
+  <TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" inputs="TRF_TV TRF_FLAT" mode="enabled">
+   <targetParameter name="outputDirectory" value="testResults/taggedValueTransformer/createOriginalSchemaInfoTags/xsd"/>
+   <targetParameter name="sortedOutput" value="true"/>
+   <targetParameter name="defaultEncodingRule" value="XSDEncRule"/>
+   <xi:include href="sc-resources/config/StandardRules.xml"/>
+   <xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+   <xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+   <rules>
+    <EncodingRule name="XSDEncRule" extends="iso19136_2007">
+     <rule name="rule-xsd-cls-mixin-classes"/>
+     <rule name="rule-xsd-all-tagged-values"/>
+    </EncodingRule>
+   </rules>
+  </TargetXmlSchema>
+ </targets>
+</ShapeChangeConfiguration>

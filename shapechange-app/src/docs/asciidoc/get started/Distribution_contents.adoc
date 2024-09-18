@@ -1,0 +1,252 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Distribution_contents]]
+= Distribution contents
+
+[[Resources_in_the_distribution_and_resources_available_on_shapechangenet]]
+== Resources in the distribution and resources available on shapechange.net
+
+The resources needed to execute ShapeChange are contained
+in the distribution package, to ensure:
+
+* that ShapeChange can be run without an internet connection, and 
+* that the execution uses the correct resources; those with which
+the particular version of ShapeChange was developed.
+** This helps avoiding issues with incompatible resources being used.
+
+The resources for the latest release of ShapeChange are also available
+on shapechange.net.
+
+The following table describes the resources in both the 
+distribution package and on shapechange.net.
+
+[cols="2,5",options="header"]
+|===
+|File |Description
+|ShapeChange-{project-version}.jar |The ShapeChange command line application, 
+packaged as an executable JAR file.
+
+|LICENSE |The license of the ShapeChange distribution - the GNU
+Public License v3.
+
+|config |Folder containing basic reusable fragments for configuration files. 
+These can be included in project configuration files using XInclude. More details
+on configuration files are described
+xref:../get started/Configuration.adoc[here]. Example
+configuration files can be found in the 'test' folder.
+
+|config/DescriptorSourcesInspire.xml 
+|(since 2.0.2) An example configuration for the source of descriptive
+information about model elements as used in the INSPIRE application
+schemas.
+
+|config/minimal.xml
+|This file is a minimal configuration file that will be used if
+ShapeChange is invoked without parameters for example by
+double-clicking the JAR file.
+
+|config/StandardAliases.xml
+|This file specifies typical aliases for well-known stereotypes and is
+typically included in a project configuration file. This also handles
+different writing styles for stereotype names e.g. «featureType» vs.
+«Feature Type». Additional aliases may be specified in a project
+configuration file.
+
+|config/StandardJsonMapEntries.xml
+|Includes the standard map entries for the JSON encoding rule.
+Additional mappings can be defined in project configurations - or added
+to these central mapping files.
+
+|config/StandardMapEntries-v21.xml
+|Includes map entries configuration files for GML 2.1 schema encoding.
+Additional mappings can be defined in project configurations - or added
+to these central mapping files.
+
+|config/StandardMapEntries-v31.xml
+|Includes map entries configuration files for GML 3.1 schema encoding.
+Additional mappings can be defined in project configurations - or added
+to these central mapping files.
+
+|config/StandardMapEntries.xml
+|Includes map entries configuration files for GML 3.2 (and above)
+schema encoding. This provides standard XML Schema implementations for
+many types from ISO/TC 211 and OGC standards that are used in
+application schemas. Additional mappings can be defined in project
+configurations - or added to these central mapping files.
+
+|config/StandardMapEntries_gml21.xml
+|Map entries for basic types (e.g. from ISO 19103) according to the GML
+3.2 / ISO 19136 encoding rule based on GML 2.1.
+
+|config/StandardMapEntries_gml31.xml
+|Map entries for basic types (e.g. from ISO 19103) according to the GML
+3.2 / ISO 19136 encoding rule based on GML 3.1.
+
+|config/StandardMapEntries_gmlcov.xml
+|Map entries for mapping types from the GMLCOV standard to their
+implementations.
+
+|config/StandardMapEntries_iso19107-v21.xml
+|Map entries for mapping types from ISO 19107 (spatial schema) to their
+GML (2.1) implementations.
+
+|config/StandardMapEntries_iso19107-v31.xml
+|Map entries for mapping types from ISO 19107 (spatial schema) to their
+GML (3.1) implementations.
+
+|config/StandardMapEntries_iso19107.xml
+|Map entries for mapping types from ISO 19107 (spatial schema) to their
+GML (3.2 and above) implementations and their ISO/TS 19139 GSS
+implementations.
+
+|config/StandardMapEntries_iso19108-v31.xml
+|Map entries for mapping types from ISO 19108 (temporal schema) to
+their GML (3.1) implementations.
+
+|config/StandardMapEntries_iso19108.xml
+|Map entries for mapping types from ISO 19108 (temporal schema) to
+their GML (3.2 and above) implementations and their ISO/TS 19139 GTS
+implementations.
+
+|config/StandardMapEntries_iso19111-v31.xml
+|Map entries for mapping types from ISO 19111 (coordinate reference
+systems) to their GML (3.1) implementations.
+
+|config/StandardMapEntries_iso19111.xml
+|Map entries for mapping types from ISO 19111 (coordinate reference
+systems) to their GML (3.2 and above) implementations.
+
+|config/StandardMapEntries_iso19115-v21.xml
+|Map entries for mapping types from ISO 19115 (metadata) to their GML
+(2.1) implementations.
+
+|config/StandardMapEntries_iso19115.xml
+|Map entries for mapping types from ISO 19115 (metadata) to their
+ISO/TS 19139 implementations.
+
+|config/StandardMapEntries_iso19123-v31.xml
+|Map entries for mapping types from ISO 19123 (coverages) to their GML
+(3.1) implementations.
+
+|config/StandardMapEntries_iso19123.xml
+|Map entries for mapping types from ISO 19123 (coverages) to their
+GMLCOV implementations.
+
+|config/StandardMapEntries_iso19136_2007.xml
+|Map entries for basic types according to the GML 3.2 / ISO 19136
+encoding rule.
+
+|config/StandardMapEntries_iso19139_2007.xml
+|Map entries for basic types according to the ISO/TS 19139 encoding
+rule.
+
+|config/StandardMapEntries_iso19156.xml
+|Map entries for mapping types from ISO 19158 (observation and
+measurements) to their OMXML implementations.
+
+|config/StandardMapEntries_sweCommon.xml
+|Includes the standard map entries for the
+xref:../targets/xml schema/SWE_Common_Data_Model_2.0_Encoding_Rule.adoc[SWE Common Data Model
+2.0 encoding rule]. Additional mappings can be defined in project
+configurations - or added to these central mapping files.
+
+|config/StandardNamespaces-v21.xml
+|Lists namespaces commonly imported from GML 2.1 application schemas.
+The GML namespace must be specified in any ShapeChange configuration. If
+you want to create a GML 2.1 application schema include this file in
+your configuration.
+
+|config/StandardNamespaces-v31.xml
+|Lists namespaces commonly imported from GML 3.1 application schemas.
+The GML namespace must be specified in any ShapeChange configuration. If
+you want to create a GML 3.1 application schema include this file in
+your configuration.
+
+|config/StandardNamespaces.xml
+|Lists namespaces commonly imported from GML 3.2/3.3 application
+schemas. The GML namespace must be specified in any ShapeChange
+configuration. If you want to create a GML 3.2/3.3 application schema
+include this file in your configuration.
+
+|config/StandardRules.xml
+|Specifies some pre-defined XML Schema encoding rules.
+
+|config/StandardTagAliases.xml
+|(since 2.0.2) This file specifies typical aliases for well-known
+descriptor tags and may be included in a project configuration
+file. Additional aliases may be specified in a project configuration
+file.
+
+|dataModelPatterns |Database model pattern XMI templates, used by the
+xref:../targets/SQL_DDL.adoc#dataModelPatternPath[SQL DDL target] when
+creating UML database models.
+
+|documentation |The technical documentation of ShapeChange.
+
+|lib |Folder containing libraries needed by ShapeChange.
+
+|ont |Folder with files for ontology generation
+
+|schema |Folder for XML Schema documents
+
+|schema/ShapeChangeConfiguration.xsd
+|XML Schema for ShapeChange configuration files.
+
+|schema/ShapeChangeAppinfo.xsd
+|XML Schema for elements embedded by ShapeChange in appinfo
+annotations.
+
+|schema/ShapeChangeResult.xsd
+|XML Schema for the log files created by ShapeChange.
+
+|schema/w3c/XInclude.xsd
+|XML Schema for XInclude published by W3C.
+
+|templates
+|Folder for template files used by ShapeChange.
+
+|templates/template.docx
+|Template file that can be used to create a
+xref:../targets/feature catalogue/Feature_Catalogue.adoc[feature
+catalogue] output of an application schema in DOCX format.
+
+|test.bat, test.sh and folder test |Resources to test the installation.
+
+|xslt |Folder for example XSLT stylesheets that may be used 
+by ShapeChange targets e.g. the feature catalogue generation.
+
+|xslt/docx.xsl
+|Example stylesheet to generate DOCX feature catalogues.
+
+|xslt/frameHtml.xsl
+|Example stylesheet to generate frame-based HTML feature catalogues.
+
+|xslt/html.xsl
+|Example stylesheet to generate (single-page) HTML feature catalogues.
+
+|xslt/localizationMessages.xml
+|Example XML file that contains a list of all messages required when
+creating a feature catalogue in different languages. This file can be
+customized to support additional languages. (further details:
+xref:../targets/feature catalogue/Feature_Catalogue.adoc#Localization[here])
+
+|xslt/stylesheet.css
+|Example cascading stylesheet that applies to frame-based HTML feature
+catalogues (further details:
+xref:../targets/feature catalogue/Cascading_Style_Sheets_CSS.adoc[here]).
+
+|===

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/profiling/withProfileMetadata/testProfiling_withMetadata.qea" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/profiling/withProfileMetadata/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="A" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="A" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<!-- <rule -->
+					<!-- name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" 
+						/> -->
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="B_and_C" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="B,C" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<!-- <rule -->
+					<!-- name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" 
+						/> -->
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+			input="B_and_C" id="B_and_C_homogeneousgeometry" mode="enabled">
+			<parameters>
+				<ProcessParameter name="separatorForGeometryTypeSuffix"
+					value="_" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-homogeneousgeometries" />
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry param="P"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Point"
+					type="GM_Point" />
+				<ProcessMapEntry param="C"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Curve"
+					type="GM_Curve" />
+				<ProcessMapEntry param="S"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Surface"
+					type="GM_Surface" />
+			</mapEntries>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="D" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="D" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<!-- <rule -->
+					<!-- name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" 
+						/> -->
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeProfileInfos" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+			id="E" input="INPUT" mode="enabled">
+			<parameters>
+				<ProcessParameter name="profiles" value="E" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="profiler">
+					<!-- <rule -->
+					<!-- name="rule-trf-profiling-preprocessing-profilesValueConsistencyCheck" 
+						/> -->
+					<rule name="rule-trf-profiling-preprocessing-modelConsistencyCheck" />
+					<rule name="rule-trf-profiling-processing-explicitProfileSettings" />
+					<rule name="rule-trf-profiling-postprocessing-removeResidualTypes" />
+					<rule name="rule-trf-profiling-postprocessing-removeEmptyPackages" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+			input="E" id="E_homogeneousgeometry" mode="enabled">
+			<parameters>
+				<ProcessParameter name="separatorForGeometryTypeSuffix"
+					value="_" />
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-prop-flatten-homogeneousgeometries" />
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry param="P"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Point"
+					type="GM_Point" />
+				<ProcessMapEntry param="C"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Curve"
+					type="GM_Curve" />
+				<ProcessMapEntry param="S"
+					rule="rule-trf-prop-flatten-homogeneousgeometries" targetType="GM_Surface"
+					type="GM_Surface" />
+			</mapEntries>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			inputs="A B_and_C_homogeneousgeometry E_homogeneousgeometry" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/profiling/withProfileMetadata/results/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="gml33" />
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.modelexport.ModelExport"
+			inputs="D" mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/profiling/withProfileMetadata/results/scxml" />
+			<targetParameter name="outputFilename" value="profileDExport" />
+			<targetParameter name="defaultEncodingRule" value="export" />
+			<rules>
+				<EncodingRule name="export">
+					<rule name="rule-exp-pkg-allPackagesAreEditable" />
+				</EncodingRule>
+			</rules>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

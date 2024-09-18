@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties/testEA_fc_inheritedProperties.zip"/>
+		<parameter name="appSchemaName" value="TestSchema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties/log.xml"/>
+	</log>
+	<targets>		
+		<Target class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/featureCatalogue/inheritedPropertiesAndNoAlphabeticSortingForProperties"/>
+			<targetParameter name="outputFilename" value="fc_inheritedProperties"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="inheritedProperties" value="true"/>
+			<targetParameter name="noAlphabeticSortingForProperties" value="true"/>
+			<targetParameter name="outputFormat" value="HTML"/>
+			<targetParameter name="name" value="'Test application schema'"/>
+			<targetParameter name="scope" value="This feature catalogue ..."/>
+			<targetParameter name="versionNumber" value="n/a"/>
+			<targetParameter name="versionDate" value="n/a"/>
+			<targetParameter name="xsltPath" value="sc-resources/xslt"/>
+			<targetParameter name="producer" value="interactive instruments GmbH"/>
+			<targetParameter name="lang" value="de"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

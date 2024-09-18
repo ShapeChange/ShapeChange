@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/sql/outputDdlModification/test_sql_outputDdlModification.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/sql/outputDdlModification/log_sql.xml" />
+	</log>
+	<targets>
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="defaultEncodingRule" value="sql" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/outputDdlModification/ddl" />
+			<targetParameter name="removeEmptyLinesInDdlOutput"
+				value="true" />
+			<targetParameter name="fileDdlTop"
+				value="src/integrationtests/sql/outputDdlModification/topAndBottomDdls/top.sql" />
+			<targetParameter name="fileDdlBottom"
+	value="src/integrationtests/sql/outputDdlModification/topAndBottomDdls/bottom.sql" />
+			<xi:include
+				href="sc-resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

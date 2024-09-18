@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/config/testEA_associationClassMapper.xml" end="Tue Jul 12 09:27:26 CEST 2016" resultCode="0" start="Tue Jul 12 09:27:15 CEST 2016" version="2.1.1-SNAPSHOT">
+  <Messages>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/associationClassTransformation/1'"/>
+    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'original'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'original'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/associationClassTransformation/1'"/>
+    <Info message="(Converter.java) Now processing target 'Feature Catalogue' for input 'original'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'original'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Now processing transformation 'associationClassMapper' for input ID: 'original'."/>
+    <Info message="(Converter.java) Performed transformation for transformer ID 'associationClassMapper' for input ID: 'original'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/associationClassTransformation/1'"/>
+    <Info message="(Converter.java) Now processing target 'XML Schema' for input 'associationClassMapper'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'associationClassMapper'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema', target namespace: 'http://test/associationClassTransformation/1'"/>
+    <Info message="(Converter.java) Now processing target 'Feature Catalogue' for input 'associationClassMapper'."/>
+    <Info message="(Converter.java) Executed target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'associationClassMapper'.&#10;-------------------------------------------------"/>
+    <Info message="(Converter.java) Executed deferred output write for target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'original'."/>
+    <Info message="(Converter.java) Executed deferred output write for target class 'de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue' for input ID: 'associationClassMapper'."/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/associationClassTransform/original/act2.xsd" scope="http://test/associationClassTransformation/1" target="XML Schema">act2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/associationClassTransform/associationClassMapper/act2.xsd" scope="http://test/associationClassTransformation/1" target="XML Schema">act2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/associationClassTransform/original/associationClassTransform.html" target="Feature Catalogue">associationClassTransform.html</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/associationClassTransform/associationClassMapper/associationClassTransform.html" target="Feature Catalogue">associationClassTransform.html</Result>
+  </Results>
+</ShapeChangeResult>

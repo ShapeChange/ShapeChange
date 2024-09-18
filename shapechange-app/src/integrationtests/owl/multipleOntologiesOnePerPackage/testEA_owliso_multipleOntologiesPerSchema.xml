@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="addTaggedValues" value="ontologyNameTV,sourceTV" />
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile" value="src/integrationtests/owl/multipleOntologiesOnePerPackage/test_owliso.qea" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/owl/multipleOntologiesPerSchema/log_owliso.xml" />
+	</log>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/owl/multipleOntologiesPerSchema/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="test" />
+			<rules>
+				<EncodingRule name="test" extends="gml33">
+					<rule name="rule-xsd-cls-mixin-classes" />
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+		<TargetOwl
+			class="de.interactive_instruments.shapechange.core.target.ontology.OWLISO19150"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/owl/multipleOntologiesPerSchema/owl" />
+			<targetParameter name="defaultEncodingRule" value="encrule" />
+			<!-- turtle ntriples nquads rdfxml jsonld rdfjson trig trix rdfthrift -->
+			<targetParameter name="outputFormat" value="turtle" />
+			<!-- <targetParameter name="source" value="MySource"/> -->
+			<targetParameter name="URIbase" value="http://ontology.base.uri" />
+			<targetParameter name="ontologyNameTaggedValue"
+				value="ontologyNameTV" />
+			<targetParameter name="sourceTaggedValueName" value="sourceTV" />
+			<targetParameter name="rdfNamespaceSeparator" value="/" />
+			<xi:include href="sc-resources/config/StandardNamespaces-owl.xml" />
+			<rules>
+				<EncodingRule name="encrule" extends="*">
+					<rule name="rule-owl-cls-encode-featuretypes" />
+					<rule name="rule-owl-pkg-ontologyName-byTaggedValue" />
+					<rule name="rule-owl-pkg-ontologyName-withPath" />
+					<rule name="rule-owl-pkg-ontologyName-appendVersion" />
+					<rule name="rule-owl-pkg-dctSourceTitle" />
+					<rule name="rule-owl-pkg-importISO191502Base" />
+				</EncodingRule>
+			</rules>
+			<descriptorTargets>
+				<DescriptorTarget target="rdfs:label" template="[[alias]]"
+					noValueBehavior="populateOnce" noValueText="FIXME" />
+			</descriptorTargets>
+		</TargetOwl>
+	</targets>
+</ShapeChangeConfiguration>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="SCXML"/>
+	 <parameter name="inputFile" value="src/integrationtests/xsd/ade/ade.zip"/>
+		<parameter name="appSchemaName" value="ADE Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+	 <parameter name="logFile" value="testResults/xsd/ade/log_ADE.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+		 <targetParameter name="outputDirectory" value="testResults/xsd/ade"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="citygml-ade"/>
+			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
+		<rule name="req-all-all-documentation"/>
+		<rule name="req-xsd-pkg-targetNamespace"/>
+		<rule name="req-xsd-pkg-xmlns"/>
+		<rule name="req-xsd-pkg-namespace-schema-only"/>
+		<rule name="rec-xsd-pkg-version"/>
+		<rule name="req-xsd-pkg-xsdDocument"/>
+		<rule name="req-xsd-pkg-dependencies"/>
+		<rule name="req-xsd-cls-codelist-asDictionary-true"/>
+		<rule name="req-xsd-cls-codelist-extensibility-values"/>
+		<rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
+		<rule name="req-xsd-cls-datatype-noPropertyType"/>
+		<rule name="req-xsd-cls-objecttype-noPropertyType"/>
+		<rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
+		<rule name="req-xsd-cls-enum-no-supertypes"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-nillable"/>
+		
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="okstra">
+		<rule name="rule-xsd-cls-no-base-class"/>
+		<rule name="rule-xsd-cls-no-abstract-classes"/>
+		<rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
+		<rule name="rule-xsd-cls-okstra-lifecycle"/>
+		<rule name="rule-xsd-cls-okstra-fid"/>
+	</EncodingRule>
+  <EncodingRule extends="iso19136_2007" name="gml21">
+    <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
+    <rule name="rule-xsd-all-gml21"/>
+  </EncodingRule>
+	<EncodingRule extends="*" name="notEncoded">
+		<rule name="rule-xsd-all-notEncoded"/>
+		<rule name="rule-json-all-notEncoded"/>
+		<rule name="rule-sql-all-notEncoded"/>
+		<rule name="rule-cdb-all-notEncoded"/>
+		<rule name="rule-gpkg-all-notEncoded"/>
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="citygml-ade">
+		<rule name="req-xsd-cls-suppress-supertype"/>
+		<rule name="req-xsd-cls-suppress-subtype"/>
+		<rule name="req-xsd-cls-suppress-no-properties"/>
+		<rule name="rule-xsd-cls-suppress"/>
+		<rule name="rule-xsd-cls-adeelement"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-initialValue"/>		
+	</EncodingRule>
+	<EncodingRule extends="iso19139_2007" name="metadata-profile">
+		<rule name="rule-xsd-cls-standard-19139-isoType"/>
+		<rule name="req-xsd-cls-suppress-supertype"/>
+		<rule name="req-xsd-cls-suppress-subtype"/>
+		<rule name="req-xsd-cls-suppress-no-properties"/>
+		<rule name="rule-xsd-cls-suppress"/>
+		<rule name="rule-xsd-pkg-schematron"/>
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
+		<rule name="req-xsd-cls-mixin-supertypes"/>
+		<rule name="req-xsd-cls-codelist-no-supertypes"/>
+		<rule name="rule-xsd-cls-union-asCharacterString"/>
+		<rule name="rule-xsd-cls-union-asGroup"/>
+		<rule name="rule-xsd-cls-enum-supertypes"/>
+		<rule name="rule-xsd-cls-enum-subtypes"/>
+		<rule name="rule-xsd-cls-basictype"/>
+		<rule name="rule-xsd-cls-union-direct"/>		
+		<rule name="rule-xsd-cls-codelist-constraints"/>
+		<rule name="rule-xsd-cls-mixin-classes-as-group"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-exclude-derived"/>
+		<rule name="rule-xsd-prop-length-size-pattern"/>
+		<rule name="rule-xsd-prop-xsdAsAttribute"/>
+		<rule name="rule-xsd-prop-nillable"/>
+		<rule name="rule-xsd-prop-nilReasonAllowed"/>
+		<rule name="rule-xsd-prop-initialValue"/>		
+		<rule name="rule-xsd-prop-att-map-entry"/>
+		<rule name="rule-xsd-pkg-schematron"/>
+		<rule name="rule-xsd-all-tagged-values"/>
+	</EncodingRule>   
+	<EncodingRule extends="*" name="external">
+		<rule name="rule-xsd-all-notEncoded"/>
+	</EncodingRule>
+	<EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
+		<rule name="rule-xsd-cls-no-gml-types"/>
+		<rule name="rule-xsd-all-naming-gml"/>
+		<rule name="rule-xsd-cls-global-enumeration"/>
+		<rule name="rule-xsd-cls-standard-gml-property-types"/>
+	</EncodingRule>
+</rules>
+			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<XmlNamespace location="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>
+  <XmlNamespace location="http://www.w3.org/1999/xlink.xsd" ns="http://www.w3.org/1999/xlink" nsabr="xlink"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" ns="http://www.opengis.net/gml" nsabr="gml"/>
+  
+  <XmlNamespace ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/" nsabr="gmldgiwgsp"/>
+  <XmlNamespace ns="http://www.w3.org/2001/XMLSchema-instance" nsabr="xsi"/>
+</xmlNamespaces>
+			<xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	<XsdMapEntry type="Character" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="CharacterString" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Integer" xmlPropertyType="integer" xmlType="integer" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Boolean" xmlPropertyType="boolean" xmlType="boolean" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Number" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Real" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Date" xmlPropertyType="date" xmlType="date" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="DateTime" xmlPropertyType="dateTime" xmlType="dateTime" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="ClockTime" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Bit" xmlPropertyType="boolean" xmlType="boolean" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Decimal" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Vector" xmlPropertyType="gml:VectorType" xmlType="gml:VectorType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GenericName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="LocalName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="ScopedName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Distance" xmlPropertyType="gml:LengthType" xmlType="gml:LengthType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Length" xmlPropertyType="gml:LengthType" xmlType="gml:LengthType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Angle" xmlPropertyType="gml:AngleType" xmlType="gml:AngleType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Speed" xmlPropertyType="gml:SpeedType" xmlType="gml:SpeedType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Velocity" xmlPropertyType="gml:SpeedType" xmlType="gml:SpeedType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Scale" xmlPropertyType="gml:ScaleType" xmlType="gml:ScaleType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Area" xmlPropertyType="gml:AreaType" xmlType="gml:AreaType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Volume" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Sign" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Time" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Year" xmlPropertyType="gYear" xmlType="gYear" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Any" xmlElement="gml:_Object" xmlPropertyType="_P_" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Dictionary" xmlElement="gml:Dictionary" xmlPropertyType="_P_" xmlType="gml:DictionaryType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+	<XsdMapEntry type="doubleOrNilReason" xmlPropertyType="gml:doubleOrNull" xmlType="gml:doubleOrNull" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="MeasureList" xmlPropertyType="gml:MeasureListType" xmlType="gml:MeasureListType" xmlTypeContent="complex" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+	<XsdMapEntry type="Binary" xmlPropertyType="hexBinary" xmlType="hexBinary" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+</xsdMapEntries>
+  <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	<XsdMapEntry type="GM_Object" xmlElement="gml:_Geometry" xmlPropertyType="gml:GeometryPropertyType" xmlType="gml:AbstractGeometryType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Primitive" xmlElement="gml:_GeometricPrimitive" xmlPropertyType="gml:GeometricPrimitivePropertyType" xmlType="gml:AbstractGeometricPrimitiveType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="DirectPosition" xmlPropertyType="gml:DirectPositionType" xmlType="gml:DirectPositionType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Position" xmlElement="gml:Point" xmlPropertyType="gml:PointPropertyType" xmlType="gml:PointType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Point" xmlElement="gml:Point" xmlPropertyType="gml:PointPropertyType" xmlType="gml:PointType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Curve" xmlElement="gml:Curve" xmlPropertyType="gml:CurvePropertyType" xmlType="gml:CurveType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Surface" xmlElement="gml:Surface" xmlPropertyType="gml:SurfacePropertyType" xmlType="gml:SurfaceType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_PolyhedralSurface" xmlElement="gml:PolyhedralSurface" xmlPropertyType="_P_" xmlType="gml:PolyhedralSurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_TriangulatedSurface" xmlElement="gml:TriangulatedSurface" xmlPropertyType="_P_" xmlType="gml:TriangulatedSurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Tin" xmlElement="gml:Tin" xmlPropertyType="_P_" xmlType="gml:TinType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Solid" xmlElement="gml:Solid" xmlPropertyType="gml:SolidPropertyType" xmlType="gml:SolidType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_OrientableCurve" xmlElement="gml:_Curve" xmlPropertyType="gml:CurvePropertyType" xmlType="gml:AbstractCurveType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_OrientableSurface" xmlElement="gml:_Surface" xmlPropertyType="gml:SurfacePropertyType" xmlType="gml:AbstractSurfaceType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Ring" xmlElement="gml:Ring" xmlPropertyType="gml:AbstractRingPropertyType" xmlType="gml:RingType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Shell" xmlElement="gml:Shell" xmlPropertyType="gml:ShellPropertyType" xmlType="gml:ShellType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Aggregate" xmlElement="gml:MultiGeometry" xmlPropertyType="gml:MultiGeometryPropertyType" xmlType="gml:MultiGeometryType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CompositePoint" xmlElement="gml:Point" xmlPropertyType="_P_" xmlType="gml:PointType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CompositeCurve" xmlElement="gml:CompositeCurve" xmlPropertyType="_P_" xmlType="gml:CompositeCurveType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CompositeSurface" xmlElement="gml:CompositeSurface" xmlPropertyType="_P_" xmlType="gml:CompositeSurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CompositeSolid" xmlElement="gml:CompositeSolid" xmlPropertyType="_P_" xmlType="gml:CompositeSolidType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Complex" xmlElement="gml:GeometricComplex" xmlPropertyType="gml:GeometricComplexPropertyType" xmlType="gml:GeometricComplexType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_MultiPoint" xmlElement="gml:MultiPoint" xmlPropertyType="gml:MultiPointPropertyType" xmlType="gml:MultiPointType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_MultiCurve" xmlElement="gml:MultiCurve" xmlPropertyType="gml:MultiCurvePropertyType" xmlType="gml:MultiCurveType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_MultiSurface" xmlElement="gml:MultiSurface" xmlPropertyType="gml:MultiSurfacePropertyType" xmlType="gml:MultiSurfaceType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_MultiSolid" xmlElement="gml:MultiSolid" xmlPropertyType="gml:MultiSolidPropertyType" xmlType="gml:MultiSolidType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_MultiPrimitive" xmlElement="gml:MultiGeometry" xmlPropertyType="gml:MultiGeometryPropertyType" xmlType="gml:MultiGeometryType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CurveSegment" xmlElement="gml:_CurveSegment" xmlPropertyType="_P_" xmlType="gml:AbstractCurveSegmentType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Arc" xmlElement="gml:Arc" xmlPropertyType="_P_" xmlType="gml:ArcType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_ArcByBulge" xmlElement="gml:ArcByBulge" xmlPropertyType="_P_" xmlType="gml:ArcByBulgeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_ArcString" xmlElement="gml:ArcString" xmlPropertyType="_P_" xmlType="gml:ArcStringType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_ArcStringByBulge" xmlElement="gml:ArcStringByBulge" xmlPropertyType="_P_" xmlType="gml:ArcStringByBulgeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Bezier" xmlElement="gml:Bezier" xmlPropertyType="_P_" xmlType="gml:BezierType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_BsplineCurve" xmlElement="gml:BSpline" xmlPropertyType="_P_" xmlType="gml:BSplineType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Circle" xmlElement="gml:Circle" xmlPropertyType="_P_" xmlType="gml:CircleType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Clothoid" xmlElement="gml:Clothoid" xmlPropertyType="_P_" xmlType="gml:ClothoidType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_CubicSpline" xmlElement="gml:CubicSpline" xmlPropertyType="_P_" xmlType="gml:CubicSplineType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_GeodesicString" xmlElement="gml:GeodesicString" xmlPropertyType="_P_" xmlType="gml:GeodesicStringType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_LineString" xmlElement="gml:LineStringSegment" xmlPropertyType="_P_" xmlType="gml:LineStringSegmentType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_OffsetCurve" xmlElement="gml:OffsetCurve" xmlPropertyType="_P_" xmlType="gml:OffsetCurveType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_SurfacePatch" xmlElement="gml:_SurfacePatch" xmlPropertyType="_P_" xmlType="gml:AbstractSurfacePatchType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_GriddedSurface" xmlElement="gml:_GriddedSurface" xmlPropertyType="_P_" xmlType="gml:AbstractGriddedSurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_ParametricCurveSurface" xmlElement="gml:_ParametricCurveSurface" xmlPropertyType="_P_" xmlType="gml:AbstractParametricCurveSurfaceType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Cone" xmlElement="gml:Cone" xmlPropertyType="_P_" xmlType="gml:ConeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Cylinder" xmlElement="gml:Cylinder" xmlPropertyType="_P_" xmlType="gml:CylinderType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Geodesic" xmlElement="gml:Geodesic" xmlPropertyType="_P_" xmlType="gml:GeodesicType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Polygon" xmlElement="gml:PolygonPatch" xmlPropertyType="_P_" xmlType="gml:PolygonPatchType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Sphere" xmlElement="gml:Sphere" xmlPropertyType="_P_" xmlType="gml:SphereType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Triangle" xmlElement="gml:Triangle" xmlPropertyType="_P_" xmlType="gml:TriangleType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GM_Envelope" xmlElement="gml:Envelope" xmlPropertyType="_P_" xmlType="gml:EnvelopeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+	<XsdMapEntry type="TP_Object" xmlElement="gml:_Topology" xmlPropertyType="_P_" xmlType="gml:AbstractTopologyType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_Node" xmlElement="gml:Node" xmlPropertyType="gml:DirectedNodePropertyType" xmlType="gml:NodeType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_Edge" xmlElement="gml:Edge" xmlPropertyType="gml:DirectedEdgePropertyType" xmlType="gml:EdgeType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_Face" xmlElement="gml:Face" xmlPropertyType="gml:DirectedFacePropertyType" xmlType="gml:FaceType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_Solid" xmlElement="gml:TopoSolid" xmlPropertyType="gml:DirectedTopoSolidPropertyType" xmlType="gml:TopoSolidType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_DirectedNode" xmlPropertyType="gml:DirectedNodePropertyType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_DirectedEdge" xmlPropertyType="gml:DirectedEdgePropertyType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_DirectedFace" xmlPropertyType="gml:DirectedFacePropertyType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_DirectedSolid" xmlPropertyType="gml:DirectedTopoSolidPropertyType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TP_Complex" xmlElement="gml:TopoComplex" xmlPropertyType="gml:TopoComplexMemberType" xmlType="gml:TopoComplexType" xmlTypeContent="complex" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+</xsdMapEntries>
+  <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	<XsdMapEntry type="TM_Object" xmlElement="gml:_TimeObject" xmlPropertyType="_P_" xmlType="gml:AbstractTimeObjectType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Complex" xmlElement="gml:_TimeComplex" xmlPropertyType="_P_" xmlType="gml:AbstractTimeComplexType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_GeometricPrimitive" xmlElement="gml:_TimeGeometricPrimitive" xmlPropertyType="_P_" xmlType="gml:AbstractTimeGeometricPrimitiveType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Instant" xmlElement="gml:TimeInstant" xmlPropertyType="gml:TimeInstantPropertyType" xmlType="gml:TimeInstantType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Period" xmlElement="gml:TimePeriod" xmlPropertyType="gml:TimePeriodPropertyType" xmlType="gml:TimePeriodType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_TopologicalComplex" xmlElement="gml:TimeTopologyComplex" xmlPropertyType="gml:TimeTopologyComplexPropertyType" xmlType="gml:TimeTopologyComplexType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_TopologicalPrimitive" xmlElement="gml:_TimeTopologyPrimtive" xmlPropertyType="gml:TimeTopologyPrimtivePropertyType" xmlType="gml:AbstractTimeTopologyPrimtiveType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Node" xmlElement="gml:TimeNode" xmlPropertyType="gml:TimeNodePropertyType" xmlType="gml:TimeNodeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Edge" xmlElement="gml:TimeEdge" xmlPropertyType="gml:TimeEdgePropertyType" xmlType="gml:TimeEdgeType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_PeriodDuration" xmlPropertyType="duration" xmlType="duration" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_IntervalLength" xmlPropertyType="gml:TimeIntervalLengthType" xmlType="gml:TimeIntervalLengthType" xmlTypeContent="simple" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Position" xmlPropertyType="gml:TimePositionType" xmlType="gml:TimePositionType" xmlTypeContent="simple" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+	<XsdMapEntry type="TM_Position" xmlPropertyType="gml:TimePositionType" xmlType="gml:TimePositionType" xmlTypeContent="simple" xmlTypeType="complex" xsdEncodingRules="gml33"/>
+	<XsdMapEntry type="TM_Coordinate" xmlPropertyType="decimal" xmlType="decimal" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_CalDate" xmlPropertyType="gml:CalDate" xmlType="gml:CalDate" xmlTypeContent="simple" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_ClockTime" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_DateAndTime" xmlPropertyType="dateTime" xmlType="dateTime" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Calendar" xmlElement="gml:TimeCalendar" xmlPropertyType="gml:TimeCalendarPropertyType" xmlType="gml:TimeCalendarType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_CalendarEra" xmlElement="gml:TimeCalendarEra" xmlPropertyType="gml:TimeCalendarEraPropertyType" xmlType="gml:TimeCalendarEraType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Clock" xmlElement="gml:TimeClock" xmlPropertyType="gml:TimeClockPropertyType" xmlType="gml:TimeClockType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_CoordinateSystem" xmlElement="gml:TimeCoordinateSystem" xmlPropertyType="_P_" xmlType="gml:TimeCoordinateSystemType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_OrdinalReferenceSystem" xmlElement="gml:TimeOrdinalReferenceSystem" xmlPropertyType="_P_" xmlType="gml:TimeOrdinalReferenceSystemType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_OrdinalEra" xmlElement="gml:TimeOrdinalEra" xmlPropertyType="gml:TimeOrdinalEraPropertyType" xmlType="gml:TimeOrdinalEraType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="TM_Duration" xmlPropertyType="duration" xmlType="duration" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+</xsdMapEntries>
+  <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <XsdMapEntry type="SC_CRS" xmlElement="gml:_CRS" xmlPropertyType="gml:CRSRefType" xmlType="gml:AbstractReferenceSystemType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  
+</xsdMapEntries>
+  <xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+  <XsdMapEntry type="CV_Coverage" xmlElement="gml:_Coverage" xmlPropertyType="_P_" xmlType="gml:AbstractCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_ContinuousCoverage" xmlElement="gml:_ContinuousCoverage" xmlPropertyType="_P_" xmlType="gml:AbstractContinuousCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_DiscreteCoverage" xmlElement="gml:_DiscreteCoverage" xmlPropertyType="_P_" xmlType="gml:AbstractDiscreteCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_ContinuousQuadrilateralGridCoverage" xmlElement="gml:RectifiedGridCoverage" xmlPropertyType="_P_" xmlType="gml:RectifiedGridCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_DiscreteCurveCoverage" xmlElement="gml:MultiCurveCoverage" xmlPropertyType="_P_" xmlType="gml:MultiCurveCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_DiscretePointCoverage" xmlElement="gml:MultiPointCoverage" xmlPropertyType="_P_" xmlType="gml:MultiPointCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_DiscreteSurfaceCoverage" xmlElement="gml:MultiSurfaceCoverage" xmlPropertyType="_P_" xmlType="gml:MultiSurfaceCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_DiscreteSolidCoverage" xmlElement="gml:MultiSolidCoverage" xmlPropertyType="_P_" xmlType="gml:MultiSolidCoverageType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  <XsdMapEntry type="CV_RectifiedGrid" xmlElement="gml:RectifiedGrid" xmlPropertyType="_P_" xmlType="gml:RectifiedGridType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+  
+</xsdMapEntries>
+  
+</xsdMapEntries>
+			<xmlNamespaces>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/2.0/cityGMLBase.xsd" ns="http://www.opengis.net/citygml/2.0" nsabr="cit"/>
+			</xmlNamespaces>
+			<xsdMapEntries>
+				<XsdMapEntry type="CityModel" xmlElement="cit:CityModel" xmlPropertyType="_P_" xmlType="cit:CityModelType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+				<XsdMapEntry type="_CityObject" xmlElement="cit:_CityObject" xmlPropertyType="_P_" xmlType="cit:AbstractCityObjectType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="*"/>
+			</xsdMapEntries>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

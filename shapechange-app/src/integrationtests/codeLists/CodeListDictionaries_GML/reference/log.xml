@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/codeLists/CodeListDictionaries_GML/testEA_codeListDictionaries_gml.xml"
+                   end="Thu Sep 12 14:38:00 CEST 2024"
+                   resultCode="0"
+                   start="Thu Sep 12 14:37:51 CEST 2024"
+                   version="4.0.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\codeLists\CodeListDictionaries_GML\test_codeListDictionaries_gml.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\codeLists\CodeListDictionaries_GML\test_codeListDictionaries_gml.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\codeLists\CodeListDictionaries_GML\test_codeListDictionaries_gml.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\codeLists\CodeListDictionaries_GML\test_codeListDictionaries_gml.qea"/>
+      <Warning message="XML Schema document name 'FIXME' does not contain the .xsd file extension.">
+         <Detail xmlns="" message="Context: Package 'Model::Test Model::Test Schema2'"/>
+      </Warning>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema1', target namespace: 'http://example.org/shapechange/codeListDictionaries_GML'"/>
+      <ProcessFlowInfo message="Now processing target 'Code List Dictionary' for input 'IDENTITY'."/>
+      <Info message="Code list 'CodesB' is not configured to be encoded as a dictionary. Either parameter 'codelists' is set to false, or tagged value asDictionary on the code list is false. It will be ignored."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema2', target namespace: 'FIXME'"/>
+      <ProcessFlowInfo message="Now processing target 'Code List Dictionary' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/a/IDENTITY/Enums.xml"
+              scope="cld:Enums"
+              target="Code List Dictionary">Enums.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/a/IDENTITY/CodesD.xml"
+              scope="cld:CodesD"
+              target="Code List Dictionary">CodesD.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/a/IDENTITY/CodesE.xml"
+              scope="cld:CodesE"
+              target="Code List Dictionary">CodesE.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/a/IDENTITY/CodesA.xml"
+              scope="cld:CodesA"
+              target="Code List Dictionary">CodesA.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/a/IDENTITY/CodesC.xml"
+              scope="cld:CodesC"
+              target="Code List Dictionary">CodesC.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/b/IDENTITY/CodeList.xml"
+              scope=":CodeList"
+              target="Code List Dictionary">CodeList.xml</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/codeLists/CodeListDictionaries_GML/results/b/IDENTITY/Enumeration.xml"
+              scope=":Enumeration"
+              target="Code List Dictionary">Enumeration.xml</Result>
+   </Results>
+</ShapeChangeResult>

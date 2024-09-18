@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:m="http://test.org/schema" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" elementFormDefault="qualified" targetNamespace="http://test.org/schema" version="1">
+  <annotation>
+    <appinfo>
+      <sc:taggedValue tag="description">Anwendungsschema zum Testen@de</sc:taggedValue>
+      <sc:taggedValue tag="description">Application schema used for testing@en</sc:taggedValue>
+      <sc:taggedValue tag="designation">Test Anwendungsschema@de</sc:taggedValue>
+      <sc:taggedValue tag="language">en</sc:taggedValue>
+    </appinfo>
+  </annotation>
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class1" substitutionGroup="gml:AbstractFeature" type="m:Class1Type">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="description">Beschreibung der Klasse 1@de</sc:taggedValue>
+        <sc:taggedValue tag="description">Description of class 1@en</sc:taggedValue>
+        <sc:taggedValue tag="designation">Klasse1@de</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="p1" type="string">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="description">Allgemeine Beschreibung@de</sc:taggedValue>
+                <sc:taggedValue tag="description">General description@en</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="p2" type="m:Class2PropertyType">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="description">Beziehung zu Klasse 2@de</sc:taggedValue>
+                <sc:taggedValue tag="description">Relationship to class 2@en</sc:taggedValue>
+              </appinfo>
+            </annotation>
+          </element>
+          <element name="v1" nillable="true">
+            <annotation>
+              <appinfo>
+                <sc:taggedValue tag="description">Gemessener Wert für XYZ@de</sc:taggedValue>
+                <sc:taggedValue tag="description">Measured value of XYZ@en</sc:taggedValue>
+              </appinfo>
+            </annotation>
+            <complexType>
+              <simpleContent>
+                <extension base="gml:MeasureType">
+                  <attribute name="nilReason" type="gml:NilReasonType"/>
+                </extension>
+              </simpleContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="m:Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Class2" substitutionGroup="gml:AbstractFeature" type="m:Class2Type">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="description">Beschreibung der Klasse 2@de</sc:taggedValue>
+        <sc:taggedValue tag="description">Description of class 2@en</sc:taggedValue>
+        <sc:taggedValue tag="designation">Klasse2@de</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="Class2Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="m:Class2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

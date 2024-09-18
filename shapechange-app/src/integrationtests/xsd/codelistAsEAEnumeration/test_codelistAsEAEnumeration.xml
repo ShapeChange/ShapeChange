@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/xsd/codelistAsEAEnumeration/test_codelistAsEAEnumeration.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<descriptorSources>						
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml" />
+			<DescriptorSource descriptor="definition" source="tag" tag="definition"/>
+			<DescriptorSource descriptor="description" source="tag"  tag="description"/>
+			<DescriptorSource descriptor="example" source="tag" tag="example"/>
+			<DescriptorSource descriptor="alias" source="tag" tag="alias"/>
+			<DescriptorSource descriptor="legalBasis" source="tag" tag="legalBasis"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="tag" tag="dataCaptureStatement"/>
+			<DescriptorSource descriptor="language" source="tag" tag="language"/>
+		</descriptorSources>
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/xsd/codelistAsEAEnumeration/log.xml" />
+	</log>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/xsd/codelistAsEAEnumeration" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007" />
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

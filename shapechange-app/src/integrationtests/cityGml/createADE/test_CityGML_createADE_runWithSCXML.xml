@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeConfiguration xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="SCXML"/>
+		<parameter name="inputFile" value="src/integrationtests/cityGml/createADE/test_cityGML_createADE.zip"/>
+		<parameter name="ignoreEncodingRuleTaggedValues" value="true"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedOutput" value="true"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="appSchemaNameRegex" value="Test Schema"/>
+		<stereotypeAliases xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	
+	<StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
+	<StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
+	<StereotypeAlias alias="bundle" wellknown=""/>	
+	<StereotypeAlias alias="leaf" wellknown=""/>
+	
+	<StereotypeAlias alias="abstract" wellknown=""/>
+	<StereotypeAlias alias="conceptScheme" wellknown="CodeList"/>
+	<StereotypeAlias alias="vocabulary" wellknown="CodeList"/>
+	<StereotypeAlias alias="request" wellknown="DataType"/>
+	<StereotypeAlias alias="response" wellknown="DataType"/>
+	<StereotypeAlias alias="feature" wellknown="FeatureType"/>	
+	<StereotypeAlias alias="interface" wellknown="Type"/>
+	<StereotypeAlias alias="attributeValueConcept" wellknown="valueConcept"/>
+	
+	<StereotypeAlias alias="property" wellknown=""/>
+	<StereotypeAlias alias="enum" wellknown=""/>
+</stereotypeAliases>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="tag" tag="documentation"/>
+			<DescriptorSource descriptor="alias" source="tag" tag="name"/>
+			<DescriptorSource descriptor="primaryCode" source="tag" tag="primaryCode"/>
+			<DescriptorSource descriptor="definition" source="tag" tag="definition"/>
+			<DescriptorSource descriptor="description" source="tag" tag="description"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+		</descriptorSources>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/cityGml/createADE/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer class="de.interactive_instruments.shapechange.core.transformation.citygml.CityGMLTransformer" id="TRF_CREATE_ADE" input="INPUT" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="trf">
+					<rule name="rule-trf-CityGML-createADE"/>
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry rule="rule-trf-CityGML-createADE" targetType="bldg:Building" type="AircraftHangar"/>
+				<ProcessMapEntry rule="rule-trf-CityGML-createADE" targetType="tran:TrafficArea" type="Apron"/>
+			</mapEntries>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" inputs="TRF_CREATE_ADE" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/cityGml/createADE/ade"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="citygml-ade"/>
+			<rules xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
+		<rule name="req-all-all-documentation"/>
+		<rule name="req-xsd-pkg-targetNamespace"/>
+		<rule name="req-xsd-pkg-xmlns"/>
+		<rule name="req-xsd-pkg-namespace-schema-only"/>
+		<rule name="rec-xsd-pkg-version"/>
+		<rule name="req-xsd-pkg-xsdDocument"/>
+		<rule name="req-xsd-pkg-dependencies"/>
+		<rule name="req-xsd-cls-codelist-asDictionary-true"/>
+		<rule name="req-xsd-cls-codelist-extensibility-values"/>
+		<rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
+		<rule name="req-xsd-cls-datatype-noPropertyType"/>
+		<rule name="req-xsd-cls-objecttype-noPropertyType"/>
+		<rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
+		<rule name="req-xsd-cls-enum-no-supertypes"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-nillable"/>
+		
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="okstra">
+		<rule name="rule-xsd-cls-no-base-class"/>
+		<rule name="rule-xsd-cls-no-abstract-classes"/>
+		<rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
+		<rule name="rule-xsd-cls-okstra-lifecycle"/>
+		<rule name="rule-xsd-cls-okstra-fid"/>
+	</EncodingRule>
+  <EncodingRule extends="iso19136_2007" name="gml21">
+    <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
+    <rule name="rule-xsd-all-gml21"/>
+  </EncodingRule>
+	<EncodingRule extends="*" name="notEncoded">
+		<rule name="rule-xsd-all-notEncoded"/>
+		<rule name="rule-json-all-notEncoded"/>
+		<rule name="rule-sql-all-notEncoded"/>
+		<rule name="rule-cdb-all-notEncoded"/>
+		<rule name="rule-gpkg-all-notEncoded"/>
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="citygml-ade">
+		<rule name="req-xsd-cls-suppress-supertype"/>
+		<rule name="req-xsd-cls-suppress-subtype"/>
+		<rule name="req-xsd-cls-suppress-no-properties"/>
+		<rule name="rule-xsd-cls-suppress"/>
+		<rule name="rule-xsd-cls-adeelement"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-initialValue"/>		
+	</EncodingRule>
+	<EncodingRule extends="iso19139_2007" name="metadata-profile">
+		<rule name="rule-xsd-cls-standard-19139-isoType"/>
+		<rule name="req-xsd-cls-suppress-supertype"/>
+		<rule name="req-xsd-cls-suppress-subtype"/>
+		<rule name="req-xsd-cls-suppress-no-properties"/>
+		<rule name="rule-xsd-cls-suppress"/>
+		<rule name="rule-xsd-pkg-schematron"/>
+	</EncodingRule>
+	<EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
+		<rule name="req-xsd-cls-mixin-supertypes"/>
+		<rule name="req-xsd-cls-codelist-no-supertypes"/>
+		<rule name="rule-xsd-cls-union-asCharacterString"/>
+		<rule name="rule-xsd-cls-union-asGroup"/>
+		<rule name="rule-xsd-cls-enum-supertypes"/>
+		<rule name="rule-xsd-cls-enum-subtypes"/>
+		<rule name="rule-xsd-cls-basictype"/>
+		<rule name="rule-xsd-cls-union-direct"/>		
+		<rule name="rule-xsd-cls-codelist-constraints"/>
+		<rule name="rule-xsd-cls-mixin-classes-as-group"/>
+		<rule name="rule-xsd-cls-mixin-classes"/>
+		<rule name="rule-xsd-prop-exclude-derived"/>
+		<rule name="rule-xsd-prop-length-size-pattern"/>
+		<rule name="rule-xsd-prop-xsdAsAttribute"/>
+		<rule name="rule-xsd-prop-nillable"/>
+		<rule name="rule-xsd-prop-nilReasonAllowed"/>
+		<rule name="rule-xsd-prop-initialValue"/>		
+		<rule name="rule-xsd-prop-att-map-entry"/>
+		<rule name="rule-xsd-pkg-schematron"/>
+		<rule name="rule-xsd-all-tagged-values"/>
+	</EncodingRule>   
+	<EncodingRule extends="*" name="external">
+		<rule name="rule-xsd-all-notEncoded"/>
+	</EncodingRule>
+	<EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
+		<rule name="rule-xsd-cls-no-gml-types"/>
+		<rule name="rule-xsd-all-naming-gml"/>
+		<rule name="rule-xsd-cls-global-enumeration"/>
+		<rule name="rule-xsd-cls-standard-gml-property-types"/>
+	</EncodingRule>
+</rules>
+			<xsdMapEntries xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	
+	<XsdMapEntry type="Character" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="CharacterString" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Integer" xmlPropertyType="integer" xmlType="integer" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Boolean" xmlPropertyType="boolean" xmlType="boolean" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Number" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Real" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Date" xmlPropertyType="date" xmlType="date" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="DateTime" xmlPropertyType="dateTime" xmlType="dateTime" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="ClockTime" xmlPropertyType="string" xmlType="string" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Bit" xmlPropertyType="boolean" xmlType="boolean" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Decimal" xmlPropertyType="double" xmlType="double" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Vector" xmlPropertyType="gml:VectorType" xmlType="gml:VectorType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="GenericName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="LocalName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="ScopedName" xmlPropertyType="gml:CodeType" xmlType="gml:CodeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Distance" xmlPropertyType="gml:LengthType" xmlType="gml:LengthType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Length" xmlPropertyType="gml:LengthType" xmlType="gml:LengthType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Angle" xmlPropertyType="gml:AngleType" xmlType="gml:AngleType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Speed" xmlPropertyType="gml:SpeedType" xmlType="gml:SpeedType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Velocity" xmlPropertyType="gml:SpeedType" xmlType="gml:SpeedType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Scale" xmlPropertyType="gml:ScaleType" xmlType="gml:ScaleType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Area" xmlPropertyType="gml:AreaType" xmlType="gml:AreaType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Volume" xmlPropertyType="gml:VolumeType" xmlType="gml:VolumeType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Measure" xmlPropertyType="gml:MeasureType" xmlType="gml:MeasureType" xmlTypeContent="simple" xmlTypeNilReason="false" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Sign" xmlPropertyType="gml:SignType" xmlType="gml:SignType" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Time" xmlPropertyType="time" xmlType="time" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Year" xmlPropertyType="gYear" xmlType="gYear" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Any" xmlElement="gml:_Object" xmlPropertyType="_P_" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="Dictionary" xmlElement="gml:Dictionary" xmlPropertyType="_P_" xmlType="gml:DictionaryType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+	<XsdMapEntry type="doubleOrNilReason" xmlPropertyType="gml:doubleOrNull" xmlType="gml:doubleOrNull" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	<XsdMapEntry type="MeasureList" xmlPropertyType="gml:MeasureListType" xmlType="gml:MeasureListType" xmlTypeContent="complex" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+	<XsdMapEntry type="Binary" xmlPropertyType="hexBinary" xmlType="hexBinary" xmlTypeContent="simple" xmlTypeType="simple" xsdEncodingRules="iso19136_2007 gml33"/>
+	
+</xsdMapEntries>
+			<xsdMapEntries>
+				<XsdMapEntry type="_CityObject" xmlElement="core:_CityObject" xmlType="core:AbstractCityObjectType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="Building" xmlElement="bldg:Building" xmlType="bldg:BuildingType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="BuildingInstallation" xmlElement="bldg:BuildingInstallation" xmlPropertyType="bldg:BuildingInstallationPropertyType" xmlType="bldg:BuildingInstallationType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="CityFurniture" xmlElement="frn:CityFurniture" xmlType="frn:CityFurnitureType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="Door" xmlElement="bldg:Door" xmlType="bldg:DoorType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="TrafficArea" xmlElement="tran:TrafficArea" xmlPropertyType="tran:TrafficAreaPropertyType" xmlType="tran:TrafficAreaType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+				<XsdMapEntry type="TransportationComplex" xmlElement="tran:TransportationComplex" xmlType="tran:TransportationComplexType" xmlTypeContent="complex" xmlTypeType="complex" xsdEncodingRules="iso19136_2007"/>
+			</xsdMapEntries>
+
+			<xmlNamespaces xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1">
+	<XmlNamespace location="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd" ns="http://www.interactive-instruments.de/ShapeChange/AppInfo" nsabr="sc"/>
+  <XmlNamespace location="http://www.w3.org/1999/xlink.xsd" ns="http://www.w3.org/1999/xlink" nsabr="xlink"/>
+  <XmlNamespace location="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" ns="http://www.opengis.net/gml" nsabr="gml"/>
+  
+  <XmlNamespace ns="http://www.dgiwg.org/gml/3.2/profiles/spatial/1.0/" nsabr="gmldgiwgsp"/>
+  <XmlNamespace ns="http://www.w3.org/2001/XMLSchema-instance" nsabr="xsi"/>
+</xmlNamespaces>
+			<xmlNamespaces>
+				
+				<XmlNamespace location="http://schemas.opengis.net/citygml/2.0/cityGMLBase.xsd" ns="http://www.opengis.net/citygml/2.0" nsabr="core"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/appearance/2.0/appearance.xsd" ns="http://www.opengis.net/citygml/appearance/2.0" nsabr="app"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/bridge/2.0/bridge.xsd" ns="http://www.opengis.net/citygml/bridge/2.0" nsabr="brid"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/building/2.0/building.xsd" ns="http://www.opengis.net/citygml/building/2.0" nsabr="bldg"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/cityfurniture/2.0/cityFurniture.xsd" ns="http://www.opengis.net/citygml/cityfurniture/2.0" nsabr="frn"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/cityobjectgroup/2.0/cityObjectGroup.xsd" ns="http://www.opengis.net/citygml/cityobjectgroup/2.0" nsabr="grp"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/generics/2.0/generics.xsd" ns="http://www.opengis.net/citygml/generics/2.0" nsabr="gen"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/landuse/2.0/landUse.xsd" ns="http://www.opengis.net/citygml/landuse/2.0" nsabr="luse"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/relief/2.0/relief.xsd" ns="http://www.opengis.net/citygml/relief/2.0" nsabr="dem"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/transportation/2.0/transportation.xsd" ns="http://www.opengis.net/citygml/transportation/2.0" nsabr="tran"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/tunnel/2.0/tunnel.xsd" ns="http://www.opengis.net/citygml/tunnel/2.0" nsabr="tun"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/vegetation/2.0/vegetation.xsd" ns="http://www.opengis.net/citygml/vegetation/2.0" nsabr="veg"/>
+				<XmlNamespace location="http://schemas.opengis.net/citygml/waterbody/2.0/waterBody.xsd" ns="http://www.opengis.net/citygml/waterbody/2.0" nsabr="wtr"/>
+			</xmlNamespaces>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

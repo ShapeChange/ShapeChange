@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sch/oclPathEncoding/testEA_sch_oclPathEncoding.xml" end="Wed Feb 07 09:10:21 CET 2018" resultCode="0" start="Wed Feb 07 09:08:25 CET 2018" version="2.5.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclPathEncoding\test_sch_oclPathEncoding.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclPathEncoding\test_sch_oclPathEncoding.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclPathEncoding\test_sch_oclPathEncoding.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\oclPathEncoding\test_sch_oclPathEncoding.qea"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/oclPathEncoding'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/oclPathEncoding/xsd/INPUT/testOclPathEncoding.xsd" scope="http://example.org/shapechange/sch/oclPathEncoding" target="XML Schema">testOclPathEncoding.xsd</Result>
+  </Results>
+</ShapeChangeResult>

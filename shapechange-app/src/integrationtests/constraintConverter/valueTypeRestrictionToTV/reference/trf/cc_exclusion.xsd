@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:cc="http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/exclusion" xmlns:ccsr="http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/spatialRep" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo" elementFormDefault="qualified" targetNamespace="http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/exclusion" version="1.0">
+  <import namespace="http://example.org/shapechange/constraints/constraintConverter/valueTypeRestrictionToTV/spatialRep"/>
+  <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo" schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="FeatureTypeA" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeAType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="valueTypeOptions">place=PointPositionSpecification,SurfacePositionSpecification</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FeatureTypeAType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="place" type="ccsr:PlaceSpecificationPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:FeatureTypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeB" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeBType"/>
+  <complexType name="FeatureTypeBType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:FeatureTypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeC" substitutionGroup="gml:AbstractFeature" type="cc:FeatureTypeCType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FeatureTypeCType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="place" type="ccsr:PlaceSpecificationPropertyType"/>
+          <element name="supertype" type="cc:SupertypePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeCPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:FeatureTypeC"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeD" substitutionGroup="cc:FeatureTypeC" type="cc:FeatureTypeDType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification,SurfacePositionSpecification</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FeatureTypeDType">
+    <complexContent>
+      <extension base="cc:FeatureTypeCType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeDPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:FeatureTypeD"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureTypeE" substitutionGroup="cc:FeatureTypeD" type="cc:FeatureTypeEType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="valueTypeOptions">place=LocationSpecification;supertype=A,B</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="FeatureTypeEType">
+    <complexContent>
+      <extension base="cc:FeatureTypeDType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureTypeEPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:FeatureTypeE"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SubtypeA" substitutionGroup="cc:Supertype" type="cc:SubtypeAType"/>
+  <complexType name="SubtypeAType">
+    <complexContent>
+      <extension base="cc:SupertypeType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubtypeAPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:SubtypeA"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SubtypeB" substitutionGroup="cc:Supertype" type="cc:SubtypeBType"/>
+  <complexType name="SubtypeBType">
+    <complexContent>
+      <extension base="cc:SupertypeType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SubtypeBPropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:SubtypeB"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Supertype" substitutionGroup="gml:AbstractGML" type="cc:SupertypeType"/>
+  <complexType name="SupertypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SupertypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:Supertype"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Type" substitutionGroup="gml:AbstractGML" type="cc:TypeType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="valueTypeOptions">place=CurvePositionSpecification</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="TypeType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element name="place" type="ccsr:PlaceSpecificationPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="TypePropertyType">
+    <sequence minOccurs="0">
+      <element ref="cc:Type"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+</schema>

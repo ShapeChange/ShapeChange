@@ -1,0 +1,65 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[The_element_transformers]]
+= The element "transformers"
+
+The <transformers> element contains information on the transformations
+that shall be applied on the input model. There can be more than one
+transformation, and transformations are run on the input model or on the
+result of another transformation. This element is the top-level element
+under which are nested individual <Transformer> definitions.  See
+xref:../transformations/Transformations.adoc[here] for a full discussion of
+all ShapeChange transformations and their specific configuration
+options.
+
+Each transformation listed in the configuration can be switched off by
+setting the "mode" attribute to "disabled". The default value is
+"enabled".
+
+NOTE: The model to be processed by a target is identified using the
+"input" XML attribute. Model validation as a pre-check can be performed
+using the validators identified in XML attribute "validators". Further
+information is provided xref:./Configuration.adoc[here].
+
+A sample <transformers> section of a configuration file can look like
+the following:
+
+[source,xml,linenumbers]
+----------
+<transformers>
+    <Transformer
+        class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform"
+        mode="enabled" id="identity">            
+    </Transformer>
+    <Transformer
+       class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+        mode="enabled" id="A" input="identity">
+        <parameters>
+            <ProcessParameter name="profiles" value="A"/>
+            <ProcessParameter name="constraintHandling" value="remove"/>
+        </parameters>
+    </Transformer>
+    <Transformer
+       class="de.interactive_instruments.shapechange.core.transformation.profiling.Profiler"
+        mode="enabled" id="B" input="identity">
+        <parameters>
+            <ProcessParameter name="profiles" value="B"/>
+            <ProcessParameter name="constraintHandling" value="remove"/>
+        </parameters>
+    </Transformer>
+</transformers>
+----------

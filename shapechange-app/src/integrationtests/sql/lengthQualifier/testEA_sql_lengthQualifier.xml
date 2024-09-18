@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/sql/lengthQualifier/test_sql_lengthQualifier.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile" value="testResults/sql/lengthQualifier/log_sql.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+			input="INPUT" id="F_inheritance" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="PostgreSQL" />
+			<targetParameter name="defaultEncodingRule" value="customRule1" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/lengthQualifier/postgresql" />
+			<targetParameter name="outputFilename" value="database_model_postgresql" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="public" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<rules>
+				<EncodingRule name="customRule1" extends="sql">
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardSqlMapEntries-PostgreSQL.xml" />
+			<mapEntries>
+				<MapEntry type="SpecialTypeA" rule="*" targetType="cond:textOrCharacterVarying"/>
+				<MapEntry type="SpecialTypeB" rule="*" targetType="cond:textOrCharacterVarying"/>
+			</mapEntries>
+		</Target>
+
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="SQLServer" />
+			<targetParameter name="defaultEncodingRule" value="customRule2" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/lengthQualifier/ddl_sqlserver" />
+			<targetParameter name="outputFilename" value="database_model_sqlserver" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<rules>
+				<EncodingRule name="customRule2" extends="sql">
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardSqlMapEntries-SQLServer.xml" />
+			<mapEntries>
+				<MapEntry type="SpecialTypeA" rule="*" targetType="cond:textOrCharacterVarying"/>
+				<MapEntry type="SpecialTypeB" rule="*" targetType="cond:textOrCharacterVarying"/>
+				<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying"/>
+			</mapEntries>
+		</Target>
+
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="Oracle" />
+			<targetParameter name="defaultEncodingRule" value="customRule3" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/lengthQualifier/ddl_oracle" />
+			<targetParameter name="outputFilename" value="database_model_oracle" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="dbOwner" value="dbo" />
+			<targetParameter name="deletePreExistingDataModelPackage"
+				value="true" />
+			<targetParameter name="lengthQualifier" value="BYTE" />
+			<targetParameter name="codeNameSize" value="50"/>
+			<targetParameter name="eaAuthor" value="Test Author"/>
+			<rules>
+				<EncodingRule name="customRule3" extends="sql">
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-all-associativetables"/>
+					<rule name="rule-sql-all-databaseModel" />
+				</EncodingRule>
+			</rules>
+			<mapEntries>
+				<!-- targetType: use 'cond:' to indicate that conditional type selection needs to be performed, with the following string identifying the nature of the type mapping (e.g. 'textOrCharacterVarying'). -->
+				<!-- param: used to indicate special nature of the type, for example 'geometry' to indicate that the map entry is for a geometry type. -->
+
+				<!-- ISO/TS 19103 -->
+				<MapEntry type="Boolean" rule="*" targetType="INTEGER" param="defaultValue{true=1;false=0}"/>
+				<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying" param="defaultValue{quoted=true},length{lengthQualifier=BYTE}"/>
+				<MapEntry type="Date" rule="*" targetType="DATE" param="defaultValue{quoted=true}"/>
+				<MapEntry type="DateTime" rule="*" targetType="TIMESTAMP" param=""/>
+				<MapEntry type="Integer" rule="*" targetType="INTEGER" param=""/>
+				<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Number" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Scale" rule="*" targetType="INTEGER" param=""/>
+
+				<!-- ISO/TS 19107 -->
+				<MapEntry type="GM_Curve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=line}"/>
+				<MapEntry type="GM_MultiCurve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multiline}"/>
+				<MapEntry type="GM_MultiPoint" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipoint}"/>
+				<MapEntry type="GM_MultiSurface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipolygon}"/>
+				<MapEntry type="GM_Object" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=collection}"/>
+				<MapEntry type="GM_Point" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=point}"/>
+				<MapEntry type="GM_Surface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=polygon}"/>
+
+				<!-- ... more to be added as required -->
+				<MapEntry type="Short" rule="*" targetType="SHORTINTEGER" param=""/>
+				<MapEntry type="Long" rule="*" targetType="LONGINTEGER" param=""/>
+
+				<!-- other ISO -->
+				<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param="length{lengthQualifier=BYTE}"/>
+				<MapEntry type="Area" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Length" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="TM_PeriodDuration" rule="*" targetType="VARCHAR2(20)" param="length{lengthQualifier=BYTE}"/>
+				<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying" param="length{lengthQualifier=BYTE}"/>
+
+				<MapEntry type="SpecialTypeA" rule="*" targetType="VARCHAR2(20)" param="length{lengthQualifier=CHAR}"/>
+				<MapEntry type="SpecialTypeB" rule="*" targetType="VARCHAR2" param="length{lengthQualifier=NONE}"/>
+			</mapEntries>
+		</Target>
+		<Target class="de.interactive_instruments.shapechange.core.target.sql.SqlDdl"
+			mode="enabled">
+			<targetParameter name="databaseSystem" value="Oracle" />
+			<targetParameter name="defaultEncodingRule" value="customRule4" />
+			<targetParameter name="outputDirectory"
+				value="testResults/sql/lengthQualifier/ddl_oracle_noGlobalLengthQualifier" />
+			<targetParameter name="outputFilename" value="database_model_oracle" />
+			<targetParameter name="size" value="-1" />
+			<targetParameter name="srid" value="4979" />
+			<targetParameter name="createReferences" value="true" />
+			<targetParameter name="foreignKeyColumnSuffix" value="_fk" />
+			<targetParameter name="codeNameSize" value="50"/>
+			<rules>
+				<EncodingRule name="customRule4" extends="sql">
+					<rule name="rule-sql-cls-object-types"/>
+					<rule name="rule-sql-cls-data-types"/>
+					<rule name="rule-sql-cls-code-lists"/>
+					<rule name="rule-sql-all-associativetables"/>
+				</EncodingRule>
+			</rules>
+			<mapEntries>
+				<!-- targetType: use 'cond:' to indicate that conditional type selection needs to be performed, with the following string identifying the nature of the type mapping (e.g. 'textOrCharacterVarying'). -->
+				<!-- param: used to indicate special nature of the type, for example 'geometry' to indicate that the map entry is for a geometry type. -->
+
+				<!-- ISO/TS 19103 -->
+				<MapEntry type="Boolean" rule="*" targetType="INTEGER" param="defaultValue{true=1;false=0}"/>
+				<MapEntry type="CharacterString" rule="*" targetType="cond:textOrCharacterVarying" param="defaultValue{quoted=true},length{lengthQualifier=BYTE}"/>
+				<MapEntry type="Date" rule="*" targetType="DATE" param="defaultValue{quoted=true}"/>
+				<MapEntry type="DateTime" rule="*" targetType="TIMESTAMP" param=""/>
+				<MapEntry type="Integer" rule="*" targetType="INTEGER" param=""/>
+				<MapEntry type="Real" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Number" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Scale" rule="*" targetType="INTEGER" param=""/>
+
+				<!-- ISO/TS 19107 -->
+				<MapEntry type="GM_Curve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=line}"/>
+				<MapEntry type="GM_MultiCurve" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multiline}"/>
+				<MapEntry type="GM_MultiPoint" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipoint}"/>
+				<MapEntry type="GM_MultiSurface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=multipolygon}"/>
+				<MapEntry type="GM_Object" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=collection}"/>
+				<MapEntry type="GM_Point" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=point}"/>
+				<MapEntry type="GM_Surface" rule="*" targetType="SDO_GEOMETRY" param="geometry{layer_gtype=polygon}"/>
+
+				<!-- ... more to be added as required -->
+				<MapEntry type="Short" rule="*" targetType="SHORTINTEGER" param=""/>
+				<MapEntry type="Long" rule="*" targetType="LONGINTEGER" param=""/>
+
+				<!-- other ISO -->
+				<MapEntry type="CountryCode" rule="*" targetType="VARCHAR2(3)" param="length{lengthQualifier=BYTE}"/>
+				<MapEntry type="Area" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="Length" rule="*" targetType="NUMBER" param=""/>
+				<MapEntry type="TM_PeriodDuration" rule="*" targetType="VARCHAR2(20)" param="length{lengthQualifier=BYTE}"/>
+				<MapEntry type="URI" rule="*" targetType="cond:textOrCharacterVarying" param="length{lengthQualifier=BYTE}"/>
+
+				<MapEntry type="SpecialTypeA" rule="*" targetType="VARCHAR2(20)" param="length{lengthQualifier=CHAR}"/>
+				<MapEntry type="SpecialTypeB" rule="*" targetType="VARCHAR2" param="length{lengthQualifier=NONE}"/>
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

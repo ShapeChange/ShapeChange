@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile" value="src/integrationtests/typeConverter/enumerationToCodelist/test_typeConversion.qea" />
+		<parameter name="appSchemaNameRegex" value="Test_EnumerationConversion.*" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/typeConversion/enumerationToCodelist/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.typeconversion.TypeConverter"
+			input="INPUT" id="trf" mode="enabled">
+			<parameters>
+				<ProcessParameter name="toCodelistExclusionRegex" value="EnumerationExcludedViaPar.*" />
+			</parameters>		
+			<rules>
+				<ProcessRuleSet name="convert">
+					<rule name="rule-trf-enumeration-to-codelist" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema
+			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
+			inputs="INPUT trf" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/typeConversion/enumerationToCodelist/xsd" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="gml33" />			
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces.xml" />
+			<xi:include href="sc-resources/config/StandardMapEntries.xml" />
+<!-- 			<xsdMapEntries> -->
+<!-- 				<XsdMapEntry type="ExtEnumeration" xsdEncodingRules="iso19136_2007 gml33" xmlPropertyType="string" xmlType="string" xmlTypeType="simple" xmlTypeContent="simple"/> -->
+<!-- 			</xsdMapEntries> -->
+		</TargetXmlSchema>
+<!-- 		<Target -->
+<!-- 			class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" -->
+<!-- 			inputs="trf" mode="enabled"> -->
+<!-- 			<targetParameter name="outputDirectory" value="testResults/typeConversion/enumerationToCodelist/fc" /> -->
+<!-- 			<targetParameter name="outputFilename" value="test" /> -->
+<!-- 			<targetParameter name="sortedOutput" value="true" /> -->
+<!-- 			<targetParameter name="inheritedProperties" value="false" /> -->
+<!-- 			<targetParameter name="outputFormat" value="FRAMEHTML" /> -->
+<!-- 			<targetParameter name="xslTransformerFactory" -->
+<!-- 				value="net.sf.saxon.TransformerFactoryImpl" /> -->
+<!-- 			<targetParameter name="name" value="'Test application schema'" /> -->
+<!-- 			<targetParameter name="scope" value="This feature catalogue ..." /> -->
+<!-- 			<targetParameter name="versionNumber" value="n/a" /> -->
+<!-- 			<targetParameter name="versionDate" value="n/a" /> -->
+<!-- 			<targetParameter name="producer" value="interactive instruments GmbH" /> -->
+<!-- 		</Target> -->
+	</targets>
+</ShapeChangeConfiguration>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sch/codelist2/testEA_sch_codelist2.xml" end="Mon Mar 05 09:38:16 CET 2018" resultCode="0" start="Mon Mar 05 09:38:10 CET 2018" version="2.5.2-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionariesML' and @inputs 'INPUT' ..."/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2\test_sch_codelist2.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2\test_sch_codelist2.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2\test_sch_codelist2.qea"/>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sch\codelist2\test_sch_codelist2.qea"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/codelistCheck'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema 19139', target namespace: 'http://example.org/shapechange/sch/codelist2/iso19139'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML32', target namespace: 'http://example.org/shapechange/sch/codelist2/gml32'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML33', target namespace: 'http://example.org/shapechange/sch/codelist2/gml33'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/codelistCheck'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema 19139', target namespace: 'http://example.org/shapechange/sch/codelist2/iso19139'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML32', target namespace: 'http://example.org/shapechange/sch/codelist2/gml32'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML33', target namespace: 'http://example.org/shapechange/sch/codelist2/gml33'"/>
+    <Info message="Now processing target 'XML Schema' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/codelistCheck'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema 19139', target namespace: 'http://example.org/shapechange/sch/codelist2/iso19139'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML32', target namespace: 'http://example.org/shapechange/sch/codelist2/gml32'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML33', target namespace: 'http://example.org/shapechange/sch/codelist2/gml33'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionaries' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sch/codelistCheck'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema 19139', target namespace: 'http://example.org/shapechange/sch/codelist2/iso19139'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML32', target namespace: 'http://example.org/shapechange/sch/codelist2/gml32'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Application schema found, package name: 'Codelist Schema GML33', target namespace: 'http://example.org/shapechange/sch/codelist2/gml33'"/>
+    <Info message="Now processing target 'Code List Dictionary' for input 'INPUT'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.codelists.CodelistDictionariesML' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml32/INPUT/testCodelist2.xsd" scope="http://example.org/shapechange/sch/codelistCheck" target="XML Schema">testCodelist2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml32/INPUT/codeListIso19139.xsd" scope="http://example.org/shapechange/sch/codelist2/iso19139" target="XML Schema">codeListIso19139.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml32/INPUT/codeListGml32.xsd" scope="http://example.org/shapechange/sch/codelist2/gml32" target="XML Schema">codeListGml32.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml32/INPUT/codeListGml33.xsd" scope="http://example.org/shapechange/sch/codelist2/gml33" target="XML Schema">codeListGml33.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml33/INPUT/testCodelist2.xsd" scope="http://example.org/shapechange/sch/codelistCheck" target="XML Schema">testCodelist2.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml33/INPUT/codeListIso19139.xsd" scope="http://example.org/shapechange/sch/codelist2/iso19139" target="XML Schema">codeListIso19139.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml33/INPUT/codeListGml32.xsd" scope="http://example.org/shapechange/sch/codelist2/gml32" target="XML Schema">codeListGml32.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/xsd/test_schema_gml33/INPUT/codeListGml33.xsd" scope="http://example.org/shapechange/sch/codelist2/gml33" target="XML Schema">codeListGml33.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/dictionary/gml32/INPUT/CodeListIso19139.xml" scope="cliso:CodeListIso19139" target="Code List Dictionary">CodeListIso19139.xml</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/dictionary/gml32/INPUT/CodeListGml32.xml" scope="clgml32:CodeListGml32" target="Code List Dictionary">CodeListGml32.xml</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/dictionary/gml32/INPUT/CodeListGml33.xml" scope="clgml33:CodeListGml33" target="Code List Dictionary">CodeListGml33.xml</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sch/codelist2/dictionary/iso19139/INPUT/CodeListIso19139.xml" scope="cliso:CodeListIso19139" target="Code List Dictionary">CodeListIso19139.xml</Result>
+  </Results>
+</ShapeChangeResult>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="inputFile"
+			value="src/integrationtests/arcgis/reflexiveRelationship/test_arcgis_reflexiveRelationship.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema" />
+		<parameter name="sortedSchemaOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/arcgis/reflexiveRelationship/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.Flattener"
+			input="INPUT" id="F_inheritance" mode="enabled">
+			<rules>
+				<ProcessRuleSet name="flattener">
+					<rule name="rule-trf-cls-flatten-inheritance" />
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<Target
+			class="de.interactive_instruments.shapechange.ea.target.arcgisworkspace.ArcGISWorkspace"
+			mode="enabled" inputs="F_inheritance">
+			<targetParameter name="workspaceTemplate"
+				value="sc-resources/templates/ArcGISWorkspace_template.qea" />
+			<targetParameter name="defaultEncodingRule" value="MyArcGISRule" />
+			<targetParameter name="defaultLength" value="255" />
+			<targetParameter name="outputDirectory"
+				value="testResults/arcgis/reflexiveRelationship/arcgis" />
+			<targetParameter name="outputFilename" value="test" />
+			<targetParameter name="documentationTemplate" value="[[definition]]" />
+			<targetParameter name="documentationNoValue" value="" />
+			<targetParameter name="maxNameLength" value="64" />
+			<targetParameter name="reflexiveRelationshipFieldSuffix"
+				value="_SUFFIX" />
+			<targetParameter name="eaAuthor" value="Test Author" />
+			<rules>
+				<EncodingRule name="MyArcGISRule">
+					<rule name="rule-arcgis-cls-identifierStereotype" />
+					<rule name="rule-arcgis-prop-reflexiveRelationshipAsField" />
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardMapEntries_ArcGISWorkspace.xml" />
+			<mapEntries>
+				<MapEntry type="GUID" rule="*" targetType="esriFieldTypeGUID" />
+			</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

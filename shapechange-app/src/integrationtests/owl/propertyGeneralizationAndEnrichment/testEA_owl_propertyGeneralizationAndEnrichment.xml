@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+ xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+ <input id="original">
+  <parameter name="inputModelType" value="EA7"/>
+  <parameter name="inputFile"
+   value="src/integrationtests/owl/propertyGeneralizationAndEnrichment/test_owl_propertyGeneralizationAndEnrichment.qea"/>
+  <parameter name="appSchemaName" value="AppSchema"/>
+  <parameter name="publicOnly" value="true"/>
+  <parameter name="checkingConstraints" value="disabled"/>
+  <parameter name="sortedSchemaOutput" value="true"/>
+  <parameter name="extractSeparator" value="--"/>
+  <xi:include href="sc-resources/config/StandardAliases.xml"/>
+  <descriptorSources>
+   <DescriptorSource descriptor="documentation" source="ea:notes"/>
+   <DescriptorSource descriptor="alias" source="sc:extract" token="Name"/>
+   <DescriptorSource descriptor="primaryCode" source="sc:extract" token="Primary code"/>
+   <DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+   <DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+   <DescriptorSource descriptor="example" source="sc:extract" token="Example"/>
+   <DescriptorSource descriptor="legalBasis" source="sc:extract" token="Legal basis"/>
+   <DescriptorSource descriptor="dataCaptureStatement" source="sc:extract"
+    token="Data capture statement"/>
+   <DescriptorSource descriptor="language" source="sc:extract" token="Language"/>
+  </descriptorSources>
+ </input>
+ <log>
+  <parameter name="reportLevel" value="INFO"/>
+  <parameter name="logFile" value="testResults/owl/propertyGeneralizationAndEnrichment/log.xml"/>
+ </log>
+ <transformers>
+  <Transformer id="associationClassMapper" input="original"
+   class="de.interactive_instruments.shapechange.core.transformation.flattening.AssociationClassMapper"/>
+ </transformers>
+ <targets>
+  <TargetOwl inputs="associationClassMapper"
+   class="de.interactive_instruments.shapechange.core.target.ontology.OWLISO19150" mode="enabled">
+   <targetParameter name="outputDirectory"
+    value="testResults/owl/propertyGeneralizationAndEnrichment/owl"/>
+   <!-- Output format identifiers: turtle ntriples nquads rdfxml jsonld rdfjson 
+				trig trix rdfthrift -->
+   <targetParameter name="outputFormat" value="turtle"/>
+   <targetParameter name="defaultEncodingRule" value="MyRule"/>
+   <targetParameter name="language" value="en"/>
+   <targetParameter name="defaultTypeImplementation" value="owl:Class"/>
+
+   <targetParameter name="ontologyNameCode" value="test"/>
+   <targetParameter name="source" value="Test ontology"/>
+   <targetParameter name="URIbase" value="http://example.org/ontology"/>
+
+   <xi:include href="sc-resources/config/StandardMapEntries-owl.xml"/>
+
+   <rdfConversionParameters>
+    <PropertyConversionParameter property="FT2::attFT2" schema="AppSchema" subPropertyOf="test:attGeneral"/>
+   </rdfConversionParameters>
+
+   <xi:include href="sc-resources/config/StandardNamespaces-owl.xml"/>
+   <namespaces>
+    <Namespace nsabr="test" ns="http://example.org/ontology/test#" location="test.ttl" />
+    <Namespace nsabr="other" ns="http://example.org/shapechange/owl/propertyGeneralizationAndEnrichment/otherNamespace#" />
+   </namespaces>
+
+   <rdfGeneralProperties>
+    <GeneralObjectProperty>
+     <name>roleGeneral</name>
+     <propertyCharacteristicAxioms>Symmetric</propertyCharacteristicAxioms>
+    </GeneralObjectProperty>
+    <GeneralObjectProperty>
+     <namespaceAbbreviation>other</namespaceAbbreviation>
+     <name>roleGeneral2</name>
+     <subPropertyOf>test:roleGeneral</subPropertyOf>
+     <additionalProperty>
+      <property>rdfs:label</property>
+      <value lang="en">label of roleGeneral2</value>
+     </additionalProperty>
+     <propertyCharacteristicAxioms>Reflexive Irreflexive</propertyCharacteristicAxioms>
+    </GeneralObjectProperty>
+    <GeneralDataProperty>
+     <name>attGeneral</name>
+     <domainByUnionOfSubPropertyDomains>true</domainByUnionOfSubPropertyDomains>
+     <additionalProperty>
+      <property>rdfs:label</property>
+      <value lang="en">label of attGeneral</value>
+     </additionalProperty>
+     <isFunctional>true</isFunctional>
+    </GeneralDataProperty>
+   </rdfGeneralProperties>
+
+   <rules>
+    <EncodingRule name="MyRule" extends="*">
+     <rule name="rule-owl-pkg-singleOntologyPerSchema"/>
+     <rule name="rule-owl-pkg-ontologyName-code"/>
+     <rule name="rule-owl-cls-encode-featuretypes"/>
+     <rule name="rule-owl-cls-enumerationAsCodelist"/>
+     <rule name="rule-owl-cls-codelist-19150-2"/>
+     <rule name="rule-owl-prop-general"/>
+     <rule name="rule-owl-prop-globalScopeByConversionParameter"/>
+     <rule name="rule-owl-prop-range-global"/>
+     <rule name="rule-owl-prop-propertyEnrichment"/>
+    </EncodingRule>
+   </rules>
+  </TargetOwl>
+ </targets>
+</ShapeChangeConfiguration>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/variousFunctionality/loadingWithProhibitedStatus/test_loadingWithProhibitedStatusSetting.qea"/>
+		<parameter name="appSchemaName" value="Test"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="prohibitLoadingClassesWithStatusTaggedValue" value="notValid,retired,superseded"/>
+		<parameter name="checkingConstraints" value="enabled"/>
+		<parameter name="loadConstraintsForSelectedSchemasOnly" value="true"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="extractSeparator" value="--"/>
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation" source="ea:notes"/>
+			<DescriptorSource descriptor="alias" source="ea:alias"/>
+			<DescriptorSource descriptor="definition" source="sc:extract" token="Definition"/>
+			<DescriptorSource descriptor="description" source="sc:extract" token="Description"/>
+			<DescriptorSource descriptor="example" source="none"/>
+			<DescriptorSource descriptor="legalBasis" source="none"/>
+			<DescriptorSource descriptor="dataCaptureStatement" source="none"/>
+			<DescriptorSource descriptor="language" source="none"/>
+			<DescriptorSource descriptor="globalIdentifier" source="none"/>
+			<DescriptorSource descriptor="primaryCode" source="none"/>
+		</descriptorSources>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+	</input>	
+	<log>
+    <parameter name="reportLevel" value="INFO"/>
+    <parameter name="logFile" value="testResults/loadingWithProhibitedStatusSetting/log.xml"/>
+  </log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/loadingWithProhibitedStatusSetting/results/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="myxsdrule"/>
+			<rules>
+			<EncodingRule name="myxsdrule" extends="gml33">
+	            <rule name="rule-xsd-cls-mixin-classes"/>
+	            <rule name="rule-xsd-pkg-schematron"/>
+				<rule name="rule-xsd-cls-codelist-constraints"/>
+	         </EncodingRule>
+	         </rules>
+	         <xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+		<Target class="de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/loadingWithProhibitedStatusSetting/results/html"/>
+			<targetParameter name="outputFilename" value="test"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="includeCodelistURI" value="false"/>
+			<targetParameter name="inheritedProperties" value="false"/>
+			<targetParameter name="outputFormat" value="HTML"/>
+			<targetParameter name="xslTransformerFactory"
+				value="net.sf.saxon.TransformerFactoryImpl"/>
+			<targetParameter name="name" value="'Test application schema'"/>
+			<targetParameter name="scope" value="This feature catalogue ..."/>
+			<targetParameter name="versionNumber" value="n/a"/>
+			<targetParameter name="versionDate" value="n/a"/>
+			<targetParameter name="producer" value="interactive instruments GmbH"/>	
+			<targetParameter name="xsltPath" value="sc-resources/xslt"/>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

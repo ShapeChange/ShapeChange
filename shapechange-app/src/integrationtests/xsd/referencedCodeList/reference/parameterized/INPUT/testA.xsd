@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        xmlns:ta="https://example.org/test/a"
+        xmlns:tb="https://example.org/test/b"
+        elementFormDefault="qualified"
+        targetNamespace="https://example.org/test/a"
+        version="1.0">
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <import namespace="https://example.org/test/b" schemaLocation="testB.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="FeatureType"
+            substitutionGroup="gml:AbstractFeature"
+            type="ta:FeatureTypeType"/>
+   <complexType name="FeatureTypeType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element minOccurs="0" name="codeListA" type="gml:CodeType">
+                  <annotation>
+                     <appinfo>
+                        <sc:referenzierteCodelist>ta:CodeListA</sc:referenzierteCodelist>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" name="codeListB" type="tb:CodeListBType">
+                  <annotation>
+                     <appinfo>
+                        <sc:referenzierteCodelist>tb:CodeListB</sc:referenzierteCodelist>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureTypePropertyType">
+      <sequence minOccurs="0">
+         <element ref="ta:FeatureType"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

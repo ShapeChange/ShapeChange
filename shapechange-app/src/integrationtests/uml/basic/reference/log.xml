@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/uml/basic/testEA_uml_basic.xml" end="Thu Jan 18 10:51:08 CET 2018" resultCode="0" start="Thu Jan 18 10:50:22 CET 2018" version="2.5.1-SNAPSHOT">
+  <Messages>
+    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'dimension' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Numerics::Vector'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Warning message="The multiplicity value of 'size' is neither a number nor a known string. '*' is used instead.">
+      <Detail message="Context: Class 'Model::ISO TC 211::ISO 19103 Conceptual Schema Language::ISO 19103:2005 Schema Language::Basic Types::Primitive::Text::CharacterString'"/>
+    </Warning>
+    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\uml\basic\test_uml_basic.qea"/>
+    <Info message="Application schema found, package name: 'AppSchema1', target namespace: 'http://example.org/shapechange/uml/basic1'"/>
+    <Info message="Now processing target 'XML Schema' for input 'input'."/>
+    <Info message="Application schema found, package name: 'AppSchema2', target namespace: 'http://example.org/shapechange/uml/basic2'"/>
+    <Info message="Now processing target 'XML Schema' for input 'input'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Now processing transformation 'model' for input ID: 'input'."/>
+    <Info message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+    <Info message="Performed transformation for transformer ID 'model' for input ID: 'input'.&#10;-------------------------------------------------"/>
+    <Info message="Application schema found, package name: 'AppSchema1', target namespace: 'http://example.org/shapechange/uml/basic1'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Application schema found, package name: 'AppSchema2', target namespace: 'http://example.org/shapechange/uml/basic2'"/>
+    <Info message="Now processing target 'UML Model' for input 'model'."/>
+    <Info message="Executed target class 'de.interactive_instruments.shapechange.ea.target.uml.UmlModel' for input ID: 'model'.&#10;-------------------------------------------------"/>
+  </Messages>
+  <Results>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/uml/basic/xsd/input/uml1.xsd" scope="http://example.org/shapechange/uml/basic1" target="XML Schema">uml1.xsd</Result>
+    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/uml/basic/xsd/input/uml2.xsd" scope="http://example.org/shapechange/uml/basic2" target="XML Schema">uml2.xsd</Result>
+  </Results>
+</ShapeChangeResult>
