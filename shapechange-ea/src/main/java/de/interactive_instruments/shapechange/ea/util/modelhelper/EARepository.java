@@ -69,7 +69,7 @@ public class EARepository {
 
     private void readPackage(Package pkg, String pathToPackage) {
 
-	String name = pkg.GetName();
+	String name = pkg.GetName().trim();
 	String fullName = pathToPackage + name;
 	String pathToOwnedElements = fullName + "::";
 

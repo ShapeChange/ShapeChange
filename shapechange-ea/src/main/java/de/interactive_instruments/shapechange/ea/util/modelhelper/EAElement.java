@@ -48,7 +48,7 @@ public class EAElement extends AbstractEAModelElement {
 
     public EAElement(Element elmt, String pathToElement) {
 
-	super(elmt.GetName(), pathToElement + elmt.GetName());
+	super(elmt.GetName().trim(), pathToElement + elmt.GetName().trim());
 	this.elementId = elmt.GetElementID();
 	this.metaType = elmt.GetMetaType();
     }
