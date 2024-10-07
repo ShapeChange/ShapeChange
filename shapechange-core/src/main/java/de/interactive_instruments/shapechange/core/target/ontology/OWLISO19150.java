@@ -585,6 +585,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	    // DEFAULT BEHAVIOR
 
+	    // if the package contains a code list or enumeration, create
+	    // additional OntologyModels as necessary
+	    SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
+	    ontclasses.addAll(p.containedClasses());
+	    createAdditionalOntologyModels(ontclasses, od.getPrefix(), od.getRdfNamespace(), od.getName(), od.getPath(),
+		    od.getFileName(), p.version());
+
 	    /*
 	     * Create ontologies for all sub packages that are in the same target namespace.
 	     * 
@@ -603,9 +610,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		// if the package contains a code list or enumeration, create
 		// additional OntologyModels as necessary
-		SortedSet<ClassInfo> ontclasses = new TreeSet<ClassInfo>();
-		ontclasses.addAll(subPi.containedClasses());
-		createAdditionalOntologyModels(ontclasses, odSub.getPrefix(), odSub.getRdfNamespace(), odSub.getName(),
+		SortedSet<ClassInfo> subontclasses = new TreeSet<ClassInfo>();
+		subontclasses.addAll(subPi.containedClasses());
+		createAdditionalOntologyModels(subontclasses, odSub.getPrefix(), odSub.getRdfNamespace(), odSub.getName(),
 			odSub.getPath(), odSub.getFileName(), subPi.version());
 
 	    }
@@ -1540,7 +1547,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	// declare default encoding rule
-	ProcessRuleSet iso19150_2014Prs = new ProcessRuleSet("iso19150_2014","*");
+	ProcessRuleSet iso19150_2014Prs = new ProcessRuleSet("iso19150_2014", "*");
 	r.addRuleSet(iso19150_2014Prs);
 
 	// declare optional rules
