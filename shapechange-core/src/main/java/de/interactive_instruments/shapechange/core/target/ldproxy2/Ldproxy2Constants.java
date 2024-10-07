@@ -103,6 +103,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
+    public static final String PARAM_ENABLE_CODELISTS = "enableCodelists";
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
@@ -119,6 +120,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
+    public static final String PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE = "providerConfigLabelTemplate";
     public static final String PARAM_QUERYABLES = "queryables";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";

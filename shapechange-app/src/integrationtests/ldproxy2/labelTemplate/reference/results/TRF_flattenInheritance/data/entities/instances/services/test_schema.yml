@@ -11,6 +11,3 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        myAttribute2:
-        - codelist: MyEnumeration

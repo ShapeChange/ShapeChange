@@ -93,37 +93,30 @@
                <modelElementEncodings>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="AbstractFeatureTypeA"
-                                           xmlAttribute="false"
                                            xmlName="AbstractFeatureTypeA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="AbstractFeatureTypeA::attMeasure"
-                                           xmlAttribute="false"
                                            xmlName="attMeasure"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="AbstractFeatureTypeA::attUnionA"
-                                           xmlAttribute="false"
                                            xmlName="attUnionA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="AbstractFeatureTypeA::ftAtoTA"
-                                           xmlAttribute="false"
                                            xmlName="ftAtoTA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="AbstractFeatureTypeA::geom"
-                                           xmlAttribute="false"
                                            xmlName="geom"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="DataTypeA"
-                                           xmlAttribute="false"
                                            xmlName="DataTypeA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="DataTypeA::att1"
-                                           xmlAttribute="false"
                                            xmlName="att1"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
@@ -133,37 +126,30 @@
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="TypeA"
-                                           xmlAttribute="false"
                                            xmlName="TypeA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="TypeA::attCodelistA"
-                                           xmlAttribute="false"
                                            xmlName="attCodelistA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="TypeASub"
-                                           xmlAttribute="false"
                                            xmlName="TypeASub"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="TypeASub::att1"
-                                           xmlAttribute="false"
                                            xmlName="att1"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="UnionA"
-                                           xmlAttribute="false"
                                            xmlName="UnionA"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="UnionA::opt1"
-                                           xmlAttribute="false"
                                            xmlName="opt1"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema A"
                                            modelElementName="UnionA::opt2"
-                                           xmlAttribute="false"
                                            xmlName="opt2"
                                            xmlNamespace="http://shapechange.net/test/a"/>
                </modelElementEncodings>
@@ -175,7 +161,6 @@
                <modelElementEncodings>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema B"
                                            modelElementName="FeatureTypeB"
-                                           xmlAttribute="false"
                                            xmlName="FeatureTypeB"
                                            xmlNamespace="http://shapechange.net/test/b"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema B"
@@ -185,12 +170,10 @@
                                            xmlNamespace="http://shapechange.net/test/b"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema B"
                                            modelElementName="FeatureTypeB::att2"
-                                           xmlAttribute="false"
                                            xmlName="att2"
                                            xmlNamespace="http://shapechange.net/test/b"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema B"
                                            modelElementName="FeatureTypeB::att3"
-                                           xmlAttribute="false"
                                            xmlName="att3"
                                            xmlNamespace="http://shapechange.net/test/b"/>
                </modelElementEncodings>
@@ -202,12 +185,10 @@
                <modelElementEncodings>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="DataTypeC"
-                                           xmlAttribute="false"
                                            xmlName="DataTypeC"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="DataTypeC::att1"
-                                           xmlAttribute="false"
                                            xmlName="att1"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
@@ -217,27 +198,22 @@
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="DataTypeC::attDataTypeA"
-                                           xmlAttribute="false"
                                            xmlName="attDataTypeA"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="FeatureTypeC1"
-                                           xmlAttribute="false"
                                            xmlName="FeatureTypeC1"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="FeatureTypeC1::ftC1toFTB"
-                                           xmlAttribute="false"
                                            xmlName="ftC1toFTB"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="FeatureTypeC2"
-                                           xmlAttribute="false"
                                            xmlName="FeatureTypeC2"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                   <ModelElementXmlEncoding applicationSchemaName="Cross Schema C"
                                            modelElementName="FeatureTypeC2::att1"
-                                           xmlAttribute="false"
                                            xmlName="att1"
                                            xmlNamespace="http://shapechange.net/test/c"/>
                </modelElementEncodings>
@@ -261,11 +237,14 @@
          <targetParameter name="serviceDescription" value="..."/>
          <targetParameter name="serviceLabel" value="label"/>
          <targetParameter name="srid" value="4326"/>
+         <targetParameter name="enableCodelists" value="true"/>
          <targetParameter name="enableGmlOutput" value="true"/>
          <targetParameter name="gmlIdPrefix" value="_"/>
          <targetParameter name="gmlIdOnGeometries" value="true"/>
          <targetParameter name="featureCollectionElementName" value="wfs:FeatureCollection"/>
          <targetParameter name="featureMemberElementName" value="wfs:member"/>
+         <targetParameter name="providerConfigLabelTemplate"
+                          value="{{value}}{{unit | prepend:' [' | append:']'}}"/>
          <targetParameter name="supportsStandardResponseParameters" value="true"/>
          <targetParameter name="uomTaggedValueName" value="unitOfMeasure"/>
          <targetParameter name="_unitTestOverride" value="true"/>
@@ -384,6 +363,7 @@
             <MapEntry param="" rule="*" targetType="STRING" type="Time"/>
             <MapEntry param="" rule="*" targetType="INTEGER" type="Year"/>
             <MapEntry param="" rule="*" targetType="STRING" type="URI"/>
+            <MapEntry param="" rule="*" targetType="STRING" type="URL"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Measure"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Distance"/>
             <MapEntry param="" rule="*" targetType="FLOAT" type="Length"/>

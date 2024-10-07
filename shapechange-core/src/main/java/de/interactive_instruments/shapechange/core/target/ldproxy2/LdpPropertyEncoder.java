@@ -425,14 +425,6 @@ public class LdpPropertyEncoder {
 			&& typeCi.matches(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT)) {
 		    constraintsBuilder.enumValues(LdpInfo.enumValues(typeCi));
 		}
-
-//		if (!Ldproxy2Target.enableFragments || context.isInFragment()) {
-//		    // Create content for inclusion in service config:
-//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-//			    .codelist(codelistId).build();
-//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-//		}
 	    }
 
 	    if (providerConfigConstraintCreated) {
@@ -1133,29 +1125,34 @@ public class LdpPropertyEncoder {
 		}
 	    }
 
-	    if (LdpInfo.isEnumerationOrCodelistValueType(pi) && !target.valueTypeIsMapped(pi)) {
-
-		ClassInfo typeCi = pi.typeClass();
-
-		String codelistId = LdpInfo.codelistId(typeCi);
-
-		if (!Ldproxy2Target.codelistsAndEnumerations.contains(typeCi)) {
-		    /*
-		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
-		     * from the schemas selected for processing.
-		     */
-		    MessageContext mc = result.addWarning(msgSource, 127, typeCi.name(), codelistId);
-		    if (mc != null) {
-			mc.addDetail(msgSource, 0, typeCi.fullNameInSchema());
-		    }
-		}
-
-		// Create content for inclusion in service config:
-		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
-			.build();
-		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			typeDefinitionCi, propertyPath(nowVisitedList), trf);
-	    }
+	    /*
+	     * 2024-10-07 JE: codelist information now only provided via codelist
+	     * constraints in the provider configuration; codelist property transformations
+	     * are obsolete.
+	     */
+//	    if (LdpInfo.isEnumerationOrCodelistValueType(pi) && !target.valueTypeIsMapped(pi)) {
+//
+//		ClassInfo typeCi = pi.typeClass();
+//
+//		String codelistId = LdpInfo.codelistId(typeCi);
+//
+//		if (!Ldproxy2Target.codelistsAndEnumerations.contains(typeCi)) {
+//		    /*
+//		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
+//		     * from the schemas selected for processing.
+//		     */
+//		    MessageContext mc = result.addWarning(msgSource, 127, typeCi.name(), codelistId);
+//		    if (mc != null) {
+//			mc.addDetail(msgSource, 0, typeCi.fullNameInSchema());
+//		    }
+//		}
+//
+//		// Create content for inclusion in service config:
+//		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
+//			.build();
+//		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+//			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+//	    }
 
 	    // create more service constraint content
 	    if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {

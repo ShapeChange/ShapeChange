@@ -21,8 +21,6 @@
 
 (from v2.12.0)
 
-NOTE: This target supports ldproxy versions 3.1.0 and upwards.
-
 
 [[ldproxy2_overview]]
 == Overview
@@ -147,6 +145,7 @@ The following information items are added to the provider configuration file:
 ** forceAxisOrder: value of target parameter _forceAxisOrder_; default is NONE
 * nativeTimeZone: value of target parameter _nativeTimeZone_; default: NONE
 ** NOTE: The time-zone ID is given as a string like 'Europe/Paris'. Internally, parsing is achieved using the Java ZoneId class and its static `of(String zoneId)` method. The system default time-zone ID is determined via the static `systemDefault()` method. For further information about the allowed formats of the time-zone ID, consult the documentation of the Java ZoneId class and the two methods.
+* labelTemplate: value of target parameter _providerConfigLabelTemplate_; if the parameter is not set (to a non-empty string), the 'labelTemplate' is not created
 * types: will be populated as described in section <<ldproxy2_schemaconversionrules_types>>
 * fragments: will be generated if target parameter _enableFragments_ is set to true. For further details, see section <<ldproxy2_schemaconversionrules_types_inheritance_and_specialization>>.
 
@@ -174,6 +173,17 @@ The following information items are added to the service configuration file:
 as described in subsection <<ldproxy2_building_block_features_gml>> are added to the service configuration.
 
 NOTE: Members of the service configuration, whose value is equal to the default value for that member defined by ldproxy, may not actually be written to the service configuration file created by the target.
+
+[[ldproxy2_building_block_codelists]]
+===== Codelists
+
+ldproxy supports the publication of configured code lists. The documentation of 
+ldproxy building block Codelists describes the relevant configuration items.
+By setting target parameter __enableCodelists__ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/codelists.html[Codelists]
+to the service configuration as enabled.
+
 
 [[ldproxy2_building_block_features_gml]]
 ===== Features - GML
@@ -1023,9 +1033,7 @@ _rule-ldp2-cls-codelist-targetbytaggedvalue_ is useful in combination with model
 
 ======
 
-In addition, whenever a property, whose value type is the enumeration / code list, information is added both to the provider and the service configurations.
-
-The following information items are added to the property encoding in the provider configuration:
+In addition, whenever a property, whose value type is the enumeration / code list, the following information items are added to the property encoding in the provider configuration:
 
 * type: default is STRING; if tagged value _numericType_ on the enumeration / code list is not blank, then the type results by mapping the type name given by the tagged value.
 * codelist constraint: the codelist ID
@@ -1036,28 +1044,6 @@ The following information items are added to the property encoding in the provid
 NOTE: If the enumeration / code list itself is not encoded, is mapped, or does not belong to the schemas selected for processing, ShapeChange will log a warning, informing the user that this situation is an issue unless an ldproxy codelist with corresponding ID has already been or will be established for the desired deployment by other means (e.g. by manually creating it).
 
 NOTE: Depending upon the use case, it may or may not be useful to convert enumerations to code lists before executing the ldproxy target, using the xref:../transformations/Type_Converter.adoc#rule-trf-enumeration-to-codelist[Type Converter rule-trf-enumeration-to-codelist]. An advantage would be that transformations that apply to code lists could then also be applied to enumerations. A disadvantage would be that _rule-ldp2-cls-enumeration-enum-constraint_ would then no longer be applied, since the types that have originally been enumerations would then be code lists.
-
-The following information is added to the collection definition (within the service configuration) of the global type in which the UML property is encoded, API building block FEATURES_HTML, member `transformations`: a member whose name is the '.'-concatenated path to the property within the type definition. The value of the new member is an object, to which a `codelist` member is added, with value being the ID of the enumeration / code list.
-
-// https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/services/building-blocks/features-html.md
-
-// https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/transformations.md
-
-[#example_ldproxy2_schemaconversionrules_types_enumeration_and_codelist_serviceconfig_featureshtml_codelist_transformation,reftext='{listing-caption} {counter:listing-num}']
-.Addition of codelist transformations for properties in the service configuration
-[source,YAML,linenumbers]
-----
-collections:
-  classxyz:
-    api:
-    - buildingBlock: FEATURES_HTML
-      transformations:
-        propertya.propertyb.propertyc:
-          codelist: MyEnumeration
-        propertyd:
-          codelist: MyCodelist
-----
-
 
 
 [[ldproxy2_schemaconversionrules_types_basictype]]

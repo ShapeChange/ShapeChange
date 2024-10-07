@@ -7,6 +7,7 @@ nativeCrs:
   code: 4326
   forceAxisOrder: NONE
 nativeTimeZone: Europe/Berlin
+labelTemplate: "{{value}}{{unit | prepend:' [' | append:']'}}"
 connectionInfo:
   database: FIXME
   host: FIXME

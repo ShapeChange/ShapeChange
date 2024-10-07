@@ -28,8 +28,3 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        pCodelist1:
-        - codelist: Codelist1
-        pCodelist2:
-        - codelist: Codelist2

@@ -5,6 +5,8 @@ description: '...'
 enabled: true
 serviceType: OGC_API
 api:
+- buildingBlock: CODELISTS
+  enabled: true
 - buildingBlock: GML
   enabled: true
   applicationNamespaces:
@@ -33,9 +35,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        att3:
-        - codelist: EnumerationA
     - buildingBlock: GML
       transformations:
         att2.att1:
@@ -104,9 +103,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        attCodelistA:
-        - codelist: CodeListA
     - buildingBlock: GML
       conformance: NONE
   tasub:
@@ -115,8 +111,5 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        attCodelistA:
-        - codelist: CodeListA
     - buildingBlock: GML
       conformance: NONE

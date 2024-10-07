@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.ogcapi.codelists.domain.ImmutableCodelistsConfiguration;
 import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
 import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
@@ -306,7 +307,7 @@ public class LdpConfigBuilder {
 
 	    /*
 	     * Create service config entry (must be done after provider config entry
-	     * creation, in order for codelist transformation infos to be available for
+	     * creation, in order for relevant transformation infos to be available for
 	     * inclusion in the service config)
 	     */
 
@@ -340,7 +341,7 @@ public class LdpConfigBuilder {
 				 * until the WG for OGC API Features has discussed the matter, and maybe
 				 * extended the queryable mechanics.
 				 */
-				
+
 //				// a feature ref (object) always has an id property
 //				queryableProperties.add(pi.name() + ".id");
 //				
@@ -429,6 +430,12 @@ public class LdpConfigBuilder {
 	    queryablesBuilder.enabled(true);
 	}
 
+	ImmutableCodelistsConfiguration.Builder codelistsBuilder = null;
+	if (Ldproxy2Target.enableCodelists) {
+	    codelistsBuilder = cfg.builder().ogcApiExtension().codelists();
+	    codelistsBuilder.enabled(true);
+	}
+
 	/*
 	 * ================================
 	 * 
@@ -447,6 +454,9 @@ public class LdpConfigBuilder {
 	if (queryablesBuilder != null) {
 	    generalExtensionConfigurations.add(queryablesBuilder.build());
 	}
+	if (codelistsBuilder != null) {
+	    generalExtensionConfigurations.add(codelistsBuilder.build());
+	}
 
 	serviceConfig = cfg.builder().entity().api().id(Ldproxy2Target.mainId).entityStorageVersion(2)
 		.label(Ldproxy2Target.serviceLabel).description(Ldproxy2Target.serviceDescription)
@@ -462,8 +472,8 @@ public class LdpConfigBuilder {
 	 */
 
 	ImmutableConnectionInfoSql connectionInfo = cfg.builder().entity().provider().connectionInfoBuilder()
-		.dialect(Dialect.PGIS).database("FIXME").host("FIXME").user("FIXME").password("FIXME-base64-encoded")
-		.schemas(Ldproxy2Target.dbSchemaNames).build();
+		.dialect(Dialect.PGIS.name()).database("FIXME").host("FIXME").user("FIXME")
+		.password("FIXME-base64-encoded").schemas(Ldproxy2Target.dbSchemaNames).build();
 
 	ImmutableSqlPathDefaults sourcePathDefaults = cfg.builder().entity().provider().sourcePathDefaultsBuilder()
 		.primaryKey(ldpSourcePathProvider.defaultPrimaryKey()).sortKey(ldpSourcePathProvider.defaultSortKey())
@@ -482,6 +492,10 @@ public class LdpConfigBuilder {
 
 	if (Ldproxy2Target.nativeTimeZone != null) {
 	    providerConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
+	}
+
+	if (StringUtils.isNotBlank(Ldproxy2Target.providerConfigLabelTemplate)) {
+	    providerConfigBuilder.labelTemplate(Ldproxy2Target.providerConfigLabelTemplate);
 	}
 
 	providerConfig = providerConfigBuilder.build();

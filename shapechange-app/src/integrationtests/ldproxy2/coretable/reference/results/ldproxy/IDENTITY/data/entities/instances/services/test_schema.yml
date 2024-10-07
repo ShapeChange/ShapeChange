@@ -63,15 +63,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        attFt3A:
-        - codelist: MyEnumeration
-        attFt3B:
-        - codelist: MyCodelist
-        attFt3C:
-        - codelist: MyEnumeration
-        attFt3D:
-        - codelist: MyCodelist
     - buildingBlock: GML
       conformance: NONE
     - buildingBlock: GEO_JSON

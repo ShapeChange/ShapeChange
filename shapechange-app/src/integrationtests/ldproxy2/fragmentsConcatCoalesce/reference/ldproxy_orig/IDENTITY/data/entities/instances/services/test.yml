@@ -64,9 +64,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        t5c1p1:
-        - codelist: T5_Enumeration1
     - buildingBlock: GML
       conformance: NONE
   t5_class2:
@@ -75,11 +72,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        t5c1p1:
-        - codelist: T5_Enumeration1
-        t5c2p1:
-        - codelist: T5_Enumeration2
     - buildingBlock: GML
       conformance: NONE
   t6_class1:
@@ -104,15 +96,6 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        att1:
-        - codelist: T7_CodeList
-        att2:
-        - codelist: T7_CodeList
-        att3.attDt1:
-        - codelist: T7_CodeList
-        att3.attDt2:
-        - codelist: T7_CodeList
     - buildingBlock: GML
       conformance: NONE
   t8_class1:

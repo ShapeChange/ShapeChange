@@ -28,19 +28,9 @@ collections:
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        attCode1:
-        - codelist: TS2_Codelist1
-        attDt.attCode2:
-        - codelist: TS2_CodeList2
-        attExtCodelist:
-        - codelist: Ext_Codelist
   ts2_featuretype2:
     id: ts2_featuretype2
     label: ts2_featuretype2
     enabled: true
     api:
     - buildingBlock: FEATURES_HTML
-      transformations:
-        attCode3:
-        - codelist: TS2_Codelist3

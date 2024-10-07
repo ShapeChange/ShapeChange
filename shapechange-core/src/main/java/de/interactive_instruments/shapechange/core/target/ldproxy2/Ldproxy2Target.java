@@ -116,6 +116,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String descriptionTemplate = "[[definition]]";
     public static String descriptorNoValue = "";
     public static boolean enableFragments = false;
+    public static boolean enableCodelists = false;
     public static boolean enableFeaturesGml = false;
     public static boolean enableFeaturesGeoJson = false;
     public static boolean enableFeaturesJsonFg = false;
@@ -142,6 +143,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static int srid = 4326;
     public static String uomTvName = null;
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
+    public static String providerConfigLabelTemplate = null;
 
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
@@ -315,6 +317,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    primaryKeyColumn = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_PK_COLUMN,
 		    "id", false, true);
 
+	    providerConfigLabelTemplate = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE, null, false, true);
+
 	    List<String> queryables = options.parameterAsStringList(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_QUERYABLES, null, true, true);
 	    if (!queryables.isEmpty()) {
@@ -344,6 +349,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    linearizeCurves = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_LINEARIZE_CURVES, false);
+
+	    enableCodelists = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_ENABLE_CODELISTS, false);
 
 	    // GML relevant parameters
 
@@ -473,10 +481,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		coretableInverseRelationNameColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, "rel_inv", false, true);
-		
+
 		coretableVersion = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_VERSION, null, false, true);
-		
+
 		coretableVersionColumn = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, "version", false, true);
 	    }
@@ -528,7 +536,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //	    if(!dataDirectoryFile.exists()) {
 //		dataDirectoryFile.mkdirs();
 //	    }
-	    
+
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
 	    cfg = LdproxyCfgWriter.create(dataDirectoryPath);
@@ -970,6 +978,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	nativeTimeZone = null;
 	objectIdentifierName = "oid";
 	primaryKeyColumn = "id";
+	providerConfigLabelTemplate = null;
 	queryablesFromConfig = new TreeSet<>();
 	reflexiveRelationshipFieldSuffix = "";
 	serviceDescription = "FIXME";
@@ -982,6 +991,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	mainId = null;
 	mainAppSchema = null;
 
+	enableCodelists = false;
 	enableFeaturesGml = false;
 	enableFeaturesGeoJson = false;
 	enableFeaturesJsonFg = false;
