@@ -206,6 +206,9 @@ determined. For a mapped type, the identifier types are defined by map
 entry characteristic `collectionIdTypes`. For all other cases, the applicable
 identifier types are defined by target parameter 
 xref:./JSON_Schema.adoc#featureRefIdTypes[featureRefIdTypes].
+* (since v4.0.0) A format for feature identifiers can also be specified - for 
+mapped types via map entry characteristic `collectionIdFormat`, for all other 
+cases via target parameter <<featureRefIdFormat>>.
 * With all this information available, ShapeChange can create the right
 schema definition for a feature reference (all such definitions include
 member "x-ogc-role": "reference"; examples are shown below):
@@ -248,7 +251,8 @@ _Simple reference schema_:
 
 ```json
 {
-  "type": "integer",
+  "type": "string",
+  "format": "uuid",
   "x-ogc-role": "reference",
   "x-ogc-collectionId": "buildings"
 }
@@ -323,6 +327,19 @@ _External reference schema_:
 }
 ```
 
+
+[[rule-json-all-featureRefs-alwaysSimple]]
+==== rule-json-all-featureRefs-alwaysSimple
+
+(since v4.0.0)
+
+Extends the behavior of <<rule-json-all-featureRefs>>, so that
+only simple reference schemas are created for profile `rel-as-key`.
+
+This conversion rule was created in support of code generation from JSON Schema.
+It can be useful to set parameter <<featureRefWithAnyCollectionId>> to `false`,
+or to omit that parameter (since its default value is `false`), because then
+`x-ogc-collectionId` will be created, with the applicable collection identifier(s).
 
 
 [[rule-json-all-notEncoded]]
@@ -642,12 +659,16 @@ then the constraint for the "geometry" member will NOT be created.
 This rule extends 
 _xref:./JSON_Schema.adoc#rule-json-all-documentation[rule-json-all-documentation]_
 by creating a new "enumDescription" annotation within the JSON Schema definition
-of an enumeration, with one member per encoded enum. The name of such a member
+of an enumeration (except for any enumeration with name "Boolean [ignoring case]), 
+with one member per encoded enum. The name of such a member
 is the initial value of the enum, if available, otherwise the enum name. The 
 member value is a JSON object with annotation members created by applying the
 configured xref:./JSON_Schema.adoc#Annotations[JSON Schema annotations] to the
 enum. Note that if none of the annotation definitions creates an annotation 
 value for the enum, then the JSON object will be empty.
+
+NOTE: Since v4.0.0, it is possible to control whether enum descriptions are also created
+for enum valued properties via target parameter <<enumDescriptionOnEnumerationValuedProperties>>.
 
 [[rule-json-cls-genericValueType]]
 ==== rule-json-cls-genericValueType
@@ -1631,7 +1652,7 @@ Applies to Rule(s):
 
 Required / Optional: optional
 
-Type: Enum (one of "uri" and "uri-reference")
+Type: Enum (one of "uri", "uri-reference")
 
 Default Value: "uri"
 
@@ -1726,6 +1747,26 @@ order to encode the type represented by that object.
 Applies to Rule(s):
 _xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[rule-json-cls-name-as-entityType]_
 
+
+[[enumDescriptionOnEnumerationValuedProperties]]
+==== enumDescriptionOnEnumerationValuedProperties
+
+(since v4.0.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _false_
+
+Explanation: If _true_, then enum descriptions are also created for
+properties whose value type is an enumeration (unless the name of the
+enumeration is "Boolean" [ignoring case]).
+
+Applies to Rule(s):
+_xref:./JSON_Schema.adoc#rule-json-cls-documentation-enumDescription[rule-json-cls-documentation-enumDescription]_
+
+
 [[featureCollectionOnly]]
 ==== featureCollectionOnly
 
@@ -1743,6 +1784,25 @@ collections (one per feature type) are not created.
 
 Applies to Rule(s): 
 _xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
+
+
+[[featureRefIdFormat]]
+==== featureRefIdFormat
+
+(since v4.0.0)
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: _none_
+
+Explanation: The format of feature identifiers in non-external collection(s).
+For example, 'uuid', in case that target parameter <<featureRefIdTypes>> has value 'string'.
+
+Applies to Rule(s): 
+_xref:./JSON_Schema.adoc#rule-json-all-featureRefs[rule-json-all-featureRefs]_
+
 
 [[featureRefIdTypes]]
 ==== featureRefIdTypes
@@ -2293,6 +2353,8 @@ omitted, which can be useful for cases in which the collection identifiers are n
 fully defined at schema creation time.
 * collectionIdTypes: The type of the feature identifiers used in the collection(s).
 "string", "integer", or a (comma-separated) list thereof. Optional; default is "integer".
+* collectionIdFormat: The format of the feature identifiers used in the collection(s).
+For example, 'uuid' - in case that collectionIdTypes is 'string'.
 * uriTemplate: This characteristic is required for the map entry parameter _collectionInfos_.
 The value is a URI - typically a URL - template for links that reference the members of 
 OGC API Features collection(s). 

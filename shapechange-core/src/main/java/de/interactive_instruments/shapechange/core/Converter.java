@@ -301,7 +301,7 @@ public class Converter implements MessageSource {
 		/*
 		 * no conversion since there are no transformations and targets and thus the
 		 * model was not loaded
-		 */		
+		 */
 	    } else if (model == null) {
 		result.addProcessFlowFatalError(this, 14);
 		throw new ShapeChangeAbortException();
@@ -378,6 +378,9 @@ public class Converter implements MessageSource {
      * @throws Exception
      */
     private void executeDeferrableOutputWriters(List<TargetConfiguration> targetConfigs) throws Exception {
+
+	// Prepare targets
+	resetSingleTargets();
 
 	for (TargetConfiguration tgt : targetConfigs) {
 
@@ -1081,7 +1084,7 @@ public class Converter implements MessageSource {
 	    return "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
 	case 520:
 	    return "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
-		    
+
 	case 1012:
 	    return "Application schema found, package name: '$1$', target namespace: '$2$'";
 

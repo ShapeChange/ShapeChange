@@ -52,7 +52,8 @@ import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 public class TaggedValueTransformerConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
+	    Stream.of(TaggedValueTransformer.PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME,
+		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
 		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
 		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST,
 		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,

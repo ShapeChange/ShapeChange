@@ -173,7 +173,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     protected static SortedSet<String> genericValueTypes = null;
     protected static SortedSet<String> featureRefProfiles = null;
     protected static SortedSet<JsonSchemaType> featureRefIdTypes = new TreeSet<>();
+    protected static String featureRefIdFormat = null;
     protected static boolean featureRefWithAnyCollectionId = false;
+
+    protected static boolean enumDescriptionOnEnumerationValuedProperties = false;
 
     /* ------ */
     /*
@@ -317,7 +320,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    lowerCaseCollectionIdsInRelAsKeyProfile = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_LOWER_CASE_COLLID_REL_AS_KEY, true);
-	    
+
 	    if (options.hasParameter(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_ID_MEMBER_ENCODING_RESTRICTIONS)) {
 		// format already checked by validation of the configuration
@@ -384,8 +387,14 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		}
 	    }
 
+	    featureRefIdFormat = options.parameterAsString(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_FEATURE_REF_ID_FORMAT, null, false, true);
+
 	    featureRefWithAnyCollectionId = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_FEATURE_REF_ANY_COLLECTION_ID, false);
+
+	    enumDescriptionOnEnumerationValuedProperties = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_ENUM_DESCRIPTION_ON_ENUMERATION_VALUED_PROP, false);
 
 	    schemaDefinitionForVoidable = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_SCHEMA_DEF_VOIDABLE, null, false, true);
@@ -673,7 +682,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     public String getLinkObjectUri() {
 	return linkObjectUri;
     }
-    
+
     public boolean isLowerCaseCollectionIdsInRelAsKeyProfile() {
 	return lowerCaseCollectionIdsInRelAsKeyProfile;
     }
@@ -1071,7 +1080,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	 */
 	jsDocsByCi.put(ci, jsd);
     }
-    
+
     public String getSchemaDefinitionForVoidable() {
 	return schemaDefinitionForVoidable;
     }
@@ -1303,7 +1312,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	geoJsonCompatibleGeometryTypes = null;
 	featureRefProfiles = null;
 	featureRefIdTypes = new TreeSet<>();
+	featureRefIdFormat = null;
 	featureRefWithAnyCollectionId = false;
+
+	enumDescriptionOnEnumerationValuedProperties = false;
     }
 
     @Override
@@ -1311,6 +1323,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	r.addRule("rule-json-all-documentation");
 	r.addRule("rule-json-all-featureRefs");
+	r.addRule("rule-json-all-featureRefs-alwaysSimple");
 	r.addRule("rule-json-all-notEncoded");
 	r.addRule("rule-json-cls-basictype");
 	r.addRule("rule-json-cls-codelist-link");
@@ -1345,7 +1358,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	r.addRule("rule-json-prop-measure");
 	r.addRule("rule-json-prop-readOnly");
 	r.addRule("rule-json-prop-voidable");
-	
+
 	r.addRule("rule-json-prop-specificChecksForSupertypeValuedProperties");
 
 	ProcessRuleSet defaultGeoJsonPrs = new ProcessRuleSet("defaultGeoJson", "*", new TreeSet<>(Stream

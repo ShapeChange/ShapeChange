@@ -60,7 +60,7 @@ public class JsonSchemaConstants {
     public static final String ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE = "uriTemplate";
     public static final String ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_IDS = "collectionIds";
     public static final String ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES = "collectionIdTypes";
-    
+    public static final String ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_FORMAT = "collectionIdFormat";
 
     public static final String PARAM_USE_ANCHOR_IN_LINKS_TO_GEN_SCHEMA_DEFS = "useAnchorsInLinksToGeneratedSchemaDefinitions";
     /**
@@ -121,6 +121,8 @@ public class JsonSchemaConstants {
     public static final String PARAM_LINK_OBJECT_URI = "linkObjectUri";
     public static final String PARAM_LOWER_CASE_COLLID_REL_AS_KEY = "lowerCaseCollectionIdsInRelAsKeyProfile";
     public static final String PARAM_MEASURE_OBJECT_URI = "measureObjectUri";
+    
+    public static final String PARAM_ENUM_DESCRIPTION_ON_ENUMERATION_VALUED_PROP = "enumDescriptionOnEnumerationValuedProperties";
 
     /**
      * NOTE: Undocumented right now; background: separate property definitions could
@@ -132,6 +134,7 @@ public class JsonSchemaConstants {
     public static final String PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES = "geoJsonCompatibleGeometryTypes";
     
     public static final String PARAM_FEATURE_REF_ID_TYPES = "featureRefIdTypes";
+    public static final String PARAM_FEATURE_REF_ID_FORMAT = "featureRefIdFormat";
     public static final String PARAM_FEATURE_REF_PROFILES = "featureRefProfiles";
     public static final String PARAM_FEATURE_REF_ANY_COLLECTION_ID = "featureRefWithAnyCollectionId";
 
@@ -139,6 +142,7 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_DOCUMENTATION_ENUM_DESCRIPTION = "rule-json-cls-documentation-enumDescription";
 
     public static final String RULE_ALL_FEATURE_REFS = "rule-json-all-featureRefs";
+    public static final String RULE_ALL_FEATURE_REFS_ALWAYS_SIMPLE = "rule-json-all-featureRefs-alwaysSimple";
     public static final String RULE_ALL_NOT_ENCODED = "rule-json-all-notEncoded";
 
     public static final String RULE_CLS_BASIC_TYPE = "rule-json-cls-basictype";

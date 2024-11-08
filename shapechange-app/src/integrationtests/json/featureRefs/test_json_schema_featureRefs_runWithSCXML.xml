@@ -63,6 +63,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -154,6 +158,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -247,6 +255,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -339,6 +351,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -414,7 +430,8 @@
          <targetParameter name="sortedOutput" value="true"/>
          <targetParameter name="inlineOrByReferenceDefault" value="byReference"/>
          <targetParameter name="featureRefProfiles" value="rel-as-key, rel-as-uri, rel-as-link"/>
-         <targetParameter name="featureRefIdTypes" value="integer, string"/>
+         <targetParameter name="featureRefIdTypes" value="string"/>
+         <targetParameter name="featureRefIdFormat" value="uuid"/>
          <targetParameter name="featureRefWithAnyCollectionId" value="true"/>
          <targetParameter name="defaultEncodingRule" value="myPlainJson5"/>
          <rules>
@@ -432,6 +449,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -489,7 +510,106 @@
                       rule="*"
                       targetType="https://example.org/extschema/schema.json#/$defs/ExtFT1"
                       type="ExtFT1"/>
-            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string}"
+            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string;collectionIdFormat=uuid}"
+                      rule="*"
+                      targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
+                      type="ExtFT2"/>
+            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/baz/(featureId);collectionIdTypes=string,integer}"
+                      rule="*"
+                      targetType="https://example.org/extschema/schema.json#/$defs/ExtFT3"
+                      type="ExtFT3"/>
+         </mapEntries>
+      </Target>
+      <Target class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget"
+              inputs="IDENTITY"
+              mode="enabled">
+         <targetParameter name="outputDirectory"
+                          value="testResults/json/featureRefs/json_schemas/schema6"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="inlineOrByReferenceDefault" value="byReference"/>
+         <targetParameter name="featureRefProfiles" value="rel-as-key, rel-as-uri, rel-as-link"/>
+         <targetParameter name="featureRefIdTypes" value="string"/>
+         <targetParameter name="featureRefIdFormat" value="uuid"/>
+         <targetParameter name="featureRefWithAnyCollectionId" value="false"/>
+         <targetParameter name="defaultEncodingRule" value="myPlainJson6"/>
+         <rules>
+            <EncodingRule extends="defaultPlainJson" name="myPlainJson6">
+               <rule name="rule-json-all-featureRefs"/>
+               <rule name="rule-json-all-featureRefs-alwaysSimple"/>
+            </EncodingRule>
+         </rules>
+         <mapEntries>
+            <MapEntry param="" rule="*" targetType="string" type="CharacterString"/>
+            <MapEntry param="keywords{minLength=1;maxLength=1}"
+                      rule="*"
+                      targetType="string"
+                      type="Character"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
+            <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
+            <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
+            <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
+            <MapEntry param="" rule="*" targetType="number" type="Number"/>
+            <MapEntry param="" rule="*" targetType="number" type="Real"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Measure"/>
+            <MapEntry param="measure" rule="*" targetType="number" type="Length"/>
+            <MapEntry param="keywords{format=date}"
+                      rule="*"
+                      targetType="string"
+                      type="Date"/>
+            <MapEntry param="keywords{format=date-time}"
+                      rule="*"
+                      targetType="string"
+                      type="DateTime"/>
+            <MapEntry param="keywords{format=time}"
+                      rule="*"
+                      targetType="string"
+                      type="Time"/>
+            <MapEntry param=""
+                      rule="*"
+                      targetType="http://www.opengis.net/to/be/determined/Any.json"
+                      type="Any"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/LineString.json"
+                      type="GM_Curve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiLineString.json"
+                      type="GM_MultiCurve"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPoint.json"
+                      type="GM_MultiPoint"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/MultiPolygon.json"
+                      type="GM_MultiSurface"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Geometry.json"
+                      type="GM_Object"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Point.json"
+                      type="GM_Point"/>
+            <MapEntry param="geometry"
+                      rule="*"
+                      targetType="https://geojson.org/schema/Polygon.json"
+                      type="GM_Surface"/>
+         </mapEntries>
+         <mapEntries>
+            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/extft1/bar/(featureId);collectionIdTypes=integer}"
+                      rule="*"
+                      targetType="https://example.org/extschema/schema.json#/$defs/ExtFT1"
+                      type="ExtFT1"/>
+            <MapEntry param="collectionInfos{uriTemplate=https://example.com/foo/(collectionId)/bar/(featureId);collectionIds=extft2,extft2sub1,extft2sub2;collectionIdTypes=string;collectionIdFormat=uuid}"
                       rule="*"
                       targetType="https://example.org/extschema/schema.json#/$defs/ExtFT2"
                       type="ExtFT2"/>

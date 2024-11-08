@@ -42,76 +42,46 @@
          <advancedProcessConfigurations>
             <JsonSchemaAnnotations>
                <annotations>
-                  <SimpleAnnotation annotation="title"                                    
-                                    arrayValue="false"
+                  <SimpleAnnotation annotation="title"
                                     descriptorOrTaggedValue="alias"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
-                  <TemplateAnnotation annotation="description"                                      
-                                      arrayValue="false"
-                                      multiValueBehavior="connectInSingleAnnotationValue"
-                                      multiValueConnectorToken=" "
+                                    noValueBehavior="ignore"/>
+                  <TemplateAnnotation annotation="description"
                                       noValueBehavior="populateOnce"
                                       noValueValue="[None Specified]"
                                       valueTemplate="Definition: [[definition]]  Description: [[description]]"/>
                   <SimpleAnnotation annotation="unit"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:unit"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    noValueBehavior="ignore"/>
                   <SimpleAnnotation annotation="lesbarerName"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:lesbarerName"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    noValueBehavior="ignore"/>
                   <SimpleAnnotation annotation="label"
                                     arrayValue="false"
-                                    descriptorOrTaggedValue="TV(|):aliasList"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="TV(|):aliasList"/>
                   <SimpleAnnotation annotation="label2"
                                     arrayValue="true"
-                                    descriptorOrTaggedValue="TV(|):aliasList"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="TV(|):aliasList"/>
                   <SimpleAnnotation annotation="deprecated"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:deprecated"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
                                     type="boolean"/>
                   <SimpleAnnotation annotation="code"
-                  					modelElementType="Class"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
+                                    modelElementType="Class"
                                     noValueBehavior="populateOnce"
                                     noValueValue="0"
                                     type="integer"/>
                   <SimpleAnnotation annotation="code"
-                  					modelElementType="Property"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
+                                    modelElementType="Property"
                                     noValueBehavior="ignore"
                                     noValueValue="0"
                                     type="integer"/>
                   <TemplateAnnotation annotation="isDefinedBy"
-                                      arrayValue="false"
                                       multiValueBehavior="createMultipleAnnotationValues"
-                                      multiValueConnectorToken=" "
-                                      noValueBehavior="ignore"
-                                      noValueValue=""
                                       valueTemplate="http://example.org/view?i=[[TV(,):item]]"/>
                   <SimpleAnnotation annotation="examples"
                                     arrayValue="true"
-                                    descriptorOrTaggedValue="example"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="example"/>
                </annotations>
             </JsonSchemaAnnotations>
          </advancedProcessConfigurations>
@@ -122,6 +92,7 @@
          <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
          <targetParameter name="byReferenceJsonSchemaDefinition"
                           value="https://example.org/jsonschema/byreference.json"/>
+         <targetParameter name="enumDescriptionOnEnumerationValuedProperties" value="true"/>
          <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
          <rules>
             <EncodingRule extends="defaultPlainJson" name="myPlainJson">
@@ -140,6 +111,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>
@@ -200,75 +175,45 @@
             <JsonSchemaAnnotations>
                <annotations>
                   <SimpleAnnotation annotation="title"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="alias"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    noValueBehavior="ignore"/>
                   <TemplateAnnotation annotation="description"
-                                      arrayValue="false"
-                                      multiValueBehavior="connectInSingleAnnotationValue"
-                                      multiValueConnectorToken=" "
                                       noValueBehavior="populateOnce"
                                       noValueValue="[None Specified]"
                                       valueTemplate="Definition: [[definition]]  Description: [[description]]"/>
                   <SimpleAnnotation annotation="unit"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:unit"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    noValueBehavior="ignore"/>
                   <SimpleAnnotation annotation="lesbarerName"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:lesbarerName"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    noValueBehavior="ignore"/>
                   <SimpleAnnotation annotation="label"
                                     arrayValue="false"
-                                    descriptorOrTaggedValue="TV(|):aliasList"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="TV(|):aliasList"/>
                   <SimpleAnnotation annotation="label2"
                                     arrayValue="true"
-                                    descriptorOrTaggedValue="TV(|):aliasList"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="TV(|):aliasList"/>
                   <SimpleAnnotation annotation="deprecated"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:deprecated"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
                                     type="boolean"/>
                   <SimpleAnnotation annotation="code"
-                                    modelElementType="Class"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
+                                    modelElementType="Class"
                                     noValueBehavior="populateOnce"
                                     noValueValue="0"
                                     type="integer"/>
                   <SimpleAnnotation annotation="code"
-                                    modelElementType="Property"
-                                    arrayValue="false"
                                     descriptorOrTaggedValue="TV:codeNumber"
+                                    modelElementType="Property"
                                     noValueBehavior="ignore"
                                     noValueValue="0"
                                     type="integer"/>
                   <TemplateAnnotation annotation="isDefinedBy"
-                                      arrayValue="false"
                                       multiValueBehavior="createMultipleAnnotationValues"
-                                      multiValueConnectorToken=" "
-                                      noValueBehavior="ignore"
-                                      noValueValue=""
                                       valueTemplate="http://example.org/view?i=[[TV(,):item]]"/>
                   <SimpleAnnotation annotation="examples"
                                     arrayValue="true"
-                                    descriptorOrTaggedValue="example"
-                                    noValueBehavior="ignore"
-                                    noValueValue=""
-                                    type="string"/>
+                                    descriptorOrTaggedValue="example"/>
                </annotations>
             </JsonSchemaAnnotations>
          </advancedProcessConfigurations>
@@ -296,6 +241,10 @@
                       rule="*"
                       targetType="string"
                       type="URI"/>
+            <MapEntry param="keywords{format=uri}"
+                      rule="*"
+                      targetType="string"
+                      type="URL"/>
             <MapEntry param="" rule="*" targetType="boolean" type="Boolean"/>
             <MapEntry param="" rule="*" targetType="integer" type="Integer"/>
             <MapEntry param="" rule="*" targetType="number" type="Decimal"/>

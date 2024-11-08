@@ -639,7 +639,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    if (StringUtils.isNotBlank(s)) {
 		writer.dataElement(TransformationConstants.TRF_TV_NAME_GENERATIONDATETIME, PrepareToPrint(s));
 	    }
-	    
+
 	    if (representTaggedValues != null) {
 		PrintTaggedValues(pi, representTaggedValues, null, false);
 	    }
@@ -746,12 +746,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	    // TODO extend with checks for additional child content
 	    boolean emptyElement = (img.getDocumentation() == null || !includeDiagramDocumentation);
-	    
-	    if(emptyElement) {
+
+	    if (emptyElement) {
 		writer.emptyElement("image", atts);
 	    } else {
-		writer.startElement("image", atts);		
-		if(StringUtils.isNotBlank(img.getDocumentation()) && includeDiagramDocumentation) {
+		writer.startElement("image", atts);
+		if (StringUtils.isNotBlank(img.getDocumentation()) && includeDiagramDocumentation) {
 		    writer.dataElement("documentation", img.getDocumentation());
 		}
 		writer.endElement("image");
@@ -959,12 +959,12 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	    writer.startElement("taggedValues");
 
-		if (representTaggedValues != null) {
-		    PrintTaggedValues(pix, representTaggedValues, null, false);
-		}
+	    if (representTaggedValues != null) {
+		PrintTaggedValues(pix, representTaggedValues, null, false);
+	    }
 
 	    writer.endElement("taggedValues");
-		
+
 	    writer.endElement("Package");
 	}
 
@@ -3014,8 +3014,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = options.parameter(this.getClass().getName(), PARAM_INCLUDE_DIAGRAMS);
 	if (s != null && s.equalsIgnoreCase("true"))
 	    includeDiagrams = true;
-	
-	includeDiagramDocumentation = options.parameterAsBoolean(this.getClass().getName(), PARAM_INCLUDE_DIAGRAM_DOCUMENTATION, false);
+
+	includeDiagramDocumentation = options.parameterAsBoolean(this.getClass().getName(),
+		PARAM_INCLUDE_DIAGRAM_DOCUMENTATION, false);
 
 	s = options.parameter(this.getClass().getName(), PARAM_DONT_TRANSFORM);
 	if (s != null && s.equalsIgnoreCase("true"))
@@ -3053,9 +3054,21 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	if (s != null && s.length() > 0)
 	    xslTransformerFactory = s;
 
-	s = options.parameter(this.getClass().getName(), PARAM_XSL_HTML_FILE);
-	if (s != null && s.length() > 0)
-	    xslhtmlfileName = s;
+	if (options.hasParameter(this.getClass().getName(), PARAM_XSL_HTML_FILE)) {
+	    s = options.parameter(this.getClass().getName(), PARAM_XSL_HTML_FILE);
+	    if (s != null && s.length() > 0) {
+		xslhtmlfileName = s;
+	    }
+	} else {
+	    /*
+	     * default behavior for schema diff: switch to default xslt for html diff -
+	     * unless the configuration explicitly names an XSLT file to use
+	     */
+	    if (options.hasParameter(this.getClass().getName(), PARAM_REFERENCE_MODEL_TYPE)
+		    && options.hasParameter(this.getClass().getName(), PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING)) {
+		xslhtmlfileName = DEFAULT_XSL_HTML_DIFF_FILE_NAME;
+	    }
+	}
 
 	s = options.parameter(this.getClass().getName(), PARAM_XSL_FRAME_HTML_FILENAME);
 	if (s != null && s.length() > 0)

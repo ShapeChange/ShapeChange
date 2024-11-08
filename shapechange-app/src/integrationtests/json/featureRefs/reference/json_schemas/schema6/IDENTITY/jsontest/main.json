@@ -61,23 +61,9 @@
               "$ref": "#/$defs/SCLinkObject"
             },
             {
-              "properties": {
-                "collectionId": {
-                  "type": "string"
-                },
-                "featureId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "collectionId",
-                "featureId"
-              ],
-              "type": "object",
+              "format": "uuid",
+              "type": "string",
+              "x-ogc-collectionId": "t",
               "x-ogc-role": "reference"
             }
           ]
@@ -94,23 +80,13 @@
                 "$ref": "#/$defs/SCLinkObject"
               },
               {
-                "properties": {
-                  "collectionId": {
-                    "type": "string"
-                  },
-                  "featureId": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "title": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "collectionId",
-                  "featureId"
+                "format": "uuid",
+                "type": "string",
+                "x-ogc-collectionId": [
+                  "ft2",
+                  "ft2sub1sub1",
+                  "ft2sub2"
                 ],
-                "type": "object",
                 "x-ogc-role": "reference"
               }
             ]
@@ -155,23 +131,9 @@
               "$ref": "#/$defs/SCLinkObject"
             },
             {
-              "properties": {
-                "collectionId": {
-                  "type": "string"
-                },
-                "featureId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "collectionId",
-                "featureId"
-              ],
-              "type": "object",
+              "format": "uuid",
+              "type": "string",
+              "x-ogc-collectionId": "ft1",
               "x-ogc-role": "reference"
             }
           ]
@@ -202,28 +164,8 @@
               "$ref": "#/$defs/SCLinkObject"
             },
             {
-              "properties": {
-                "collectionId": {
-                  "type": "string",
-                  "enum": [
-                    "extft2",
-                    "extft2sub1",
-                    "extft2sub2"
-                  ]
-                },
-                "featureId": {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "collectionId",
-                "featureId"
-              ],
-              "type": "object",
+              "format": "uuid",
+              "type": "string",
               "x-ogc-collectionId": [
                 "extft2",
                 "extft2sub1",
@@ -244,25 +186,10 @@
               "$ref": "#/$defs/SCLinkObject"
             },
             {
-              "properties": {
-                "collectionId": {
-                  "type": "string"
-                },
-                "featureId": {
-                  "type": [
-                    "string",
-                    "integer"
-                  ]
-                },
-                "title": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "collectionId",
-                "featureId"
+              "type": [
+                "string",
+                "integer"
               ],
-              "type": "object",
               "x-ogc-role": "reference",
               "x-ogc-uriTemplate": "https://example.com/foo/{collectionId}/baz/{featureId}"
             }

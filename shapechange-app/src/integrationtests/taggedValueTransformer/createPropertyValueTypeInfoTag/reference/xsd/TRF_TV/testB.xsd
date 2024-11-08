@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        xmlns:ta="http://example.org/shapechange/schema/test/a"
+        xmlns:tb="http://example.org/shapechange/schema/test/b"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test/b"
+        version="1.0">
+   <import namespace="http://example.org/shapechange/schema/test/a"/>
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="DataType2"
+            substitutionGroup="gml:AbstractObject"
+            type="tb:DataType2Type"/>
+   <complexType name="DataType2Type">
+      <sequence>
+         <element minOccurs="0" name="integer" type="integer">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="propertyValueTypeName">Integer</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   <complexType name="DataType2PropertyType">
+      <sequence>
+         <element ref="tb:DataType2"/>
+      </sequence>
+   </complexType>
+   <simpleType name="EnumerationType">
+      <restriction base="string">
+         <enumeration value="val1"/>
+         <enumeration value="val2"/>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType1"
+            substitutionGroup="ta:AbstractSupertype"
+            type="tb:FeatureType1Type">
+      <annotation>
+         <documentation>This is a feature type.</documentation>
+      </annotation>
+   </element>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="ta:AbstractSupertypeType">
+            <sequence>
+               <element name="enum" type="tb:EnumerationType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Enumeration</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="boolean" type="boolean">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Boolean</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="measure" type="gml:MeasureType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Measure</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" name="string" type="string">
+                  <annotation>
+                     <documentation>This is a string.</documentation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">CharacterString</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded" minOccurs="0" name="real" type="double">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Real</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="geometry" type="gml:PointPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">GM_Point</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="datatype" type="tb:DataType2PropertyType">
+                  <annotation>
+                     <documentation>This is a data type.</documentation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">DataType2</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="union" type="tb:UnionPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Union</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="role2" type="tb:FeatureType2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">tb:role1</reversePropertyName>
+                        <sc:taggedValue tag="propertyValueTypeName">FeatureType3</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="FeatureType2"
+            substitutionGroup="ta:AbstractSupertype"
+            type="tb:FeatureType2Type"/>
+   <complexType abstract="true" name="FeatureType2Type">
+      <complexContent>
+         <extension base="ta:AbstractSupertypeType">
+            <sequence>
+               <element name="codelist" type="gml:CodeType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">CodeList</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="boolean" type="boolean">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Boolean</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element maxOccurs="unbounded"
+                        minOccurs="0"
+                        name="role1"
+                        type="tb:FeatureType1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">tb:role2</reversePropertyName>
+                        <sc:taggedValue tag="propertyValueTypeName">FeatureType1</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType3"
+            substitutionGroup="tb:FeatureType2"
+            type="tb:FeatureType3Type"/>
+   <complexType name="FeatureType3Type">
+      <complexContent>
+         <extension base="tb:FeatureType2Type">
+            <sequence>
+               <element name="attFt3" type="integer">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="propertyValueTypeName">Integer</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType3PropertyType">
+      <sequence minOccurs="0">
+         <element ref="tb:FeatureType3"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinBPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType2"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinCPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="MixinDPropertyType">
+      <choice minOccurs="0">
+         <element ref="tb:FeatureType1"/>
+      </choice>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Union"
+            substitutionGroup="gml:AbstractObject"
+            type="tb:UnionType"/>
+   <complexType name="UnionType">
+      <choice>
+         <element name="optA" type="integer">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="propertyValueTypeName">Integer</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </element>
+         <element name="optB" type="tb:EnumerationType">
+            <annotation>
+               <appinfo>
+                  <sc:taggedValue tag="propertyValueTypeName">Enumeration</sc:taggedValue>
+               </appinfo>
+            </annotation>
+         </element>
+      </choice>
+   </complexType>
+   <complexType name="UnionPropertyType">
+      <sequence>
+         <element ref="tb:Union"/>
+      </sequence>
+   </complexType>
+</schema>

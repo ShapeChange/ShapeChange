@@ -78,11 +78,16 @@
                 "3"
               ],
               "type": "number"
+            },
+            "att3": {
+              "description": "Definition: [None Specified]  Description: [None Specified]",
+              "$ref": "#E1"
             }
           },
           "required": [
             "att1",
-            "att2"
+            "att2",
+            "att3"
           ]
         }
       },
@@ -95,7 +100,24 @@
       "description": "Definition: [None Specified]  Description: [None Specified]",
       "code": 2000,
       "isDefinedBy": "http://example.org/view?i\u003dFT2",
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "att1": {
+              "description": "Definition: [None Specified]  Description: [None Specified]",
+              "$ref": "#E2"
+            }
+          },
+          "required": [
+            "att1"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
     },
     "T": {
       "$anchor": "T",

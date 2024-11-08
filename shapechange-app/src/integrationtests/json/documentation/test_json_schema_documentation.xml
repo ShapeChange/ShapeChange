@@ -38,6 +38,7 @@
    <targetParameter name="jsonBaseUri" value="https://example.org/baseuri_from_config"/>
    <targetParameter name="linkObjectUri" value="http://example.org/jsonschema/link.json"/>
    <targetParameter name="byReferenceJsonSchemaDefinition" value="https://example.org/jsonschema/byreference.json"/>
+   <targetParameter name="enumDescriptionOnEnumerationValuedProperties" value="true"/>
    <targetParameter name="defaultEncodingRule" value="myPlainJson"/>
    <rules>
     <EncodingRule name="myPlainJson" extends="defaultPlainJson">

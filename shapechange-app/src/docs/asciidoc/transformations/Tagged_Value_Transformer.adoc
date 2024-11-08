@@ -68,6 +68,30 @@ target, which can use the information to generate
 xref:../targets/SQL_DDL.adoc#SQL_Encoding_Infos[SQL encoding infos].
 
 
+[[rule-trf-taggedValue-createPropertyValueTypeInformationTag]]
+==== rule-trf-taggedValue-createPropertyValueTypeInformationTag
+
+(since v4.0.0)
+
+For each property of classes within the schemas selected for processing,
+a tagged value is added, providing information about the property value type.
+
+The tag name is defined by transformation parameter <<propertyValueTypeInfoTagName>>.
+
+The tag value is determined as follows:
+
+* If the property value type is undefined (e.g. typically for enums), then the tag 
+value is the empty string.
+* Otherwise, if the value type could not be found in the model (which can happen, 
+for example if the value type was set manually and contains a typo), or if the 
+value type does not belong to the schemas selected for processing, then the tag
+value is the name of the value type, as defined for the property in the model.
+* Otherwise, i.e. the value type does belong to the schemas selected for processing:
+** If the value type has no subtypes, then the tag value is the value type name.
+** Otherwise, the tag value is a comma-separated list of all non-abstract subtypes in
+the complete subtype hierarchy, including the value type itself if it is not abstract.
+
+
 [[rule-trf-taggedValue-inheritance]]
 ==== rule-trf-taggedValue-inheritance
 
@@ -90,6 +114,25 @@ multiple values.
 
 [[Parameters]]
 === Parameters
+
+[[propertyValueTypeInfoTagName]]
+==== propertyValueTypeInfoTagName
+
+(since v4.0.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String (comma-separated list)
+
++++Default Value+++: 'propertyValueTypeName'
+
++++Explanation+++: Name of the tag to be added by <<rule-trf-taggedValue-createPropertyValueTypeInformationTag>>.
+
++++Applies to Rule(s)+++:
+xref:./Tagged_Value_Transformer.adoc#rule-trf-taggedValue-createPropertyValueTypeInformationTag[_rule-trf-taggedValue-createPropertyValueTypeInformationTag_]
+
 
 [[taggedValueInheritanceAppendList]]
 ==== taggedValueInheritanceAppendList

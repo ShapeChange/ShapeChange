@@ -94,11 +94,25 @@
             "3"
           ],
           "type": "number"
+        },
+        "att3": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "enumDescription": {
+            "e1": {
+              "description": "Definition: e1 Def  Description: e1 Desc",
+              "lesbarerName": "E 1"
+            },
+            "e2": {
+              "description": "Definition: [None Specified]  Description: [None Specified]"
+        }
+      },
+          "$ref": "#E1"
         }
       },
       "required": [
         "att1",
-        "att2"
+        "att2",
+        "att3"
       ]
     },
     "FT2": {
@@ -106,7 +120,26 @@
       "description": "Definition: [None Specified]  Description: [None Specified]",
       "code": 2000,
       "isDefinedBy": "http://example.org/view?i\u003dFT2",
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "att1": {
+          "description": "Definition: [None Specified]  Description: [None Specified]",
+          "enumDescription": {
+            "1000": {
+              "description": "Definition: enumA Def  Description: enumA Desc",
+              "lesbarerName": "Enum A"
+            },
+            "2000": {
+              "description": "Definition: enumB Def  Description: enumB Desc",
+              "lesbarerName": "Enum B"
+            }
+          },
+          "$ref": "#E2"
+        }
+      },
+      "required": [
+        "att1"
+      ]
     },
     "T": {
       "$anchor": "T",

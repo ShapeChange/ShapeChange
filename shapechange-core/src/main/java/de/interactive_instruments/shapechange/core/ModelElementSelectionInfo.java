@@ -42,6 +42,7 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Info;
@@ -103,8 +104,8 @@ public class ModelElementSelectionInfo implements MessageSource {
     }
 
     public void validate() throws ModelElementSelectionParseException {
-	
-	if(isValid != null && isValid) {
+
+	if (isValid != null && isValid) {
 	    return;
 	}
 
@@ -457,41 +458,53 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    PropertyInfo pi = (PropertyInfo) infoType;
 
 	    /*
-	     * Try to get the value type from the model
+	     * only perform the check for properties that actually have a value type name
 	     */
-	    Model model = pi.model();
+	    if (StringUtils.isNotBlank(pi.typeInfo().name)) {
 
-	    ClassInfo valueType = null;
-	    if (pi.typeInfo().id != null) {
-		valueType = model.classById(pi.typeInfo().id);
-	    }
-	    if (valueType == null && pi.typeInfo().name != null) {
-		valueType = model.classByName(pi.typeInfo().name);
-	    }
+		/*
+		 * Try to get the value type from the model
+		 */
+		Model model = pi.model();
 
-	    if (valueType != null) {
-
-		propertyValueTypeStereotypeMatch = false;
-
-		Stereotypes stereotypes = valueType.stereotypes();
-
-		// TBD: what if a model element has no stereotype?
-		// stereotypes in info types have been normalized
-		if (stereotypes.isEmpty()) {
-		    stereotypes = options.stereotypesFactory();
-		    stereotypes.add("");
+		ClassInfo valueType = null;
+		if (pi.typeInfo().id != null) {
+		    valueType = model.classById(pi.typeInfo().id);
+		}
+		if (valueType == null && pi.typeInfo().name != null) {
+		    valueType = model.classByName(pi.typeInfo().name);
 		}
 
-		for (String stereotype : stereotypes.asArray()) {
+		if (valueType != null) {
 
-		    Matcher matcher = propertyValueTypeStereotypePattern.matcher(stereotype);
+		    propertyValueTypeStereotypeMatch = false;
 
-		    if (matcher.matches()) {
-			propertyValueTypeStereotypeMatch = true;
-			result.addDebug(this, 100, stereotype, propertyValueTypeStereotypePattern.pattern());
-			break;
-		    } else {
-			result.addDebug(this, 101, stereotype, propertyValueTypeStereotypePattern.pattern());
+		    Stereotypes stereotypes = valueType.stereotypes();
+
+		    // TBD: what if a model element has no stereotype?
+		    // stereotypes in info types have been normalized
+		    if (stereotypes.isEmpty()) {
+			stereotypes = options.stereotypesFactory();
+			stereotypes.add("");
+		    }
+
+		    for (String stereotype : stereotypes.asArray()) {
+
+			Matcher matcher = propertyValueTypeStereotypePattern.matcher(stereotype);
+
+			if (matcher.matches()) {
+			    propertyValueTypeStereotypeMatch = true;
+			    result.addDebug(this, 100, stereotype, propertyValueTypeStereotypePattern.pattern());
+			    break;
+			} else {
+			    result.addDebug(this, 101, stereotype, propertyValueTypeStereotypePattern.pattern());
+			}
+		    }
+		} else {
+		    MessageContext mc = result.addWarning(this, 104,
+			    StringUtils.defaultIfBlank(pi.typeInfo().name, "NOT_FOUND"), pi.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, pi.fullName());
 		    }
 		}
 	    }
@@ -738,6 +751,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 	 */
 	switch (mnr) {
 
+	case 1:
+	    return "Context: $1$";
 	case 100:
 	    return "??'$1$' matches regex '$2$'";
 	case 101:
@@ -746,7 +761,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    return "Could not find application schema for Info type '$1$'";
 	case 103:
 	    return "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
-
+	case 104:
+	    return "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

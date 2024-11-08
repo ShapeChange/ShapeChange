@@ -58,4 +58,15 @@ public class TaggedValueTransformerTest extends BasicTestSCXML {
 				new String[] { "xsd" }, "testResults/taggedValueTransformer/createOriginalSchemaInfoTags/xsd",
 				"src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/reference/xsd");
 	}
+	
+	@Test
+	public void testCreatePropertyValueTypeInfoTag() {
+		/*
+		 * 
+		 */
+		multiTest(
+				"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/test_createPropertyValueTypeInfoTag.xml",
+				new String[] { "xsd" }, "testResults/taggedValueTransformer/createPropertyValueTypeInfoTag/xsd",
+				"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/reference/xsd");
+	}
 }

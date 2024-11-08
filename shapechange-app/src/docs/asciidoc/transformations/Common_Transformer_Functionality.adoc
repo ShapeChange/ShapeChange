@@ -51,6 +51,10 @@ elements after a transformation.
 Filter instructions support the identification of model elements for
 which a tagged value is to be (re-)set.
 
+NOTE: If multiple <TaggedValue> elements for the same tagged value match for a given
+model element, then the values from these <TaggedValue> elements will be
+set as a list of values for the tag on that model element.
+
 It is possible to add a tagged value to a model element without
 providing an actual value in the configuration. In that case ShapeChange
 determines if the tagged value already exists. If so, the existing value

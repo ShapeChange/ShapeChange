@@ -805,7 +805,7 @@ public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSeri
 	this.add(new XOgcUriTemplateKeyword(template));
 	return this;
     }
-
+    
     @Override
     public JsonValue toJson(JsonSerializationContext context) {
 
