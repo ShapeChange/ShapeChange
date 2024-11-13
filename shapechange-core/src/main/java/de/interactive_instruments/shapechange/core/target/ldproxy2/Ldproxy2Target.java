@@ -115,6 +115,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String dateTimeFormat = null; // no default value
     public static String descriptionTemplate = "[[definition]]";
     public static String descriptorNoValue = "";
+    public static List<String> dropSqlEncodingInfosForTypes = new ArrayList<>();
     public static boolean enableFragments = false;
     public static boolean enableCodelists = false;
     public static boolean enableFeaturesGml = false;
@@ -280,6 +281,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    descriptorNoValue = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, "", false, true);
 
+	    dropSqlEncodingInfosForTypes = options.parameterAsStringList(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES, null, true, true);
+
 	    String forceAxisOrderString = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, "NONE", false, true);
 	    forceAxisOrder = Force.valueOf(forceAxisOrderString);
@@ -420,6 +424,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		} else {
 		    for (Element seiElmt : seiElmts) {
 			sqlEncodingInfos.merge(SqlEncodingInfos.fromXml(seiElmt));
+		    }
+		    if (!dropSqlEncodingInfosForTypes.isEmpty()) {
+			sqlEncodingInfos.dropInfosForTypes(dropSqlEncodingInfosForTypes);
 		    }
 		}
 	    }
@@ -601,18 +608,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    result.addInfo(this, 24, ci.name());
 
-	} else if (!enableFragments && ci.category() == Options.DATATYPE /* || ci.category() == Options.UNION */) {
+	} else if (!enableFragments && Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)) {
 
 	    // ignore here - will be encoded as needed
 
 	    /*
 	     * 2022-08-25 JE: Handling of unions just like data types deactivated. For the
 	     * time being, we keep the approach with type flattening. 2023-06-23 JE: In
-	     * other words, unions are not supported, but data types are.
+	     * other words, unions are not supported, but data types are. 2024-11-12 JE:
+	     * Encoding unions like data types activated again
 	     */
 
-	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE
-		|| (enableFragments && (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE))) {
+	} else if (ci.category() == Options.OBJECT || ci.category() == Options.FEATURE || (enableFragments
+		&& (ci.category() == Options.MIXIN || Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)))) {
 
 	    if (objectFeatureMixinAndDataTypes.stream().anyMatch(t -> t.name().equalsIgnoreCase(ci.name()))) {
 		MessageContext mc = result.addError(this, 125, ci.name());
@@ -637,8 +645,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	} else {
 
 	    /*
-	     * NOTE: conversion of basic types and unions not supported. Conversion of
-	     * mixins only supported if fragments are enabled.
+	     * NOTE: conversion of basic types not supported. Conversion of mixins only
+	     * supported if fragments are enabled.
 	     */
 
 	    result.addInfo(this, 17, ci.name());
@@ -941,6 +949,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		&& genericValueTypes != null && genericValueTypes.contains(ci.name());
     }
 
+    public static boolean isDatatypeOrUnionEncodedLikeDatatype(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE
+		|| (ci.category() == Options.UNION && ci.matches(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE));
+    }
+
+    public static boolean categoryOfValueIsDatatypeOrSupportedUnion(PropertyInfo pi) {
+	return pi.categoryOfValue() == Options.DATATYPE || (pi.categoryOfValue() == Options.UNION
+		&& pi.typeClass() != null && pi.typeClass().matches(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE));
+    }
+
     @Override
     public void reset() {
 
@@ -966,6 +984,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	dateTimeFormat = null; // no default value
 	descriptionTemplate = "[[definition]]";
 	descriptorNoValue = "";
+	dropSqlEncodingInfosForTypes = new ArrayList<>();
 	enableFragments = false;
 	forceAxisOrder = Force.NONE;
 	foreignKeyColumnSuffix = "";
@@ -1027,6 +1046,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
+	r.addRule(Ldproxy2Constants.RULE_ALL_AAA);
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
@@ -1042,6 +1062,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT);
 	r.addRule(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
+	r.addRule(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
     }
 
@@ -1186,6 +1207,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
 	case 136:
 	    return "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
+	case 137:
+	    return "AAA encoding of property '$1$' in class '$2$' (value type is '$3$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry. Setting source path to 'FIXME'.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

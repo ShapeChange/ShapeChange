@@ -288,7 +288,8 @@ public class LdpPropertyEncoder {
 		    propertyMapForBuilder = linkPropertyDefs;
 		}
 
-	    } else if (!LdpUtil.isLdproxySimpleType(ldpType) && pi.categoryOfValue() == Options.DATATYPE) {
+	    } else if (!LdpUtil.isLdproxySimpleType(ldpType)
+		    && Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 
 		/*
 		 * detect circular dependency in the property path - circular paths are not
@@ -332,7 +333,17 @@ public class LdpPropertyEncoder {
 			 * recursively.
 			 */
 
-			LdpPropertyEncodingContext nextContext = ldpProvider.createChildContext(context, typeCi);
+			LdpPropertyEncodingContext nextContext;
+
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
+			    LdpSourcePathInfos sourcePathInfosForProperty = sourcePathProvider
+				    .sourcePathPropertyLevel(pi, alreadyVisitedPiList, context);
+			    nextContext = ldpProvider.createChildContext(context, typeCi,
+				    sourcePathInfosForProperty.getSourcePathInfos().get(0));
+			} else {
+
+			    nextContext = ldpProvider.createChildContext(context, typeCi);
+			}
 
 			LinkedHashMap<String, FeatureSchema> datatypePropertyDefs = propertyDefinitions(typeCi,
 				nowVisitedList, nextContext);
@@ -384,14 +395,14 @@ public class LdpPropertyEncoder {
 	    Optional<ImmutableSchemaConstraints> constraints = Optional.empty();
 	    boolean providerConfigConstraintCreated = false;
 	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
-	    if (pi.cardinality().minOccurs != 0 && !pi.voidable()) {
+	    if (pi.cardinality().minOccurs != 0 && !pi.voidable() && pi.inClass().category() != Options.UNION) {
 
 		providerConfigConstraintCreated = true;
 		constraintsBuilder.required(true);
 	    }
 	    if (pi.cardinality().maxOccurs > 1 && !(pi == identifierPi || pi == defaultGeometryPi)
 		    && ldpType != Type.GEOMETRY) {
-		if (pi.voidable()) {
+		if (pi.voidable() || pi.inClass().category() == Options.UNION) {
 		    providerConfigConstraintCreated = true;
 		    constraintsBuilder.minOccurrence(0);
 		} else {
@@ -988,7 +999,7 @@ public class LdpPropertyEncoder {
 	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, pi, spi, propertyMapForBuilder);
 	}
 
-	if (!LdpUtil.isLdproxySimpleType(ldpType) && (pi.categoryOfValue() == Options.DATATYPE)) {
+	if (!LdpUtil.isLdproxySimpleType(ldpType) && Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 
 	    Optional<ClassInfo> optActualTypeCi = ldpProvider.actualTypeClass(spi, pi);
 
@@ -1028,8 +1039,13 @@ public class LdpPropertyEncoder {
     }
 
     private Optional<String> applicableSourcePath(PropertyInfo pi, LdpSourcePathInfo spi) {
-	return (spi.getIdSourcePath().isPresent() && !isFeatureRefWithTitle(pi)) ? spi.getIdSourcePath()
-		: spi.getValueSourcePath();
+	if (spi.getIdSourcePath().isPresent() && !isFeatureRefWithTitle(pi)) {
+	    return spi.getIdSourcePath();
+	} else if (spi.getValueSourcePath().isPresent() && spi.getValueSourcePath().get().startsWith("flatten")) {
+	    return Optional.empty();
+	} else {
+	    return spi.getValueSourcePath();
+	}
     }
 
     private boolean isFeatureRefWithTitle(PropertyInfo pi) {
@@ -1062,7 +1078,8 @@ public class LdpPropertyEncoder {
 	 * order of the xsd encoding, and property overrides).
 	 */
 	Collection<PropertyInfo> propsToProcess = (Ldproxy2Target.enableFragments && !context.isInFragment()
-		&& currentCi.category() != Options.DATATYPE) ? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
+		&& !Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(currentCi))
+			? LdpInfo.allPropertiesInOrderOfXsdEncoding(currentCi)
 			: currentCi.properties().values();
 
 	for (PropertyInfo pi : propsToProcess) {
@@ -1087,7 +1104,8 @@ public class LdpPropertyEncoder {
 //		    // link object case
 //		}
 
-	    } else if (!LdpUtil.isLdproxySimpleType(ldpType) && pi.categoryOfValue() == Options.DATATYPE) {
+	    } else if (!LdpUtil.isLdproxySimpleType(ldpType)
+		    && Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 
 		ClassInfo typeCi = pi.typeClass();
 

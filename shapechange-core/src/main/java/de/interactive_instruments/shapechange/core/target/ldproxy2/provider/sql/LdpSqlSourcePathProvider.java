@@ -96,6 +96,11 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     public LdpSourcePathInfos sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
 	    LdpPropertyEncodingContext contextx) {
 
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.typeInfo().name.equalsIgnoreCase("LI_Lineage")) {
+	    result.addError("IMPLEMENT LI_LINEAGE");
+	    return new LdpSourcePathInfos();
+	}
+
 	LdpSqlPropertyEncodingContext context = (LdpSqlPropertyEncodingContext) contextx;
 
 	LdpSourcePathInfos spRes = new LdpSourcePathInfos();
@@ -282,7 +287,20 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		ClassInfo typeCi = pi.typeClass();
 
-		if (typeCi == null) {
+		if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
+
+		    MessageContext mc = result.addError(msgSource, 137, pi.name(), pi.inClass().name(), typeName);
+		    if (mc != null) {
+			mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+		    }
+
+		    if (pi.cardinality().maxOccurs == 1) {
+			valueSourcePath = Optional.of(databaseColumnName(pi));
+		    } else {
+			valueSourcePath = Optional.empty();
+		    }
+
+		} else if (typeCi == null) {
 
 		    MessageContext mc = result.addError(msgSource, 118, typeName);
 		    if (mc != null) {
@@ -325,7 +343,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    valueSourcePath = Optional.of(path);
 			}
 
-		    } else if (typeCi.category() == Options.DATATYPE) {
+		    } else if (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(typeCi)) {
 
 			if (typeCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
 
@@ -617,6 +635,20 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
     private String databaseColumnName(PropertyInfo pi) {
 
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
+
+	    /*
+	     * 2024-11-13 JE: 'position' is very special in GeoInfoDok
+	     */
+	    if (pi.name().equals("position") /* && pi.typeInfo().name.startsWith("GM_") */) {
+		return "position";
+	    }
+
+	    if (StringUtils.isNotBlank(pi.taggedValue("AAA:Kennung"))) {
+		return pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
+	    }
+	}
+
 	String suffix = "";
 
 	Type t = target.ldproxyType(pi);
@@ -625,7 +657,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 //
 //	    if (LdpInfo.valueTypeIsTypeWithIdentity(pi) || target.isMappedToLink(pi)) {
 //		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffix;
-//	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
+//	    } else if (Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 //		suffix = suffix + Ldproxy2Target.foreignKeyColumnSuffixDatatype;
 //	    }
 //
@@ -657,7 +689,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    ? Ldproxy2Target.reflexiveRelationshipFieldSuffix
 			    : Ldproxy2Target.foreignKeyColumnSuffix;
 		}
-	    } else if (pi.categoryOfValue() == Options.DATATYPE) {
+	    } else if (Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 		suffix = Ldproxy2Target.foreignKeyColumnSuffixDatatype;
 	    } else {
 		suffix = (isReflexiveProperty && Ldproxy2Target.reflexiveRelationshipFieldSuffix != null)
@@ -732,7 +764,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			: Ldproxy2Target.foreignKeyColumnSuffix;
 	    }
 
-	} else if (pi.categoryOfValue() == Options.DATATYPE) {
+	} else if (Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 	    suffix = Ldproxy2Target.foreignKeyColumnSuffixDatatype;
 	}
 
@@ -821,6 +853,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		String piSchema = pi.model().schemaPackage(pi.inClass()).name();
 
 		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)) {
+
 		    result.add(sei);
 		}
 	    }
@@ -879,7 +912,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		 */
 		suffix = "_" + previousPi.name() + suffix;
 
-		if (prevPiOwnerCi != null && prevPiOwnerCi.category() == Options.DATATYPE
+		if (prevPiOwnerCi != null && Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(prevPiOwnerCi)
 			&& Ldproxy2Target.model.isInSelectedSchemas(prevPiOwnerCi)
 			&& target.mapEntry(prevPiOwnerCi).isEmpty()
 			&& prevPiOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)) {
@@ -938,7 +971,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     private boolean isEncodedInUsageSpecificDataTypeTable(PropertyInfo pi) {
 
 	ClassInfo piOwnerCi = pi.inClass();
-	return (piOwnerCi != null && piOwnerCi.category() == Options.DATATYPE
+	return (piOwnerCi != null && Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(piOwnerCi)
 		&& Ldproxy2Target.model.isInSelectedSchemas(piOwnerCi) && target.mapEntry(piOwnerCi).isEmpty()
 		&& piOwnerCi.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES));
     }
@@ -999,6 +1032,11 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     @Override
     public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
 
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.model().isInSelectedSchemas(pi.inClass())
+		&& Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(pi.inClass())) {
+	    return false;
+	}
+
 	if (pi.cardinality().maxOccurs == 1 && !this.encodingInfos.isEmpty()) {
 	    /*
 	     * For single valued properties, check if there is a deviation in the property
@@ -1035,8 +1073,8 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		}
 	    }
 	}
-	
-	if(super.parseLdpSourcePathsTaggedValue(pi).size() > 1) {
+
+	if (super.parseLdpSourcePathsTaggedValue(pi).size() > 1) {
 	    // multiple source paths are defined via tagged value
 	    return false;
 	}

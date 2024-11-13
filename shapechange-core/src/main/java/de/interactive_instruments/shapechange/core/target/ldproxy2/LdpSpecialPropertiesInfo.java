@@ -43,8 +43,8 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 
 /**
- * Helper class to determine information about special properties of a
- * given class.
+ * Helper class to determine information about special properties of a given
+ * class.
  * 
  * NOTE: Property override is taken into account. Even though ldproxy does not
  * fully support inheritance, it does support shallow merge of schemas, where
@@ -229,7 +229,7 @@ public class LdpSpecialPropertiesInfo {
 		    + identifierPropsFromSupertypes.size()) > 1;
 
 	    if (ci.supertypesInCompleteHierarchy().stream().anyMatch(st -> LdpInfo.isEncoded(st)
-		    && st.category() != Options.MIXIN && st.category() != Options.DATATYPE)) {
+		    && st.category() != Options.MIXIN && !Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(st))) {
 		/*
 		 * currentCi has at least one non-mixin and non-datatype supertype that is
 		 * encoded -> it will definitely provide an identifier property for the type
@@ -248,7 +248,7 @@ public class LdpSpecialPropertiesInfo {
 		     * a datatype.
 		     */
 		    encodeAdditionalIdentifierProp = ci.category() != Options.MIXIN
-			    && ci.category() != Options.DATATYPE;
+			    && !Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci);
 		}
 	    }
 

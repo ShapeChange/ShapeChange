@@ -102,10 +102,12 @@ public class SqlEncodingInfos implements MessageSource {
 	    String name = sei.hasOriginalClassName() ? sei.getOriginalClassName() : sei.getClassName();
 	    String schema = sei.hasOriginalSchemaName() ? sei.getOriginalSchemaName() : sei.getSchemaName();
 
-	    String ciSchema = ci.model().schemaPackage(ci).name();
+	    if (ci.model().schemaPackage(ci) != null) {
+		String ciSchema = ci.model().schemaPackage(ci).name();
 
-	    if (ci.name().equals(name) && ciSchema.equals(schema)) {
-		return true;
+		if (ci.name().equals(name) && ciSchema.equals(schema)) {
+		    return true;
+		}
 	    }
 	}
 
@@ -318,6 +320,32 @@ public class SqlEncodingInfos implements MessageSource {
 	this.propertyInfos.addAll(otherSqlEncodingInfos.getSqlPropertyEncodingInfos());
     }
 
+    public void dropInfosForTypes(List<String> typeNamesToDropSqlEncodingInfosFor) {
+
+	List<SqlClassEncodingInfo> classInfosToDrop = new ArrayList<>();
+	List<SqlPropertyEncodingInfo> propertyInfosToDrop = new ArrayList<>();
+
+	for (String typeToDrop : typeNamesToDropSqlEncodingInfosFor) {
+
+	    for (SqlClassEncodingInfo scei : this.classInfos) {
+		if (typeToDrop.equals(scei.getClassName()) || typeToDrop.equals(scei.getOriginalClassName())) {
+		    classInfosToDrop.add(scei);
+		}
+	    }
+
+	    for (SqlPropertyEncodingInfo spei : this.propertyInfos) {
+		if (typeToDrop.equals(spei.getInClassName()) || typeToDrop.equals(spei.getOriginalInClassName())
+			|| typeToDrop.equals(spei.getPropertyValueType())
+			|| typeToDrop.equals(spei.getOriginalPropertyValueType())) {
+		    propertyInfosToDrop.add(spei);
+		}
+	    }
+	}
+
+	this.classInfos.removeAll(classInfosToDrop);
+	this.propertyInfos.removeAll(propertyInfosToDrop);
+    }
+
     @Override
     public String message(int mnr) {
 
@@ -333,5 +361,4 @@ public class SqlEncodingInfos implements MessageSource {
 	}
 
     }
-
 }

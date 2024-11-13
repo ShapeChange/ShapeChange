@@ -238,8 +238,8 @@ public class LdpConfigBuilder {
 
 	for (ClassInfo ci : objectFeatureMixinAndDataTypes) {
 
-	    if (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE || ci.isAbstract()) {
-		continue;
+	    if (ci.category() == Options.MIXIN || Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci) || ci.isAbstract()) {
+		continue; 
 	    }
 
 	    String typeDefName = LdpInfo.configIdentifierName(ci);
@@ -302,8 +302,9 @@ public class LdpConfigBuilder {
 	    if (bbFeaturesGmlBuilder != null) {
 		bbFeaturesGmlBuilder.register(ci);
 	    }
-
-	    providerTypeDefinitions.put(typeDefName, typeDefBuilder.build());
+	    
+	    ImmutableFeatureSchema typeDef = typeDefBuilder.build();
+	    providerTypeDefinitions.put(typeDefName, typeDef);
 
 	    /*
 	     * Create service config entry (must be done after provider config entry

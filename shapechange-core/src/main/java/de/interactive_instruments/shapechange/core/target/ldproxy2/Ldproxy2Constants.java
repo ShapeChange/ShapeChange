@@ -90,6 +90,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_DATE_TIME_FORMAT = "dateTimeFormat";
     public static final String PARAM_DESCRIPTION_TEMPLATE = "descriptionTemplate";
     public static final String PARAM_DESCRIPTOR_NO_VALUE = "descriptorNoValue";
+    public static final String PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES = "dropSqlEncodingInfosForTypes";
     public static final String PARAM_FORCE_AXIS_ORDER = "forceAxisOrder";
     public static final String PARAM_FK_COLUMN_SUFFIX = "foreignKeyColumnSuffix";
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
@@ -148,6 +149,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_VERSION = "coretableVersion";
     public static final String PARAM_CORETABLE_VERSION_COLUMN = "coretableVersionColumn";
 
+    public static final String RULE_ALL_AAA = "rule-ldp2-all-aaa";
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
@@ -163,6 +165,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_ENUMERATION_ENUM_CONSTRAINT = "rule-ldp2-cls-enumeration-enum-constraint";
     public static final String RULE_CLS_GENERIC_VALUE_TYPE = "rule-ldp2-cls-genericValueType";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
+    public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
 
 }

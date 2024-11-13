@@ -48,12 +48,15 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    .comparing(SqlPropertyEncodingInfo::getSchemaName, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalSchemaName,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
-	    .thenComparing(SqlPropertyEncodingInfo::getPropertyName, Comparator.nullsFirst(Comparator.naturalOrder()))
-	    .thenComparing(SqlPropertyEncodingInfo::getOriginalPropertyName,
-		    Comparator.nullsFirst(Comparator.naturalOrder()))
+	    
 	    .thenComparing(SqlPropertyEncodingInfo::getInClassName, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalInClassName,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
+	    
+	    .thenComparing(SqlPropertyEncodingInfo::getPropertyName, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getOriginalPropertyName,
+		    Comparator.nullsFirst(Comparator.naturalOrder()))
+	    
 	    .thenComparing(SqlPropertyEncodingInfo::getPropertyValueType,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalPropertyValueType,

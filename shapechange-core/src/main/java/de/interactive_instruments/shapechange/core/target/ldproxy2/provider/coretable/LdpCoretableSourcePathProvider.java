@@ -190,7 +190,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 			// value source path is just the property name
 
-		    } else if (typeCi.category() == Options.DATATYPE) {
+		    } else if (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(typeCi)) {
 
 			// value source path is just the property name
 
@@ -242,7 +242,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     private Optional<String> featureRefIdSourcePath(PropertyInfo pi) {
 
 	String idSourcePath;
-	if (pi.inClass().category() == Options.DATATYPE) {
+	if (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(pi.inClass())) {
 
 	    // NOTE: Such a situation would actually not be compliant to ISO 19109
 
@@ -288,7 +288,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     private Optional<String> featureRefValueSourcePath(PropertyInfo pi) {
 
 	String valueSourcePath;
-	if (pi.inClass().category() == Options.DATATYPE) {
+	if (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(pi.inClass())) {
 
 	    // NOTE: Such a situation would actually not be compliant to ISO 19109
 

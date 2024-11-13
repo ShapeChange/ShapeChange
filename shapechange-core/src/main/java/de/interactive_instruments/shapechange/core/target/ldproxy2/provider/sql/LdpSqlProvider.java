@@ -58,7 +58,7 @@ public class LdpSqlProvider extends AbstractLdpProvider {
     public Type idValueTypeForFeatureRef(PropertyInfo pi, LdpSourcePathInfo spi) {
 	return spi.getIdValueType().isPresent() ? spi.getIdValueType().get() : Type.INTEGER;
     }
-    
+
     @Override
     public LdpSqlPropertyEncodingContext createInitialPropertyEncodingContext(ClassInfo ci, boolean isTypeDefinition) {
 
@@ -66,7 +66,7 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 
 	pec.setType(ci);
 
-	if (isTypeDefinition) {
+	if (isTypeDefinition /* || ci.matches(Ldproxy2Constants.RULE_ALL_AAA) */) {
 
 	    pec.setInFragment(false);
 	    pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
@@ -77,10 +77,16 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 
 	    // if fragments are enabled, the source path for datatype is only available for
 	    // non-usage-specific datatype encoding
-	    if (ci.category() == Options.MIXIN || (ci.category() == Options.DATATYPE
+	    if (ci.category() == Options.MIXIN || (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)
 		    && ci.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES))) {
 		pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
 	    }
+
+	    // 2024-11-13 JE: unclear ...
+//	    if (!(ci.category() == Options.MIXIN || (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)
+//		    && ci.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES)))) {
+//		pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
+//	    }
 	}
 
 	return pec;
@@ -105,7 +111,7 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 	LdpSqlPropertyEncodingContext childContext = createChildContextBase(parentContext, typeCi);
 
 	LdpSqlSourcePathInfo spi = (LdpSqlSourcePathInfo) spix;
-	childContext.setSourceTable(spi.targetTable);
+	childContext.setSourceTable(spi.getTargetTable());
 
 	return childContext;
     }
@@ -119,17 +125,26 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 
 	return childContext;
     }
-    
+
     /**
      * @param spix - tbd
-     * @param pi              - tbd
+     * @param pi   - tbd
      * @return the actual type class; can be empty if the class could not be
      *         determined
      */
     public Optional<ClassInfo> actualTypeClass(LdpSourcePathInfo spix, PropertyInfo pi) {
-	
-	LdpSqlSourcePathInfo spi = (LdpSqlSourcePathInfo)spix;	
-	String targetTable = spi.targetTable;
+
+	LdpSqlSourcePathInfo spi = (LdpSqlSourcePathInfo) spix;
+	String targetTable = spi.getTargetTable();
+
+	/*
+	 * The table check cannot work if the database representation for the value type
+	 * of pi is flattened into another table. So, ignore the target table if its
+	 * value starts with "flatten".
+	 */
+	if (targetTable.startsWith("flatten")) {
+	    targetTable = null;
+	}
 
 	if (!Ldproxy2Target.sqlEncodingInfos.isEmpty()
 		&& Ldproxy2Target.sqlEncodingInfos.hasClassEncodingInfoForTable(targetTable)) {
@@ -163,6 +178,5 @@ public class LdpSqlProvider extends AbstractLdpProvider {
     public boolean isDatatypeWithSubtypesEncodedInFragmentWithSingularSchemaAndObjectType() {
 	return false;
     }
-    
-    
+
 }

@@ -42,7 +42,7 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSourcePath
  */
 public class LdpSqlSourcePathInfo extends LdpSourcePathInfo {
 
-    protected String targetTable;
+    private String targetTable;
 
     public LdpSqlSourcePathInfo(Optional<String> idSourcePath, Optional<String> valueSourcePath, Optional<Type> valueType, String refType,
 	    String refUriTemplate, boolean targetsSingleValue, String targetTable) {
