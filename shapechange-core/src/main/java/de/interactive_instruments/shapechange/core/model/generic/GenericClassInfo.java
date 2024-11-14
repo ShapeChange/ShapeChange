@@ -39,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -48,7 +47,6 @@ import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.shapechange.core.profile.Profiles;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
@@ -63,6 +61,7 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.model.Stereotypes;
 import de.interactive_instruments.shapechange.core.model.TaggedValues;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
+import de.interactive_instruments.shapechange.core.profile.Profiles;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -734,7 +733,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	    properties.remove(keyFound);
 
     }
-
+    
     /**
      * Adds the given list of new properties to this class. Their sequence numbers
      * are used as-is. However, the sequence numbers of the already existing

@@ -35,11 +35,15 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.transformation.adding.CodeListLoader.CodeListSourceRepresentation;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -47,7 +51,10 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
  */
 public class CodeListLoaderConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>();
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
+	    .of(CodeListLoader.PARAM_LOAD_CODES_RE3GISTRY_LANG, CodeListLoader.PARAM_LOAD_CODES_REMOVE_EXISTING_CODES,
+		    CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION)
+	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -59,12 +66,28 @@ public class CodeListLoaderConfigurationValidator extends AbstractConfigurationV
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;
 
+	if (config.hasParameter(CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION)) {
+	    String defaultCodeListSourceRepresentation = config.parameterAsString(
+		    CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION, null, false, true);
+	    try {
+		CodeListSourceRepresentation.fromString(defaultCodeListSourceRepresentation);
+	    } catch (IllegalArgumentException e) {
+		result.addError(this, 100, defaultCodeListSourceRepresentation);
+		isValid = false;
+	    }
+	}
+
 	return isValid;
     }
 
     @Override
     public String message(int mnr) {
 	switch (mnr) {
+
+	case 100:
+	    return "Value of transformation parameter "
+		    + CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION
+		    + " is invalid. Configured parameter value '$1$' does not belong to the set of recognized values.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
