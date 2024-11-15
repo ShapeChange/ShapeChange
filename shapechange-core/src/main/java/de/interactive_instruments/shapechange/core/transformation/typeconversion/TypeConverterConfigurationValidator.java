@@ -50,15 +50,15 @@ import de.interactive_instruments.shapechange.core.TransformerConfiguration;
  */
 public class TypeConverterConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(TypeConverter.PARAM_DEFAULT_METADATA_TYPE, TypeConverter.PARAM_DEFAULT_VOID_REASON_TYPE,
-		    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_NAME_SUFFIX,
-		    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE,
-		    TypeConverter.PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX,
-		    TypeConverter.PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE,
-		    TypeConverter.PARAM_METADATA_PROPERTY_NAME_SUFFIX,
-		    TypeConverter.PARAM_NILREASON_PROPERTY_NAME_SUFFIX, TypeConverter.PARAM_TO_FEATURE_TYPE_NAME_REGEX,
-		    TypeConverter.PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME).collect(Collectors.toSet()));
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
+	    TypeConverter.PARAM_DEFAULT_METADATA_TYPE, TypeConverter.PARAM_DEFAULT_VOID_REASON_TYPE,
+	    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_NAME_SUFFIX,
+	    TypeConverter.PARAM_DISSOLVE_ASSOCIATIONS_ATTRIBUTE_TYPE,
+	    TypeConverter.PARAM_ENUMERATION_TO_CODELIST_EXCLUSION_REGEX,
+	    TypeConverter.PARAM_METADATA_PROPERTY_INLINEORBYREFERENCE,
+	    TypeConverter.PARAM_METADATA_PROPERTY_NAME_SUFFIX, TypeConverter.PARAM_NILREASON_PROPERTY_NAME_SUFFIX,
+	    TypeConverter.PARAM_PROPERTIES_TO_SWITCH_VALUE_TYPES, TypeConverter.PARAM_TO_FEATURE_TYPE_NAME_REGEX,
+	    TypeConverter.PARAM_TO_FEATURE_TYPE_TAGGED_VALUE_NAME).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override

@@ -156,6 +156,7 @@ public class TypeConverter implements Transformer, MessageSource {
      * "moved" (as if dragging the association end to the new value type).
      */
     public static final String RULE_SWITCH_VALUE_TYPES = "rule-trf-switchValueTypes";
+    public static final String PARAM_PROPERTIES_TO_SWITCH_VALUE_TYPES = "propertiesToSwitch";
 
     /**
      * Dissolves associations that are navigable from types in the schemas selected
@@ -291,6 +292,9 @@ public class TypeConverter implements Transformer, MessageSource {
 
 	List<ProcessMapEntry> mapEntries = trfConfig.getMapEntries();
 
+	List<String> propertiesToSwitch = trfConfig.parameterAsStringList(PARAM_PROPERTIES_TO_SWITCH_VALUE_TYPES, null,
+		true, true);
+
 	for (ProcessMapEntry pme : mapEntries) {
 
 	    String type = pme.getType();
@@ -299,9 +303,35 @@ public class TypeConverter implements Transformer, MessageSource {
 
 	    for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
-		if (genPi.inClass().category() == Options.CODELIST || genPi.inClass().category() == Options.ENUMERATION ||
-			!genPi.typeInfo().name.equals(type)) {
+		if (genPi.inClass().category() == Options.CODELIST || genPi.inClass().category() == Options.ENUMERATION
+			|| !genPi.typeInfo().name.equals(type)) {
 		    continue;
+		}
+
+		/*
+		 * if switching shall only be applied to certain properties, check if genPi is
+		 * one of them
+		 */
+		if (!propertiesToSwitch.isEmpty()) {
+		    boolean switchGenPiValueType = false;
+		    for (String pToSwitch : propertiesToSwitch) {
+
+			if (pToSwitch.contains(".")) {
+			    String[] parts = pToSwitch.split("\\.");
+			    if (parts[0].equals(genPi.inClass().name()) && parts[1].equals(genPi.name())) {
+				switchGenPiValueType = true;
+				break;
+			    }
+			} else {
+			    if (genPi.name().equals(pToSwitch)) {
+				switchGenPiValueType = true;
+				break;
+			    }
+			}
+		    }
+		    if (!switchGenPiValueType) {
+			continue;
+		    }
 		}
 
 		genPi.copyTypeInfo(targetType);
@@ -320,7 +350,7 @@ public class TypeConverter implements Transformer, MessageSource {
 		    } else {
 
 			GenericAssociationInfo ai = (GenericAssociationInfo) genPi.association();
-			
+
 			GenericPropertyInfo otherEnd;
 			if (ai.end1() == genPi) {
 			    otherEnd = (GenericPropertyInfo) ai.end2();
@@ -538,9 +568,12 @@ public class TypeConverter implements Transformer, MessageSource {
 			    otherRole.setCardinality(new Multiplicity("0..*"));
 			    otherRole.setTypeInfo(new Type(genCi.id(), genCi.name()));
 			    otherRole.setInClass(mdt);
-			    otherRole.setSequenceNumber(new StructuredNumber(otherRole.getNextNumberForAssociationRoleWithoutExplicitSequenceNumber()), true);
+			    otherRole.setSequenceNumber(
+				    new StructuredNumber(
+					    otherRole.getNextNumberForAssociationRoleWithoutExplicitSequenceNumber()),
+				    true);
 			    genModel.register(otherRole);
-			    
+
 			    // create directed association
 			    GenericAssociationInfo genAi = new GenericAssociationInfo();
 			    genAi.setId("association_for_" + mdPi.id());
