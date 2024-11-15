@@ -50,6 +50,7 @@ import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema.Builder;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
+import de.ii.xtraplatform.features.domain.SchemaBase.Embed;
 import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Scope;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
@@ -226,6 +227,8 @@ public class LdpPropertyEncoder {
 		    && StringUtils.isNotBlank(pi.taggedValue(Ldproxy2Target.uomTvName))) {
 		unitForBuilder = Optional.of(pi.taggedValue(Ldproxy2Target.uomTvName).trim());
 	    }
+
+	    List<ImmutablePropertyTransformation> transformations = new ArrayList<>();
 
 	    Optional<Role> propRoleForBuilder;
 
@@ -436,6 +439,17 @@ public class LdpPropertyEncoder {
 			&& typeCi.matches(Ldproxy2Constants.RULE_CLS_ENUMERATION_ENUM_CONSTRAINT)) {
 		    constraintsBuilder.enumValues(LdpInfo.enumValues(typeCi));
 		}
+
+		/*
+		 * For AAA-applications, where the code list value is a uri stored in an
+		 * xyz_href column, we only want the local code value, i.e. the part behind the
+		 * last '/' in the uri.
+		 */
+		if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.categoryOfValue() != Options.ENUMERATION) {
+		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			    .stringFormat("{{value | replace:'([^\\/]+)$':'$1'}}").build();
+		    transformations.add(trf);
+		}
 	    }
 
 	    if (providerConfigConstraintCreated) {
@@ -550,6 +564,8 @@ public class LdpPropertyEncoder {
 		     */
 		    if (!isEncodedAsFeatureRef(pi)) {
 			propMemberDefBuilder.valueType(valueTypeForBuilder);
+		    } else {
+			handleEmbedding(pi, propMemberDefBuilder);
 		    }
 
 		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).type(typeForBuilder)
@@ -658,6 +674,8 @@ public class LdpPropertyEncoder {
 		 */
 		if (!isEncodedAsFeatureRef(pi)) {
 		    propMemberDefBuilder.valueType(valueTypeForBuilder);
+		} else {
+		    handleEmbedding(pi, propMemberDefBuilder);
 		}
 
 		if (StringUtils.isNotBlank(pi.taggedValue("ldpExcludedScopes"))) {
@@ -681,7 +699,7 @@ public class LdpPropertyEncoder {
 			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
 			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
 			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
-			.propertyMap(propertyMapForBuilder).build();
+			.transformations(transformations).propertyMap(propertyMapForBuilder).build();
 
 		propertyDefs.put(pi.name(), propMemberDef);
 
@@ -735,6 +753,12 @@ public class LdpPropertyEncoder {
 	}
 
 	return propertyDefs;
+    }
+
+    private void handleEmbedding(PropertyInfo pi, Builder propMemberDefBuilder) {
+	if (Ldproxy2Target.embeddingForFeatureRefs && "inline".equalsIgnoreCase(pi.inlineOrByReference())) {
+	    propMemberDefBuilder.embed(Embed.ALWAYS);
+	}
     }
 
     private void addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(PropertyInfo pi,

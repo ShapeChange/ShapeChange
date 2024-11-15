@@ -96,16 +96,35 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     public LdpSourcePathInfos sourcePathPropertyLevel(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
 	    LdpPropertyEncodingContext contextx) {
 
-	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.typeInfo().name.equalsIgnoreCase("LI_Lineage")) {
-	    result.addError("IMPLEMENT LI_LINEAGE");
-	    return new LdpSourcePathInfos();
-	}
-
 	LdpSqlPropertyEncodingContext context = (LdpSqlPropertyEncodingContext) contextx;
 
 	LdpSourcePathInfos spRes = new LdpSourcePathInfos();
 	spRes.setPi(pi);
 	spRes.setContext(context);
+
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.typeInfo().name.equalsIgnoreCase("LI_Lineage")) {
+
+	    result.addError("IMPLEMENT LI_LINEAGE");
+	    return new LdpSourcePathInfos();
+
+	} /*
+	   * else if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) &&
+	   * isImplementedAsFeatureReference(pi) &&
+	   * StringUtils.equalsAnyIgnoreCase(pi.typeInfo().name, "AA_NREO",
+	   * "AX_Buchungsblattbezirk", "AX_Bundesland", "AX_Dienststelle", "AX_Gemarkung",
+	   * "AX_GemarkungsteilFlur", "AX_Gemeinde", "AX_KreisRegion",
+	   * "AX_LagebezeichnungKatalogeintrag", "AX_Regierungsbezirk",
+	   * "AX_Verwaltungsgemeinschaft")) {
+	   * 
+	   * Optional<String> idSourcePath =
+	   * Optional.of("TEST_AAA_KATALOG_ID_SOURCE_PATH"); Optional<Type> idValueType =
+	   * Optional.of(determineIdValueType("string")); String refType =
+	   * LdpUtil.formatCollectionId("TEST_AAA_KATALOG_PROPERTY_VALUE_TYPE");
+	   * 
+	   * LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath,
+	   * Optional.empty(), idValueType, refType, null, pi.cardinality().maxOccurs ==
+	   * 1, "TBD_TARGET_TABLE"); spRes.addSourcePathInfo(spi); return spRes; }
+	   */
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
@@ -148,10 +167,74 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		    valueSourcePath = Optional.of(spei.getValueSourcePath());
 
 		    if (isImplementedAsFeatureReference(pi)) {
-			idSourcePath = Optional.of(spei.getIdSourcePath());
-			idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
-			refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
+
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && StringUtils.equalsAnyIgnoreCase(
+				spei.getPropertyValueType(), "AX_Buchungsblattbezirk_Schluessel",
+				"AX_Bundesland_Schluessel", "AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
+				"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen", "AX_Kreis_Schluessel",
+				"AX_VerschluesselteLagebezeichnung", "AX_Regierungsbezirk_Schluessel",
+				"AX_Verwaltungsgemeinschaft_Schluessel")) {
+
+			    /*
+			     * Case of a aaa property with with katalog object key as original value type,
+			     * which shall be encoded as feature ref (to the actual katalog object).
+			     */
+
+			    if ("AX_Gemeindekennzeichen".equalsIgnoreCase(spei.getPropertyValueType())) {
+
+				/*
+				 * AX_Gemeindekennzeichen can identify both AX_Gemeinde and AX_Gemeindeteil
+				 * (maybe even AX_KommunalesTeilgebiet). Thus, we create multiple source path
+				 * infos.
+				 * 
+				 * TBD: If we can tell that only a subset of these options is the target, we
+				 * could define a tagged value that identifies the relevant cases.
+				 */
+
+				LdpSqlSourcePathInfo spi1 = aaaKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeinde");
+				spRes.addSourcePathInfo(spi1);
+				LdpSqlSourcePathInfo spi2 = aaaKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeindeteil");
+				spRes.addSourcePathInfo(spi2);
+
+			    } else {
+
+				/*
+				 * case of singular target (the katalog key only refers to a single katalog
+				 * feature type)
+				 */
+				LdpSqlSourcePathInfo spi = aaaKatalogObjektSourcePathInfo(pi, spei, pi.typeInfo().name);
+				spRes.addSourcePathInfo(spi);
+			    }
+
+			    return spRes;
+
+			} else {
+
+			    idSourcePath = Optional.of(spei.getIdSourcePath());
+			    idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
+			    refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
+			}
 		    }
+
+//		    /*
+//		     * For AAA-applications, where the code list value is a uri stored in an
+//		     * xyz_href column, we only want the local code value, i.e. the part behind the
+//		     * last '/' in the uri.
+//		     */
+//		    if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.categoryOfValue() == Options.CODELIST
+//			    && spei.getValueSourcePath().endsWith("_href")) {
+//			String tmp = spei.getValueSourcePath();
+//			String pathPrefix = null;
+//			String hrefColumn = tmp;
+//			if (tmp.contains("/")) {
+//			    pathPrefix = StringUtils.substringBeforeLast(tmp, "/");
+//			    hrefColumn = StringUtils.substringAfterLast(tmp, "/");
+//			}
+//			String hrefColumnNew = "[EXPRESSION]{sql=regexp_substr($T$." + hrefColumn + ", '[^/]+$')}";
+//			String newValueSourcePath = pathPrefix == null ? hrefColumnNew
+//				: pathPrefix + "/" + hrefColumnNew;
+//			valueSourcePath = Optional.of(newValueSourcePath);
+//		    }
 		}
 
 		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
@@ -615,6 +698,41 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	}
 
 	return spRes;
+    }
+
+    private LdpSqlSourcePathInfo aaaKatalogObjektSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei,
+	    String actualTypeClassName) {
+
+	String katalogObjektartTableName = sqlProviderHelper
+		.databaseTableName(pi.model().classByName(actualTypeClassName), false);
+
+	String schluesselValueSourcePath = spei.getValueSourcePath();
+
+	String katalogObjektIdSourcePath;
+	String sourcePathBase;
+
+	if (schluesselValueSourcePath.startsWith("flattenedTo:")) {
+
+	    // case of a data type that was flattened into its parent table
+	    sourcePathBase = "[_ko_sch_" + sqlProviderHelper.aaaKennung(pi) + "=sch]" + katalogObjektartTableName;
+	    katalogObjektIdSourcePath = sourcePathBase + "/objid";
+
+	} else {
+
+	    // case of an associative table
+	    sourcePathBase = schluesselValueSourcePath + "/[_ko_sch_" + sqlProviderHelper.aaaKennung(pi) + "=sch]"
+		    + katalogObjektartTableName;
+	    katalogObjektIdSourcePath = sourcePathBase + "/objid";
+	}
+
+	Optional<String> idSourcePath = Optional.of(katalogObjektIdSourcePath);
+	Optional<String> valueSourcePath = Optional.of(sourcePathBase);
+	Optional<Type> idValueType = Optional.of(Type.STRING);
+	String refType = LdpUtil.formatCollectionId(actualTypeClassName);
+
+	LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType, null,
+		pi.cardinality().maxOccurs == 1, katalogObjektartTableName);
+	return spi;
     }
 
     private Type determineIdValueType(String idValueType) {

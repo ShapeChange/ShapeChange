@@ -116,6 +116,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String descriptionTemplate = "[[definition]]";
     public static String descriptorNoValue = "";
     public static List<String> dropSqlEncodingInfosForTypes = new ArrayList<>();
+    public static boolean embeddingForFeatureRefs = false;
     public static boolean enableFragments = false;
     public static boolean enableCodelists = false;
     public static boolean enableFeaturesGml = false;
@@ -347,6 +348,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    "FIXME", false, true);
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
+
+	    embeddingForFeatureRefs = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_EMBEDDING_FOR_FEATURE_REFS, false);
 
 	    enableFragments = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_FRAGMENTS,
 		    false);
@@ -985,6 +989,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	descriptionTemplate = "[[definition]]";
 	descriptorNoValue = "";
 	dropSqlEncodingInfosForTypes = new ArrayList<>();
+	embeddingForFeatureRefs = false;
 	enableFragments = false;
 	forceAxisOrder = Force.NONE;
 	foreignKeyColumnSuffix = "";

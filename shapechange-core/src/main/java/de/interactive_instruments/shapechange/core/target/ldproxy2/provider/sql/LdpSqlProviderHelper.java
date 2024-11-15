@@ -38,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlClassEncodingInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target;
 
@@ -86,5 +87,11 @@ public class LdpSqlProviderHelper {
 	}
     }
 
-    
+    /**
+     * @param pi - tbd
+     * @return the value of tag 'AAA:Kennung', in lower case (locale: english)
+     */
+    public String aaaKennung(PropertyInfo pi) {
+	return pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
+    }
 }

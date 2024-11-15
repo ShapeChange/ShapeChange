@@ -70,6 +70,7 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.StructuredNumber;
 import de.interactive_instruments.shapechange.core.TransformerConfiguration;
+import de.interactive_instruments.shapechange.core.Type;
 import de.interactive_instruments.shapechange.core.model.Descriptor;
 import de.interactive_instruments.shapechange.core.model.Descriptors;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
@@ -353,7 +354,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 				genPi.setDerived(false);
 				genPi.setReadOnly(false);
 				genPi.setAttribute(true);
-				genPi.setTypeInfo(null);
+				genPi.setTypeInfo(new Type(null, ""));
 				genPi.setNavigable(true);
 				genPi.setOrdered(false);
 				genPi.setUnique(false);
@@ -510,7 +511,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 		genPi.setDerived(false);
 		genPi.setReadOnly(false);
 		genPi.setAttribute(true);
-		genPi.setTypeInfo(null);
+		genPi.setTypeInfo(new Type(null, ""));
 		genPi.setNavigable(true);
 		genPi.setOrdered(false);
 		genPi.setUnique(false);

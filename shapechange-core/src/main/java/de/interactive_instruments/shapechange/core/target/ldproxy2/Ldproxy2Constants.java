@@ -101,6 +101,8 @@ public class Ldproxy2Constants {
      */
     public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
 
+    public static final String PARAM_EMBEDDING_FOR_FEATURE_REFS = "embeddingForFeatureRefs";
+    
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
