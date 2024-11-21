@@ -678,6 +678,8 @@ public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSour
 		this.setInlineOrByReference("byreference");
 	    } else if (tvValue.equalsIgnoreCase("inlineOrByReference")) {
 		this.setInlineOrByReference("inlineOrByReference");
+	    } else if (StringUtils.isBlank(tvValue)) {
+		this.setInlineOrByReference(null);
 	    } else {
 		MessageContext mc = result.addWarning(this, 2, tvName, tvValue);
 		if (mc != null) {

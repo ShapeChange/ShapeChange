@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -68,6 +69,10 @@ public class LdpUtil {
 	return t == Type.GEOMETRY;
     }
 
+    public static String fragmentRef(String specialObjectOrDataTypeName) {
+	return "#/fragments/" + specialObjectOrDataTypeName.toLowerCase(Locale.ENGLISH);
+    }
+
     public static String fragmentRef(ClassInfo ci) {
 	return "#/fragments/" + LdpInfo.configIdentifierName(ci);
     }
@@ -77,6 +82,58 @@ public class LdpUtil {
 	    return id;
 	} else {
 	    return id.toLowerCase(Locale.ENGLISH);
+	}
+    }
+
+    public static String queryableId(PropertyInfo pi) {
+	return pi.name() + queryableSuffix(pi);
+    }
+
+    public static String queryableSuffix(PropertyInfo pi) {
+
+	if (pi.isAttribute()) {
+
+	    return "";
+
+	} else {
+
+	    // pi is association role
+
+	    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
+
+		return "";
+
+		/*
+		 * 2024-06-13 JE: Differentiation of queryables for id and title disabled.
+		 * Queryable thus far only defined for id, which is the default. We will wait
+		 * until the WG for OGC API Features has discussed the matter, and maybe
+		 * extended the queryable mechanics.
+		 */
+
+//		// a feature ref (object) always has an id property
+//		queryableProperties.add(pi.name() + ".id");
+//		
+//		/*
+//		 * a feature ref (object) MAY have a title property with an actual title value
+//		 * (not just repeating the id)
+//		 */
+//		if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
+//		    queryableProperties.add(pi.name() + ".title");
+//		}
+
+	    } else {
+
+		// assume link encoding
+
+		// not useful to filter on href value
+//		queryableProperties.add(pi.name()+".href");
+
+		/*
+		 * but a link object always has a title (which is either the object id or an
+		 * actual title value)
+		 */
+		return ".title";
+	    }
 	}
     }
 }

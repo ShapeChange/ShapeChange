@@ -1051,10 +1051,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
-	r.addRule(Ldproxy2Constants.RULE_ALL_AAA);
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
+	r.addRule(Ldproxy2Constants.RULE_ALL_GEOINFODOK);
 	r.addRule(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF);
 	r.addRule(Ldproxy2Constants.RULE_ALL_NOT_ENCODED);
 	r.addRule(Ldproxy2Constants.RULE_ALL_QUERYABLES);
@@ -1213,7 +1213,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 136:
 	    return "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
 	case 137:
-	    return "AAA encoding of property '$1$' in class '$2$' (value type is '$3$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry. Setting source path to 'FIXME'.";
+	    return "GeoInfoDok encoding of property '$1$' (value type is '$2$', max mult is '$3$', in fragment '$4$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

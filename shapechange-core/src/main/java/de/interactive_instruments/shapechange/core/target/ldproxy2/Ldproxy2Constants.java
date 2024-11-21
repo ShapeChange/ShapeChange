@@ -41,6 +41,9 @@ public class Ldproxy2Constants {
     public static final String PLATFORM = "ldp2";
 
     public static final long UNITTEST_UNIX_TIME = 1000000000000L;
+    
+    public static final String LI_LINEAGE_FRAGMENT_NAME = "li_lineage";
+    public static final String LI_LINEAGE_OBJECT_TYPE = "LI_Lineage";
 
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING = "initialValueEncoding";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE = "true";
@@ -151,10 +154,10 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_VERSION = "coretableVersion";
     public static final String PARAM_CORETABLE_VERSION_COLUMN = "coretableVersionColumn";
 
-    public static final String RULE_ALL_AAA = "rule-ldp2-all-aaa";
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
+    public static final String RULE_ALL_GEOINFODOK = "rule-ldp2-all-gid";
     public static final String RULE_ALL_LINK_OBJECT_AS_FEATURE_REF = "rule-ldp2-all-linkObjectAsFeatureRef";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
     public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
@@ -169,5 +172,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
+    
+    public static final String SQL_PREFIX_FLATTENED_TO_PARENT_TABLE = "flattenedTo:";
 
 }

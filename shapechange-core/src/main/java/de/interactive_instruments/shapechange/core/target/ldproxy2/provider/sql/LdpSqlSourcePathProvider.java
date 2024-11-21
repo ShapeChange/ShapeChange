@@ -102,30 +102,6 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	spRes.setPi(pi);
 	spRes.setContext(context);
 
-	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.typeInfo().name.equalsIgnoreCase("LI_Lineage")) {
-
-	    result.addError("IMPLEMENT LI_LINEAGE");
-	    return new LdpSourcePathInfos();
-
-	} /*
-	   * else if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) &&
-	   * isImplementedAsFeatureReference(pi) &&
-	   * StringUtils.equalsAnyIgnoreCase(pi.typeInfo().name, "AA_NREO",
-	   * "AX_Buchungsblattbezirk", "AX_Bundesland", "AX_Dienststelle", "AX_Gemarkung",
-	   * "AX_GemarkungsteilFlur", "AX_Gemeinde", "AX_KreisRegion",
-	   * "AX_LagebezeichnungKatalogeintrag", "AX_Regierungsbezirk",
-	   * "AX_Verwaltungsgemeinschaft")) {
-	   * 
-	   * Optional<String> idSourcePath =
-	   * Optional.of("TEST_AAA_KATALOG_ID_SOURCE_PATH"); Optional<Type> idValueType =
-	   * Optional.of(determineIdValueType("string")); String refType =
-	   * LdpUtil.formatCollectionId("TEST_AAA_KATALOG_PROPERTY_VALUE_TYPE");
-	   * 
-	   * LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath,
-	   * Optional.empty(), idValueType, refType, null, pi.cardinality().maxOccurs ==
-	   * 1, "TBD_TARGET_TABLE"); spRes.addSourcePathInfo(spi); return spRes; }
-	   */
-
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
 	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
@@ -168,7 +144,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		    if (isImplementedAsFeatureReference(pi)) {
 
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && StringUtils.equalsAnyIgnoreCase(
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
 				spei.getPropertyValueType(), "AX_Buchungsblattbezirk_Schluessel",
 				"AX_Bundesland_Schluessel", "AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
 				"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen", "AX_Kreis_Schluessel",
@@ -191,9 +167,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 				 * could define a tagged value that identifies the relevant cases.
 				 */
 
-				LdpSqlSourcePathInfo spi1 = aaaKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeinde");
+				LdpSqlSourcePathInfo spi1 = gidKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeinde");
 				spRes.addSourcePathInfo(spi1);
-				LdpSqlSourcePathInfo spi2 = aaaKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeindeteil");
+				LdpSqlSourcePathInfo spi2 = gidKatalogObjektSourcePathInfo(pi, spei, "AX_Gemeindeteil");
 				spRes.addSourcePathInfo(spi2);
 
 			    } else {
@@ -202,10 +178,17 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 				 * case of singular target (the katalog key only refers to a single katalog
 				 * feature type)
 				 */
-				LdpSqlSourcePathInfo spi = aaaKatalogObjektSourcePathInfo(pi, spei, pi.typeInfo().name);
+				LdpSqlSourcePathInfo spi = gidKatalogObjektSourcePathInfo(pi, spei, pi.typeInfo().name);
 				spRes.addSourcePathInfo(spi);
 			    }
 
+			    return spRes;
+
+			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+				&& "LI_Lineage".equalsIgnoreCase(spei.getPropertyValueType())) {
+
+			    LdpSqlSourcePathInfo spi = gidLiLineageSourcePathInfo(pi, spei);
+			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
 			} else {
@@ -215,26 +198,6 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
 			}
 		    }
-
-//		    /*
-//		     * For AAA-applications, where the code list value is a uri stored in an
-//		     * xyz_href column, we only want the local code value, i.e. the part behind the
-//		     * last '/' in the uri.
-//		     */
-//		    if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.categoryOfValue() == Options.CODELIST
-//			    && spei.getValueSourcePath().endsWith("_href")) {
-//			String tmp = spei.getValueSourcePath();
-//			String pathPrefix = null;
-//			String hrefColumn = tmp;
-//			if (tmp.contains("/")) {
-//			    pathPrefix = StringUtils.substringBeforeLast(tmp, "/");
-//			    hrefColumn = StringUtils.substringAfterLast(tmp, "/");
-//			}
-//			String hrefColumnNew = "[EXPRESSION]{sql=regexp_substr($T$." + hrefColumn + ", '[^/]+$')}";
-//			String newValueSourcePath = pathPrefix == null ? hrefColumnNew
-//				: pathPrefix + "/" + hrefColumnNew;
-//			valueSourcePath = Optional.of(newValueSourcePath);
-//		    }
 		}
 
 		LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType,
@@ -370,12 +333,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		ClassInfo typeCi = pi.typeClass();
 
-		if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
-
-		    MessageContext mc = result.addError(msgSource, 137, pi.name(), pi.inClass().name(), typeName);
-		    if (mc != null) {
-			mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-		    }
+		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)) {
 
 		    if (pi.cardinality().maxOccurs == 1) {
 			valueSourcePath = Optional.of(databaseColumnName(pi));
@@ -700,7 +658,19 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	return spRes;
     }
 
-    private LdpSqlSourcePathInfo aaaKatalogObjektSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei,
+    private LdpSqlSourcePathInfo gidLiLineageSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei) {
+
+	Optional<String> valueSourcePath = Optional.of(spei.getValueSourcePath());
+	Optional<String> idSourcePath = Optional.empty();
+	Optional<Type> idValueType = Optional.empty();
+	String refType = null;
+
+	LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType, null,
+		pi.cardinality().maxOccurs == 1, null);
+	return spi;
+    }
+
+    private LdpSqlSourcePathInfo gidKatalogObjektSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei,
 	    String actualTypeClassName) {
 
 	String katalogObjektartTableName = sqlProviderHelper
@@ -711,7 +681,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	String katalogObjektIdSourcePath;
 	String sourcePathBase;
 
-	if (schluesselValueSourcePath.startsWith("flattenedTo:")) {
+	if (schluesselValueSourcePath.startsWith(Ldproxy2Constants.SQL_PREFIX_FLATTENED_TO_PARENT_TABLE)) {
 
 	    // case of a data type that was flattened into its parent table
 	    sourcePathBase = "[_ko_sch_" + sqlProviderHelper.aaaKennung(pi) + "=sch]" + katalogObjektartTableName;
@@ -753,7 +723,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
     private String databaseColumnName(PropertyInfo pi) {
 
-	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)) {
 
 	    /*
 	     * 2024-11-13 JE: 'position' is very special in GeoInfoDok
@@ -1150,7 +1120,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     @Override
     public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
 
-	if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.model().isInSelectedSchemas(pi.inClass())
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.model().isInSelectedSchemas(pi.inClass())
 		&& Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(pi.inClass())) {
 	    return false;
 	}

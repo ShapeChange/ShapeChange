@@ -86,14 +86,20 @@ public class LdpPropertyEncoder {
     protected LdpBuildingBlockFeaturesGeoJsonBuilder bbFeaturesGeoJsonBuilder;
     protected LdpBuildingBlockFeaturesJsonFgBuilder bbFeaturesJsonFgBuilder;
 
+    protected SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi;
+
+    protected LdpGidEncoder gidEncoder = new LdpGidEncoder();
+
+    protected LdpConfigBuilder ldpConfigBuilder;
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider sourcePathProvider;
 
-    public LdpPropertyEncoder(Ldproxy2Target target, LdpBuildingBlockFeaturesGmlBuilder gml,
-	    LdpBuildingBlockFeaturesHtmlBuilder featuresHtml,
+    public LdpPropertyEncoder(LdpConfigBuilder ldpConfigBuilder, Ldproxy2Target target,
+	    LdpBuildingBlockFeaturesGmlBuilder gml, LdpBuildingBlockFeaturesHtmlBuilder featuresHtml,
 	    LdpBuildingBlockFeaturesGeoJsonBuilder featuresGeoJsonBuilder,
 	    LdpBuildingBlockFeaturesJsonFgBuilder featuresJsonFgBuilder, LdpProvider ldpProvider,
-	    LdpSourcePathProvider sourcePathProvider) {
+	    LdpSourcePathProvider sourcePathProvider,
+	    SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi) {
 
 	this.target = target;
 	this.result = target.result;
@@ -104,8 +110,11 @@ public class LdpPropertyEncoder {
 	this.bbFeaturesGeoJsonBuilder = featuresGeoJsonBuilder;
 	this.bbFeaturesJsonFgBuilder = featuresJsonFgBuilder;
 
+	this.ldpConfigBuilder = ldpConfigBuilder;
 	this.ldpProvider = ldpProvider;
 	this.sourcePathProvider = sourcePathProvider;
+
+	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;
     }
 
     /**
@@ -251,8 +260,6 @@ public class LdpPropertyEncoder {
 	    boolean ignoreSourcePathOnPropertyLevel = false;
 
 	    Optional<String> objectTypeForBuilder = Optional.empty();
-//	    Optional<String> refTypeForBuilder = Optional.empty();
-//	    Optional<String> refUriTemplateForBuilder = Optional.empty();
 
 	    LinkedHashMap<String, FeatureSchema> propertyMapForBuilder = new LinkedHashMap<>();
 
@@ -261,17 +268,7 @@ public class LdpPropertyEncoder {
 
 		if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 
-//		    ClassInfo typeCi = pi.typeClass();
-
-//		    if (!target.valueTypeIsMapped(pi) && typeCi != null && target.isProcessedType(typeCi)) {
-//			// the value type must be a type with identity
-//			refTypeForBuilder = Optional.of(LdpUtil.formatCollectionId(pi.typeInfo().name));
-//		    } else {
-//			// the value type is mapped
-//			refUriTemplateForBuilder = Optional.of(sqlSourcePathProvider.urlTemplateForValueType(pi));
-//		    }
-
-//		    objectTypeForBuilder = typeCi != null ? Optional.of(LdpInfo.originalClassName(typeCi)) : Optional.of(pi.typeInfo().name);
+		    // nothing to set
 
 		} else {
 
@@ -338,7 +335,7 @@ public class LdpPropertyEncoder {
 
 			LdpPropertyEncodingContext nextContext;
 
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA)) {
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)) {
 			    LdpSourcePathInfos sourcePathInfosForProperty = sourcePathProvider
 				    .sourcePathPropertyLevel(pi, alreadyVisitedPiList, context);
 			    nextContext = ldpProvider.createChildContext(context, typeCi,
@@ -354,10 +351,6 @@ public class LdpPropertyEncoder {
 
 			objectTypeForBuilder = Optional.of(LdpInfo.originalClassName(typeCi));
 		    }
-
-//		    if (bbFeaturesGmlBuilder != null) {
-//			bbFeaturesGmlBuilder.register(typeCi);
-//		    }
 		}
 	    }
 
@@ -441,11 +434,11 @@ public class LdpPropertyEncoder {
 		}
 
 		/*
-		 * For AAA-applications, where the code list value is a uri stored in an
+		 * For GeoInfoDok-applications, where the code list value is a uri stored in an
 		 * xyz_href column, we only want the local code value, i.e. the part behind the
 		 * last '/' in the uri.
 		 */
-		if (pi.matches(Ldproxy2Constants.RULE_ALL_AAA) && pi.categoryOfValue() != Options.ENUMERATION) {
+		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.categoryOfValue() != Options.ENUMERATION) {
 		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
 			    .stringFormat("{{value | replace:'([^\\/]+)$':'$1'}}").build();
 		    transformations.add(trf);
@@ -474,7 +467,21 @@ public class LdpPropertyEncoder {
 
 		if (sourcePathInfosForBuilder != null) {
 
-		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
+		    /*
+		     * Handle special case of GeoInfoDok encoding and property with LI_Lineage value
+		     * type first.
+		     */
+		    if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+			    && "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)) {
+
+			valueTypeForBuilder = Optional.empty();
+			typeForBuilder = Type.OBJECT;
+			propMemberDefBuilder.schema(LdpUtil.fragmentRef("LI_Lineage"));
+
+			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
+
+		    } else if (sourcePathInfosForBuilder.isMultipleSourcePaths()
+			    && sourcePathInfosForBuilder.allWithRefType()
 			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
 			    && (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)
 				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi))
@@ -580,7 +587,32 @@ public class LdpPropertyEncoder {
 		 * Case of fragment encoding, or of a type definition if fragments are disabled.
 		 */
 
-		if (sourcePathInfosForBuilder != null) {
+		/*
+		 * Handle special case of GeoInfoDok encoding and property with LI_Lineage value
+		 * type first.
+		 */
+		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+			&& "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)) {
+
+		    valueTypeForBuilder = Optional.empty();
+		    typeForBuilder = Type.OBJECT;
+		    objectTypeForBuilder = Optional.of(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE);
+
+		    if (Ldproxy2Target.enableFragments) {
+
+			if (!gidEncoder.LiLineageFragmentCreated()) {
+			    ldpConfigBuilder.createAdditionalFragment(Ldproxy2Constants.LI_LINEAGE_FRAGMENT_NAME,
+				    gidEncoder.createLiLineageFragment());
+			}
+
+			propMemberDefBuilder.schema(LdpUtil.fragmentRef("LI_Lineage"));
+
+		    } else {
+
+			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
+		    }
+
+		} else if (sourcePathInfosForBuilder != null) {
 
 		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
 			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
@@ -702,42 +734,6 @@ public class LdpPropertyEncoder {
 			.transformations(transformations).propertyMap(propertyMapForBuilder).build();
 
 		propertyDefs.put(pi.name(), propMemberDef);
-
-//		// create more service constraint content
-//		if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {
-//		    String tv = pi.taggedValue("ldpRemove").trim().toUpperCase(Locale.ENGLISH);
-//		    if (tv.equals("IN_COLLECTION") || tv.equals("ALWAYS") || tv.equals("NEVER")) {
-//			ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
-//				.build();
-//			bbFeaturesHtmlBuilder
-//				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-//					nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-//		    } else {
-//			MessageContext mc = result.addError(msgSource, 122, pi.name(), pi.taggedValue("ldpRemove"));
-//			if (mc != null) {
-//			    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
-//			}
-//		    }
-//		}
-//		if (ldpType == Type.DATE && StringUtils.isNotBlank(Ldproxy2Target.dateFormat)) {
-//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-//			    .dateFormat(Ldproxy2Target.dateFormat).build();
-//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-//		}
-//		if (ldpType == Type.DATETIME && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
-//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-//			    .dateFormat(Ldproxy2Target.dateTimeFormat).build();
-//		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-//			    nowVisitedList.get(0).inClass(), propertyPath(nowVisitedList), trf);
-//		}
-//
-//		if (bbFeaturesGmlBuilder != null) {
-//
-//		    ClassInfo firstCi = nowVisitedList.get(0).inClass();
-//
-//		    bbFeaturesGmlBuilder.register(pi, firstCi, propertyPath(nowVisitedList));
-//		}
 	    }
 	}
 
@@ -756,7 +752,9 @@ public class LdpPropertyEncoder {
     }
 
     private void handleEmbedding(PropertyInfo pi, Builder propMemberDefBuilder) {
-	if (Ldproxy2Target.embeddingForFeatureRefs && "inline".equalsIgnoreCase(pi.inlineOrByReference())) {
+	if (Ldproxy2Target.embeddingForFeatureRefs && "inline".equalsIgnoreCase(pi.inlineOrByReference())
+		&& !(pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+			&& "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name))) {
 	    propMemberDefBuilder.embed(Embed.ALWAYS);
 	}
     }
@@ -879,10 +877,7 @@ public class LdpPropertyEncoder {
 		typePropertyDefBuilder.sourcePath(Ldproxy2Target.coretableFeatureTypeColumn);
 	    } else {
 		PropertyInfo typeAttribute = LdpInfo.getTypeAttribute(typeCi);
-//		    LdpPropertyEncodingContext typeCiContext = ldpProvider.createInitialPropertyEncodingContext(
-//			    typeCi, !Ldproxy2Target.enableFragments || !context.isInFragment());
-//		    LdpSourcePathInfos typeAttributeSpis = sourcePathProvider.sourcePathPropertyLevel(
-//			    typeAttribute, new ArrayList<PropertyInfo>(), typeCiContext);
+
 		LdpSourcePathInfos typeAttributeSpis = sourcePathProvider.sourcePathPropertyLevel(typeAttribute,
 			nowVisitedList, ldpProvider.createChildContext(context, typeCi));
 
@@ -1053,10 +1048,6 @@ public class LdpPropertyEncoder {
 		    if (!target.isMappedToLink(actualTypeCi)) {
 			schemaBuilder.schema(LdpUtil.fragmentRef(actualTypeCi));
 		    }
-
-//				if (bbFeaturesGmlBuilder != null) {
-//				    bbFeaturesGmlBuilder.register(actualTypeCi);
-//				}
 		}
 	    }
 	}
@@ -1065,7 +1056,8 @@ public class LdpPropertyEncoder {
     private Optional<String> applicableSourcePath(PropertyInfo pi, LdpSourcePathInfo spi) {
 	if (spi.getIdSourcePath().isPresent() && !isFeatureRefWithTitle(pi)) {
 	    return spi.getIdSourcePath();
-	} else if (spi.getValueSourcePath().isPresent() && spi.getValueSourcePath().get().startsWith("flatten")) {
+	} else if (spi.getValueSourcePath().isPresent()
+		&& spi.getValueSourcePath().get().startsWith(Ldproxy2Constants.SQL_PREFIX_FLATTENED_TO_PARENT_TABLE)) {
 	    return Optional.empty();
 	} else {
 	    return spi.getValueSourcePath();
@@ -1122,12 +1114,6 @@ public class LdpPropertyEncoder {
 
 		// can be ignored when encoding the service configuration
 
-//		if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-//		    // feature ref case
-//		} else {
-//		    // link object case
-//		}
-
 	    } else if (!LdpUtil.isLdproxySimpleType(ldpType)
 		    && Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
 
@@ -1167,34 +1153,28 @@ public class LdpPropertyEncoder {
 		}
 	    }
 
-	    /*
-	     * 2024-10-07 JE: codelist information now only provided via codelist
-	     * constraints in the provider configuration; codelist property transformations
-	     * are obsolete.
-	     */
-//	    if (LdpInfo.isEnumerationOrCodelistValueType(pi) && !target.valueTypeIsMapped(pi)) {
-//
-//		ClassInfo typeCi = pi.typeClass();
-//
-//		String codelistId = LdpInfo.codelistId(typeCi);
-//
-//		if (!Ldproxy2Target.codelistsAndEnumerations.contains(typeCi)) {
-//		    /*
-//		     * Handle case of enumeration/codelist that is not encoded, unmapped, or not
-//		     * from the schemas selected for processing.
-//		     */
-//		    MessageContext mc = result.addWarning(msgSource, 127, typeCi.name(), codelistId);
-//		    if (mc != null) {
-//			mc.addDetail(msgSource, 0, typeCi.fullNameInSchema());
-//		    }
-//		}
-//
-//		// Create content for inclusion in service config:
-//		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().codelist(codelistId)
-//			.build();
-//		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-//			typeDefinitionCi, propertyPath(nowVisitedList), trf);
-//	    }
+	    if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+		    && "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)) {
+
+		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+			.dateFormat(Ldproxy2Target.dateTimeFormat).build();
+		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
+			typeDefinitionCi, propertyPath(nowVisitedList) + ".processStep.dateTime", trf);
+	    }
+
+	    if (pi.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)
+		    && "true".equalsIgnoreCase(pi.taggedValue("ldpQueryable"))) {
+
+		SortedSet<String> queryablesForCollectionCi;
+		if (queryablePropertiesByCollectionCi.containsKey(typeDefinitionCi)) {
+		    queryablesForCollectionCi = queryablePropertiesByCollectionCi.get(typeDefinitionCi);
+		} else {
+		    queryablesForCollectionCi = new TreeSet<>();
+		    queryablePropertiesByCollectionCi.put(typeDefinitionCi, queryablesForCollectionCi);
+		}
+
+		queryablesForCollectionCi.add(propertyPath(nowVisitedList) + LdpUtil.queryableSuffix(pi));
+	    }
 
 	    // create more service constraint content
 	    if (StringUtils.isNotBlank(pi.taggedValue("ldpRemove"))) {

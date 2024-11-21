@@ -381,15 +381,16 @@ the target creates a QUERYABLES building block in the service configuration.
 It just contains the member `enabled: true`.
 
 For each collection, whose represented type matches `rule-ldp2-all-queryables`, 
-the target checks which, if any, of the properties have a name - current or original - equal 
+the target checks which, if any, of the (directly owned or inherited) 
+properties have a name - current or original - equal 
 to one of the names provided by target parameter `queryables` (the parameter value is a 
 comma-separated list of property names; no default value is defined). If at least one such property 
 was found, the target creates a `queryables` member in the QUERYABLES building block 
 in the service configuration of the collection (adding that building block if necessary), with:
 
 * member `included` and an array of the names of all queryable properties. If a queryable association role:
-** does match _rule-ldp2-all-linkObjectAsFeatureRef_, then `.id` is added to the role name (so that queries will be supported on the `id`-value of the referenced feature). In addition, if the value type of the association has a valid title attribute (i.e., it has tag `ldpTitleAttribute` and the tag value identifies a property of the value type [possibly inherited]), another queryable for the association role is added, but this time with a `.title`-suffix.
-** otherwise, link object encoding is assumed, and `.title` is added to the role name (meaning that queries will be performed on the `title`-value of the link object that is encoded for an association role). Note that link objects always have a `title`-property, with either the id of the linked object, or its title.
+** does not match _rule-ldp2-all-linkObjectAsFeatureRef_, then link object encoding is assumed, and `.title` is added to the role name (meaning that queries will be performed on the `title`-value of the link object that is encoded for an association role). Note that link objects always have a `title`-property, with either the id of the linked object, or its title.
+** otherwise, (_rule-ldp2-all-linkObjectAsFeatureRef_ does match), the queryable will be the feature id.
 * member `pathSeparator` and value DOT. 
 
 NOTE: The differentiation between 'current' and 'original' property name is important when the 
@@ -397,9 +398,11 @@ ldproxy target shall encode a model which has been flattened (flattening inherit
 When this happens (in the mentioned flattening cases), the original property name is documented in tagged value _originalPropertyName_. The ldproxy target checks this tag when matching
 properties of a value type against the configured list of queryables.
 
-NOTE: The definition of queryable properties using the global target configuration parameter
-`queryables` can be enhanced in the future. For example, it would be possible to introduce a
-specific tag, to be set on a type, which would provide the names of queryable properties of that type.
+Since v4.0.0, it is also possible to tag properties that shall be queryables with 
+tag 'ldpQueryable' (value must be equal to, ignoring case, 'true'). This supports marking
+properties of complex data types as queryables, which is not possible using 
+target parameter `queryables`. Of course, setting the tag also works for other kinds of properties (i.e.,
+attributes and association roles of a class).
 
 Example (from one of the ShapeChange unit tests):
 
@@ -1397,6 +1400,16 @@ parsing these values, then the member `excludedScopes` is added to the property 
 provider configuration, with the ldproxy schema scopes defined by the tag value as value.
 
 
+[[ldproxy2_embedding]]
+==== Embedding
+
+If __rule-ldp2-all-linkObjectAsFeatureRef__ is set in the encoding rule, and 
+target parameter `embeddingForFeatureRefs` is set to true, then all properties with a 
+feature or object type as value type that have tagged value `inlineOrByReference=inline`
+ will be encoded in the ldproxy provider configuration with member `embed` 
+ and value ALWAYS.
+
+
 [[ldproxy2_schemaconversionrules_properties_serviceconfig]]
 ==== Additional Service Configuration Items
 
@@ -1754,6 +1767,25 @@ The ldproxy target will create appropriate configurations for this particular da
 The coretable approach supports object references whose sources are data types.
 However, such references MUST be encoded within the JSON-properties. They cannot be 
 represented in the references table.
+
+[[ldproxy2_schemaconversionrules_specificrules_geoinfodok]]
+==== GeoInfoDok
+
+(since v4.0.0)
+
+__rule-ldp2-all-gid__ supports the creation of ldproxy configurations 
+for GeoInfoDok application schemas (which are maintained by the 
+German mapping agencies). The data is assumed to be stored within a
+relational database.
+
+The conversion requires that SQL encoding 
+infos are configured, which provide detailed information about how
+relevant model elements are stored within the database.
+
+Encoding of metadata types (from ISO 19115) is restricted to relevant components.
+Currently, only a subset of LI_Lineage is supported by the conversion.
+Support for additional metadata model elements can be added in future
+versions of ShapeChange.
 
 
 [[ldproxy2_encodingrules]]

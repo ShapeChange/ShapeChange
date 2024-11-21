@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -106,6 +107,10 @@ public class LdpConfigBuilder {
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider ldpSourcePathProvider;
 
+    protected SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi = new TreeMap<>();
+
+    protected SortedMap<String, ImmutableFeatureSchema> additionalFragments = new TreeMap<>();
+
     public LdpConfigBuilder(Ldproxy2Target target, LdproxyCfgWriter cfg,
 	    LdpBuildingBlockFeaturesGmlBuilder buldingBlockFeaturesGmlBuilder,
 	    LdpBuildingBlockFeaturesGeoJsonBuilder buldingBlockGeoJsonBuilder,
@@ -125,9 +130,9 @@ public class LdpConfigBuilder {
 	this.ldpProvider = ldpProvider;
 	this.ldpSourcePathProvider = ldpSourcePathProvider;
 
-	this.propertyEncoder = new LdpPropertyEncoder(this.target, this.bbFeaturesGmlBuilder,
+	this.propertyEncoder = new LdpPropertyEncoder(this, this.target, this.bbFeaturesGmlBuilder,
 		this.bbFeaturesHtmlBuilder, this.bbFeaturesGeoJsonBuilder, this.bbFeaturesJsonFgBuilder,
-		this.ldpProvider, this.ldpSourcePathProvider);
+		this.ldpProvider, this.ldpSourcePathProvider, this.queryablePropertiesByCollectionCi);
 
 	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
@@ -227,6 +232,13 @@ public class LdpConfigBuilder {
 		    bbFeaturesGmlBuilder.register(ci);
 		}
 	    }
+
+	    /*
+	     * In special cases, additional fragment definitions need to be created.
+	     */
+	    for (Entry<String, ImmutableFeatureSchema> e : this.additionalFragments.entrySet()) {
+		providerFragmentDefinitions.put(e.getKey(), e.getValue());
+	    }
 	}
 
 	/*
@@ -238,8 +250,9 @@ public class LdpConfigBuilder {
 
 	for (ClassInfo ci : objectFeatureMixinAndDataTypes) {
 
-	    if (ci.category() == Options.MIXIN || Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci) || ci.isAbstract()) {
-		continue; 
+	    if (ci.category() == Options.MIXIN || Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)
+		    || ci.isAbstract()) {
+		continue;
 	    }
 
 	    String typeDefName = LdpInfo.configIdentifierName(ci);
@@ -302,7 +315,7 @@ public class LdpConfigBuilder {
 	    if (bbFeaturesGmlBuilder != null) {
 		bbFeaturesGmlBuilder.register(ci);
 	    }
-	    
+
 	    ImmutableFeatureSchema typeDef = typeDefBuilder.build();
 	    providerTypeDefinitions.put(typeDefName, typeDef);
 
@@ -320,54 +333,19 @@ public class LdpConfigBuilder {
 
 		SortedSet<String> queryableProperties = new TreeSet<>();
 
+		// add properties identified via tagged values
+		if (queryablePropertiesByCollectionCi.containsKey(ci)) {
+		    queryableProperties.addAll(queryablePropertiesByCollectionCi.get(ci));
+		}
+
 		for (PropertyInfo pi : ci.propertiesAll()) {
 		    /*
 		     * This would also be the place to check if the property itself has a tagged
 		     * value that marks the property as queryable
 		     */
 		    if (queryables.contains(pi.name()) || queryables.contains(LdpInfo.originalPropertyName(pi))) {
-
-			if (pi.isAttribute()) {
-			    queryableProperties.add(pi.name());
-			} else {
-			    // pi is association role
-
-			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-
-				queryableProperties.add(pi.name());
-
-				/*
-				 * 2024-06-13 JE: Differentiation of queryables for id and title disabled.
-				 * Queryable thus far only defined for id, which is the default. We will wait
-				 * until the WG for OGC API Features has discussed the matter, and maybe
-				 * extended the queryable mechanics.
-				 */
-
-//				// a feature ref (object) always has an id property
-//				queryableProperties.add(pi.name() + ".id");
-//				
-//				/*
-//				 * a feature ref (object) MAY have a title property with an actual title value
-//				 * (not just repeating the id)
-//				 */
-//				if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-//				    queryableProperties.add(pi.name() + ".title");
-//				}
-
-			    } else {
-
-				// assume link encoding
-
-				// not useful to filter on href value
-//				queryableProperties.add(pi.name()+".href");
-
-				/*
-				 * but a link object always has a title (which is either the object id or an
-				 * actual title value)
-				 */
-				queryableProperties.add(pi.name() + ".title");
-			    }
-			}
+			String queryableId = LdpUtil.queryableId(pi);
+			queryableProperties.add(queryableId);
 		    }
 		}
 
@@ -592,6 +570,10 @@ public class LdpConfigBuilder {
 	}
 
 	this.codelistById.put(id, ic);
+    }
+
+    public void createAdditionalFragment(String fragmentName, ImmutableFeatureSchema fragment) {
+	this.additionalFragments.put(fragmentName, fragment);
     }
 
 }

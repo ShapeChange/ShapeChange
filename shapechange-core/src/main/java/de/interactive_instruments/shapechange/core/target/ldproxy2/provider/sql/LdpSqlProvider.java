@@ -66,7 +66,7 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 
 	pec.setType(ci);
 
-	if (isTypeDefinition /* || ci.matches(Ldproxy2Constants.RULE_ALL_AAA) */) {
+	if (isTypeDefinition) {
 
 	    pec.setInFragment(false);
 	    pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
@@ -140,9 +140,9 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 	/*
 	 * The table check cannot work if the database representation for the value type
 	 * of pi is flattened into another table. So, ignore the target table if its
-	 * value starts with "flatten".
+	 * value starts with "flattenedTo:".
 	 */
-	if (targetTable.startsWith("flatten")) {
+	if (targetTable.startsWith(Ldproxy2Constants.SQL_PREFIX_FLATTENED_TO_PARENT_TABLE)) {
 	    targetTable = null;
 	}
 
