@@ -243,6 +243,10 @@ defined by that process map entry. For an association role, that means
 that the whole association is "moved" (as if dragging the association
 end to the new value type).
 
+Since v4.0.0 of ShapeChange, the switch can be restricted to certain property,
+identified via parameter <<propertiesToSwitch>>.
+
+
 [[rule-trf-toFeatureType]]
 ==== rule-trf-toFeatureType
 
@@ -404,6 +408,29 @@ rule-trf-nilReason-property-for-nillable-property.
 
 _+++Applies to Rule(s)+++:
 xref:./Type_Converter.adoc#rule-trf-nilReason-property-for-nillable-property[rule-trf-nilReason-property-for-nillable-property]_
+
+[[propertiesToSwitch]]
+==== propertiesToSwitch
+
+(since v4.0.0)
+
+Alias: none
+
+Required / Optional: optional
+
+Type: (comma-separated) list of strings
+
+Default Value: _none_
+
+Explanation: Identifies the properties for which type switching
+shall be applied. Each property identifier is either the property name,
+or the property name scoped to a class (using the pattern 
+`{class name} + '.' + {property name}`). If the parameter is set, then only 
+those properties which match one of the configured identifiers are
+potential candidates for type switching.
+
+Applies to Rule(s): <<rule-trf-switchValueTypes>>
+
 
 [[toCodelistExclusionRegex]]
 ==== toCodelistExclusionRegex

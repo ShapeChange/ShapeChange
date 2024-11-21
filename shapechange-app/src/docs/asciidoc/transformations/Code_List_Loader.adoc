@@ -55,24 +55,56 @@ _de.interactive_instruments.shapechange.core.transformation.adding.CodeListLoade
 ==== rule-trf-cls-loadCodes
 
 This rule loads codes from authoritative code list sources into the
-model. The transformation looks at each code list contained in the
+model. 
+
+The transformation looks at each code list contained in the
 schemas selected for processing. If the code list defines the source,
 then the codes will be retrieved from the source and added to the code
-list. The source is defined by tagged value _codeListSource_, which
+list. 
+
+NOTE: A code list which defines a code list source may already contain
+codes (typically modeled as attributes). Loading codes from the source
+may result in duplicate codes. By setting transformation parameter
+<<removeExistingCodesBeforeLoading>> to true, the pre-existing codes 
+can be removed before codes are loaded from the source. This behavior
+is available since v4.0.0 of ShapeChange, and only applies to the
+code lists for which a code list source is defined.
+
+The source is defined by tagged value _codeListSource_, which
 provides a link to a remote or local resource in a specific
 representation. The representation is defined via tagged value
-_codeListSourceRepresentation_. At the moment, the following
-representation is supported:
+_codeListSourceRepresentation_ (or, since v4.0.0, using transformation 
+parameter <<defaultCodeListSourceRepresentation>> as fallback). 
+At the moment, the following representation is supported:
 
-* Representation:
-** ID: application/x.iso639_2
+* Representation __application/x.iso639_2__:
 ** Definition: The CSV-based list of ISO 639-2 language codes, as
 published by the
 https://www.loc.gov/standards/iso639-2/ascii_8bits.html[Library of
-Congress]. Codes are loaded as follows: The code name is the alpha-3
+Congress]. 
+** Code retrieval details: The code name is the alpha-3
 code (bibliographic, in case that both a bibliographic and a
 terminologic code are available). The english name is used as the
 definition and documentation of the code.
+* Representation __application/x-re3gistry-json__:
+** Definition: The JSON format for codelist encoding of the Re3gistry
+implementation. Tested with the GDI-DE re3gistry instance of the
+German mapping agencies.
+** Code retrieval details: The code list source is assumed to be an
+http(s) URL to the code list in the Re3gistry, in a specific register. 
+If the URL does end with '.json', it is assumed that the URL directly links 
+to the JSON representation in the desired language (see parameter <<re3gistryLang>>).
+Otherwise, the URL is assumed to link to the base resource of the code list
+in a specific register, and 
+`'/' + {code list name} + '.' + {value of parameter re3gistryLang} + '.json'`
+is added to the source URL. From the JSON document, the objects in member `containedItems`
+(in the register identified by the URL) are parsed. For each item object,
+its `value` member is retrieved. It represents a particular code.
+If the URL in `value/status/id` ends with `/valid` or `/retired`, the code is
+loaded. Otherwise, it is ignored. Thus, only relevant codes are loaded from the 
+registry. The value of member `value/CodeListValue_local_Id/text` is used as the initial value
+for the new attribute that will be added to the code list to represent the code,
+while the value of member `value/label/text` is used as attribute name.
 
 Additional representations can be added in the future.
 
@@ -89,7 +121,68 @@ charsetName)].
 [[Parameters]]
 === Parameters
 
-At the moment no parameters are defined for this transformation.
+[[defaultCodeListSourceRepresentation]]
+==== defaultCodeListSourceRepresentation
+
+(since v4.0.0)
+
++++Alias+++: _none_
+
++++Type+++: enum, one of 'application/x.iso639_2' and 'application/x-re3gistry-json'
+
++++Default value+++: _none_
+
++++Behavior+++
+
+Default representation for code list sources.
+
++++Applies to Rule(s)+++
+
+* <<rule-trf-cls-loadCodes>>
+
+
+[[re3gistryLang]]
+==== re3gistryLang
+
+(since v4.0.0)
+
++++Alias+++: _none_
+
++++Type+++: string (should be a code for one of the languages supported by the relevant Re3gistry instance(s))
+
++++Default value+++: en
+
++++Behavior+++
+
+Define the code of the language in which to retrieve code (list) metadata.
+
+
++++Applies to Rule(s)+++
+
+* <<rule-trf-cls-loadCodes>>
+
+
+[[removeExistingCodesBeforeLoading]]
+==== removeExistingCodesBeforeLoading
+
+(since v4.0.0)
+
++++Alias+++: _none_
+
++++Type+++: boolean
+
++++Default value+++: false
+
++++Behavior+++
+
+Set to true, in order for any pre-existing codes to be removed
+from a code list before loading codes from the code list source
+defined for that code list.
+
++++Applies to Rule(s)+++
+
+* <<rule-trf-cls-loadCodes>>
+
 
 [[Map_Entries]]
 === Map Entries
