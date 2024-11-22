@@ -120,6 +120,9 @@ public class Ldproxy2Constants {
     public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
     public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
     public static final String PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS = "supportsStandardResponseParameters";
+    public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
+    public static final String PARAM_JSONFG_FEATURE_TYPE = "jsonFgFeatureType";
+    public static final String PARAM_JSONFG_INCLUDE_IN_GEOJSON = "jsonFgIncludeInGeoJson";
     public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";
     public static final String PARAM_LINEARIZE_CURVES = "linearizeCurves";
     public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";

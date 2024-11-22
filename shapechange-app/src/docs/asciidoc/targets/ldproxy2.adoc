@@ -367,8 +367,23 @@ ShapeChange will add ldproxy building block
 https://docs.ldproxy.net/de/services/building-blocks/features_-_json-fg.html[Features - JSON-FG]
 to the service configuration as enabled.
 
-Currently, specific configuration items for this building block are added
+* If target parameter _jsonFgCoordRefSys_ is set (to a boolean value; 
+no default is defined for this target),
+a `coordRefSys` member will be added to the general Features JSON-FG building block 
+in the service configuration.
+* If target parameter _jsonFgFeatureType_ is set (see description of
+configuration option `featureType` in the ldproxy documentation of building 
+block Features JSON-FG),
+a `featureType` member will be added to the general Features JSON-FG building block 
+in the service configuration.
+* If target parameter _jsonFgIncludeInGeoJson_ is set (see description of
+configuration option `includeInGeoJson` in the ldproxy documentation of building 
+block Features JSON-FG),
+an `includeInGeoJson` member will be added to the general Features JSON-FG building block 
+in the service configuration.
+* Additional configuration items for this building block can be added
 through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
+
 In the future, generation of additional configuration items for this
 building block can be supported.
 
@@ -997,7 +1012,10 @@ NOTE: ShapeChange supports the notion of mixin type (for further details, see xr
 [[ldproxy2_schemaconversionrules_types_union]]
 ==== Union
 
-Conversion of unions is not supported by the ldproxy target. 
+Since v4.0.0, the ldproxy target supports __rule-ldp2-cls-unionLikeDataType__
+for the conversion of unions. With this rule, unions are encoded like
+data types, with all properties of the union being treated as having
+minimum multiplicity 0.
 
 NOTE: You can transform unions, either flattening them (using the xref:../transformations/Flattener.adoc#rule-trf-prop-flatten-types[Flattener rule-trf-prop-flatten-types]), or by mapping them (using the xref:../transformations/Type_Converter.adoc#rule-trf-switchValueTypes[Type Converter rule-trf-switchValueTypes], or a map entry defined in the ldproxy target).
 

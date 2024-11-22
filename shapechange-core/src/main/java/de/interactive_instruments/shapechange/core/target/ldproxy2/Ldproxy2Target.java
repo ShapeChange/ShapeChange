@@ -52,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
@@ -128,6 +129,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String foreignKeyColumnSuffixDatatype = "";
     public static String foreignKeyColumnSuffixCodelist = "";
     public static SortedSet<String> genericValueTypes = null;
+    public static Boolean jsonFgCoordRefSys = null;
+    public static List<String> jsonFgFeatureType = new ArrayList<>();
+    public static List<OPTION> jsonFgIncludeInGeoJson = new ArrayList<>();
 
     public static String collectionIdFormat = "lowerCase";
 
@@ -447,6 +451,23 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    if (enableFeaturesJsonFg) {
 		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder();
+
+		if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS)) {
+		    jsonFgCoordRefSys = options.parameterAsBoolean(this.getClass().getName(),
+			    Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, true);
+		}
+		jsonFgFeatureType = options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE, null, true, true);
+		List<String> jsonFgIncludeInGeoJsonIn = options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, null, true, true);
+		for (String s : jsonFgIncludeInGeoJsonIn) {
+		    try {
+			OPTION jsonFgOption = OPTION.valueOf(s);
+			jsonFgIncludeInGeoJson.add(jsonFgOption);
+		    } catch (IllegalArgumentException e) {
+			// ignore - should be reported by configuration validator
+		    }
+		}
 	    }
 
 	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
@@ -996,6 +1017,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixDatatype = "";
 	foreignKeyColumnSuffixCodelist = "";
 	genericValueTypes = null;
+	jsonFgCoordRefSys = null;
+	jsonFgFeatureType = new ArrayList<>();
+	jsonFgIncludeInGeoJson = new ArrayList<>();
 	labelTemplate = "[[alias]]";
 	linearizeCurves = false;
 	maxNameLength = 63;

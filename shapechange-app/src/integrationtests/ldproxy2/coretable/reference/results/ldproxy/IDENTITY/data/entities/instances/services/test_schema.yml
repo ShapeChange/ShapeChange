@@ -22,6 +22,8 @@ api:
         StringAttribute: t:StringAttribute
         UrlAttribute: t:UrlAttribute
   gmlIdPrefix: _
+- buildingBlock: JSON_FG
+  enabled: true
 - buildingBlock: QUERYABLES
   enabled: true
 - buildingBlock: RESOURCES

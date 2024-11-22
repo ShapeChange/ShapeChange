@@ -47,6 +47,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
+import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.ModelElementXmlEncoding;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
@@ -84,16 +85,18 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_FEATURES_GML, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
 	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
 	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_CODELIST, Ldproxy2Constants.PARAM_FRAGMENTS,
-	    Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES, Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
-	    Ldproxy2Constants.PARAM_LINEARIZE_CURVES, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
-	    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
-	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE,
-	    Ldproxy2Constants.PARAM_QUERYABLES, Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX,
-	    Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION, Ldproxy2Constants.PARAM_SERVICE_LABEL,
-	    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SRID,
-	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES,
-	    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
-	    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_GENERIC_VALUE_TYPES, Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS,
+	    Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE, Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON,
+	    Ldproxy2Constants.PARAM_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_LINEARIZE_CURVES,
+	    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE,
+	    Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME, Ldproxy2Constants.PARAM_PK_COLUMN,
+	    Ldproxy2Constants.PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE, Ldproxy2Constants.PARAM_QUERYABLES,
+	    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
+	    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
+	    Ldproxy2Constants.PARAM_SRID, Ldproxy2Constants.PARAM_GML_ID_PREFIX,
+	    Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES, Ldproxy2Constants.PARAM_GML_OUTPUT,
+	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_UOM_TV_NAME,
+	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
@@ -174,6 +177,21 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		MessageContext mc = result.addError(this, 107, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER, paramValue);
 		mc.addDetail(this, 0, targetConfigInputs);
 		isValid = false;
+	    }
+	}
+
+	if (targetConfig.hasParameter(Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON)) {
+	    List<String> jsonFgIncludeInGeoJsonIn = targetConfig
+		    .parameterAsStringList(Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, null, true, true);
+	    for (String s : jsonFgIncludeInGeoJsonIn) {
+		try {
+		    OPTION.valueOf(s);
+		} catch (IllegalArgumentException e) {
+		    MessageContext mc = result.addError(this, 107, Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON,
+			    s);
+		    mc.addDetail(this, 0, targetConfigInputs);
+		    isValid = false;
+		}
 	    }
 	}
 

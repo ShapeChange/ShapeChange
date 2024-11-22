@@ -415,6 +415,28 @@ public class LdpConfigBuilder {
 	    codelistsBuilder.enabled(true);
 	}
 
+	ImmutableGeoJsonConfiguration.Builder geoJsonBuilder = null;
+	if (Ldproxy2Target.enableFeaturesGeoJson) {
+	    geoJsonBuilder = cfg.builder().ogcApiExtension().geoJson();
+	    geoJsonBuilder.enabled(true);
+	}
+
+	ImmutableJsonFgConfiguration.Builder jsonFgBuilder = null;
+	if (Ldproxy2Target.enableFeaturesJsonFg) {
+	    jsonFgBuilder = cfg.builder().ogcApiExtension().jsonFg();
+	    jsonFgBuilder.enabled(true);
+
+	    if (Ldproxy2Target.jsonFgCoordRefSys != null) {
+		jsonFgBuilder.coordRefSys(Ldproxy2Target.jsonFgCoordRefSys);
+	    }
+	    if (!Ldproxy2Target.jsonFgFeatureType.isEmpty()) {
+		jsonFgBuilder.featureType(Ldproxy2Target.jsonFgFeatureType);
+	    }
+	    if (!Ldproxy2Target.jsonFgIncludeInGeoJson.isEmpty()) {
+		jsonFgBuilder.includeInGeoJson(Ldproxy2Target.jsonFgIncludeInGeoJson);
+	    }
+	}
+
 	/*
 	 * ================================
 	 * 
@@ -435,6 +457,12 @@ public class LdpConfigBuilder {
 	}
 	if (codelistsBuilder != null) {
 	    generalExtensionConfigurations.add(codelistsBuilder.build());
+	}
+	if (geoJsonBuilder != null) {
+	    generalExtensionConfigurations.add(geoJsonBuilder.build());
+	}
+	if (jsonFgBuilder != null) {
+	    generalExtensionConfigurations.add(jsonFgBuilder.build());
 	}
 
 	serviceConfig = cfg.builder().entity().api().id(Ldproxy2Target.mainId).entityStorageVersion(2)

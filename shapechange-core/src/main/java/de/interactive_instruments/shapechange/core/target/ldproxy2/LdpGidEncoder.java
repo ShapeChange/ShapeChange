@@ -60,6 +60,8 @@ public class LdpGidEncoder {
 
 	boolean setSourcePaths = sourcePathInfosForBuilder != null
 		&& !(Ldproxy2Target.enableFragments && sourcePathInfosForBuilder.getContext().isInFragment());
+	boolean createObjectTypes = !Ldproxy2Target.enableFragments || sourcePathInfosForBuilder == null
+		|| sourcePathInfosForBuilder.getContext().isInFragment();
 
 	String valueSourcePathOrColumnPrefix = null;
 	PropertyInfo pi = null;
@@ -75,6 +77,9 @@ public class LdpGidEncoder {
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessStepBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processStepBuilder = new ImmutableFeatureSchema.Builder();
 	processStepBuilder.name("processStep");
+	if (createObjectTypes) {
+	    processStepBuilder.objectType("LI_ProcessStep");
+	}
 	/*
 	 * NOTE: We always use object_array, even for cases where only a single value is
 	 * stored, because we want to use a common schema for li_lineage.
@@ -91,6 +96,9 @@ public class LdpGidEncoder {
 	    LinkedHashMap<String, FeatureSchema> propertyMapForSourceBuilder = new LinkedHashMap<>();
 	    ImmutableFeatureSchema.Builder sourceBuilder = new ImmutableFeatureSchema.Builder();
 	    sourceBuilder.name("source").type(Type.OBJECT);
+	    if (createObjectTypes) {
+		sourceBuilder.objectType("LI_Source");
+	    }
 
 	    {
 		// source.description
@@ -145,6 +153,9 @@ public class LdpGidEncoder {
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessorBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processorBuilder = new ImmutableFeatureSchema.Builder();
 	processorBuilder.name("processor").type(Type.OBJECT);
+	if (createObjectTypes) {
+	    processorBuilder.objectType("CI_ResponsibleParty");
+	}
 
 	{
 	    // processor.organisationName
