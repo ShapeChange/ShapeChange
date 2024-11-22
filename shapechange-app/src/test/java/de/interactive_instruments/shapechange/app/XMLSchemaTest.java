@@ -321,4 +321,12 @@ public class XMLSchemaTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/xsd/referencedCodeList",
 		"src/integrationtests/xsd/referencedCodeList/reference");
     }
+    
+    @Test
+    public void test_gmlFeatureCollection() {
+
+	multiTest("src/integrationtests/xsd/gmlFeatureCollection/test_gmlFeatureCollection.xml",
+		new String[] { "xsd" }, "testResults/xsd/gmlFeatureCollection",
+		"src/integrationtests/xsd/gmlFeatureCollection/reference");
+    }
 }

@@ -106,7 +106,8 @@ public class Options {
     /** Well known stereotypes */
     public static final Set<String> classStereotypes = Stream.of("codelist", "enumeration", "datatype", "featuretype",
 	    "type", "basictype", "interface", "union", "abstract", "fachid", "schluesseltabelle", "adeelement",
-	    "featureconcept", "attributeconcept", "valueconcept", "roleconcept", "aixmextension", "retired")
+	    "featureconcept", "attributeconcept", "valueconcept", "roleconcept", "aixmextension", "retired",
+	    "featurecollection")
 	    .collect(Collectors.toSet());
     public static final Set<String> assocStereotypes = Stream.of("disjoint", "retired").collect(Collectors.toSet());
 

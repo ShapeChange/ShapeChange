@@ -459,6 +459,19 @@ enumeration type in XML Schema.
 NOTE: This conversion rule is probably no longer in use and may be
 deleted.
 
+[[rule-xsd-cls-gmlFeatureCollection]]
+==== rule-xsd-cls-gmlFeatureCollection
+
+(since v4.0.0)
+
+This conversion rule will encode a class with stereotype 
+«FeatureCollection» and no supertype in the substitution group
+of gml:AbstractFeatureCollection. 
+
+NOTE: gml:AbstractFeatureCollection is deprecated in GML 3.2.1.
+The conversion rule is intended for backwards-compatibility of XSD
+encoding in communities that still rely on this GML element/type.
+
 [[rule-xsd-cls-local-basictype]]
 ==== rule-xsd-cls-local-basictype
 

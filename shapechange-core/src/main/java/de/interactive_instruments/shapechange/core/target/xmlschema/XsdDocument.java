@@ -726,7 +726,10 @@ public class XsdDocument implements MessageSource {
 
     private String defaultSubstitutionGroup(ClassInfo ci) {
 	int cat = ci.category();
-	if (ci.matches("rule-xsd-cls-no-gml-types")) {
+	if (ci.matches("rule-xsd-cls-gmlFeatureCollection") && ci.stereotype("featurecollection")) {
+	    addImport("gml", options.fullNamespace("gml"));
+	    return "gml:AbstractFeatureCollection";
+	} else if (ci.matches("rule-xsd-cls-no-gml-types")) {
 	    return null;
 	} else if (ci.matches("rule-xsd-all-naming-gml")) {
 	    addImport("gml", options.fullNamespace("gml"));
@@ -780,7 +783,10 @@ public class XsdDocument implements MessageSource {
 
     private String defaultBaseType(ClassInfo ci) {
 	int cat = ci.category();
-	if (ci.matches("rule-xsd-cls-no-gml-types")) {
+	if (ci.matches("rule-xsd-cls-gmlFeatureCollection") && ci.stereotype("featurecollection")) {
+	    addImport("gml", options.fullNamespace("gml"));
+	    return "gml:AbstractFeatureCollectionType";
+	} else if (ci.matches("rule-xsd-cls-no-gml-types")) {
 	    return null;
 	} else if (ci.matches("rule-xsd-all-naming-gml")) {
 	    addImport("gml", options.fullNamespace("gml"));
