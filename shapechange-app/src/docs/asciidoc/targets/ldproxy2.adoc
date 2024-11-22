@@ -185,6 +185,30 @@ https://docs.ldproxy.net/de/services/building-blocks/codelists.html[Codelists]
 to the service configuration as enabled.
 
 
+[[ldproxy2_building_block_crs]]
+===== Crs
+
+(since v4.0.0)
+
+By setting target parameter _enableCrs_ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/crs.html[CRS]
+to the service configuration as enabled. The Web API is then
+configured to support additional coordinate reference systems, and
+thus the provision of data in different CRSs.
+
+If the building block is enabled, ShapeChange will automatically add
+the native CRS (defined by target parameters _srid_ and _forceAxisOrder_)
+to the `additionalCrs` member of the building block. Using target parameter
+_additionalCrs_, more CRS definitions can be provided for the 
+`additionalCrs` member. See the documentation of the member in the official
+ldproxy documentation of the building block. The value of the target 
+parameter is a comma-separated list of CRS identifiers. A CRS identifier
+is either a (numeric) EPSG code, or a combination (using '|' as separator) of
+an EPSG code and one of the values for `forceAxisOrder` supported by ldproxy.
+If the CRS identifier only is the EPSG code then `forceAxisOrder=NONE` applies.
+
+
 [[ldproxy2_building_block_features_gml]]
 ===== Features - GML
 
@@ -348,10 +372,11 @@ collections:
 [[ldproxy2_building_block_features_geojson]]
 ===== Features - GeoJSON
 
-By setting target parameter _enableFeaturesGeoJson_ to 'true', 
-ShapeChange will add ldproxy building block 
+Building block 
 https://docs.ldproxy.net/de/services/building-blocks/features_-_geojson.html[Features - GeoJSON]
-to the service configuration as enabled.
+is enabled by default for an ldproxy instance. By setting 
+target parameter _enableFeaturesGeoJson_ to 'false', 
+ShapeChange will add ldproxy to the service configuration as disabled.
 
 Currently, specific configuration items for this building block are added
 through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
@@ -386,6 +411,18 @@ through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
 
 In the future, generation of additional configuration items for this
 building block can be supported.
+
+
+[[ldproxy2_building_block_filter]]
+===== Filter
+
+(since v4.0.0)
+
+ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/filter.html[Filter]
+supports feature filtering with CQL2.
+By setting target parameter __enableFilter__ to 'true', 
+ShapeChange will add the building block to the service configuration as enabled.
 
 
 [[ldproxy2_queryables]]

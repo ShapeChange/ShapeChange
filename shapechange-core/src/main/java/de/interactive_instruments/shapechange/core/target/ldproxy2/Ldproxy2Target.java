@@ -55,6 +55,7 @@ import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
+import de.ii.xtraplatform.crs.domain.EpsgCrs;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
@@ -109,6 +110,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //     */
 //    protected static String documentationNoValue = null;
 
+    public static List<EpsgCrs> additionalCrs = new ArrayList<>();
     public static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
     public static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
     public static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
@@ -120,9 +122,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static boolean embeddingForFeatureRefs = false;
     public static boolean enableFragments = false;
     public static boolean enableCodelists = false;
+    public static boolean enableCrs = false;
     public static boolean enableFeaturesGml = false;
-    public static boolean enableFeaturesGeoJson = false;
+    public static boolean enableFeaturesGeoJson = true;
     public static boolean enableFeaturesJsonFg = false;
+    public static boolean enableFilter = false;
     public static Force forceAxisOrder = Force.NONE;
     public static String foreignKeyColumnSuffix = "";
     public static String reflexiveRelationshipFieldSuffix = null;
@@ -365,6 +369,36 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    enableCodelists = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ENABLE_CODELISTS, false);
 
+	    enableCrs = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_ENABLE_CRS,
+		    false);
+
+	    /*
+	     * Important: additionalCrs must be created after parameters 'srid' and
+	     * 'forceAxisOrder' have been parsed
+	     */
+	    if (enableCrs) {
+		additionalCrs.add(EpsgCrs.of(srid, forceAxisOrder));
+
+		List<String> additionalCrsFromParam = options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_ADDITIONAL_CRS, null, true, true);
+
+		// NOTE: parameter has been checked by configuration validator
+		for (String ac : additionalCrsFromParam) {
+		    String codeString;
+		    Force force = Force.NONE;
+		    if (ac.contains("|")) {
+			String[] parts = ac.split("\\|");
+			codeString = parts[0].trim();
+			if (parts.length > 1 && StringUtils.isNotBlank(parts[1])) {
+			    force = Force.valueOf(parts[1].trim());
+			}
+		    } else {
+			codeString = ac;
+		    }
+		    additionalCrs.add(EpsgCrs.of(Integer.valueOf(codeString), force));
+		}
+	    }
+
 	    // GML relevant parameters
 
 	    if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_FEATURES_GML)) {
@@ -374,6 +408,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		enableFeaturesGml = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_OUTPUT, false);
 	    }
+
+	    enableFilter = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_ENABLE_FILTER,
+		    false);
 
 	    if (enableFeaturesGml) {
 
@@ -440,7 +477,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    }
 
 	    enableFeaturesGeoJson = options.parameterAsBoolean(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, false);
+		    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, true);
 
 	    if (enableFeaturesGeoJson) {
 		bbGeoJsonBuilder = new LdpBuildingBlockFeaturesGeoJsonBuilder();
@@ -1002,6 +1039,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //	documentationTemplate = null;
 //	documentationNoValue = null;
 
+	additionalCrs = new ArrayList<>();
 	associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
 	cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
 	codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
@@ -1040,9 +1078,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	mainAppSchema = null;
 
 	enableCodelists = false;
+	enableCrs = false;
 	enableFeaturesGml = false;
-	enableFeaturesGeoJson = false;
+	enableFeaturesGeoJson = true;
 	enableFeaturesJsonFg = false;
+	enableFilter = false;
 	uomTvName = null;
 	bbGmlBuilder = null;
 	bbGeoJsonBuilder = null;

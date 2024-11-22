@@ -47,10 +47,12 @@ import org.apache.commons.lang3.StringUtils;
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.codelists.domain.ImmutableCodelistsConfiguration;
 import de.ii.ogcapi.collections.queryables.domain.ImmutableQueryablesConfiguration;
+import de.ii.ogcapi.crs.domain.ImmutableCrsConfiguration;
 import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
 import de.ii.ogcapi.features.jsonfg.domain.ImmutableJsonFgConfiguration;
+import de.ii.ogcapi.filter.domain.ImmutableFilterConfiguration;
 import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
 import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableFeatureTypeConfigurationOgcApi;
@@ -58,6 +60,7 @@ import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
+import de.ii.xtraplatform.crs.domain.EpsgCrs;
 import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
@@ -68,17 +71,17 @@ import de.ii.xtraplatform.features.sql.domain.ImmutableConnectionInfoSql;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
 import de.ii.xtraplatform.features.sql.domain.ImmutableQueryGeneratorSettings;
 import de.ii.xtraplatform.features.sql.domain.ImmutableSqlPathDefaults;
+import de.interactive_instruments.shapechange.core.Options;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
-import de.interactive_instruments.shapechange.core.Options;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -415,6 +418,16 @@ public class LdpConfigBuilder {
 	    codelistsBuilder.enabled(true);
 	}
 
+	ImmutableCrsConfiguration.Builder crsBuilder = null;
+	if (Ldproxy2Target.enableCrs) {
+	    crsBuilder = cfg.builder().ogcApiExtension().crs();
+	    crsBuilder.enabled(true);
+
+	    Ldproxy2Target.additionalCrs.sort((EpsgCrs e1, EpsgCrs e2) -> Integer.compare(e1.getCode(), e2.getCode()));
+
+	    crsBuilder.addAllAdditionalCrs(Ldproxy2Target.additionalCrs);
+	}
+
 	ImmutableGeoJsonConfiguration.Builder geoJsonBuilder = null;
 	if (Ldproxy2Target.enableFeaturesGeoJson) {
 	    geoJsonBuilder = cfg.builder().ogcApiExtension().geoJson();
@@ -435,6 +448,12 @@ public class LdpConfigBuilder {
 	    if (!Ldproxy2Target.jsonFgIncludeInGeoJson.isEmpty()) {
 		jsonFgBuilder.includeInGeoJson(Ldproxy2Target.jsonFgIncludeInGeoJson);
 	    }
+	}
+
+	ImmutableFilterConfiguration.Builder filterBuilder = null;
+	if (Ldproxy2Target.enableFilter) {
+	    filterBuilder = cfg.builder().ogcApiExtension().filter();
+	    filterBuilder.enabled(true);
 	}
 
 	/*
@@ -458,11 +477,17 @@ public class LdpConfigBuilder {
 	if (codelistsBuilder != null) {
 	    generalExtensionConfigurations.add(codelistsBuilder.build());
 	}
+	if (crsBuilder != null) {
+	    generalExtensionConfigurations.add(crsBuilder.build());
+	}
 	if (geoJsonBuilder != null) {
 	    generalExtensionConfigurations.add(geoJsonBuilder.build());
 	}
 	if (jsonFgBuilder != null) {
 	    generalExtensionConfigurations.add(jsonFgBuilder.build());
+	}
+	if (filterBuilder != null) {
+	    generalExtensionConfigurations.add(filterBuilder.build());
 	}
 
 	serviceConfig = cfg.builder().entity().api().id(Ldproxy2Target.mainId).entityStorageVersion(2)

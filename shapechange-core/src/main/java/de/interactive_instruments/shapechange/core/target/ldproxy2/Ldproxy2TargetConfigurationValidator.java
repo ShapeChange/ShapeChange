@@ -34,12 +34,12 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,18 +49,18 @@ import org.w3c.dom.Element;
 
 import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
-import de.interactive_instruments.shapechange.core.target.xml_encoding_util.ModelElementXmlEncoding;
-import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
-import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.TargetConfiguration;
 import de.interactive_instruments.shapechange.core.XmlNamespace;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.target.xml_encoding_util.ModelElementXmlEncoding;
+import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.shapechange.core.util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -69,10 +69,11 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageCont
 public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
-	    Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT,
-	    Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME,
-	    Ldproxy2Constants.PARAM_CORETABLE, Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN,
-	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
+	    Ldproxy2Constants.PARAM_ADDITIONAL_CRS, Ldproxy2Constants.PARAM_ASSOC_TABLE_COLUMN_SUFFIX,
+	    Ldproxy2Constants.PARAM_COLLECTION_ID_FORMAT, Ldproxy2Constants.PARAM_CFG_TEMPLATE_PATH,
+	    Ldproxy2Constants.PARAM_CODE_TARGET_TAG_NAME, Ldproxy2Constants.PARAM_CORETABLE,
+	    Ldproxy2Constants.PARAM_CORETABLE_PK_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN,
+	    Ldproxy2Constants.PARAM_CORETABLE_ID_COLUMN_LDPROXY_TYPE,
 	    Ldproxy2Constants.PARAM_CORETABLE_FEATURE_TYPE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_GEOMETRY_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_SOURCE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN,
@@ -81,6 +82,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES,
 	    Ldproxy2Constants.PARAM_EMBEDDING_FOR_FEATURE_REFS, Ldproxy2Constants.PARAM_ENABLE_CODELISTS,
+	    Ldproxy2Constants.PARAM_ENABLE_CRS, Ldproxy2Constants.PARAM_ENABLE_FILTER,
 	    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, Ldproxy2Constants.PARAM_FEATURES_JSONFG,
 	    Ldproxy2Constants.PARAM_FEATURES_GML, Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER,
 	    Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX, Ldproxy2Constants.PARAM_FK_COLUMN_SUFFIX_DATATYPE,
@@ -180,6 +182,52 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    }
 	}
 
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_ADDITIONAL_CRS);
+	if (targetConfig.hasParameter(Ldproxy2Constants.PARAM_ADDITIONAL_CRS)) {
+
+	    List<String> additionalCrsFromParam = targetConfig
+		    .parameterAsStringList(Ldproxy2Constants.PARAM_ADDITIONAL_CRS, null, true, true);
+
+	    for (String ac : additionalCrsFromParam) {
+
+		boolean acValid = true;
+
+		String codeString = null;
+		if (ac.contains("|")) {
+
+		    if (StringUtils.countMatches(ac, "|") > 1) {
+			acValid = false;
+		    } else {
+			String[] parts = ac.split("\\|");
+			codeString = parts[0].trim();
+			if (parts.length > 1 && StringUtils.isNotBlank(parts[1])) {
+			    try {
+				Force.valueOf(parts[1].trim());
+			    } catch (IllegalArgumentException e) {
+				acValid = false;
+			    }
+			}
+		    }
+		} else {
+		    codeString = ac;
+		}
+
+		if (StringUtils.isNotBlank(codeString)) {
+		    try {
+			Integer.valueOf(codeString);
+		    } catch (NumberFormatException e) {
+			acValid = false;
+		    }
+		}
+
+		if (!acValid) {
+		    MessageContext mc = result.addError(this, 115, ac, Ldproxy2Constants.PARAM_ADDITIONAL_CRS);
+		    mc.addDetail(this, 0, targetConfigInputs);
+		    isValid = false;
+		}
+	    }
+	}
+
 	if (targetConfig.hasParameter(Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON)) {
 	    List<String> jsonFgIncludeInGeoJsonIn = targetConfig
 		    .parameterAsStringList(Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, null, true, true);
@@ -191,6 +239,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 			    s);
 		    mc.addDetail(this, 0, targetConfigInputs);
 		    isValid = false;
+		    break;
 		}
 	    }
 	}
@@ -592,6 +641,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
 	case 114:
 	    return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+	case 115:
+	    return "Component value '$1$' of parameter '$2$' is not a valid value (general note: case matters for this parameter).";
 
 	default:
 	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;

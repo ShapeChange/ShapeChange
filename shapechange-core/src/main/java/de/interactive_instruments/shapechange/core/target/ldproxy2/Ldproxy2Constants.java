@@ -105,11 +105,14 @@ public class Ldproxy2Constants {
     public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
 
     public static final String PARAM_EMBEDDING_FOR_FEATURE_REFS = "embeddingForFeatureRefs";
-    
+        
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
     public static final String PARAM_ENABLE_CODELISTS = "enableCodelists";
+    public static final String PARAM_ENABLE_CRS = "enableCrs";
+    public static final String PARAM_ADDITIONAL_CRS = "additionalCrs";
+    public static final String PARAM_ENABLE_FILTER = "enableFilter";
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
