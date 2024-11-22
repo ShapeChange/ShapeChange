@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/flattener/inheritance3/testEA_Flattening_inheritance3.xml"
+                   end="Fri Nov 22 14:19:09 CET 2024"
+                   resultCode="0"
+                   start="Fri Nov 22 14:18:59 CET 2024"
+                   version="4.0.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'IDENTITY TRF_END' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\flattener\inheritance3\test_inheritance3.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\flattener\inheritance3\test_inheritance3.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\flattener\inheritance3\test_inheritance3.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\flattener\inheritance3\test_inheritance3.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/flattening/inheritance2'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'IDENTITY'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_END' for input ID: 'IDENTITY'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-cls-flatten-inheritance ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_END' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://shapechange.net/test/flattening/inheritance2'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'TRF_END'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_END'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/flattening/inheritance3/results/xsd/IDENTITY/flat.xsd"
+              scope="http://shapechange.net/test/flattening/inheritance2"
+              target="XML Schema">flat.xsd</Result>
+      <Result href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/flattening/inheritance3/results/xsd/TRF_END/flat.xsd"
+              scope="http://shapechange.net/test/flattening/inheritance2"
+              target="XML Schema">flat.xsd</Result>
+   </Results>
+</ShapeChangeResult>

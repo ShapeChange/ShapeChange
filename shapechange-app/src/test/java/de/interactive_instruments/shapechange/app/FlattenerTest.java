@@ -199,4 +199,10 @@ public class FlattenerTest extends BasicTestSCXML {
 		new String[] { "xsd", "json" }, "testResults/flattening/inheritanceAddAttributesInSequence",
 		"src/integrationtests/flattener/inheritance_addAttributesInSequence/reference");
     }
+    
+    @Test
+    public void test_flatten_inheritance3() {
+	multiTest("src/integrationtests/flattener/inheritance3/testEA_Flattening_inheritance3.xml", new String[] { "xsd" },
+		"testResults/flattening/inheritance3/results", "src/integrationtests/flattener/inheritance3/reference/results");
+    }
 }
