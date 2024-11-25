@@ -1770,6 +1770,35 @@ Applies to Rule(s)
 
 * rule-trf-cls-flatten-inheritance
 
+
+[[flattenInheritanceKeepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype]]
+==== flattenInheritanceKeepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype
+
+(since v4.0.0)
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: false (for backwards-compatibility)
+
+Behavior:
+
+If the value type of an association role is a supertype, the association is
+processed by _rule-trf-cls-flatten-inheritance_. The default behavior is to
+set the minimum occurrence of such association roles to 0 when creating
+value type/subtype specific copies of the association. However, if there is
+only one non-abstract type in the set of the value type and its (direct and
+indirect) subtypes, changing the cardinality this way is not necessary (since
+there is really only one possible value type; all other cases with abstract
+value type will be removed) and may not be desired. In order to prevent the
+cardinality change in such a situation, set this transformation parameter to
+'true'.
+
+Applies to Rule(s)
+
+* <<rule-trf-cls-flatten-inheritance>>
+
 [[flattenObjectTypes]]
 ==== flattenObjectTypes
 

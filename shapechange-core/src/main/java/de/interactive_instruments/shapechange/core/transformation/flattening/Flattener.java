@@ -184,7 +184,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String PARAM_INCLUDE_OBJECT_NAV = "includeObjectToObjectNavigability";
 
     public static final String PARAM_INHERITANCE_INCLUDE_REGEX = "flattenInheritanceIncludeRegex";
-
+    public static final String PARAM_INHERITANCE_ASSROLE_MINZERO = "flattenInheritanceKeepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype";
     public static final String PARAM_INHERITANCE_LINKED_DOC_PAGEBREAK = "linkedDocumentPageBreak";
 
     public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
@@ -5557,7 +5557,7 @@ public class Flattener implements Transformer, MessageSource {
 	 * type name as suffix). Remove the uni-directional association UA1 from the
 	 * model (since it has been replaced by a set of type-specific copies UAx).
 	 */
-	preProcessAssociationsWhenFlatteningInheritance(genModel, genSuperclassesById.keySet());
+	preProcessAssociationsWhenFlatteningInheritance(genModel, genSuperclassesById.keySet(), trfConfig);
 
 	// now on to copying the contents of supertypes down to their subtypes
 
@@ -5611,7 +5611,8 @@ public class Flattener implements Transformer, MessageSource {
 		    if (addAttributesAtBottom) {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_BOTTOM);
 		    } else if (addAttributesInSequence) {
-			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_INSEQUENCE);
+			copyContentToSubtypes(genModel, superclass,
+				PropertyCopyPositionIndicator.PROPERTY_COPY_INSEQUENCE);
 		    } else {
 			copyContentToSubtypes(genModel, superclass, PropertyCopyPositionIndicator.PROPERTY_COPY_TOP);
 		    }
@@ -5879,7 +5880,10 @@ public class Flattener implements Transformer, MessageSource {
     }
 
     private void preProcessAssociationsWhenFlatteningInheritance(GenericModel genModel,
-	    Set<String> idsOfRelevantSupertypeClasses) {
+	    Set<String> idsOfRelevantSupertypeClasses, TransformerConfiguration trfConfig) {
+
+	boolean keepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype = trfConfig
+		.parameterAsBoolean(PARAM_INHERITANCE_ASSROLE_MINZERO, false);
 
 	/*
 	 * Step 1: For each bi-directional association where one or both ends have
@@ -6028,6 +6032,9 @@ public class Flattener implements Transformer, MessageSource {
 		}
 	    });
 
+	    long countNonAbstractOtherTypeAndSubtypes = otherTypeAndSubtypes.stream().filter(fCi -> !fCi.isAbstract())
+		    .count();
+
 	    if (otherTypeAndSubtypes.size() == 1) {
 
 		/*
@@ -6058,10 +6065,16 @@ public class Flattener implements Transformer, MessageSource {
 		for (GenericClassInfo otherType : otherTypeAndSubtypes) {
 
 		    Multiplicity mPi1 = new Multiplicity(navPi.cardinality().toString());
-		    mPi1.minOccurs = 0;
+		    if (countNonAbstractOtherTypeAndSubtypes > 1
+			    || !keepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype) {
+			mPi1.minOccurs = 0;
+		    }
 
 		    Multiplicity mPi2 = new Multiplicity(revPi.cardinality().toString());
-		    mPi2.minOccurs = 0;
+		    if (countNonAbstractOtherTypeAndSubtypes > 1
+			    || !keepCardinalityForAssociationRoleWithAtMostOneNonAbstractTypeOrSubtype) {
+			mPi2.minOccurs = 0;
+		    }
 
 		    // compute new name and code/alias
 		    String newNamePi1 = computeAssociationRoleNameForFlattenInheritance(navPi, otherType, separator);

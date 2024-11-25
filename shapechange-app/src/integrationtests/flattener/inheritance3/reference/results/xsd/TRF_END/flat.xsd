@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:flat="http://shapechange.net/test/flattening/inheritance2"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        elementFormDefault="qualified"
+        targetNamespace="http://shapechange.net/test/flattening/inheritance2"
+        version="FIXME">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="T1_FT1"
+            substitutionGroup="gml:AbstractFeature"
+            type="flat:T1_FT1Type"/>
+   <complexType name="T1_FT1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element minOccurs="0" name="p1a_T1_FT2_2" type="flat:T1_FT2_2PropertyType"/>
+               <element minOccurs="0" name="p1a_T1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+               <element minOccurs="0" name="p1b_T1_FT2_2" type="flat:T1_FT2_2PropertyType"/>
+               <element minOccurs="0" name="p1b_T1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+               <element name="p1c_T1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T1_FT1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:T1_FT1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T1_FT2_1Union"
+            substitutionGroup="gml:AbstractObject"
+            type="flat:T1_FT2_1UnionType"/>
+   <complexType name="T1_FT2_1UnionType">
+      <choice>
+         <element name="t1_FT2_2" type="flat:T1_FT2_2PropertyType"/>
+         <element name="t1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="T1_FT2_1UnionPropertyType">
+      <sequence>
+         <element ref="flat:T1_FT2_1Union"/>
+      </sequence>
+   </complexType>
+   <element name="T1_FT2_2"
+            substitutionGroup="gml:AbstractFeature"
+            type="flat:T1_FT2_2Type"/>
+   <complexType name="T1_FT2_2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T1_FT2_2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:T1_FT2_2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="T1_FT2_2Union"
+            substitutionGroup="gml:AbstractObject"
+            type="flat:T1_FT2_2UnionType"/>
+   <complexType name="T1_FT2_2UnionType">
+      <choice>
+         <element name="t1_FT2_2" type="flat:T1_FT2_2PropertyType"/>
+         <element name="t1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="T1_FT2_2UnionPropertyType">
+      <sequence>
+         <element ref="flat:T1_FT2_2Union"/>
+      </sequence>
+   </complexType>
+   <element name="T1_FT2_3Union"
+            substitutionGroup="gml:AbstractObject"
+            type="flat:T1_FT2_3UnionType"/>
+   <complexType name="T1_FT2_3UnionType">
+      <choice>
+         <element name="t1_FT2_4" type="flat:T1_FT2_4PropertyType"/>
+      </choice>
+   </complexType>
+   <complexType name="T1_FT2_3UnionPropertyType">
+      <sequence>
+         <element ref="flat:T1_FT2_3Union"/>
+      </sequence>
+   </complexType>
+   <element name="T1_FT2_4"
+            substitutionGroup="gml:AbstractFeature"
+            type="flat:T1_FT2_4Type"/>
+   <complexType name="T1_FT2_4Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="T1_FT2_4PropertyType">
+      <sequence minOccurs="0">
+         <element ref="flat:T1_FT2_4"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

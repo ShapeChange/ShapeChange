@@ -1378,6 +1378,7 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-cls-codelist-gmlsf");
 	r.addRule("rule-xsd-cls-enum-subtypes");
 	r.addRule("rule-xsd-cls-enum-supertypes");
+	r.addRule("rule-xsd-cls-gmlFeatureCollection");
 	r.addRule("rule-xsd-cls-mixin-classes-as-group");
 	r.addRule("rule-xsd-cls-mixin-classes");
 	r.addRule("rule-xsd-cls-mixin-classes-non-mixin-supertypes");
