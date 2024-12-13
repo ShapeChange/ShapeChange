@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/ldproxy2/unionLikeDataType/test_ldproxy2_unionLikeDataType.xml"
+                   end="Wed Nov 27 09:26:43 CET 2024"
+                   resultCode="0"
+                   start="Wed Nov 27 09:26:33 CET 2024"
+                   version="4.0.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target' and @inputs 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\ldproxy2\unionLikeDataType\test_ldproxy2_unionLikeDataType.qea"/>
+      <Info message="Connected to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\ldproxy2\unionLikeDataType\test_ldproxy2_unionLikeDataType.qea"/>
+      <Info message="Starting reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\ldproxy2\unionLikeDataType\test_ldproxy2_unionLikeDataType.qea"/>
+      <Info message="Finished reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\ldproxy2\unionLikeDataType\test_ldproxy2_unionLikeDataType.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'Ldproxy (v2)' for input 'IDENTITY'."/>
+      <Info message="The target configuration does not contain advanced process configuration infos."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results/>
+</ShapeChangeResult>

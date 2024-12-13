@@ -42,7 +42,6 @@ import de.interactive_instruments.shapechange.core.AbstractConfigurationValidato
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.transformation.adding.CodeListLoader.CodeListSourceRepresentation;
 
 /**
@@ -52,7 +51,8 @@ import de.interactive_instruments.shapechange.core.transformation.adding.CodeLis
 public class CodeListLoaderConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream
-	    .of(CodeListLoader.PARAM_LOAD_CODES_RE3GISTRY_LANG, CodeListLoader.PARAM_LOAD_CODES_REMOVE_EXISTING_CODES,
+	    .of(CodeListLoader.PARAM_LOAD_CODES_RE3GISTRY_LANG, CodeListLoader.PARAM_LOAD_CODES_RE3GISTRY_REGISTER,
+		    CodeListLoader.PARAM_LOAD_CODES_REMOVE_EXISTING_CODES,
 		    CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION)
 	    .collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;

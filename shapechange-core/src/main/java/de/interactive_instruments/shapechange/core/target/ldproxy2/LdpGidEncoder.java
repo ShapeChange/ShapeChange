@@ -33,11 +33,12 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.util.LinkedHashMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
-import shadow.org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -222,9 +223,24 @@ public class LdpGidEncoder {
 	this.gidLiLineageSchema(propertyMapForLiLineageBuilder, null);
 
 	ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		.name(Ldproxy2Constants.LI_LINEAGE_FRAGMENT_NAME).label(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE)
+		.name(Ldproxy2Constants.LI_LINEAGE_FRAGMENT_NAME)/* .label(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE) */
 		.objectType(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE).propertyMap(propertyMapForLiLineageBuilder);
 
 	return fragmentBuilder.build();
     }
+
+//    public static String valueSourcePathForCodeListValuedProperty(String baseValueSourcePath) {
+//
+//	String pathPrefix = "";
+//	String colName = baseValueSourcePath;
+//
+//	if (baseValueSourcePath.contains("/")) {
+//	    pathPrefix = StringUtils.substringBeforeLast(baseValueSourcePath, "/") + "/";
+//	    colName = StringUtils.substringAfterLast(baseValueSourcePath, "/");
+//	}
+//
+//	String valueSourcePath = pathPrefix + "[EXPRESSION]{sql=regexp_substr($T$." + colName + ", '[^/]+$')}";
+//
+//	return valueSourcePath;
+//    }
 }

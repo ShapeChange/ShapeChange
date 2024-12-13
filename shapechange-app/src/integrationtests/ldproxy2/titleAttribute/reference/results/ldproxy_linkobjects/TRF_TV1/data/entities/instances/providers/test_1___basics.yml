@@ -134,7 +134,7 @@ types:
             label: FeatureType-ID
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/featuretype/items/{{value}}"
-    schema: '#/fragments/featuretype'
+    schema: "#/fragments/featuretype"
   ts1_featuretype1:
     sourcePath: /ts1_featuretype1
     type: OBJECT
@@ -241,7 +241,7 @@ types:
             label: TS1_FeatureType2-ID
             transformations:
             - stringFormat: "{{serviceUrl}}/collections/ts1_featuretype2/items/{{value}}"
-    schema: '#/fragments/ts1_featuretype1'
+    schema: "#/fragments/ts1_featuretype1"
   ts1_featuretype2:
     sourcePath: /ts1_featuretype2
     type: OBJECT
@@ -315,15 +315,15 @@ types:
           type: OBJECT_ARRAY
         - sourcePath: "[_id=ts1_featuretype2_id]ts1_featuretype2_roletoft3_2_ts1_featuretype3subb/[ts1_featuretype3subb_id=_id]ts1_featuretype3subb"
           type: OBJECT_ARRAY
-    schema: '#/fragments/ts1_featuretype2'
+    schema: "#/fragments/ts1_featuretype2"
   ts1_featuretype3suba:
     sourcePath: /ts1_featuretype3suba
     type: OBJECT
-    schema: '#/fragments/ts1_featuretype3suba'
+    schema: "#/fragments/ts1_featuretype3suba"
   ts1_featuretype3subb:
     sourcePath: /ts1_featuretype3subb
     type: OBJECT
-    schema: '#/fragments/ts1_featuretype3subb'
+    schema: "#/fragments/ts1_featuretype3subb"
 fragments:
   featuretype:
     type: OBJECT
@@ -745,8 +745,8 @@ fragments:
   ts1_featuretype3suba:
     type: OBJECT
     objectType: TS1_FeatureType3SubA
-    schema: '#/fragments/ts1_featuretype3'
+    schema: "#/fragments/ts1_featuretype3"
   ts1_featuretype3subb:
     type: OBJECT
     objectType: TS1_FeatureType3SubB
-    schema: '#/fragments/ts1_featuretype3'
+    schema: "#/fragments/ts1_featuretype3"

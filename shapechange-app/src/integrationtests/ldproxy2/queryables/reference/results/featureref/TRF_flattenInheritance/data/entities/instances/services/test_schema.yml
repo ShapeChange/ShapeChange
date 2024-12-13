@@ -16,6 +16,7 @@ collections:
     - buildingBlock: QUERYABLES
       included:
       - attDate
+      - attDt.attDtCharacterString
       - attInt
       - attPoint
       - roleFTtoT_Subtype
@@ -32,7 +33,6 @@ collections:
     - buildingBlock: QUERYABLES
       included:
       - attCharacter
-    - buildingBlock: FEATURES_HTML
   type:
     id: type
     label: type
@@ -41,4 +41,3 @@ collections:
     - buildingBlock: QUERYABLES
       included:
       - attCharacter
-    - buildingBlock: FEATURES_HTML

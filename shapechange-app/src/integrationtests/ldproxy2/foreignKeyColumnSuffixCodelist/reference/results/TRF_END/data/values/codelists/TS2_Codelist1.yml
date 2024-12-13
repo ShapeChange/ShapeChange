@@ -1,5 +1,6 @@
 ---
 label: Alias TS2_Codelist1
+description: Documentation TS2_CodeList1
 entries:
   codeX: https://example.org/cX
   codeY: https://example.org/cY

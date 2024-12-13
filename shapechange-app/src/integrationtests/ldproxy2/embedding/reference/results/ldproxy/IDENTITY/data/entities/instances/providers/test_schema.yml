@@ -1,0 +1,131 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 25832
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: _id
+  sortKey: _id
+types:
+  featuretype1:
+    sourcePath: /featuretype1
+    type: OBJECT
+    label: FeatureType1
+    properties:
+      roleFt1toFt2:
+        sourcePath: "[roleft1toft2_fk=_id]featuretype2"
+        type: FEATURE_REF
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+            constraints:
+              required: true
+          title:
+            sourcePath: atttitle
+            type: STRING
+            label: FeatureType2-title
+        refType: featuretype2
+        embed: ALWAYS
+      roleFt1toT1:
+        sourcePath: "[_id=featuretype1_id]FeatureType1_roleFt1toT1/[type1_id=_id]type1"
+        type: FEATURE_REF_ARRAY
+        properties:
+          id:
+            sourcePath: _id
+            type: INTEGER
+            constraints:
+              required: true
+        refType: type1
+        embed: ALWAYS
+      roleFt1toFt3:
+        sourcePath: roleft1toft3_fk
+        type: FEATURE_REF
+        valueType: INTEGER
+        refType: featuretype3
+    schema: "#/fragments/featuretype1"
+  featuretype2:
+    sourcePath: /featuretype2
+    type: OBJECT
+    label: FeatureType2
+    schema: "#/fragments/featuretype2"
+  featuretype3:
+    sourcePath: /featuretype3
+    type: OBJECT
+    label: FeatureType3
+    schema: "#/fragments/featuretype3"
+  type1:
+    sourcePath: /type1
+    type: OBJECT
+    label: Type1
+    schema: "#/fragments/type1"
+fragments:
+  featuretype1:
+    type: OBJECT
+    objectType: FeatureType1
+    label: FeatureType1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      roleFt1toFt2:
+        type: FEATURE_REF
+        label: roleFt1toFt2
+        constraints:
+          required: true
+        embed: ALWAYS
+      roleFt1toT1:
+        type: FEATURE_REF_ARRAY
+        label: roleFt1toT1
+        constraints:
+          minOccurrence: 0
+        embed: ALWAYS
+      roleFt1toFt3:
+        type: FEATURE_REF
+        label: roleFt1toFt3
+        constraints:
+          required: true
+  featuretype2:
+    type: OBJECT
+    objectType: FeatureType2
+    label: FeatureType2
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      attTitle:
+        sourcePath: atttitle
+        type: STRING
+        label: attTitle
+        constraints:
+          required: true
+  featuretype3:
+    type: OBJECT
+    objectType: FeatureType3
+    label: FeatureType3
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+  type1:
+    type: OBJECT
+    objectType: Type1
+    label: Type1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID

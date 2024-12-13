@@ -49,6 +49,24 @@ types:
         geometryType: POINT
         constraints:
           required: true
+      attDt:
+        sourcePath: "[idx=featuretype_id]FeatureType_attDt/[datatype_id=idx]datatype"
+        type: OBJECT_ARRAY
+        objectType: DataType
+        constraints:
+          required: true
+          minOccurrence: 1
+        properties:
+          attDtCharacterString:
+            sourcePath: attdtcharacterstring
+            type: STRING
+            constraints:
+              required: true
+          attDtInt:
+            sourcePath: attdtint
+            type: INTEGER
+            constraints:
+              required: true
       roleFTtoT_Subtype:
         sourcePath: "[rolefttot_subtype_fk=idx]subtype"
         type: OBJECT

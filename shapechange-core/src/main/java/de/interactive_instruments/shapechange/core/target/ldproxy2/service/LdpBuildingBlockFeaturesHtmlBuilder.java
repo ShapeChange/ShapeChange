@@ -46,7 +46,8 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
  */
 public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder {
 
-    public ImmutableFeaturesHtmlConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+    public ImmutableFeaturesHtmlConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg,
+	    ClassInfo ci) {
 
 	ImmutableFeaturesHtmlConfiguration.Builder fhtmlBuilder = cfg.builder().ogcApiExtension().featuresHtml();
 
@@ -59,6 +60,11 @@ public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder
 	}
 
 	return fhtmlBuilder.build();
+    }
+
+    @Override
+    public boolean hasInputForServiceCollection(ClassInfo ci) {
+	return hasTransformations(ci) || LdpInfo.featureTitleTemplate(ci).isPresent();
     }
 
 }

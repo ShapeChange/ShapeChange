@@ -90,15 +90,24 @@ definition and documentation of the code.
 ** Definition: The JSON format for codelist encoding of the Re3gistry
 implementation. Tested with the GDI-DE re3gistry instance of the
 German mapping agencies.
-** Code retrieval details: The code list source is assumed to be an
-http(s) URL to the code list in the Re3gistry, in a specific register. 
-If the URL does end with '.json', it is assumed that the URL directly links 
-to the JSON representation in the desired language (see parameter <<re3gistryLang>>).
+** Code retrieval details: The code list source is a code list hosted
+by a Re3gistry instance, in a specific register. The code list source
+either is a URL or the path to a local JSON file (especially useful
+for unit tests, or in cases where the Re3gistry is not readily available).
+If a URL is given, and the URL does end with '.json', it is assumed 
+that the URL directly links to the JSON representation in the 
+desired language (see parameter <<re3gistryLang>>).
 Otherwise, the URL is assumed to link to the base resource of the code list
-in a specific register, and 
+in a specific register (which is determined from the URL), and 
 `'/' + {code list name} + '.' + {value of parameter re3gistryLang} + '.json'`
-is added to the source URL. From the JSON document, the objects in member `containedItems`
-(in the register identified by the URL) are parsed. For each item object,
+is added to the source URL. If the code list source is a local JSON file,
+parameter <<re3gistryRegister>> must be set, in order to identify the
+relevant register.
+From the JSON document, the objects in the member 
+that represents the register are parsed:
+*** The `definition/text` is set as definition of the code list - unless the
+code list already has a non-empty definition.
+*** For each item object within `containedItems`,
 its `value` member is retrieved. It represents a particular code.
 If the URL in `value/status/id` ends with `/valid` or `/retired`, the code is
 loaded. Otherwise, it is ignored. Thus, only relevant codes are loaded from the 
@@ -155,6 +164,30 @@ Default representation for code list sources.
 +++Behavior+++
 
 Define the code of the language in which to retrieve code (list) metadata.
+
+
++++Applies to Rule(s)+++
+
+* <<rule-trf-cls-loadCodes>>
+
+
+[[re3gistryRegister]]
+==== re3gistryRegister
+
+(since v4.0.0)
+
++++Alias+++: _none_
+
++++Type+++: string
+
++++Default value+++: _none_
+
++++Behavior+++
+
+Identifier of the register in which the code lists are located in the re3gistry.
+Only relevant for cases in which the code list source is a local json file.
+If the source is an HTTP URL, the register is automatically determined from
+the URL.
 
 
 +++Applies to Rule(s)+++

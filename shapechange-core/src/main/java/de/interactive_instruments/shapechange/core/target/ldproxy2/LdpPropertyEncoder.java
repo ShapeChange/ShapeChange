@@ -440,7 +440,7 @@ public class LdpPropertyEncoder {
 		 */
 		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.categoryOfValue() != Options.ENUMERATION) {
 		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .stringFormat("{{value | replace:'([^\\/]+)$':'$1'}}").build();
+			    .stringFormat("{{value | replace:'^.*\\/([^\\/]+)$':'$1'}}").build();
 		    transformations.add(trf);
 		}
 	    }
@@ -484,7 +484,7 @@ public class LdpPropertyEncoder {
 			    && sourcePathInfosForBuilder.allWithRefType()
 			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
 			    && (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)
-				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi))
+				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi) || isEmbed(pi))
 			    && sourcePathInfosForBuilder.commonValueSourcePath().isPresent()) {
 
 			addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(pi, propMemberDefBuilder,
@@ -617,7 +617,7 @@ public class LdpPropertyEncoder {
 		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
 			    && pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)
 			    && (pi.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)
-				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi))
+				    || LdpInfo.valueTypeHasValidLdpTypeAttributeTag(pi) || isEmbed(pi))
 			    && sourcePathInfosForBuilder.commonValueSourcePath().isPresent()) {
 
 			addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(pi, propMemberDefBuilder,
@@ -752,11 +752,15 @@ public class LdpPropertyEncoder {
     }
 
     private void handleEmbedding(PropertyInfo pi, Builder propMemberDefBuilder) {
-	if (Ldproxy2Target.embeddingForFeatureRefs && "inline".equalsIgnoreCase(pi.inlineOrByReference())
-		&& !(pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
-			&& "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name))) {
+	if (isEmbed(pi)) {
 	    propMemberDefBuilder.embed(Embed.ALWAYS);
 	}
+    }
+
+    private boolean isEmbed(PropertyInfo pi) {
+	return Ldproxy2Target.embeddingForFeatureRefs && "inline".equalsIgnoreCase(pi.inlineOrByReference())
+		&& isEncodedAsFeatureRef(pi) && !(pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+			&& "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name));
     }
 
     private void addDetailsForFeatureRefWithMultipleRefTypesAndCommonValueSourcePath(PropertyInfo pi,
@@ -977,17 +981,19 @@ public class LdpPropertyEncoder {
 	    if (StringUtils.isNotBlank(spi.getRefType())) {
 		schemaBuilder.refType(spi.getRefType());
 
-		if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
-
+		if (isEmbed(pi) || LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 		    /*
-		     * In this case, where id and title properties are explicitly set for the
-		     * feature ref, its source path will result in the actual object, not just the
-		     * id. So ignore / do not encode the id value type.
+		     * In this case, where the id property is explicitly set for the feature ref,
+		     * its source path will result in the actual object, not just the id. So ignore
+		     * / do not encode the id value type.
 		     */
 		    ignoreIdValueType = true;
 
 		    ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, spi);
 		    propertyMapForBuilder.put("id", idSubProp);
+		}
+
+		if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
 
 		    ImmutableFeatureSchema titleSubProp = createTitlePropertyForLinkOrFeatureRef(pi);
 		    propertyMapForBuilder.put("title", titleSubProp);
@@ -1054,7 +1060,18 @@ public class LdpPropertyEncoder {
     }
 
     private Optional<String> applicableSourcePath(PropertyInfo pi, LdpSourcePathInfo spi) {
-	if (spi.getIdSourcePath().isPresent() && !isFeatureRefWithTitle(pi)) {
+
+	/*
+	 * 2024-11-26:
+	 * https://docs.ldproxy.net/providers/feature/#embedding-feature-references: The
+	 * sourcePath of the feature reference property must end at the referenced
+	 * feature; that is, at least the id property of the reference must be declared
+	 * explicitly. Therefore, we return the value source path for properties that
+	 * shall be embedded (the encoding of embedded feature refs is as feature ref
+	 * with id property).
+	 */
+
+	if (spi.getIdSourcePath().isPresent() && !(isFeatureRefWithTitle(pi) || isEmbed(pi))) {
 	    return spi.getIdSourcePath();
 	} else if (spi.getValueSourcePath().isPresent()
 		&& spi.getValueSourcePath().get().startsWith(Ldproxy2Constants.SQL_PREFIX_FLATTENED_TO_PARENT_TABLE)) {

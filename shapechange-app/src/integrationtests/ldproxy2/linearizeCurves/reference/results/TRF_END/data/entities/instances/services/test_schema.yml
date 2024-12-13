@@ -26,5 +26,3 @@ collections:
     id: featuretype
     label: featuretype
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML

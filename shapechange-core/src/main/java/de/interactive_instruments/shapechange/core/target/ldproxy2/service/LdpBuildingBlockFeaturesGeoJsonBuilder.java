@@ -58,4 +58,9 @@ public class LdpBuildingBlockFeaturesGeoJsonBuilder extends LdpBuildingBlockBuil
 	return bbBuilder.build();
     }
 
+    @Override
+    public boolean hasInputForServiceCollection(ClassInfo ci) {
+	return hasTransformations(ci);
+    }
+
 }

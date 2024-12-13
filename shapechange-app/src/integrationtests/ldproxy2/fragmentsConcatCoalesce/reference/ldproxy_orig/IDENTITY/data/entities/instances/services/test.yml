@@ -23,7 +23,6 @@ collections:
     label: t1_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t1_class2:
@@ -31,7 +30,6 @@ collections:
     label: t1_class2
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t2_class1:
@@ -39,7 +37,6 @@ collections:
     label: t2_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t3_class1:
@@ -47,7 +44,6 @@ collections:
     label: t3_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t4_class1:
@@ -55,7 +51,6 @@ collections:
     label: t4_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t5_class1:
@@ -63,7 +58,6 @@ collections:
     label: t5_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t5_class2:
@@ -71,7 +65,6 @@ collections:
     label: t5_class2
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t6_class1:
@@ -79,7 +72,6 @@ collections:
     label: t6_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t6_class2:
@@ -87,7 +79,6 @@ collections:
     label: t6_class2
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t7_class1:
@@ -95,7 +86,6 @@ collections:
     label: t7_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t8_class1:
@@ -103,7 +93,6 @@ collections:
     label: t8_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t8_class1sub:
@@ -111,7 +100,6 @@ collections:
     label: t8_class1sub
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t8_class2sub:
@@ -119,7 +107,6 @@ collections:
     label: t8_class2sub
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t9_class1:
@@ -127,7 +114,6 @@ collections:
     label: t9_class1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
   t9_class2:
@@ -135,6 +121,5 @@ collections:
     label: t9_class2
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE

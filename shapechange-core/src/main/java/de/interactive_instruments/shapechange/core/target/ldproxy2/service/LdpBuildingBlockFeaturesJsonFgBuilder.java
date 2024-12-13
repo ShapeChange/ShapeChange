@@ -58,4 +58,9 @@ public class LdpBuildingBlockFeaturesJsonFgBuilder extends LdpBuildingBlockBuild
 	return bbBuilder.build();
     }
 
+    @Override
+    public boolean hasInputForServiceCollection(ClassInfo ci) {
+	return hasTransformations(ci);
+    }
+
 }

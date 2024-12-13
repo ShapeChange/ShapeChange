@@ -1,8 +1,9 @@
+<!DOCTYPE HTML>
 <html xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result">
-  <head>
-    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>ShapeChange result</title>
-    <style type="text/css">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>ShapeChange result</title>
+      <style type="text/css">
 body
 {
 background-color:#f4f6fe;
@@ -62,8 +63,7 @@ td
 border:1px solid #98bf21;
 padding:5px 20px 5px 20px;
 }
-</style>
-    <script language="JavaScript" type="text/javascript">
+</style><script type="text/javascript" language="JavaScript">
 function toggleMe(a)
 {
 var list = document.getElementsByClassName(a);
@@ -83,253 +83,387 @@ for (var i=0; i<list.length;i++) {
 
 return true;
 }
-</script>
-  </head>
-  <body>
-    <h1>ShapeChange result</h1>
-    <table>
-      <tr>
-        <td>
-          <p>Result:</p>
-        </td><td>
-          <p>Conversion Completed</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>Start time:</p>
-        </td><td>
-          <p>Thu Aug 13 10:19:35 CEST 2020</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>End time:</p>
-        </td><td>
-          <p>Thu Aug 13 10:19:40 CEST 2020</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>Configuration file:</p>
-        </td><td>
-          <p>src/integrationtests/typeConverter/switchValueTypes/test_switchValueTypes.xml</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>ShapeChange version:</p>
-        </td><td>
-          <p>2.9.2-SNAPSHOT</p>
-        </td>
-      </tr>
-    </table>
-    <a name="messages">
-      <h2>Messages</h2>
-    </a>
-    <div id="menu">
-      <p align="center">Click on the following buttons to toggle log messages of the according category.</p>
+</script></head>
+   <body>
+      <h1>ShapeChange result</h1>
       <table>
-        <tbody>
-          <tr>
-            <th>Process Flow</th><th>Process Execution</th>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowDebug')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Debug</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Debug')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Debug</a></td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowInfo')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Info</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Info')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Info</a></td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowWarning')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Warning</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Warning')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Warning</a></td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Error</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('Error')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Error</a></td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="return toggleMe('ProcessFlowFatalError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Fatal Error</a></td><td><a href="javascript:void(0)" onclick="return toggleMe('FatalError')"><img alt="" border="0" height="10" width="10" src="http://shapechange.net/resources/images/open.gif"> Fatal Error</a></td>
-          </tr>
-        </tbody>
+         <tr>
+            <td>
+               <p>Result:</p>
+            </td>
+            <td>
+               <p>Conversion Completed</p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>Start time:</p>
+            </td>
+            <td>
+               <p>Wed Nov 27 09:44:08 CET 2024</p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>End time:</p>
+            </td>
+            <td>
+               <p>Wed Nov 27 09:44:17 CET 2024</p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>Configuration file:</p>
+            </td>
+            <td>
+               <p>src/integrationtests/typeConverter/switchValueTypes/test_switchValueTypes.xml</p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>ShapeChange version:</p>
+            </td>
+            <td>
+               <p>4.0.0-SNAPSHOT</p>
+            </td>
+         </tr>
+      </table><a name="messages">
+         <h2>Messages</h2></a><div id="menu">
+         <p align="center">Click on the following buttons to toggle log messages of the according category.</p>
+         <table>
+            <tbody>
+               <tr>
+                  <th>Process Flow</th>
+                  <th>Process Execution</th>
+               </tr>
+               <tr>
+                  <td><a onclick="return toggleMe('ProcessFlowDebug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Debug</a></td>
+                  <td><a onclick="return toggleMe('Debug')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Debug</a></td>
+               </tr>
+               <tr>
+                  <td><a onclick="return toggleMe('ProcessFlowInfo')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Info</a></td>
+                  <td><a onclick="return toggleMe('Info')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Info</a></td>
+               </tr>
+               <tr>
+                  <td><a onclick="return toggleMe('ProcessFlowWarning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Warning</a></td>
+                  <td><a onclick="return toggleMe('Warning')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Warning</a></td>
+               </tr>
+               <tr>
+                  <td><a onclick="return toggleMe('ProcessFlowError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Error</a></td>
+                  <td><a onclick="return toggleMe('Error')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Error</a></td>
+               </tr>
+               <tr>
+                  <td><a onclick="return toggleMe('ProcessFlowFatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Fatal Error</a></td>
+                  <td><a onclick="return toggleMe('FatalError')" href="javascript:void(0)"><img src="http://shapechange.net/resources/images/open.gif" width="10" height="10" border="0" alt=""> Fatal Error</a></td>
+               </tr>
+            </tbody>
+         </table><br></div>
+      <table border="0">
+         <tr>
+            <th>
+               <p>Severity</p>
+            </th>
+            <th>
+               <p>Message</p>
+            </th>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- Semantic validation of ShapeChange configuration: START ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Validating input parameters.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Validation of input parameters completed.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Validating log parameters.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Validation of log parameters completed.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating transformer with @id 'trf' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating transformer with @id 'trf2' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  and @inputs 'INPUT trf trf2' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connecting to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\typeConverter\switchValueTypes\test_switchValueTypes.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connected to C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\typeConverter\switchValueTypes\test_switchValueTypes.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Starting reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\typeConverter\switchValueTypes\test_switchValueTypes.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Finished reading C:\REPOSITORIES\ii\extern\GitHub\ShapeChange\ShapeChange\shapechange-app\src\integrationtests\typeConverter\switchValueTypes\test_switchValueTypes.qea</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'XML Schema' for input 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'trf' for input ID: 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- now processing: rule-trf-switchValueTypes ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'XML Schema' for input 'trf'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  for input ID: 'trf'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'trf2' for input ID: 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- now processing: rule-trf-switchValueTypes ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'trf2' for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'XML Schema' for input 'trf2'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  for input ID: 'trf2'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+      </table><a name="results">
+         <h2>Results</h2></a><table border="0">
+         <tr>
+            <th>
+               <p>Target</p>
+            </th>
+            <th>
+               <p>Scope</p>
+            </th>
+            <th>
+               <p>File</p>
+            </th>
+         </tr>
+         <tr>
+            <td>
+               <p>XML Schema</p>
+            </td>
+            <td>
+               <p>http://example.org/shapechange/typeconverter/propertyMetadataStereotype</p>
+            </td>
+            <td>
+               <p><a href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/typeConversion/switchValueTypes/xsd/INPUT/test.xsd">test.xsd</a></p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>XML Schema</p>
+            </td>
+            <td>
+               <p>http://example.org/shapechange/typeconverter/propertyMetadataStereotype</p>
+            </td>
+            <td>
+               <p><a href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/typeConversion/switchValueTypes/xsd/trf/test.xsd">test.xsd</a></p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>XML Schema</p>
+            </td>
+            <td>
+               <p>http://example.org/shapechange/typeconverter/propertyMetadataStereotype</p>
+            </td>
+            <td>
+               <p><a href="file:/C:/REPOSITORIES/ii/extern/GitHub/ShapeChange/ShapeChange/shapechange-app/testResults/typeConversion/switchValueTypes/xsd/trf2/test.xsd">test.xsd</a></p>
+            </td>
+         </tr>
       </table>
-      <br>
-    </div>
-    <table border="0">
-      <tr>
-        <th>
-          <p>Severity</p>
-        </th><th>
-          <p>Message</p>
-        </th>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>---------- Semantic validation of ShapeChange configuration: START ----------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>--- Validating transformer with @id 'trf' ...</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'INPUT trf' ...</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Connecting to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Connected to C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Starting reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="Info">
-        <td>
-          <p>Info</p>
-        </td><td>
-          <p>Finished reading C:\REPOSITORIES\JE\ShapeChange\src\test\resources\typeConverter\switchValueTypes\test_switchValueTypes.EAP</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Now processing target 'XML Schema' for input 'INPUT'.</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.
--------------------------------------------------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Now processing transformation 'trf' for input ID: 'INPUT'.</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>---------- now processing: rule-trf-switchValueTypes ----------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.
--------------------------------------------------</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/typeconverter/propertyMetadataStereotype'</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Now processing target 'XML Schema' for input 'trf'.</p>
-        </td>
-      </tr>
-      <tr style="display:table-row" class="ProcessFlowInfo">
-        <td>
-          <p>ProcessFlowInfo</p>
-        </td><td>
-          <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'trf'.
--------------------------------------------------</p>
-        </td>
-      </tr>
-    </table>
-    <a name="results">
-      <h2>Results</h2>
-    </a>
-    <table border="0">
-      <tr>
-        <th>
-          <p>Target</p>
-        </th><th>
-          <p>Scope</p>
-        </th><th>
-          <p>File</p>
-        </th>
-      </tr>
-      <tr>
-        <td>
-          <p>XML Schema</p>
-        </td><td>
-          <p>http://example.org/shapechange/typeconverter/propertyMetadataStereotype</p>
-        </td><td>
-          <p>
-            <a href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/typeConversion/switchValueTypes/xsd/INPUT/test.xsd">test.xsd</a>
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>XML Schema</p>
-        </td><td>
-          <p>http://example.org/shapechange/typeconverter/propertyMetadataStereotype</p>
-        </td><td>
-          <p>
-            <a href="file:/C:/REPOSITORIES/JE/ShapeChange/testResults/typeConversion/switchValueTypes/xsd/trf/test.xsd">test.xsd</a>
-          </p>
-        </td>
-      </tr>
-    </table>
-    <hr>
-    <p align="center">
-      <small>This report was generated by <a href="http://shapechange.net">ShapeChange</a></small>
-    </p>
-  </body>
+      <hr>
+      <p align="center"><small>This report was generated by <a href="http://shapechange.net">ShapeChange</a></small></p>
+   </body>
 </html>

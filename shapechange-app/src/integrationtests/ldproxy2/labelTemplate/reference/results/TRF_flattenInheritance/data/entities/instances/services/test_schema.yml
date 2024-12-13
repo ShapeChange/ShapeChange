@@ -9,5 +9,3 @@ collections:
     id: myfeaturetype
     label: myfeaturetype
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML

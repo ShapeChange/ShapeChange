@@ -169,8 +169,12 @@ public class LdpConfigBuilder {
 		String fragmentName = LdpInfo.configIdentifierName(ci);
 
 		ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(fragmentName).objectType(LdpInfo.originalClassName(ci)).label(LdpInfo.label(ci))
+			.name(fragmentName).objectType(LdpInfo.originalClassName(ci))
 			.description(LdpInfo.description(ci));
+
+		if (ci.category() != Options.DATATYPE && ci.category() != Options.UNION) {
+		    fragmentBuilder.label(LdpInfo.label(ci));
+		}
 
 		LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, false);
 
@@ -266,7 +270,11 @@ public class LdpConfigBuilder {
 
 	    ImmutableFeatureSchema.Builder typeDefBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
 		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci))
-		    .label(LdpInfo.label(ci)).description(LdpInfo.description(ci));
+		    .description(LdpInfo.description(ci));
+
+	    if (ci.category() != Options.DATATYPE && ci.category() != Options.UNION) {
+		typeDefBuilder.label(LdpInfo.label(ci));
+	    }
 
 	    LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, true);
 
@@ -360,23 +368,25 @@ public class LdpConfigBuilder {
 		}
 	    }
 
-	    ImmutableFeaturesHtmlConfiguration featuresHtmlConfig = bbFeaturesHtmlBuilder
-		    .createConfigurationForServiceCollection(cfg, ci);
-	    extensionConfigurations.add(featuresHtmlConfig);
+	    if (bbFeaturesHtmlBuilder.hasInputForServiceCollection(ci)) {
+		ImmutableFeaturesHtmlConfiguration featuresHtmlConfig = bbFeaturesHtmlBuilder
+			.createConfigurationForServiceCollection(cfg, ci);
+		extensionConfigurations.add(featuresHtmlConfig);
+	    }
 
-	    if (bbFeaturesGmlBuilder != null) {
+	    if (bbFeaturesGmlBuilder != null && bbFeaturesGmlBuilder.hasInputForServiceCollection(ci)) {
 		ImmutableGmlConfiguration gmlConfig = bbFeaturesGmlBuilder
 			.createGmlConfigurationForServiceCollection(cfg, ci);
 		extensionConfigurations.add(gmlConfig);
 	    }
 
-	    if (bbFeaturesGeoJsonBuilder != null) {
+	    if (bbFeaturesGeoJsonBuilder != null && bbFeaturesGeoJsonBuilder.hasInputForServiceCollection(ci)) {
 		ImmutableGeoJsonConfiguration geoJsonConfig = bbFeaturesGeoJsonBuilder
 			.createConfigurationForServiceCollection(cfg, ci);
 		extensionConfigurations.add(geoJsonConfig);
 	    }
 
-	    if (bbFeaturesJsonFgBuilder != null) {
+	    if (bbFeaturesJsonFgBuilder != null && bbFeaturesJsonFgBuilder.hasInputForServiceCollection(ci)) {
 		ImmutableJsonFgConfiguration jsonFgConfig = bbFeaturesJsonFgBuilder
 			.createConfigurationForServiceCollection(cfg, ci);
 		extensionConfigurations.add(jsonFgConfig);
@@ -561,7 +571,8 @@ public class LdpConfigBuilder {
 	    label = labelOpt.get();
 	}
 
-	ImmutableCodelist ic = cfg.builder().value().codelist().label(label).sourceType(ImportType.TEMPLATES).build();
+	ImmutableCodelist ic = cfg.builder().value().codelist().label(label).sourceType(ImportType.TEMPLATES)
+		.description(LdpInfo.description(ci)).build();
 
 	if (!ci.properties().isEmpty()) {
 

@@ -9,11 +9,7 @@ collections:
     id: FeatureTypeA
     label: FeatureTypeA
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   FeatureTypeB:
     id: FeatureTypeB
     label: FeatureTypeB
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML

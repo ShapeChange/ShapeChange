@@ -91,6 +91,7 @@ public class CodeListLoader implements Transformer, MessageSource {
     public static final String PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION = "defaultCodeListSourceRepresentation";
     public static final String PARAM_LOAD_CODES_REMOVE_EXISTING_CODES = "removeExistingCodesBeforeLoading";
     public static final String PARAM_LOAD_CODES_RE3GISTRY_LANG = "re3gistryLang";
+    public static final String PARAM_LOAD_CODES_RE3GISTRY_REGISTER = "re3gistryRegister";
 
     public static final String TV_CL_SOURCE = "codeListSource";
     public static final String TV_CL_SOURCE_CHARSET = "codeListSourceCharset";
@@ -240,30 +241,31 @@ public class CodeListLoader implements Transformer, MessageSource {
 
     private void loadRe3gistryJson(GenericClassInfo genCi, String clSourceIn, Charset clSourceCharset) {
 
-	if (!clSourceIn.toLowerCase().startsWith("http")) {
-	    result.addError(this, 107, genCi.name(), clSourceIn);
-	    return;
-	}
-
 	String lang = config.parameterAsString(PARAM_LOAD_CODES_RE3GISTRY_LANG, "en", false, true);
 
 	File tmpFile = null;
 
-	String[] sourceParts = clSourceIn.split("/");
-
 	String clSource = clSourceIn;
-	String codelistRegister;
+	String codelistRegister = config.parameterAsString(PARAM_LOAD_CODES_RE3GISTRY_REGISTER, null, false, true);
 
-	if (!clSourceIn.endsWith(".json")) {
+	if (clSource.toLowerCase().startsWith("http")) {
 
-	    String codeListName = sourceParts[sourceParts.length - 1];
-//		    StringUtils.substringAfterLast(clSourceIn, "/");
-	    clSource = clSource + "/" + codeListName + "." + lang + ".json";
+	    String[] sourceParts = clSourceIn.split("/");
 
-	    codelistRegister = sourceParts[sourceParts.length - 2];
+	    if (!clSourceIn.endsWith(".json")) {
 
-	} else {
-	    codelistRegister = sourceParts[sourceParts.length - 3];
+		String codeListName = sourceParts[sourceParts.length - 1];
+		clSource = clSource + "/" + codeListName + "." + lang + ".json";
+
+		codelistRegister = sourceParts[sourceParts.length - 2];
+
+	    } else {
+
+		codelistRegister = sourceParts[sourceParts.length - 3];
+	    }
+	} else if (StringUtils.isBlank(codelistRegister)) {
+	    result.addError(this, 103, genCi.name(), clSourceIn);
+	    return;
 	}
 
 	try {
@@ -271,17 +273,31 @@ public class CodeListLoader implements Transformer, MessageSource {
 	    tmpFile = File.createTempFile("ShapeChange_CodeListLoader", genCi.name());
 	    tmpFile.deleteOnExit();
 
-	    URL clSourceUrl = new URL(clSource);
-	    URLConnection urlConn = clSourceUrl.openConnection();
-	    /*
-	     * 2024-11-14 JE: Just in case the registry forbids access from java programs,
-	     * we trick the server into believing that we access the list from a web
-	     * browser. This is the same approach as when loading ISO 639_2 codes from the
-	     * library of congress web server.
-	     */
-	    urlConn.setRequestProperty("User-Agent", USER_AGENT_VALUE);
+	    if (clSource.toLowerCase().startsWith("http")) {
 
-	    FileUtils.copyInputStreamToFile(urlConn.getInputStream(), tmpFile);
+		URL clSourceUrl = new URL(clSource);
+		URLConnection urlConn = clSourceUrl.openConnection();
+		/*
+		 * 2024-11-14 JE: Just in case the registry forbids access from java programs,
+		 * we trick the server into believing that we access the list from a web
+		 * browser. This is the same approach as when loading ISO 639_2 codes from the
+		 * library of congress web server.
+		 */
+		urlConn.setRequestProperty("User-Agent", USER_AGENT_VALUE);
+
+		FileUtils.copyInputStreamToFile(urlConn.getInputStream(), tmpFile);
+
+	    } else {
+
+		File clSourceFile = new File(clSource);
+
+		if (clSourceFile.exists()) {
+		    FileUtils.copyFile(clSourceFile, tmpFile);
+		} else {
+		    result.addError(this, 105, genCi.name(), clSourceFile.getAbsolutePath());
+		    return;
+		}
+	    }
 
 	} catch (Exception e) {
 	    result.addError(this, 106, genCi.name(), clSource, tmpFile.getAbsolutePath(), e.getMessage());
@@ -297,13 +313,10 @@ public class CodeListLoader implements Transformer, MessageSource {
 
 	    JsonObject registerObj = rootObj.getAsJsonObject(codelistRegister);
 
-	    /*
-	     * 2024-11-14 JE: WIP ... no description for ImmutableCodelist yet.
-	     */
-//	    Optional<String> definitionOpt = parseRe3gistryJsonLangTextValue(registerObj, "definition");
-//	    if(definitionOpt.isPresent() && StringUtils.isBlank(genCi.description()) {
-//		genCi.descriptors().put(Descriptor.DESCRIPTION, codelistRegister)
-//	    }
+	    Optional<String> definitionOpt = parseRe3gistryJsonLangTextValue(registerObj, "definition");
+	    if (definitionOpt.isPresent() && StringUtils.isBlank(genCi.definition())) {
+		genCi.descriptors().put(Descriptor.DEFINITION, definitionOpt.get());
+	    }
 
 	    if (registerObj.has("containeditems")) {
 		JsonArray containedItemsArray = registerObj.getAsJsonArray("containeditems");
@@ -564,15 +577,14 @@ public class CodeListLoader implements Transformer, MessageSource {
 	case 102:
 	    return "Representation for source of code list '$1$' could not be identified. Message is: $2$. The code list will be ignored.";
 	case 103:
-	    return "";
+	    return "Code list register could not be determined for codelist with source '$1$'. Remember to set parameter "
+		    + PARAM_LOAD_CODES_RE3GISTRY_REGISTER + " when using local sources (i.e., not retrieved via http).";
 	case 104:
 	    return "Exception occurred while reading source file for code list '$1$'. Message is: '$2$'. The code list will be ignored.";
 	case 105:
 	    return "Source file for code list '$1$' not found at location '$2$'. The code list will be ignored.";
 	case 106:
 	    return "Could not copy source file for code list '$1$' from '$2$' to '$3$'. Message is: $4$. The code list will be ignored.";
-	case 107:
-	    return "Re3gistry code list representation only supports code list sources with HTTP(s) based access. Invalid source for code list '$1$': $2$";
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}

@@ -26,32 +26,22 @@ collections:
     id: ts10_featuretype1
     label: ts10_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts1_featuretype1:
     id: ts1_featuretype1
     label: ts1_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts1_featuretype2:
     id: ts1_featuretype2
     label: ts1_featuretype2
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts2_featuretype1:
     id: ts2_featuretype1
     label: ts2_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts2_featuretype2:
     id: ts2_featuretype2
     label: ts2_featuretype2
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts3_featuretype1:
     id: ts3_featuretype1
     label: ts3_featuretype1
@@ -63,8 +53,6 @@ collections:
     id: ts3_type1
     label: ts3_type1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts4_featuretype1:
     id: ts4_featuretype1
     label: ts4_featuretype1
@@ -78,26 +66,18 @@ collections:
     id: ts5_featuretype1
     label: ts5_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts6_featuretype1:
     id: ts6_featuretype1
     label: ts6_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts6_featuretype2:
     id: ts6_featuretype2
     label: ts6_featuretype2
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts7_featuretype1:
     id: ts7_featuretype1
     label: ts7_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts8_featuretype1:
     id: ts8_featuretype1
     label: ts8_featuretype1
@@ -135,5 +115,3 @@ collections:
     id: ts9_featuretype1
     label: ts9_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML

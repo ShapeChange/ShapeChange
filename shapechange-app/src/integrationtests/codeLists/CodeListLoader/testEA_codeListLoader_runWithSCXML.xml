@@ -51,6 +51,13 @@
                    id="TRF_CL_LOADER"
                    input="IDENTITY"
                    mode="enabled">
+         <parameters>
+            <ProcessParameter name="removeExistingCodesBeforeLoading" value="true"/>
+            <ProcessParameter name="defaultCodeListSourceRepresentation"
+                              value="application/x-re3gistry-json"/>
+            <ProcessParameter name="re3gistryLang" value="de"/>
+            <ProcessParameter name="re3gistryRegister" value="de.adv-online.gid"/>
+         </parameters>
          <rules>
             <ProcessRuleSet name="cl_loader_rules">
                <rule name="rule-trf-cls-loadCodes"/>

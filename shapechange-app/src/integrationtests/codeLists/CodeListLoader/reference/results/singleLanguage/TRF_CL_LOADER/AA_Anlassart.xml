@@ -1,0 +1,1143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='./CodelistDictionary-v32.xsl'?>
+<Dictionary xmlns="http://www.opengis.net/gml/3.2"
+            xmlns:gml="http://www.opengis.net/gml/3.2"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            gml:id="AA_Anlassart"
+            xsi:schemaLocation="http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd">
+   <identifier codeSpace="http://example.org/shapechange/codeListLoader">AA_Anlassart</identifier>
+   <dictionaryEntry>
+      <Definition gml:id="Abgabe von Flurstücken an eine andere katasterführenden Stelle">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Abgabe von Flurstücken an eine andere katasterführenden Stelle</identifier>
+         <name>010306</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Abschreibung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Abschreibung</identifier>
+         <name>060100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Abschreibung auf bestehendes Buchungsblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Abschreibung auf bestehendes Buchungsblatt</identifier>
+         <name>060102</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Abschreibung auf neues Buchungsblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Abschreibung auf neues Buchungsblatt</identifier>
+         <name>060101</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Abschreibung eines Flurstückes (Gebietsreform)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Abschreibung eines Flurstückes (Gebietsreform)</identifier>
+         <name>010802</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Angaben zu Eigentümer oder Erbbauberechtigten verändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Angaben zu Eigentümer oder Erbbauberechtigten verändern</identifier>
+         <name>050000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Angaben zur Grundbuchfortführung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Angaben zur Grundbuchfortführung</identifier>
+         <name>003000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Anlegen von Wohnungseigentum">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Anlegen von Wohnungseigentum</identifier>
+         <name>080200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Anlegen von Wohnungserbbaurecht">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Anlegen von Wohnungserbbaurecht</identifier>
+         <name>080300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Anlegen von Wohnungsuntererbbaurecht">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Anlegen von Wohnungsuntererbbaurecht</identifier>
+         <name>080400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Anteile buchen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Anteile buchen</identifier>
+         <name>080000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Aufhebung eines Wohnungseigentums">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Aufhebung eines Wohnungseigentums</identifier>
+         <name>060900</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Aufhebung von Anteilen am ungetrennten Hofraum">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Aufhebung von Anteilen am ungetrennten Hofraum</identifier>
+         <name>061400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Auflösung ungetrennter Hofräume">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Auflösung ungetrennter Hofräume</identifier>
+         <name>080650</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Ausbuchung eines Grundstücks nach § 3 Abs. 3 GBO">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Ausbuchung eines Grundstücks nach § 3 Abs. 3 GBO</identifier>
+         <name>061300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Automatische Kartographische Generalisierung mit Konflikt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Automatische Kartographische Generalisierung mit Konflikt</identifier>
+         <name>4100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Automatische Kartographische Generalisierung ohne Konflikt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Automatische Kartographische Generalisierung ohne Konflikt</identifier>
+         <name>4000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Behebung von Geometrischen Ungenauigkeiten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Behebung von Geometrischen Ungenauigkeiten</identifier>
+         <name>HE1000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung aufgrund Erbnachweis">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung aufgrund Erbnachweis</identifier>
+         <name>050200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung aufgrund Erwerbsvorgängen außerhalb des Grundbuchs">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung aufgrund Erwerbsvorgängen außerhalb des Grundbuchs</identifier>
+         <name>050300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung der Flurstücksangaben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung der Flurstücksangaben</identifier>
+         <name>010500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung der Flächenangabe">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung der Flächenangabe</identifier>
+         <name>010501</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung der Flächenangabe mit Veränderung des Flurstückskennzeichens">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung der Flächenangabe mit Veränderung des Flurstückskennzeichens</identifier>
+         <name>010511</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung eines Katastrierungsfehlers">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung eines Katastrierungsfehlers</identifier>
+         <name>010503</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Berichtigung eines Zeichenfehlers">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Berichtigung eines Zeichenfehlers</identifier>
+         <name>010502</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Beschreibung der Buchungsstelle ändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Beschreibung der Buchungsstelle ändern</identifier>
+         <name>040000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Bestandteilszuschreibung (§ 890 Abs. 2 BGB, § 6 GBO)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Bestandteilszuschreibung (§ 890 Abs. 2 BGB, § 6 GBO)</identifier>
+         <name>060500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Bodenordnungsmaßnahmen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Bodenordnungsmaßnahmen</identifier>
+         <name>010600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung aufgrund Veränderung der Grundstücksbezeichnung oder der Größe (Spalten 3 + 4 des BV)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung aufgrund Veränderung der Grundstücksbezeichnung oder der Größe (Spalten 3 + 4 des BV)</identifier>
+         <name>060700</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung der neuen Grundstücke in einem bestehenden  Buchungsblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung der neuen Grundstücke in einem bestehenden  Buchungsblatt</identifier>
+         <name>060201</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung des Grundstücks auf ein bestehendes Buchungsblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung des Grundstücks auf ein bestehendes Buchungsblatt</identifier>
+         <name>060902</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung des Grundstücks auf ein bestehendes Buchungsblatt der Miteigentümer">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung des Grundstücks auf ein bestehendes Buchungsblatt der Miteigentümer</identifier>
+         <name>060802</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung des Grundstücks auf ein neues Buchungsblatt (1)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung des Grundstücks auf ein neues Buchungsblatt (1)</identifier>
+         <name>060801</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung des Grundstücks auf ein neues Buchungsblatt (2)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung des Grundstücks auf ein neues Buchungsblatt (2)</identifier>
+         <name>060901</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung nach § 3 Abs. 4 GBO">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung nach § 3 Abs. 4 GBO</identifier>
+         <name>080100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung nach § 3 Abs. 4 GBO aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung nach § 3 Abs. 4 GBO aufheben</identifier>
+         <name>060800</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Buchung § 3 Abs. 4 ff GBO ändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Buchung § 3 Abs. 4 ff GBO ändern</identifier>
+         <name>040400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Eigentumsänderung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Eigentumsänderung</identifier>
+         <name>050100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Eintragen eines Gebäudes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Eintragen eines Gebäudes</identifier>
+         <name>200100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Eintragung des Flurstückes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Eintragung des Flurstückes</identifier>
+         <name>010307</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Entstehung eines Festpunkts (erstmalige Aufnahme in AFIS)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Entstehung eines Festpunkts (erstmalige Aufnahme in AFIS)</identifier>
+         <name>090500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Erbbaurecht anlegen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Erbbaurecht anlegen</identifier>
+         <name>070100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Erbbaurecht aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Erbbaurecht aufheben</identifier>
+         <name>070200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Erfassung der Bodenschätzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Erfassung der Bodenschätzung</identifier>
+         <name>300421</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Erneuerung der Lagekoordinaten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Erneuerung der Lagekoordinaten</identifier>
+         <name>010702</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Erstbuchung eines Grundstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Erstbuchung eines Grundstücks</identifier>
+         <name>061200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Ersteinrichtung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Ersteinrichtung</identifier>
+         <name>000000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Flurbereinigung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Flurbereinigung</identifier>
+         <name>010611</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Flurbereinigung - freiwilliger Landtausch">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Flurbereinigung - freiwilliger Landtausch</identifier>
+         <name>010612</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Flurstücksbestimmung gemäß § 12 Abs. 2 Satz 2 VermGeoG LSA">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Flurstücksbestimmung gemäß § 12 Abs. 2 Satz 2 VermGeoG LSA</identifier>
+         <name>010316</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Flurstücksdaten fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Flurstücksdaten fortführen</identifier>
+         <name>010000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Flurstückszerlegung mit Eigentumsübergang nach Straßengesetzen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Flurstückszerlegung mit Eigentumsübergang nach Straßengesetzen</identifier>
+         <name>010104</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Fortführung der Angaben aufgrund von Aktualisierungen des Datenbankgrundbuchs (dabag)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Fortführung der Angaben aufgrund von Aktualisierungen des Datenbankgrundbuchs (dabag)</identifier>
+         <name>500000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Gebäudeeinmessung nach § 14 Abs. 2 Satz 2 VermGeoG LSA">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Gebäudeeinmessung nach § 14 Abs. 2 Satz 2 VermGeoG LSA</identifier>
+         <name>010317</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grenzabmarkung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grenzabmarkung</identifier>
+         <name>010904</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grenzbestimmung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grenzbestimmung</identifier>
+         <name>010903</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grenzfeststellung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grenzfeststellung</identifier>
+         <name>010900</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grenzvermessung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grenzvermessung</identifier>
+         <name>010901</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grenzwiederherstellung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grenzwiederherstellung</identifier>
+         <name>010902</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grundaktualisierung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grundaktualisierung</identifier>
+         <name>1000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grundbuchblatt schließen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grundbuchblatt schließen</identifier>
+         <name>062000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grundbuchblattbezeichnung ändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grundbuchblattbezeichnung ändern</identifier>
+         <name>030000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Grundstücke buchen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Grundstücke buchen</identifier>
+         <name>060000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Herrschvermerk aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Herrschvermerk aufheben</identifier>
+         <name>070400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Herrschvermerk buchen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Herrschvermerk buchen</identifier>
+         <name>070300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Interaktive Kartographische Generalisierung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Interaktive Kartographische Generalisierung</identifier>
+         <name>5000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katastererneuerung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katastererneuerung</identifier>
+         <name>010700</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katastererneuerung - vereinfachte Neuvermessung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katastererneuerung - vereinfachte Neuvermessung</identifier>
+         <name>010701</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katasterliche Buchung eines buchungsfreien Grundstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katasterliche Buchung eines buchungsfreien Grundstücks</identifier>
+         <name>020102</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katasterliche Buchung eines noch nicht im Grundbuch gebuchten Grundstücks oder Rechts (Erwerber- oder Pseudoblatt)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katasterliche Buchung eines noch nicht im Grundbuch gebuchten Grundstücks oder Rechts (Erwerber- oder Pseudoblatt)</identifier>
+         <name>020101</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katasterliche Buchungsdaten fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katasterliche Buchungsdaten fortführen</identifier>
+         <name>020100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katasterliche Namensnummer und Rechtsgemeinschaft fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katasterliche Namensnummer und Rechtsgemeinschaft fortführen</identifier>
+         <name>020201</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Katasterliche Personendaten fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Katasterliche Personendaten fortführen</identifier>
+         <name>020300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Kompletter Eigentumswechsel im Grundbuchblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Kompletter Eigentumswechsel im Grundbuchblatt</identifier>
+         <name>050101</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Löschen des Flurstückes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Löschen des Flurstückes</identifier>
+         <name>010308</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Löschen eines Gebäudes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Löschen eines Gebäudes</identifier>
+         <name>200300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Modellgeneralisierung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Modellgeneralisierung</identifier>
+         <name>3000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Nachtrag zur Flurbereinigung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Nachtrag zur Flurbereinigung</identifier>
+         <name>010618</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Namensnummer von katasterlichen Buchungsstellen verändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Namensnummer von katasterlichen Buchungsstellen verändern</identifier>
+         <name>020200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Namensänderung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Namensänderung</identifier>
+         <name>050400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Neufassung des Grundbuchs (§§ 33, 69 GBV)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Neufassung des Grundbuchs (§§ 33, 69 GBV)</identifier>
+         <name>061100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Personengruppe eintragen oder ändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Personengruppe eintragen oder ändern</identifier>
+         <name>090200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Qualitätssicherung und Datenpflege">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Qualitätssicherung und Datenpflege</identifier>
+         <name>010704</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Rechte buchen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Rechte buchen</identifier>
+         <name>070000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Sonderung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Sonderung</identifier>
+         <name>010107</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Sonstige Daten fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Sonstige Daten fortführen</identifier>
+         <name>300000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Sonstige Rechte anlegen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Sonstige Rechte anlegen</identifier>
+         <name>070700</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Sonstige Rechte aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Sonstige Rechte aufheben</identifier>
+         <name>070800</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Sonstiges">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Sonstiges</identifier>
+         <name>9999</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Spitzenaktualisierung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Spitzenaktualisierung</identifier>
+         <name>2000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung</identifier>
+         <name>060200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung Herrschvermerk aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung Herrschvermerk aufheben</identifier>
+         <name>071100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung am ungetrennten Hofraum aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung am ungetrennten Hofraum aufheben</identifier>
+         <name>080700</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung einer Buchung § 3 Abs. 4 GBO nach Wohnungseigentumsgesetz">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung einer Buchung § 3 Abs. 4 GBO nach Wohnungseigentumsgesetz</identifier>
+         <name>080800</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung eines Anteils am ungetrennten Hofraum nach Wohnungseigentumsgesetz">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung eines Anteils am ungetrennten Hofraum nach Wohnungseigentumsgesetz</identifier>
+         <name>080900</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung eines Herrschvermerks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung eines Herrschvermerks</identifier>
+         <name>080500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung eines sonstigen Rechts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung eines sonstigen Rechts</identifier>
+         <name>080600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilung sonstiges Recht aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilung sonstiges Recht aufheben</identifier>
+         <name>071200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Teilweiser Eigentumswechsel im Grundbuchblatt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Teilweiser Eigentumswechsel im Grundbuchblatt</identifier>
+         <name>050102</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Umlegung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Umlegung</identifier>
+         <name>010621</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Umlegung nach § 76 BauGB">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Umlegung nach § 76 BauGB</identifier>
+         <name>010622</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Umnummerierung (infolge Zuständigkeitsänderungen am Grundbuch)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Umnummerierung (infolge Zuständigkeitsänderungen am Grundbuch)</identifier>
+         <name>030100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Umschreibung des Grundbuchs (§§ 28 ff, 68 GBV)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Umschreibung des Grundbuchs (§§ 28 ff, 68 GBV)</identifier>
+         <name>061000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Untererbbaurecht anlegen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Untererbbaurecht anlegen</identifier>
+         <name>070500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Untererbbaurecht aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Untererbbaurecht aufheben</identifier>
+         <name>070600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Untergang eines Festpunktes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Untergang eines Festpunktes</identifier>
+         <name>090540</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Vereinfachte Umlegung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Vereinfachte Umlegung</identifier>
+         <name>010623</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Vereinigung (§ 890 Abs. 1 BGB, § 5 GBO)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Vereinigung (§ 890 Abs. 1 BGB, § 5 GBO)</identifier>
+         <name>060400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verfahren nach dem Baugesetzbuch">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verfahren nach dem Baugesetzbuch</identifier>
+         <name>010602</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verfahren nach dem Flurbereinigungsgesetz">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verfahren nach dem Flurbereinigungsgesetz</identifier>
+         <name>010601</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Vermessung der Verfahrensgrenze des Flurbereinigungsgebietes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Vermessung der Verfahrensgrenze des Flurbereinigungsgebietes</identifier>
+         <name>010616</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verschmelzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verschmelzung</identifier>
+         <name>010102</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verschmelzung von Flurstücken auf unterschiedlichen Beständen/Buchungsstellen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verschmelzung von Flurstücken auf unterschiedlichen Beständen/Buchungsstellen</identifier>
+         <name>010199</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verwaltung eintragen oder ändern">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verwaltung eintragen oder ändern</identifier>
+         <name>090100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Verzeichnisse außerhalb des Grundbuches fortführen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Verzeichnisse außerhalb des Grundbuches fortführen</identifier>
+         <name>020000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung am Flurstück mit Änderung der Umfangsgrenzen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung am Flurstück mit Änderung der Umfangsgrenzen</identifier>
+         <name>010203</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung am Flurstück mit Änderung der Umfangsgrenzen des Grundstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung am Flurstück mit Änderung der Umfangsgrenzen des Grundstücks</identifier>
+         <name>010200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung an der Landesgrenze und des Gebietes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung an der Landesgrenze und des Gebietes</identifier>
+         <name>6000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund Berichtigung eines Aufnahmefehlers">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund Berichtigung eines Aufnahmefehlers</identifier>
+         <name>010205</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund Berichtigung eines Grenzbestimmungsfehlers">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund Berichtigung eines Grenzbestimmungsfehlers</identifier>
+         <name>010207</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund der Homogenisierung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund der Homogenisierung</identifier>
+         <name>300500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund der Kartenanpassung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund der Kartenanpassung</identifier>
+         <name>300501</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund der Qualitätsverbesserung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund der Qualitätsverbesserung</identifier>
+         <name>010703</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund der Vorschriften des Straßenrechts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund der Vorschriften des Straßenrechts</identifier>
+         <name>010201</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund der Vorschriften des Wasserrechts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund der Vorschriften des Wasserrechts</identifier>
+         <name>010202</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung aufgrund gerichtlicher Entscheidung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung aufgrund gerichtlicher Entscheidung</identifier>
+         <name>010206</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Angaben zu den Nutzerprofilen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Angaben zu den Nutzerprofilen</identifier>
+         <name>100000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Anschrift aufgrund katasterlicher Erhebung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Anschrift aufgrund katasterlicher Erhebung</identifier>
+         <name>020303</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Beschreibung des Flurstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Beschreibung des Flurstücks</identifier>
+         <name>010400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Bewertung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Bewertung</identifier>
+         <name>300430</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Bezeichnung oder der Zugehörigkeit des Flurstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Bezeichnung oder der Zugehörigkeit des Flurstücks</identifier>
+         <name>010300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Bodenschätzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Bodenschätzung</identifier>
+         <name>300420</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Flurstücksbezeichnung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Flurstücksbezeichnung</identifier>
+         <name>010301</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Flurstücksnummer">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Flurstücksnummer</identifier>
+         <name>010312</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Flurzugehörigkeit">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Flurzugehörigkeit</identifier>
+         <name>010305</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gebietseinheiten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gebietseinheiten</identifier>
+         <name>300440</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gebäudeeigenschaften">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gebäudeeigenschaften</identifier>
+         <name>200200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gemarkungszugehörigkeit">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gemarkungszugehörigkeit</identifier>
+         <name>010302</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gemeindezugehörigkeit">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gemeindezugehörigkeit</identifier>
+         <name>010310</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gemeindezugehörigkeit einzelner Flurstücke">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gemeindezugehörigkeit einzelner Flurstücke</identifier>
+         <name>010309</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Gemeindezugehörigkeit ganzer Gemarkungen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Gemeindezugehörigkeit ganzer Gemarkungen</identifier>
+         <name>010303</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Geometrie durch Implizitbehandlung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Geometrie durch Implizitbehandlung</identifier>
+         <name>300900</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Lage">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Lage</identifier>
+         <name>010402</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Personendaten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Personendaten</identifier>
+         <name>020301</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Personengruppe">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Personengruppe</identifier>
+         <name>020302</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Reservierung von Fachkennzeichen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Reservierung von Fachkennzeichen</identifier>
+         <name>300600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Vermarkung und/oder der beschreibenden Angaben eines Festpunkts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Vermarkung und/oder der beschreibenden Angaben eines Festpunkts</identifier>
+         <name>090520</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Vertretung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Vertretung</identifier>
+         <name>020305</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der Verwaltung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der Verwaltung</identifier>
+         <name>020304</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der besonderen Flurstücksgrenze">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der besonderen Flurstücksgrenze</identifier>
+         <name>010401</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der tatsächlichen Nutzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der tatsächlichen Nutzung</identifier>
+         <name>300300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der tatsächlichen Nutzung mit Änderung der Wirtschaftsart">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der tatsächlichen Nutzung mit Änderung der Wirtschaftsart</identifier>
+         <name>010403</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der tatsächlichen Nutzung ohne Änderung der Wirtschaftsart">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der tatsächlichen Nutzung ohne Änderung der Wirtschaftsart</identifier>
+         <name>010405</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung der öffentlich-rechtlichen und sonstigen Festsetzungen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung der öffentlich-rechtlichen und sonstigen Festsetzungen</identifier>
+         <name>300410</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung des Anliegervermerks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung des Anliegervermerks</identifier>
+         <name>010404</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung nach dem Grenzbereinigungsgesetz">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung nach dem Grenzbereinigungsgesetz</identifier>
+         <name>HE1100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung von Bauwerken, Einrichtungen und sonstigen Angaben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung von Bauwerken, Einrichtungen und sonstigen Angaben</identifier>
+         <name>300200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung von Gebäudedaten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung von Gebäudedaten</identifier>
+         <name>200000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung von Katalogeinträgen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung von Katalogeinträgen</identifier>
+         <name>300700</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung von Metadaten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung von Metadaten</identifier>
+         <name>300800</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderung von gesetzlichen Festlegungen, Gebietseinheiten, Katalogen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderung von gesetzlichen Festlegungen, Gebietseinheiten, Katalogen</identifier>
+         <name>300400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderungen am Flurstück ohne Änderung der Umfangsgrenzen des Grundstücks">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderungen am Flurstück ohne Änderung der Umfangsgrenzen des Grundstücks</identifier>
+         <name>010100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Veränderungen der Angaben zum Netzpunkt">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Veränderungen der Angaben zum Netzpunkt</identifier>
+         <name>300100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Vollziehung einer Verschmelzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Vollziehung einer Verschmelzung</identifier>
+         <name>060600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Vorzeitige Grundbuchberichtigung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Vorzeitige Grundbuchberichtigung</identifier>
+         <name>010690</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Wohnungserbbaurecht aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Wohnungserbbaurecht aufheben</identifier>
+         <name>070900</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Wohnungsuntererbbaurecht aufheben">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Wohnungsuntererbbaurecht aufheben</identifier>
+         <name>071000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Zerlegung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Zerlegung</identifier>
+         <name>010105</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Zerlegung oder Sonderung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Zerlegung oder Sonderung</identifier>
+         <name>010101</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Zerlegung und Verschmelzung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Zerlegung und Verschmelzung</identifier>
+         <name>010103</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Zerstörung der Vermarkung eines Festpunkts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Zerstörung der Vermarkung eines Festpunkts</identifier>
+         <name>090530</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="Zuschreibung eines Flurstückes (Gebietsreform)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Zuschreibung eines Flurstückes (Gebietsreform)</identifier>
+         <name>010801</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Ändern in Verzeichnissen ohne Grundbucheintragung">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Ändern in Verzeichnissen ohne Grundbucheintragung</identifier>
+         <name>090000</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderung aufgrund des Eisenbahnneuordnungsgesetzes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderung aufgrund des Eisenbahnneuordnungsgesetzes</identifier>
+         <name>010614</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderung aufgrund des Landwirtschaftsanpassungsgesetzes">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderung aufgrund des Landwirtschaftsanpassungsgesetzes</identifier>
+         <name>010613</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderung der Anschrift">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderung der Anschrift</identifier>
+         <name>090300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderung der Personendaten">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderung der Personendaten</identifier>
+         <name>090400</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderung von Koordinaten, Höhe und/oder Schwerewert eines Festpunkts">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderung von Koordinaten, Höhe und/oder Schwerewert eines Festpunkts</identifier>
+         <name>090510</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderungen am Wohnungseigentum">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderungen am Wohnungseigentum</identifier>
+         <name>040100</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderungen am Wohnungserbbaurecht">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderungen am Wohnungserbbaurecht</identifier>
+         <name>040200</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderungen am Wohnungsuntererbbaurecht">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderungen am Wohnungsuntererbbaurecht</identifier>
+         <name>040300</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderungen an den Beziehungen  zwischen den Buchungsstellen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderungen an den Beziehungen  zwischen den Buchungsstellen</identifier>
+         <name>040500</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Änderungen in der Ergänzung, Beschreibung sowie der Bemerkung zu Buchungen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Änderungen in der Ergänzung, Beschreibung sowie der Bemerkung zu Buchungen</identifier>
+         <name>040600</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von Bodenschätzung und Bewertung (Ersterfassung)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von Bodenschätzung und Bewertung (Ersterfassung)</identifier>
+         <name>HE7401</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von Bodenschätzung und Bewertung (Fortführung der Geometrie)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von Bodenschätzung und Bewertung (Fortführung der Geometrie)</identifier>
+         <name>HE7403</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von Bodenschätzung und Bewertung (Nachschätzung)">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von Bodenschätzung und Bewertung (Nachschätzung)</identifier>
+         <name>HE7402</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von Flurbereinigungsergebnissen">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von Flurbereinigungsergebnissen</identifier>
+         <name>010619</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von Flurstücken einer anderen katasterführenden Stelle">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von Flurstücken einer anderen katasterführenden Stelle</identifier>
+         <name>010304</name>
+      </Definition>
+   </dictionaryEntry>
+   <dictionaryEntry>
+      <Definition gml:id="_Übernahme von wichtigen Terminen im Ablauf eines Bodenordnungsverfahrens">
+         <identifier codeSpace="http://example.org/shapechange/codeListLoader/AA_Anlassart">Übernahme von wichtigen Terminen im Ablauf eines Bodenordnungsverfahrens</identifier>
+         <name>010615</name>
+      </Definition>
+   </dictionaryEntry>
+</Dictionary>

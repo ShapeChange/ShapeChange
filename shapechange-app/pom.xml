@@ -148,6 +148,7 @@
 							<phase>package</phase>
 							<goals>
 								<goal>jar</goal>
+								<goal>test-jar</goal>
 							</goals>
 							<configuration>
 								<archive>

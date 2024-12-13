@@ -57,6 +57,7 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 public class LdpSpecialPropertiesInfo {
 
     private PropertyInfo identifierPiOfCi = null;
+    private PropertyInfo identifierPiOfCiOrSupertype = null;
     private boolean multipleIdentifierPisEncountered = false;
     private boolean encodeAdditionalIdentifierProp = false;
 
@@ -216,6 +217,10 @@ public class LdpSpecialPropertiesInfo {
     private void determineIdentifierInfos() {
 
 	List<PropertyInfo> allIdentifierProperties = identifierProperties(ci, new ArrayList<>());
+
+	if (allIdentifierProperties.size() == 1) {
+	    identifierPiOfCiOrSupertype = allIdentifierProperties.get(0);
+	}
 
 	List<PropertyInfo> identifierPropsFromCurrentCi = allIdentifierProperties.stream()
 		.filter(pi -> pi.inClass() == ci).collect(Collectors.toList());
@@ -513,6 +518,13 @@ public class LdpSpecialPropertiesInfo {
      */
     public PropertyInfo getIdentifierPiOfCi() {
 	return identifierPiOfCi;
+    }
+
+    /**
+     * @return the identifierPiOfCiOrSupertype
+     */
+    public PropertyInfo getIdentifierPiOfCiOrSupertype() {
+	return identifierPiOfCiOrSupertype;
     }
 
     /**

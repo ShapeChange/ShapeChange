@@ -47,7 +47,7 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
  *
  */
 public abstract class LdpBuildingBlockBuilder {
-    
+
     /**
      * Property transformations, to be added to the building blocks of type
      * collections in the service configuration.
@@ -83,4 +83,12 @@ public abstract class LdpBuildingBlockBuilder {
     public Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> getPropertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass() {
 	return this.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass;
     }
+
+    public boolean hasTransformations(ClassInfo ci) {
+	return this.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)
+		&& !this.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.get(ci)
+			.isEmpty();
+    }
+    
+    public abstract boolean hasInputForServiceCollection(ClassInfo ci);
 }

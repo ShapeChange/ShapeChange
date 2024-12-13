@@ -16,7 +16,7 @@
   <rdfs:Datatype rdf:about="http://shapechange.net/resources/ont/base#Measure">
     <skos:notation rdf:datatype="http://www.w3.org/2001/XMLSchema#NCName">Measure</skos:notation>
     <skos:prefLabel xml:lang="en">measure</skos:prefLabel>
-    <skos:defnition>A text representation of a measure value. The decimal value is followed by a space and the unit of the measure.</skos:defnition>
+    <skos:definition>A text representation of a measure value. The decimal value is followed by a space and the unit of the measure.</skos:definition>
   </rdfs:Datatype>
 
   <rdfs:Datatype rdf:about="http://shapechange.net/resources/ont/base#Sign">

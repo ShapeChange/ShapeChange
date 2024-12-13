@@ -373,7 +373,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	if (StringUtils.isNotBlank(gmlIdPrefix)) {
 	    scConfigGmlBuilder.gmlIdPrefix(gmlIdPrefix);
 	}
-	if(gmlIdOnGeometries) {
+	if (gmlIdOnGeometries) {
 	    scConfigGmlBuilder.gmlIdOnGeometries(true);
 	}
 	if (gmlSfLevel != null && gmlSfLevel != -1) {
@@ -439,5 +439,14 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    }
 	    xmlAttributes.add(propertyPath);
 	}
+    }
+
+    @Override
+    public boolean hasInputForServiceCollection(ClassInfo ci) {
+	/*
+	 * TODO be more specific; for now, we assume that if gml output is enabled, then
+	 * each collection has something to say
+	 */
+	return true;
     }
 }

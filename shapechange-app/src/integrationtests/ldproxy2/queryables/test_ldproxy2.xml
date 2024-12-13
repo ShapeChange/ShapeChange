@@ -93,7 +93,7 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/ldproxy2/queryables/results/featureref" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="queryables" value="attDate,attInt,attPoint,attCharacter,roleFTtoT"/>
+			<targetParameter name="queryables" value="attInt,attPoint,attCharacter,roleFTtoT"/>
 			<targetParameter name="associativeTableColumnSuffix"
 				value="_id" />
 <!-- 			<targetParameter name="cfgTemplatePath" -->

@@ -1,0 +1,125 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 25832
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: _id
+  sortKey: _id
+types:
+  featuretype1:
+    sourcePath: /featuretype1
+    type: OBJECT
+    properties:
+      attDtA:
+        sourcePath: "[attdta_fkdt=_id]datatype1"
+        type: OBJECT
+        objectType: DataType1
+        properties:
+          attDt2:
+            sourcePath: "[_id=datatype1_id]DataType1_attDt2{sortKey=datatype1_id}/attdt2"
+            type: VALUE_ARRAY
+            valueType: FLOAT
+        schema: "#/fragments/datatype1"
+      attDtB:
+        sourcePath: "[_id=featuretype1_id]FeatureType1_attDtB/[datatype1_id=_id]datatype1"
+        type: OBJECT_ARRAY
+        objectType: DataType1
+        properties:
+          attDt2:
+            sourcePath: "[_id=datatype1_id]DataType1_attDt2{sortKey=datatype1_id}/attdt2"
+            type: VALUE_ARRAY
+            valueType: FLOAT
+        schema: "#/fragments/datatype1"
+      attUA:
+        sourcePath: "[attua_fkdt=_id]union1"
+        type: OBJECT
+        objectType: Union1
+        properties:
+          attU2:
+            sourcePath: "[_id=union1_id]Union1_attU2{sortKey=union1_id}/attu2"
+            type: VALUE_ARRAY
+            valueType: STRING
+        schema: "#/fragments/union1"
+      attUB:
+        sourcePath: "[_id=featuretype1_id]FeatureType1_attUB/[union1_id=_id]union1"
+        type: OBJECT_ARRAY
+        objectType: Union1
+        properties:
+          attU2:
+            sourcePath: "[_id=union1_id]Union1_attU2{sortKey=union1_id}/attu2"
+            type: VALUE_ARRAY
+            valueType: STRING
+        schema: "#/fragments/union1"
+    schema: "#/fragments/featuretype1"
+fragments:
+  datatype1:
+    type: OBJECT
+    objectType: DataType1
+    properties:
+      attDt1:
+        sourcePath: attdt1
+        type: INTEGER
+        constraints:
+          required: true
+      attDt2:
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        constraints:
+          minOccurrence: 0
+  featuretype1:
+    type: OBJECT
+    objectType: FeatureType1
+    properties:
+      oid:
+        sourcePath: _id
+        type: INTEGER
+        role: ID
+      attDtA:
+        type: OBJECT
+        objectType: DataType1
+        constraints:
+          required: true
+        schema: "#/fragments/datatype1"
+      attDtB:
+        type: OBJECT_ARRAY
+        objectType: DataType1
+        constraints:
+          required: true
+          minOccurrence: 1
+        schema: "#/fragments/datatype1"
+      attUA:
+        type: OBJECT
+        objectType: Union1
+        constraints:
+          required: true
+        schema: "#/fragments/union1"
+      attUB:
+        type: OBJECT_ARRAY
+        objectType: Union1
+        constraints:
+          required: true
+          minOccurrence: 1
+        schema: "#/fragments/union1"
+  union1:
+    type: OBJECT
+    objectType: Union1
+    properties:
+      attU1:
+        sourcePath: attu1
+        type: BOOLEAN
+      attU2:
+        type: VALUE_ARRAY
+        valueType: STRING
+        constraints:
+          minOccurrence: 0

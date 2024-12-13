@@ -1029,7 +1029,6 @@ The following information items are encoded for the type definition of the «dat
 or as defined for data type valued properties in section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>
 // {<<ldproxy2_schemaconversionrules_types_database_table_names,db_table_name>>}
 * In fragment definitions:
-** label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
 ** description: value as derived using the _descriptionTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
 * properties: as documented in section <<ldproxy2_schemaconversionrules_properties>>
 
@@ -1069,6 +1068,9 @@ The following information items are encoded within the YAML file:
 
 * id: the enumeration / code list ID
 * label: value as derived using the _labelTemplate_ (see the <<ldproxy2_schemaconversionrules_documentation,documentation>> section for further details)
+* description: value as derived using the _descriptionTemplate_ 
+(see the <<ldproxy2_schemaconversionrules_documentation,documentation>> 
+section for further details)
 * sourceType: TEMPLATES
 * entries: One entry `{code}: {target_value}` per enum / code defined by the enumeration / code list
 ** An enum / code is represented by an attribute in the UML model.

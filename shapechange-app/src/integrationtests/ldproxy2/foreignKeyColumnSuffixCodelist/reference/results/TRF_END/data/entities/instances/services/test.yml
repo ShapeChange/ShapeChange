@@ -26,11 +26,7 @@ collections:
     id: ts2_featuretype1
     label: ts2_featuretype1
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML
   ts2_featuretype2:
     id: ts2_featuretype2
     label: ts2_featuretype2
     enabled: true
-    api:
-    - buildingBlock: FEATURES_HTML

@@ -34,47 +34,34 @@ collections:
     label: FT1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   FT2:
     id: FT2
     label: FT2
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   FT2Sub1Sub1:
     id: FT2Sub1Sub1
     label: FT2Sub1Sub1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   FT3:
     id: FT3
     label: FT3
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   FT4:
     id: FT4
     label: FT4
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
     - buildingBlock: GEO_JSON
@@ -98,28 +85,19 @@ collections:
     label: FT5
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   FT5Sub1:
     id: FT5Sub1
     label: FT5Sub1
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG
   T:
     id: T
     label: T
     enabled: true
     api:
-    - buildingBlock: FEATURES_HTML
     - buildingBlock: GML
       conformance: NONE
-    - buildingBlock: GEO_JSON
-    - buildingBlock: JSON_FG

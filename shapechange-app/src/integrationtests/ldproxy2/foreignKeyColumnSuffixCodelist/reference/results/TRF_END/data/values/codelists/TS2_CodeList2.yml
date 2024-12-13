@@ -1,5 +1,6 @@
 ---
 label: Alias TS2_Codelist2
+description: Documentation TS2_CodeList2
 entries:
   A: codeA
   B: codeB

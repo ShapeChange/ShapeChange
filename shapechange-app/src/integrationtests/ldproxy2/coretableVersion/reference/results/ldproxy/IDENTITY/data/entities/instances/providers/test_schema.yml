@@ -20,11 +20,11 @@ types:
   FeatureTypeA:
     sourcePath: "/features{filter=featuretype='FeatureTypeA' AND myversion='1.1'}"
     type: OBJECT
-    schema: '#/fragments/FeatureTypeA'
+    schema: "#/fragments/FeatureTypeA"
   FeatureTypeB:
     sourcePath: "/features{filter=featuretype='FeatureTypeB' AND myversion='1.1'}"
     type: OBJECT
-    schema: '#/fragments/FeatureTypeB'
+    schema: "#/fragments/FeatureTypeB"
 fragments:
   FeatureTypeA:
     type: OBJECT

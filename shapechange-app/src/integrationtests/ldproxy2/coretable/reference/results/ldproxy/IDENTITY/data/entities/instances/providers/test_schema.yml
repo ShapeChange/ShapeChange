@@ -21,47 +21,46 @@ types:
     sourcePath: "/features{filter=featuretype='FT1'}"
     type: OBJECT
     label: FT1
-    schema: '#/fragments/FT1'
+    schema: "#/fragments/FT1"
   FT2:
     sourcePath: "/features{filter=featuretype='FT2'}"
     type: OBJECT
     label: FT2
-    schema: '#/fragments/FT2'
+    schema: "#/fragments/FT2"
   FT2Sub1Sub1:
     sourcePath: "/features{filter=featuretype='FT2Sub1Sub1'}"
     type: OBJECT
     label: FT2Sub1Sub1
-    schema: '#/fragments/FT2Sub1Sub1'
+    schema: "#/fragments/FT2Sub1Sub1"
   FT3:
     sourcePath: "/features{filter=featuretype='FT3'}"
     type: OBJECT
     label: FT3
-    schema: '#/fragments/FT3'
+    schema: "#/fragments/FT3"
   FT4:
     sourcePath: "/features{filter=featuretype='FT4'}"
     type: OBJECT
     label: FT4
-    schema: '#/fragments/FT4'
+    schema: "#/fragments/FT4"
   FT5:
     sourcePath: "/features{filter=featuretype='FT5'}"
     type: OBJECT
     label: FT5
-    schema: '#/fragments/FT5'
+    schema: "#/fragments/FT5"
   FT5Sub1:
     sourcePath: "/features{filter=featuretype='FT5Sub1'}"
     type: OBJECT
     label: FT5Sub1
-    schema: '#/fragments/FT5Sub1'
+    schema: "#/fragments/FT5Sub1"
   T:
     sourcePath: "/features{filter=featuretype='T'}"
     type: OBJECT
     label: T
-    schema: '#/fragments/T'
+    schema: "#/fragments/T"
 fragments:
   DT:
     type: OBJECT
     objectType: DT
-    label: DT
     properties:
       attDt1A:
         sourcePath: attDt1A
@@ -78,11 +77,10 @@ fragments:
         constraints:
           required: true
           minOccurrence: 1
-        schema: '#/fragments/DT2'
+        schema: "#/fragments/DT2"
   DT2:
     type: OBJECT
     objectType: DT2
-    label: DT2
     properties:
       attDt2A:
         sourcePath: attDt2A
@@ -125,7 +123,6 @@ fragments:
   DT3:
     type: OBJECT
     objectType: DT3
-    label: DT3
     properties:
       generAttribute:
         sourcePath: generAttribute
@@ -134,7 +131,7 @@ fragments:
         label: generAttribute
         constraints:
           required: true
-        schema: '#/fragments/GenerAttribute'
+        schema: "#/fragments/GenerAttribute"
   FT1:
     type: OBJECT
     objectType: FT1
@@ -171,7 +168,7 @@ fragments:
         label: attDt
         constraints:
           required: true
-        schema: '#/fragments/DT'
+        schema: "#/fragments/DT"
       roleT:
         sourcePath: "[id=base_id]references{filter=rel='roleT'}/[related_id=id]features"
         type: FEATURE_REF
@@ -280,14 +277,14 @@ fragments:
     type: OBJECT
     objectType: FT2Sub1
     label: FT2Sub1
-    schema: '#/fragments/FT2'
+    schema: "#/fragments/FT2"
   FT2Sub1Sub1:
     type: OBJECT
     objectType: FT2Sub1Sub1
     label: FT2Sub1Sub1
     merge:
-    - schema: '#/fragments/FT2Sub1'
-    - schema: '#/fragments/Mixin'
+    - schema: "#/fragments/FT2Sub1"
+    - schema: "#/fragments/Mixin"
     - properties:
         attFt2subsub:
           sourcePath: "[JSON]properties/attFt2subsub"
@@ -356,7 +353,7 @@ fragments:
         type: OBJECT
         objectType: GenerAttribute
         label: someGenerAttribute
-        schema: '#/fragments/GenerAttribute'
+        schema: "#/fragments/GenerAttribute"
       otherGenerAttribute:
         sourcePath: "[JSON]properties/otherGenerAttribute"
         type: OBJECT_ARRAY
@@ -364,7 +361,7 @@ fragments:
         label: otherGenerAttribute
         constraints:
           minOccurrence: 0
-        schema: '#/fragments/GenerAttribute'
+        schema: "#/fragments/GenerAttribute"
       attDt3:
         sourcePath: "[JSON]properties/attDt3"
         type: OBJECT
@@ -372,7 +369,7 @@ fragments:
         label: attDt3
         constraints:
           required: true
-        schema: '#/fragments/DT3'
+        schema: "#/fragments/DT3"
   FT5:
     type: OBJECT
     objectType: FT5
@@ -392,11 +389,10 @@ fragments:
     type: OBJECT
     objectType: FT5Sub1
     label: FT5Sub1
-    schema: '#/fragments/FT5'
+    schema: "#/fragments/FT5"
   GenerAttribute:
     type: OBJECT
     objectType: GenerAttribute
-    label: GenerAttribute
     properties:
       name:
         sourcePath: name

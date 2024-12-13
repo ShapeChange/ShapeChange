@@ -32,11 +32,29 @@
 				<ProcessMapEntry type="ExtFT1" targetType="ExtFT2" rule="*"/>
 			</mapEntries>			
 		</Transformer>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.typeconversion.TypeConverter"
+			input="INPUT" id="trf2" mode="enabled">	
+			<parameters>
+				<ProcessParameter name="propertiesToSwitch" value="attInteger, FT1.rFT1toExtFT1"/>
+			</parameters>
+			<rules>
+				<ProcessRuleSet name="convert">
+					<rule name="rule-trf-switchValueTypes" />
+				</ProcessRuleSet>
+			</rules>
+			<mapEntries>
+				<ProcessMapEntry type="Integer" targetType="CharacterString" rule="*"/>
+				<ProcessMapEntry type="ExtDT1" targetType="ExtDT2" rule="*"/>
+				<ProcessMapEntry type="FT2" targetType="FT3" rule="*"/>
+				<ProcessMapEntry type="ExtFT1" targetType="ExtFT2" rule="*"/>
+			</mapEntries>			
+		</Transformer>
 	</transformers>
 	<targets>
 		<TargetXmlSchema
 			class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
-			inputs="INPUT trf" mode="enabled">
+			inputs="INPUT trf trf2" mode="enabled">
 			<targetParameter name="outputDirectory" value="testResults/typeConversion/switchValueTypes/xsd" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="gml33" />			

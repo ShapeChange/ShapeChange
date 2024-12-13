@@ -1,0 +1,42 @@
+---
+id: test_schema
+label: MyServiceLabel
+description: '...'
+enabled: true
+serviceType: OGC_API
+api:
+- buildingBlock: CRS
+  enabled: true
+  additionalCrs:
+  - code: 12345
+    forceAxisOrder: LON_LAT
+  - code: 25832
+    forceAxisOrder: NONE
+  - code: 25833
+    forceAxisOrder: NONE
+- buildingBlock: FILTER
+  enabled: true
+- buildingBlock: JSON_FG
+  enabled: true
+  featureType:
+  - "{{type}}"
+  includeInGeoJson:
+  - featureType
+  - coordRefSys
+collections:
+  featuretype1:
+    id: featuretype1
+    label: featuretype1
+    enabled: true
+  featuretype2:
+    id: featuretype2
+    label: featuretype2
+    enabled: true
+  featuretype3:
+    id: featuretype3
+    label: featuretype3
+    enabled: true
+  type1:
+    id: type1
+    label: type1
+    enabled: true

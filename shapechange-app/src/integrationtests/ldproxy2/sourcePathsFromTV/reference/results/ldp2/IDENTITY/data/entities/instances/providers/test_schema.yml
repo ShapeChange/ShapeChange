@@ -43,7 +43,7 @@ types:
         - sourcePath: attc3
           type: VALUE_ARRAY
           valueType: INTEGER
-    schema: '#/fragments/featuretype'
+    schema: "#/fragments/featuretype"
 fragments:
   featuretype:
     type: OBJECT

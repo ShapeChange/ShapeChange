@@ -65,7 +65,7 @@ types:
         sourcePath: "[_id=t1_class1_id]c1py/py"
         type: VALUE_ARRAY
         valueType: STRING
-    schema: '#/fragments/t1_class1'
+    schema: "#/fragments/t1_class1"
   t1_class2:
     sourcePath: /t1_class2
     type: OBJECT
@@ -107,12 +107,12 @@ types:
           type: FEATURE_REF
           valueType: INTEGER
           refType: t1_class1
-    schema: '#/fragments/t1_class2'
+    schema: "#/fragments/t1_class2"
   t2_class1:
     sourcePath: /t2_class1
     type: OBJECT
     label: T2_Class1
-    schema: '#/fragments/t2_class1'
+    schema: "#/fragments/t2_class1"
   t3_class1:
     sourcePath: /t3_class1
     type: OBJECT
@@ -127,13 +127,13 @@ types:
             sourcePath: "[_id=t3_class2_id]t3_class1_p2_t3c2p2"
             type: OBJECT
             objectType: T3_Class2SubDt
-            schema: '#/fragments/t3_class2subdt'
+            schema: "#/fragments/t3_class2subdt"
           t3c2p3:
             sourcePath: "[_id=t3_class2_id]t3_class1_p2_t3c2p3"
             type: OBJECT_ARRAY
             objectType: T3_Class2SubDt
-            schema: '#/fragments/t3_class2subdt'
-        schema: '#/fragments/t3_class2'
+            schema: "#/fragments/t3_class2subdt"
+        schema: "#/fragments/t3_class2"
       p3:
         sourcePath: "[_id=t3_class1_id]t3_class1_p3"
         type: OBJECT
@@ -143,7 +143,7 @@ types:
             sourcePath: "[_id=t3_class3_id]t3_class1_p3_t3c3p1/t3c3p1"
             type: VALUE_ARRAY
             valueType: STRING
-        schema: '#/fragments/t3_class3'
+        schema: "#/fragments/t3_class3"
       p4:
         type: OBJECT_ARRAY
         concat:
@@ -155,7 +155,7 @@ types:
               sourcePath: "[_id=t3_class4_id]t3_class1_p4_t3_class4_t3c4p3/t3c4p3"
               type: VALUE_ARRAY
               valueType: INTEGER
-          schema: '#/fragments/t3_class4'
+          schema: "#/fragments/t3_class4"
         - sourcePath: "[_id=t3_class1_id]t3_class1_p4_t3_class4sub"
           type: OBJECT_ARRAY
           objectType: T3_Class4Sub
@@ -168,7 +168,7 @@ types:
               sourcePath: "[_id=t3_class4sub_id]t3_class1_p4_t3_class4sub_t3c4subp2/t3c4subp2"
               type: VALUE_ARRAY
               valueType: STRING
-          schema: '#/fragments/t3_class4sub'
+          schema: "#/fragments/t3_class4sub"
       p6:
         sourcePath: "[_id=t3_class1_id]t3_class1_p6/tb_extdtinmodel_id"
         type: FEATURE_REF_ARRAY
@@ -191,7 +191,7 @@ types:
               sourcePath: "[_id=t3_class4_id]t3_class1_p9_t3_class4_t3c4p3/t3c4p3"
               type: VALUE_ARRAY
               valueType: INTEGER
-          schema: '#/fragments/t3_class4'
+          schema: "#/fragments/t3_class4"
         - sourcePath: "[_id=t3_class1_id]t3_class1_p9_t3_class4sub"
           type: OBJECT
           objectType: T3_Class4Sub
@@ -204,8 +204,8 @@ types:
               sourcePath: "[_id=t3_class4sub_id]t3_class1_p9_t3_class4sub_t3c4subp2/t3c4subp2"
               type: VALUE_ARRAY
               valueType: STRING
-          schema: '#/fragments/t3_class4sub'
-    schema: '#/fragments/t3_class1'
+          schema: "#/fragments/t3_class4sub"
+    schema: "#/fragments/t3_class1"
   t4_class1:
     sourcePath: /t4_class1
     type: OBJECT
@@ -221,7 +221,7 @@ types:
         type: FEATURE_REF_ARRAY
         valueType: INTEGER
         refUriTemplate: "https://example.org/external/ExternalFeatureType/{{value}}"
-    schema: '#/fragments/t4_class1'
+    schema: "#/fragments/t4_class1"
   t5_class1:
     sourcePath: /t5_class1
     type: OBJECT
@@ -231,7 +231,7 @@ types:
         sourcePath: "[_id=t5_class1_id]t5_class1_t5c1p1/t5c1p1"
         type: VALUE_ARRAY
         valueType: STRING
-    schema: '#/fragments/t5_class1'
+    schema: "#/fragments/t5_class1"
   t5_class2:
     sourcePath: /t5_class2
     type: OBJECT
@@ -241,7 +241,7 @@ types:
         sourcePath: "[_id=t5_class2_id]t5_class2_t5c1p1/t5c1p1"
         type: VALUE_ARRAY
         valueType: STRING
-    schema: '#/fragments/t5_class2'
+    schema: "#/fragments/t5_class2"
   t6_class1:
     sourcePath: /t6_class1
     type: OBJECT
@@ -308,12 +308,12 @@ types:
         type: FEATURE_REF
         valueType: INTEGER
         refType: t6_class2
-    schema: '#/fragments/t6_class1'
+    schema: "#/fragments/t6_class1"
   t6_class2:
     sourcePath: /t6_class2
     type: OBJECT
     label: T6_Class2
-    schema: '#/fragments/t6_class2'
+    schema: "#/fragments/t6_class2"
   t7_class1:
     sourcePath: /t7_class1
     type: OBJECT
@@ -332,8 +332,8 @@ types:
             sourcePath: "[_id=t7_datatype_id]t7_class1_att3_attdt2/t7_codelist_id"
             type: VALUE_ARRAY
             valueType: STRING
-        schema: '#/fragments/t7_datatype'
-    schema: '#/fragments/t7_class1'
+        schema: "#/fragments/t7_datatype"
+    schema: "#/fragments/t7_class1"
   t8_class1:
     sourcePath: /t8_class1
     type: OBJECT
@@ -352,7 +352,7 @@ types:
         type: FEATURE_REF_ARRAY
         valueType: INTEGER
         refType: t8_class2sub
-    schema: '#/fragments/t8_class1'
+    schema: "#/fragments/t8_class1"
   t8_class1sub:
     sourcePath: /t8_class1sub
     type: OBJECT
@@ -375,7 +375,7 @@ types:
         sourcePath: "[_id=t8_class1sub_id]t8_class1sub_attc1submult/attc1submult"
         type: VALUE_ARRAY
         valueType: STRING
-    schema: '#/fragments/t8_class1sub'
+    schema: "#/fragments/t8_class1sub"
   t8_class2sub:
     sourcePath: /t8_class2sub
     type: OBJECT
@@ -392,7 +392,7 @@ types:
           type: FEATURE_REF_ARRAY
           valueType: INTEGER
           refType: t8_class1sub
-    schema: '#/fragments/t8_class2sub'
+    schema: "#/fragments/t8_class2sub"
   t9_class1:
     sourcePath: /t9_class1
     type: OBJECT
@@ -433,7 +433,7 @@ types:
         type: FEATURE_REF_ARRAY
         valueType: STRING
         refType: t9_class2
-    schema: '#/fragments/t9_class1'
+    schema: "#/fragments/t9_class1"
   t9_class2:
     sourcePath: /t9_class2
     type: OBJECT
@@ -475,7 +475,7 @@ types:
           type: FEATURE_REF
           valueType: INTEGER
           refType: t9_class1
-    schema: '#/fragments/t9_class2'
+    schema: "#/fragments/t9_class2"
 fragments:
   t1_class1:
     type: OBJECT
@@ -629,14 +629,14 @@ fragments:
         label: p2
         constraints:
           required: true
-        schema: '#/fragments/t3_class2'
+        schema: "#/fragments/t3_class2"
       p3:
         type: OBJECT
         objectType: T3_Class3
         label: p3
         constraints:
           required: true
-        schema: '#/fragments/t3_class3'
+        schema: "#/fragments/t3_class3"
       p4:
         type: OBJECT_ARRAY
         label: p4
@@ -678,7 +678,6 @@ fragments:
   t3_class2:
     type: OBJECT
     objectType: T3_Class2
-    label: T3_Class2
     properties:
       t3c2p1:
         sourcePath: t3c2p1
@@ -692,18 +691,17 @@ fragments:
         label: t3c2p2
         constraints:
           required: true
-        schema: '#/fragments/t3_class2subdt'
+        schema: "#/fragments/t3_class2subdt"
       t3c2p3:
         type: OBJECT_ARRAY
         objectType: T3_Class2SubDt
         label: t3c2p3
         constraints:
           minOccurrence: 0
-        schema: '#/fragments/t3_class2subdt'
+        schema: "#/fragments/t3_class2subdt"
   t3_class2subdt:
     type: OBJECT
     objectType: T3_Class2SubDt
-    label: T3_Class2SubDt
     properties:
       t3c2subp1:
         sourcePath: t3c2subp1
@@ -714,7 +712,6 @@ fragments:
   t3_class3:
     type: OBJECT
     objectType: T3_Class3
-    label: T3_Class3
     properties:
       t3c3p1:
         type: VALUE_ARRAY
@@ -732,7 +729,6 @@ fragments:
   t3_class4:
     type: OBJECT
     objectType: T3_Class4
-    label: T3_Class4
     properties:
       t3c4p1:
         sourcePath: t3c4p1
@@ -756,7 +752,6 @@ fragments:
   t3_class4sub:
     type: OBJECT
     objectType: T3_Class4Sub
-    label: T3_Class4Sub
     properties:
       t3c4subp1:
         sourcePath: t3c4subp1
@@ -771,7 +766,7 @@ fragments:
         constraints:
           required: true
           minOccurrence: 1
-    schema: '#/fragments/t3_class4'
+    schema: "#/fragments/t3_class4"
   t4_class1:
     type: OBJECT
     objectType: T4_Class1
@@ -828,7 +823,7 @@ fragments:
           - 1000
           - 2000
           required: true
-    schema: '#/fragments/t5_class1'
+    schema: "#/fragments/t5_class1"
   t6_class1:
     type: OBJECT
     objectType: T6_Class1
@@ -908,11 +903,10 @@ fragments:
         label: att3
         constraints:
           required: true
-        schema: '#/fragments/t7_datatype'
+        schema: "#/fragments/t7_datatype"
   t7_datatype:
     type: OBJECT
     objectType: T7_DataType
-    label: T7_DataType
     properties:
       attDt1:
         sourcePath: attdt1_fkcl
@@ -957,15 +951,15 @@ fragments:
         constraints:
           required: true
           minOccurrence: 1
-    schema: '#/fragments/t8_mixin_b'
+    schema: "#/fragments/t8_mixin_b"
   t8_class1sub:
     type: OBJECT
     objectType: T8_Class1Sub
     label: T8_Class1Sub
     merge:
-    - schema: '#/fragments/t8_class1'
-    - schema: '#/fragments/t8_mixin_c'
-    - schema: '#/fragments/t8_mixin_d'
+    - schema: "#/fragments/t8_class1"
+    - schema: "#/fragments/t8_mixin_c"
+    - schema: "#/fragments/t8_mixin_d"
     - properties:
         attC1Sub:
           sourcePath: attc1sub
@@ -1011,7 +1005,7 @@ fragments:
         label: attC2Sub
         constraints:
           required: true
-    schema: '#/fragments/t8_class2'
+    schema: "#/fragments/t8_class2"
   t8_mixin_a:
     type: OBJECT
     objectType: T8_Mixin_A
@@ -1047,7 +1041,7 @@ fragments:
         label: pMixB
         constraints:
           required: true
-    schema: '#/fragments/t8_mixin_a'
+    schema: "#/fragments/t8_mixin_a"
   t8_mixin_c:
     type: OBJECT
     objectType: T8_Mixin_C

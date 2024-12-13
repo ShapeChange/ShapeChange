@@ -51,6 +51,7 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpGidEncoder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpPropertyEncodingContext;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSourcePathInfos;
@@ -141,6 +142,16 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		    // the property value type is not mapped - so is available in the database
 
 		    valueSourcePath = Optional.of(spei.getValueSourcePath());
+
+		    /*
+		     * 2024-11-29 JE: reduction via SQL expression not supported for filtering
+		     */
+//		    if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.categoryOfValue() == Options.CODELIST
+//			    && valueSourcePath.isPresent()) {
+//
+//			valueSourcePath = Optional
+//				.of(LdpGidEncoder.valueSourcePathForCodeListValuedProperty(valueSourcePath.get()));
+//		    }
 
 		    if (isImplementedAsFeatureReference(pi)) {
 
@@ -713,8 +724,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 	LdpSpecialPropertiesInfo specPropInfo = target.specialPropertiesInfo(ci);
 
-	if (!specPropInfo.isMultipleIdentifierPisEncountered() && specPropInfo.getIdentifierPiOfCi() != null) {
-	    return target.ldproxyType(specPropInfo.getIdentifierPiOfCi());
+	if (!specPropInfo.isMultipleIdentifierPisEncountered()
+		&& specPropInfo.getIdentifierPiOfCiOrSupertype() != null) {
+	    return target.ldproxyType(specPropInfo.getIdentifierPiOfCiOrSupertype());
 	}
 
 	// default when creating new identifier members in type definitions is integer
@@ -733,7 +745,17 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	    }
 
 	    if (StringUtils.isNotBlank(pi.taggedValue("AAA:Kennung"))) {
-		return pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
+
+		String colBaseName = pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
+		if (pi.categoryOfValue() == Options.CODELIST) {
+		    /*
+		     * 2024-11-29 JE: reduction via SQL expression not supported for filtering
+		     */
+//		    return LdpGidEncoder.valueSourcePathForCodeListValuedProperty(colBaseName + "_href");
+		    return colBaseName + "_href";
+		} else {
+		    return colBaseName;
+		}
 	    }
 	}
 
@@ -960,8 +982,16 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 //	    }
 //	}
 	LdpSpecialPropertiesInfo specPropInfo = target.specialPropertiesInfo(ci);
-	if (!specPropInfo.isMultipleIdentifierPisEncountered() && specPropInfo.getIdentifierPiOfCi() != null) {
-	    return databaseColumnName(specPropInfo.getIdentifierPiOfCi());
+	if (!specPropInfo.isMultipleIdentifierPisEncountered()
+		&& specPropInfo.getIdentifierPiOfCiOrSupertype() != null) {
+
+	    PropertyInfo identifierPi = specPropInfo.getIdentifierPiOfCiOrSupertype();
+	    String ldpSourcePathsTV = identifierPi.taggedValue("ldpSourcePaths");
+	    if (StringUtils.isNotBlank(ldpSourcePathsTV)) {
+		return ldpSourcePathsTV;
+	    } else {
+		return databaseColumnName(identifierPi);
+	    }
 	} else {
 	    return Ldproxy2Target.primaryKeyColumn;
 	}
