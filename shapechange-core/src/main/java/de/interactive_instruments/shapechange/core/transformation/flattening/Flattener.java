@@ -3086,9 +3086,36 @@ public class Flattener implements Transformer, MessageSource {
 	}
 
 	/*
-	 * TODO: update code of app schema packages; update code of association info
-	 * objects (names of association roles are updated)
+	 * TODO: update code of association info objects (names of association roles are
+	 * updated)
 	 */
+
+	// update package names
+	for (PackageInfo pi : genModel.allPackagesFromSelectedSchemas()) {
+
+	    GenericPackageInfo genPi = (GenericPackageInfo) pi;
+
+	    // get (trimmed) code for the package
+	    String code = getCode(genPi);
+
+	    // only update if a code is actually available for the class
+	    if (code != null) {
+
+		String oldName = genPi.name();
+
+		genPi.setName(code);
+
+		if (keepOriginalNameAsCode) {
+		    // set the name of the package as its code value
+		    setCode(genPi, oldName);
+		}
+
+		// TBD if this is necessary
+//		if (genPi.isSchema() || genPi.isAppSchema()) {
+//		    genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME, oldName, false);
+//		}
+	    }
+	}
     }
 
     /**
@@ -3136,6 +3163,30 @@ public class Flattener implements Transformer, MessageSource {
 
 	    // store in a tagged value
 	    genCi.setTaggedValue(tvNameForCodeValue, codeValue, false);
+	}
+    }
+
+    /**
+     * Sets the code value of the given package.
+     *
+     * Automatically determines where to store the code value - in the alias or a
+     * specific tagged value.
+     *
+     * @param genPi
+     * @param codeValue
+     */
+    private void setCode(GenericPackageInfo genPi, String codeValue) {
+
+	if (tvNameForCodeValue == null) {
+
+	    // store in the alias
+	    // genCi.setAliasNameAll(new Descriptors(codeValue));
+
+	    genPi.descriptors().put(Descriptor.ALIAS, codeValue);
+	} else {
+
+	    // store in a tagged value
+	    genPi.setTaggedValue(tvNameForCodeValue, codeValue, false);
 	}
     }
 
