@@ -555,6 +555,16 @@
    </extension>
   </complexContent>
  </complexType>
+ <element name="descriptorValues" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:descriptorValuesType"/>
+ <complexType name="descriptorValuesType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <choice maxOccurs="unbounded">
+        <element ref="sc:DescriptorValue"/>
+       </choice>
+   </extension>
+  </complexContent>
+ </complexType>
  <element name="LangString" type="sc:LangStringType"/>
  <complexType name="LangStringType">
   <simpleContent>
