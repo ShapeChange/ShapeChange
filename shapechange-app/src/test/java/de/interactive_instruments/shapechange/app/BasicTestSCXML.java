@@ -187,6 +187,23 @@ public class BasicTestSCXML extends BasicTest {
 	super.sqlTest(pathToRelevantConfig, sqlFileNamesWithoutExtension, replacevalues, basedirResults,
 		basedirReference, noErrors);
     }
+    
+    protected void txtTest(String config, String[] txtFileNamesWithoutExtension, HashMap<String, String> replacevalues,
+	    String basedirResults, String basedirReference, boolean noErrors) {
+
+	String pathToRelevantConfig;
+
+	try {
+	    pathToRelevantConfig = scxmlConverter.updateSCXMLTestResources(config);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    fail("Exception occurred while updating SCXML test resources.", e);
+	    return;
+	}
+
+	super.txtTest(pathToRelevantConfig, txtFileNamesWithoutExtension, replacevalues, basedirResults,
+		basedirReference, noErrors);
+    }
 
     @Override
     protected void xsdTest(String config, String[] xsdFileNamesWithoutExtension, String[] schFileNamesWithoutExtension,

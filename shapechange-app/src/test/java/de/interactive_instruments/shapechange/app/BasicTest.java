@@ -237,7 +237,8 @@ public abstract class BasicTest {
 		    } else if (fresExtension.equals("docx") && fileFormatsToCheck.contains("docx")) {
 			similarDocx(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName());
-		    } else if (fresExtension.equals("sql") && fileFormatsToCheck.contains("sql")) {
+		    } else if ((fresExtension.equals("sql") && fileFormatsToCheck.contains("sql"))
+			    || (fresExtension.equals("txt") && fileFormatsToCheck.contains("txt"))) {
 			similarTxt(dirResults + File.separator + fres.getName(),
 				dirReference + File.separator + fres.getName(), true, true, true);
 		    } else if (fresExtension.equals("ttl") && fileFormatsToCheck.contains("ttl")) {
@@ -528,6 +529,29 @@ public abstract class BasicTest {
 	    for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
 		similarTxt(basedirResults + "/" + fileNameWithoutExtension + ".sql",
 			basedirReference + "/" + fileNameWithoutExtension + ".sql", true, true, true);
+	    }
+	}
+    }
+    
+    protected void txtTest(String config, String[] fileNamesWithoutExtension, HashMap<String, String> replacevalues,
+	    String basedirResults, String basedirReference, boolean noErrors) {
+
+	long start = (new Date()).getTime();
+	TestInstance test = new TestInstance(config, replacevalues);
+	long end = (new Date()).getTime();
+
+	System.out.println("Execution time " + config + ": " + (end - start) + "ms");
+
+	if (noErrors)
+	    assertTrue(test.noError(), "Test model execution failed");
+
+	if (testTime)
+	    assertTrue(end - start < 90000, "Execution time too long");
+
+	if (fileNamesWithoutExtension != null) {
+	    for (String fileNameWithoutExtension : fileNamesWithoutExtension) {
+		similarTxt(basedirResults + "/" + fileNameWithoutExtension + ".txt",
+			basedirReference + "/" + fileNameWithoutExtension + ".txt", true, true, true);
 	    }
 	}
     }
