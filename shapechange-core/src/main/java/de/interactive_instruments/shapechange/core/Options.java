@@ -104,10 +104,10 @@ public class Options {
     public static final String TargetFOL2SchematronClass = "de.interactive_instruments.shapechange.core.target.fol2schematron.FOL2Schematron";
 
     /** Well known stereotypes */
-    public static final Set<String> classStereotypes = Stream.of("codelist", "enumeration", "datatype", "featuretype",
-	    "type", "basictype", "interface", "union", "abstract", "fachid", "schluesseltabelle", "adeelement",
-	    "featureconcept", "attributeconcept", "valueconcept", "roleconcept", "aixmextension", "retired",
-	    "featurecollection")
+    public static final Set<String> classStereotypes = Stream
+	    .of("codelist", "enumeration", "datatype", "featuretype", "type", "basictype", "interface", "union",
+		    "abstract", "fachid", "schluesseltabelle", "adeelement", "featureconcept", "attributeconcept",
+		    "valueconcept", "roleconcept", "aixmextension", "retired", "featurecollection")
 	    .collect(Collectors.toSet());
     public static final Set<String> assocStereotypes = Stream.of("disjoint", "retired").collect(Collectors.toSet());
 
@@ -3240,11 +3240,11 @@ public class Options {
 
 	List<TaggedValueConfigurationEntry> result = new ArrayList<TaggedValueConfigurationEntry>();
 
-	Element directTaggedValuesInTrf = null;
+	List<Element> directTaggedValuesInTrfList = new ArrayList<>();
 
 	/*
-	 * identify taggedValues element that is direct child of the Transformer element
-	 * - can be null
+	 * identify taggedValues elements that are direct children of the Transformer
+	 * element
 	 */
 	NodeList children = trfE.getChildNodes();
 	if (children != null && children.getLength() != 0) {
@@ -3253,29 +3253,31 @@ public class Options {
 
 		Node n = children.item(k);
 		if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("taggedValues")) {
-		    directTaggedValuesInTrf = (Element) n;
-		    break;
+		    directTaggedValuesInTrfList.add((Element) n);
 		}
 	    }
 	}
 
-	if (directTaggedValuesInTrf != null) {
+	if (!directTaggedValuesInTrfList.isEmpty()) {
 
-	    NodeList taggedValuesNl = directTaggedValuesInTrf.getElementsByTagName("TaggedValue");
-	    Node taggedValueN;
-	    Element taggedValueE;
+	    for (Element directTaggedValuesInTrf : directTaggedValuesInTrfList) {
 
-	    if (taggedValuesNl != null && taggedValuesNl.getLength() > 0) {
+		NodeList taggedValuesNl = directTaggedValuesInTrf.getElementsByTagName("TaggedValue");
+		Node taggedValueN;
+		Element taggedValueE;
 
-		for (int k = 0; k < taggedValuesNl.getLength(); k++) {
+		if (taggedValuesNl != null && taggedValuesNl.getLength() > 0) {
 
-		    taggedValueN = taggedValuesNl.item(k);
-		    if (taggedValueN.getNodeType() == Node.ELEMENT_NODE) {
+		    for (int k = 0; k < taggedValuesNl.getLength(); k++) {
 
-			taggedValueE = (Element) taggedValueN;
+			taggedValueN = taggedValuesNl.item(k);
+			if (taggedValueN.getNodeType() == Node.ELEMENT_NODE) {
 
-			TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry.parse(taggedValueE);
-			result.add(tvce);
+			    taggedValueE = (Element) taggedValueN;
+
+			    TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry.parse(taggedValueE);
+			    result.add(tvce);
+			}
 		    }
 		}
 	    }
