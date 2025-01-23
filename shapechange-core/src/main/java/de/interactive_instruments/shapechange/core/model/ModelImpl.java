@@ -119,9 +119,7 @@ public abstract class ModelImpl implements Model {
 
 		for (Constraint con : cons) {
 
-		    if (con instanceof FolConstraint) {
-
-			FolConstraint folCon = (FolConstraint) con;
+		    if (con instanceof FolConstraint folCon) {
 
 			if (folCon.sourceType().equals(SbvrConstants.FOL_SOURCE_TYPE)) {
 

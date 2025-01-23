@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -241,7 +242,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	InputStream stream = null;
 
 	if (uri.startsWith("http")) {
-	    URL url = new URL(uri);
+	    URL url = URI.create(uri).toURL();
 	    URLConnection urlConnection = url.openConnection();
 	    stream = urlConnection.getInputStream();
 	} else {
@@ -740,8 +741,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    JsonPointer jpParameters = Json.createPointer(parametersBaseJsonPointerPath);
 	    try {
 		JsonStructure tmp = (JsonStructure) jpParameters.getValue(overlay);
-		if (tmp instanceof JsonArray) {
-		    JsonArray array = (JsonArray) tmp;
+		if (tmp instanceof JsonArray array) {
 		    for (int i = 0; i < array.size(); i++) {
 			JsonObject p = (JsonObject) array.get(i);
 			if (p.containsValue(Json.createValue("#/components/parameters/collectionId"))) {
@@ -764,9 +764,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	JsonValue result;
 
-	if (jv instanceof JsonObject) {
-
-	    JsonObject jvObj = (JsonObject) jv;
+	if (jv instanceof JsonObject jvObj) {
 
 	    JsonObjectBuilder builder = Json.createObjectBuilder();
 
@@ -777,9 +775,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    result = builder.build();
 
-	} else if (jv instanceof JsonArray) {
-
-	    JsonArray jvArr = (JsonArray) jv;
+	} else if (jv instanceof JsonArray jvArr) {
 
 	    JsonArrayBuilder builder = Json.createArrayBuilder();
 
@@ -789,9 +785,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    result = builder.build();
 
-	} else if (jv instanceof JsonString) {
-
-	    JsonString jvString = (JsonString) jv;
+	} else if (jv instanceof JsonString jvString) {
 
 	    result = Json.createValue(jvString.getString().replaceAll(parameter, replacement));
 

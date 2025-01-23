@@ -566,7 +566,7 @@ public abstract class FolSchematronNode {
 
 			// Just one child? Pass through ...
 			if (children.size() == 1)
-				return children.get(0).translate(ctx);
+				return children.getFirst().translate(ctx);
 
 			// Which logic particle?
 			String particle = null;
@@ -746,7 +746,7 @@ public abstract class FolSchematronNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			FolSchematronNode obj = children.get(0);
+			FolSchematronNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 			if (xpt.fragment.length() == 0)
 				xpt.fragment = ".";
@@ -781,7 +781,7 @@ public abstract class FolSchematronNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			FolSchematronNode obj = children.get(0);
+			FolSchematronNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 
 			xpt.fragment = "not(" + xpt.fragment + ")";
@@ -815,7 +815,7 @@ public abstract class FolSchematronNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			FolSchematronNode obj = children.get(0);
+			FolSchematronNode obj = children.getFirst();
 			XpathFragment xptobj = obj.translate(ctx);
 
 			// Note: function nilled() is not a good fit here, because it
@@ -989,7 +989,7 @@ public abstract class FolSchematronNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the arguments
-			XpathFragment xptobj = children.get(0).translate(ctx);
+			XpathFragment xptobj = children.getFirst().translate(ctx);
 			if (xptobj.fragment.length() == 0)
 				xptobj.fragment = ".";
 			XpathFragment xptpat = children.get(1).translate(ctx);
@@ -1057,7 +1057,7 @@ public abstract class FolSchematronNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// One argument to be compiled in any case
-			XpathFragment xpt1 = children.get(0).translate(ctx);
+			XpathFragment xpt1 = children.getFirst().translate(ctx);
 
 			// Take cases on operation and number of operands
 			if (children.size() == 1) {
@@ -1205,9 +1205,7 @@ public abstract class FolSchematronNode {
 
 			if (value != null) {
 
-				if (value instanceof AttributeNode) {
-
-					AttributeNode an = (AttributeNode) value;
+				if (value instanceof AttributeNode an) {
 					return an.hasSimpleType();
 
 				} else {
@@ -1248,8 +1246,7 @@ public abstract class FolSchematronNode {
 
 			if (value != null) {
 
-				if (value instanceof AttributeNode) {
-					AttributeNode an = (AttributeNode) value;
+				if (value instanceof AttributeNode an) {
 					return an.hasIdentity();
 
 				} else {
@@ -1477,7 +1474,7 @@ public abstract class FolSchematronNode {
 			// it the object child of attribute created formerly.
 			if (at == 0) {
 				// There is nothing but the object, So, transfer this.
-				atrite.addChild(children.get(0));
+				atrite.addChild(children.getFirst());
 			} else {
 				// Create another Attribute with the selectors in front of the
 				// splitting point. Make it the object of the right hand one.
@@ -1485,7 +1482,7 @@ public abstract class FolSchematronNode {
 						attributes[0]);
 				for (int i = 1; i < at; i++)
 					appendAttribute(attributes[i]);
-				atleft.addChild(children.get(0));
+				atleft.addChild(children.getFirst());
 				atrite.addChild(atleft);
 			}
 			return atrite;
@@ -2119,14 +2116,12 @@ public abstract class FolSchematronNode {
 			XpathType type = XpathType.STRING;
 
 			// Some special treatments
-			if (literal instanceof StringLiteral) {
+			if (literal instanceof StringLiteral stringLiteral) {
 
 				// If string, surround with ''
-				value = "'" + ((StringLiteral) literal).getValue() + "'";
+				value = "'" + stringLiteral.getValue() + "'";
 
-			} else if (literal instanceof StringLiteralList) {
-
-				StringLiteralList sll = (StringLiteralList) literal;
+			} else if (literal instanceof StringLiteralList sll) {
 
 				List<String> values = sll.getValues();
 

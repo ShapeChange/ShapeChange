@@ -148,15 +148,11 @@ public class ConstraintParserAndValidator implements Transformer {
 
 					for (Constraint con : ciCons) {
 
-						if (con instanceof OclConstraint) {
-
-							OclConstraint oclCon = (OclConstraint) con;
+						if (con instanceof OclConstraint oclCon) {
 
 							newConstraints.add(parse(oclCon, genCi));
 
-						} else if (con instanceof FolConstraint) {
-
-							FolConstraint folCon = (FolConstraint) con;
+						} else if (con instanceof FolConstraint folCon) {
 
 							newConstraints
 									.add(parse(folCon, sbvrParser, genCi, r));
@@ -194,9 +190,7 @@ public class ConstraintParserAndValidator implements Transformer {
 
 							for (Constraint con : piCons) {
 
-								if (con instanceof OclConstraint) {
-
-									OclConstraint oclCon = (OclConstraint) con;
+								if (con instanceof OclConstraint oclCon) {
 
 									newConstraints.add(parse(oclCon, genPi));
 

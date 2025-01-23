@@ -769,8 +769,8 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 			    if (mc != null)
 				mc.addDetail(null, 400, "Package", pkg().fullName());
 			}
-			if (ai instanceof PropertyInfoImpl) {
-			    ((PropertyInfoImpl) ai).restriction = true;
+			if (ai instanceof PropertyInfoImpl impl) {
+			    impl.restriction = true;
 			}
 			result().addWarning(null, 1002, ai.name(), name(), cicurr.name());
 		    }

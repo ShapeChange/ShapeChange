@@ -520,8 +520,8 @@ public class Differ {
 	 * Done for legalBasis and primaryCode; TBD: example and dataCaptureStatement
 	 */
 	String refs;
-	if (aaaModel && curr instanceof ClassInfo) {
-	    String currdoc = addConstraints((ClassInfo) curr, curr.documentation());
+	if (aaaModel && curr instanceof ClassInfo info) {
+	    String currdoc = addConstraints(info, curr.documentation());
 	    String refdoc = (ref == null ? "" : addConstraints((ClassInfo) ref, ref.documentation()));
 	    diff = stringDiff(ElementType.DOCUMENTATION, refdoc, currdoc);
 	} else {

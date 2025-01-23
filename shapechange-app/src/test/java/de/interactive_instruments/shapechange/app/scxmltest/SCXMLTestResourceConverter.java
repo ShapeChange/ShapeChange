@@ -34,7 +34,6 @@ package de.interactive_instruments.shapechange.app.scxmltest;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -372,14 +371,14 @@ public class SCXMLTestResourceConverter {
 
 	    // get SCXML file that was produced
 	    List<Path> scxmlFilePaths = null;
-	    try (Stream<Path> files = Files.walk(Paths.get(exportDirectory.toURI()))) {
+	    try (Stream<Path> files = Files.walk(Path.of(exportDirectory.toURI()))) {
 		scxmlFilePaths = files.filter(
 			f -> f.getFileName().toString().equals(FilenameUtils.getBaseName(modelFilePath) + ".zip"))
 			.collect(Collectors.toList());
 
 	    }
 
-	    File scxmlFile = scxmlFilePaths.get(0).toFile();
+	    File scxmlFile = scxmlFilePaths.getFirst().toFile();
 	    FileUtils.copyFile(scxmlFile,
 		    new File(FilenameUtils.getPath(modelFilePath) + FilenameUtils.getBaseName(modelFilePath) + ".zip"));
 	}

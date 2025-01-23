@@ -36,6 +36,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -52,6 +53,7 @@ import de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchemaCon
 public class DefaultDialog extends JFrame
                            implements ActionListener, Dialog {
 
+	@Serial
 	private static final long serialVersionUID = 3197452835574541123L;
 
 	private JTextField mdlField;
@@ -293,9 +295,9 @@ public class DefaultDialog extends JFrame
     			 if (Desktop.isDesktopSupported())
         			 Desktop.getDesktop().open(logfile);
     			 else if (SystemUtils.IS_OS_WINDOWS)
-    				 Runtime.getRuntime().exec("cmd /c start "+logfile.getPath());
+    				 Runtime.getRuntime().exec(("cmd /c start " + logfile.getPath()).split(" "));
     			 else 
-    				 Runtime.getRuntime().exec("open "+logfile.getPath());
+    				 Runtime.getRuntime().exec(("open "+logfile.getPath()).split(" "));
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				System.exit(1);

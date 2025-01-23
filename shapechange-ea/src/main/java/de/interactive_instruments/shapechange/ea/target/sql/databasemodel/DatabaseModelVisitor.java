@@ -33,6 +33,7 @@ package de.interactive_instruments.shapechange.ea.target.sql.databasemodel;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -240,7 +241,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	if (dmPatternDir.toLowerCase().startsWith("http")) {
 	    // create temporary local copy of XMI template
 	    try {
-		URL url = new URL(dmPatternFilePath);
+		URL url = URI.create(dmPatternFilePath).toURL();
 		dmPatternFile = File.createTempFile(eadbms.getDmPatternFileName(), null);
 		dmPatternFile.deleteOnExit();
 		FileUtils.copyURLToFile(url, dmPatternFile);
@@ -457,8 +458,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 	     */
 	    for (SqlConstraint constr : table.getConstraints()) {
 
-		if (constr instanceof PrimaryKeyConstraint) {
-		    PrimaryKeyConstraint pkCon = (PrimaryKeyConstraint) constr;
+		if (constr instanceof PrimaryKeyConstraint pkCon) {
 		    primaryKeyColumns.addAll(pkCon.getColumns());
 		}
 	    }
@@ -537,17 +537,13 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 	AlterExpression expr = alter.getExpression();
 
-	if (expr instanceof ConstraintAlterExpression) {
-
-	    ConstraintAlterExpression conAltExpr = (ConstraintAlterExpression) expr;
+	if (expr instanceof ConstraintAlterExpression conAltExpr) {
 
 	    // For now we assume that the operation is always 'ADD'
 
 	    SqlConstraint constr = conAltExpr.getConstraint();
 
-	    if (constr instanceof CheckConstraint) {
-
-		CheckConstraint checkCon = (CheckConstraint) constr;
+	    if (constr instanceof CheckConstraint checkCon) {
 
 		try {
 		    Element tableElmt = repository.GetElementByID(this.eaElementIDByTable.get(table));
@@ -561,9 +557,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 		    result.addError(this, 105, constr.getName(), table.getName(), e.getMessage());
 		}
 
-	    } else if (constr instanceof ForeignKeyConstraint) {
-
-		ForeignKeyConstraint fkCon = (ForeignKeyConstraint) constr;
+	    } else if (constr instanceof ForeignKeyConstraint fkCon) {
 
 		try {
 		    Element tableElmt = repository.GetElementByID(this.eaElementIDByTable.get(table));
@@ -640,7 +634,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 
 		    String pkMethodName = pkMethodOfReferenceTableElmt.GetName();
 		    Parameter pkColParam = EAMethodUtil.getFirstParameter(pkMethodOfReferenceTableElmt);
-		    String conName = "(" + foreignKeyColumns.get(0).getName() + " = " + pkColParam.GetName() + ")";
+		    String conName = "(" + foreignKeyColumns.getFirst().getName() + " = " + pkColParam.GetName() + ")";
 
 		    Connector con = EAElementUtil.createEAAssociation(tableElmt, referenceTableElmt);
 
@@ -670,9 +664,7 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
 		    result.addError(this, 106, constr.getName(), table.getName(), e.getMessage());
 		}
 
-	    } else if (constr instanceof UniqueConstraint) {
-
-		UniqueConstraint ukCon = (UniqueConstraint) constr;
+	    } else if (constr instanceof UniqueConstraint ukCon) {
 
 		try {
 		    Element tableElmt = repository.GetElementByID(this.eaElementIDByTable.get(table));

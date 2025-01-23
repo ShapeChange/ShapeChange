@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1424,7 +1425,7 @@ public class Options {
 		    URL url;
 		    String configURL = "http://shapechange.net/resources/config/minimal.xml";
 		    try {
-			url = new URL(configURL);
+			url = URI.create(configURL).toURL();
 			configStream = url.openStream();
 		    } catch (MalformedURLException e) {
 			throw new ShapeChangeAbortException(
@@ -1439,7 +1440,7 @@ public class Options {
 	    File file = new File(configFile);
 	    if (file == null || !file.exists()) {
 		try {
-		    configStream = (new URL(configFile)).openStream();
+		    configStream = (URI.create(configFile).toURL()).openStream();
 		} catch (MalformedURLException e) {
 		    throw new ShapeChangeAbortException(
 			    "No configuration file found at " + configFile + " (malformed URL)");
@@ -1667,9 +1668,7 @@ public class Options {
 
 	    // in order for the input model load not to produce warnings,
 	    // we also need to load the map entries
-	    if (tgtConfig instanceof TargetXmlSchemaConfiguration) {
-
-		TargetXmlSchemaConfiguration config = (TargetXmlSchemaConfiguration) tgtConfig;
+	    if (tgtConfig instanceof TargetXmlSchemaConfiguration config) {
 
 		// add xml schema namespace information
 		for (XmlNamespace xns : config.getXmlNamespaces()) {
@@ -2041,9 +2040,7 @@ public class Options {
 			currentProcessConfig.getParameters().get("defaultEncodingRule"));
 	    }
 
-	    if (currentProcessConfig instanceof TargetXmlSchemaConfiguration) {
-
-		TargetXmlSchemaConfiguration config = (TargetXmlSchemaConfiguration) currentProcessConfig;
+	    if (currentProcessConfig instanceof TargetXmlSchemaConfiguration config) {
 
 		// add xml schema namespace information
 		for (XmlNamespace xns : config.getXmlNamespaces()) {

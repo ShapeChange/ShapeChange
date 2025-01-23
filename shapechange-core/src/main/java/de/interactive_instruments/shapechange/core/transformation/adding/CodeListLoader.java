@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -275,7 +276,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 
 	    if (clSource.toLowerCase().startsWith("http")) {
 
-		URL clSourceUrl = new URL(clSource);
+		URL clSourceUrl = URI.create(clSource).toURL();
 		URLConnection urlConn = clSourceUrl.openConnection();
 		/*
 		 * 2024-11-14 JE: Just in case the registry forbids access from java programs,
@@ -436,7 +437,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 		 * 'User-Agent' as below does work (at least for now).
 		 */
 
-		URL clSourceUrl = new URL(clSource);
+		URL clSourceUrl = URI.create(clSource).toURL();
 		URLConnection urlConn = clSourceUrl.openConnection();
 		urlConn.setRequestProperty("User-Agent", USER_AGENT_VALUE);
 

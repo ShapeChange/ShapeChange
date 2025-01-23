@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.shapechange.core.model.generic.reader;
 
+import java.io.Serial;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -40,6 +42,7 @@ import org.xml.sax.SAXException;
  */
 public class GenericModelReaderConfigurationException extends SAXException {
 
+	@Serial
 	private static final long serialVersionUID = -162079643611577028L;
 
 	public GenericModelReaderConfigurationException(String message) {

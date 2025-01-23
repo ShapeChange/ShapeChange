@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import de.interactive_instruments.shapechange.core.target.json.json.JsonArray;
@@ -42,10 +43,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class AllOfKeyword extends ArrayList<JsonSchema> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -5305923391206246182L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = -5305923391206246182L;
 
     @Override
     public String name() {

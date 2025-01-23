@@ -423,7 +423,7 @@ public class CodelistDictionariesML implements Target, MessageSource {
 		/*
 		 * documentation is a single valued descriptor, so we get the first list item
 		 */
-		result = dsList.get(0);
+		result = dsList.getFirst();
 	    }
 	}
 

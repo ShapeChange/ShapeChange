@@ -31,13 +31,16 @@
  */
 package de.interactive_instruments.shapechange.core.target.sql;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class SqlDdlException extends Exception {
 
-    private static final long serialVersionUID = -2383463895232456805L;
+	@Serial
+	private static final long serialVersionUID = -2383463895232456805L;
     
     public SqlDdlException(String msg) {
 	super(msg);

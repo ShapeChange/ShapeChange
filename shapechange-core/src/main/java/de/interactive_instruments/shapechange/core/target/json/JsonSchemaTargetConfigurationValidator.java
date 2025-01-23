@@ -206,8 +206,7 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
 
 		for (AbstractJsonSchemaAnnotationElement annElmt : annotationElmts) {
 
-		    if (annElmt instanceof SimpleAnnotationElement) {
-			SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
+		    if (annElmt instanceof SimpleAnnotationElement ann) {
 			String desc = ann.getDescriptorOrTaggedValue();
 			if (desc.startsWith("TV")) {
 			    Matcher m = DescriptorAndTagResolver.taggedValuePattern.matcher(desc);

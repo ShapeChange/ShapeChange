@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -51,10 +52,11 @@ import java.util.SortedSet;
  */
 public class JsonSchema extends ArrayList<JsonSchemaKeyword> implements JsonSerializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 6435126599869464953L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = 6435126599869464953L;
     public static final JsonSchema TRUE = new JsonSchema(true);
     public static final JsonSchema FALSE = new JsonSchema(false);
 

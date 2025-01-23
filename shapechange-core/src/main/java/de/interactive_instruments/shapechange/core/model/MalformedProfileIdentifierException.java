@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.shapechange.core.model;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
@@ -40,6 +42,7 @@ public class MalformedProfileIdentifierException extends Exception {
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = -6473676722300935169L;
 
 	public MalformedProfileIdentifierException(String msg) {

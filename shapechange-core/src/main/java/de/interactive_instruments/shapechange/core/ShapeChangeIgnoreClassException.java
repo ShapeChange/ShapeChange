@@ -32,8 +32,11 @@
 
 package de.interactive_instruments.shapechange.core;
 
+import java.io.Serial;
+
 /** Exception raised during analysis of a class. */
 public class ShapeChangeIgnoreClassException extends Exception {
+	@Serial
 	private static final long serialVersionUID = 1810420265953260988L;
 
 	public ShapeChangeIgnoreClassException() {

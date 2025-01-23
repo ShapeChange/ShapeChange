@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -43,10 +44,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class PropertiesKeyword extends LinkedHashMap<String, JsonSchema> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -976025227591229530L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = -976025227591229530L;
 
     @Override
     public String name() {

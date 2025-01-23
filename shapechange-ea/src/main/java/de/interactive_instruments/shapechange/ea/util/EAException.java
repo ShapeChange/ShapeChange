@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.shapechange.ea.util;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff
  *
@@ -40,6 +42,7 @@ public class EAException extends Exception {
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = 4255379790531850640L;
 	
 	public EAException(String msg) {

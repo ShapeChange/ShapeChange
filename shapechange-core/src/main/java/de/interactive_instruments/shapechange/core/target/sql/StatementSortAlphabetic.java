@@ -76,28 +76,26 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 
 	// same type of statement for o1 and o2
 
-	if (o1 instanceof SQLitePragma) {
+	if (o1 instanceof SQLitePragma pragma) {
 
-	    String p1Name = ((SQLitePragma) o1).getName();
+	    String p1Name = pragma.getName();
 	    String p2Name = ((SQLitePragma) o2).getName();
 
 	    return p1Name.compareTo(p2Name);
 
-	} else if (o1 instanceof CreateTable) {
+	} else if (o1 instanceof CreateTable table) {
 
 	    if (SqlConstants.STATEMENT_SORT_USES_SCHEMA_NAME) {
-		String tableName_o1 = ((CreateTable) o1).getTable().getFullName();
+		String tableName_o1 = table.getTable().getFullName();
 		String tableName_o2 = ((CreateTable) o2).getTable().getFullName();
 		return tableName_o1.compareTo(tableName_o2);
 	    } else {
-		String tableName_o1 = ((CreateTable) o1).getTable().getName();
+		String tableName_o1 = table.getTable().getName();
 		String tableName_o2 = ((CreateTable) o2).getTable().getName();
 		return tableName_o1.compareTo(tableName_o2);
 	    }
 
-	} else if (o1 instanceof Select) {
-
-	    Select s1 = (Select) o1;
+	} else if (o1 instanceof Select s1) {
 	    Select s2 = (Select) o2;
 
 	    if (s1.hasExpression() && s2.hasExpression()) {
@@ -110,19 +108,15 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		} else if (e1 instanceof SpatiaLiteCreateSpatialIndexExpression
 			&& e2 instanceof SpatiaLiteAddGeometryColumn) {
 		    return 1;
-		} else if (e1 instanceof SpatiaLiteCreateSpatialIndexExpression
-			&& e2 instanceof SpatiaLiteCreateSpatialIndexExpression) {
-		    SpatiaLiteCreateSpatialIndexExpression csie1 = (SpatiaLiteCreateSpatialIndexExpression) e1;
-		    SpatiaLiteCreateSpatialIndexExpression csie2 = (SpatiaLiteCreateSpatialIndexExpression) e2;
+		} else if (e1 instanceof SpatiaLiteCreateSpatialIndexExpression csie1
+			&& e2 instanceof SpatiaLiteCreateSpatialIndexExpression csie2) {
 		    int tableNameComp = csie1.getTable().getFullName().compareTo(csie2.getTable().getFullName());
 		    if (tableNameComp == 0) {
 			return csie1.getColumn().getName().compareTo(csie2.getColumn().getName());
 		    } else {
 			return tableNameComp;
 		    }
-		} else if (e1 instanceof SpatiaLiteAddGeometryColumn && e2 instanceof SpatiaLiteAddGeometryColumn) {
-		    SpatiaLiteAddGeometryColumn agc1 = (SpatiaLiteAddGeometryColumn) e1;
-		    SpatiaLiteAddGeometryColumn agc2 = (SpatiaLiteAddGeometryColumn) e2;
+		} else if (e1 instanceof SpatiaLiteAddGeometryColumn agc1 && e2 instanceof SpatiaLiteAddGeometryColumn agc2) {
 		    int tableNameComp = agc1.getTable().getFullName().compareTo(agc2.getTable().getFullName());
 		    if (tableNameComp == 0) {
 			return agc1.getColumn().getName().compareTo(agc2.getColumn().getName());
@@ -138,19 +132,17 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		return 0;
 	    }
 
-	} else if (o1 instanceof Alter) {
-
-	    Alter a1 = (Alter) o1;
+	} else if (o1 instanceof Alter a1) {
 	    Alter a2 = (Alter) o2;
 
 	    String tableName_o1;
 	    String tableName_o2;
 
 	    if (SqlConstants.STATEMENT_SORT_USES_SCHEMA_NAME) {
-		tableName_o1 = ((Alter) o1).getTable().getFullName();
+		tableName_o1 = a1.getTable().getFullName();
 		tableName_o2 = ((Alter) o2).getTable().getFullName();
 	    } else {
-		tableName_o1 = ((Alter) o1).getTable().getName();
+		tableName_o1 = a1.getTable().getName();
 		tableName_o2 = ((Alter) o2).getTable().getName();
 	    }
 
@@ -165,10 +157,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		AlterExpression ae1 = a1.getExpression();
 		AlterExpression ae2 = a2.getExpression();
 
-		if (ae1 instanceof ConstraintAlterExpression && ae2 instanceof ConstraintAlterExpression) {
-
-		    ConstraintAlterExpression cae1 = (ConstraintAlterExpression) ae1;
-		    ConstraintAlterExpression cae2 = (ConstraintAlterExpression) ae2;
+		if (ae1 instanceof ConstraintAlterExpression cae1 && ae2 instanceof ConstraintAlterExpression cae2) {
 
 		    SqlConstraint scae1 = cae1.getConstraint();
 		    SqlConstraint scae2 = cae2.getConstraint();
@@ -186,9 +175,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		return 0;
 	    }
 
-	} else if (o1 instanceof CreateIndex) {
-
-	    CreateIndex ci1 = (CreateIndex) o1;
+	} else if (o1 instanceof CreateIndex ci1) {
 	    CreateIndex ci2 = (CreateIndex) o2;
 
 	    Index ind1 = ci1.getIndex();
@@ -214,9 +201,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		return tableName_o1.compareTo(tableName_o2);
 	    }
 
-	} else if (o1 instanceof Insert) {
-
-	    Insert ins1 = (Insert) o1;
+	} else if (o1 instanceof Insert ins1) {
 	    Insert ins2 = (Insert) o2;
 
 	    Table tins1 = ins1.getTable();
@@ -263,9 +248,7 @@ public class StatementSortAlphabetic implements Comparator<Statement> {
 		return ilv1.getResult().compareTo(ilv2.getResult());
 	    }
 
-	} else if (o1 instanceof Comment) {
-
-	    Comment comment1 = (Comment) o1;
+	} else if (o1 instanceof Comment comment1) {
 	    Comment comment2 = (Comment) o2;
 
 	    return comment1.computeTargetName().compareTo(comment2.computeTargetName());

@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.json;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -42,10 +43,11 @@ import com.google.gson.JsonElement;
  */
 public class JsonObject extends LinkedHashMap<String, JsonValue> implements JsonValue {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 8368313314461135215L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = 8368313314461135215L;
     
     @Override
     public JsonElement toGson() {

@@ -206,8 +206,8 @@ public class Xmi10Document extends ModelImpl implements Model, MessageSource {
 		result.addError(m);
 	    }
 	    Exception se = e;
-	    if (e instanceof SAXException) {
-		se = ((SAXException) e).getException();
+	    if (e instanceof SAXException exception) {
+		se = exception.getException();
 	    }
 	    if (se != null) {
 		se.printStackTrace(System.err);

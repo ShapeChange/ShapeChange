@@ -572,7 +572,7 @@ public class ProfileLoader implements Transformer, MessageSource {
 
 								// compute diffs
 								Differ differ = new Differ();
-								PackageInfo refSchema = set.iterator().next();
+								PackageInfo refSchema = set.getFirst();
 
 								// compare schema versions
 								String inputSchemaVersion = inputSchema

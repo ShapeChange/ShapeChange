@@ -293,7 +293,7 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 				} else {
 
 					GenericClassInfo st = nonExtCisById
-							.get(supertypeIds.iterator().next());
+							.get(supertypeIds.getFirst());
 
 					if (st == null) {
 

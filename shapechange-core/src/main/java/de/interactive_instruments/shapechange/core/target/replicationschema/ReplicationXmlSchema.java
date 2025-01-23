@@ -822,9 +822,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 
 	Element eAppInfo = null;
 
-	if (info instanceof ClassInfo) {
-
-	    ClassInfo ci = (ClassInfo) info;
+	if (info instanceof ClassInfo ci) {
 
 	    if (ci.globalIdentifier() != null
 		    && (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT)) {
@@ -834,9 +832,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 		eAppInfo.appendChild(document.createTextNode(ci.globalIdentifier()));
 	    }
 
-	} else if (info instanceof PropertyInfo) {
-
-	    PropertyInfo pi = (PropertyInfo) info;
+	} else if (info instanceof PropertyInfo pi) {
 
 	    if (pi.globalIdentifier() != null) {
 

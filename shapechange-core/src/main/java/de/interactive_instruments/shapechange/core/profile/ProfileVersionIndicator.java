@@ -142,8 +142,8 @@ public class ProfileVersionIndicator {
 
 			while (!versionInfosTmp.isEmpty()) {
 
-				VersionRange tmp = versionInfosTmp.get(0);
-				versionInfosTmp.remove(0);
+				VersionRange tmp = versionInfosTmp.getFirst();
+				versionInfosTmp.removeFirst();
 
 				boolean mergeOccurred;
 
@@ -173,7 +173,7 @@ public class ProfileVersionIndicator {
 				versionInfos.add(tmp);
 
 				if (versionInfosTmp.size() == 1) {
-					versionInfos.add(versionInfosTmp.remove(0));
+					versionInfos.add(versionInfosTmp.removeFirst());
 				}
 			}
 

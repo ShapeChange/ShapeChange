@@ -143,12 +143,12 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 					 */
 					if (horizontalLine) {
 						P pHorizLine = DocxUtil.createHorizontalLine();
-						mdp.getContent().add(0, pHorizLine);
+						mdp.getContent().addFirst(pHorizLine);
 					}
 
 					if (specificText != null) {
 						P pText = DocxUtil.createText(specificText);
-						mdp.getContent().add(0, pText);
+						mdp.getContent().addFirst(pText);
 					}
 
 					/*

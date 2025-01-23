@@ -753,7 +753,7 @@ public class JsonSchemaDocument implements MessageSource {
 	List<JsonSchema> allOfMembers = new ArrayList<>();
 
 	// There should be exactly one supertype for a basic type
-	ClassInfo supertype = ci.supertypeClasses().first();
+	ClassInfo supertype = ci.supertypeClasses().getFirst();
 
 	// add schema definition for supertype
 	Optional<JsonSchemaTypeInfo> supertypeTypeInfo = identifyJsonSchemaTypeForSupertype(supertype,
@@ -891,7 +891,7 @@ public class JsonSchemaDocument implements MessageSource {
 	 * just refer to the schema definition from the supertype
 	 */
 	if (restrictingFacetSchema.isEmpty()) {
-	    jsClass.addAll(allOfMembers.get(0));
+	    jsClass.addAll(allOfMembers.getFirst());
 	} else {
 	    allOfMembers.add(restrictingFacetSchema);
 	    // create the "allOf"
@@ -1998,7 +1998,7 @@ public class JsonSchemaDocument implements MessageSource {
 		    }
 		}
 		if (geometryPis.size() == 1) {
-		    PropertyInfo geomPi = geometryPis.get(0);
+		    PropertyInfo geomPi = geometryPis.getFirst();
 		    if (geomPi.inClass() == ci
 			    && !"false".equalsIgnoreCase(geomPi.taggedValue("jsonPrimaryGeometry"))) {
 			primaryGeometryPi = geomPi;
@@ -2595,7 +2595,7 @@ public class JsonSchemaDocument implements MessageSource {
 		    if (collectionIds.size() == 0) {
 			collectionIdsJsonValueOpt = Optional.empty();
 		    } else if (collectionIds.size() == 1) {
-			collectionIdsJsonValueOpt = Optional.of(new JsonString(collectionIds.iterator().next()));
+			collectionIdsJsonValueOpt = Optional.of(new JsonString(collectionIds.getFirst()));
 		    } else {
 			JsonArray arr = new JsonArray();
 			for (String v : collectionIds) {
@@ -3254,7 +3254,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (otherTypeSchemas.size() > 1) {
 		parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
 	    } else {
-		parentForTypeSchema.addAll(otherTypeSchemas.get(0));
+		parentForTypeSchema.addAll(otherTypeSchemas.getFirst());
 	    }
 
 	} else if (!simpleTypeSchema.isEmpty() && otherTypeSchemas.isEmpty()) {
@@ -3453,7 +3453,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    if (otherTypeSchemas.size() > 1) {
 		parentForTypeSchema.oneOf(otherTypeSchemas.toArray(new JsonSchema[otherTypeSchemas.size()]));
 	    } else {
-		parentForTypeSchema.addAll(otherTypeSchemas.get(0));
+		parentForTypeSchema.addAll(otherTypeSchemas.getFirst());
 	    }
 
 	} else if (!simpleTypeSchema.isEmpty() && otherTypeSchemas.isEmpty()) {
@@ -3812,7 +3812,7 @@ public class JsonSchemaDocument implements MessageSource {
 	    // no need for entity type checks
 	    JsonSchema featuresSchema = getOrCreatePropertyPath(contentSchema, featuresMemberPath, true);
 	    featuresSchema.type(JsonSchemaType.ARRAY).items(
-		    new JsonSchema().ref(identifyJsonSchemaType(collectionMembers.iterator().next()).get().getRef()));
+		    new JsonSchema().ref(identifyJsonSchemaType(collectionMembers.getFirst()).get().getRef()));
 	} else {
 
 	    boolean collectionsWithTopLevelEntityType = collectionMembers.stream()

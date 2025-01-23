@@ -625,7 +625,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 
 	if (pkColumns.size() == 1) {
 
-	    return pkColumns.iterator().next().getName();
+	    return pkColumns.getFirst().getName();
 
 	} else {
 
@@ -686,7 +686,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
 	    List<Column> pkCols = table.getPrimaryKeyColumns();
 
 	    if (pkCols.size() == 1) {
-		return ldproxyType(pkCols.get(0).getDataType());
+		return ldproxyType(pkCols.getFirst().getDataType());
 	    } else {
 		// undefined - return empty optional
 	    }

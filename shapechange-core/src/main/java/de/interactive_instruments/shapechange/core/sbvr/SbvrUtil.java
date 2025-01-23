@@ -72,10 +72,10 @@ public class SbvrUtil {
 
 			SchemaCall result;
 
-			if (sc instanceof PropertyCall) {
+			if (sc instanceof PropertyCall call) {
 
 				PropertyCall pc = new PropertyCall();
-				pc.setSchemaElement(((PropertyCall) sc).getSchemaElement());
+				pc.setSchemaElement(call.getSchemaElement());
 				result = pc;
 
 			} else {

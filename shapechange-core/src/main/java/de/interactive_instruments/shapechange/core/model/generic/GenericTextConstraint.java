@@ -101,8 +101,8 @@ public class GenericTextConstraint extends TextConstraintImpl {
 	private String determineConstraintType(Constraint constr) {
 
 		String type = "OCL";
-		if (constr instanceof TextConstraint) {
-			type = ((TextConstraint) constr).type();
+		if (constr instanceof TextConstraint constraint) {
+			type = constraint.type();
 			if(StringUtils.isBlank(type)) {
 				type = "Text";
 			}

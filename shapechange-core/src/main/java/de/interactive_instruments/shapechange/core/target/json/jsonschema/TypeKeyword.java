@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -44,7 +45,8 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class TypeKeyword extends TreeSet<JsonSchemaType> implements JsonSchemaKeyword {
 
-    private static final long serialVersionUID = -4863298373229680536L;
+	@Serial
+	private static final long serialVersionUID = -4863298373229680536L;
 
     public TypeKeyword() {
     }

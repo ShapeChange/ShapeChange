@@ -54,7 +54,7 @@ public class TargetUtil {
 		String mainAppSchemaName = options.parameter(TargetUtil.PARAM_MAIN_APP_SCHEMA);
 		if (StringUtils.isBlank(mainAppSchemaName)) {
 			if (selectedSchemas.size() == 1) {
-				mainAppSchema = selectedSchemas.first();
+				mainAppSchema = selectedSchemas.getFirst();
 			} else {
 				mainAppSchema = null;
 			}

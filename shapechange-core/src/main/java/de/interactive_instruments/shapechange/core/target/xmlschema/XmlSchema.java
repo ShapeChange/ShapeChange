@@ -215,10 +215,10 @@ public class XmlSchema implements Target, MessageSource {
 	    });
 
 	    for (Constraint c : cs) {
-		if (c != null && c instanceof OclConstraint && schDoc != null
-			&& ((OclConstraint) c).syntaxTree() != null) {
+		if (c != null && c instanceof OclConstraint constraint && schDoc != null
+			&& constraint.syntaxTree() != null) {
 
-		    schDoc.addAssertion(ci, (OclConstraint) c);
+		    schDoc.addAssertion(ci, constraint);
 		}
 	    }
 
@@ -285,9 +285,9 @@ public class XmlSchema implements Target, MessageSource {
 		});
 
 		for (Constraint c : propiCs) {
-		    if (c != null && c instanceof OclConstraint && schDoc != null
-			    && ((OclConstraint) c).syntaxTree() != null) {
-			schDoc.addAssertionForPropertyConstraint((OclConstraint) c, null, true);
+		    if (c != null && c instanceof OclConstraint constraint && schDoc != null
+			    && constraint.syntaxTree() != null) {
+			schDoc.addAssertionForPropertyConstraint(constraint, null, true);
 		    }
 		}
 	    }
@@ -943,8 +943,8 @@ public class XmlSchema implements Target, MessageSource {
 		    result.addError(m);
 		}
 		Exception se = e;
-		if (e instanceof SAXException) {
-		    se = ((SAXException) e).getException();
+		if (e instanceof SAXException exception) {
+		    se = exception.getException();
 		}
 		if (se != null) {
 		    se.printStackTrace(System.err);

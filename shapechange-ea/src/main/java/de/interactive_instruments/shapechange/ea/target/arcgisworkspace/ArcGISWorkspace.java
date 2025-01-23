@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -486,7 +487,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	    // copy template file either from remote or local URI
 	    if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
 		try {
-		    URL templateUrl = new URL(workspaceTemplateFilePath);
+		    URL templateUrl = URI.create(workspaceTemplateFilePath).toURL();
 		    FileUtils.copyURLToFile(templateUrl, outputFile);
 		} catch (MalformedURLException e1) {
 		    result.addFatalError(this, 6, workspaceTemplateFilePath, e1.getMessage());
@@ -3854,25 +3855,25 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 			    int parentLength = 0;
 			    tvKey = "Length#ArcGIS::Field::Length";
 			    if (parentAttTVs.containsKey(tvKey)) {
-				parentLength = Integer.parseInt(parentAttTVs.get(tvKey).getValues().get(0));
+				parentLength = Integer.parseInt(parentAttTVs.get(tvKey).getValues().getFirst());
 			    }
 
 			    int parentPrecision = 0;
 			    tvKey = "Precision#ArcGIS::Field::Precision";
 			    if (parentAttTVs.containsKey(tvKey)) {
-				parentPrecision = Integer.parseInt(parentAttTVs.get(tvKey).getValues().get(0));
+				parentPrecision = Integer.parseInt(parentAttTVs.get(tvKey).getValues().getFirst());
 			    }
 
 			    int parentScale = 0;
 			    tvKey = "Scale#ArcGIS::Field::Scale";
 			    if (parentAttTVs.containsKey(tvKey)) {
-				parentScale = Integer.parseInt(parentAttTVs.get(tvKey).getValues().get(0));
+				parentScale = Integer.parseInt(parentAttTVs.get(tvKey).getValues().getFirst());
 			    }
 
 			    boolean parentIsNullable = false;
 			    tvKey = "IsNullable#ArcGIS::Field::IsNullable";
 			    if (parentAttTVs.containsKey(tvKey)) {
-				parentIsNullable = Boolean.parseBoolean(parentAttTVs.get(tvKey).getValues().get(0));
+				parentIsNullable = Boolean.parseBoolean(parentAttTVs.get(tvKey).getValues().getFirst());
 			    }
 
 			    boolean lengthChange = false;
@@ -3905,7 +3906,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				    tvKey = "Length#ArcGIS::Field::Length";
 				    if (subtypeAttTVs.containsKey(tvKey)) {
 					int subtypeLength = Integer
-						.parseInt(subtypeAttTVs.get(tvKey).getValues().get(0));
+						.parseInt(subtypeAttTVs.get(tvKey).getValues().getFirst());
 					if (parentLength != subtypeLength) {
 					    lengthChange = true;
 					    if (subtypeLength > maxLengthFromSubtypes) {
@@ -3917,7 +3918,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				    tvKey = "Precision#ArcGIS::Field::Precision";
 				    if (subtypeAttTVs.containsKey(tvKey)) {
 					int subtypePrecision = Integer
-						.parseInt(subtypeAttTVs.get(tvKey).getValues().get(0));
+						.parseInt(subtypeAttTVs.get(tvKey).getValues().getFirst());
 					if (parentPrecision != subtypePrecision) {
 					    precisionChange = true;
 					    if (subtypePrecision > maxPrecisionFromSubtypes) {
@@ -3929,7 +3930,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				    tvKey = "Scale#ArcGIS::Field::Scale";
 				    if (subtypeAttTVs.containsKey(tvKey)) {
 					int subtypeScale = Integer
-						.parseInt(subtypeAttTVs.get(tvKey).getValues().get(0));
+						.parseInt(subtypeAttTVs.get(tvKey).getValues().getFirst());
 					if (parentScale != subtypeScale) {
 					    scaleChange = true;
 					    if (subtypeScale > maxScaleFromSubtypes) {
@@ -3941,7 +3942,7 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 				    tvKey = "IsNullable#ArcGIS::Field::IsNullable";
 				    if (subtypeAttTVs.containsKey(tvKey)) {
 					boolean subtypeIsNullable = Boolean
-						.parseBoolean(subtypeAttTVs.get(tvKey).getValues().get(0));
+						.parseBoolean(subtypeAttTVs.get(tvKey).getValues().getFirst());
 					if (parentIsNullable != subtypeIsNullable) {
 					    isNullableChange = true;
 					    if (subtypeIsNullable) {

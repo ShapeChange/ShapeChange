@@ -197,7 +197,7 @@ public class LdpConfigBuilder {
 		    /*
 		     * since we only have a single supertype schema, just reference that
 		     */
-		    fragmentBuilder.schema(LdpUtil.fragmentRef(supertypes.get(0)));
+		    fragmentBuilder.schema(LdpUtil.fragmentRef(supertypes.getFirst()));
 
 		    if (!ciPropertyDefs.isEmpty()) {
 			fragmentBuilder.propertyMap(ciPropertyDefs);
@@ -221,7 +221,7 @@ public class LdpConfigBuilder {
 			 * Add the properties of ci mixin first (because that is what is done by the
 			 * XmlSchema target, when encoding a mixin that has supertypes.
 			 */
-			partialObjectSchemas.add(0, ciPartialObjectSchema);
+			partialObjectSchemas.addFirst(ciPartialObjectSchema);
 		    } else {
 			/*
 			 * If ci is not a mixin, add the ci properties at the end.

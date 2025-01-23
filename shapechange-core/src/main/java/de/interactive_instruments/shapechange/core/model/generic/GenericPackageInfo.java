@@ -100,8 +100,8 @@ public class GenericPackageInfo extends PackageInfoImpl implements MessageSource
 
 	    for (PackageInfo child : childPi) {
 
-		if (child instanceof GenericPackageInfo) {
-		    ((GenericPackageInfo) child).getAllPackages(set);
+		if (child instanceof GenericPackageInfo info) {
+		    info.getAllPackages(set);
 		} else {
 		    // the child package is not one of the selected schema; we
 		    // ignore it
@@ -398,8 +398,8 @@ public class GenericPackageInfo extends PackageInfoImpl implements MessageSource
 	    // to see if they are empty
 	    for (PackageInfo child : childPi) {
 
-		if (child instanceof GenericPackageInfo) {
-		    ((GenericPackageInfo) child).getEmptyPackages(containerForEmptyPackages);
+		if (child instanceof GenericPackageInfo info) {
+		    info.getEmptyPackages(containerForEmptyPackages);
 
 		} else {
 		    /*
@@ -438,8 +438,8 @@ public class GenericPackageInfo extends PackageInfoImpl implements MessageSource
 	if (childPi != null && childPi.size() > 0) {
 	    sb.append(indent + "packages:\n");
 	    for (PackageInfo pi : childPi) {
-		if (pi instanceof GenericPackageInfo) {
-		    sb.append(((GenericPackageInfo) pi).toString(indent + indent));
+		if (pi instanceof GenericPackageInfo info) {
+		    sb.append(info.toString(indent + indent));
 		} else {
 		    sb.append(indent + indent + pi.name() + "(not a GenericPackageInfo\n");
 		}

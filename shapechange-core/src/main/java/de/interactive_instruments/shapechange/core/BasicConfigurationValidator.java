@@ -33,6 +33,7 @@ package de.interactive_instruments.shapechange.core;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -165,7 +166,7 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 
 		    String urlString = pathToXsltDirectory + "/" + xsltFileName;
 		    try {
-			URL url = new URL(urlString);
+			URL url = URI.create(urlString).toURL();
 			url.toURI();
 		    } catch (URISyntaxException | MalformedURLException e) {
 			result.addProcessFlowError(this, 100, conf.getClassName(), joiner.join(conf.getInputIds()),
@@ -210,9 +211,7 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	 */
 	for (TargetConfiguration conf : targetConfigs) {
 
-	    if (conf instanceof TargetXmlSchemaConfiguration) {
-
-		TargetXmlSchemaConfiguration xsdConf = (TargetXmlSchemaConfiguration) conf;
+	    if (conf instanceof TargetXmlSchemaConfiguration xsdConf) {
 
 		List<XsdMapEntry> xsdMapEntries = xsdConf.getXsdMapEntries();
 

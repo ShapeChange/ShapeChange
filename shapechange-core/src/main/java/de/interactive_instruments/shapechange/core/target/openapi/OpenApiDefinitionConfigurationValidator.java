@@ -146,7 +146,7 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
 		OpenApiConstants.PARAM_JSON_SCHEMA_VERSION, "2019-09", false, true);
 	Optional<JsonSchemaVersion> jsVersion = JsonSchemaVersion.fromString(jsVersionParamValue);
 
-	if (!jsVersion.isPresent()) {
+	if (jsVersion.isEmpty()) {
 	    isValid = false;
 	    result.addError(this, 8, JsonSchemaConstants.PARAM_JSON_SCHEMA_VERSION, jsVersionParamValue);
 	}

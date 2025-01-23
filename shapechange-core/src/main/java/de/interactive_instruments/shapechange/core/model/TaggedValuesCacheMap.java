@@ -199,7 +199,7 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 
 		for (Entry<String, List<String>> e : tagMap.entrySet()) {
 
-			res.put(e.getKey(), e.getValue().get(0));
+			res.put(e.getKey(), e.getValue().getFirst());
 		}
 
 		return res;
@@ -226,7 +226,7 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 
 			for (Entry<String, List<String>> e : tagMap.entrySet()) {
 				if (tagsAsSet.contains(e.getKey())) {
-					res.put(e.getKey(), e.getValue().get(0));
+					res.put(e.getKey(), e.getValue().getFirst());
 				}
 			}
 		}
@@ -239,7 +239,7 @@ public class TaggedValuesCacheMap extends TaggedValuesImpl {
 
 		List<String> l = tagMap.get(tag);
 
-		return l != null && l.size() > 0 ? l.get(0) : null;
+		return l != null && l.size() > 0 ? l.getFirst() : null;
 	} // getFirstValue()
 
 	@Override

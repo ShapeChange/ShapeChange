@@ -74,14 +74,12 @@ public class SQLiteDdlFixer {
 
 		for (Statement stmt : stmtsIn) {
 
-			if (stmt instanceof Alter) {
-
-				Alter alter = (Alter) stmt;
+			if (stmt instanceof Alter alter) {
 
 				AlterExpression ae = alter.getExpression();
 
 				if (ae.getOperation().equals(AlterExpression.AlterOperation.ADD)
-						&& ae instanceof ConstraintAlterExpression) {
+						&& ae instanceof ConstraintAlterExpression expression) {
 
 					String fullTableName = alter.getTable().getFullName();
 
@@ -96,18 +94,16 @@ public class SQLiteDdlFixer {
 								.get(fullTableName);
 					}
 
-					cons.add(((ConstraintAlterExpression) ae).getConstraint());
+					cons.add(expression.getConstraint());
 
 				} else {
 
 					result.add(stmt);
 				}
 
-			} else if (stmt instanceof CreateTable) {
+			} else if (stmt instanceof CreateTable ct) {
 
 				result.add(stmt);
-
-				CreateTable ct = (CreateTable) stmt;
 
 				Table table = ct.getTable();
 				

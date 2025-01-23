@@ -291,9 +291,7 @@ public class FOL2Schematron implements Target, MessageSource {
 	    // process the constraints
 	    for (Constraint con : cons) {
 
-		if (con instanceof FolConstraint) {
-
-		    FolConstraint folCon = (FolConstraint) con;
+		if (con instanceof FolConstraint folCon) {
 
 		    /*
 		     * translate first order logic expression - if it exists - to schematron
@@ -679,60 +677,54 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	FolSchematronNode scn = null;
 
-	if (folExpr instanceof Quantification) {
-
-	    Quantification q = (Quantification) folExpr;
+	if (folExpr instanceof Quantification q) {
 	    scn = translateQuantification(q, enclosing);
 
-	} else if (folExpr instanceof SchemaCall) {
-
-	    SchemaCall sc = (SchemaCall) folExpr;
+	} else if (folExpr instanceof SchemaCall sc) {
 	    scn = translateSchemaCall(sc, enclosing, false);
 
-	} else if (folExpr instanceof Literal) {
-
-	    Literal lit = (Literal) folExpr;
+	} else if (folExpr instanceof Literal lit) {
 	    scn = translateLiteral(lit, enclosing);
 
-	} else if (folExpr instanceof Variable) {
+	} else if (folExpr instanceof Variable variable) {
 
-	    scn = translateVariable((Variable) folExpr, enclosing);
+	    scn = translateVariable(variable, enclosing);
 
-	} else if (folExpr instanceof Not) {
+	} else if (folExpr instanceof Not not) {
 
-	    scn = translateNot((Not) folExpr, enclosing);
+	    scn = translateNot(not, enclosing);
 
-	} else if (folExpr instanceof EqualTo) {
+	} else if (folExpr instanceof EqualTo to) {
 
-	    scn = translateComparisonOperation((BinaryComparisonPredicate) folExpr, "=", enclosing);
+	    scn = translateComparisonOperation(to, "=", enclosing);
 
-	} else if (folExpr instanceof HigherOrEqualTo) {
+	} else if (folExpr instanceof HigherOrEqualTo to) {
 
-	    scn = translateComparisonOperation((BinaryComparisonPredicate) folExpr, ">=", enclosing);
+	    scn = translateComparisonOperation(to, ">=", enclosing);
 
-	} else if (folExpr instanceof HigherThan) {
+	} else if (folExpr instanceof HigherThan than) {
 
-	    scn = translateComparisonOperation((BinaryComparisonPredicate) folExpr, ">", enclosing);
+	    scn = translateComparisonOperation(than, ">", enclosing);
 
-	} else if (folExpr instanceof LowerOrEqualTo) {
+	} else if (folExpr instanceof LowerOrEqualTo to) {
 
-	    scn = translateComparisonOperation((BinaryComparisonPredicate) folExpr, "<=", enclosing);
+	    scn = translateComparisonOperation(to, "<=", enclosing);
 
-	} else if (folExpr instanceof LowerThan) {
+	} else if (folExpr instanceof LowerThan than) {
 
-	    scn = translateComparisonOperation((BinaryComparisonPredicate) folExpr, "<", enclosing);
+	    scn = translateComparisonOperation(than, "<", enclosing);
 
-	} else if (folExpr instanceof AndOr) {
+	} else if (folExpr instanceof AndOr or) {
 
-	    scn = translateAndOr((AndOr) folExpr, enclosing);
+	    scn = translateAndOr(or, enclosing);
 
-	} else if (folExpr instanceof IsNull) {
+	} else if (folExpr instanceof IsNull nullInst) {
 
-	    scn = translateIsNull((IsNull) folExpr, enclosing);
+	    scn = translateIsNull(nullInst, enclosing);
 
-	} else if (folExpr instanceof IsTypeOf) {
+	} else if (folExpr instanceof IsTypeOf of) {
 
-	    scn = translateIsTypeOf((IsTypeOf) folExpr, enclosing);
+	    scn = translateIsTypeOf(of, enclosing);
 
 	} else {
 	    // Anything unknown
@@ -779,14 +771,10 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	boolean assumeError = true;
 
-	if (clex instanceof FolSchematronNode.LiteralNode) {
-
-	    FolSchematronNode.LiteralNode cllit = (FolSchematronNode.LiteralNode) clex;
+	if (clex instanceof FolSchematronNode.LiteralNode cllit) {
 	    Literal l = cllit.literal;
 
-	    if (l instanceof ClassLiteral) {
-
-		ClassLiteral lcl = (ClassLiteral) l;
+	    if (l instanceof ClassLiteral lcl) {
 		ClassInfo ci = lcl.getSchemaElement();
 		typeOf.setClass(ci);
 		assumeError = false;
@@ -961,9 +949,7 @@ public class FOL2Schematron implements Target, MessageSource {
 	    atn.setVariable(varnode);
 	}
 
-	if (sc instanceof PropertyCall) {
-
-	    PropertyCall pc = (PropertyCall) sc;
+	if (sc instanceof PropertyCall pc) {
 
 	    // Find out if we are appending a nilReason property
 	    int absorptionType = 0;
@@ -1050,8 +1036,8 @@ public class FOL2Schematron implements Target, MessageSource {
 		return null;
 	    }
 
-	    if (enclosing != null && enclosing instanceof AttributeNode) {
-		atn = (AttributeNode) enclosing;
+	    if (enclosing != null && enclosing instanceof AttributeNode node) {
+		atn = node;
 	    }
 	}
 

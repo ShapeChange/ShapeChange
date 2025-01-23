@@ -1275,9 +1275,7 @@ public class SqlBuilder implements MessageSource {
 
 	    ClassInfo type = null;
 
-	    if (i instanceof PropertyInfo) {
-
-		PropertyInfo pi = (PropertyInfo) i;
+	    if (i instanceof PropertyInfo pi) {
 		type = model.classByIdOrName(pi.typeInfo());
 
 	    } else {
@@ -2029,9 +2027,7 @@ public class SqlBuilder implements MessageSource {
 
 	    ClassInfo type = null;
 
-	    if (i instanceof PropertyInfo) {
-
-		PropertyInfo pi = (PropertyInfo) i;
+	    if (i instanceof PropertyInfo pi) {
 		type = model.classByIdOrName(pi.typeInfo());
 
 	    } else {
@@ -3090,7 +3086,7 @@ public class SqlBuilder implements MessageSource {
 			source = cycle.get(i);
 
 			if (i == 0) {
-			    target = cycle.get(cycle.size() - 1);
+			    target = cycle.getLast();
 			} else {
 			    target = cycle.get(i - 1);
 			}
@@ -3100,7 +3096,7 @@ public class SqlBuilder implements MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}
@@ -3110,7 +3106,7 @@ public class SqlBuilder implements MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}
@@ -3122,7 +3118,7 @@ public class SqlBuilder implements MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}

@@ -388,18 +388,14 @@ public class Differ2 {
 
     private Info findMatchingTargetSubElement(Info sourceI, Collection<? extends Info> targetSubElements) {
 
-	if (sourceI instanceof ClassInfo) {
-
-	    ClassInfo sourceCi = (ClassInfo) sourceI;
+	if (sourceI instanceof ClassInfo sourceCi) {
 	    SortedSet<ClassInfo> targetClasses = new TreeSet<>();
 	    for (Info tse : targetSubElements) {
 		targetClasses.add((ClassInfo) tse);
 	    }
 	    return findMatchingTargetClass(sourceCi, targetClasses);
 
-	} else if (sourceI instanceof PackageInfo) {
-
-	    PackageInfo sourcePi = (PackageInfo) sourceI;
+	} else if (sourceI instanceof PackageInfo sourcePi) {
 	    Map<String, PackageInfo> targetPackagesByFullNameInSchema = new HashMap<>();
 	    for (Info tse : targetSubElements) {
 		PackageInfo targetPackage = (PackageInfo) tse;
@@ -407,9 +403,7 @@ public class Differ2 {
 	    }
 	    return findMatchingTargetPackage(sourcePi, targetPackagesByFullNameInSchema);
 
-	} else if (sourceI instanceof PropertyInfo) {
-
-	    PropertyInfo sourcePi = (PropertyInfo) sourceI;
+	} else if (sourceI instanceof PropertyInfo sourcePi) {
 	    SortedSet<PropertyInfo> targetProperties = new TreeSet<>();
 	    for (Info tse : targetSubElements) {
 		targetProperties.add((PropertyInfo) tse);
@@ -667,9 +661,9 @@ public class Differ2 {
 
 	List<DiffElement2> diffs = new ArrayList<>();
 
-	if (aaaModel && target instanceof ClassInfo) {
+	if (aaaModel && target instanceof ClassInfo info) {
 	    // TBD - why do we need this AAA specific code here?
-	    String targetDoc = addConstraints((ClassInfo) target, target.documentation());
+	    String targetDoc = addConstraints(info, target.documentation());
 	    String sourceDoc = addConstraints((ClassInfo) source, source.documentation());
 	    stringDiff(diffs, ElementChangeType.DOCUMENTATION, source, target, sourceDoc, targetDoc);
 	} else {

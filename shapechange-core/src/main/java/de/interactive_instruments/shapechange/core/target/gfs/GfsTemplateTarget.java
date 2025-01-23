@@ -423,7 +423,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 	for (List<PropertyInfo> path : pathsToEndProperties) {
 
-	    PropertyInfo endPi = path.get(path.size() - 1);
+	    PropertyInfo endPi = path.getLast();
 
 	    AbstractPropertyDefinition baseDef;
 
@@ -460,7 +460,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
 		if (!maxMultiplicityGreaterOne && endPi.matches(GfsTemplateConstants.RULE_PROP_WIDTH)
 			&& StringUtils.isNotBlank(endPi.taggedValue("gfsWidth"))
 			&& propertyType != GfsPropertyType.FEATURE_PROPERTY
-			&& (!propertySubtype.isPresent() || !(propertySubtype.get() == GfsPropertySubtype.BOOLEAN
+			&& (propertySubtype.isEmpty() || !(propertySubtype.get() == GfsPropertySubtype.BOOLEAN
 				|| propertySubtype.get() == GfsPropertySubtype.DATE
 				|| propertySubtype.get() == GfsPropertySubtype.DATETIME
 				|| propertySubtype.get() == GfsPropertySubtype.TIME))) {
@@ -521,7 +521,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	     * just outside the range in the path list)
 	     */
 
-	    PropertyInfo endPi = path.get(path.size() - 1);
+	    PropertyInfo endPi = path.getLast();
 
 	    /*
 	     * Handle case of end property with value type being a type with identity that
@@ -529,8 +529,8 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	     * FeatureProperty instead).
 	     */
 	    if ((endPi.categoryOfValue() == Options.FEATURE || endPi.categoryOfValue() == Options.OBJECT)
-		    && def instanceof PropertyDefinition
-		    && ((PropertyDefinition) def).getType() == GfsPropertyType.FEATURE_PROPERTY) {
+		    && def instanceof PropertyDefinition propDef
+		    && propDef.getType() == GfsPropertyType.FEATURE_PROPERTY) {
 
 		String inlineOrByReferenceTV = StringUtils.stripToNull(endPi.taggedValue("inlineOrByReference"));
 
@@ -569,7 +569,6 @@ public class GfsTemplateTarget implements Target, MessageSource {
 
 			def.setName(defName + xmlAttributeNameSeparator + "href");
 			def.setElementPath(defElementPath + "@href");
-			PropertyDefinition propDef = (PropertyDefinition) def;
 			setXmlAttributeFieldValues(propDef, propDef.getType());
 			resForBaseDef.add(def);
 
@@ -774,7 +773,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
     private void identifyPropertyPaths(PropertyInfo pi, List<PropertyInfo> propListUpToIncludingPi,
 	    List<List<PropertyInfo>> pathsToEndProperties) {
 
-	if (propListUpToIncludingPi.get(propListUpToIncludingPi.size() - 1) != pi) {
+	if (propListUpToIncludingPi.getLast() != pi) {
 	    throw new IllegalArgumentException(
 		    "Wrong use of method identifyPropertyPaths(..) - argument propListUpToIncludingPi does not contain argument pi as last element");
 	}
@@ -878,7 +877,7 @@ public class GfsTemplateTarget implements Target, MessageSource {
     private String toString(List<PropertyInfo> propPath) {
 
 	StringBuffer sb = new StringBuffer();
-	sb.append(propPath.get(0).inClass().name());
+	sb.append(propPath.getFirst().inClass().name());
 	for (PropertyInfo pi : propPath) {
 	    sb.append(".");
 	    sb.append(pi.name());

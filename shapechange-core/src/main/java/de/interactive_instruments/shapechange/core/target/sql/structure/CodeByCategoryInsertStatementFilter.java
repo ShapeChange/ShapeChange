@@ -60,9 +60,7 @@ public class CodeByCategoryInsertStatementFilter implements StatementFilter {
 
 		for (Statement stmt : statements) {
 
-			if (stmt instanceof Insert) {
-
-				Insert ins = (Insert) stmt;
+			if (stmt instanceof Insert ins) {
 				ClassInfo repCi = ins.getTable().getRepresentedClass();
 
 				if (category.equals(repCi.taggedValue("codelistType"))) {

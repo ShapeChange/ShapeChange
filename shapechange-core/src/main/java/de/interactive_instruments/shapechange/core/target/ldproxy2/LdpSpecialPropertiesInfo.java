@@ -96,7 +96,7 @@ public class LdpSpecialPropertiesInfo {
 	List<PropertyInfo> allDefaultIntervalEndProperties = defaultIntervalEndProperties(ci, new ArrayList<>());
 	multipleDefaultIntervalEndsEncountered = allDefaultIntervalEndProperties.size() > 1;
 	if (allDefaultIntervalEndProperties.size() == 1) {
-	    defaultIntervalEndPi = allDefaultIntervalEndProperties.get(0);
+	    defaultIntervalEndPi = allDefaultIntervalEndProperties.getFirst();
 	}
 	if (defaultIntervalEndPi != null && defaultIntervalEndPi.inClass() == ci
 		&& defaultIntervalEndPi != this.defaultInstantPiOfCi) {
@@ -128,7 +128,7 @@ public class LdpSpecialPropertiesInfo {
 	List<PropertyInfo> allDefaultIntervalStartProperties = defaultIntervalStartProperties(ci, new ArrayList<>());
 	multipleDefaultIntervalStartsEncountered = allDefaultIntervalStartProperties.size() > 1;
 	if (allDefaultIntervalStartProperties.size() == 1) {
-	    defaultIntervalStartPi = allDefaultIntervalStartProperties.get(0);
+	    defaultIntervalStartPi = allDefaultIntervalStartProperties.getFirst();
 	}
 	if (defaultIntervalStartPi != null && defaultIntervalStartPi.inClass() == ci
 		&& defaultIntervalStartPi != this.defaultInstantPiOfCi) {
@@ -160,7 +160,7 @@ public class LdpSpecialPropertiesInfo {
 	List<PropertyInfo> allDefaultInstantProperties = defaultInstantProperties(ci, new ArrayList<>());
 	multipleDefaultInstantsEncountered = allDefaultInstantProperties.size() > 1;
 	if (allDefaultInstantProperties.size() == 1) {
-	    defaultInstantPi = allDefaultInstantProperties.get(0);
+	    defaultInstantPi = allDefaultInstantProperties.getFirst();
 	}
 	if (defaultInstantPi != null && defaultInstantPi.inClass() == ci) {
 
@@ -209,7 +209,7 @@ public class LdpSpecialPropertiesInfo {
 	} else {
 
 	    if (defaultGeometryPropsFromCurrentCi.size() == 1) {
-		this.defaultGeometryPiOfCi = defaultGeometryPropsFromCurrentCi.get(0);
+		this.defaultGeometryPiOfCi = defaultGeometryPropsFromCurrentCi.getFirst();
 	    }
 	}
     }
@@ -219,7 +219,7 @@ public class LdpSpecialPropertiesInfo {
 	List<PropertyInfo> allIdentifierProperties = identifierProperties(ci, new ArrayList<>());
 
 	if (allIdentifierProperties.size() == 1) {
-	    identifierPiOfCiOrSupertype = allIdentifierProperties.get(0);
+	    identifierPiOfCiOrSupertype = allIdentifierProperties.getFirst();
 	}
 
 	List<PropertyInfo> identifierPropsFromCurrentCi = allIdentifierProperties.stream()
@@ -245,7 +245,7 @@ public class LdpSpecialPropertiesInfo {
 		if (!identifierPropsFromSupertypes.isEmpty()) {
 		    // must be an identifier of a mixin supertype
 		} else if (!identifierPropsFromCurrentCi.isEmpty()) {
-		    this.identifierPiOfCi = identifierPropsFromCurrentCi.get(0);
+		    this.identifierPiOfCi = identifierPropsFromCurrentCi.getFirst();
 		} else {
 		    /*
 		     * No identifier property at all, and no non-mixin / non-datatype supertype.
@@ -266,7 +266,7 @@ public class LdpSpecialPropertiesInfo {
 	    if (!multipleIdentifierPisEncountered) {
 
 		if (!identifierPropsFromCurrentCi.isEmpty()) {
-		    this.identifierPiOfCi = identifierPropsFromCurrentCi.get(0);
+		    this.identifierPiOfCi = identifierPropsFromCurrentCi.getFirst();
 		} else {
 		    // no identifier property at all
 		    encodeAdditionalIdentifierProp = true;

@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -43,7 +44,8 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class EnumDescriptionKeyword extends LinkedHashMap<String, JsonSchema> implements JsonSchemaKeyword {
 
-    private static final long serialVersionUID = 8025292125212563197L;
+	@Serial
+	private static final long serialVersionUID = 8025292125212563197L;
 
     @Override
     public String name() {

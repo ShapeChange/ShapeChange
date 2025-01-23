@@ -81,7 +81,7 @@ public class Descriptors {
 
 			if (values != null && !values.isEmpty()) {
 				if (values.size() == 1) {
-					this.singleValue = values.get(0);
+					this.singleValue = values.getFirst();
 				} else {
 					this.multipleValues = new ArrayList<LangString>();
 					this.multipleValues.addAll(values);

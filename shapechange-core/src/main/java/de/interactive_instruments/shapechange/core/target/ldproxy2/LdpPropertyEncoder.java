@@ -297,7 +297,7 @@ public class LdpPropertyEncoder {
 		 */
 		if (alreadyVisitedPiList.stream().anyMatch(vPi -> vPi.inClass() == typeCi) || typeCi == currentCi) {
 
-		    ClassInfo topType = alreadyVisitedPiList.get(0).inClass();
+		    ClassInfo topType = alreadyVisitedPiList.getFirst().inClass();
 
 		    MessageContext mc = result.addError(msgSource, 117, topType.name(), propertyPath(nowVisitedList));
 		    if (mc != null) {
@@ -339,7 +339,7 @@ public class LdpPropertyEncoder {
 			    LdpSourcePathInfos sourcePathInfosForProperty = sourcePathProvider
 				    .sourcePathPropertyLevel(pi, alreadyVisitedPiList, context);
 			    nextContext = ldpProvider.createChildContext(context, typeCi,
-				    sourcePathInfosForProperty.getSourcePathInfos().get(0));
+				    sourcePathInfosForProperty.getSourcePathInfos().getFirst());
 			} else {
 
 			    nextContext = ldpProvider.createChildContext(context, typeCi);
@@ -499,7 +499,7 @@ public class LdpPropertyEncoder {
 
 			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
 
-			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().getFirst();
 
 			    encodeSourcePathInfosInTypeDefinitionWithFragmentsEnabled(pi, typeCi, alreadyVisitedPiList,
 				    nowVisitedList, currentCi, spi, context, propMemberDefBuilder, ldpType,
@@ -627,7 +627,7 @@ public class LdpPropertyEncoder {
 
 			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
 
-			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().getFirst();
 			    propMemberDefBuilder.sourcePath(applicableSourcePath(pi, spi));
 
 			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
@@ -770,7 +770,7 @@ public class LdpPropertyEncoder {
 
 	propMemberDefBuilder.sourcePath(sourcePathInfosForBuilder.commonValueSourcePath().get());
 
-	ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, sourcePathInfosForBuilder.spis.get(0));
+	ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, sourcePathInfosForBuilder.spis.getFirst());
 	propertyMapForBuilder.put("id", idSubProp);
 
 	if (LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)) {
@@ -819,12 +819,12 @@ public class LdpPropertyEncoder {
 	 */
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
 	    List<String> newTitleSourcePaths = new ArrayList<>();
-	    newTitleSourcePaths.add(titleSourcePaths.get(0));
+	    newTitleSourcePaths.add(titleSourcePaths.getFirst());
 	    titleSourcePaths = newTitleSourcePaths;
 	}
 
 	if (titleSourcePaths.size() == 1) {
-	    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.get(0));
+	    titlePropBuilder = titlePropBuilder.sourcePath(titleSourcePaths.getFirst());
 	} else {
 	    List<ImmutableFeatureSchema> titleCoalesceSchemas = new ArrayList<>();
 	    int index = 0;
@@ -873,7 +873,7 @@ public class LdpPropertyEncoder {
 	List<LdpSourcePathInfo> spis = sourcePathInfosForBuilder.getSourcePathInfos();
 
 	if (spis.size() == 1) {
-	    String singularRefType = spis.get(0).getRefType();
+	    String singularRefType = spis.getFirst().getRefType();
 	    typePropertyDefBuilder.constantValue(singularRefType);
 	} else {
 

@@ -207,7 +207,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
 
 			if (collectionIds.size() == 1) {
 
-			    refType = collectionIds.first();
+			    refType = collectionIds.getFirst();
 
 			} else {
 

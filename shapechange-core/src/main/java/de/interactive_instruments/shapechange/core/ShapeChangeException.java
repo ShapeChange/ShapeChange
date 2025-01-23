@@ -32,13 +32,16 @@
 
 package de.interactive_instruments.shapechange.core;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ShapeChangeException extends Exception {
-	
-    private static final long serialVersionUID = -6991887983884872841L;
+
+	@Serial
+	private static final long serialVersionUID = -6991887983884872841L;
     
 	public ShapeChangeException(String msg) {
 		super(msg);

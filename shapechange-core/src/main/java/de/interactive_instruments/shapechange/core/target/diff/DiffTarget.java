@@ -341,7 +341,7 @@ public class DiffTarget implements SingleTarget, MessageSource {
 
 	    if (set.size() == 1) {
 
-		PackageInfo refSchema = set.iterator().next();
+		PackageInfo refSchema = set.getFirst();
 
 		// compute diffs
 		Differ2 differ;

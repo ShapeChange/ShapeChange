@@ -96,7 +96,7 @@ public class AndOr extends LogicalPredicate {
 		StringBuilder sb = new StringBuilder();
 		
 		sb.append("(");
-		sb.append(predicateList.get(0).toString());
+		sb.append(predicateList.getFirst().toString());
 		
 		for(int i=1; i<predicateList.size(); i++) {
 			sb.append(") ");

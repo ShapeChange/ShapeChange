@@ -399,12 +399,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	    Info owner = null;
 
-	    if (infoType instanceof PropertyInfo) {
-		owner = ((PropertyInfo) infoType).inClass();
-	    } else if (infoType instanceof ClassInfo) {
-		owner = ((ClassInfo) infoType).pkg();
-	    } else if (infoType instanceof PackageInfo) {
-		PackageInfo pkg = (PackageInfo) infoType;
+	    if (infoType instanceof PropertyInfo info) {
+		owner = info.inClass();
+	    } else if (infoType instanceof ClassInfo info) {
+		owner = info.pkg();
+	    } else if (infoType instanceof PackageInfo pkg) {
 		if (pkg.owner() != null) {
 		    owner = pkg.owner();
 		}
@@ -453,9 +452,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
-	if (hasPropertyValueTypeStereotypePattern() && infoType instanceof PropertyInfo) {
-
-	    PropertyInfo pi = (PropertyInfo) infoType;
+	if (hasPropertyValueTypeStereotypePattern() && infoType instanceof PropertyInfo pi) {
 
 	    /*
 	     * only perform the check for properties that actually have a value type name
@@ -510,9 +507,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
-	if (hasPropertyValueTypeNamePattern() && infoType instanceof PropertyInfo) {
-
-	    PropertyInfo pi = (PropertyInfo) infoType;
+	if (hasPropertyValueTypeNamePattern() && infoType instanceof PropertyInfo pi) {
 
 	    if (StringUtils.isNotBlank(pi.typeInfo().name)) {
 
@@ -548,12 +543,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	    String ownerName = null;
 
-	    if (infoType instanceof PropertyInfo) {
-		ownerName = ((PropertyInfo) infoType).inClass().name();
-	    } else if (infoType instanceof ClassInfo) {
-		ownerName = ((ClassInfo) infoType).pkg().name();
-	    } else if (infoType instanceof PackageInfo) {
-		PackageInfo pkg = (PackageInfo) infoType;
+	    if (infoType instanceof PropertyInfo info) {
+		ownerName = info.inClass().name();
+	    } else if (infoType instanceof ClassInfo info) {
+		ownerName = info.pkg().name();
+	    } else if (infoType instanceof PackageInfo pkg) {
 		if (pkg.owner() != null) {
 		    ownerName = pkg.owner().name();
 		}
@@ -683,23 +677,17 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	SortedSet<PackageInfo> pis = new TreeSet<>();
 
-	if (infoType instanceof PackageInfo) {
+	if (infoType instanceof PackageInfo info) {
 
-	    pis.add((PackageInfo) infoType);
+	    pis.add(info);
 
-	} else if (infoType instanceof ClassInfo) {
-
-	    ClassInfo ci = (ClassInfo) infoType;
+	} else if (infoType instanceof ClassInfo ci) {
 	    pis.add(ci.pkg());
 
-	} else if (infoType instanceof PropertyInfo) {
-
-	    PropertyInfo propI = (PropertyInfo) infoType;
+	} else if (infoType instanceof PropertyInfo propI) {
 	    pis.add(propI.inClass().pkg());
 
-	} else if (infoType instanceof AssociationInfo) {
-
-	    AssociationInfo ai = (AssociationInfo) infoType;
+	} else if (infoType instanceof AssociationInfo ai) {
 	    if (ai.assocClass() != null) {
 		pis.add(ai.assocClass().pkg());
 	    }

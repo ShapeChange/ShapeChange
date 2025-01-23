@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +44,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class ExamplesKeyword extends ArrayList<JsonValue> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -1019397320835551860L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = -1019397320835551860L;
 
     public ExamplesKeyword() {
 	super();

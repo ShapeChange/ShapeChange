@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.shapechange.ea.target.arcgisworkspace;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
  *         de)
@@ -41,6 +43,7 @@ public class DatabaseException extends Exception {
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = 5634063269447037275L;
 
 	public DatabaseException(String message, Throwable exception) {

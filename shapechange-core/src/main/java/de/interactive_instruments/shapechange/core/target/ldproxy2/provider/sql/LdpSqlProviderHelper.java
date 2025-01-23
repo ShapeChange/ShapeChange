@@ -65,7 +65,7 @@ public class LdpSqlProviderHelper {
 	    List<SqlClassEncodingInfo> scei = Ldproxy2Target.sqlEncodingInfos.getClassEncodingInfos(ci);
 
 	    if (scei.size() == 1) {
-		return scei.get(0).getTable();
+		return scei.getFirst().getTable();
 	    } else {
 		return null;
 	    }

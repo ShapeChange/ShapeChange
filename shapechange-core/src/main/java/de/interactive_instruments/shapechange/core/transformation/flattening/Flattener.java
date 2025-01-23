@@ -2086,9 +2086,7 @@ public class Flattener implements Transformer, MessageSource {
 		     * for safety against shallow copies of the supertype set, we use
 		     * GenericClassInfo
 		     */
-		    if (supertype instanceof GenericClassInfo) {
-
-			GenericClassInfo supertypeGenCi = (GenericClassInfo) supertype;
+		    if (supertype instanceof GenericClassInfo supertypeGenCi) {
 
 			SortedSet<String> subtypesOfSupertype = supertypeGenCi.subtypes();
 
@@ -4464,7 +4462,7 @@ public class Flattener implements Transformer, MessageSource {
 			source = cycle.get(i);
 
 			if (i == 0) {
-			    target = cycle.get(cycle.size() - 1);
+			    target = cycle.getLast();
 			} else {
 			    target = cycle.get(i - 1);
 			}
@@ -4474,7 +4472,7 @@ public class Flattener implements Transformer, MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}
@@ -4484,7 +4482,7 @@ public class Flattener implements Transformer, MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}
@@ -4496,7 +4494,7 @@ public class Flattener implements Transformer, MessageSource {
 			source = cycle.get(i);
 
 			if (i == cycle.size() - 1) {
-			    target = cycle.get(0);
+			    target = cycle.getFirst();
 			} else {
 			    target = cycle.get(i + 1);
 			}
@@ -6350,9 +6348,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		    if (model.isInAppSchema(supertype)) {
 
-			if (supertype instanceof GenericClassInfo) {
-
-			    GenericClassInfo genSupertype = (GenericClassInfo) supertype;
+			if (supertype instanceof GenericClassInfo genSupertype) {
 
 			    boolean tmp = matchesRegexInSupertypeHierarchy(genSupertype, regex);
 
@@ -7153,9 +7149,7 @@ public class Flattener implements Transformer, MessageSource {
 
 		    } else if (ci.category() == Options.ENUMERATION) {
 
-			if (ci instanceof GenericClassInfo) {
-
-			    GenericClassInfo genCi = (GenericClassInfo) ci;
+			if (ci instanceof GenericClassInfo genCi) {
 
 			    int maxSequenceNumber = Integer.MIN_VALUE;
 			    Set<StructuredNumber> enumSeqNumbers = genCi.properties().keySet();

@@ -682,7 +682,7 @@ public abstract class InfoImpl implements Info {
 
 				if (descriptor.isSingleValued() && result.size() != 0) {
 					MessageContext mc = model().result().addWarning(null, 704,
-							descriptor.getName(), result.get(0).toString(),
+							descriptor.getName(), result.getFirst().toString(),
 							ls.toString());
 					addContextDetails(mc);
 				} else {
@@ -721,7 +721,7 @@ public abstract class InfoImpl implements Info {
 					if (descriptor.isSingleValued() && result.size() != 0) {
 						MessageContext mc = model().result().addWarning(null,
 								704, descriptor.getName(),
-								result.get(0).toString(), ls.toString());
+								result.getFirst().toString(), ls.toString());
 						addContextDetails(mc);
 					} else {
 						result.add(ls.getValue());

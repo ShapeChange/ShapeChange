@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.transformation.flattening;
 
+import java.io.Serial;
 import java.util.Set;
 
 import org.jgrapht.graph.DefaultEdge;
@@ -40,6 +41,7 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class PropertySetEdge extends DefaultEdge {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private String source;

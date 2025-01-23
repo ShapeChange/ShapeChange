@@ -88,9 +88,7 @@ public class BasicModelValidatorConfigurationValidator extends AbstractConfigura
 
 		for (AbstractContentTestElement testElmt : contentTestElmts) {
 
-		    if (testElmt instanceof DescriptorContentTestElement) {
-
-			DescriptorContentTestElement descriptorTestElmt = (DescriptorContentTestElement) testElmt;
+		    if (testElmt instanceof DescriptorContentTestElement descriptorTestElmt) {
 
 			String desc = descriptorTestElmt.getDescriptorOrTaggedValue();
 			if (desc.startsWith("TV")) {

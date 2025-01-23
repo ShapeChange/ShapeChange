@@ -118,9 +118,7 @@ public abstract class AbstractNameNormalizer implements NameNormalizer {
 	// normalize constraint names
 	AlterExpression expr = alter.getExpression();
 
-	if (expr instanceof ConstraintAlterExpression) {
-
-	    ConstraintAlterExpression cae = (ConstraintAlterExpression) expr;
+	if (expr instanceof ConstraintAlterExpression cae) {
 
 	    if (cae.getConstraint().hasName()) {
 		cae.getConstraint().setName(normalize(cae.getConstraint().getName()));

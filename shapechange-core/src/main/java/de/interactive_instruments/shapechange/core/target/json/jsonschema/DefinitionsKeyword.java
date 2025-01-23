@@ -31,16 +31,19 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class DefinitionsKeyword extends DefsKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -6239598677754331927L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = -6239598677754331927L;
 
     @Override
     public String name() {

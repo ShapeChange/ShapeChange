@@ -83,7 +83,7 @@ public class GenericValueTypeUtil {
 	    return Optional.empty();
 	} else {
 
-	    Set<String> intersection = propNameSets.get(0);
+	    Set<String> intersection = propNameSets.getFirst();
 
 	    for (int i = 1; i < propNameSets.size(); i++) {
 		Set<String> nextSet = propNameSets.get(i);

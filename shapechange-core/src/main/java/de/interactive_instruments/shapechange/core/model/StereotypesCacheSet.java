@@ -222,7 +222,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 					 * stereotype remains
 					 */
 					if(stSet.size() == 1) {
-						st = stSet.first();
+						st = stSet.getFirst();
 						stSet = null;
 					}
 				}
@@ -236,7 +236,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 		if (st != null) {
 			return st;
 		} else if (stSet != null && !stSet.isEmpty()) {
-			return stSet.iterator().next();
+			return stSet.getFirst();
 		} else {
 			return "";
 		}

@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -733,7 +734,7 @@ public class ShapeChangeResult {
 		StreamSource xsltSource;
 		if (xsltfileName.toLowerCase().startsWith("http")) {
 		    // get xslt via URL
-		    URL url = new URL(xsltfileName);
+		    URL url = URI.create(xsltfileName).toURL();
 		    URLConnection urlConnection = url.openConnection();
 		    xsltSource = new StreamSource(urlConnection.getInputStream());
 		} else {

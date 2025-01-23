@@ -401,8 +401,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	ProcessConfiguration tmp = o.getCurrentProcessConfig();
 
-	if (tmp instanceof TargetOwlConfiguration) {
-	    config = (TargetOwlConfiguration) tmp;
+	if (tmp instanceof TargetOwlConfiguration configuration) {
+	    config = configuration;
 	} else {
 	    result.addError(this, 6);
 	    throw new ShapeChangeAbortException();

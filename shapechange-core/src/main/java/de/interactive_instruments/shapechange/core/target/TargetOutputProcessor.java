@@ -346,7 +346,7 @@ public class TargetOutputProcessor implements MessageSource {
 
 		    if (pathToXsltDirectory.toLowerCase().startsWith("http")) {
 
-			URL url = new URL(pathToXsltDirectory + "/" + xsltFileName);
+			URL url = URI.create(pathToXsltDirectory + "/" + xsltFileName).toURL();
 			xsltMainFileUri = url.toURI();
 
 		    } else {

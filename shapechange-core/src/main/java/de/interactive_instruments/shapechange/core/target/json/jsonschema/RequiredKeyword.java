@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.TreeSet;
 
@@ -44,10 +45,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class RequiredKeyword extends TreeSet<String> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2036720425129844413L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = 2036720425129844413L;
 
     public RequiredKeyword() {
 

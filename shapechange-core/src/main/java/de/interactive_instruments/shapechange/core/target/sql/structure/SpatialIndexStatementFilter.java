@@ -58,27 +58,21 @@ public class SpatialIndexStatementFilter implements StatementFilter {
 
 		for (Statement stmt : statements) {
 
-			if (stmt instanceof Select) {
-
-				Select select = (Select) stmt;
+			if (stmt instanceof Select select) {
 
 				if (select.hasExpression() && select
 						.getExpression() instanceof SpatiaLiteCreateSpatialIndexExpression) {
 					result.add(select);
 				}
 
-			} else if (stmt instanceof Insert) {
-
-				Insert ins = (Insert) stmt;
+			} else if (stmt instanceof Insert ins) {
 
 				if (ins.getTable().getName()
 						.equalsIgnoreCase("USER_SDO_GEOM_METADATA")) {
 					result.add(stmt);
 				}
 
-			} else if (stmt instanceof CreateIndex) {
-
-				CreateIndex cIndex = (CreateIndex) stmt;
+			} else if (stmt instanceof CreateIndex cIndex) {
 				Index index = cIndex.getIndex();
 
 				if ((index.hasSpecs() && specJoiner.join(index.getSpecs())

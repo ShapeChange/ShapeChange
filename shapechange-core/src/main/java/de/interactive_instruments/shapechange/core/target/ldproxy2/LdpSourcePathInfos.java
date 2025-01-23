@@ -76,8 +76,8 @@ public class LdpSourcePathInfos {
 		spi -> spi.getIdSourcePath().isPresent() ? spi.getIdSourcePath().get() : "ID_SOURCE_PATH_UNAVAILABLE")
 		.distinct().collect(Collectors.toList());
 
-	if (distinctIdSourcePaths.size() == 1 && !"ID_SOURCE_PATH_UNAVAILABLE".equals(distinctIdSourcePaths.get(0))) {
-	    return Optional.of(distinctIdSourcePaths.get(0));
+	if (distinctIdSourcePaths.size() == 1 && !"ID_SOURCE_PATH_UNAVAILABLE".equals(distinctIdSourcePaths.getFirst())) {
+	    return Optional.of(distinctIdSourcePaths.getFirst());
 	} else {
 	    return Optional.empty();
 	}
@@ -90,8 +90,8 @@ public class LdpSourcePathInfos {
 		.distinct().collect(Collectors.toList());
 
 	if (distinctValueSourcePaths.size() == 1
-		&& !"VALUE_SOURCE_PATH_UNAVAILABLE".equals(distinctValueSourcePaths.get(0))) {
-	    return Optional.of(distinctValueSourcePaths.get(0));
+		&& !"VALUE_SOURCE_PATH_UNAVAILABLE".equals(distinctValueSourcePaths.getFirst())) {
+	    return Optional.of(distinctValueSourcePaths.getFirst());
 	} else {
 	    return Optional.empty();
 	}

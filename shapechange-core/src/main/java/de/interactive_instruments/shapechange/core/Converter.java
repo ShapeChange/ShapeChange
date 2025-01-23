@@ -213,14 +213,10 @@ public class Converter implements MessageSource {
 
 		    ConfigurationValidator validator = (ConfigurationValidator) theClass.getConstructor().newInstance();
 
-		    if (pConfig instanceof TransformerConfiguration) {
-
-			TransformerConfiguration tconfig = (TransformerConfiguration) pConfig;
+		    if (pConfig instanceof TransformerConfiguration tconfig) {
 			result.addProcessFlowInfo(this, 514, tconfig.getId());
 
-		    } else if (pConfig instanceof ValidatorConfiguration) {
-
-			ValidatorConfiguration vconfig = (ValidatorConfiguration) pConfig;
+		    } else if (pConfig instanceof ValidatorConfiguration vconfig) {
 			result.addProcessFlowInfo(this, 518, vconfig.getId());
 
 		    } else {
@@ -279,8 +275,8 @@ public class Converter implements MessageSource {
 	    }
 
 	    Exception se = e;
-	    if (e instanceof SAXException) {
-		se = ((SAXException) e).getException();
+	    if (e instanceof SAXException exception) {
+		se = exception.getException();
 	    }
 	    if (se != null) {
 		se.printStackTrace(System.err);
@@ -344,8 +340,8 @@ public class Converter implements MessageSource {
 	    }
 
 	    Exception se = e;
-	    if (e instanceof SAXException) {
-		se = ((SAXException) e).getException();
+	    if (e instanceof SAXException exception) {
+		se = exception.getException();
 	    }
 	    if (se != null) {
 		se.printStackTrace(System.err);

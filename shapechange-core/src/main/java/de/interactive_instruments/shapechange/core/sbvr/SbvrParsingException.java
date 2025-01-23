@@ -31,6 +31,8 @@
  */
 package de.interactive_instruments.shapechange.core.sbvr;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff
  *
@@ -40,6 +42,7 @@ public class SbvrParsingException extends RuntimeException {
 	/**
 	 * 
 	 */
+	@Serial
 	private static final long serialVersionUID = 3738096393166887496L;
 	
 	private SbvrErrorInfo error;

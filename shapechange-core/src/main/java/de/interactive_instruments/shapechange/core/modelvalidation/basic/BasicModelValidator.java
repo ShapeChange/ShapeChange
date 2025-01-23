@@ -116,9 +116,7 @@ public class BasicModelValidator extends AbstractModelValidator {
 
 	    for (AbstractContentTestElement testElmt : contentTestElements) {
 
-		if (testElmt instanceof DescriptorContentTestElement) {
-
-		    DescriptorContentTestElement descriptorTestElmt = (DescriptorContentTestElement) testElmt;
+		if (testElmt instanceof DescriptorContentTestElement descriptorTestElmt) {
 
 		    if (descriptorTestElmt.getModelElementSelectionInfo().matches(i)) {
 

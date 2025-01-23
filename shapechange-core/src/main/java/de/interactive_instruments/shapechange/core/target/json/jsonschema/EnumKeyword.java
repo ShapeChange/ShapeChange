@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +44,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class EnumKeyword extends ArrayList<JsonValue> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 2950497991632003427L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = 2950497991632003427L;
 
     public EnumKeyword() {
 	super();

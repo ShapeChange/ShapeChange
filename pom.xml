@@ -334,6 +334,24 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
+				    <groupId>org.openrewrite.maven</groupId>
+				    <artifactId>rewrite-maven-plugin</artifactId>
+				    <version>6.0.4</version>
+			        <dependencies>
+			          <dependency>
+			            <groupId>org.openrewrite.recipe</groupId>
+			            <artifactId>rewrite-migrate-java</artifactId>
+			            <version>3.0.1</version>
+			          </dependency>
+			          <!-- https://mvnrepository.com/artifact/org.openrewrite/rewrite-java-21 -->
+					  <dependency>
+						    <groupId>org.openrewrite</groupId>
+						    <artifactId>rewrite-java-21</artifactId>
+						    <version>8.43.4</version>
+						</dependency>
+			        </dependencies>
+				</plugin>
+				<plugin>
 					<groupId>pl.project13.maven</groupId>
 					<artifactId>git-commit-id-plugin</artifactId>
 					<version>4.9.10</version>
@@ -358,8 +376,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.13.0</version>
 					<configuration>
-						<source>21</source>
-						<target>21</target>
+						<release>21</release>
 						<showWarnings>true</showWarnings>
 						<showDeprecation>true</showDeprecation>
 					</configuration>
@@ -506,6 +523,10 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+		    <plugin>
+			    <groupId>org.openrewrite.maven</groupId>
+			    <artifactId>rewrite-maven-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<inherited>false</inherited>
@@ -538,5 +559,4 @@
 			</extension>
 		</extensions>
 	</build>
-	
 </project>

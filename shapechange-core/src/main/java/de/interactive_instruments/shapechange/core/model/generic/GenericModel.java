@@ -36,7 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -593,16 +593,12 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		    sb.append("(GenericModel) contextModelElement for constraint named '" + con.name() + "' ["
 			    + con.text() + "] is null.");
 
-		    if (owner instanceof PropertyInfo) {
-
-			PropertyInfo pi = (PropertyInfo) owner;
+		    if (owner instanceof PropertyInfo pi) {
 
 			sb.append(" Omitting constraint in property '" + pi.name() + "' of class '"
 				+ pi.inClass().name() + "'.");
 
-		    } else if (owner instanceof ClassInfo) {
-
-			ClassInfo ci = (ClassInfo) owner;
+		    } else if (owner instanceof ClassInfo ci) {
 
 			sb.append(" Omitting constraint in class '" + ci.name() + "'.");
 
@@ -748,19 +744,19 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 	    for (Constraint con : constraints) {
 
-		if (con instanceof FolConstraint) {
+		if (con instanceof FolConstraint constraint) {
 
-		    GenericFolConstraint genCon = new GenericFolConstraint((FolConstraint) con);
+		    GenericFolConstraint genCon = new GenericFolConstraint(constraint);
 		    conCopies.add(genCon);
 
-		} else if (con instanceof TextConstraint) {
+		} else if (con instanceof TextConstraint constraint) {
 
-		    GenericTextConstraint genCon = new GenericTextConstraint((TextConstraint) con);
+		    GenericTextConstraint genCon = new GenericTextConstraint(constraint);
 		    conCopies.add(genCon);
 
-		} else if (con instanceof OclConstraint) {
+		} else if (con instanceof OclConstraint constraint) {
 
-		    GenericOclConstraint genCon = new GenericOclConstraint((OclConstraint) con);
+		    GenericOclConstraint genCon = new GenericOclConstraint(constraint);
 		    conCopies.add(genCon);
 
 		} else {
@@ -1090,7 +1086,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		    try {
 			if (scxmlXsdLocation.startsWith("http")) {
-			    s = sf.newSchema(new URL(scxmlXsdLocation));
+			    s = sf.newSchema(URI.create(scxmlXsdLocation).toURL());
 			} else {
 			    File schemaFile = new File(scxmlXsdLocation);
 			    s = sf.newSchema(schemaFile);
@@ -1427,12 +1423,10 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    contextModelElementType = ModelElmtContextType.ATTRIBUTE;
 	}
 
-	if (con instanceof GenericFolConstraint) {
-	    GenericFolConstraint genCon = (GenericFolConstraint) con;
+	if (con instanceof GenericFolConstraint genCon) {
 	    genCon.setContextModelElmt(contextModelElement);
 	    genCon.setContextModelElmtType(contextModelElementType);
-	} else if (con instanceof GenericOclConstraint) {
-	    GenericOclConstraint genCon = (GenericOclConstraint) con;
+	} else if (con instanceof GenericOclConstraint genCon) {
 	    genCon.setContextModelElmt(contextModelElement);
 	    genCon.setContextModelElmtType(contextModelElementType);
 	} else {
@@ -1491,9 +1485,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	// Same app schema, first add classes (already converted to generic
 	// classes because it is the same app schema) to output ...
 
-	if (pi instanceof GenericPackageInfo) {
+	if (pi instanceof GenericPackageInfo info) {
 
-	    res.addAll(((GenericPackageInfo) pi).getClasses());
+	    res.addAll(info.getClasses());
 
 	    // .. then descend to next packages
 	    for (PackageInfo cpi : pi.containedPackages()) {
@@ -1980,9 +1974,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	// Remove identified properties from the model and their classes
 	for (PropertyInfo piToRemove : propsToRemove) {
 
-	    if (piToRemove instanceof GenericPropertyInfo) {
-
-		GenericPropertyInfo propToRemove = (GenericPropertyInfo) piToRemove;
+	    if (piToRemove instanceof GenericPropertyInfo propToRemove) {
 
 		this.genPropertiesById.remove(propToRemove.id());
 
@@ -3127,9 +3119,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		for (Constraint con : ciCons) {
 
-		    if (con instanceof OclConstraint) {
-
-			OclConstraint oclCon = (OclConstraint) con;
+		    if (con instanceof OclConstraint oclCon) {
 
 			Constraint parsedConstraint = parse(oclCon, genCi);
 
@@ -3139,9 +3129,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			newClassConstraints.add(parsedConstraint);
 
-		    } else if (con instanceof FolConstraint) {
-
-			FolConstraint folCon = (FolConstraint) con;
+		    } else if (con instanceof FolConstraint folCon) {
 
 			Constraint parsedConstraint = parse(folCon, sbvrParser, genCi);
 
@@ -3192,9 +3180,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 			for (Constraint con : piCons) {
 
-			    if (con instanceof OclConstraint) {
-
-				OclConstraint oclCon = (OclConstraint) con;
+			    if (con instanceof OclConstraint oclCon) {
 
 				Constraint parsedConstraint = parse(oclCon, genPi);
 

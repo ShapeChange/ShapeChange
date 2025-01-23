@@ -34,7 +34,7 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -827,7 +827,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		try {
 		    if (cfgTemplatePath.startsWith("http")) {
-			FileUtils.copyURLToFile(new URL(cfgTemplatePath), cfgFile);
+			FileUtils.copyURLToFile(URI.create(cfgTemplatePath).toURL(), cfgFile);
 		    } else {
 			FileUtils.copyFile(new File(cfgTemplatePath), cfgFile);
 		    }
@@ -841,7 +841,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (StringUtils.isNotBlank(serviceConfigTemplatePathString)) {
 		try {
 		    if (serviceConfigTemplatePathString.startsWith("http")) {
-			FileUtils.copyURLToFile(new URL(serviceConfigTemplatePathString), serviceConfigTemplateFile);
+			FileUtils.copyURLToFile(URI.create(serviceConfigTemplatePathString).toURL(), serviceConfigTemplateFile);
 		    } else {
 			FileUtils.copyFile(new File(serviceConfigTemplatePathString), serviceConfigTemplateFile);
 		    }

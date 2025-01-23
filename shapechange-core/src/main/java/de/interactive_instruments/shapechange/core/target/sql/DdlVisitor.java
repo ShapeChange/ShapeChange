@@ -236,9 +236,7 @@ public class DdlVisitor implements StatementVisitor {
 	sb.append(ae.getOperation());
 	sb.append(" ");
 
-	if (ae instanceof ConstraintAlterExpression) {
-
-	    ConstraintAlterExpression cae = (ConstraintAlterExpression) ae;
+	if (ae instanceof ConstraintAlterExpression cae) {
 	    sb.append(cae.toString());
 	}
 

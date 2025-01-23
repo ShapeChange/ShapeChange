@@ -31,13 +31,16 @@
  */
 package de.interactive_instruments.shapechange.core;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ShapeChangeParseException extends Exception {
 
-    private static final long serialVersionUID = -8227708234112686607L;
+	@Serial
+	private static final long serialVersionUID = -8227708234112686607L;
 
     public ShapeChangeParseException(String msg) {
 	super(msg);

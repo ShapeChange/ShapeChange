@@ -69,7 +69,7 @@ public class LdpGidEncoder {
 
 	if (setSourcePaths && sourcePathInfosForBuilder != null && !sourcePathInfosForBuilder.isEmpty()) {
 
-	    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().get(0);
+	    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().getFirst();
 	    valueSourcePathOrColumnPrefix = spi.getValueSourcePath().get();
 	    pi = sourcePathInfosForBuilder.getPi();
 	}

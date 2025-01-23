@@ -377,7 +377,7 @@ public class Profiles {
 				ProfileIdentifier pi = identifiers.get(i);
 				sb.append(pi + ",");
 			}
-			sb.append(identifiers.get(identifiers.size() - 1));
+			sb.append(identifiers.getLast());
 		}
 
 		return sb.toString();

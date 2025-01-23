@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -383,7 +384,7 @@ public class Config implements SingleTarget, MessageSource {
 		// defaults
 		// for some target parameters.
 		PackageInfo first = (model.allPackagesFromSelectedSchemas().isEmpty() ? null
-			: model.allPackagesFromSelectedSchemas().first());
+			: model.allPackagesFromSelectedSchemas().getFirst());
 
 		// Establish the parameter values. Use defaults where no value is provided in
 		// the
@@ -1240,7 +1241,7 @@ public class Config implements SingleTarget, MessageSource {
 
 					URL url;
 					try {
-					    url = new URL(surl);
+					    url = URI.create(surl).toURL();
 					    configStream = url.openStream();
 					} catch (MalformedURLException e) {
 					    MessageContext m = result.addError(this, 7, surl);

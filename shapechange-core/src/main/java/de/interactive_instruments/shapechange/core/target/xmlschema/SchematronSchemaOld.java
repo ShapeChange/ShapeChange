@@ -352,42 +352,26 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 
 	SchematronConstraintNode scn = null;
 
-	if (ocl instanceof OclNode.Expression) {
-	    // The OCL Expression wrapper ...
-	    OclNode.Expression ex = (OclNode.Expression) ocl;
+	if (ocl instanceof OclNode.Expression ex) {
 	    scn = translateConstraintToSchematronNode(ex.expression, null, negate);
 	    // Check on implementation restrictions
 	    if (scn.containsError())
 		return null;
-	} else if (ocl instanceof OclNode.IterationCallExp) {
-	    // IterationCallExp
-	    OclNode.IterationCallExp iter = (OclNode.IterationCallExp) ocl;
+	} else if (ocl instanceof OclNode.IterationCallExp iter) {
 	    scn = translateConstraintIterationToSchematronNode(iter, enclosing, negate);
-	} else if (ocl instanceof OclNode.OperationCallExp) {
-	    // OperationCallExp
-	    OclNode.OperationCallExp oper = (OclNode.OperationCallExp) ocl;
+	} else if (ocl instanceof OclNode.OperationCallExp oper) {
 	    scn = translateConstraintOperationToSchematronNode(oper, enclosing, negate);
-	} else if (ocl instanceof OclNode.AttributeCallExp) {
-	    // AttributeCallExp
-	    OclNode.AttributeCallExp attr = (OclNode.AttributeCallExp) ocl;
+	} else if (ocl instanceof OclNode.AttributeCallExp attr) {
 	    scn = translateConstraintAttributeToSchematronNode(attr, enclosing, negate);
-	} else if (ocl instanceof OclNode.LiteralExp) {
-	    // LiteralExp
-	    OclNode.LiteralExp lit = (OclNode.LiteralExp) ocl;
+	} else if (ocl instanceof OclNode.LiteralExp lit) {
 	    scn = translateConstraintLiteralToSchematronNode(lit, enclosing, negate);
-	} else if (ocl instanceof OclNode.VariableExp) {
-	    // VariableExp
-	    OclNode.VariableExp var = (OclNode.VariableExp) ocl;
+	} else if (ocl instanceof OclNode.VariableExp var) {
 	    scn = new SchematronConstraintNode.Variable(this, var.declaration, negate);
 	    if (enclosing != null)
 		enclosing.addChild(scn);
-	} else if (ocl instanceof OclNode.IfExp) {
-	    // IfExp
-	    OclNode.IfExp ifex = (OclNode.IfExp) ocl;
+	} else if (ocl instanceof OclNode.IfExp ifex) {
 	    scn = translateConstraintIfExpToSchematronNode(ifex, enclosing, negate);
-	} else if (ocl instanceof OclNode.LetExp) {
-	    // LetExp
-	    OclNode.LetExp letex = (OclNode.LetExp) ocl;
+	} else if (ocl instanceof OclNode.LetExp letex) {
 	    scn = translateConstraintLetExpToSchematronNode(letex, enclosing, negate);
 	} else {
 	    // Anything unknown
@@ -663,11 +647,9 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 	    // Evaluate the type and make sure it is a class constant.
 	    SchematronConstraintNode clex = translateConstraintToSchematronNode(oper.arguments[0], null, false);
 	    boolean assumeError = true;
-	    if (clex instanceof SchematronConstraintNode.Literal) {
-		SchematronConstraintNode.Literal cllit = (SchematronConstraintNode.Literal) clex;
+	    if (clex instanceof SchematronConstraintNode.Literal cllit) {
 		OclNode.LiteralExp lex = cllit.literal;
-		if (lex instanceof OclNode.ClassLiteralExp) {
-		    OclNode.ClassLiteralExp lcl = (OclNode.ClassLiteralExp) lex;
+		if (lex instanceof OclNode.ClassLiteralExp lcl) {
 		    ClassInfo ci = lcl.umlClass;
 		    kindOf.setClass(ci);
 		    assumeError = false;
@@ -701,11 +683,9 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 	    // geometry type.
 	    SchematronConstraintNode clex = translateConstraintToSchematronNode(oper.arguments[0], null, false);
 	    boolean assumeError = true;
-	    if (clex instanceof SchematronConstraintNode.Literal) {
-		SchematronConstraintNode.Literal cllit = (SchematronConstraintNode.Literal) clex;
+	    if (clex instanceof SchematronConstraintNode.Literal cllit) {
 		OclNode.LiteralExp lex = cllit.literal;
-		if (lex instanceof OclNode.ClassLiteralExp) {
-		    OclNode.ClassLiteralExp lcl = (OclNode.ClassLiteralExp) lex;
+		if (lex instanceof OclNode.ClassLiteralExp lcl) {
 		    ClassInfo ci = lcl.umlClass;
 		    cast.setClass(ci);
 		    assumeError = false;
@@ -736,11 +716,9 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 	    SchematronConstraintNode clex = translateConstraintToSchematronNode(oper.object, null, false);
 	    boolean assumeError = true;
 	    ClassInfo ci = null;
-	    if (clex instanceof SchematronConstraintNode.Literal) {
-		SchematronConstraintNode.Literal cllit = (SchematronConstraintNode.Literal) clex;
+	    if (clex instanceof SchematronConstraintNode.Literal cllit) {
 		OclNode.LiteralExp lex = cllit.literal;
-		if (lex instanceof OclNode.ClassLiteralExp) {
-		    OclNode.ClassLiteralExp lcl = (OclNode.ClassLiteralExp) lex;
+		if (lex instanceof OclNode.ClassLiteralExp lcl) {
 		    ci = lcl.umlClass;
 		    if (ci != null)
 			assumeError = false;
@@ -813,8 +791,7 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 	// Find out if we are appending a nilReason property
 	int absorptionType = 0;
 	Info info = attr.selector.modelProperty;
-	if (info instanceof PropertyInfo) {
-	    PropertyInfo pi = (PropertyInfo) info;
+	if (info instanceof PropertyInfo pi) {
 	    boolean nilreason = pi.implementedByNilReason();
 	    if (nilreason)
 		absorptionType = 2;
@@ -855,13 +832,13 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 		enclosing.addChild(atn);
 	    return atn;
 
-	} else if (objnode instanceof SchematronConstraintNode.Attribute) {
-
+	} else if (objnode instanceof SchematronConstraintNode.Attribute atn) {
+	    
 	    // The object of an AttributeExp turns out to be an Attribute node,
 	    // which means that we are just another qualification for the
 	    // latter. So we just need to append the new AttributeExp to the
 	    // existing Attribute node ...
-	    SchematronConstraintNode.Attribute atn = (SchematronConstraintNode.Attribute) objnode;
+	    
 	    // Different ways to append on findings concerning property
 	    // absorption and nilReason treatment ...
 	    if (atn.isPropertyAbsorbing()) {
@@ -920,8 +897,7 @@ public class SchematronSchemaOld extends AbstractSchematronSchema implements Mes
 	    SchematronConstraintNode enclosing, boolean negate) {
 
 	// Reject class constants, which stand for suppressed classes
-	if (lit instanceof OclNode.ClassLiteralExp) {
-	    OclNode.ClassLiteralExp lcl = (OclNode.ClassLiteralExp) lit;
+	if (lit instanceof OclNode.ClassLiteralExp lcl) {
 	    ClassInfo ci = lcl.umlClass;
 	    if (ci.suppressed()) {
 		result.addError(this, 109, currentOclConstraintName, currentOclConstraintClass.name(), ci.name());

@@ -205,7 +205,7 @@ public class ModelCleaner implements Transformer, MessageSource {
 				List<PropertyInfo> props = new ArrayList<PropertyInfo>(
 						genPis.values());
 
-				GenericPropertyInfo p1 = (GenericPropertyInfo) props.get(0);
+				GenericPropertyInfo p1 = (GenericPropertyInfo) props.getFirst();
 				GenericPropertyInfo p2 = (GenericPropertyInfo) props.get(1);
 
 				/*

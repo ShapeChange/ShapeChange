@@ -442,9 +442,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 			PropertyInfo piIdentifiedByVerb;
 			ClassInfo contextForVerb;
 
-			if (scLastSeg instanceof ClassCall) {
-
-				ClassCall ccLastSeg = (ClassCall) scLastSeg;
+			if (scLastSeg instanceof ClassCall ccLastSeg) {
 				contextForVerb = ccLastSeg.getSchemaElement();
 
 				piIdentifiedByVerb = findPropertyByAssociationNameInClassInfo(
@@ -707,7 +705,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 	public Predicate visitRelativeClauseExpr(RelativeClauseExprContext ctx)
 			throws SbvrParsingException {
 
-		Predicate p = this.visitRelativeClause(ctx.relativeClause().get(0));
+		Predicate p = this.visitRelativeClause(ctx.relativeClause().getFirst());
 
 		if (ctx.relativeClause().size() == 1) {
 
@@ -1126,9 +1124,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 
 		SchemaCall result;
 
-		if (previousElement instanceof ClassCall) {
-
-			ClassCall cc = (ClassCall) previousElement;
+		if (previousElement instanceof ClassCall cc) {
 
 			// then the pathSegmentName must identify a property of that class
 			result = parsePropertyCall(pathSegmentName, cc);
@@ -1337,9 +1333,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 
 		ClassInfo classContext;
 
-		if (previousElementFromScope instanceof ClassCall) {
-
-			ClassCall tmp = (ClassCall) previousElementFromScope;
+		if (previousElementFromScope instanceof ClassCall tmp) {
 			classContext = tmp.getSchemaElement();
 
 		} else {
@@ -1676,13 +1670,11 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 
 		Predicate actual = fol;
 
-		if (fol instanceof Not) {
-			actual = ((Not) fol).getPredicate();
+		if (fol instanceof Not not) {
+			actual = not.getPredicate();
 		}
 
-		if (actual instanceof BinaryComparisonPredicate) {
-
-			BinaryComparisonPredicate bcp = (BinaryComparisonPredicate) actual;
+		if (actual instanceof BinaryComparisonPredicate bcp) {
 
 			bcp.setExprLeft(this.leftExpr);
 			bcp.setExprRight(exprRight);
@@ -1738,7 +1730,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 		if (names.size() == 1) {
 
 			StringLiteral sl = new StringLiteral();
-			sl.setValue(names.get(0));
+			sl.setValue(names.getFirst());
 			return sl;
 
 		} else {
@@ -1799,10 +1791,10 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 
 			TreeSet<String> typeNames = new TreeSet<String>();
 
-			if (e instanceof StringLiteral) {
-				typeNames.add(((StringLiteral) e).getValue());
-			} else if (e instanceof StringLiteralList) {
-				typeNames.addAll(((StringLiteralList) e).getValues());
+			if (e instanceof StringLiteral literal) {
+				typeNames.add(literal.getValue());
+			} else if (e instanceof StringLiteralList list) {
+				typeNames.addAll(list.getValues());
 			} else {
 
 				// should not happen, unless grammar was changed
@@ -1869,7 +1861,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 
 			IsTypeOf ito = new IsTypeOf();
 			ito.setExprLeft(this.leftExpr);
-			ito.setExprRight(typeClassLiterals.get(0));
+			ito.setExprRight(typeClassLiterals.getFirst());
 
 			return ito;
 		}

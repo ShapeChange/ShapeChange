@@ -140,15 +140,15 @@ public class Variable extends Expression {
 
 			SchemaCall current = value;
 
-			PropertyCall lastPC = current instanceof PropertyCall ? (PropertyCall) current
+			PropertyCall lastPC = current instanceof PropertyCall pc ? pc
 					: null;
 
 			while (current.getNextElement() != null) {
 
 				current = current.getNextElement();
 
-				if (current instanceof PropertyCall) {
-					lastPC = (PropertyCall) current;
+				if (current instanceof PropertyCall call) {
+					lastPC = call;
 				}
 			}
 

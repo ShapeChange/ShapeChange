@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.ea.target.sql.databasemodel;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class DatabaseModelWriterEA implements DatabaseModelWriter, MessageSource
 
 		    // copy ea repo file from remote URI
 		    try {
-			URL eaRepoUrl = new URL(eaRepoFilePathByConfig);
+			URL eaRepoUrl = URI.create(eaRepoFilePathByConfig).toURL();
 			FileUtils.copyURLToFile(eaRepoUrl, eaRepo);
 			result.addInfo(this, 30, eaRepoFilePathByConfig, eaRepo.getAbsolutePath());
 		    } catch (MalformedURLException e1) {

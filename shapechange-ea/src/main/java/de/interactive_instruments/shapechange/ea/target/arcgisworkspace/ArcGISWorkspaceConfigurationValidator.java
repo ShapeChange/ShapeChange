@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.ea.target.arcgisworkspace;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.SortedSet;
@@ -145,7 +146,7 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
 	    if (workspaceTemplateFilePath.toLowerCase().startsWith("http")) {
 
 		try {
-		    URL templateUrl = new URL(workspaceTemplateFilePath);
+		    URL templateUrl = URI.create(workspaceTemplateFilePath).toURL();
 		    FileUtils.copyURLToFile(templateUrl, outputFile);
 		} catch (MalformedURLException e1) {
 		    isValid = false;

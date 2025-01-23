@@ -1153,17 +1153,13 @@ public class Profiler implements Transformer, MessageSource {
 									+ con.name() + "' [" + con.text()
 									+ "] is null.");
 
-					if (owner instanceof PropertyInfo) {
-
-						PropertyInfo pi = (PropertyInfo) owner;
+					if (owner instanceof PropertyInfo pi) {
 
 						sb.append(" Omitting constraint in property '"
 								+ pi.name() + "' of class '"
 								+ pi.inClass().name() + "'.");
 
-					} else if (owner instanceof ClassInfo) {
-
-						ClassInfo ci = (ClassInfo) owner;
+					} else if (owner instanceof ClassInfo ci) {
 
 						sb.append(" Omitting constraint in class '" + ci.name()
 								+ "'.");
@@ -1252,9 +1248,7 @@ public class Profiler implements Transformer, MessageSource {
 
 				ClassInfo ciSub = genModel.classById(subtypeId);
 
-				if (ciSub instanceof GenericClassInfo) {
-
-					GenericClassInfo genCiSub = (GenericClassInfo) ciSub;
+				if (ciSub instanceof GenericClassInfo genCiSub) {
 
 					directGenSubtypes.add(genCiSub);
 

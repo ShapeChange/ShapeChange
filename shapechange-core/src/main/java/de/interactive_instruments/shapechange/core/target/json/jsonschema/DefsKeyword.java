@@ -32,6 +32,7 @@
 package de.interactive_instruments.shapechange.core.target.json.jsonschema;
 
 import java.util.TreeMap;
+import java.io.Serial;
 import java.util.Map.Entry;
 
 import de.interactive_instruments.shapechange.core.target.json.json.JsonObject;
@@ -43,10 +44,11 @@ import de.interactive_instruments.shapechange.core.target.json.json.JsonValue;
  */
 public class DefsKeyword extends TreeMap<String, JsonSchema> implements JsonSchemaKeyword {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 6130420413664559174L;
+	/**
+	  
+	 */
+	@Serial
+	private static final long serialVersionUID = 6130420413664559174L;
 
     @Override
     public String name() {

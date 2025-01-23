@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.ea.target.uml;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -241,7 +242,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 		    // copy template file either from remote or local URI
 		    if (qeaTemplateFilePath.toLowerCase().startsWith("http")) {
 			try {
-			    URL templateUrl = new URL(qeaTemplateFilePath);
+			    URL templateUrl = URI.create(qeaTemplateFilePath).toURL();
 			    FileUtils.copyURLToFile(templateUrl, repfile);
 			} catch (MalformedURLException e1) {
 			    result.addFatalError(this, 51, qeaTemplateFilePath, e1.getMessage());
@@ -514,9 +515,7 @@ public class UmlModel implements SingleTarget, MessageSource {
 
 	String text = constr.text();
 
-	if (mergeConstraintCommentsIntoText && constr instanceof OclConstraint) {
-
-	    OclConstraint oclCon = (OclConstraint) constr;
+	if (mergeConstraintCommentsIntoText && constr instanceof OclConstraint oclCon) {
 
 	    if (oclCon.hasComments()) {
 
@@ -548,8 +547,8 @@ public class UmlModel implements SingleTarget, MessageSource {
     private String determineConstraintType(Constraint constr) {
 
 	String type = "OCL";
-	if (constr instanceof TextConstraint) {
-	    type = ((TextConstraint) constr).type();
+	if (constr instanceof TextConstraint constraint) {
+	    type = constraint.type();
 	    if (StringUtils.isBlank(type)) {
 		type = "Text";
 	    }

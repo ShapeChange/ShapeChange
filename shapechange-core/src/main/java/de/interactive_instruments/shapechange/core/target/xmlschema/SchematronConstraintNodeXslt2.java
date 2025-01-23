@@ -214,10 +214,9 @@ public abstract class SchematronConstraintNodeXslt2 {
 
     protected boolean isAttributeWithVariableSelfAsSource(SchematronConstraintNodeXslt2 node) {
 
-	if (node instanceof Attribute) {
-	    Attribute att = (Attribute) node;
-	    SchematronConstraintNodeXslt2 source = att.children.get(0);
-	    if (source instanceof Variable && ((Variable) source).getName().equalsIgnoreCase("self")) {
+	if (node instanceof Attribute att) {
+	    SchematronConstraintNodeXslt2 source = att.children.getFirst();
+	    if (source instanceof Variable variable && variable.getName().equalsIgnoreCase("self")) {
 		return true;
 	    }
 	}
@@ -434,7 +433,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    // Just one child? Pass through ...
 	    if (children.size() == 1)
-		return children.get(0).translate(ctx);
+		return children.getFirst().translate(ctx);
 
 	    // Which logic particle?
 	    String particle = null;
@@ -595,7 +594,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Fetch and compile the object
-	    SchematronConstraintNodeXslt2 obj = children.get(0);
+	    SchematronConstraintNodeXslt2 obj = children.getFirst();
 	    XpathFragment xpt = obj.translate(ctx);
 	    if (xpt.fragment.length() == 0) {
 		xpt.fragment = ".";
@@ -651,7 +650,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl) {
 	    if (this.vardecl == vardecl)
-		return children.get(0);
+		return children.getFirst();
 	    return null;
 	}
 
@@ -664,7 +663,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Fetch and compile the object
-	    SchematronConstraintNodeXslt2 selection = children.get(0);
+	    SchematronConstraintNodeXslt2 selection = children.getFirst();
 	    XpathFragment xpt = selection.translate(ctx);
 
 	    // Prepare the binding context for compilation of the iterator
@@ -726,7 +725,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl) {
 	    if (this.vardecl == vardecl)
-		return children.get(0);
+		return children.getFirst();
 	    return null;
 	}
 
@@ -739,7 +738,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Fetch and compile the object
-	    SchematronConstraintNodeXslt2 selection = children.get(0);
+	    SchematronConstraintNodeXslt2 selection = children.getFirst();
 	    XpathFragment xpt = selection.translate(ctx);
 
 	    // Prepare the binding context for compilation of the iterator
@@ -807,7 +806,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl) {
 	    if (this.vardecl == vardecl)
-		return children.get(0);
+		return children.getFirst();
 	    return null;
 	}
 
@@ -826,7 +825,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    boolean neg = negated;
 
 	    // Fetch and compile the object
-	    SchematronConstraintNodeXslt2 obj = children.get(0);
+	    SchematronConstraintNodeXslt2 obj = children.getFirst();
 	    XpathFragment xpt = obj.translate(ctx);
 
 	    // Get hold of the expression argument and take cases on its
@@ -855,8 +854,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 		// The type name is relevant in case of 'Boolean'
 		String objAttNameOfLastClass = null;
 
-		if (obj instanceof Attribute)
-		    obat = (Attribute) obj;
+		if (obj instanceof Attribute attribute)
+		    obat = attribute;
 		else if (obj instanceof Variable) {
 		    obat = obj.generatingAttribute();
 		}
@@ -1044,7 +1043,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl) {
 	    if (this.vardecl == vardecl)
-		return children.get(0);
+		return children.getFirst();
 	    return null;
 	}
 
@@ -1055,7 +1054,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return The retrieved Attribute node if there is such a thing
 	 */
 	public Attribute generatingAttribute() {
-	    return children.get(0).generatingAttribute();
+	    return children.getFirst().generatingAttribute();
 	}
 
 	/**
@@ -1074,7 +1073,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return Flag indicating whether the node has a simple type
 	 */
 	public boolean hasSimpleType() {
-	    return children.get(0).hasSimpleType();
+	    return children.getFirst().hasSimpleType();
 	}
 
 	/**
@@ -1084,7 +1083,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return Flag indicating whether the node is an identity carrying type
 	 */
 	public boolean hasIdentity() {
-	    return children.get(0).hasIdentity();
+	    return children.getFirst().hasIdentity();
 	}
 
 	/**
@@ -1101,7 +1100,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Fetch and compile the object
-	    SchematronConstraintNodeXslt2 obj = children.get(0);
+	    SchematronConstraintNodeXslt2 obj = children.getFirst();
 	    XpathFragment xpt = obj.translate(ctx);
 
 	    // Prepare the binding context for compilation of the iterator
@@ -1292,7 +1291,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 */
 	public XpathFragment translate(BindingContext ctx) {
 
-	    SchematronConstraintNodeXslt2 objnode = children.get(0);
+	    SchematronConstraintNodeXslt2 objnode = children.getFirst();
 	    // update the binding context to let attribute translation know that access to
 	    // property metadata is the intent
 	    ctx.propertyMetadataAccess = true;
@@ -1397,7 +1396,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Translate the object in the given context
-	    SchematronConstraintNodeXslt2 objnode = children.get(0);
+	    SchematronConstraintNodeXslt2 objnode = children.getFirst();
 	    XpathFragment xptobj = objnode.translate(ctx);
 	    boolean emptyobject = xptobj.fragment.length() == 0;
 
@@ -1513,7 +1512,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Translate the object in the given context
-	    SchematronConstraintNodeXslt2 objnode = children.get(0);
+	    SchematronConstraintNodeXslt2 objnode = children.getFirst();
 	    XpathFragment xptobj = objnode.translate(ctx);
 	    if (xptobj.fragment.length() == 0) {
 		xptobj.fragment = "self::*";
@@ -1657,7 +1656,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Translate the object
-	    SchematronConstraintNodeXslt2 obj = children.get(0);
+	    SchematronConstraintNodeXslt2 obj = children.getFirst();
 	    XpathFragment xpt = obj.translate(ctx);
 	    if (xpt.fragment.length() == 0) {
 		xpt.fragment = ".";
@@ -1766,7 +1765,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Translate the arguments
-	    XpathFragment xptobj = children.get(0).translate(ctx);
+	    XpathFragment xptobj = children.getFirst().translate(ctx);
 	    if (xptobj.fragment.length() == 0) {
 		xptobj.fragment = ".";
 	    }
@@ -1828,7 +1827,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // Translate the arguments
-	    XpathFragment xptobj = children.get(0).translate(ctx);
+	    XpathFragment xptobj = children.getFirst().translate(ctx);
 	    if (xptobj.fragment.length() == 0)
 		xptobj.fragment = ".";
 	    XpathFragment xptpat = children.get(1).translate(ctx);
@@ -1876,7 +1875,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // One argument to be compiled in any case
-	    XpathFragment xpt1 = children.get(0).translate(ctx);
+	    XpathFragment xpt1 = children.getFirst().translate(ctx);
 
 	    // Take cases on operation and number of operands
 	    if (children.size() == 1) {
@@ -2073,10 +2072,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 		}
 	    }
 
-	    if (binds != null && binds instanceof Let) {
+	    if (binds != null && binds instanceof Let let) {
+		
 		// Treatment for 'let' expression ...
 		// Grab the initial value expression
-		Let let = (Let) binds;
+		
 		SchematronConstraintNodeXslt2 expr = null;
 		for (int i = 0; i < let.children.size() - 1; i++) {
 		    if (let.vardecls[i] == vardecl) {
@@ -2260,14 +2260,14 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // it the object child of attribute created formerly.
 	    if (at == 0) {
 		// There is nothing but the object, So, transfer this.
-		atrite.addChild(children.get(0));
+		atrite.addChild(children.getFirst());
 	    } else {
 		// Create another Attribute with the selectors in front of the
 		// splitting point. Make it the object of the right hand one.
 		Attribute atleft = new Attribute(schemaObject, attributes[0], negated);
 		for (int i = 1; i < at; i++)
 		    appendAttribute(attributes[i]);
-		atleft.addChild(children.get(0));
+		atleft.addChild(children.getFirst());
 		atrite.addChild(atleft);
 	    }
 	    return atrite;
@@ -2305,7 +2305,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	 * @return Flag indicating the inquired property
 	 */
 	public boolean isVarOrAttribBased(OclNode.Declaration vardecl) {
-	    return children.get(0).isVarOrAttribBased(vardecl);
+	    return children.getFirst().isVarOrAttribBased(vardecl);
 	}
 
 	/**
@@ -2429,7 +2429,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	     * Translate the object. This is a variable (self in most of the cases), or
 	     * allInstances() or any type of iterator such as exists, forAll, select.
 	     */
-	    SchematronConstraintNodeXslt2 objnode = children.get(0);
+	    SchematronConstraintNodeXslt2 objnode = children.getFirst();
 	    XpathFragment xpt = objnode.translate(ctx);
 
 	    if (xpt.fragment.length() > 0) {
@@ -2933,11 +2933,10 @@ public abstract class SchematronConstraintNodeXslt2 {
 		// If string, surround with ''
 		value = "'" + value + "'";
 
-	    } else if (literal instanceof OclNode.EnumerationLiteralExp) {
-
+	    } else if (literal instanceof OclNode.EnumerationLiteralExp litex) {
+		
 		// Enums and codelists are to be treated like strings, except
 		// Boolean class ones, which are treated as Boolean constants
-		OclNode.EnumerationLiteralExp litex = (OclNode.EnumerationLiteralExp) literal;
 		ClassInfo ci = litex.dataType.umlClass;
 
 		if (ci != null && ci.name().equals("Boolean")) {
@@ -3005,11 +3004,10 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    value = "'" + value + "'";
 		}
 
-	    } else if (literal instanceof OclNode.BooleanLiteralExp) {
-
+	    } else if (literal instanceof OclNode.BooleanLiteralExp lit) {
+		
 		// Booleans may need consideration of negation
-
-		OclNode.BooleanLiteralExp lit = (OclNode.BooleanLiteralExp) literal;
+		
 		boolean val = lit.value;
 		if (negated) {
 		    val = !val;
@@ -3022,9 +3020,8 @@ public abstract class SchematronConstraintNodeXslt2 {
 		// The value is already o.k., but we need to set the type
 		type = XpathType.NUMBER;
 
-	    } else if (literal instanceof OclNode.DateTimeLiteralExp) {
-
-		OclNode.DateTimeLiteralExp lt = (OclNode.DateTimeLiteralExp) literal;
+	    } else if (literal instanceof OclNode.DateTimeLiteralExp lt) {
+		
 		if (lt.current) {
 		    // This references the current date and cannot be
 		    // represented in Xpath ...
@@ -3035,7 +3032,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 		    int y = dt.get(Calendar.YEAR);
 		    int m = dt.get(Calendar.MONTH) + 1;
 		    int d = dt.get(Calendar.DAY_OF_MONTH);
-		    value = String.format("'%04d-%02d-%02d'", y, m, d);
+		    value = "'%04d-%02d-%02d'".formatted(y, m, d);
 		}
 		type = XpathType.BOOLEAN;
 
@@ -3086,7 +3083,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	public XpathFragment translate(BindingContext ctx) {
 
 	    // The 3 arguments
-	    SchematronConstraintNodeXslt2 con = children.get(0);
+	    SchematronConstraintNodeXslt2 con = children.getFirst();
 	    SchematronConstraintNodeXslt2 thn = children.get(1);
 	    SchematronConstraintNodeXslt2 els = children.get(2);
 
@@ -3175,7 +3172,7 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    // definitions of the 'let' construct itself is done way down in
 	    // the Variable nodes whenever a variable of the 'let' is made
 	    // use of.
-	    SchematronConstraintNodeXslt2 body = children.get(children.size() - 1);
+	    SchematronConstraintNodeXslt2 body = children.getLast();
 	    letctx = ctx;
 	    XpathFragment xpt = body.translate(ctx);
 	    return xpt;

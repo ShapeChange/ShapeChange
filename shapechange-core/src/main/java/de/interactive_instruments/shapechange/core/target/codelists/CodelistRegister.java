@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
@@ -333,7 +334,7 @@ public class CodelistRegister implements SingleTarget {
 		diffs = differ.diff(p, refPackage);
 	    } else if (set.size() == 1) {
 		differ = new Differ(true, new String[0]);
-		refPackage = set.iterator().next();
+		refPackage = set.getFirst();
 		refVersion = refPackage.version();
 		diffs = differ.diff(p, refPackage);
 		for (Entry<Info, SortedSet<DiffElement>> me : diffs.entrySet()) {
@@ -1014,8 +1015,8 @@ public class CodelistRegister implements SingleTarget {
 			break;
 		    }
 		}
-	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo) {
-	    s = ((PropertyInfo) i).initialValue();
+	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo info) {
+	    s = info.initialValue();
 	    if (diffs != null && diffs.get(i) != null)
 		for (DiffElement diff : diffs.get(i)) {
 		    if (diff.subElementType == ElementType.ENUM) {
@@ -1174,7 +1175,7 @@ public class CodelistRegister implements SingleTarget {
 
 	    InputStream stream = null;
 	    if (xsltPath.toLowerCase().startsWith("http")) {
-		URL url = new URL(xsltPath + "/" + xsltfileName);
+		URL url = URI.create(xsltPath + "/" + xsltfileName).toURL();
 		URLConnection urlConnection = url.openConnection();
 		stream = urlConnection.getInputStream();
 	    } else {

@@ -202,7 +202,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 				int i = 0;
 				for (String tv : tvsWithSingleValue) {
 					this.simpleTags[0][i] = tv;
-					this.simpleTags[1][i] = tvsDeepCopy.get(tv).get(0);
+					this.simpleTags[1][i] = tvsDeepCopy.get(tv).getFirst();
 					i++;
 				}
 
@@ -306,7 +306,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 			if (values.size() == 1) {
 
 				// delegate to other method
-				put(tag, values.get(0));
+				put(tag, values.getFirst());
 
 			} else {
 
@@ -411,7 +411,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 		if (complexTags != null) {
 			for (Entry<String, List<String>> e : complexTags.entrySet()) {
 
-				res.put(e.getKey(), e.getValue().get(0));
+				res.put(e.getKey(), e.getValue().getFirst());
 			}
 		}
 
@@ -452,7 +452,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 			if (complexTags != null) {
 				for (Entry<String, List<String>> e : complexTags.entrySet()) {
 					if (tagsAsSet.contains(e.getKey())) {
-						res.put(e.getKey(), e.getValue().get(0));
+						res.put(e.getKey(), e.getValue().getFirst());
 					}
 				}
 			}
@@ -479,7 +479,7 @@ public class TaggedValuesCacheArray extends TaggedValuesImpl {
 
 		} else if (complexTags != null && complexTags.containsKey(tag)) {
 
-			return complexTags.get(tag).get(0);
+			return complexTags.get(tag).getFirst();
 
 		} else if (simpleTags != null) {
 

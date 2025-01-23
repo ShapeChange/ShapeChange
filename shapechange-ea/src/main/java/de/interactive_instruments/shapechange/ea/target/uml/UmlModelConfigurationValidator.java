@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.ea.target.uml;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,7 +154,7 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 		    // copy template file either from remote or local URI
 		    if (eaTemplateFilePath.toLowerCase().startsWith("http")) {
 			try {
-			    URL templateUrl = new URL(eaTemplateFilePath);
+			    URL templateUrl = URI.create(eaTemplateFilePath).toURL();
 			    FileUtils.copyURLToFile(templateUrl, repfile);
 			    created = true;
 			} catch (MalformedURLException e1) {

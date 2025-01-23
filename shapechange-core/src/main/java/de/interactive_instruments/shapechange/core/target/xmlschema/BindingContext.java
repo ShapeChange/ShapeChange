@@ -94,14 +94,14 @@ public class BindingContext {
     public void addStep() {
 	if (vars == null || vars.size() == 0)
 	    return;
-	++(vars.get(vars.size() - 1).noOfSteps);
+	++(vars.getLast().noOfSteps);
     }
 
     /** Do away with the last variable declaration */
     public void popDeclaration() {
 	if (vars == null || vars.size() == 0)
 	    return;
-	vars.remove(vars.size() - 1);
+	vars.removeLast();
     }
 
     public void merge(BindingContext ctx) {

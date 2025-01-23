@@ -31,13 +31,16 @@
  */
 package de.interactive_instruments.shapechange.core;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ModelElementSelectionParseException extends IllegalStateException {
 
-    private static final long serialVersionUID = 1308913713943343225L;
+	@Serial
+	private static final long serialVersionUID = 1308913713943343225L;
 
     public ModelElementSelectionParseException(String msg) {
 	super(msg);

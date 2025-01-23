@@ -390,8 +390,8 @@ public class CodelistDictionaries implements Target, MessageSource {
 	    s = i.aliasName();
 	} else if (source.equalsIgnoreCase("id")) {
 	    s = i.id();
-	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo) {
-	    s = ((PropertyInfo) i).initialValue();
+	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo info) {
+	    s = info.initialValue();
 	} else if (source.startsWith("@")) {
 	    s = i.taggedValue(source.substring(1));
 	}

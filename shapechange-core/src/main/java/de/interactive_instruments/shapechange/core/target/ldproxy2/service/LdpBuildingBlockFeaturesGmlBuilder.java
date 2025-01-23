@@ -202,7 +202,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	} else {
 	    if (!originalSchemaName.equals(pi.model().schemaPackage(pi.inClass()).name())) {
 		SortedSet<PackageInfo> originalSchema = model.schemas(originalSchemaName);
-		if (originalSchema.isEmpty() || StringUtils.isBlank(originalSchema.first().targetNamespace())) {
+		if (originalSchema.isEmpty() || StringUtils.isBlank(originalSchema.getFirst().targetNamespace())) {
 		    if (gmlFixmeByOriginalSchemaNameMap.containsKey(originalSchemaName)) {
 			xmlNamespaceToUse = gmlFixmeByOriginalSchemaNameMap.get(originalSchemaName);
 		    } else {
@@ -210,7 +210,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 			result.addWarning(msgSource, 129, originalSchemaName, xmlNamespaceToUse);
 		    }
 		} else {
-		    xmlNamespaceToUse = originalSchema.first().targetNamespace();
+		    xmlNamespaceToUse = originalSchema.getFirst().targetNamespace();
 		}
 	    }
 	}

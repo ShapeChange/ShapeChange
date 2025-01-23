@@ -189,7 +189,7 @@ public class ProfileConstraintTransformer
 		}
 
 		GenericPackageInfo profileSchema = (GenericPackageInfo) profileSchemaSet
-				.first();
+				.getFirst();
 
 		// Get classes of base schemas
 		SortedSet<GenericClassInfo> baseSchemaClasses = getBaseSchemaClasses(
@@ -409,7 +409,7 @@ public class ProfileConstraintTransformer
 		}
 
 		GenericPackageInfo profileSchema = (GenericPackageInfo) profileSchemaSet
-				.first();
+				.getFirst();
 
 		/*
 		 * Get classes of base schemas
@@ -702,7 +702,7 @@ public class ProfileConstraintTransformer
 
 		if (!dss.isEmpty()) {
 
-			return dss.first();
+			return dss.getFirst();
 
 		} else {
 

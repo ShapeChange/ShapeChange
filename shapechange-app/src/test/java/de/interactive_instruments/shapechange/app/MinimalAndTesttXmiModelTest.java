@@ -32,6 +32,7 @@
 package de.interactive_instruments.shapechange.app;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
 import org.junit.jupiter.api.Tag;
@@ -48,7 +49,7 @@ public class MinimalAndTesttXmiModelTest extends BasicTestSCXML {
 	 * NOTE: Input model type of minimal configuration is XMI
 	 */
 	try {
-	    URL url = new URL("http://shapechange.net/resources/config/minimal.xml");
+	    URL url = URI.create("http://shapechange.net/resources/config/minimal.xml").toURL();
 	    InputStream configStream = url.openStream();
 	    if (configStream != null) {
 		xsdTest(null, new String[] { "test" }, null, ".", "src/integrationtests/xmi/basic/reference");

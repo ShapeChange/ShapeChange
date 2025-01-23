@@ -31,11 +31,14 @@
  */
 package de.interactive_instruments.shapechange.core.target.ontology;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff
  */
 public class OntologyProcessingException extends Exception {
 
+	@Serial
 	private static final long serialVersionUID = -2317158003266968407L;
 
 	public OntologyProcessingException(String message, Throwable exception) {

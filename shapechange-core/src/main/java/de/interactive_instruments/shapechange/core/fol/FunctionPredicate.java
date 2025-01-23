@@ -61,7 +61,7 @@ public class FunctionPredicate extends Predicate {
 		sb.append("(");
 		if(args != null && !args.isEmpty()) {
 			
-			sb.append(args.get(0).toString());
+			sb.append(args.getFirst().toString());
 			
 			for(int i=1; i<args.size(); i++) {
 				sb.append(",");

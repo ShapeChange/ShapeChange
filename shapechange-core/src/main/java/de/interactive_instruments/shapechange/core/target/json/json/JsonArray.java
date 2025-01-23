@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.json.json;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import com.google.gson.JsonElement;
@@ -41,7 +42,8 @@ import com.google.gson.JsonElement;
  */
 public class JsonArray extends ArrayList<JsonValue> implements JsonValue {
 
-    private static final long serialVersionUID = 6420580609482450369L;
+	@Serial
+	private static final long serialVersionUID = 6420580609482450369L;
 
     @Override
     public JsonElement toGson() {

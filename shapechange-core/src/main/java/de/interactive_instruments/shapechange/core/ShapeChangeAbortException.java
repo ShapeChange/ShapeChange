@@ -32,8 +32,11 @@
 
 package de.interactive_instruments.shapechange.core;
 
+import java.io.Serial;
+
 /** The abort exception is only thrown in case of a fatal error. */
 public class ShapeChangeAbortException extends Exception {
+	@Serial
 	private static final long serialVersionUID = 9198956685101864680L;
 
 	private String msgText;

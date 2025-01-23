@@ -413,16 +413,16 @@ public class ModelWriter extends AbstractModelWriter {
 		String sourceType = null;
 		String[] comments = null;
 
-		if (con instanceof FolConstraint) {
+		if (con instanceof FolConstraint constraint) {
 
 		    elementName = "FolConstraint";
-		    sourceType = ((FolConstraint) con).sourceType();
-		    comments = ((FolConstraint) con).comments();
+		    sourceType = constraint.sourceType();
+		    comments = constraint.comments();
 
-		} else if (con instanceof OclConstraint) {
+		} else if (con instanceof OclConstraint constraint) {
 
 		    elementName = "OclConstraint";
-		    comments = ((OclConstraint) con).comments();
+		    comments = constraint.comments();
 
 		} else {
 

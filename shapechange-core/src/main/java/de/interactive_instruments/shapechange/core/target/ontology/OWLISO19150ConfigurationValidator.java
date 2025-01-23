@@ -365,8 +365,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	    isValid = isValid && checkPropertyIdentifiers(result, gp.getName(), gp.getSubPropertyOf(), "subPropertyOf");
 
-	    if (gp instanceof GeneralObjectProperty) {
-		GeneralObjectProperty gop = (GeneralObjectProperty) gp;
+	    if (gp instanceof GeneralObjectProperty gop) {
 		isValid = isValid
 			&& checkPropertyIdentifiers(result, gop.getName(), gop.getInverseProperty(), "inverseProperty");
 	    }

@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -304,7 +304,7 @@ public class XMLUtil {
 	File file = new File(xmlPath);
 	if (file == null || !file.exists()) {
 	    try {
-		xmlStream = (new URL(xmlPath)).openStream();
+		xmlStream = (URI.create(xmlPath).toURL()).openStream();
 	    } catch (MalformedURLException e) {
 		throw new Exception("No XML file found at " + xmlPath + " (malformed URL)");
 	    } catch (IOException e) {

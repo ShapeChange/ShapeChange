@@ -71,20 +71,20 @@ public class DiffElement2Comparator implements Comparator<DiffElement2> {
 
 	if (o1Info != null) {
 
-	    if (o1Info instanceof PropertyInfo) {
-		packagePathThis = ((PropertyInfo) o1Info).inClass().pkg().fullNameInSchema();
-	    } else if (o1Info instanceof ClassInfo) {
-		packagePathThis = ((ClassInfo) o1Info).pkg().fullNameInSchema();
+	    if (o1Info instanceof PropertyInfo info) {
+		packagePathThis = info.inClass().pkg().fullNameInSchema();
+	    } else if (o1Info instanceof ClassInfo info) {
+		packagePathThis = info.pkg().fullNameInSchema();
 	    } else {
 		packagePathThis = o1Info.fullNameInSchema();
 	    }
 	}
 
 	if (o2Info != null)
-	    if (o2Info instanceof PropertyInfo) {
-		packagePathOther = ((PropertyInfo) o2Info).inClass().pkg().fullNameInSchema();
-	    } else if (o2Info instanceof ClassInfo) {
-		packagePathOther = ((ClassInfo) o2Info).pkg().fullNameInSchema();
+	    if (o2Info instanceof PropertyInfo info) {
+		packagePathOther = info.inClass().pkg().fullNameInSchema();
+	    } else if (o2Info instanceof ClassInfo info) {
+		packagePathOther = info.pkg().fullNameInSchema();
 	    } else {
 		packagePathOther = o2Info.fullNameInSchema();
 	    }

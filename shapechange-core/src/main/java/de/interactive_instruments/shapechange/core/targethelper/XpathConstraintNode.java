@@ -301,14 +301,14 @@ public abstract class XpathConstraintNode {
 		public void addStep() {
 			if (vars == null || vars.size() == 0)
 				return;
-			++(vars.get(vars.size() - 1).noOfSteps);
+			++(vars.getLast().noOfSteps);
 		}
 
 		// Do away with the last variable declaration
 		public void popDeclaration() {
 			if (vars == null || vars.size() == 0)
 				return;
-			vars.remove(vars.size() - 1);
+			vars.removeLast();
 		}
 
 		// Merge another context
@@ -532,7 +532,7 @@ public abstract class XpathConstraintNode {
 
 			// Just one child? Pass through ...
 			if (children.size() == 1)
-				return children.get(0).translate(ctx);
+				return children.getFirst().translate(ctx);
 
 			// Which logic particle?
 			String particle = null;
@@ -700,7 +700,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			XpathConstraintNode obj = children.get(0);
+			XpathConstraintNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 			if (xpt.fragment.length() == 0)
 				xpt.fragment = ".";
@@ -777,7 +777,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			XpathConstraintNode obj = children.get(0);
+			XpathConstraintNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 
 			// Prepare the binding context for compilation of the iterator
@@ -869,7 +869,7 @@ public abstract class XpathConstraintNode {
 			boolean neg = negated;
 
 			// Fetch and compile the object
-			XpathConstraintNode obj = children.get(0);
+			XpathConstraintNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 
 			// Get hold of the expression argument and take cases on its
@@ -892,8 +892,7 @@ public abstract class XpathConstraintNode {
 				// If the expression is the identity mapping, the result depends
 				// on the nature of the object types.
 				boolean simple = false;
-				if (obj instanceof Attribute) {
-					Attribute obat = (Attribute) obj;
+				if (obj instanceof Attribute obat) {
 					ClassInfo ci = obat.attributes[obat.attributes.length
 							- 1].main.dataType.umlClass;
 					if (ci != null) {
@@ -939,8 +938,8 @@ public abstract class XpathConstraintNode {
 						if (!exat.hasSimpleType()) {
 							// Class is expressed by means of an element
 							// construct.
-							XpathConstraintNode sv = exat.children.get(0);
-							exat.children.set(0, children.get(0));
+							XpathConstraintNode sv = exat.children.getFirst();
+							exat.children.set(0, children.getFirst());
 							XpathFragment xpta = exat.translate(ctx);
 							xpt.merge(xpta);
 							xpt.fragment = "count(" + xpt.fragment + ") "
@@ -976,13 +975,13 @@ public abstract class XpathConstraintNode {
 						boolean savednegated = negated;
 						negated = false;
 						// 1st: obj->isUnique(v|v.a1)
-						children.set(1, exat1.children.get(0));
+						children.set(1, exat1.children.getFirst());
 						XpathFragment xpt1 = translate(ctx);
 						// 2nd: obj.a1->isUnique(w|w.a2....) -- Note variable
 						// is incorrectly used - Type is not o.k.
-						Attribute exat0 = (Attribute) exat1.children.get(0);
-						Variable v0 = (Variable) exat0.children.get(0);
-						exat0.children.set(0, children.get(0));
+						Attribute exat0 = (Attribute) exat1.children.getFirst();
+						Variable v0 = (Variable) exat0.children.getFirst();
+						exat0.children.set(0, children.getFirst());
 						exat1.children.set(0, v0); // Note wrong type
 						children.set(0, exat0);
 						children.set(1, exat1);
@@ -1074,7 +1073,7 @@ public abstract class XpathConstraintNode {
 		 * @return The retrieved Attribute node if there is such a thing
 		 */
 		public Attribute generatingAttribute() {
-			return children.get(0).generatingAttribute();
+			return children.getFirst().generatingAttribute();
 		}
 
 		/**
@@ -1097,7 +1096,7 @@ public abstract class XpathConstraintNode {
 		 * @return Flag indicating whether the node has a simple type
 		 */
 		public boolean hasSimpleType() {
-			return children.get(0).hasSimpleType();
+			return children.getFirst().hasSimpleType();
 		}
 
 		/**
@@ -1109,7 +1108,7 @@ public abstract class XpathConstraintNode {
 		 * @return Flag indicating whether the node is an identity carrying type
 		 */
 		public boolean hasIdentity() {
-			return children.get(0).hasIdentity();
+			return children.getFirst().hasIdentity();
 		}
 
 		/**
@@ -1131,7 +1130,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Fetch and compile the object
-			XpathConstraintNode obj = children.get(0);
+			XpathConstraintNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 
 			// Prepare the binding context for compilation of the iterator
@@ -1332,7 +1331,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the object in the given context
-			XpathConstraintNode objnode = children.get(0);
+			XpathConstraintNode objnode = children.getFirst();
 			XpathFragment xptobj = objnode.translate(ctx);
 			boolean emptyobject = xptobj.fragment.length() == 0;
 
@@ -1438,7 +1437,7 @@ public abstract class XpathConstraintNode {
 		 * @return Flag indicating whether the node has a simple type
 		 */
 		public boolean hasSimpleType() {
-			return children.get(0).hasSimpleType();
+			return children.getFirst().hasSimpleType();
 		}
 
 		/**
@@ -1450,7 +1449,7 @@ public abstract class XpathConstraintNode {
 		 * @return Flag indicating whether the node is an identity carrying type
 		 */
 		public boolean hasIdentity() {
-			return children.get(0).hasIdentity();
+			return children.getFirst().hasIdentity();
 		}
 
 		/**
@@ -1468,7 +1467,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the object in the given context
-			XpathConstraintNode objnode = children.get(0);
+			XpathConstraintNode objnode = children.getFirst();
 			XpathFragment xptobj = objnode.translate(ctx);
 			if (xptobj.fragment.length() == 0) {
 				xptobj.fragment = "self::*";
@@ -1547,7 +1546,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the object
-			XpathConstraintNode obj = children.get(0);
+			XpathConstraintNode obj = children.getFirst();
 			XpathFragment xpt = obj.translate(ctx);
 
 			// Is it the string length function or a set count?
@@ -1656,7 +1655,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the arguments
-			XpathFragment xptobj = children.get(0).translate(ctx);
+			XpathFragment xptobj = children.getFirst().translate(ctx);
 			if (xptobj.fragment.length() == 0)
 				xptobj.fragment = ".";
 			XpathFragment xptfr = children.get(1).translate(ctx);
@@ -1759,7 +1758,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// Translate the arguments
-			XpathFragment xptobj = children.get(0).translate(ctx);
+			XpathFragment xptobj = children.getFirst().translate(ctx);
 			if (xptobj.fragment.length() == 0)
 				xptobj.fragment = ".";
 			XpathFragment xptpat = children.get(1).translate(ctx);
@@ -1827,7 +1826,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// One argument to be compiled in any case
-			XpathFragment xpt1 = children.get(0).translate(ctx);
+			XpathFragment xpt1 = children.getFirst().translate(ctx);
 
 			// Take cases on operation and number of operands
 			if (children.size() == 1) {
@@ -1955,7 +1954,7 @@ public abstract class XpathConstraintNode {
 			if (binds == null)
 				return null; // Should not occur!
 			// Ask this iterator's object child
-			return binds.children.get(0).generatingAttribute();
+			return binds.children.getFirst().generatingAttribute();
 		}
 
 		/**
@@ -1976,7 +1975,7 @@ public abstract class XpathConstraintNode {
 			}
 			if (binds == null)
 				return false;
-			return binds.children.get(0).hasSimpleType();
+			return binds.children.getFirst().hasSimpleType();
 		}
 
 		/**
@@ -1997,7 +1996,7 @@ public abstract class XpathConstraintNode {
 			}
 			if (binds == null)
 				return true;
-			return binds.children.get(0).hasIdentity();
+			return binds.children.getFirst().hasIdentity();
 		}
 
 		/**
@@ -2201,7 +2200,7 @@ public abstract class XpathConstraintNode {
 			// it the object child of attribute created formerly.
 			if (at == 0) {
 				// There is nothing but the object, So, transfer this.
-				atrite.addChild(children.get(0));
+				atrite.addChild(children.getFirst());
 			} else {
 				// Create another Attribute with the selectors in front of the
 				// splitting point. Make it the object of the right hand one.
@@ -2209,7 +2208,7 @@ public abstract class XpathConstraintNode {
 						negated);
 				for (int i = 1; i < at; i++)
 					appendAttribute(attributes[i]);
-				atleft.addChild(children.get(0));
+				atleft.addChild(children.getFirst());
 				atrite.addChild(atleft);
 			}
 			return atrite;
@@ -2253,7 +2252,7 @@ public abstract class XpathConstraintNode {
 		 * @return Flag indicating the inquired property
 		 */
 		public boolean isVarOrAttribBased(OclNode.Declaration vardecl) {
-			return children.get(0).isVarOrAttribBased(vardecl);
+			return children.getFirst().isVarOrAttribBased(vardecl);
 		}
 
 		/**
@@ -2408,7 +2407,7 @@ public abstract class XpathConstraintNode {
 			// Translate the object. This is a variable (self in most of the
 			// cases), or AllInstances() or any type of object producing
 			// iterator such as Select().
-			XpathFragment obj = children.get(0).translate(ctx);
+			XpathFragment obj = children.getFirst().translate(ctx);
 
 			// Get the prefixes that possibly surround the identifier contained
 			// in xlink:href references
@@ -2526,7 +2525,7 @@ public abstract class XpathConstraintNode {
 							// has to be compiled in an undefined context.
 							BindingContext ctx1 = ctx.clone();
 							ctx1.setState(BindingContext.CtxState.OTHER);
-							XpathFragment obj1 = children.get(0)
+							XpathFragment obj1 = children.getFirst()
 									.translate(ctx1);
 							String frag = obj.merge(obj1);
 							obj.fragment = frag;
@@ -2641,11 +2640,11 @@ public abstract class XpathConstraintNode {
 				// If string, surround with ''
 				value = "'" + value + "'";
 
-			} else if (literal instanceof OclNode.EnumerationLiteralExp) {
-
+			} else if (literal instanceof OclNode.EnumerationLiteralExp litex) {
+			    
 				// Enums to be treated like strings, except Boolean class
 				// ones, which are treated as Boolean constants
-				OclNode.EnumerationLiteralExp litex = (OclNode.EnumerationLiteralExp) literal;
+			    
 				ClassInfo ci = litex.dataType.umlClass;
 				if (ci != null && ci.name().equals("Boolean")) {
 					boolean val = value.equalsIgnoreCase("TRUE");
@@ -2667,10 +2666,10 @@ public abstract class XpathConstraintNode {
 					value = "'" + value + "'";
 				}
 
-			} else if (literal instanceof OclNode.BooleanLiteralExp) {
+			} else if (literal instanceof OclNode.BooleanLiteralExp lit) {
+			    
 				// Booleans may need consideration of negation
-
-				OclNode.BooleanLiteralExp lit = (OclNode.BooleanLiteralExp) literal;
+			    
 				boolean val = lit.value;
 				if (negated)
 					val = !val;
@@ -2683,9 +2682,7 @@ public abstract class XpathConstraintNode {
 				// The value is already o.k., but we need to set the type
 				type = XpathType.NUMBER;
 
-			} else if (literal instanceof OclNode.DateTimeLiteralExp) {
-
-				OclNode.DateTimeLiteralExp lt = (OclNode.DateTimeLiteralExp) literal;
+			} else if (literal instanceof OclNode.DateTimeLiteralExp lt) {
 				if (lt.current)
 					// This references the current date and cannot be
 					// represented in Xpath ...
@@ -2696,7 +2693,7 @@ public abstract class XpathConstraintNode {
 					int y = dt.get(Calendar.YEAR);
 					int m = dt.get(Calendar.MONTH) + 1;
 					int d = dt.get(Calendar.DAY_OF_MONTH);
-					value = String.format("'%04d-%02d-%02d'", y, m, d);
+					value = "'%04d-%02d-%02d'".formatted(y, m, d);
 				}
 				type = XpathType.BOOLEAN;
 
@@ -2756,7 +2753,7 @@ public abstract class XpathConstraintNode {
 		public XpathFragment translate(BindingContext ctx) {
 
 			// The 3 arguments
-			XpathConstraintNode con = children.get(0);
+			XpathConstraintNode con = children.getFirst();
 			XpathConstraintNode thn = children.get(1);
 			XpathConstraintNode els = children.get(2);
 
