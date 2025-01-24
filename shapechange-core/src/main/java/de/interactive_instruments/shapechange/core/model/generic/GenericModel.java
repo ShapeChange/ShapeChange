@@ -735,6 +735,12 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	return results;
     }
 
+    /**
+     * Creates a copy of the given list of constraints.
+     *
+     * @param constraints the list of constraints to copy
+     * @return a vector containing the copied constraints
+     */
     public Vector<Constraint> copy(List<Constraint> constraints) {
 
 	Vector<Constraint> conCopies = null;
@@ -762,10 +768,9 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		} else {
 		    result.addWarning(this, 30309, con.getClass().getName());
 		}
-
 	    }
 	}
-
+	
 	return conCopies;
     }
 
@@ -775,7 +780,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
      * their id (if the id is the same, then the object is replaced with the generic
      * one).
      * 
-     * @param gai
+     * @param gai the GenericAssociationInfo object whose content is to be updated
      */
     private void updateAssociationInfoContent(GenericAssociationInfo gai) {
 

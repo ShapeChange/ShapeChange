@@ -56,7 +56,6 @@ public class ConstraintMapping {
 	public ConstraintMapping(ConstraintType constraintType, String target,
 			String template, String noValue, String multiValueConnectorToken,
 			Format format) {
-		super();
 		this.constraintType = constraintType;
 		this.target = target;
 		this.template = template;

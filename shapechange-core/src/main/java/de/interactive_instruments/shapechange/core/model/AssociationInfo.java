@@ -53,4 +53,4 @@ public interface AssociationInfo extends Info {
     public boolean isReflexive();
 
     public boolean isBiDirectional();
-};
+}

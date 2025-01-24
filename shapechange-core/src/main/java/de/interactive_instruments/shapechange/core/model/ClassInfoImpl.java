@@ -533,7 +533,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    }
 	}
 
-	return new TreeSet<PropertyInfo>(allPropsByName.values());
+	return new TreeSet<>(allPropsByName.values());
     }
 
     @Override
@@ -544,25 +544,23 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    return true;
 	}
 	boolean res = true;
-	for (Iterator<String> i = ts.iterator(); i.hasNext();) {
-	    ClassInfo cix = model().classById(i.next());
-	    if (cix != null) {
-		if (cix.category() == Options.UNKNOWN) {
-		    res = res && cix.checkSupertypes(cat);
-		} else if (cix.category() == Options.MIXIN) {
-		} else if (cix.category() != cat) {
-		    res = false;
-		}
-		if (!res) {
-		    result().addDebug(null, 10003, name(), "" + cat, "FALSE");
-		    return res;
-		}
+	for (String supertypeId : ts) {
+	    ClassInfo cix = model().classById(supertypeId);
+	    if (cix == null) {
+		continue;
+	    }
+	    int cixCategory = cix.category();
+	    if (cixCategory == Options.UNKNOWN) {
+		res = res && cix.checkSupertypes(cat);
+	    } else if (cixCategory != Options.MIXIN && cixCategory != cat) {
+		res = false;
+	    }
+	    if (!res) {
+		result().addDebug(null, 10003, name(), "" + cat, "FALSE");
+		return false;
 	    }
 	}
-	if (res)
-	    result().addDebug(null, 10003, name(), "" + cat, "TRUE");
-	else
-	    result().addDebug(null, 10003, name(), "" + cat, "FALSE");
+	result().addDebug(null, 10003, name(), "" + cat, res ? "TRUE" : "FALSE");
 	return res;
     }
 
@@ -1155,7 +1153,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 
 	return result;
     }
-    
+
     @Override
     public SortedSet<ClassInfo> subtypeClasses() {
 
@@ -1234,5 +1232,5 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	}
 
 	return null;
-    }    
+    }
 }

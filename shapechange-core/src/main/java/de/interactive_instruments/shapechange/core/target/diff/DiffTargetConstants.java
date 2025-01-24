@@ -29,8 +29,17 @@ package de.interactive_instruments.shapechange.core.target.diff;
 public class DiffTargetConstants {
 
     /**
-     * Optional (default is the current run directory) - The path to the folder in
-     * which the resulting XML file will be created.
+     * Alias: none
+     * <p>
+     * Required / Optional: optional
+     * <p>
+     * Type: String
+     * <p>
+     * Default Value: current run directory
+     * <p>
+     * Explanation: The path to the folder in which the resulting XML file will be created.
+     * <p>
+     * Applies to Rule(s): none – default behavior
      */
     public static final String PARAM_OUTPUT_DIR = "outputDirectory";
 

@@ -88,7 +88,7 @@ public class Converter implements MessageSource {
 	result = r;
 	target = null;
 	outputProcessor = new TargetOutputProcessor(r);
-    };
+    }
 
     public void convert() throws ShapeChangeAbortException {
 
@@ -99,8 +99,7 @@ public class Converter implements MessageSource {
 	 * is an essential pre-processing step before executing the conversion
 	 */
 	boolean skipSemanticValidation = false;
-	if (options.parameter(Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG) != null && options
-		.parameter(Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG).trim().equalsIgnoreCase("true")) {
+	if (StringUtils.equalsIgnoreCase(options.parameter(Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG), "true")) {
 	    skipSemanticValidation = true;
 	}
 
@@ -134,7 +133,7 @@ public class Converter implements MessageSource {
 
 	if (options.isOnlyDeferrableOutputWrite()) {
 
-	    executeDeferrableOutputWriters();
+	    executeAllDeferrableOutputWriters();
 
 	} else {
 
@@ -260,7 +259,7 @@ public class Converter implements MessageSource {
 	return isValid;
     }
 
-    private void executeDeferrableOutputWriters() {
+    private void executeAllDeferrableOutputWriters() {
 
 	try {
 
@@ -313,7 +312,7 @@ public class Converter implements MessageSource {
 
 		} else {
 
-		    // at first run any targets that directly reference the input
+		    // first, run any targets that directly reference the input
 		    // model
 		    this.executeTargets(model, options.getInputId(), options.getInputTargetConfigs());
 
@@ -376,7 +375,7 @@ public class Converter implements MessageSource {
     private void executeDeferrableOutputWriters(List<TargetConfiguration> targetConfigs) throws Exception {
 
 	// Prepare targets
-	resetSingleTargets();
+	resetAllSingleTargets();
 
 	for (TargetConfiguration tgt : targetConfigs) {
 
@@ -704,7 +703,7 @@ public class Converter implements MessageSource {
 	    // now execute the target
 
 	    // Prepare targets
-	    resetSingleTargets();
+	    resetAllSingleTargets();
 
 	    // update the outputDirectory parameter by appending the id of the
 	    // model provider
@@ -763,7 +762,7 @@ public class Converter implements MessageSource {
 
 		    StatusBoard.getStatusBoard().statusChanged(STATUS_TARGET_PROCESS);
 
-		    ClassInfo[] classArr = classes(model, pi);
+		    ClassInfo[] classArr = getClasses(model, pi);
 		    for (int cidx = 0; cidx < classArr.length; cidx++) {
 			ClassInfo k = classArr[cidx];
 			target.process(k);
@@ -902,7 +901,7 @@ public class Converter implements MessageSource {
      * @throws SecurityException
      */
     @SuppressWarnings("rawtypes")
-    private ClassInfo[] classes(Model model, PackageInfo pi) throws NoSuchMethodException, SecurityException {
+    private ClassInfo[] getClasses(Model model, PackageInfo pi) throws NoSuchMethodException, SecurityException {
 	Set<ClassInfo> classes = model.classes(pi);
 	// Change the order of processing if requested by sortedOutput parameter
 	String sortedOpt = options.parameter(target.getClass().getName(), "sortedOutput");
@@ -975,7 +974,7 @@ public class Converter implements MessageSource {
      * instances the result can only be created after all schemas have been
      * processed), so they have to be reseted before a new conversion.
      */
-    private void resetSingleTargets() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+    private void resetAllSingleTargets() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
 	    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 	Vector<String> targets = options.targets();
 	for (Iterator<String> j = targets.iterator(); j.hasNext();) {

@@ -935,7 +935,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     // FIXME package structure
     private void PrintPackage(PackageInfo pix, Operation op) throws Exception {
 
-	if (packageInPackage(pix)) {
+	if (isPackageInPackage(pix)) {
 
 	    writer.startElement("Package", "id", packageId(pix), op);
 
@@ -1124,21 +1124,21 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	return document;
     }
 
-    private boolean packageInPackage(PackageInfo pi) {
-	if (Package.length() == 0)
-	    return true;
-	if (pi.name().equals(Package))
-	    return true;
-	if (pi.isSchema())
-	    return false;
-	return packageInPackage(pi.owner());
-    }
+	private boolean isPackageInPackage(PackageInfo pi) {
+		if (Package.length() == 0)
+			return true;
+		if (pi.name().equals(Package))
+			return true;
+		if (pi.isSchema())
+			return false;
+		return isPackageInPackage(pi.owner());
+	}
 
     public void process(ClassInfo ci) {
 	if (error)
 	    return;
 
-	if (!packageInPackage(ci.pkg()))
+	if (!isPackageInPackage(ci.pkg()))
 	    return;
 
 	// determine diff operation for ci
@@ -1292,7 +1292,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	if (!ci.inSchema(pi) && !onlyProperties && op != Operation.DELETE)
 	    return false;
 
-	if (!packageInPackage(ci.pkg()) && !onlyProperties && op != Operation.DELETE)
+	if (!isPackageInPackage(ci.pkg()) && !onlyProperties && op != Operation.DELETE)
 	    return false;
 
 	return ExportItem(ci);

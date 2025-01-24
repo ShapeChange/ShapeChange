@@ -35,11 +35,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -56,12 +55,12 @@ import de.interactive_instruments.shapechange.core.model.ImageMetadata;
 public class ImageMetadataContentHandler implements ContentHandler {
 
     private static final Set<String> IMAGE_METADATA_ELEMENTS = new HashSet<String>(
-		Arrays.asList(new String[] { "documentation" }));
-    
+	    Arrays.asList(new String[] { "documentation" }));
+
     private SortedMap<String, ImageMetadata> images = new TreeMap<>();
-    
-    protected StringBuffer sb = null;
-    
+
+    protected StringBuilder sb = null;
+
     private String id = null;
     private String name = null;
     private String documentation = null;
@@ -102,7 +101,7 @@ public class ImageMetadataContentHandler implements ContentHandler {
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
 	if (localName.equalsIgnoreCase("image")) {
-	    
+
 	    // reset fields
 	    this.id = null;
 	    this.name = null;
@@ -110,24 +109,23 @@ public class ImageMetadataContentHandler implements ContentHandler {
 	    this.relPathToFile = null;
 	    this.width = 0;
 	    this.height = 0;
-	    
+
 	    this.sb = null;
 
 	    id = atts.getValue("id");
 
 	    if (!images.containsKey(id)) {
 		name = atts.getValue("name");
-		
+
 		relPathToFile = atts.getValue("relPath");
 		width = Integer.parseInt(atts.getValue("width"));
 		height = Integer.parseInt(atts.getValue("height"));
 
-		
 	    }
-	    
-	} else if(IMAGE_METADATA_ELEMENTS.contains(localName)) {
-	    
-	    sb = new StringBuffer();
+
+	} else if (IMAGE_METADATA_ELEMENTS.contains(localName)) {
+
+	    sb = new StringBuilder();
 	}
     }
 
@@ -135,7 +133,7 @@ public class ImageMetadataContentHandler implements ContentHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
 	if (localName.equalsIgnoreCase("image")) {
-	    
+
 	    if (!images.containsKey(id)) {
 		/*
 		 * 2021-12-06 JE: file not needed by FC, afaics.
@@ -143,9 +141,9 @@ public class ImageMetadataContentHandler implements ContentHandler {
 		File file = null;
 		ImageMetadata img = new ImageMetadata(id, name, documentation, file, relPathToFile, width, height);
 		this.images.put(id, img);
-		
+
 	    }
-	    
+
 	} else if (localName.equalsIgnoreCase("documentation")) {
 	    this.documentation = sb.toString();
 	}
@@ -154,7 +152,7 @@ public class ImageMetadataContentHandler implements ContentHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
 	if (sb != null) {
-		sb.append(ch, start, length);
+	    sb.append(ch, start, length);
 	}
     }
 
@@ -172,8 +170,8 @@ public class ImageMetadataContentHandler implements ContentHandler {
     public void skippedEntity(String name) throws SAXException {
 	// irrelevant
     }
-    
+
     public List<ImageMetadata> getImages() {
-	return this.images.values().stream().collect(Collectors.toList());
+	return new ArrayList<>(this.images.values());
     }
 }

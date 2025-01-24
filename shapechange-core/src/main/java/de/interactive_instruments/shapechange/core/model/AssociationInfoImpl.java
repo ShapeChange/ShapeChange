@@ -34,111 +34,115 @@ package de.interactive_instruments.shapechange.core.model;
 
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class AssociationInfoImpl extends InfoImpl
-		implements AssociationInfo {
+public abstract class AssociationInfoImpl extends InfoImpl implements AssociationInfo {
 
-	protected String name = null;
+    protected String name = null;
 
-	/**
-	 * Return the encoding rule relevant on the association, given the platform
+    /**
+     * Return the encoding rule relevant on the association, given the platform
+     */
+    public String encodingRule(String platform) {
+	String s = taggedValue(platform + "EncodingRule");
+	if (StringUtils.isBlank(s) || options().ignoreEncodingRuleTaggedValues()) {
+	    ClassInfo aci = assocClass();
+	    if (aci != null) {
+		s = aci.encodingRule(platform);
+	    } else {
+		s = super.encodingRule(platform);
+	    }
+	}
+	if (s != null) {
+	    s = s.toLowerCase().trim();
+	}
+	return s;
+    };
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * WARNING: This method is intended to be "final", but not actually declared as
+     * such. A depending project can thus extend the method, if absolutely
+     * necessary.
+     * 
+     * @see de.interactive_instruments.shapechange.core.model.InfoImpl#language()
+     */
+    @Override
+    public String language() {
+
+	String lang = this.taggedValue("language");
+
+	if (StringUtils.isBlank(lang)) {
+	    ClassInfo ci = this.assocClass();
+	    if (ci != null) {
+		return ci.language();
+	    }
+	} else {
+	    return lang;
+	}
+
+	// associations without association classes are not part of a package,
+	// so we do
+	// not have an application schema context
+	return null;
+    }
+
+    @Override
+    public String name() {
+	/*
+	 * 2016-07-26 JE: The association name should not always automatically be
+	 * constructed. For rule-owl-prop-iso191502Aggregation we would get association
+	 * names that are not in the model. I've added a new input parameter to control
+	 * the behavior.
 	 */
-	public String encodingRule(String platform) {
-		String s = taggedValue(platform + "EncodingRule");
-		if (s == null || s.isEmpty()
-				|| options().ignoreEncodingRuleTaggedValues()) {
-			ClassInfo aci = assocClass();
-			if (aci != null)
-				s = aci.encodingRule(platform);
-			else {
-				s = super.encodingRule(platform);
-			}
+	if (StringUtils.isBlank(name)) {
+	    if (options().dontConstructAssociationNames()) {
+		name = "";
+	    } else {
+		if (end2() != null && end2().inClass() != null) {
+		    name = end2().inClass().name() + "_";
+		} else {
+		    name = "end2_";
 		}
-		if (s != null)
-			s = s.toLowerCase().trim();
-		return s;
-	};
-
-	/**
-	 * {@inheritDoc}
-	 * <p>
-	 * WARNING: This method is intended to be "final", but not actually declared
-	 * as such. A depending project can thus extend the method, if absolutely
-	 * necessary.
-	 * 
-	 * @see de.interactive_instruments.shapechange.core.model.InfoImpl#language()
-	 */
-	@Override
-	public String language() {
-		String lang = this.taggedValue("language");
-
-		if (StringUtils.isBlank(lang)) {
-			ClassInfo ci = this.assocClass();
-			if (ci != null)
-				return ci.language();
-		} else
-			return lang;
-
-		// associations without association classes are not part of a package,
-		// so we do
-		// not have an application schema context
-		return null;
-	}
-
-	@Override
-	public String name() {
-		/*
-		 * 2016-07-26 JE: The association name should not always automatically
-		 * be constructed. For rule-owl-prop-iso191502Aggregation we would get
-		 * association names that are not in the model. I've added a new input
-		 * parameter to control the behavior.
-		 */
-		if (StringUtils.isBlank(name)) {
-			if (options().dontConstructAssociationNames()) {
-				name = "";
-			} else {
-				if (end2() != null && end2().inClass() != null)
-					name = end2().inClass().name() + "_";
-				else
-					name = "end2_";
-				// name = "roles[0]_";
-				if (end1() != null && end1().inClass() != null)
-					name = name + end1().inClass().name();
-				else
-					name = name + "end1";
-				// name = name + "roles[1]";
-			}
+		// name = "roles[0]_";
+		if (end1() != null && end1().inClass() != null) {
+		    name = name + end1().inClass().name();
+		} else {
+		    name = name + "end1";
 		}
-
-		return name;
+		// name = name + "roles[1]";
+	    }
 	}
 
-	@Override
-	public String fullName() {
-		return name();
-	}
+	return name;
+    }
 
-	@Override
-	public String fullNameInSchema() {
-		return name();
-	}
-	
-	@Override
-	public final boolean isReflexive() {
-	    return this.end1().inClass() == this.end2().inClass();
-	}
-	
-	@Override
-	public final boolean isBiDirectional() {
-	    return this.end1().isNavigable() && this.end2().isNavigable();
-	}
+    @Override
+    public String fullName() {
+	return name();
+    }
 
-	@Override
-	public void postprocessAfterLoadingAndValidate() {
-		if (postprocessed)
-			return;
+    @Override
+    public String fullNameInSchema() {
+	return name();
+    }
 
-		super.postprocessAfterLoadingAndValidate();
+    @Override
+    public final boolean isReflexive() {
+	return this.end1().inClass() == this.end2().inClass();
+    }
 
-		postprocessed = true;
+    @Override
+    public final boolean isBiDirectional() {
+	return this.end1().isNavigable() && this.end2().isNavigable();
+    }
+
+    @Override
+    public void postprocessAfterLoadingAndValidate() {
+	if (postprocessed) {
+	    return;
 	}
+	super.postprocessAfterLoadingAndValidate();
+
+	postprocessed = true;
+    }
 }

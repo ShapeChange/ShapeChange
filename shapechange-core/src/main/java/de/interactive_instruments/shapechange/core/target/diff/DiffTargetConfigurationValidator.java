@@ -133,9 +133,9 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
 	 * In the future, the DefaultModelProvider might be enhanced to perform checks
 	 * that a given model file can be read.
 	 */
-	String rmt = config.parameterAsString(DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE, null, false, true);
-	if (StringUtils.isBlank(rmt)) {
-	    result.addError(this, 100, DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE);
+	String referenceModelType = config.parameterAsString(DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE, null, false, true);
+	if (StringUtils.isBlank(referenceModelType)) {
+		result.addError(this, 100, DiffTargetConstants.PARAM_REFERENCE_MODEL_TYPE);
 	    isValid = false;
 	} else {
 	    // no further checks for reference model type here
