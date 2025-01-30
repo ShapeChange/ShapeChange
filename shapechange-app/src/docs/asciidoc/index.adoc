@@ -165,11 +165,7 @@
 
 === xref:targets/JSON_Schema.adoc[JSON Schema]
 
-=== xref:targets/JSON_Schema_deprecated.adoc[JSON Schema (deprecated)]
-
 === xref:targets/ldproxy2.adoc[ldproxy configuration]
-
-=== xref:targets/ldproxy_Configuration.adoc[ldproxy configuration (old)]
 
 === xref:targets/DiffTarget.adoc[Model diff]
 
