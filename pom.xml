@@ -466,6 +466,10 @@
 				<plugin>
 					<artifactId>maven-scm-publish-plugin</artifactId>
 					<version>3.3.0</version>
+					<configuration>
+						<serverId>github.com</serverId>
+						<pubScmUrl>scm:git:https://github.com/ShapeChange/ShapeChange.git</pubScmUrl>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
