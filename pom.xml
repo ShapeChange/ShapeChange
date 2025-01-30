@@ -471,7 +471,7 @@
 						<pubScmUrl>scm:git:https://github.com/ShapeChange/ShapeChange.git</pubScmUrl>
 						<scmBranch>gh-pages</scmBranch>
 						<checkinComment>Update documentation</checkinComment>
-						<content>${project.build.directory}/gh-pages</content>
+						<content>${basedir}/shapechange-app/target/gh-pages</content>
 						<skipDeletedFiles>true</skipDeletedFiles>
 						<siteOutputEncoding>UTF-8</siteOutputEncoding>
 						<tryUpdate>true</tryUpdate>
