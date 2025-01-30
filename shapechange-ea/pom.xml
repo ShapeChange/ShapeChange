@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.sparx</groupId>
 			<artifactId>eaapi</artifactId>
-			<version>16.1.1628</version>
+			<version>17.0.1704</version>
 		</dependency>		
 	</dependencies>
 	<build>
