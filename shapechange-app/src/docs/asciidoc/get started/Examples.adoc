@@ -31,7 +31,7 @@ model, transforming it, and deriving target representations, and b) UML
 models (mostly as EA repositories, but also in SCXML).
 
 The unit tests can be found in our GitHub repository at
-https://github.com/ShapeChange/ShapeChange/tree/master/src/integrationtests.
+https://github.com/ShapeChange/ShapeChange/tree/master/shapechange-app/src/integrationtests.
 If you are looking for examples of a certain parameter, rule,
 transformation, or target, simply perform a search over the contents of
 these resources (in .xml files), searching for either the name of the

@@ -59,7 +59,7 @@ the first non-empty value retrieved via one of the sources specified by
 parameter
 xref:./GML_Codelist_Dictionary.adoc#identifier[_identifier_].
 The @codeSpace of that element will be the value of target parameter
-<<fixedCodeSpace>>, if set, otherwise it will be the target namespace of the
+<<fixedIdentifierCodeSpace>>, if set, otherwise it will be the target namespace of the
 schema to which the code list / enumeration belongs.
 ** A GML name element will be added to the dictionary for each
 non-empty source specified by parameter
@@ -93,7 +93,7 @@ a non-blank value, then that value is used. Otherwise, the
 value is the first non-empty value retrieved via one of the sources specified by
 parameter <<identifier>>.
 The @codeSpace of that element will be looked up in the following order:
-*** target parameter <<fixedCodeSpace>>
+*** target parameter <<fixedIdentifierCodeSpace>>
 *** tagged value codeList
 *** tagged value infoURL
 *** the target namespace of the schema to which the code list /
@@ -186,7 +186,7 @@ will be replaced by the value of the descriptor, or the
 value _FIXME_, if the descriptor has no value for the 
 model element. For further information on descriptors, 
 including the available descriptor identifiers, see
-xref:../get started/The_element_input.adoc#Descriptor_sources[this
+xref:../../get started/The_element_input.adoc#Descriptor_sources[this
 page]. In addition to the well-known descriptors (including
 'name' for the name of the UML model element), the 
 values 'initialValue' and 'className' can be used as

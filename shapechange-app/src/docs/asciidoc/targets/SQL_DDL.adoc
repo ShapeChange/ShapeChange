@@ -450,8 +450,8 @@ The following list shows, which database systems support deferrable constraints,
 // https://stackoverflow.com/questions/5300307/not-deferrable-versus-deferrable-initially-immediate
 
 NOTE: According to the Enterprise Architect documentation for database modeling (v15.2), 
-specifically the pages on https://sparxsystems.com/enterprise_architect_user_guide/16.1/modeling_domains/constraints2.html[database table constraints / indexes] and 
-https://sparxsystems.com/enterprise_architect_user_guide/16.1/modeling_domains/foreignkeys.html[foreign keys], 
+specifically the pages on https://sparxsystems.com/enterprise_architect_user_guide/17.0/modeling_domains/constraints2.html[database table constraints / indexes] and 
+https://sparxsystems.com/enterprise_architect_user_guide/17.0/modeling_domains/foreignkeys.html[foreign keys], 
 EA database models do not contain constraint checking options.
 
 
@@ -990,7 +990,7 @@ schema is defined for the targetTable.
 
 NOTE: The following example is from one of the ShapeChange unit tests.
 The model, configuration, and results of that test are available 
-https://github.com/ShapeChange/ShapeChange/tree/master/src/integrationtests/sql/sqlEncodingInfos[here].
+https://github.com/ShapeChange/ShapeChange/tree/master/shapechange-app/src/integrationtests/sql/sqlEncodingInfos[here].
 
 [source,xml,linenumbers]
 ----------

@@ -603,9 +603,9 @@ if the maximum multiplicity of the property is greater than one, the latter if i
 equal to one. Further details on the encoding of a FEATURE_REF are given <<feature_ref,here>>.
 
 NOTE: The following example is from one of the ShapeChange unit tests.
-The ShapeChange configuration and results of that test are available https://github.com/ShapeChange/ShapeChange/tree/master/src/integrationtests/ldproxy2/fragmentsConcatCoalesce[here], 
+The ShapeChange configuration and results of that test are available https://github.com/ShapeChange/ShapeChange/tree/master/shapechange-app/src/integrationtests/ldproxy2/fragmentsConcatCoalesce[here], 
 while the model is available
-https://github.com/ShapeChange/ShapeChange/tree/master/src/integrationtests/sql/sqlEncodingInfos[here].
+https://github.com/ShapeChange/ShapeChange/tree/master/shapechange-app/src/integrationtests/sql/sqlEncodingInfos[here].
 The example only shows an extract of the whole unit test.
 
 [#img_ldproxy2_inheritance_and_specialization_example,reftext='{figure-caption} {counter:figure-num}']
@@ -987,7 +987,7 @@ NOTE: If the primary geometry property has a maximum multiplicity greater than 1
 
 NOTE: Additional geometry properties are encoded like all other UML properties.
 
-NOTE: The ldproxy target expects all geometry properties to have a maximum multiplicity of exactly 1. That is because ldproxy supports multi-geometry types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used in implementations that rely upon the https://www.ogc.org/standard/sfa/[Simple Feature Access standard] (such as spatial databases which typically implement the https://www.ogc.org/standard/sfs/[Simple Feature Access - Part 2: SQL Option]), but does not define a transformation of a geometry property with max multiplicity greater than 1 to such a multi-geometry type. An according model transformation could be defined and implemented in ShapeChange as a future enhancement. In any case: If the ldproxy target encounters a geometry property with maximum multiplicity greater than 1, it logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
+NOTE: The ldproxy target expects all geometry properties to have a maximum multiplicity of exactly 1. That is because ldproxy supports multi-geometry types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used in implementations that rely upon the https://www.ogc.org/publications/standard/sfa/[Simple Feature Access standard] (such as spatial databases which typically implement the https://www.ogc.org/publications/standard/sfs/[Simple Feature Access - Part 2: SQL Option]), but does not define a transformation of a geometry property with max multiplicity greater than 1 to such a multi-geometry type. An according model transformation could be defined and implemented in ShapeChange as a future enhancement. In any case: If the ldproxy target encounters a geometry property with maximum multiplicity greater than 1, it logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
 
 
 
@@ -1321,7 +1321,7 @@ The `type` member of a property definition depends upon the value type of the pr
 *** If the data store contains curve geometries specified by SQL/MM, 
 such as CircularString and CurvePolygon, target parameter `linearizeCurves` 
 must be set to true. For further details, see 
-https://github.com/interactive-instruments/ldproxy/issues/1119[ldproxy issue 1119].
+https://github.com/ldproxy/ldproxy/issues/1119[ldproxy issue 1119].
 ** Otherwise, if the value type is an enumeration or code list, then `type` is STRING or a numeric type, as explained in the <<ldproxy2_schemaconversionrules_types_enumeration_and_codelist>> section.
 ** Otherwise, if the value type is implemented as OBJECT but is not a type with identity (so most likely it is a data type), `type` simply is OBJECT.
 ** Otherwise, if the value type is mapped to LINK, or a type with identity, and:

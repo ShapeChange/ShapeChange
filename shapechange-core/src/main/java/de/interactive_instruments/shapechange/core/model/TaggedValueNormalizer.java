@@ -125,7 +125,7 @@ public class TaggedValueNormalizer {
 	    "oneToManyReferenceColumnName", "dissolveAssociation", "precision", "scale", "numericType", "toFeatureType",
 	    "toCodelist", "codelistType", "shortName", "codeListSource", "codeListSourceCharset",
 	    "codeListSourceRepresentation", "codeListRestriction", "arcgisDefaultSubtype", "arcgisSubtypeCode",
-	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "reportable", "dissolveAssociationAttributeType",
+	    "arcgisUsedBySubtypes", "arcgisSubtypeInitialValues", "dissolveAssociationAttributeType",
 	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "originalClassName",
 	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
 	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",

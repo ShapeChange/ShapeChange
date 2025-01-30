@@ -39,4 +39,4 @@ To process Enterprise Architect models with ShapeChange, the steps to do so depe
 * 32 bit Java:
 ** Copy the file SSJavaCom.dll located in _<EA installation folder>/Java API_ to <__Windows folder>/System32__ (on a 32-bit machine) or to <__Windows folder>/SysWOW64__ (on a 64-bit machine).
 
-NOTE: If you are searching for a 32bit JDK, take a look at the JDKs from https://adoptium.net/[Adoptium]. They provide 32bit OpenJDK for Java 8, 11, and later.
+NOTE: If you are searching for a 32bit JDK, take a look at the JDKs from https://adoptium.net/[Adoptium]. They provide 32bit OpenJDKs for Java.

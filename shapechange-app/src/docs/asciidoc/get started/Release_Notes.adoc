@@ -29,23 +29,24 @@ The ShapeChange {project-version} release package can be downloaded https://shap
 
 Additional information, including dependencies:
 
-* Java Version: Java 11 (tested with 64 bit)
-* Tested EA Version(s): EA 16.1 (both 32 and 64 bit)
+* Java Version: Java 21 (LTS) (tested with 64 bit)
+* Tested EA Version(s): EA 17.0 (32 bit)
 ** NOTE: This field specifies the versions of EA with which the given
 ShapeChange release has been developed and tested. The release will in
 most cases also work with other versions of EA (especially: versions
 prior to the specified version), because the EA API as well as the
 interfaces used by ShapeChange are often - but not always - backwards
-compatible. However, versions of EA prior to EA 16.0 should not be used.
-* EA API included in distribution: EA 16.1.1628
+compatible. Of course, this is more likely the case for recent prior
+versions.
+* EA API included in distribution: EA 17.0.1704
 ** NOTE: If you are using a different version of EA and experience
-issues when executing ShapeChange, you can try exchanging the eaapi.jar
+issues when executing ShapeChange, you can try exchanging the eaapi jar
 in the "lib" folder with the one provided by your version of EA (the
 .jar file can be found in "\{EA installation directory}/Java API"). Make
 sure to rename your eaapi.jar to the one you wish to replace, otherwise
 ShapeChange-internal links to the jar (especially in the manifest of the
 ShapeChange JAR file) may be broken.
-* Saxon JAR used: Saxon-HE-12.4.jar
+* Saxon JAR used: Saxon-HE-12.5.jar
 ** NOTE: Identifies the version of the Saxon HE jar that is used by the
 ShapeChange release. If you plan to create
 xref:../targets/feature catalogue/Feature_Catalogue.adoc[feature catalogues]
