@@ -39,9 +39,9 @@ To start using ShapeChange, follow these steps:
 
 [width="100%",cols="1,9"]
 |===
-|1 |Verify that you are using the *Java Runtime Environment 11* or later.
+|1 |Verify that your Java Runtime Environment fulfills the Java version requirements defined in the xref:./Release_Notes.adoc[Release Notes] (or is of an even higher version).
 
-|2 |https://shapechange.net/resources/dist/net/shapechange/ShapeChange/{project-version}/ShapeChange-{project-version}.zip[Download ShapeChange (all platforms; version {project-version})] xref:./Release_Notes.adoc[Release Notes]
+|2 |https://github.com/ShapeChange/ShapeChange/releases/download/{project-version}/ShapeChange-{project-version}.zip[Download ShapeChange (all platforms; version {project-version})] xref:./Release_Notes.adoc[Release Notes]
 
 |3 |*Unpack the ZIP archive*. An overview of the contents of the archive can be found xref:./Distribution_contents.adoc[here]. Use a path without whitespace in filenames as the XSLT processor currently used by ShapeChange cannot handle such path names properly.
 
