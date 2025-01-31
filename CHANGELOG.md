@@ -1,5 +1,45 @@
 # Changelog
 
+## [4.0.0](https://github.com/ShapeChange/ShapeChange/tree/4.0.0) (2025-01-30)
+
+[Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/3.1.0...4.0.0)
+
+**Implemented enhancements:**
+
+- XML Schema target - add non-standard conversion rule to encode class in substitution group of gml:AbstractFeatureCollection [\#465](https://github.com/ShapeChange/ShapeChange/issues/465)
+- Flattener transformation - add parameter to keep original association role cardinality when flatten inheritance, for cases with at most one non-abstract value type or subtype [\#464](https://github.com/ShapeChange/ShapeChange/issues/464)
+- ldproxy target - support building blocks CRS and Filter [\#463](https://github.com/ShapeChange/ShapeChange/issues/463)
+- ldproxy target - add conversion rule to encode unions like data types [\#462](https://github.com/ShapeChange/ShapeChange/issues/462)
+- ldproxy target - support building block 'Features - JSON-FG' configuration options 'coordRefSys', 'featureType' and 'includeInGeoJson' [\#461](https://github.com/ShapeChange/ShapeChange/issues/461)
+- Type converter transformation - enhance rule-trf-switchValueTypes to only switch value types for configured properties [\#460](https://github.com/ShapeChange/ShapeChange/issues/460)
+- Code list loader transformation - add support for loading codes from Re3gistry instances [\#459](https://github.com/ShapeChange/ShapeChange/issues/459)
+- ldproxy target - support conversion of GeoInfoDok application schemas [\#458](https://github.com/ShapeChange/ShapeChange/issues/458)
+- ldproxy target - support embedding for feature refs [\#457](https://github.com/ShapeChange/ShapeChange/issues/457)
+- ldproxy target - support the identification of queryable properties via tagged value [\#456](https://github.com/ShapeChange/ShapeChange/issues/456)
+- Tagged Value Transformer - add rule to create tagged value with information about the property value type [\#454](https://github.com/ShapeChange/ShapeChange/issues/454)
+- ldproxy target - remove obsolete codelist transformations for properties in the service configuration [\#434](https://github.com/ShapeChange/ShapeChange/issues/434)
+- ldproxy target - add parameter to define the label template in the provider configuration [\#433](https://github.com/ShapeChange/ShapeChange/issues/433)
+- ldproxy target - add parameter to enable building block codelists [\#432](https://github.com/ShapeChange/ShapeChange/issues/432)
+- Refactor ShapeChange - modularization to create artifacts with core and with Enterprise Architect specific functionality [\#401](https://github.com/ShapeChange/ShapeChange/issues/401)
+
+**Fixed bugs:**
+
+- Typo: skos:defnition in http://shapechange.net/resources/ont/base\# [\#469](https://github.com/ShapeChange/ShapeChange/issues/469)
+- Ontology target - Error when generating codelists [\#431](https://github.com/ShapeChange/ShapeChange/issues/431)
+
+**Closed issues:**
+
+- Codelist generation with rule-owl-cls-codelist-external: expected behavior or bug? [\#475](https://github.com/ShapeChange/ShapeChange/issues/475)
+- cvc-complex-type.2.3: Element 'Target' cannot have character \[children\], because the type's content type is element-only.  [\#472](https://github.com/ShapeChange/ShapeChange/issues/472)
+- ShapeChange - cvc-elt.1.a: Cannot find the declaration of element 'ShapeChangeConfiguration' at ShapeChange 3.1.0. [\#471](https://github.com/ShapeChange/ShapeChange/issues/471)
+- Slash vs hash in UML-to-OWL conversion [\#467](https://github.com/ShapeChange/ShapeChange/issues/467)
+- Facet length for strings \(GML application schemas\) [\#466](https://github.com/ShapeChange/ShapeChange/issues/466)
+- JSON Schema target - add conversion rule to only generate simple reference schemas \(obsolete / not implemented\) [\#445](https://github.com/ShapeChange/ShapeChange/issues/445)
+- How to map qualified UML type/class [\#418](https://github.com/ShapeChange/ShapeChange/issues/418)
+- Latest version gives issue with older versions \(Cannot find the declaration of element 'ShapeChangeConfiguration\) [\#410](https://github.com/ShapeChange/ShapeChange/issues/410)
+- Encoding of temporary file for feature catalogue [\#409](https://github.com/ShapeChange/ShapeChange/issues/409)
+- Enterprise Architect bug duplicating attributes in ArcGIS Workspace Export v13.1 through v16.1 \(Build 1622\) [\#346](https://github.com/ShapeChange/ShapeChange/issues/346)
+
 ## [3.1.0](https://github.com/ShapeChange/ShapeChange/tree/3.1.0) (2024-06-20)
 
 [Full Changelog](https://github.com/ShapeChange/ShapeChange/compare/3.0.0...3.1.0)
@@ -26,6 +66,36 @@
 
 - Old version of Saxon [\#361](https://github.com/ShapeChange/ShapeChange/issues/361)
 - Test resources on shapechange.net not yet updated [\#354](https://github.com/ShapeChange/ShapeChange/issues/354)
+
+**Merged pull requests:**
+
+- Bump com.google.guava:guava from 33.2.0-jre to 33.2.1-jre [\#403](https://github.com/ShapeChange/ShapeChange/pull/403) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.6.3 to 3.7.0 [\#402](https://github.com/ShapeChange/ShapeChange/pull/402) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.google.code.gson:gson from 2.10.1 to 2.11.0 [\#400](https://github.com/ShapeChange/ShapeChange/pull/400) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.commons:commons-csv from 1.10.0 to 1.11.0 [\#397](https://github.com/ShapeChange/ShapeChange/pull/397) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.google.guava:guava from 33.1.0-jre to 33.2.0-jre [\#396](https://github.com/ShapeChange/ShapeChange/pull/396) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the fasterxml-jackson group with 3 updates [\#395](https://github.com/ShapeChange/ShapeChange/pull/395) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-deploy-plugin from 3.1.1 to 3.1.2 [\#392](https://github.com/ShapeChange/ShapeChange/pull/392) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the xmlunit group with 2 updates [\#391](https://github.com/ShapeChange/ShapeChange/pull/391) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.commons:commons-text from 1.11.0 to 1.12.0 [\#390](https://github.com/ShapeChange/ShapeChange/pull/390) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-jar-plugin from 3.3.0 to 3.4.1 [\#389](https://github.com/ShapeChange/ShapeChange/pull/389) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump io.github.classgraph:classgraph from 4.8.170 to 4.8.172 [\#388](https://github.com/ShapeChange/ShapeChange/pull/388) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the slf4j group with 2 updates [\#386](https://github.com/ShapeChange/ShapeChange/pull/386) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-source-plugin from 3.3.0 to 3.3.1 [\#385](https://github.com/ShapeChange/ShapeChange/pull/385) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump io.github.classgraph:classgraph from 4.8.168 to 4.8.170 [\#384](https://github.com/ShapeChange/ShapeChange/pull/384) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump commons-io:commons-io from 2.16.0 to 2.16.1 [\#383](https://github.com/ShapeChange/ShapeChange/pull/383) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mil.nga.geopackage:geopackage from 6.6.4 to 6.6.5 [\#382](https://github.com/ShapeChange/ShapeChange/pull/382) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump commons-io:commons-io from 2.15.1 to 2.16.0 [\#380](https://github.com/ShapeChange/ShapeChange/pull/380) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.jena:apache-jena-libs from 4.10.0 to 5.0.0 [\#379](https://github.com/ShapeChange/ShapeChange/pull/379) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-assembly-plugin from 3.7.0 to 3.7.1 [\#378](https://github.com/ShapeChange/ShapeChange/pull/378) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.google.guava:guava from 33.0.0-jre to 33.1.0-jre [\#377](https://github.com/ShapeChange/ShapeChange/pull/377) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-compiler-plugin from 3.12.1 to 3.13.0 [\#376](https://github.com/ShapeChange/ShapeChange/pull/376) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the fasterxml-jackson group with 3 updates [\#375](https://github.com/ShapeChange/ShapeChange/pull/375) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.fasterxml.jackson.core:jackson-databind from 2.16.1 to 2.16.2 [\#374](https://github.com/ShapeChange/ShapeChange/pull/374) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.fasterxml.jackson.dataformat:jackson-dataformat-yaml from 2.16.1 to 2.16.2 [\#373](https://github.com/ShapeChange/ShapeChange/pull/373) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump org.apache.maven.plugins:maven-assembly-plugin from 3.6.0 to 3.7.0 [\#372](https://github.com/ShapeChange/ShapeChange/pull/372) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump com.fasterxml.jackson.core:jackson-core from 2.16.1 to 2.16.2 [\#371](https://github.com/ShapeChange/ShapeChange/pull/371) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump io.github.classgraph:classgraph from 4.8.167 to 4.8.168 [\#370](https://github.com/ShapeChange/ShapeChange/pull/370) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [3.0.0](https://github.com/ShapeChange/ShapeChange/tree/3.0.0) (2023-11-28)
 
