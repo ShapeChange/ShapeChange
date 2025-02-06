@@ -85,7 +85,7 @@ public class ShapeChangeClassFinder {
 
 	try {
 
-	    scanResult = new ClassGraph().enableAllInfo().blacklistPackages(packageBlacklist).scan();
+	    scanResult = new ClassGraph().enableAllInfo().rejectPackages(packageBlacklist).scan();
 
 	    /*
 	     * IMPORTANT: Keep the scanTime and following commented code for debugging
@@ -103,7 +103,7 @@ public class ShapeChangeClassFinder {
 
 	    ClassInfoList targetClassInfos = scanResult.getClassesImplementing(interfaceName)
 		    .filter(classInfo -> (!(classInfo.isInterface() || classInfo.isAbstract())));
-	    
+
 	    return targetClassInfos.loadClasses();
 
 	} finally {

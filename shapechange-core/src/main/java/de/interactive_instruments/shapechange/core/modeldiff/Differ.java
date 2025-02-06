@@ -661,8 +661,8 @@ public class Differ {
 	// perform diff for the tagged values
 	// TODO handle tags with multiple values
 	String taglist = curr.options().parameter("representTaggedValues");
-	Map<String, String> taggedValues = curr.taggedValues(taglist);
-	Map<String, String> taggedValuesRef = (ref == null ? null : ref.taggedValues(taglist));
+	Map<String, String> taggedValues = curr.taggedValuesForTagList(taglist).getFirstValues();
+	Map<String, String> taggedValuesRef = (ref == null ? null : ref.taggedValuesForTagList(taglist).getFirstValues());
 
 	for (Map.Entry<String, String> entry : taggedValues.entrySet()) {
 	    String key = entry.getKey();

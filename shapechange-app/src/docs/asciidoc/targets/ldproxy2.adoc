@@ -107,7 +107,7 @@ Schema packages have the stereotype «applicationSchema», «schema», or an ali
 
 This ldproxy target is a so-called "ShapeChange Single Target", i.e. it converts all xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schemas selected for processing] in one go, rather than handling each of these schemas separately.
 
-The target creates a single provider configuration (in folder data/store/entities/providers) as well as a single service configuration file (in folder data/store/entities/services). The names of these files are given by the name of the xref:../get started/The_element_input.adoc#mainAppSchema[main schema], in all lower case, and non-word characters replaced by '_'. The resulting name is also used as the id within these files. The encoding details for each of the two configuration files are documented in sections <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>> and <<ldproxy2_schemaconversionrules_schemapackage_serviceconfig>>.
+The target creates a single provider configuration (in folder data/entities/providers) as well as a single service configuration file (in folder data/entities/services). The names of these files are given by the name of the xref:../get started/The_element_input.adoc#mainAppSchema[main schema], in all lower case, and non-word characters replaced by '\_'. The resulting name is also used as the id within these files. However, if target parameter _apiId_ is set, then its value is used as file name and id. The encoding details for each of the two configuration files are documented in sections <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>> and <<ldproxy2_schemaconversionrules_schemapackage_serviceconfig>>.
 
 NOTE: If a single API (provider and service configuration) shall be created for each schema, set the xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schema selection parameter] appropriately. If multiple schemas need to be processed, and each shall result in a different API, then either run ShapeChange multiple times (updating the schema selection parameters each time) or define multiple ldproxy targets (each selecting a different schema for processing).
 
@@ -143,6 +143,7 @@ The following information items are added to the provider configuration file:
 ** code: value of target parameter _srid_; default is 4326
 *** NOTE: The SqlDdl target has a similar parameter.
 ** forceAxisOrder: value of target parameter _forceAxisOrder_; default is NONE
+** NOTE: (since v4.1.0) If target parameter _srid_ is not configured, then nativeCrs is not created.
 * nativeTimeZone: value of target parameter _nativeTimeZone_; default: NONE
 ** NOTE: The time-zone ID is given as a string like 'Europe/Paris'. Internally, parsing is achieved using the Java ZoneId class and its static `of(String zoneId)` method. The system default time-zone ID is determined via the static `systemDefault()` method. For further information about the allowed formats of the time-zone ID, consult the documentation of the Java ZoneId class and the two methods.
 * labelTemplate: value of target parameter _providerConfigLabelTemplate_; if the parameter is not set (to a non-empty string), the 'labelTemplate' is not created
@@ -413,6 +414,18 @@ In the future, generation of additional configuration items for this
 building block can be supported.
 
 
+[[ldproxy2_building_block_features_result_type]]
+===== Features - Result Type
+
+(since v4.1.0)
+
+ldproxy building block 
+https://docs.ldproxy.net/services/building-blocks/features_-_result_type.html[Features - Result Type]
+adds a query parameter to return only the number of features matched by a request.
+By setting target parameter __enableFeaturesResultType__ to 'true', 
+ShapeChange will add the building block to the service configuration as enabled.
+
+
 [[ldproxy2_building_block_filter]]
 ===== Filter
 
@@ -422,6 +435,18 @@ ldproxy building block
 https://docs.ldproxy.net/de/services/building-blocks/filter.html[Filter]
 supports feature filtering with CQL2.
 By setting target parameter __enableFilter__ to 'true', 
+ShapeChange will add the building block to the service configuration as enabled.
+
+
+[[ldproxy2_building_block_projections]]
+===== Projections
+
+(since v4.1.0)
+
+ldproxy building block 
+https://docs.ldproxy.net/services/building-blocks/projections.html[Projections]
+supports selecting the feature properties included in the feature response.
+By setting target parameter __enableProjections__ to 'true', 
 ShapeChange will add the building block to the service configuration as enabled.
 
 
@@ -475,6 +500,27 @@ collections:
       - roleFTtoT_Type.title
       pathSeparator: DOT
 ----------
+
+
+[[ldproxy2_building_block_sorting]]
+===== Sorting
+
+(since v4.1.0)
+
+ldproxy building block 
+https://docs.ldproxy.net/services/building-blocks/sorting.html[Sorting]
+supports sorting features in a response.
+By setting target parameter __enableSorting__ to 'true', 
+ShapeChange will add the building block to the service configuration as enabled.
+
+Additional parameters can be set, to define the sorting behavior.
+They correspond to the configuration parameters of the building block.
+Therefore, please visit the documentation of the building block for further details.
+
+* Parameter _sortingIncluded_ (comma-separated list of strings, default: _none_): corresponds to the _included_ parameter of the Sorting building block
+* Parameter _sortingExcluded_ (comma-separated list of strings, default: _none_): corresponds to the _excluded_ parameter of the Sorting building block
+* Parameter _sortingPathSeparator_ (string, default: _none_): corresponds to the _pathSeparator_ parameter of the Sorting building block
+
 
 [[ldproxy2_schemaconversionrules_types]]
 === Types
@@ -1062,7 +1108,7 @@ NOTE: You can transform unions, either flattening them (using the xref:../transf
 
 // https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/codelists
 
-Enumerations and code lists are not converted to top-level provider type definitions. Each «enumeration» / «codelist» that a) is not mapped, b) is not marked to not be encoded, and c) belongs to the schemas selected for processing, is converted to a {id}.yml file in the data/store/entities/codelists folder. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
+Enumerations and code lists are not converted to top-level provider type definitions. Each «enumeration» / «codelist» that a) is not mapped, b) is not marked to not be encoded, and c) belongs to the schemas selected for processing, is converted to a {id}.yml file. By default, that file is placed in the data/values/codelists folder. However, by setting tagged value _ldpCodelistValuePath_ on the «enumeration» / «codelist», a directory path below the codelists folder can be defined, in which the file will be placed. For example, if tag _ldpCodelistValuePath_ has value "abc/def", then the yml file is placed in folder data/values/codelists/abc/def. The ldproxy target thus also converts enumerations to ldproxy code lists. The ID thereby is the enumeration / code list name, with all non-word characters replaced by '_'.
 
 The following information items are encoded within the YAML file:
 

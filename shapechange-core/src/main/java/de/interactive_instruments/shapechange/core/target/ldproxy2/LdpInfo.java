@@ -69,7 +69,15 @@ public class LdpInfo {
     }
 
     public static String codelistId(ClassInfo ci) {
-	return ci.name().replaceAll("\\W", "_");
+
+	String idPrefix = ci.taggedValue("ldpCodelistValuePath");
+	if (StringUtils.isBlank(idPrefix)) {
+	    idPrefix = "";
+	} else {
+	    idPrefix = StringUtils.appendIfMissing(idPrefix.trim(), "/");
+	}
+
+	return idPrefix + ci.name().replaceAll("\\W", "_");
     }
 
     public static Optional<String> label(Info i) {

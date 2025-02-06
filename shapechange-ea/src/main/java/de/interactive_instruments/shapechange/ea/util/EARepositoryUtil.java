@@ -73,7 +73,9 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	 * http://www.sparxsystems.com/forums/smf/index.php?topic=2134.0
 	 */
 	System.gc();
-	System.runFinalization();
+	
+	// FIXME Have asked Sparx Systems support for guidance
+	System.runFinalization();	
     }
 
     /**

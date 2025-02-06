@@ -52,12 +52,15 @@ import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
 import de.ii.ogcapi.features.jsonfg.domain.ImmutableJsonFgConfiguration;
+import de.ii.ogcapi.features.resulttype.domain.ImmutableResultTypeConfiguration;
 import de.ii.ogcapi.filter.domain.ImmutableFilterConfiguration;
 import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
 import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableFeatureTypeConfigurationOgcApi;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
+import de.ii.ogcapi.projections.app.ImmutableProjectionsConfiguration;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
+import de.ii.ogcapi.sorting.domain.ImmutableSortingConfiguration;
 import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs;
@@ -460,10 +463,38 @@ public class LdpConfigBuilder {
 	    }
 	}
 
+	ImmutableResultTypeConfiguration.Builder featuresResultTypeBuilder = null;
+	if (Ldproxy2Target.enableFeaturesResultType) {
+	    featuresResultTypeBuilder = cfg.builder().ogcApiExtension().resultType();
+	    featuresResultTypeBuilder.enabled(true);
+	}
+
 	ImmutableFilterConfiguration.Builder filterBuilder = null;
 	if (Ldproxy2Target.enableFilter) {
 	    filterBuilder = cfg.builder().ogcApiExtension().filter();
 	    filterBuilder.enabled(true);
+	}
+
+	ImmutableProjectionsConfiguration.Builder projectionsBuilder = null;
+	if (Ldproxy2Target.enableProjections) {
+	    projectionsBuilder = cfg.builder().ogcApiExtension().projections();
+	    projectionsBuilder.enabled(true);
+	}
+
+	ImmutableSortingConfiguration.Builder sortingBuilder = null;
+	if (Ldproxy2Target.enableSorting) {
+	    sortingBuilder = cfg.builder().ogcApiExtension().sorting();
+	    sortingBuilder.enabled(true);
+
+	    if (!Ldproxy2Target.sortingIncluded.isEmpty()) {
+		sortingBuilder.included(Ldproxy2Target.sortingIncluded);
+	    }
+	    if (!Ldproxy2Target.sortingExcluded.isEmpty()) {
+		sortingBuilder.excluded(Ldproxy2Target.sortingExcluded);
+	    }
+	    if (Ldproxy2Target.sortingPathSeparator != null) {
+		sortingBuilder.pathSeparator(Ldproxy2Target.sortingPathSeparator);
+	    }
 	}
 
 	/*
@@ -496,8 +527,17 @@ public class LdpConfigBuilder {
 	if (jsonFgBuilder != null) {
 	    generalExtensionConfigurations.add(jsonFgBuilder.build());
 	}
+	if (featuresResultTypeBuilder != null) {
+	    generalExtensionConfigurations.add(featuresResultTypeBuilder.build());
+	}
 	if (filterBuilder != null) {
 	    generalExtensionConfigurations.add(filterBuilder.build());
+	}
+	if (projectionsBuilder != null) {
+	    generalExtensionConfigurations.add(projectionsBuilder.build());
+	}
+	if (sortingBuilder != null) {
+	    generalExtensionConfigurations.add(sortingBuilder.build());
 	}
 
 	serviceConfig = cfg.builder().entity().api().id(Ldproxy2Target.mainId).entityStorageVersion(2)
@@ -524,12 +564,18 @@ public class LdpConfigBuilder {
 	ImmutableQueryGeneratorSettings queryGeneration = cfg.builder().entity().provider().queryGenerationBuilder()
 		.computeNumberMatched(true).build();
 
-	ImmutableEpsgCrs nativeCrs = cfg.builder().entity().provider().nativeCrsBuilder().code(Ldproxy2Target.srid)
-		.forceAxisOrder(Ldproxy2Target.forceAxisOrder).build();
+	Optional<EpsgCrs> nativeCrsOpt;
+	if (Ldproxy2Target.sridConfigured) {
+	    ImmutableEpsgCrs nativeCrs = cfg.builder().entity().provider().nativeCrsBuilder().code(Ldproxy2Target.srid)
+		    .forceAxisOrder(Ldproxy2Target.forceAxisOrder).build();
+	    nativeCrsOpt = Optional.of(nativeCrs);
+	} else {
+	    nativeCrsOpt = Optional.empty();
+	}
 
 	ImmutableFeatureProviderSqlData.Builder providerConfigBuilder = cfg.builder().entity().provider()
 		.id(Ldproxy2Target.mainId).connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
-		.queryGeneration(queryGeneration).nativeCrs(nativeCrs).types(providerTypeDefinitions)
+		.queryGeneration(queryGeneration).nativeCrs(nativeCrsOpt).types(providerTypeDefinitions)
 		.fragments(providerFragmentDefinitions);
 
 	if (Ldproxy2Target.nativeTimeZone != null) {

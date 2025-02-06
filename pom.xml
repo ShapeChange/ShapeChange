@@ -3,7 +3,7 @@
 	<groupId>net.shapechange</groupId>
 	<artifactId>ShapeChange</artifactId>
 	<name>ShapeChange</name>
-	<version>4.0.1-SNAPSHOT</version>
+	<version>4.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>shapechange-core</module>
@@ -24,18 +24,18 @@
 			<name>ShapeChange (plus additional components) release repository</name>
 			<url>https://shapechange.net/resources/dist/</url>
 		</repository>
-<!--		<repository>-->
-<!--			<id>ii-maven</id>-->
-<!--			<name>interactive instruments maven snapshots repository</name>-->
-<!--			<url>-->
-<!--				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>-->
-<!--		</repository>-->
-		 		<repository>
-		 			<id>ii-maven-releases</id>
-		 			<name>interactive instruments maven releases repository</name>
+		<repository>
+			<id>ii-maven</id>
+			<name>interactive instruments maven snapshots repository</name>
+			<url>
+				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
+		</repository>
+<!--		 		<repository>-->
+<!--		 			<id>ii-maven-releases</id>-->
+<!--		 			<name>interactive instruments maven releases repository</name>-->
 		
-		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>
-		 		</repository>
+<!--		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
+<!--		 		</repository>-->
 	</repositories>
 	<url>http://shapechange.net/</url>
 	<description>ShapeChange - processing application schemas for geographic
@@ -65,7 +65,7 @@
 			<dependency>
 				<groupId>de.interactive_instruments</groupId>
 				<artifactId>ldproxy-cfg</artifactId>
-				<version>4.2.1</version>
+				<version>4.3.0-SNAPSHOT</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
@@ -393,6 +393,9 @@
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.11.2</version>
+					<configuration>
+						<doclint>-missing</doclint>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -539,7 +542,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<inherited>false</inherited>
+				<inherited>false</inherited>				
 				<executions>
 					<execution>
 						<phase>compile</phase>
@@ -548,9 +551,7 @@
 							<goal>aggregate-no-fork</goal>
 						</goals>
 						<configuration>
-							<reportOutputDirectory>
-								${project.build.directory}/gh-pages</reportOutputDirectory>
-							<destDir>javadoc</destDir>
+							<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

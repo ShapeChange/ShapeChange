@@ -37,8 +37,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -49,10 +51,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
-import org.apache.jena.rdf.model.RDFWriterI;
 import org.apache.jena.reasoner.ValidityReport;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.RDFWriter;
+import org.apache.jena.riot.SysRIOT;
 
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
@@ -62,8 +65,8 @@ import de.interactive_instruments.shapechange.core.PropertyConversionParameter;
 import de.interactive_instruments.shapechange.core.RuleRegistry;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.TargetOwlConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.TargetOwlConfiguration;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Info;
 import de.interactive_instruments.shapechange.core.model.Model;
@@ -612,8 +615,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		// additional OntologyModels as necessary
 		SortedSet<ClassInfo> subontclasses = new TreeSet<ClassInfo>();
 		subontclasses.addAll(subPi.containedClasses());
-		createAdditionalOntologyModels(subontclasses, odSub.getPrefix(), odSub.getRdfNamespace(), odSub.getName(),
-			odSub.getPath(), odSub.getFileName(), subPi.version());
+		createAdditionalOntologyModels(subontclasses, odSub.getPrefix(), odSub.getRdfNamespace(),
+			odSub.getName(), odSub.getPath(), odSub.getFileName(), subPi.version());
 
 	    }
 	}
@@ -1188,13 +1191,22 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	    String canpath = new File(fname).getCanonicalPath();
 	    r.addDebug(this, 20000, ontName, canpath);
 
+	    /*
+	     * A general page on writing RDF in Apache Jena is located at
+	     * https://jena.apache.org/documentation/io/rdf-output.html
+	     */
+
 	    if (rdfFormat.equals(RDFFormat.RDFXML)) {
 
-		RDFWriterI writer = ontmodel.getWriter("RDF/XML");
-		writer.setProperty("xmlbase", om.getName());
-		writer.setProperty("blockRules", rdfXmlWriterBlockRules);
-		writer.setProperty("relativeURIs", "");
-		writer.write(ontmodel, bout, null);
+		// see https://jena.apache.org/documentation/io/rdfxml-output.html
+
+		Map<String, Object> properties = new HashMap<>();
+		properties.put("xmlbase", om.getName());
+		properties.put("blockRules", rdfXmlWriterBlockRules);
+		properties.put("relativeURIs", "");
+
+		RDFWriter.create().format(rdfFormat).set(SysRIOT.sysRdfWriterProperties, rea).source(ontmodel)
+			.output(bout);
 
 	    } else {
 

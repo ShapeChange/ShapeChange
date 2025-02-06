@@ -52,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.ogcapi.collections.queryables.domain.QueryablesConfiguration.PathSeparator;
 import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
@@ -126,7 +127,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static boolean enableFeaturesGml = false;
     public static boolean enableFeaturesGeoJson = true;
     public static boolean enableFeaturesJsonFg = false;
+    public static boolean enableFeaturesResultType = false;
     public static boolean enableFilter = false;
+    public static boolean enableProjections = false;
+    public static boolean enableSorting = false;
+    public static List<String> sortingIncluded = new ArrayList<>();
+    public static List<String> sortingExcluded = new ArrayList<>();
+    public static PathSeparator sortingPathSeparator = null;
+
     public static Force forceAxisOrder = Force.NONE;
     public static String foreignKeyColumnSuffix = "";
     public static String reflexiveRelationshipFieldSuffix = null;
@@ -151,12 +159,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String serviceDescription = "FIXME";
     public static String serviceLabel = "FIXME";
     public static int srid = 4326;
+    public static boolean sridConfigured = false;
     public static String uomTvName = null;
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
     public static String providerConfigLabelTemplate = null;
 
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
-
+    
     public static String coretable = "features";
     public static String coretablePkColumn = "pk";
     public static String coretableIdColumn = null;
@@ -257,7 +266,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		mainAppSchema = pi;
 	    }
 
-	    mainId = mainAppSchema.name().replaceAll("\\W", "_").toLowerCase(Locale.ENGLISH);
+	    String mainIdDefault = mainAppSchema.name().replaceAll("\\W", "_").toLowerCase(Locale.ENGLISH);
+	    mainId = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_API_ID, mainIdDefault, false, true);
 
 	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
@@ -356,7 +367,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    "FIXME", false, true);
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
-
+	    sridConfigured = options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID);
+	    
 	    embeddingForFeatureRefs = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_EMBEDDING_FOR_FEATURE_REFS, false);
 
@@ -501,6 +513,34 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    try {
 			OPTION jsonFgOption = OPTION.valueOf(s);
 			jsonFgIncludeInGeoJson.add(jsonFgOption);
+		    } catch (IllegalArgumentException e) {
+			// ignore - should be reported by configuration validator
+		    }
+		}
+	    }
+
+	    enableFeaturesResultType = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_FEATURES_RESULT_TYPE_ENABLE, false);
+
+	    enableProjections = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_PROJECTIONS_ENABLE, false);
+
+	    enableSorting = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_SORTING_ENABLE, false);
+
+	    if (enableSorting) {
+
+		sortingIncluded = options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_SORTING_INCLUDED, null, true, true);
+
+		sortingExcluded = options.parameterAsStringList(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_SORTING_EXCLUDED, null, true, true);
+
+		String sortingPathSeparatorIn = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_SORTING_PATH_SEPARATOR, null, false, true);
+		if (StringUtils.isNotBlank(sortingPathSeparatorIn)) {
+		    try {
+			sortingPathSeparator = PathSeparator.valueOf(sortingPathSeparatorIn);
 		    } catch (IllegalArgumentException e) {
 			// ignore - should be reported by configuration validator
 		    }
@@ -841,7 +881,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (StringUtils.isNotBlank(serviceConfigTemplatePathString)) {
 		try {
 		    if (serviceConfigTemplatePathString.startsWith("http")) {
-			FileUtils.copyURLToFile(URI.create(serviceConfigTemplatePathString).toURL(), serviceConfigTemplateFile);
+			FileUtils.copyURLToFile(URI.create(serviceConfigTemplatePathString).toURL(),
+				serviceConfigTemplateFile);
 		    } else {
 			FileUtils.copyFile(new File(serviceConfigTemplatePathString), serviceConfigTemplateFile);
 		    }
@@ -1035,7 +1076,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	dbSchemaNames = new TreeSet<String>();
 
 	collectionIdFormat = "lowerCase";
-
+	
 //	documentationTemplate = null;
 //	documentationNoValue = null;
 
@@ -1070,6 +1111,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	serviceDescription = "FIXME";
 	serviceLabel = "FIXME";
 	srid = 4326;
+	sridConfigured = false;
 	serviceConfigTemplatePathString = null;
 
 	outputDirectory = null;
@@ -1082,7 +1124,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	enableFeaturesGml = false;
 	enableFeaturesGeoJson = true;
 	enableFeaturesJsonFg = false;
+	enableFeaturesResultType = false;
 	enableFilter = false;
+	enableProjections = false;
+
+	enableSorting = false;
+	sortingIncluded = new ArrayList<>();
+	sortingExcluded = new ArrayList<>();
+	sortingPathSeparator = null;
+
 	uomTvName = null;
 	bbGmlBuilder = null;
 	bbGeoJsonBuilder = null;

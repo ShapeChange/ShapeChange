@@ -2181,7 +2181,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    try {
 
 		if (cssPath.toLowerCase().startsWith("http")) {
-		    URL css = new URL(cssPath + "/" + cssFileName);
+		    URL css = URI.create(cssPath + "/" + cssFileName).toURL();
 		    FileUtils.copyURLToFile(css, cssDestination);
 		} else {
 		    File css = new File(cssPath + "/" + cssFileName);
@@ -2243,7 +2243,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    BufferedImage img = null;
 
 	    if (logoFilePath.toLowerCase().startsWith("http")) {
-		URL logoUrl = new URL(logoFilePath);
+		URL logoUrl = URI.create(logoFilePath).toURL();
 		img = ImageIO.read(logoUrl);
 	    } else {
 		File localLogoFile = new File(logoFilePath);
@@ -2296,7 +2296,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	    // populate temporary file either from remote or local URI
 	    if (docxTemplateFilePath.toLowerCase().startsWith("http")) {
-		URL templateUrl = new URL(docxTemplateFilePath);
+		URL templateUrl = URI.create(docxTemplateFilePath).toURL();
 		FileUtils.copyURLToFile(templateUrl, docxtemplate_copy);
 	    } else {
 		File docxtemplate = new File(docxTemplateFilePath);
@@ -2688,7 +2688,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	    URI xsltMainFileUri = null;
 	    if (xsltPath.toLowerCase().startsWith("http")) {
-		URL url = new URL(xsltPath + "/" + xsltfileName);
+		URL url = URI.create(xsltPath + "/" + xsltfileName).toURL();
 		xsltMainFileUri = url.toURI();
 	    } else {
 		File xsl = new File(xsltPath + "/" + xsltfileName);

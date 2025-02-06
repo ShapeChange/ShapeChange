@@ -83,6 +83,8 @@ public class Ldproxy2Constants {
 //    public static final String PARAM_DOCUMENTATION_TEMPLATE = "documentationTemplate";
 //    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
+    public static final String PARAM_API_ID = "apiId";
+    
     public static final String PARAM_COLLECTION_ID_FORMAT = "collectionIdFormat";
     
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
@@ -159,7 +161,19 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN = "coretableInverseRelationNameColumn";
     public static final String PARAM_CORETABLE_VERSION = "coretableVersion";
     public static final String PARAM_CORETABLE_VERSION_COLUMN = "coretableVersionColumn";
-
+    
+    // Building block: Projections
+    public static final String PARAM_PROJECTIONS_ENABLE = "enableProjections";
+    
+    // Building block: Sorting
+    public static final String PARAM_SORTING_ENABLE = "enableSorting";
+    public static final String PARAM_SORTING_INCLUDED = "sortingIncluded";
+    public static final String PARAM_SORTING_EXCLUDED = "sortingExcluded";
+    public static final String PARAM_SORTING_PATH_SEPARATOR = "sortingPathSeparator";
+    
+    // Building block: Features - Result Type
+    public static final String PARAM_FEATURES_RESULT_TYPE_ENABLE = "enableFeaturesResultType";
+        
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";

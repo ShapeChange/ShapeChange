@@ -437,12 +437,15 @@ public class LdpPropertyEncoder {
 		 * For GeoInfoDok-applications, where the code list value is a uri stored in an
 		 * xyz_href column, we only want the local code value, i.e. the part behind the
 		 * last '/' in the uri.
+		 * 
+		 * 2025-02-04 JE: New approach is to store the code value directly in the
+		 * database. The stringFormat transformation then is no longer needed.
 		 */
-		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.categoryOfValue() != Options.ENUMERATION) {
-		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
-			    .stringFormat("{{value | replace:'^.*\\/([^\\/]+)$':'$1'}}").build();
-		    transformations.add(trf);
-		}
+//		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.categoryOfValue() != Options.ENUMERATION) {
+//		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
+//			    .stringFormat("{{value | replace:'^.*\\/([^\\/]+)$':'$1'}}").build();
+//		    transformations.add(trf);
+//		}
 	    }
 
 	    if (providerConfigConstraintCreated) {

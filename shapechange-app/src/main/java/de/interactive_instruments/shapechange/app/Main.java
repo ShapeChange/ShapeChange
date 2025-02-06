@@ -43,8 +43,18 @@ import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ui.DefaultDialog;
 
+/**
+ * The Main class serves as the entry point for the ShapeChange application.
+ * It processes command line arguments, initializes the application options,
+ * and either runs the application in command line mode or invokes the GUI.
+ */
 public class Main {
 
+    /**
+     * The main method to run the ShapeChange application.
+     *
+     * @param argv the command line arguments
+     */
     public static void main(String argv[]) {
 
 	try {
@@ -53,7 +63,7 @@ public class Main {
 	    ShapeChangeResult result = new ShapeChangeResult(options);
 
 	    Version javaVersion = Runtime.version();
-	    if (javaVersion.feature() < 11) {
+	    if (javaVersion.feature() < 21) {
 		result.addProcessFlowError(null, 18, javaVersion.toString());
 		System.exit(1);
 	    }
@@ -120,6 +130,13 @@ public class Main {
 	}
     } // main(String[])
 
+    /**
+     * Creates and shows the GUI for the application.
+     *
+     * @param c the converter
+     * @param o the options
+     * @param r the result
+     */
     private static void createAndShowGUI(Converter c, Options o, ShapeChangeResult r) {
 	Dialog dialog = null;
 	String modelFile = null;
@@ -156,7 +173,9 @@ public class Main {
 	dialog.setVisible(true);
     }
 
-    /** Prints the usage. */
+    /**
+     * Prints the usage information for the application.
+     */
     protected static void printUsage() {
 
 	System.err.println("ShapeChange command line interface");

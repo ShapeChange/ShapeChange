@@ -20,8 +20,6 @@
 
 :toc:
 
-// link:javadoc/index.html[Javadoc]
-
 == xref:about/About.adoc[About]
 
 === xref:about/Contact.adoc[Contact]
