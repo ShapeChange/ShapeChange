@@ -74,7 +74,7 @@ public class LdpInfo {
 	if (StringUtils.isBlank(idPrefix)) {
 	    idPrefix = "";
 	} else {
-	    idPrefix = StringUtils.appendIfMissing(idPrefix.trim(), "/");
+	    idPrefix = idPrefix.trim();
 	}
 
 	return idPrefix + ci.name().replaceAll("\\W", "_");
