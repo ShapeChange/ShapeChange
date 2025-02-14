@@ -62,8 +62,8 @@ import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.Operati
  * lines.</li>
  * <li>Applying general formatting now, with indentation and new line creation.
  * </li>
- * <li>Removed special treatment of "ch[i] &gt; '\u007f'" when writing characters.
- * Correct encoding should be handled by the writer.</li>
+ * <li>Removed special treatment of "ch[i] &gt; '\u007f'" when writing
+ * characters. Correct encoding should be handled by the writer.</li>
  * </ul>
  * <p>
  * The following documentation from the XMLWriter class still applies:
@@ -359,7 +359,8 @@ public class XMLWriter extends XMLFilterImpl {
      * This method is invoked automatically by the {@link #endDocument endDocument}
      * method after writing a document.
      * </p>
-     * @throws IOException  tbd
+     * 
+     * @throws IOException tbd
      * 
      * @see #reset
      */
@@ -550,8 +551,8 @@ public class XMLWriter extends XMLFilterImpl {
      * Convenience method: start an element with only local name and a single
      * attribute.
      * 
-     * @param localName tbd
-     * @param attributeName tbd
+     * @param localName      tbd
+     * @param attributeName  tbd
      * @param attributeValue tbd
      * @throws SAXException tbd
      */
@@ -563,9 +564,9 @@ public class XMLWriter extends XMLFilterImpl {
     /**
      * Convenience method: start an element with a single attribute.
      * 
-     * @param uri tbd
-     * @param localName tbd
-     * @param attributeName tbd
+     * @param uri            tbd
+     * @param localName      tbd
+     * @param attributeName  tbd
      * @param attributeValue tbd
      * @throws SAXException tbd
      */
@@ -582,10 +583,10 @@ public class XMLWriter extends XMLFilterImpl {
      * Convenience method: start an element with only local name and a single
      * attribute. Optionally, add information about the operation.
      * 
-     * @param localName tbd
-     * @param attributeName tbd
+     * @param localName      tbd
+     * @param attributeName  tbd
      * @param attributeValue tbd
-     * @param op tbd
+     * @param op             tbd
      * @throws SAXException tbd
      */
     public void startElement(String localName, String attributeName, String attributeValue, Operation op)
@@ -675,9 +676,9 @@ public class XMLWriter extends XMLFilterImpl {
      * filter chain for further processing (with leading and trailing whitespace
      * trimmed).
      * 
-     * @param ch     The array of characters to write.
-     * @param start  The starting position in the array.
-     * @param len The number of characters to write.
+     * @param ch    The array of characters to write.
+     * @param start The starting position in the array.
+     * @param len   The number of characters to write.
      * @exception org.xml.sax.SAXException If there is an error writing the
      *                                     characters, or if a handler further down
      *                                     the filter chain raises an exception.
@@ -835,9 +836,18 @@ public class XMLWriter extends XMLFilterImpl {
     public void startElement(String localName) throws SAXException {
 	startElement("", localName, "", EMPTY_ATTS);
     }
-    
+
     public void startElement(String localName, Attributes atts) throws SAXException {
 	startElement("", localName, "", atts);
+    }
+
+    public void startElement(String localName, Attributes atts, Operation op) throws SAXException {
+
+	AttributesImpl atts2 = new AttributesImpl(atts);
+	if (op != null) {
+	    atts2.addAttribute("", "mode", "", "CDATA", op.toString());
+	}
+	startElement(localName, atts2);
     }
 
     /**
@@ -1002,9 +1012,9 @@ public class XMLWriter extends XMLFilterImpl {
      * The names will have prefixes added to them.
      * 
      * @param atts The attribute list to write.
-     * @exception SAXException If there is an error writing the attribute
-     *                                 list, this method will throw an IOException
-     *                                 wrapped in a SAXException.
+     * @exception SAXException If there is an error writing the attribute list, this
+     *                         method will throw an IOException wrapped in a
+     *                         SAXException.
      */
     private void writeAttributes(Attributes atts) throws SAXException {
 
@@ -1029,9 +1039,9 @@ public class XMLWriter extends XMLFilterImpl {
      * @param start    The starting position.
      * @param length   The number of characters to use.
      * @param isAttVal true if this is an attribute value literal.
-     * @exception SAXException If there is an error writing the characters,
-     *                                 this method will throw an IOException wrapped
-     *                                 in a SAXException.
+     * @exception SAXException If there is an error writing the characters, this
+     *                         method will throw an IOException wrapped in a
+     *                         SAXException.
      */
     private void writeEsc(char ch[], int start, int length, boolean isAttVal) throws SAXException {
 
@@ -1169,6 +1179,15 @@ public class XMLWriter extends XMLFilterImpl {
 
     public void emptyElement(String localName, Attributes atts) throws SAXException {
 	emptyElement("", localName, "", atts);
+    }
+
+    public void emptyElement(String localName, Attributes atts, Operation op) throws SAXException {
+
+	AttributesImpl atts2 = new AttributesImpl(atts);
+	if (op != null) {
+	    atts2.addAttribute("", "mode", "", "CDATA", op.toString());
+	}
+	emptyElement(localName, atts2);
     }
 
     public void emptyElement(String localName, String attributeName, String attributeValue) throws SAXException {

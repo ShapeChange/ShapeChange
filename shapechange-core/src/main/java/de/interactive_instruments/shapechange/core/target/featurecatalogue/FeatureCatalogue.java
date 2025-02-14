@@ -1124,15 +1124,15 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	return document;
     }
 
-	private boolean isPackageInPackage(PackageInfo pi) {
-		if (Package.length() == 0)
-			return true;
-		if (pi.name().equals(Package))
-			return true;
-		if (pi.isSchema())
-			return false;
-		return isPackageInPackage(pi.owner());
-	}
+    private boolean isPackageInPackage(PackageInfo pi) {
+	if (Package.length() == 0)
+	    return true;
+	if (pi.name().equals(Package))
+	    return true;
+	if (pi.isSchema())
+	    return false;
+	return isPackageInPackage(pi.owner());
+    }
 
     public void process(ClassInfo ci) {
 	if (error)
@@ -1620,39 +1620,58 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     }
 
     private void PrintProperties(ClassInfo ci, boolean listOnly, Operation op) throws SAXException {
+	PrintProperties(ci, ci, listOnly, op);
+    }
+
+    /**
+     * @param baseCi    Class for which the properties of currentCi (and all its
+     *                  supertypes) shall be printed. baseCi defines the context for
+     *                  printing, and is needed to determine inherited properties
+     *                  during processing.
+     * @param currentCi Class whose properties are printed when this method is
+     *                  called. The class is either baseCi or one of its (direct or
+     *                  indirect) supertypes.
+     * @param listOnly  <code>true</code> if only property references shall be
+     *                  printed, <code>false</code> if full property details shall
+     *                  be printed.
+     * @param op        The diff operation, if applicable.
+     * @throws SAXException tbd
+     */
+    private void PrintProperties(ClassInfo baseCi, ClassInfo currentCi, boolean listOnly, Operation op)
+	    throws SAXException {
 
 	/*
 	 * IMPORTANT: it is important that inherited properties are printed before those
-	 * that directly belong to the class (ci).
+	 * that directly belong to the class (baseCi).
 	 */
 	if (/* FIXME listOnly && */inheritedProperties) {
 
-	    for (String cid : ci.supertypes()) {
+	    for (String cid : currentCi.supertypes()) {
 		ClassInfo cix = model.classById(cid);
 		if (cix != null)
-		    PrintProperties(cix, listOnly, op);
+		    PrintProperties(baseCi, cix, listOnly, op);
 	    }
 	}
 
-	for (PropertyInfo propi : ci.properties().values()) {
+	for (PropertyInfo propi : currentCi.properties().values()) {
 
 	    Operation top = op;
-	    if (hasDiff(ci, ElementType.PROPERTY, Operation.INSERT, propi)) {
+	    if (hasDiff(currentCi, ElementType.PROPERTY, Operation.INSERT, propi)) {
 		top = Operation.INSERT;
 	    }
 
 	    if (listOnly)
-		PrintPropertyRef(propi, top);
+		PrintPropertyRef(baseCi, propi, top);
 	    else
 		PrintProperty(propi, top);
 	}
 
 	// also check deletions
-	if (diffs != null && diffs.get(ci) != null) {
-	    for (DiffElement diff : diffs.get(ci)) {
+	if (diffs != null && diffs.get(currentCi) != null) {
+	    for (DiffElement diff : diffs.get(currentCi)) {
 		if (diff.subElementType == ElementType.PROPERTY && diff.change == Operation.DELETE) {
 		    if (listOnly)
-			PrintPropertyRef((PropertyInfo) diff.subElement, Operation.DELETE);
+			PrintPropertyRef(baseCi, (PropertyInfo) diff.subElement, Operation.DELETE);
 		    else
 			PrintProperty((PropertyInfo) diff.subElement, Operation.DELETE);
 		}
@@ -1660,14 +1679,27 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	}
     }
 
-    private void PrintPropertyRef(PropertyInfo propi, Operation op) throws SAXException {
+    /**
+     * @param baseCi Class for which the property propi is processed.
+     * @param propi  Property to be printed (as reference); can be owned by baseCi
+     *               or one of its supertypes
+     * @param op     tbd
+     * @throws SAXException tbd
+     */
+    private void PrintPropertyRef(ClassInfo baseCi, PropertyInfo propi, Operation op) throws SAXException {
 
 	if (ExportProperty(propi)) {
 
 	    String propiid = "_A" + propi.id();
 	    propiid = options.internalize(propiid);
 
-	    writer.emptyElement("characterizedBy", "idref", propiid, op);
+	    AttributesImpl atts = new AttributesImpl();
+	    atts.addAttribute("", "idref", "", "CDATA", propiid);
+	    if (inheritedProperties && propi.inClass() != baseCi) {
+		atts.addAttribute("", "inherited", "", "CDATA", "true");
+	    }
+
+	    writer.emptyElement("characterizedBy", atts, op);
 	}
     }
 

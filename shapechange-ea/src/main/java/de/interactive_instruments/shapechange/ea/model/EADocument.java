@@ -558,11 +558,15 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		continue;
 	    }
 
-	    repository.OpenDiagram(d.GetDiagramID());
-	    
+	    /*
+	     * 2025-02-13 JE: opening the diagram primarily needed for
+	     * SaveDiagramImageToFile, which was replaced by PutDiagramImageToFile
+	     */
+//	    repository.OpenDiagram(d.GetDiagramID());
+
 	    String diagramNotes = d.GetNotes();
 	    String imgDocumentation = StringUtils.isNotBlank(diagramNotes) ? diagramNotes.trim() : null;
-	    
+
 //	    Collection<DiagramObject> dObjects = d.GetDiagramObjects();
 //	    System.out.println("Diagram objects on diagram '"+d.GetName()+"':");
 //	    for(short k=0; k<dObjects.GetCount(); k++) {
@@ -576,8 +580,9 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 //		String elmtName = elmt.GetName();
 //		System.out.println("- Diagram object for element '"+elmtName+"': "+top+" (top), "+bottom+" (bottom), "+left+" (left), "+right+" (right).");
 //	    }
-	    
-	    projectInterface.SaveDiagramImageToFile(img.getAbsolutePath());
+
+//	    projectInterface.SaveDiagramImageToFile(img.getAbsolutePath());
+	    projectInterface.PutDiagramImageToFile(d.GetDiagramGUID(), img.getAbsolutePath(), 1);
 	    String lastError = projectInterface.GetLastError();
 	    if (StringUtils.isNotBlank(lastError)) {
 		result.addWarning("An error was reported by the EA ProjectInterface after saving image of diagram '"
@@ -601,7 +606,8 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 		continue;
 	    }
 
-	    ImageMetadata imgMeta = new ImageMetadata(imgId, imgName, imgDocumentation, img, relPathToFile, width, height);
+	    ImageMetadata imgMeta = new ImageMetadata(imgId, imgName, imgDocumentation, img, relPathToFile, width,
+		    height);
 
 	    if (type.equalsIgnoreCase("Package")) {
 
@@ -760,7 +766,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
 	return result;
     }
-    
+
     /**
      * @see de.interactive_instruments.shapechange.core.model.Model#classes(de.interactive_instruments.shapechange.core.model.PackageInfo)
      */
@@ -815,21 +821,22 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	return repository;
     }
 
-	/**
-	 * In case that a string retrieved from a field in the EA repository
-	 * contains formatting, this method converts it to plain text format
-	 * (using EA Repository.GetFormatFromField (...)).
-	 * 
-	 * @param s the string to convert
-	 * @return the string, with any formatting converted to plain text
-	 */
-	public String applyEAFormatting(String s) {
-	    return repository.GetFormatFromField("TXT", s);
-	}
+    /**
+     * In case that a string retrieved from a field in the EA repository contains
+     * formatting, this method converts it to plain text format (using EA
+     * Repository.GetFormatFromField (...)).
+     * 
+     * @param s the string to convert
+     * @return the string, with any formatting converted to plain text
+     */
+    public String applyEAFormatting(String s) {
+	return repository.GetFormatFromField("TXT", s);
+    }
 
     /**
      * Return repository object (for applications using only the EA model option)
-     * @return  tbd
+     * 
+     * @return tbd
      */
     public Repository repository() {
 	return repository;
@@ -871,8 +878,7 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 
     @Override
     public SortedSet<AssociationInfo> associations() {
-	return fAssociationById.isEmpty() ? new TreeSet<>()
-		: new TreeSet<AssociationInfo>(fAssociationById.values());
+	return fAssociationById.isEmpty() ? new TreeSet<>() : new TreeSet<AssociationInfo>(fAssociationById.values());
     }
 
     /**
