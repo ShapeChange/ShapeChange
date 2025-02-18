@@ -137,6 +137,11 @@ public class AssociationInfoEA extends AssociationInfoImpl implements Associatio
 	    relevant = true;
 	    // Register both ends at the opposite ClassInfoEA ...
 	    for (int i = 0; i < 2; i++) {
+		/*
+		 * 2025-02-18 JE: roles[1] (supplier/target role) will end up in properties[1]
+		 * (returned by end2()), while roles[0] (client/source role) will end up in
+		 * properties[0] (returned by end1()).
+		 */
 		// Create a PropertyInfo object ...
 		PropertyInfoEA pi = new PropertyInfoEA(document, roles[1 - i].ci, this, i == 0, roles[i].eaConnEnd,
 			roles[i].ci);
@@ -154,12 +159,12 @@ public class AssociationInfoEA extends AssociationInfoImpl implements Associatio
 	document.result.addDebug(null, 10013, "association", id(), name());
     }
 
-    /** Return PropertyInfo from source end */
+    @Override
     public PropertyInfo end1() {
 	return properties[0];
     }
 
-    /** Return PropertyInfo from source end */
+    @Override
     public PropertyInfo end2() {
 	return properties[1];
     }
