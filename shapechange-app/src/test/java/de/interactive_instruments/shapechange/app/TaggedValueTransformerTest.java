@@ -37,36 +37,45 @@ import org.junit.jupiter.api.Test;
 @Tag("SCXML")
 public class TaggedValueTransformerTest extends BasicTestSCXML {
 
-	@Test
-	public void testTaggedValueInheritance() {
-		/*
-		 * 
-		 */
-		multiTest(
-				"src/integrationtests/taggedValueTransformer/taggedValueInheritance/testEA_taggedValueInheritance.xml",
-				new String[] { "xml" }, "testResults/taggedValueTransformer/taggedValueInheritance/export",
-				"src/integrationtests/taggedValueTransformer/taggedValueInheritance/reference/export");
-	}
-	
-	@Test
-	public void testCreateOriginalSchemaInformationTags() {
-		/*
-		 * 
-		 */
-		multiTest(
-				"src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/test_createOriginalSchemaInfoTags.xml",
-				new String[] { "xsd" }, "testResults/taggedValueTransformer/createOriginalSchemaInfoTags/xsd",
-				"src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/reference/xsd");
-	}
-	
-	@Test
-	public void testCreatePropertyValueTypeInfoTag() {
-		/*
-		 * 
-		 */
-		multiTest(
-				"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/test_createPropertyValueTypeInfoTag.xml",
-				new String[] { "xsd" }, "testResults/taggedValueTransformer/createPropertyValueTypeInfoTag/xsd",
-				"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/reference/xsd");
-	}
+    @Test
+    public void testTaggedValueInheritance() {
+	/*
+	 * 
+	 */
+	multiTest(
+		"src/integrationtests/taggedValueTransformer/taggedValueInheritance/testEA_taggedValueInheritance.xml",
+		new String[] { "xml" }, "testResults/taggedValueTransformer/taggedValueInheritance/export",
+		"src/integrationtests/taggedValueTransformer/taggedValueInheritance/reference/export");
+    }
+
+    @Test
+    public void testCreateOriginalSchemaInformationTags() {
+	/*
+	 * 
+	 */
+	multiTest(
+		"src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/test_createOriginalSchemaInfoTags.xml",
+		new String[] { "xsd" }, "testResults/taggedValueTransformer/createOriginalSchemaInfoTags/xsd",
+		"src/integrationtests/taggedValueTransformer/createOriginalSchemaInfoTags/reference/xsd");
+    }
+
+    @Test
+    public void testCreatePropertyValueTypeInfoTag() {
+	/*
+	 * 
+	 */
+	multiTest(
+		"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/test_createPropertyValueTypeInfoTag.xml",
+		new String[] { "xsd" }, "testResults/taggedValueTransformer/createPropertyValueTypeInfoTag/xsd",
+		"src/integrationtests/taggedValueTransformer/createPropertyValueTypeInfoTag/reference/xsd");
+    }
+
+    @Test
+    public void testCreateDiverseAssociationRoleTags() {
+
+	multiTest(
+		"src/integrationtests/taggedValueTransformer/createDiverseAssociationRoleTags/test_createDiverseAssociationRoleTags.xml",
+		new String[] { "xsd", "xml" }, "testResults/taggedValueTransformer/createDiverseAssociationRoleTags/results",
+		"src/integrationtests/taggedValueTransformer/createDiverseAssociationRoleTags/reference/results");
+    }
 }

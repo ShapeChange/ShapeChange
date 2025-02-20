@@ -52,13 +52,13 @@ import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 public class TaggedValueTransformerConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
-	    Stream.of(TaggedValueTransformer.PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME,
-		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
-		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
-		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST,
-		    TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
-		    TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
-		    TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST).collect(Collectors.toSet()));
+	    Stream.of(TaggedValueTransformerConstants.PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME,
+		    TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
+		    TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX,
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST,
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST,
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -72,20 +72,20 @@ public class TaggedValueTransformerConfigurationValidator extends AbstractConfig
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
 		config.getParameters().keySet(), result) && isValid;
 
-	if (trfConfig.hasRule(TaggedValueTransformer.RULE_TV_INHERITANCE)) {
+	if (trfConfig.hasRule(TaggedValueTransformerConstants.RULE_TV_INHERITANCE)) {
 
 	    // check that required parameter is set
-	    List<String> generalIn = config
-		    .parameterAsStringList(TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);
+	    List<String> generalIn = config.parameterAsStringList(
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);
 	    List<String> overwriteIn = config.parameterAsStringList(
-		    TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST, null, true, true);
-	    List<String> appendIn = config
-		    .parameterAsStringList(TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST, null, true, true);
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST, null, true, true);
+	    List<String> appendIn = config.parameterAsStringList(
+		    TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST, null, true, true);
 
 	    if (generalIn.isEmpty()) {
 		isValid = false;
-		result.addError(this, 100, TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST,
-			TaggedValueTransformer.RULE_TV_INHERITANCE);
+		result.addError(this, 100, TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST,
+			TaggedValueTransformerConstants.RULE_TV_INHERITANCE);
 	    }
 
 	    /*
@@ -145,24 +145,24 @@ public class TaggedValueTransformerConfigurationValidator extends AbstractConfig
 	    }
 	}
 
-	if (trfConfig.hasRule(TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE)) {
+	if (trfConfig.hasRule(TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE)) {
 
 	    List<String> tvsToCopy = trfConfig.parameterAsStringList(
-		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true, true);
+		    TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true, true);
 
 	    if (tvsToCopy.isEmpty()) {
-		result.addError(this, 100, TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
-			TaggedValueTransformer.RULE_TV_COPY_FROM_VALUE_TYPE);
+		result.addError(this, 100, TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY,
+			TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE);
 		isValid = false;
 	    }
 
 	    String typeNameRegexParamValue = trfConfig.parameterAsString(
-		    TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, ".*", false, true);
+		    TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, ".*", false, true);
 	    try {
 		Pattern.compile(typeNameRegexParamValue);
 	    } catch (PatternSyntaxException e) {
 		result.addError(this, 10, typeNameRegexParamValue,
-			TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, e.getMessage());
+			TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, e.getMessage());
 		isValid = false;
 	    }
 	}
@@ -190,26 +190,31 @@ public class TaggedValueTransformerConfigurationValidator extends AbstractConfig
 	case 100:
 	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
 	case 101:
-	    return "?? Duplicate tag in parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+	    return "?? Duplicate tag in parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
 		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
 	case 102:
-	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
-		    + "' is not specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
-		    + "'. The tag will be ignored.";
+	    return "?? Tag '$1$' specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+		    + "' is not specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST + "'. The tag will be ignored.";
 	case 103:
-	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
-		    + "' is also specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_OVERWRITE_LIST
+	    return "?? Tag '$1$' specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
+		    + "' is also specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
 		    + "'. The tag will be ignored in the append list. These tags will therefore be overwritten, which may or may not be the intent.";
 	case 104:
-	    return "?? Duplicate tag in parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
+	    return "?? Duplicate tag in parameter '" + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
 		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
 	case 105:
-	    return "?? Tag '$1$' specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_APPEND_LIST
-		    + "' is not specified by parameter '" + TaggedValueTransformer.PARAM_TV_INHERITANCE_GENERAL_LIST
-		    + "'. The tag will be ignored.";
+	    return "?? Tag '$1$' specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
+		    + "' is not specified by parameter '"
+		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST + "'. The tag will be ignored.";
 
 	case 200:
-	    return "Required parameter '" + TaggedValueTransformer.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
+	    return "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
 		    + "' was not set or does not contain any value. '";
 
 	default:

@@ -41,11 +41,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformer;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Info;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformerConstants;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -95,7 +95,7 @@ public class LdpInfo {
     }
 
     public static String originalPropertyName(PropertyInfo pi) {
-	String originalPropertyName = pi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME);
+	String originalPropertyName = pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME);
 	if (StringUtils.isBlank(originalPropertyName)) {
 	    originalPropertyName = pi.name();
 	}
@@ -103,7 +103,7 @@ public class LdpInfo {
     }
 
     public static String originalSchemaName(PropertyInfo pi) {
-	String originalSchemaName = pi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME);
+	String originalSchemaName = pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME);
 	if (StringUtils.isBlank(originalSchemaName)) {
 	    originalSchemaName = pi.model().schemaPackage(pi.inClass()).name();
 	}
@@ -111,7 +111,7 @@ public class LdpInfo {
     }
 
     public static String originalInClassName(PropertyInfo pi) {
-	String originalInClassName = pi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME);
+	String originalInClassName = pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME);
 	if (StringUtils.isBlank(originalInClassName)) {
 	    originalInClassName = originalClassName(pi.inClass());
 	}
@@ -119,7 +119,7 @@ public class LdpInfo {
     }
 
     public static String originalClassName(ClassInfo ci) {
-	String originalClassName = ci.taggedValue(TaggedValueTransformer.TV_ORIG_CLASS_NAME);
+	String originalClassName = ci.taggedValue(TaggedValueTransformerConstants.TV_ORIG_CLASS_NAME);
 	if (StringUtils.isBlank(originalClassName)) {
 	    originalClassName = ci.name();
 	}

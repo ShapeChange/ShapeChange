@@ -37,6 +37,14 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.Options;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.Info;
+import de.interactive_instruments.shapechange.core.model.Model;
+import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.sql.structure.Alter;
 import de.interactive_instruments.shapechange.core.target.sql.structure.Column;
 import de.interactive_instruments.shapechange.core.target.sql.structure.ColumnDataType;
@@ -55,15 +63,7 @@ import de.interactive_instruments.shapechange.core.target.sql.structure.Table;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlClassEncodingInfo;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlPropertyEncodingInfo;
-import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformer;
-import de.interactive_instruments.shapechange.core.MessageSource;
-import de.interactive_instruments.shapechange.core.Options;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.model.Info;
-import de.interactive_instruments.shapechange.core.model.Model;
-import de.interactive_instruments.shapechange.core.model.PackageInfo;
-import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformerConstants;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -99,27 +99,27 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
     }
 
     private String originalSchemaName(Info i) {
-	return i.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME);
+	return i.taggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME);
     }
 
     private String originalClassName(ClassInfo ci) {
-	return ci.taggedValue(TaggedValueTransformer.TV_ORIG_CLASS_NAME);
+	return ci.taggedValue(TaggedValueTransformerConstants.TV_ORIG_CLASS_NAME);
     }
 
     private String originalPropertyName(PropertyInfo pi) {
-	return pi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME);
+	return pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME);
     }
 
     private String originalPropertyValueType(PropertyInfo pi) {
-	return pi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE);
+	return pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE);
     }
 
     private String originalInClassName(PropertyInfo pi) {
-	return pi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME);
+	return pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME);
     }
 
     private String originalPropertyMultiplicity(PropertyInfo pi) {
-	return pi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY);
+	return pi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY);
     }
 
     private String schemaName(PropertyInfo pi) {

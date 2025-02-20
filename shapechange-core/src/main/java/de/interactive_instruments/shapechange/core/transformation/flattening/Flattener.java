@@ -73,7 +73,6 @@ import org.jgrapht.graph.DirectedMultigraph;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
-import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformer;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Multiplicity;
 import de.interactive_instruments.shapechange.core.Options;
@@ -81,10 +80,10 @@ import de.interactive_instruments.shapechange.core.ProcessMapEntry;
 import de.interactive_instruments.shapechange.core.ProcessRuleSet;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.StructuredNumber;
 import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 import de.interactive_instruments.shapechange.core.Type;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Constraint;
@@ -99,14 +98,15 @@ import de.interactive_instruments.shapechange.core.model.TaggedValues;
 import de.interactive_instruments.shapechange.core.model.generic.GenericAssociationInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericClassInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
+import de.interactive_instruments.shapechange.core.model.generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
+import de.interactive_instruments.shapechange.core.model.generic.GenericModel.PropertyCopyPositionIndicator;
 import de.interactive_instruments.shapechange.core.model.generic.GenericPackageInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericPropertyInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericTextConstraint;
-import de.interactive_instruments.shapechange.core.model.generic.GenericModel.PropertyCopyDuplicatBehaviorIndicator;
-import de.interactive_instruments.shapechange.core.model.generic.GenericModel.PropertyCopyPositionIndicator;
 import de.interactive_instruments.shapechange.core.transformation.Transformer;
-import de.interactive_instruments.shapechange.core.util.docx.DocxUtil;
+import de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedValueTransformerConstants;
 import de.interactive_instruments.shapechange.core.util.ArcGISUtil;
+import de.interactive_instruments.shapechange.core.util.docx.DocxUtil;
 
 /**
  * Encapsulates the logic for flattening/simplifying complex constructs within
@@ -3019,7 +3019,8 @@ public class Flattener implements Transformer, MessageSource {
 
 		genModel.updateClassName(genCi, code);
 
-		genCi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_CLASS_NAME, oldName, false);
+		genCi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformerConstants.TV_ORIG_CLASS_NAME, oldName,
+			false);
 	    }
 	}
 
@@ -3079,7 +3080,8 @@ public class Flattener implements Transformer, MessageSource {
 		    setCode(genPi, name);
 		}
 
-		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, name, false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME, name,
+			false);
 	    }
 	}
 
@@ -3638,50 +3640,55 @@ public class Flattener implements Transformer, MessageSource {
 			    if ("true".equals(typeToProcess.taggedValue("representsFeatureTypeSet"))
 				    || "true".equals(typeToProcess.taggedValue("representsTypeSet"))) {
 
-				if (StringUtils
-					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME))) {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME,
-					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME), false);
-				} else {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(),
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME,
+					    genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME),
 					    false);
+				} else {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME,
+					    genPi.name(), false);
 				}
 
-				if (StringUtils
-					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME))) {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
-					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME), false);
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME,
+					    genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME),
+					    false);
 				} else {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME,
 					    genPi.inClass().name(), false);
 				}
 
-				if (StringUtils.isNotBlank(
-					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY))) {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
-					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY),
+				if (StringUtils.isNotBlank(genPi
+					.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY))) {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY,
+					    genPi.taggedValue(
+						    TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY),
 					    false);
 				} else {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_MULTIPLICITY,
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY,
 					    genPi.cardinality().toString(), false);
 				}
 
-				if (StringUtils.isNotBlank(
-					genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE))) {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
-					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE),
+				if (StringUtils.isNotBlank(genPi
+					.taggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE))) {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE,
+					    genPi.taggedValue(
+						    TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE),
 					    false);
 				} else {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_PROPERTY_VALUETYPE,
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE,
 					    genPi.typeInfo().name, false);
 				}
 
-				if (StringUtils
-					.isNotBlank(genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME))) {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
-					    genPi.taggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME), false);
+				if (StringUtils.isNotBlank(
+					genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME))) {
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME,
+					    genPi.taggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME),
+					    false);
 				} else {
-				    copy.setTaggedValue(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+				    copy.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME,
 					    genPi.model().schemaPackage(genPi.inClass()).name(), false);
 				}
 			    }
@@ -5569,9 +5576,9 @@ public class Flattener implements Transformer, MessageSource {
 	     * property (that will be copied down to all subtypes).
 	     */
 	    if (!genPi.inClass().subtypes().isEmpty()) {
-		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_INCLASS_NAME,
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME,
 			genPi.inClass().name(), false);
-		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_SCHEMA_NAME,
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME,
 			genPi.model().schemaPackage(genPi.inClass()).name(), false);
 	    }
 
@@ -5586,7 +5593,8 @@ public class Flattener implements Transformer, MessageSource {
 	     * changes occur.
 	     */
 	    if (!genPi.isAttribute() && !genPi.typeClass().subtypes().isEmpty()) {
-		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformer.TV_ORIG_PROPERTY_NAME, genPi.name(), false);
+		genPi.setTaggedValueIfCurrentlyBlank(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME,
+			genPi.name(), false);
 	    }
 	}
 

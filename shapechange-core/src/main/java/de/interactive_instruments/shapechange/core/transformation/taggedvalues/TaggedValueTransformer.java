@@ -31,7 +31,6 @@
  */
 package de.interactive_instruments.shapechange.core.transformation.taggedvalues;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +49,10 @@ import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessRuleSet;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 import de.interactive_instruments.shapechange.core.Type;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.TaggedValues;
@@ -67,105 +67,6 @@ import shadow.org.apache.commons.lang3.StringUtils;
  *
  */
 public class TaggedValueTransformer implements Transformer, MessageSource {
-
-    /**
-     * Comma-separated list of names of tagged values for which
-     * {@value #RULE_TV_INHERITANCE} shall be applied. This parameter is required.
-     */
-    public static final String PARAM_TV_INHERITANCE_GENERAL_LIST = "taggedValueInheritanceGeneralList";
-    /**
-     * Comma-separated list of names of tagged values. If a subtype already has a
-     * tagged value that would be copied from a supertype under
-     * {@value #RULE_TV_INHERITANCE}, and that tagged value is contained in the
-     * list, then the tagged value shall be overwritten in the subtype, rather than
-     * being retained.
-     * <p>
-     * NOTE: Overwriting a tagged value has higher priority than appending (see
-     * {@value #PARAM_TV_INHERITANCE_APPEND_LIST}). If a tagged value is listed for
-     * both parameters {@value #PARAM_TV_INHERITANCE_OVERWRITE_LIST} and
-     * {@value #PARAM_TV_INHERITANCE_APPEND_LIST} then it will be ignored in the
-     * latter.
-     */
-    public static final String PARAM_TV_INHERITANCE_OVERWRITE_LIST = "taggedValueInheritanceOverwriteList";
-    /**
-     * Comma-separated list of names of tagged values. If a subtype already has a
-     * tagged value that would be copied from a supertype under
-     * {@value #RULE_TV_INHERITANCE}, and that tagged value is contained in the
-     * list, then the value from the tagged value of the supertype shall be appended
-     * to the value of the tagged value from the subtype, using the separator
-     * defined by configuration parameter
-     * {@value #PARAM_TV_INHERITANCE_APPEND_SEPARATOR}.
-     * <p>
-     * NOTE: Appending a tagged value has lower priority than overwriting (see
-     * {@value #PARAM_TV_INHERITANCE_OVERWRITE_LIST}). If a tagged value is listed
-     * for both parameters {@value #PARAM_TV_INHERITANCE_OVERWRITE_LIST} and
-     * {@value #PARAM_TV_INHERITANCE_APPEND_LIST} then it will be ignored in the
-     * latter.
-     */
-    public static final String PARAM_TV_INHERITANCE_APPEND_LIST = "taggedValueInheritanceAppendList";
-    /**
-     * Define the separator to use when a tagged value inherited from a supertype
-     * under {@value #RULE_TV_INHERITANCE} shall be appended to the tagged value of
-     * the subtype. Default value is
-     * {@value #DEFAULT_TV_INHERITANCE_APPEND_SEPARATOR}.
-     */
-    public static final String PARAM_TV_INHERITANCE_APPEND_SEPARATOR = "taggedValueInheritanceAppendSeparator";
-    public static final String DEFAULT_TV_INHERITANCE_APPEND_SEPARATOR = ", ";
-
-    /**
-     * Comma-separated list of names of tagged values to copy in
-     * {@value #RULE_TV_COPY_FROM_VALUE_TYPE}. Default value is the empty string.
-     */
-    public static final String PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY = "taggedValuesToCopy";
-
-    /**
-     * Regular expression to match the name of value types from which to copy tagged
-     * values in {@value #RULE_TV_COPY_FROM_VALUE_TYPE}. Default is '.*' - to match
-     * any value type.
-     */
-    public static final String PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX = "valueTypeNameRegex";
-
-    /**
-     * Copies the tagged values specified via configuration parameter
-     * {@value #PARAM_TV_INHERITANCE_GENERAL_LIST} from supertypes of the whole
-     * model down to their subtypes, starting at the top of inheritance trees. If
-     * the tagged value already exists in the subtype, then by default it is
-     * retained. However, the value can also be overwritten and the two values can
-     * be merged - for further details, see configuration parameters
-     * {@value #PARAM_TV_INHERITANCE_OVERWRITE_LIST} and
-     * {@value #PARAM_TV_INHERITANCE_APPEND_LIST}.
-     * <p>
-     * NOTE: Care should be taken in case that the model contains classes with
-     * multiple supertypes.
-     * <p>
-     * NOTE: The implementation currently does not support tagged values with
-     * multiple values.
-     */
-    public static final String RULE_TV_INHERITANCE = "rule-trf-taggedValue-inheritance";
-
-    /**
-     * Copy specific set of tagged values (specified via parameter
-     * {@value #PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY}) from types (specified via
-     * parameter {@value #PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX}) to properties
-     * that have one of these types as value type. This can be useful for in case of
-     * tagged values like 'length', 'rangeMinimum', 'rangeMaximum', and 'pattern'
-     * that are defined on types (especially: basic types) rather than on
-     * properties, and these types are mapped to other types (e.g.
-     * 'CharacterString').
-     */
-    public static final String RULE_TV_COPY_FROM_VALUE_TYPE = "rule-trf-taggedValue-copyFromValueType";
-
-    public static final String RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS = "rule-trf-taggedValue-createOriginalSchemaInformationTags";
-    public static final String TV_ORIG_SCHEMA_NAME = "originalSchemaName";
-    public static final String TV_ORIG_CLASS_NAME = "originalClassName";
-    public static final String TV_ORIG_INCLASS_NAME = "originalInClassName";
-    public static final String TV_ORIG_PROPERTY_NAME = "originalPropertyName";
-    public static final String TV_ORIG_PROPERTY_MULTIPLICITY = "originalPropertyMultiplicity";
-    public static final String TV_ORIG_PROPERTY_VALUETYPE = "originalPropertyValueType";
-
-    public static final String RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG = "rule-trf-taggedValue-createPropertyValueTypeInformationTag";
-    public static final String PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME = "propertyValueTypeInfoTagName";
-    public static final String PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME_DEFAULT = "propertyValueTypeName";
 
     private GenericModel genModel = null;
     private Options options = null;
@@ -203,33 +104,70 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
 	// execute rules
 
-	if (rules.contains(RULE_TV_INHERITANCE)) {
-	    result.addProcessFlowInfo(null, 20103, RULE_TV_INHERITANCE);
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_INHERITANCE)) {
+	    result.addProcessFlowInfo(null, 20103, TaggedValueTransformerConstants.RULE_TV_INHERITANCE);
 	    applyRuleTaggedValueInheritance(genModel, trfConfig);
 	}
 
-	if (rules.contains(RULE_TV_COPY_FROM_VALUE_TYPE)) {
-	    result.addProcessFlowInfo(null, 20103, RULE_TV_COPY_FROM_VALUE_TYPE);
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE)) {
+	    result.addProcessFlowInfo(null, 20103, TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE);
 	    applyRuleTaggedValueCopyFromValueType(genModel, trfConfig);
 	}
 
-	if (rules.contains(RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS)) {
-	    result.addProcessFlowInfo(null, 20103, RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS);
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS);
 	    applyRuleCreateOriginalSchemaInformationTags(genModel, trfConfig);
 	}
 
-	if (rules.contains(RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG)) {
-	    result.addProcessFlowInfo(null, 20103, RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG);
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG);
 	    applyRuleCreatePropertyValueTypeInformationTag(trfConfig);
+	}
+
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_REVERSE_PROPERTY_NAME_TAG)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_REVERSE_PROPERTY_NAME_TAG);
+	    applyRuleCreateReversePropertyNameTag(trfConfig);
+	}
+
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_ROLE_SOURE_OR_TARGET_TAG)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_ROLE_SOURE_OR_TARGET_TAG);
+	    applyRuleCreateAssociationRoleSourceOrNameTag(trfConfig);
 	}
 
 	// apply post-processing (nothing to do right now)
     }
 
+    private void applyRuleCreateReversePropertyNameTag(TransformerConfiguration trfConfig) {
+
+	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+	    if (!genPi.isAttribute() && genPi.association().isBiDirectional() && genPi.reverseProperty() != null) {
+		genPi.setTaggedValue("reversePropertyName", genPi.reverseProperty().name(), false);
+	    }
+	}
+    }
+
+    private void applyRuleCreateAssociationRoleSourceOrNameTag(TransformerConfiguration trfConfig) {
+
+	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
+
+	    if (!genPi.isAttribute() && genPi.association().isBiDirectional()) {
+		AssociationInfo ai = genPi.association();
+		((GenericPropertyInfo) ai.end1()).setTaggedValue("sourceOrTarget", "source", false);
+		((GenericPropertyInfo) ai.end2()).setTaggedValue("sourceOrTarget", "target", false);
+	    }
+	}
+    }
+
     private void applyRuleCreatePropertyValueTypeInformationTag(TransformerConfiguration trfConfig) {
 
-	String propertyValueTypeInfoTagName = trfConfig.parameterAsString(PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME,
-		PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME_DEFAULT, false, true);
+	String propertyValueTypeInfoTagName = trfConfig.parameterAsString(
+		TaggedValueTransformerConstants.PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME,
+		TaggedValueTransformerConstants.PARAM_CREATEPROPERTYVALUETYPEINFO_TAGNAME_DEFAULT, false, true);
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
@@ -276,25 +214,29 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
 	    PackageInfo schemaPi = genModel.schemaPackage(genCi);
-	    genCi.setTaggedValue(TV_ORIG_SCHEMA_NAME, schemaPi == null ? "" : schemaPi.name(), false);
-	    genCi.setTaggedValue(TV_ORIG_CLASS_NAME, genCi.name(), false);
+	    genCi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME,
+		    schemaPi == null ? "" : schemaPi.name(), false);
+	    genCi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_CLASS_NAME, genCi.name(), false);
 	}
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
 
 	    PackageInfo schemaPi = genModel.schemaPackage(genPi.inClass());
-	    genPi.setTaggedValue(TV_ORIG_SCHEMA_NAME, schemaPi == null ? "" : schemaPi.name(), false);
-	    genPi.setTaggedValue(TV_ORIG_INCLASS_NAME, genPi.inClass().name(), false);
-	    genPi.setTaggedValue(TV_ORIG_PROPERTY_NAME, genPi.name(), false);
-	    genPi.setTaggedValue(TV_ORIG_PROPERTY_MULTIPLICITY, genPi.cardinality().toString(), false);
-	    genPi.setTaggedValue(TV_ORIG_PROPERTY_VALUETYPE, genPi.typeInfo().name, false);
+	    genPi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_SCHEMA_NAME,
+		    schemaPi == null ? "" : schemaPi.name(), false);
+	    genPi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_INCLASS_NAME, genPi.inClass().name(), false);
+	    genPi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_NAME, genPi.name(), false);
+	    genPi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_MULTIPLICITY,
+		    genPi.cardinality().toString(), false);
+	    genPi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_PROPERTY_VALUETYPE, genPi.typeInfo().name,
+		    false);
 	}
     }
 
     private void applyRuleTaggedValueCopyFromValueType(GenericModel genModel2, TransformerConfiguration trfConfig) {
 
-	List<String> tvsToCopyAsList = trfConfig.parameterAsStringList(PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true,
-		true);
+	List<String> tvsToCopyAsList = trfConfig.parameterAsStringList(
+		TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true, true);
 
 	if (tvsToCopyAsList.isEmpty()) {
 	    result.addError(this, 200);
@@ -304,14 +246,15 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	Joiner joiner = Joiner.on(",");
 	String tvsToCopy = joiner.join(tvsToCopyAsList);
 
-	String typeNameRegexParamValue = trfConfig.parameterAsString(PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, ".*",
-		false, true);
+	String typeNameRegexParamValue = trfConfig.parameterAsString(
+		TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, ".*", false, true);
 	Pattern typeNameRegex = null;
 	try {
 	    typeNameRegex = Pattern.compile(typeNameRegexParamValue);
 	} catch (PatternSyntaxException e) {
-	    result.addError(this, 10, typeNameRegexParamValue, PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, e.getMessage(),
-		    RULE_TV_COPY_FROM_VALUE_TYPE);
+	    result.addError(this, 10, typeNameRegexParamValue,
+		    TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TYPENAMEREGEX, e.getMessage(),
+		    TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE);
 	    return;
 	}
 
@@ -338,7 +281,8 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
     private void applyRuleTaggedValueInheritance(GenericModel genModel, TransformerConfiguration trfConfig) {
 
-	List<String> generalIn = trfConfig.parameterAsStringList(PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);
+	List<String> generalIn = trfConfig.parameterAsStringList(
+		TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);
 
 	if (generalIn.isEmpty()) {
 	    /*
@@ -349,12 +293,14 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	    return;
 	}
 
-	List<String> overwriteIn = trfConfig.parameterAsStringList(PARAM_TV_INHERITANCE_OVERWRITE_LIST, null, true,
-		true);
-	List<String> appendIn = trfConfig.parameterAsStringList(PARAM_TV_INHERITANCE_APPEND_LIST, null, true, true);
+	List<String> overwriteIn = trfConfig.parameterAsStringList(
+		TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST, null, true, true);
+	List<String> appendIn = trfConfig.parameterAsStringList(
+		TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST, null, true, true);
 
-	String appendSeparator = trfConfig.parameterAsString(PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
-		DEFAULT_TV_INHERITANCE_APPEND_SEPARATOR, true, false);
+	String appendSeparator = trfConfig.parameterAsString(
+		TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_SEPARATOR,
+		TaggedValueTransformerConstants.DEFAULT_TV_INHERITANCE_APPEND_SEPARATOR, true, false);
 
 	/*
 	 * Normalize tagged values. Ignore overwrite-TVs that are not contained in
@@ -505,9 +451,9 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	    return "Retaining tagged value $1$=$2$ in $3$.";
 
 	case 200:
-	    return "Required parameter '" + PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
-		    + "' was not set or does not contain any value. '" + RULE_TV_COPY_FROM_VALUE_TYPE
-		    + "' will not have any effect.";
+	    return "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
+		    + "' was not set or does not contain any value. '"
+		    + TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE + "' will not have any effect.";
 
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

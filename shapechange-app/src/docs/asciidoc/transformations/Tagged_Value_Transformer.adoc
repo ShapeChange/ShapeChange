@@ -91,6 +91,33 @@ value is the name of the value type, as defined for the property in the model.
 ** Otherwise, the tag value is a comma-separated list of all non-abstract subtypes in
 the complete subtype hierarchy, including the value type itself if it is not abstract.
 
+[[rule-trf-taggedValue-createReversePropertyNameTag]]
+==== rule-trf-taggedValue-createReversePropertyNameTag
+
+(since v4.1.0)
+
+For each association role of bi-directional associations, where at least one role is
+within the schemas selected for processing, a tagged value `reversePropertyName` is added, 
+providing the name of the reverse property,i.e. the property at the other end of the 
+association.
+
+
+[[rule-trf-taggedValue-createAssociationRoleSourceOrTargetTag]]
+==== rule-trf-taggedValue-createAssociationRoleSourceOrTargetTag
+
+(since v4.1.0)
+
+For each association role of bi-directional associations, where at least one role is
+within the schemas selected for processing, a tagged value `sourceOrTarget` is added, 
+indicating whether the property fulfills the source or the target role in this relationship.
+
+NOTE: The UML specification does not have a concept of 'source' and 'target' 
+for association roles. It does have it for directed relationships such as dependency 
+or generalization. However, in some cases - like encoding a relationship between
+two classes within a database - it can be useful to differentiate properties of a
+bi-directional association, categorizing them as source and target role, respectively.
+Enterprise Architect also differentiates association roles - in fact, all connector ends - this way.
+
 
 [[rule-trf-taggedValue-inheritance]]
 ==== rule-trf-taggedValue-inheritance

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/taggedValueTransformer/createDiverseAssociationRoleTags/test_createDiverseAssociationRoleTags.xml"
+                   end="Tue Feb 18 12:37:41 CET 2025"
+                   resultCode="0"
+                   start="Tue Feb 18 12:37:30 CET 2025"
+                   version="4.1.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'IDENTITY' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_TV' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'TRF_TV' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' and @inputs 'TRF_TV' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\taggedValueTransformer\createDiverseAssociationRoleTags\createDiverseAssociationRoleTags.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\taggedValueTransformer\createDiverseAssociationRoleTags\createDiverseAssociationRoleTags.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\taggedValueTransformer\createDiverseAssociationRoleTags\createDiverseAssociationRoleTags.qea"/>
+      <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '', an additional value '100' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType2::aroleSource"/>
+      </Warning>
+      <Warning message="A single value was requested for tag 'sequenceNumber', but in addition to returned value '', an additional value '300' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType1::aroleUniDirectionalAssociation"/>
+      </Warning>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\taggedValueTransformer\createDiverseAssociationRoleTags\createDiverseAssociationRoleTags.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'IDENTITY' for input ID: 'input'."/>
+      <Warning message="A single value was requested for tag 'inlineOrByReference', but in addition to returned value 'inlineOrByReference', an additional value 'byReference' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType1::aroleUniDirectionalAssociation"/>
+      </Warning>
+      <Warning message="A single value was requested for tag 'inlineOrByReference', but in addition to returned value 'inlineOrByReference', an additional value 'inline' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType2::aroleSource"/>
+      </Warning>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'IDENTITY' for input ID: 'input'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_TV' for input ID: 'IDENTITY'."/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-taggedValue-createReversePropertyNameTag ----------"/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-taggedValue-createAssociationRoleSourceOrTargetTag ----------"/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_TV' for input ID: 'IDENTITY'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'TRF_TV'."/>
+      <Warning message="A single value was requested for tag 'isMetadata', but in addition to returned value 'false', an additional value 'false' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType1::aroleUniDirectionalAssociation"/>
+      </Warning>
+      <Warning message="A single value was requested for tag 'isMetadata', but in addition to returned value 'false', an additional value 'false' exists and is ignored.">
+         <Detail xmlns=""
+                 message="Context: class InfoImpl (subtype: PropertyInfo). Model element: Model::Schemas::Test Schema::FeatureType2::aroleSource"/>
+      </Warning>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_TV'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'Model Export' for input 'TRF_TV'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.modelexport.ModelExport' for input ID: 'TRF_TV'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/taggedValueTransformer/createDiverseAssociationRoleTags/results/xsd/TRF_TV/test.xsd"
+              scope="http://example.org/shapechange/schema/test"
+              target="XML Schema">test.xsd</Result>
+   </Results>
+</ShapeChangeResult>
