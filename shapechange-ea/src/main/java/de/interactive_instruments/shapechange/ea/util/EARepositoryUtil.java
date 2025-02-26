@@ -63,22 +63,6 @@ public class EARepositoryUtil extends AbstractEAUtil {
      */
 
     /**
-     * Runs Java garbage collector (System.gc()) and then the finalization
-     * (System.runFinalization()).
-     */
-    public static void compact() {
-
-	/*
-	 * Inspired by: http://sparxsystems.com/forums/smf/index.php?topic=1308.0
-	 * http://www.sparxsystems.com/forums/smf/index.php?topic=2134.0
-	 */
-	System.gc();
-	
-	// FIXME Have asked Sparx Systems support for guidance
-	System.runFinalization();	
-    }
-
-    /**
      * Documentation provided by EA: <i>Set this property to <code>true</code> when
      * your automation client has to rapidly insert many elements, operations,
      * attributes and/or operation parameters. Set to <code>false</code> when work
