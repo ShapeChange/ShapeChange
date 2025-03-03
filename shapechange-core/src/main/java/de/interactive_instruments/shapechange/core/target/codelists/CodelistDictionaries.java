@@ -360,7 +360,9 @@ public class CodelistDictionaries implements Target, MessageSource {
 
 	    String template = templateIn;
 	    template = template.replaceAll("\\[\\[initialValue\\]\\]",
-		    StringUtils.defaultIfBlank(StringUtils.stripToNull(propi.initialValue()), noValueValue));
+		    StringUtils.defaultIfBlank(
+			    StringUtils.stripToNull(StringUtils.defaultIfBlank(propi.initialValue(), propi.name())),
+			    noValueValue));
 	    template = template.replaceAll("\\[\\[className\\]\\]",
 		    StringUtils.defaultIfBlank(propi.inClass().name(), noValueValue));
 
@@ -391,7 +393,7 @@ public class CodelistDictionaries implements Target, MessageSource {
 	} else if (source.equalsIgnoreCase("id")) {
 	    s = i.id();
 	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo info) {
-	    s = info.initialValue();
+	    s = StringUtils.defaultIfBlank(info.initialValue(), info.name());
 	} else if (source.startsWith("@")) {
 	    s = i.taggedValue(source.substring(1));
 	}

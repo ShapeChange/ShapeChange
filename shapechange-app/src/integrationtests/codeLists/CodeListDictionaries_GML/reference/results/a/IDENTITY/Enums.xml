@@ -11,12 +11,14 @@
       <Definition gml:id="enumA">
          <description>Documentation enumA</description>
          <identifier codeSpace="http://example.org/shapechange/codelistml/explicitCodeSpace">enumA</identifier>
+         <name>enumA</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="enumB">
          <description>Documentation enumB</description>
          <identifier codeSpace="http://example.org/shapechange/codelistml/explicitCodeSpace">enumB</identifier>
+         <name>enumB</name>
       </Definition>
    </dictionaryEntry>
 </Dictionary>

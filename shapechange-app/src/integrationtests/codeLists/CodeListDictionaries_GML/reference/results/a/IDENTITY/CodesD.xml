@@ -11,24 +11,28 @@
       <Definition gml:id="code1">
          <description>Documentation code1</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code1</identifier>
+         <name>code1</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="code2">
          <description>Documentation code2</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code2</identifier>
+         <name>code2</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="code3">
          <description>Documentation code3</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code3</identifier>
+         <name>code3</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="code4">
          <description>Documentation code4</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesD">code4</identifier>
+         <name>code4</name>
       </Definition>
    </dictionaryEntry>
 </Dictionary>

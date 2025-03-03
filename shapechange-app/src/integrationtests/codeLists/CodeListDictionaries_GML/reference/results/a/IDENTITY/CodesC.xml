@@ -11,12 +11,14 @@
       <Definition gml:id="code1">
          <description>Documentation code1</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesC">code1</identifier>
+         <name>code1</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="code2">
          <description>Documentation code2</description>
          <identifier codeSpace="http://example.org/shapechange/codeListDictionaries_GML/CodesC">code2</identifier>
+         <name>code2</name>
       </Definition>
    </dictionaryEntry>
 </Dictionary>

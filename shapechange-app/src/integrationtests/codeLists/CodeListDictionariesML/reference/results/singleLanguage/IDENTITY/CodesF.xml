@@ -1,4 +1,12 @@
-<gmx:CodeListDictionary xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" gml:id="CodesF" xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<gmx:CodeListDictionary xmlns:gco="http://www.isotc211.org/2005/gco"
+                        xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                        xmlns:gml="http://www.opengis.net/gml/3.2"
+                        xmlns:gmx="http://www.isotc211.org/2005/gmx"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        gml:id="CodesF"
+                        xsi:schemaLocation="http://www.isotc211.org/2005/gmx http://schemas.opengis.net/iso/19139/20070417/gmx/gmx.xsd">
   <gml:identifier codeSpace="http://example.org/info/CodesF">CodesF</gml:identifier>
   <gml:name>CodesF</gml:name>
   <gmx:codeEntry>
