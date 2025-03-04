@@ -81,6 +81,7 @@ public class CodelistDictionaries implements Target, MessageSource {
     public static final String PARAM_DEFINITION_GMLID_TEMPLATE = "definitionGmlIdTemplate";
     public static final String PARAM_DEFINITION_GMLIDENTIFIER_TEMPLATE = "definitionGmlIdentifierTemplate";
     public static final String PARAM_ADD_STYLESHEET_PROCESSING_INSTRUCTION = "addStylesheetProcessingInstruction";
+    public static final String PARAM_USE_NAME_FOR_BLANK_INITIAL_VALUE = "useNameInCaseOfBlankInitialValue";
 
     private PackageInfo pi = null;
     private Model model = null;
@@ -93,6 +94,7 @@ public class CodelistDictionaries implements Target, MessageSource {
     private boolean enums = false;
     private boolean codelists = true;
     private boolean addStylesheetProcessingInstruction = true;
+    private boolean useNameInCaseOfBlankInitialValue = false;
 
     private String definitionGmlIdTemplate = null;
     private String definitionGmlIdentifierTemplate = null;
@@ -120,6 +122,9 @@ public class CodelistDictionaries implements Target, MessageSource {
 	codelists = options.parameterAsBoolean(this.getClass().getName(), PARAM_CODELISTS, true);
 	addStylesheetProcessingInstruction = options.parameterAsBoolean(this.getClass().getName(),
 		PARAM_ADD_STYLESHEET_PROCESSING_INSTRUCTION, true);
+
+	useNameInCaseOfBlankInitialValue = options.parameterAsBoolean(this.getClass().getName(),
+		PARAM_USE_NAME_FOR_BLANK_INITIAL_VALUE, false);
 
 	identifiers = options.parameterAsStringList(this.getClass().getName(), PARAM_IDENTIFIER,
 		new String[] { "name" }, true, true);
@@ -360,9 +365,7 @@ public class CodelistDictionaries implements Target, MessageSource {
 
 	    String template = templateIn;
 	    template = template.replaceAll("\\[\\[initialValue\\]\\]",
-		    StringUtils.defaultIfBlank(
-			    StringUtils.stripToNull(StringUtils.defaultIfBlank(propi.initialValue(), propi.name())),
-			    noValueValue));
+		    StringUtils.defaultIfBlank(StringUtils.stripToNull(determineInitialValue(propi)), noValueValue));
 	    template = template.replaceAll("\\[\\[className\\]\\]",
 		    StringUtils.defaultIfBlank(propi.inClass().name(), noValueValue));
 
@@ -393,12 +396,20 @@ public class CodelistDictionaries implements Target, MessageSource {
 	} else if (source.equalsIgnoreCase("id")) {
 	    s = i.id();
 	} else if (source.equalsIgnoreCase("initialValue") && i instanceof PropertyInfo info) {
-	    s = StringUtils.defaultIfBlank(info.initialValue(), info.name());
+	    s = determineInitialValue(info);
 	} else if (source.startsWith("@")) {
 	    s = i.taggedValue(source.substring(1));
 	}
 
 	return s;
+    }
+
+    private String determineInitialValue(PropertyInfo pi) {
+	if (useNameInCaseOfBlankInitialValue) {
+	    return StringUtils.defaultIfBlank(pi.initialValue(), pi.name());
+	} else {
+	    return pi.initialValue();
+	}
     }
 
     public void write() {

@@ -191,8 +191,6 @@ page]. In addition to the well-known descriptors (including
 'name' for the name of the UML model element), the 
 values 'initialValue' and 'className' can be used as
 well (i.e., "\[[initialValue]]" and "\[[className]]").
-If 'initialValue' is used but no value is present, the
-'name' is used instead.
 
 +++Applies to Rule(s)+++: _none_ – default behavior
 
@@ -315,8 +313,7 @@ enumerant. Valid sources are:
 * "name" – corresponding to the name of the code / enumerant
 * "alias" – corresponding to the alias name of the code / enumerant
 * "initialValue" – corresponding to the initial value that may be
-defined for the code / enumerant; if no value is present, the
-'name' is used instead
+defined for the code / enumerant
 * A tagged value of the code / enumerant, identified via "@" + \{tagged
 value name}
 
@@ -343,8 +340,7 @@ retrieved from the sources will be chosen. Valid sources are:
 * "name" – corresponding to the name of the model element
 * "alias" – corresponding to the alias name of the model element
 * "initialValue" – corresponding to the initial value that may be
-defined for a code / enumerant; if no value is present, the
-'name' is used instead
+defined for a code / enumerant
 * A tagged value of the model element, identified via "@" + \{tagged
 value name}
 
@@ -371,8 +367,7 @@ created. Valid sources are:
 * "name" – corresponding to the name of the model element
 * "alias" – corresponding to the alias name of the model element
 * "initialValue" – corresponding to the initial value that may be
-defined for a code / enumerant; if no value is present, the
-'name' is used instead
+defined for a code / enumerant
 * A tagged value of the model element, identified via "@" + \{tagged
 value name}
 
@@ -427,6 +422,26 @@ such files, it is suggested that a unique directory be designated for
 this purpose.
 
 +++Applies to Rule(s)+++: _none – general behaviour_
+
+[[useNameInCaseOfBlankInitialValue]]
+==== useNameInCaseOfBlankInitialValue
+
+(since v4.1.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: Boolean
+
++++Default Value+++: false
+
++++Explanation+++: If set to true, then whenever
+the initial value of an enum / code has no value,
+i.e. the string value is null or empty, the name
+of the enum / code is used instead.
+
++++Applies to Rule(s)+++: _none_ – default behavior
 
 [[Sample_Configuration]]
 == Sample Configuration

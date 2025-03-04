@@ -48,6 +48,7 @@
 			<targetParameter name="gmlid" value="name" />
 			<targetParameter name="names" value="alias, initialValue, @name" />
 			<targetParameter name="identifier" value="name" />
+			<targetParameter name="useNameInCaseOfBlankInitialValue" value="true" />
 			<xi:include
 				href="http://shapechange.net/resources/config/StandardNamespaces.xml" />
 		</TargetXmlSchema>
@@ -68,6 +69,7 @@
 			<targetParameter name="identifier" value="name" />
 			<targetParameter name="definitionGmlIdentifierTemplate" value="[[className]]:[[initialValue]]"/>
 			<targetParameter name="addStylesheetProcessingInstruction" value="false"/>
+			<targetParameter name="useNameInCaseOfBlankInitialValue" value="true" />
 			<xi:include
 				href="http://shapechange.net/resources/config/StandardNamespaces.xml" />
 		</TargetXmlSchema>

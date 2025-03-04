@@ -537,10 +537,30 @@
       <sc:id>as5</sc:id>
       <sc:end1>
         <sc:Property>
-          <sc:name>role_Sas5</sc:name>
+          <sc:name>aReverseRoleUniDirectionalAssociaation</sc:name>
           <sc:id>Sas5</sc:id>
+          <sc:taggedValues>
+            <sc:TaggedValue>
+              <sc:name>inlineOrByReference</sc:name>
+              <sc:values>
+                <sc:Value>inlineOrByReference</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>isMetadata</sc:name>
+              <sc:values>
+                <sc:Value>false</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+            <sc:TaggedValue>
+              <sc:name>sequenceNumber</sc:name>
+              <sc:values>
+                <sc:Value>300</sc:Value>
+              </sc:values>
+            </sc:TaggedValue>
+          </sc:taggedValues>
           <sc:isNavigable>false</sc:isNavigable>
-          <sc:sequenceNumber>-536870912</sc:sequenceNumber>
+          <sc:sequenceNumber>300</sc:sequenceNumber>
           <sc:typeId>6</sc:typeId>
           <sc:typeName>FeatureType1</sc:typeName>
           <sc:isAttribute>false</sc:isAttribute>

@@ -10,3409 +10,2922 @@
       <Definition gml:id="aar">
          <description>Afar</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">aar</identifier>
-         <name>aar</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="abk">
          <description>Abkhazian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">abk</identifier>
-         <name>abk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ace">
          <description>Achinese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ace</identifier>
-         <name>ace</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ach">
          <description>Acoli</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ach</identifier>
-         <name>ach</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ada">
          <description>Adangme</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ada</identifier>
-         <name>ada</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ady">
          <description>Adyghe; Adygei</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ady</identifier>
-         <name>ady</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="afa">
          <description>Afro-Asiatic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">afa</identifier>
-         <name>afa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="afh">
          <description>Afrihili</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">afh</identifier>
-         <name>afh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="afr">
          <description>Afrikaans</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">afr</identifier>
-         <name>afr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ain">
          <description>Ainu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ain</identifier>
-         <name>ain</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="aka">
          <description>Akan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">aka</identifier>
-         <name>aka</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="akk">
          <description>Akkadian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">akk</identifier>
-         <name>akk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="alb">
          <description>Albanian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">alb</identifier>
-         <name>alb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ale">
          <description>Aleut</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ale</identifier>
-         <name>ale</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="alg">
          <description>Algonquian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">alg</identifier>
-         <name>alg</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="alt">
          <description>Southern Altai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">alt</identifier>
-         <name>alt</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="amh">
          <description>Amharic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">amh</identifier>
-         <name>amh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ang">
          <description>English, Old (ca.450-1100)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ang</identifier>
-         <name>ang</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="anp">
          <description>Angika</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">anp</identifier>
-         <name>anp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="apa">
          <description>Apache languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">apa</identifier>
-         <name>apa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ara">
          <description>Arabic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ara</identifier>
-         <name>ara</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arc">
          <description>Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arc</identifier>
-         <name>arc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arg">
          <description>Aragonese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arg</identifier>
-         <name>arg</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arm">
          <description>Armenian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arm</identifier>
-         <name>arm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arn">
          <description>Mapudungun; Mapuche</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arn</identifier>
-         <name>arn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arp">
          <description>Arapaho</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arp</identifier>
-         <name>arp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="art">
          <description>Artificial languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">art</identifier>
-         <name>art</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="arw">
          <description>Arawak</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">arw</identifier>
-         <name>arw</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="asm">
          <description>Assamese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">asm</identifier>
-         <name>asm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ast">
          <description>Asturian; Bable; Leonese; Asturleonese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ast</identifier>
-         <name>ast</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ath">
          <description>Athapascan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ath</identifier>
-         <name>ath</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="aus">
          <description>Australian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">aus</identifier>
-         <name>aus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ava">
          <description>Avaric</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ava</identifier>
-         <name>ava</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ave">
          <description>Avestan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ave</identifier>
-         <name>ave</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="awa">
          <description>Awadhi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">awa</identifier>
-         <name>awa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="aym">
          <description>Aymara</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">aym</identifier>
-         <name>aym</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="aze">
          <description>Azerbaijani</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">aze</identifier>
-         <name>aze</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bad">
          <description>Banda languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bad</identifier>
-         <name>bad</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bai">
          <description>Bamileke languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bai</identifier>
-         <name>bai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bak">
          <description>Bashkir</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bak</identifier>
-         <name>bak</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bal">
          <description>Baluchi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bal</identifier>
-         <name>bal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bam">
          <description>Bambara</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bam</identifier>
-         <name>bam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ban">
          <description>Balinese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ban</identifier>
-         <name>ban</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="baq">
          <description>Basque</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">baq</identifier>
-         <name>baq</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bas">
          <description>Basa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bas</identifier>
-         <name>bas</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bat">
          <description>Baltic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bat</identifier>
-         <name>bat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bej">
          <description>Beja; Bedawiyet</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bej</identifier>
-         <name>bej</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bel">
          <description>Belarusian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bel</identifier>
-         <name>bel</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bem">
          <description>Bemba</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bem</identifier>
-         <name>bem</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ben">
          <description>Bengali</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ben</identifier>
-         <name>ben</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ber">
          <description>Berber languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ber</identifier>
-         <name>ber</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bho">
          <description>Bhojpuri</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bho</identifier>
-         <name>bho</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bih">
          <description>Bihari languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bih</identifier>
-         <name>bih</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bik">
          <description>Bikol</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bik</identifier>
-         <name>bik</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bin">
          <description>Bini; Edo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bin</identifier>
-         <name>bin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bis">
          <description>Bislama</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bis</identifier>
-         <name>bis</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bla">
          <description>Siksika</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bla</identifier>
-         <name>bla</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bnt">
          <description>Bantu (Other)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bnt</identifier>
-         <name>bnt</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bos">
          <description>Bosnian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bos</identifier>
-         <name>bos</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bra">
          <description>Braj</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bra</identifier>
-         <name>bra</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bre">
          <description>Breton</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bre</identifier>
-         <name>bre</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="btk">
          <description>Batak languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">btk</identifier>
-         <name>btk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bua">
          <description>Buriat</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bua</identifier>
-         <name>bua</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bug">
          <description>Buginese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bug</identifier>
-         <name>bug</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bul">
          <description>Bulgarian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bul</identifier>
-         <name>bul</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="bur">
          <description>Burmese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">bur</identifier>
-         <name>bur</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="byn">
          <description>Blin; Bilin</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">byn</identifier>
-         <name>byn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cad">
          <description>Caddo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cad</identifier>
-         <name>cad</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cai">
          <description>Central American Indian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cai</identifier>
-         <name>cai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="car">
          <description>Galibi Carib</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">car</identifier>
-         <name>car</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cat">
          <description>Catalan; Valencian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cat</identifier>
-         <name>cat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cau">
          <description>Caucasian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cau</identifier>
-         <name>cau</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ceb">
          <description>Cebuano</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ceb</identifier>
-         <name>ceb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cel">
          <description>Celtic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cel</identifier>
-         <name>cel</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cha">
          <description>Chamorro</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cha</identifier>
-         <name>cha</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chb">
          <description>Chibcha</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chb</identifier>
-         <name>chb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="che">
          <description>Chechen</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">che</identifier>
-         <name>che</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chg">
          <description>Chagatai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chg</identifier>
-         <name>chg</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chi">
          <description>Chinese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chi</identifier>
-         <name>chi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chk">
          <description>Chuukese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chk</identifier>
-         <name>chk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chm">
          <description>Mari</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chm</identifier>
-         <name>chm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chn">
          <description>Chinook jargon</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chn</identifier>
-         <name>chn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cho">
          <description>Choctaw</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cho</identifier>
-         <name>cho</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chp">
          <description>Chipewyan; Dene Suline</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chp</identifier>
-         <name>chp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chr">
          <description>Cherokee</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chr</identifier>
-         <name>chr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chu">
          <description>Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chu</identifier>
-         <name>chu</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chv">
          <description>Chuvash</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chv</identifier>
-         <name>chv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="chy">
          <description>Cheyenne</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">chy</identifier>
-         <name>chy</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cmc">
          <description>Chamic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cmc</identifier>
-         <name>cmc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cnr">
          <description>Montenegrin</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cnr</identifier>
-         <name>cnr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cop">
          <description>Coptic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cop</identifier>
-         <name>cop</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cor">
          <description>Cornish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cor</identifier>
-         <name>cor</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cos">
          <description>Corsican</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cos</identifier>
-         <name>cos</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cpe">
          <description>Creoles and pidgins, English based</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cpe</identifier>
-         <name>cpe</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cpf">
          <description>Creoles and pidgins, French-based</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cpf</identifier>
-         <name>cpf</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cpp">
          <description>Creoles and pidgins, Portuguese-based</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cpp</identifier>
-         <name>cpp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cre">
          <description>Cree</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cre</identifier>
-         <name>cre</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="crh">
          <description>Crimean Tatar; Crimean Turkish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">crh</identifier>
-         <name>crh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="crp">
          <description>Creoles and pidgins</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">crp</identifier>
-         <name>crp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="csb">
          <description>Kashubian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">csb</identifier>
-         <name>csb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cus">
          <description>Cushitic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cus</identifier>
-         <name>cus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="cze">
          <description>Czech</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">cze</identifier>
-         <name>cze</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dak">
          <description>Dakota</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dak</identifier>
-         <name>dak</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dan">
          <description>Danish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dan</identifier>
-         <name>dan</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dar">
          <description>Dargwa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dar</identifier>
-         <name>dar</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="day">
          <description>Land Dayak languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">day</identifier>
-         <name>day</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="del">
          <description>Delaware</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">del</identifier>
-         <name>del</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="den">
          <description>Slave (Athapascan)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">den</identifier>
-         <name>den</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dgr">
          <description>Dogrib</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dgr</identifier>
-         <name>dgr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="din">
          <description>Dinka</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">din</identifier>
-         <name>din</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="div">
          <description>Divehi; Dhivehi; Maldivian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">div</identifier>
-         <name>div</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="doi">
          <description>Dogri</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">doi</identifier>
-         <name>doi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dra">
          <description>Dravidian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dra</identifier>
-         <name>dra</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dsb">
          <description>Lower Sorbian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dsb</identifier>
-         <name>dsb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dua">
          <description>Duala</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dua</identifier>
-         <name>dua</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dum">
          <description>Dutch, Middle (ca.1050-1350)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dum</identifier>
-         <name>dum</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dut">
          <description>Dutch; Flemish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dut</identifier>
-         <name>dut</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dyu">
          <description>Dyula</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dyu</identifier>
-         <name>dyu</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="dzo">
          <description>Dzongkha</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">dzo</identifier>
-         <name>dzo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="efi">
          <description>Efik</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">efi</identifier>
-         <name>efi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="egy">
          <description>Egyptian (Ancient)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">egy</identifier>
-         <name>egy</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="eka">
          <description>Ekajuk</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">eka</identifier>
-         <name>eka</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="elx">
          <description>Elamite</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">elx</identifier>
-         <name>elx</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="eng">
          <description>English</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">eng</identifier>
-         <name>eng</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="enm">
          <description>English, Middle (1100-1500)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">enm</identifier>
-         <name>enm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="epo">
          <description>Esperanto</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">epo</identifier>
-         <name>epo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="est">
          <description>Estonian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">est</identifier>
-         <name>est</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ewe">
          <description>Ewe</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ewe</identifier>
-         <name>ewe</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ewo">
          <description>Ewondo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ewo</identifier>
-         <name>ewo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fan">
          <description>Fang</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fan</identifier>
-         <name>fan</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fao">
          <description>Faroese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fao</identifier>
-         <name>fao</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fat">
          <description>Fanti</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fat</identifier>
-         <name>fat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fij">
          <description>Fijian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fij</identifier>
-         <name>fij</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fil">
          <description>Filipino; Pilipino</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fil</identifier>
-         <name>fil</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fin">
          <description>Finnish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fin</identifier>
-         <name>fin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fiu">
          <description>Finno-Ugrian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fiu</identifier>
-         <name>fiu</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fon">
          <description>Fon</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fon</identifier>
-         <name>fon</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fre">
          <description>French</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fre</identifier>
-         <name>fre</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="frm">
          <description>French, Middle (ca.1400-1600)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">frm</identifier>
-         <name>frm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fro">
          <description>French, Old (842-ca.1400)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fro</identifier>
-         <name>fro</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="frr">
          <description>Northern Frisian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">frr</identifier>
-         <name>frr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="frs">
          <description>Eastern Frisian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">frs</identifier>
-         <name>frs</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fry">
          <description>Western Frisian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fry</identifier>
-         <name>fry</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ful">
          <description>Fulah</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ful</identifier>
-         <name>ful</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="fur">
          <description>Friulian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">fur</identifier>
-         <name>fur</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gaa">
          <description>Ga</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gaa</identifier>
-         <name>gaa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gay">
          <description>Gayo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gay</identifier>
-         <name>gay</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gba">
          <description>Gbaya</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gba</identifier>
-         <name>gba</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gem">
          <description>Germanic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gem</identifier>
-         <name>gem</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="geo">
          <description>Georgian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">geo</identifier>
-         <name>geo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ger">
          <description>German</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ger</identifier>
-         <name>ger</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gez">
          <description>Geez</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gez</identifier>
-         <name>gez</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gil">
          <description>Gilbertese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gil</identifier>
-         <name>gil</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gla">
          <description>Gaelic; Scottish Gaelic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gla</identifier>
-         <name>gla</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gle">
          <description>Irish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gle</identifier>
-         <name>gle</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="glg">
          <description>Galician</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">glg</identifier>
-         <name>glg</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="glv">
          <description>Manx</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">glv</identifier>
-         <name>glv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gmh">
          <description>German, Middle High (ca.1050-1500)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gmh</identifier>
-         <name>gmh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="goh">
          <description>German, Old High (ca.750-1050)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">goh</identifier>
-         <name>goh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gon">
          <description>Gondi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gon</identifier>
-         <name>gon</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gor">
          <description>Gorontalo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gor</identifier>
-         <name>gor</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="got">
          <description>Gothic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">got</identifier>
-         <name>got</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="grb">
          <description>Grebo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">grb</identifier>
-         <name>grb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="grc">
          <description>Greek, Ancient (to 1453)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">grc</identifier>
-         <name>grc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gre">
          <description>Greek, Modern (1453-)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gre</identifier>
-         <name>gre</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="grn">
          <description>Guarani</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">grn</identifier>
-         <name>grn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gsw">
          <description>Swiss German; Alemannic; Alsatian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gsw</identifier>
-         <name>gsw</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="guj">
          <description>Gujarati</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">guj</identifier>
-         <name>guj</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="gwi">
          <description>Gwich'in</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">gwi</identifier>
-         <name>gwi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hai">
          <description>Haida</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hai</identifier>
-         <name>hai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hat">
          <description>Haitian; Haitian Creole</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hat</identifier>
-         <name>hat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hau">
          <description>Hausa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hau</identifier>
-         <name>hau</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="haw">
          <description>Hawaiian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">haw</identifier>
-         <name>haw</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="heb">
          <description>Hebrew</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">heb</identifier>
-         <name>heb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="her">
          <description>Herero</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">her</identifier>
-         <name>her</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hil">
          <description>Hiligaynon</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hil</identifier>
-         <name>hil</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="him">
          <description>Himachali languages; Western Pahari languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">him</identifier>
-         <name>him</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hin">
          <description>Hindi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hin</identifier>
-         <name>hin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hit">
          <description>Hittite</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hit</identifier>
-         <name>hit</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hmn">
          <description>Hmong; Mong</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hmn</identifier>
-         <name>hmn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hmo">
          <description>Hiri Motu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hmo</identifier>
-         <name>hmo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hrv">
          <description>Croatian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hrv</identifier>
-         <name>hrv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hsb">
          <description>Upper Sorbian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hsb</identifier>
-         <name>hsb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hun">
          <description>Hungarian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hun</identifier>
-         <name>hun</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="hup">
          <description>Hupa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">hup</identifier>
-         <name>hup</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="iba">
          <description>Iban</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">iba</identifier>
-         <name>iba</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ibo">
          <description>Igbo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ibo</identifier>
-         <name>ibo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ice">
          <description>Icelandic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ice</identifier>
-         <name>ice</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ido">
          <description>Ido</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ido</identifier>
-         <name>ido</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="iii">
          <description>Sichuan Yi; Nuosu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">iii</identifier>
-         <name>iii</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ijo">
          <description>Ijo languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ijo</identifier>
-         <name>ijo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="iku">
          <description>Inuktitut</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">iku</identifier>
-         <name>iku</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ile">
          <description>Interlingue; Occidental</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ile</identifier>
-         <name>ile</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ilo">
          <description>Iloko</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ilo</identifier>
-         <name>ilo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ina">
          <description>Interlingua (International Auxiliary Language Association)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ina</identifier>
-         <name>ina</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="inc">
          <description>Indic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">inc</identifier>
-         <name>inc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ind">
          <description>Indonesian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ind</identifier>
-         <name>ind</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ine">
          <description>Indo-European languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ine</identifier>
-         <name>ine</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="inh">
          <description>Ingush</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">inh</identifier>
-         <name>inh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ipk">
          <description>Inupiaq</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ipk</identifier>
-         <name>ipk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ira">
          <description>Iranian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ira</identifier>
-         <name>ira</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="iro">
          <description>Iroquoian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">iro</identifier>
-         <name>iro</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ita">
          <description>Italian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ita</identifier>
-         <name>ita</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="jav">
          <description>Javanese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">jav</identifier>
-         <name>jav</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="jbo">
          <description>Lojban</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">jbo</identifier>
-         <name>jbo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="jpn">
          <description>Japanese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">jpn</identifier>
-         <name>jpn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="jpr">
          <description>Judeo-Persian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">jpr</identifier>
-         <name>jpr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="jrb">
          <description>Judeo-Arabic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">jrb</identifier>
-         <name>jrb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kaa">
          <description>Kara-Kalpak</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kaa</identifier>
-         <name>kaa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kab">
          <description>Kabyle</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kab</identifier>
-         <name>kab</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kac">
          <description>Kachin; Jingpho</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kac</identifier>
-         <name>kac</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kal">
          <description>Kalaallisut; Greenlandic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kal</identifier>
-         <name>kal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kam">
          <description>Kamba</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kam</identifier>
-         <name>kam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kan">
          <description>Kannada</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kan</identifier>
-         <name>kan</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kar">
          <description>Karen languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kar</identifier>
-         <name>kar</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kas">
          <description>Kashmiri</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kas</identifier>
-         <name>kas</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kau">
          <description>Kanuri</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kau</identifier>
-         <name>kau</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kaw">
          <description>Kawi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kaw</identifier>
-         <name>kaw</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kaz">
          <description>Kazakh</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kaz</identifier>
-         <name>kaz</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kbd">
          <description>Kabardian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kbd</identifier>
-         <name>kbd</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kha">
          <description>Khasi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kha</identifier>
-         <name>kha</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="khi">
          <description>Khoisan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">khi</identifier>
-         <name>khi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="khm">
          <description>Central Khmer</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">khm</identifier>
-         <name>khm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kho">
          <description>Khotanese; Sakan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kho</identifier>
-         <name>kho</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kik">
          <description>Kikuyu; Gikuyu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kik</identifier>
-         <name>kik</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kin">
          <description>Kinyarwanda</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kin</identifier>
-         <name>kin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kir">
          <description>Kirghiz; Kyrgyz</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kir</identifier>
-         <name>kir</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kmb">
          <description>Kimbundu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kmb</identifier>
-         <name>kmb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kok">
          <description>Konkani</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kok</identifier>
-         <name>kok</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kom">
          <description>Komi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kom</identifier>
-         <name>kom</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kon">
          <description>Kongo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kon</identifier>
-         <name>kon</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kor">
          <description>Korean</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kor</identifier>
-         <name>kor</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kos">
          <description>Kosraean</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kos</identifier>
-         <name>kos</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kpe">
          <description>Kpelle</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kpe</identifier>
-         <name>kpe</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="krc">
          <description>Karachay-Balkar</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">krc</identifier>
-         <name>krc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="krl">
          <description>Karelian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">krl</identifier>
-         <name>krl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kro">
          <description>Kru languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kro</identifier>
-         <name>kro</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kru">
          <description>Kurukh</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kru</identifier>
-         <name>kru</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kua">
          <description>Kuanyama; Kwanyama</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kua</identifier>
-         <name>kua</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kum">
          <description>Kumyk</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kum</identifier>
-         <name>kum</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kur">
          <description>Kurdish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kur</identifier>
-         <name>kur</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="kut">
          <description>Kutenai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">kut</identifier>
-         <name>kut</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lad">
          <description>Ladino</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lad</identifier>
-         <name>lad</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lah">
          <description>Lahnda</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lah</identifier>
-         <name>lah</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lam">
          <description>Lamba</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lam</identifier>
-         <name>lam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lao">
          <description>Lao</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lao</identifier>
-         <name>lao</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lat">
          <description>Latin</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lat</identifier>
-         <name>lat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lav">
          <description>Latvian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lav</identifier>
-         <name>lav</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lez">
          <description>Lezghian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lez</identifier>
-         <name>lez</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lim">
          <description>Limburgan; Limburger; Limburgish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lim</identifier>
-         <name>lim</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lin">
          <description>Lingala</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lin</identifier>
-         <name>lin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lit">
          <description>Lithuanian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lit</identifier>
-         <name>lit</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lol">
          <description>Mongo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lol</identifier>
-         <name>lol</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="loz">
          <description>Lozi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">loz</identifier>
-         <name>loz</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ltz">
          <description>Luxembourgish; Letzeburgesch</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ltz</identifier>
-         <name>ltz</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lua">
          <description>Luba-Lulua</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lua</identifier>
-         <name>lua</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lub">
          <description>Luba-Katanga</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lub</identifier>
-         <name>lub</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lug">
          <description>Ganda</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lug</identifier>
-         <name>lug</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lui">
          <description>Luiseno</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lui</identifier>
-         <name>lui</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lun">
          <description>Lunda</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lun</identifier>
-         <name>lun</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="luo">
          <description>Luo (Kenya and Tanzania)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">luo</identifier>
-         <name>luo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="lus">
          <description>Lushai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">lus</identifier>
-         <name>lus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mac">
          <description>Macedonian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mac</identifier>
-         <name>mac</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mad">
          <description>Madurese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mad</identifier>
-         <name>mad</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mag">
          <description>Magahi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mag</identifier>
-         <name>mag</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mah">
          <description>Marshallese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mah</identifier>
-         <name>mah</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mai">
          <description>Maithili</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mai</identifier>
-         <name>mai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mak">
          <description>Makasar</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mak</identifier>
-         <name>mak</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mal">
          <description>Malayalam</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mal</identifier>
-         <name>mal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="man">
          <description>Mandingo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">man</identifier>
-         <name>man</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mao">
          <description>Maori</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mao</identifier>
-         <name>mao</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="map">
          <description>Austronesian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">map</identifier>
-         <name>map</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mar">
          <description>Marathi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mar</identifier>
-         <name>mar</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mas">
          <description>Masai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mas</identifier>
-         <name>mas</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="may">
          <description>Malay</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">may</identifier>
-         <name>may</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mdf">
          <description>Moksha</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mdf</identifier>
-         <name>mdf</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mdr">
          <description>Mandar</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mdr</identifier>
-         <name>mdr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="men">
          <description>Mende</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">men</identifier>
-         <name>men</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mga">
          <description>Irish, Middle (900-1200)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mga</identifier>
-         <name>mga</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mic">
          <description>Mi'kmaq; Micmac</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mic</identifier>
-         <name>mic</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="min">
          <description>Minangkabau</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">min</identifier>
-         <name>min</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mis">
          <description>Uncoded languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mis</identifier>
-         <name>mis</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mkh">
          <description>Mon-Khmer languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mkh</identifier>
-         <name>mkh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mlg">
          <description>Malagasy</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mlg</identifier>
-         <name>mlg</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mlt">
          <description>Maltese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mlt</identifier>
-         <name>mlt</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mnc">
          <description>Manchu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mnc</identifier>
-         <name>mnc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mni">
          <description>Manipuri</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mni</identifier>
-         <name>mni</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mno">
          <description>Manobo languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mno</identifier>
-         <name>mno</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="moh">
          <description>Mohawk</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">moh</identifier>
-         <name>moh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mon">
          <description>Mongolian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mon</identifier>
-         <name>mon</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mos">
          <description>Mossi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mos</identifier>
-         <name>mos</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mul">
          <description>Multiple languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mul</identifier>
-         <name>mul</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mun">
          <description>Munda languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mun</identifier>
-         <name>mun</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mus">
          <description>Creek</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mus</identifier>
-         <name>mus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mwl">
          <description>Mirandese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mwl</identifier>
-         <name>mwl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="mwr">
          <description>Marwari</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">mwr</identifier>
-         <name>mwr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="myn">
          <description>Mayan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">myn</identifier>
-         <name>myn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="myv">
          <description>Erzya</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">myv</identifier>
-         <name>myv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nah">
          <description>Nahuatl languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nah</identifier>
-         <name>nah</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nai">
          <description>North American Indian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nai</identifier>
-         <name>nai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nap">
          <description>Neapolitan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nap</identifier>
-         <name>nap</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nau">
          <description>Nauru</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nau</identifier>
-         <name>nau</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nav">
          <description>Navajo; Navaho</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nav</identifier>
-         <name>nav</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nbl">
          <description>Ndebele, South; South Ndebele</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nbl</identifier>
-         <name>nbl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nde">
          <description>Ndebele, North; North Ndebele</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nde</identifier>
-         <name>nde</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ndo">
          <description>Ndonga</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ndo</identifier>
-         <name>ndo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nds">
          <description>Low German; Low Saxon; German, Low; Saxon, Low</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nds</identifier>
-         <name>nds</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nep">
          <description>Nepali</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nep</identifier>
-         <name>nep</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="new">
          <description>Nepal Bhasa; Newari</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">new</identifier>
-         <name>new</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nia">
          <description>Nias</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nia</identifier>
-         <name>nia</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nic">
          <description>Niger-Kordofanian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nic</identifier>
-         <name>nic</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="niu">
          <description>Niuean</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">niu</identifier>
-         <name>niu</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nno">
          <description>Norwegian Nynorsk; Nynorsk, Norwegian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nno</identifier>
-         <name>nno</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nob">
          <description>Bokmål, Norwegian; Norwegian Bokmål</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nob</identifier>
-         <name>nob</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nog">
          <description>Nogai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nog</identifier>
-         <name>nog</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="non">
          <description>Norse, Old</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">non</identifier>
-         <name>non</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nor">
          <description>Norwegian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nor</identifier>
-         <name>nor</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nqo">
          <description>N'Ko</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nqo</identifier>
-         <name>nqo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nso">
          <description>Pedi; Sepedi; Northern Sotho</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nso</identifier>
-         <name>nso</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nub">
          <description>Nubian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nub</identifier>
-         <name>nub</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nwc">
          <description>Classical Newari; Old Newari; Classical Nepal Bhasa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nwc</identifier>
-         <name>nwc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nya">
          <description>Chichewa; Chewa; Nyanja</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nya</identifier>
-         <name>nya</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nym">
          <description>Nyamwezi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nym</identifier>
-         <name>nym</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nyn">
          <description>Nyankole</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nyn</identifier>
-         <name>nyn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nyo">
          <description>Nyoro</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nyo</identifier>
-         <name>nyo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="nzi">
          <description>Nzima</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">nzi</identifier>
-         <name>nzi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="oci">
          <description>Occitan (post 1500); Provençal</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">oci</identifier>
-         <name>oci</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="oji">
          <description>Ojibwa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">oji</identifier>
-         <name>oji</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ori">
          <description>Oriya</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ori</identifier>
-         <name>ori</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="orm">
          <description>Oromo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">orm</identifier>
-         <name>orm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="osa">
          <description>Osage</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">osa</identifier>
-         <name>osa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="oss">
          <description>Ossetian; Ossetic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">oss</identifier>
-         <name>oss</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ota">
          <description>Turkish, Ottoman (1500-1928)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ota</identifier>
-         <name>ota</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="oto">
          <description>Otomian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">oto</identifier>
-         <name>oto</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="paa">
          <description>Papuan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">paa</identifier>
-         <name>paa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pag">
          <description>Pangasinan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pag</identifier>
-         <name>pag</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pal">
          <description>Pahlavi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pal</identifier>
-         <name>pal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pam">
          <description>Pampanga; Kapampangan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pam</identifier>
-         <name>pam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pan">
          <description>Panjabi; Punjabi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pan</identifier>
-         <name>pan</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pap">
          <description>Papiamento</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pap</identifier>
-         <name>pap</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pau">
          <description>Palauan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pau</identifier>
-         <name>pau</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="peo">
          <description>Persian, Old (ca.600-400 B.C.)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">peo</identifier>
-         <name>peo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="per">
          <description>Persian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">per</identifier>
-         <name>per</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="phi">
          <description>Philippine languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">phi</identifier>
-         <name>phi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="phn">
          <description>Phoenician</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">phn</identifier>
-         <name>phn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pli">
          <description>Pali</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pli</identifier>
-         <name>pli</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pol">
          <description>Polish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pol</identifier>
-         <name>pol</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pon">
          <description>Pohnpeian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pon</identifier>
-         <name>pon</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="por">
          <description>Portuguese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">por</identifier>
-         <name>por</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pra">
          <description>Prakrit languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pra</identifier>
-         <name>pra</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pro">
          <description>Provençal, Old (to 1500)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pro</identifier>
-         <name>pro</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="pus">
          <description>Pushto; Pashto</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">pus</identifier>
-         <name>pus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="qaa-qtz">
          <description>Reserved for local use</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">qaa-qtz</identifier>
-         <name>qaa-qtz</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="que">
          <description>Quechua</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">que</identifier>
-         <name>que</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="raj">
          <description>Rajasthani</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">raj</identifier>
-         <name>raj</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rap">
          <description>Rapanui</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rap</identifier>
-         <name>rap</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rar">
          <description>Rarotongan; Cook Islands Maori</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rar</identifier>
-         <name>rar</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="roa">
          <description>Romance languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">roa</identifier>
-         <name>roa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="roh">
          <description>Romansh</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">roh</identifier>
-         <name>roh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rom">
          <description>Romany</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rom</identifier>
-         <name>rom</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rum">
          <description>Romanian; Moldavian; Moldovan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rum</identifier>
-         <name>rum</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="run">
          <description>Rundi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">run</identifier>
-         <name>run</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rup">
          <description>Aromanian; Arumanian; Macedo-Romanian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rup</identifier>
-         <name>rup</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="rus">
          <description>Russian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">rus</identifier>
-         <name>rus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sad">
          <description>Sandawe</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sad</identifier>
-         <name>sad</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sag">
          <description>Sango</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sag</identifier>
-         <name>sag</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sah">
          <description>Yakut</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sah</identifier>
-         <name>sah</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sai">
          <description>South American Indian (Other)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sai</identifier>
-         <name>sai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sal">
          <description>Salishan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sal</identifier>
-         <name>sal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sam">
          <description>Samaritan Aramaic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sam</identifier>
-         <name>sam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="san">
          <description>Sanskrit</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">san</identifier>
-         <name>san</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sas">
          <description>Sasak</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sas</identifier>
-         <name>sas</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sat">
          <description>Santali</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sat</identifier>
-         <name>sat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="scn">
          <description>Sicilian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">scn</identifier>
-         <name>scn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sco">
          <description>Scots</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sco</identifier>
-         <name>sco</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sel">
          <description>Selkup</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sel</identifier>
-         <name>sel</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sem">
          <description>Semitic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sem</identifier>
-         <name>sem</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sga">
          <description>Irish, Old (to 900)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sga</identifier>
-         <name>sga</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sgn">
          <description>Sign Languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sgn</identifier>
-         <name>sgn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="shn">
          <description>Shan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">shn</identifier>
-         <name>shn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sid">
          <description>Sidamo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sid</identifier>
-         <name>sid</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sin">
          <description>Sinhala; Sinhalese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sin</identifier>
-         <name>sin</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sio">
          <description>Siouan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sio</identifier>
-         <name>sio</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sit">
          <description>Sino-Tibetan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sit</identifier>
-         <name>sit</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sla">
          <description>Slavic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sla</identifier>
-         <name>sla</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="slo">
          <description>Slovak</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">slo</identifier>
-         <name>slo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="slv">
          <description>Slovenian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">slv</identifier>
-         <name>slv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sma">
          <description>Southern Sami</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sma</identifier>
-         <name>sma</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sme">
          <description>Northern Sami</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sme</identifier>
-         <name>sme</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="smi">
          <description>Sami languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">smi</identifier>
-         <name>smi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="smj">
          <description>Lule Sami</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">smj</identifier>
-         <name>smj</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="smn">
          <description>Inari Sami</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">smn</identifier>
-         <name>smn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="smo">
          <description>Samoan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">smo</identifier>
-         <name>smo</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sms">
          <description>Skolt Sami</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sms</identifier>
-         <name>sms</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sna">
          <description>Shona</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sna</identifier>
-         <name>sna</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="snd">
          <description>Sindhi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">snd</identifier>
-         <name>snd</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="snk">
          <description>Soninke</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">snk</identifier>
-         <name>snk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sog">
          <description>Sogdian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sog</identifier>
-         <name>sog</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="som">
          <description>Somali</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">som</identifier>
-         <name>som</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="son">
          <description>Songhai languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">son</identifier>
-         <name>son</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sot">
          <description>Sotho, Southern</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sot</identifier>
-         <name>sot</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="spa">
          <description>Spanish; Castilian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">spa</identifier>
-         <name>spa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="srd">
          <description>Sardinian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">srd</identifier>
-         <name>srd</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="srn">
          <description>Sranan Tongo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">srn</identifier>
-         <name>srn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="srp">
          <description>Serbian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">srp</identifier>
-         <name>srp</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="srr">
          <description>Serer</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">srr</identifier>
-         <name>srr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ssa">
          <description>Nilo-Saharan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ssa</identifier>
-         <name>ssa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ssw">
          <description>Swati</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ssw</identifier>
-         <name>ssw</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="suk">
          <description>Sukuma</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">suk</identifier>
-         <name>suk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sun">
          <description>Sundanese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sun</identifier>
-         <name>sun</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sus">
          <description>Susu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sus</identifier>
-         <name>sus</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="sux">
          <description>Sumerian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">sux</identifier>
-         <name>sux</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="swa">
          <description>Swahili</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">swa</identifier>
-         <name>swa</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="swe">
          <description>Swedish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">swe</identifier>
-         <name>swe</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="syc">
          <description>Classical Syriac</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">syc</identifier>
-         <name>syc</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="syr">
          <description>Syriac</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">syr</identifier>
-         <name>syr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tah">
          <description>Tahitian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tah</identifier>
-         <name>tah</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tai">
          <description>Tai languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tai</identifier>
-         <name>tai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tam">
          <description>Tamil</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tam</identifier>
-         <name>tam</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tat">
          <description>Tatar</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tat</identifier>
-         <name>tat</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tel">
          <description>Telugu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tel</identifier>
-         <name>tel</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tem">
          <description>Timne</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tem</identifier>
-         <name>tem</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ter">
          <description>Tereno</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ter</identifier>
-         <name>ter</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tet">
          <description>Tetum</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tet</identifier>
-         <name>tet</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tgk">
          <description>Tajik</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tgk</identifier>
-         <name>tgk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tgl">
          <description>Tagalog</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tgl</identifier>
-         <name>tgl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tha">
          <description>Thai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tha</identifier>
-         <name>tha</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tib">
          <description>Tibetan</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tib</identifier>
-         <name>tib</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tig">
          <description>Tigre</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tig</identifier>
-         <name>tig</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tir">
          <description>Tigrinya</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tir</identifier>
-         <name>tir</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tiv">
          <description>Tiv</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tiv</identifier>
-         <name>tiv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tkl">
          <description>Tokelau</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tkl</identifier>
-         <name>tkl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tlh">
          <description>Klingon; tlhIngan-Hol</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tlh</identifier>
-         <name>tlh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tli">
          <description>Tlingit</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tli</identifier>
-         <name>tli</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tmh">
          <description>Tamashek</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tmh</identifier>
-         <name>tmh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tog">
          <description>Tonga (Nyasa)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tog</identifier>
-         <name>tog</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ton">
          <description>Tonga (Tonga Islands)</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ton</identifier>
-         <name>ton</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tpi">
          <description>Tok Pisin</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tpi</identifier>
-         <name>tpi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tsi">
          <description>Tsimshian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tsi</identifier>
-         <name>tsi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tsn">
          <description>Tswana</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tsn</identifier>
-         <name>tsn</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tso">
          <description>Tsonga</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tso</identifier>
-         <name>tso</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tuk">
          <description>Turkmen</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tuk</identifier>
-         <name>tuk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tum">
          <description>Tumbuka</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tum</identifier>
-         <name>tum</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tup">
          <description>Tupi languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tup</identifier>
-         <name>tup</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tur">
          <description>Turkish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tur</identifier>
-         <name>tur</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tut">
          <description>Altaic languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tut</identifier>
-         <name>tut</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tvl">
          <description>Tuvalu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tvl</identifier>
-         <name>tvl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="twi">
          <description>Twi</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">twi</identifier>
-         <name>twi</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="tyv">
          <description>Tuvinian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">tyv</identifier>
-         <name>tyv</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="udm">
          <description>Udmurt</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">udm</identifier>
-         <name>udm</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="uga">
          <description>Ugaritic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">uga</identifier>
-         <name>uga</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="uig">
          <description>Uighur; Uyghur</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">uig</identifier>
-         <name>uig</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ukr">
          <description>Ukrainian</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ukr</identifier>
-         <name>ukr</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="umb">
          <description>Umbundu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">umb</identifier>
-         <name>umb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="und">
          <description>Undetermined</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">und</identifier>
-         <name>und</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="urd">
          <description>Urdu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">urd</identifier>
-         <name>urd</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="uzb">
          <description>Uzbek</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">uzb</identifier>
-         <name>uzb</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="vai">
          <description>Vai</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">vai</identifier>
-         <name>vai</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ven">
          <description>Venda</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ven</identifier>
-         <name>ven</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="vie">
          <description>Vietnamese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">vie</identifier>
-         <name>vie</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="vol">
          <description>Volapük</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">vol</identifier>
-         <name>vol</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="vot">
          <description>Votic</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">vot</identifier>
-         <name>vot</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wak">
          <description>Wakashan languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wak</identifier>
-         <name>wak</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wal">
          <description>Walamo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wal</identifier>
-         <name>wal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="war">
          <description>Waray</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">war</identifier>
-         <name>war</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="was">
          <description>Washo</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">was</identifier>
-         <name>was</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wel">
          <description>Welsh</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wel</identifier>
-         <name>wel</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wen">
          <description>Sorbian languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wen</identifier>
-         <name>wen</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wln">
          <description>Walloon</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wln</identifier>
-         <name>wln</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="wol">
          <description>Wolof</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">wol</identifier>
-         <name>wol</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="xal">
          <description>Kalmyk; Oirat</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">xal</identifier>
-         <name>xal</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="xho">
          <description>Xhosa</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">xho</identifier>
-         <name>xho</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="yao">
          <description>Yao</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">yao</identifier>
-         <name>yao</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="yap">
          <description>Yapese</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">yap</identifier>
-         <name>yap</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="yid">
          <description>Yiddish</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">yid</identifier>
-         <name>yid</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="yor">
          <description>Yoruba</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">yor</identifier>
-         <name>yor</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="ypk">
          <description>Yupik languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">ypk</identifier>
-         <name>ypk</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zap">
          <description>Zapotec</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zap</identifier>
-         <name>zap</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zbl">
          <description>Blissymbols; Blissymbolics; Bliss</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zbl</identifier>
-         <name>zbl</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zen">
          <description>Zenaga</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zen</identifier>
-         <name>zen</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zgh">
          <description>Standard Moroccan Tamazight</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zgh</identifier>
-         <name>zgh</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zha">
          <description>Zhuang; Chuang</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zha</identifier>
-         <name>zha</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="znd">
          <description>Zande languages</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">znd</identifier>
-         <name>znd</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zul">
          <description>Zulu</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zul</identifier>
-         <name>zul</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zun">
          <description>Zuni</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zun</identifier>
-         <name>zun</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zxx">
          <description>No linguistic content; Not applicable</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zxx</identifier>
-         <name>zxx</name>
       </Definition>
    </dictionaryEntry>
    <dictionaryEntry>
       <Definition gml:id="zza">
          <description>Zaza; Dimili; Dimli; Kirdki; Kirmanjki; Zazaki</description>
          <identifier codeSpace="http://example.org/info/CodesISO639_2">zza</identifier>
-         <name>zza</name>
       </Definition>
    </dictionaryEntry>
 </Dictionary>
