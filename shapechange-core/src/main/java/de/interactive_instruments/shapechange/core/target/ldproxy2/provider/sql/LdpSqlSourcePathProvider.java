@@ -41,8 +41,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
-import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
-import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlPropertyEncodingInfo;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Multiplicity;
 import de.interactive_instruments.shapechange.core.Options;
@@ -51,7 +49,6 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpGidEncoder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpPropertyEncodingContext;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSourcePathInfos;
@@ -60,6 +57,8 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpUtil;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.AbstractLdpSourcePathProvider;
+import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
+import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlPropertyEncodingInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -199,6 +198,14 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 				&& "LI_Lineage".equalsIgnoreCase(spei.getPropertyValueType())) {
 
 			    LdpSqlSourcePathInfo spi = gidLiLineageSourcePathInfo(pi, spei);
+			    spRes.addSourcePathInfo(spi);
+			    return spRes;
+
+			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
+				spei.getPropertyValueType(), "DQ_AbsoluteExternalPositionalAccuracy",
+				"DQ_RelativeInternalPositionalAccuracy")) {
+
+			    LdpSqlSourcePathInfo spi = gidSimpleValueSourcePathInfo(pi, spei);
 			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
@@ -670,6 +677,18 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     }
 
     private LdpSqlSourcePathInfo gidLiLineageSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei) {
+
+	Optional<String> valueSourcePath = Optional.of(spei.getValueSourcePath());
+	Optional<String> idSourcePath = Optional.empty();
+	Optional<Type> idValueType = Optional.empty();
+	String refType = null;
+
+	LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath, idValueType, refType, null,
+		pi.cardinality().maxOccurs == 1, null);
+	return spi;
+    }
+    
+    private LdpSqlSourcePathInfo gidSimpleValueSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei) {
 
 	Optional<String> valueSourcePath = Optional.of(spei.getValueSourcePath());
 	Optional<String> idSourcePath = Optional.empty();
