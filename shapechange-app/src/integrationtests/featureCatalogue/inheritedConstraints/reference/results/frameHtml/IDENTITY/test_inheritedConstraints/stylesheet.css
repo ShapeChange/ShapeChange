@@ -24,6 +24,13 @@ div.contentDiv {
     bottom: 0;
     width: 100%;
 }
+div.logoDiv {
+    display: inline-block;
+    width: 100%;
+}
+img.logo {
+    float:left;
+}
 header {
 /*    background-image: url("./logo.png");*/
     background-repeat: no-repeat;
@@ -56,8 +63,8 @@ h1.sidepanel {
     font-size:1.5em;
 }
 h1.banner {
-    margin-left:200px;
     vertical-align:bottom;
+    text-align:center;
 }
 h2.sidepanel {
     font-size:1.2em;

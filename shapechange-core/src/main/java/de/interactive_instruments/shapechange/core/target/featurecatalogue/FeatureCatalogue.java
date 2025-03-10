@@ -1389,6 +1389,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		case Options.OBJECT:
 		    writer.dataElement("type", "Object Type", op);
 		    break;
+		case Options.MIXIN:
+		    writer.dataElement("type", "Mixin", op);
+		    break;
 		case Options.OKSTRAKEY:
 		case Options.DATATYPE:
 		    writer.dataElement("type", "Data Type", op);

@@ -70,6 +70,7 @@
     <isAbstract>1</isAbstract>
     <characterizedBy idref="_A37_37"></characterizedBy>
     <package idref="_P4"></package>
+    <type>Mixin</type>
     <constraint>
       <name>Constraint_FT3_A</name>
       <description>Defined in FT3</description>
