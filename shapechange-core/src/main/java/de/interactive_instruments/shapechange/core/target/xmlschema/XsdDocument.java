@@ -121,6 +121,7 @@ public class XsdDocument implements MessageSource {
     protected SchematronSchema schDoc;
 
     protected boolean writeXmlEncodingInfos = false;
+    protected boolean propertyTypeContentAlwaysOptional = false;
     protected XmlEncodingInfos encodingInfos = new XmlEncodingInfos();
 
     public XsdDocument(PackageInfo pi, Model m, Options o, ShapeChangeResult r, TargetXmlSchemaConfiguration c,
@@ -186,6 +187,9 @@ public class XsdDocument implements MessageSource {
 
 	writeXmlEncodingInfos = options.getCurrentProcessConfig()
 		.parameterAsBoolean(XmlSchemaConstants.PARAM_WRITE_XML_ENCODING_INFOS, false);
+
+	propertyTypeContentAlwaysOptional = options.getCurrentProcessConfig()
+		.parameterAsBoolean(XmlSchemaConstants.PARAM_PROPERTY_TYPE_CONTENT_ALWAYS_OPTIONAL, false);
 
 	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	dbf.setNamespaceAware(true);
@@ -1314,6 +1318,8 @@ public class XsdDocument implements MessageSource {
 		    e1.appendChild(e3);
 		    addAttribute(e3, "ref", "gml:OwnershipAttributeGroup");
 		}
+	    } else if (propertyTypeContentAlwaysOptional) {
+		addAttribute(e4, "minOccurs", "0");
 	    }
 	} else if (rswe) {
 	    if (classHasIdentity(ci)) {

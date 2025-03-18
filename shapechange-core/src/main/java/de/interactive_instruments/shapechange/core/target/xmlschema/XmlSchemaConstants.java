@@ -61,4 +61,5 @@ public class XmlSchemaConstants {
     public static final String PARAM_WRITE_XML_ENCODING_INFOS = "writeXmlEncodingInfos";
     public static final String PARAM_REF_CODELIST_ANNOTATION_NAME = "referencedCodeListAnnotationName";
     public static final String PARAM_REF_CODELIST_ANNOTATION_NAMESPACE = "referencedCodeListAnnotationNamespace";
+    public static final String PARAM_PROPERTY_TYPE_CONTENT_ALWAYS_OPTIONAL = "propertyTypeContentAlwaysOptional";
 }

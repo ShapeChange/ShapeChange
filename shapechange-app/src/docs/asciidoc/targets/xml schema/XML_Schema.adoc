@@ -412,6 +412,26 @@ written.
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
+[[propertyTypeContentAlwaysOptional]]
+==== propertyTypeContentAlwaysOptional
+
+(since v4.1.0)
+
++++Type:+++ Boolean
+
++++Default Value:+++ false
+
++++Explanation:+++ If the value of target parameter 
+propertyTypeContentAlwaysOptional is equal to (ignoring case) 
+"true" then a ...PropertyType complexType created by 
+rule-xsd-cls-standard-gml-property-types will always have 
+XML-Attribute minOccurs = 0. This can be useful for
+rare situations where a community has encoded its XML Schema
+this way, and needs to ensure backwards-compatibility when
+creating the XML Schema with ShapeChange.
+
++++Applies to Rule(s)+++: rule-xsd-cls-standard-gml-property-types
+
 [[realisationLikeGeneralisation]]
 ==== realisationLikeGeneralisation
 

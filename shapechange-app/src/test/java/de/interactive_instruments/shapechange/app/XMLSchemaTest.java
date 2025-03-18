@@ -329,4 +329,12 @@ public class XMLSchemaTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/xsd/gmlFeatureCollection",
 		"src/integrationtests/xsd/gmlFeatureCollection/reference");
     }
+    
+    @Test
+    public void test_propertyTypeContentAlwaysOptional() {
+
+	multiTest("src/integrationtests/xsd/propertyTypeContentAlwaysOptional/test_propertyTypeContentAlwaysOptional.xml",
+		new String[] { "xsd" }, "testResults/xsd/propertyTypeContentAlwaysOptional",
+		"src/integrationtests/xsd/propertyTypeContentAlwaysOptional/reference");
+    }
 }
