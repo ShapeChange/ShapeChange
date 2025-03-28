@@ -35,8 +35,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -61,9 +62,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.InputSource;
@@ -74,13 +72,15 @@ import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Multiplicity;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
+import de.interactive_instruments.shapechange.core.ShapeChangeErrorHandler;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.StructuredNumber;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.StructuredNumber;
 import de.interactive_instruments.shapechange.core.fol.FolExpression;
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Constraint;
+import de.interactive_instruments.shapechange.core.model.Constraint.ModelElmtContextType;
 import de.interactive_instruments.shapechange.core.model.Descriptor;
 import de.interactive_instruments.shapechange.core.model.FolConstraint;
 import de.interactive_instruments.shapechange.core.model.Info;
@@ -90,16 +90,15 @@ import de.interactive_instruments.shapechange.core.model.OclConstraint;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.model.TextConstraint;
-import de.interactive_instruments.shapechange.core.model.Constraint.ModelElmtContextType;
 import de.interactive_instruments.shapechange.core.model.generic.reader.ConstraintContentHandler;
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericAssociationContentHandler;
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericClassContentHandler;
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericModelContentHandler;
-import de.interactive_instruments.shapechange.core.model.generic.reader.GenericModelErrorHandler;
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericPackageContentHandler;
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericPropertyContentHandler;
 import de.interactive_instruments.shapechange.core.sbvr.Sbvr2FolParser;
 import de.interactive_instruments.shapechange.core.sbvr.SbvrConstants;
+import de.interactive_instruments.shapechange.core.util.XSDUtil;
 
 /**
  * @author echterhoff
@@ -770,7 +769,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		}
 	    }
 	}
-	
+
 	return conCopies;
     }
 
@@ -1083,64 +1082,27 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		    Source instanceDocument = new StreamSource(inputStreamForValidation);
 
-		    System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/XML/XMLSchema/v1.1",
-			    "org.apache.xerces.jaxp.validation.XMLSchema11Factory");
-		    SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/XML/XMLSchema/v1.1");
-
-		    Schema s = null;
+		    StringWriter sw = new StringWriter();
+		    ShapeChangeErrorHandler handler = new ShapeChangeErrorHandler(new PrintWriter(sw));
 
 		    try {
-			if (scxmlXsdLocation.startsWith("http")) {
-			    s = sf.newSchema(URI.create(scxmlXsdLocation).toURL());
-			} else {
-			    File schemaFile = new File(scxmlXsdLocation);
-			    s = sf.newSchema(schemaFile);
-			}
-		    } catch (SAXException e) {
-			result.addError(this, 30507, scxmlXsdLocation, e.getMessage());
-		    } catch (MalformedURLException e) {
-			result.addError(this, 30506, scxmlXsdLocation, e.getMessage());
+			XSDUtil.validate(instanceDocument, false, handler, Optional.of(scxmlXsdLocation));
+		    } catch (Exception e) {
+			result.addError(this, 30508, scxmlXsdLocation, e.getMessage());
 		    }
 
-		    if (s != null) {
-			Validator v = s.newValidator();
+		    result.addInfo(this, 30500);
+		    result.addInfo(this, 30509, sw.toString());
+		    result.addInfo(this, 30501);
 
-			v.setFeature("http://apache.org/xml/features/validation/schema", true);
-			v.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-
-			GenericModelErrorHandler errorHandler = new GenericModelErrorHandler();
-			v.setErrorHandler(errorHandler);
-
-			v.validate(instanceDocument);
-
-			// check validation results
-			if (errorHandler.hasWarnings() || errorHandler.hasErrors()) {
-			    result.addInfo(this, 30500);
-
-			    if (errorHandler.hasWarnings()) {
-				List<String> warnings = errorHandler.warnings();
-				for (String w : warnings) {
-				    result.addInfo(this, 30502, w);
-				}
-			    }
-			    if (errorHandler.hasErrors()) {
-				List<String> errors = errorHandler.errors();
-				for (String e : errors) {
-				    result.addInfo(this, 30503, e);
-				}
-			    }
-
-			    result.addInfo(this, 30501);
-
-			    if (errorHandler.hasErrors()) {
-				result.addFatalError(this, 30504);
-				throw new ShapeChangeAbortException();
-			    }
-
-			} else {
-			    result.addInfo(this, 30505);
-			}
+		    // check validation results
+		    if (handler.errorsFound()) {
+			result.addFatalError(this, 30504);
+			throw new ShapeChangeAbortException();
+		    } else {
+			result.addInfo(this, 30505);
 		    }
+
 		}
 	    }
 
@@ -3444,7 +3406,11 @@ public class GenericModel extends ModelImpl implements MessageSource {
 	    return "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
 	case 30507:
 	    return "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
-
+	case 30508:
+	    return "An exception occurred while validating SCXML from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
+	case 30509:
+	    return "Validation messages:\n$1$";
+	    
 	case 30803: // x
 	    return "Exception occurred while reading the model XML. Message is: $1$.";
 

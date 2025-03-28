@@ -31,7 +31,11 @@
  */
 package de.interactive_instruments.shapechange.core.util;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.util.Optional;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -41,6 +45,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import de.interactive_instruments.shapechange.core.ShapeChangeErrorHandler;
 import shadow.org.apache.commons.lang3.StringUtils;
@@ -54,19 +59,34 @@ import shadow.org.apache.commons.lang3.StringUtils;
 public class XSDUtil {
 
     /**
-     * Performs XSD 1.1 validation of the XML document at the given path.
+     * Performs XSD 1.1 validation of the XML document at the given path. Validation
+     * is performed using the schema file(s) defined defined by parameter
+     * {@code xsdLocationOpt}.
+     * <p>
+     * Validation messages are printed via the given error handler (see
+     * {@code handlerOpt}). In order to determine if validation failed, check the
+     * handler for any errors after the validation process has been completed (see
+     * {@link ShapeChangeErrorHandler#errorsFound()}).
      * <p>
      * NOTE: XInclude statements in the XML document that is being validated are NOT
      * resolved! However, locator information should be available.
      * <p>
-     * For further details, see {@link #validate(Source, boolean)}.
+     * For further details, see
+     * {@link #validate(Source, boolean, ShapeChangeErrorHandler, Optional)}.
      * 
-     * @param xmlPath the location of the XML document; either the path to a local
-     *                file, or the URL of an HTTP resource
-     * @throws Exception If an exception occurred, or an error was detected, while
-     *                   validating the XML document.
+     * @param xmlPath        the location of the XML document; either the path to a
+     *                       local file, or the URL of an HTTP resource
+     * @param handler        The object to handle error messages. Check this object
+     *                       to determine if any validation errors were detected.
+     * @param xsdLocationOpt The location (either an HTTP-URI or a file pathname) of
+     *                       the XML Schema to use for validation, if present.
+     *                       Otherwise (i.e., the Optional is empty), the schema
+     *                       file(s) identified using the xsi:schemaLocation
+     *                       attribute within the source is used for validation.
+     * @throws Exception If an exception occurred during the validation.
      */
-    public static void validate(String xmlPath) throws Exception {
+    public static void validate(String xmlPath, ShapeChangeErrorHandler handler, Optional<String> xsdLocationOpt)
+	    throws Exception {
 
 	InputStream xmlStream = XMLUtil.inputStreamFromXml(xmlPath);
 
@@ -74,29 +94,43 @@ public class XSDUtil {
 	    throw new Exception("No XML file found at " + xmlPath);
 	}
 
-	validate(xmlStream, xmlPath);
+	validate(xmlStream, xmlPath, handler, xsdLocationOpt);
     }
 
     /**
      * Performs XSD 1.1 validation on the given XML stream (created, for example,
-     * using {@link XMLUtil#inputStreamFromXml(String)}).
+     * using {@link XMLUtil#inputStreamFromXml(String)}). Validation is performed
+     * using the schema file(s) defined defined by parameter {@code xsdLocationOpt}.
+     * <p>
+     * Validation messages are printed via the given error handler (see
+     * {@code handlerOpt}). In order to determine if validation failed, check the
+     * handler for any errors after the validation process has been completed (see
+     * {@link ShapeChangeErrorHandler#errorsFound()}).
      * <p>
      * NOTE: XInclude statements in the XML document that is being validated are NOT
      * resolved! However, locator information should be available.
      * <p>
-     * For further details, see {@link #validate(Source, boolean)}.
+     * For further details, see
+     * {@link #validate(Source, boolean, ShapeChangeErrorHandler, Optional)}.
      * 
-     * @param xmlStream Input stream with content of an XML document.
-     * @param systemId  The system identifier for the source from which the XML
-     *                  stream was loaded. It is optional (so can be
-     *                  <code>null</code>).The application can use a system
-     *                  identifier, for example, to resolve relative URIs and paths
-     *                  (like schema paths) and to include in error messages and
-     *                  warnings.
-     * @throws Exception If a validation error was detected. Note that validation
-     *                   errors are logged. They are not part of the exception.
+     * @param xmlStream      Input stream with content of an XML document.
+     * @param systemId       The system identifier for the source from which the XML
+     *                       stream was loaded. It is optional (so can be
+     *                       <code>null</code>).The application can use a system
+     *                       identifier, for example, to resolve relative URIs and
+     *                       paths (like schema paths) and to include in error
+     *                       messages and warnings.
+     * @param handler        The object to handle error messages. Check this object
+     *                       to determine if any validation errors were detected.
+     * @param xsdLocationOpt The location (either an HTTP-URI or a file pathname) of
+     *                       the XML Schema to use for validation, if present.
+     *                       Otherwise (i.e., the Optional is empty), the schema
+     *                       file(s) identified using the xsi:schemaLocation
+     *                       attribute within the source is used for validation.
+     * @throws Exception If an exception occurred during the validation.
      */
-    public static void validate(InputStream xmlStream, String systemId) throws Exception {
+    public static void validate(InputStream xmlStream, String systemId, ShapeChangeErrorHandler handler,
+	    Optional<String> xsdLocationOpt) throws Exception {
 
 	/*
 	 * 2024-06-11 JE: We want locator infos (line and column numbers) in validation
@@ -110,12 +144,20 @@ public class XSDUtil {
 	    source.setSystemId(systemId);
 	}
 
-	validate(source, false);
+	validate(source, false, handler, xsdLocationOpt);
     }
 
     /**
      * Performs XSD 1.1 validation of the XML document at the given path. For
-     * further details, see {@link #validate(Source, boolean)}.
+     * further details, see
+     * {@link #validate(Source, boolean, ShapeChangeErrorHandler, Optional)}.
+     * Validation is performed using the schema file(s) defined defined by parameter
+     * {@code xsdLocationOpt}.
+     * <p>
+     * Validation messages are printed via the given error handler (see
+     * {@code handlerOpt}). In order to determine if validation failed, check the
+     * handler for any errors after the validation process has been completed (see
+     * {@link ShapeChangeErrorHandler#errorsFound()}).
      * <p>
      * NOTE: XInclude statements in the XML document that is being validated MAY
      * have been resolved! That depends on how the DOM document was created. See
@@ -132,24 +174,35 @@ public class XSDUtil {
      *                          example, to resolve relative URIs and paths (like
      *                          schema paths) and to include in error messages and
      *                          warnings.
-     * 
-     * @throws Exception If a validation error was detected. Note that validation
-     *                   errors are logged. They are not part of the exception.
+     * @param handler           The object to handle error messages. Check this
+     *                          object to determine if any validation errors were
+     *                          detected.
+     * @param xsdLocationOpt    The location (either an HTTP-URI or a file pathname)
+     *                          of the XML Schema to use for validation, if present.
+     *                          Otherwise (i.e., the Optional is empty), the schema
+     *                          file(s) identified using the xsi:schemaLocation
+     *                          attribute within the source is used for validation.
+     * @throws Exception If an exception occurred during the validation.
      */
-    public static void validate(Document domDocument, boolean xincludesResolved, String systemId) throws Exception {
+    public static void validate(Document domDocument, boolean xincludesResolved, String systemId,
+	    ShapeChangeErrorHandler handler, Optional<String> xsdLocationOpt) throws Exception {
 
 	// NOTE: Will (typically) not have locator infos (line and column numbers)!
 	Source source = new DOMSource(domDocument);
 	if (StringUtils.isNotBlank(systemId)) {
 	    source.setSystemId(systemId);
 	}
-	validate(source, xincludesResolved);
+	validate(source, xincludesResolved, handler, xsdLocationOpt);
     }
 
     /**
-     * Performs XSD 1.1 validation on the given XML source. The schema file(s)
-     * identified using the xsi:schemaLocation attribute within the source is used
-     * for validation.
+     * Performs XSD 1.1 validation on the given XML source. Validation is performed
+     * using the schema file(s) defined defined by parameter {@code xsdLocationOpt}.
+     * <p>
+     * Validation messages are printed via the given error handler (see
+     * {@code handler}). In order to determine if validation failed, check the
+     * handler for any errors after the validation process has been completed (see
+     * {@link ShapeChangeErrorHandler#errorsFound()}).
      * <p>
      * The systemId needs to be defined on the source, in order for validation on
      * XML schemas with relative location to succeed!
@@ -169,30 +222,61 @@ public class XSDUtil {
      * @param xincludesResolved <code>true</code>, if XInclude statements have been
      *                          resolved in the given source, else
      *                          <code>false</code>.
-     * @throws Exception If a validation error was detected. Note that validation
-     *                   errors are logged. They are not part of the exception.
+     * @param handler           The object to handle error messages. Check this
+     *                          object to determine if any validation errors were
+     *                          detected.
+     * @param xsdLocationOpt    The location (either an HTTP-URI or a file pathname)
+     *                          of the XML Schema to use for validation, if present.
+     *                          Otherwise (i.e., the Optional is empty), the schema
+     *                          file(s) identified using the xsi:schemaLocation
+     *                          attribute within the source is used for validation.
+     * @throws Exception If an exception occurred during the validation.
      */
-    public static void validate(Source xmlSource, boolean xincludesResolved) throws Exception {
-
-	ShapeChangeErrorHandler handler = new ShapeChangeErrorHandler();
+    public static void validate(Source xmlSource, boolean xincludesResolved, ShapeChangeErrorHandler handler,
+	    Optional<String> xsdLocationOpt) throws Exception {
 
 	System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/XML/XMLSchema/v1.1",
 		"org.apache.xerces.jaxp.validation.XMLSchema11Factory");
 
 	SchemaFactory sf = SchemaFactory.newInstance("http://www.w3.org/XML/XMLSchema/v1.1");
-	Schema schema = sf.newSchema();
 
-	Validator v = schema.newValidator();
-	v.setErrorHandler(handler);
-	v.setFeature("http://apache.org/xml/features/validation/schema", true);
-	v.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
+	Schema schema = null;
 
-	v.validate(xmlSource);
+	if (xsdLocationOpt.isPresent()) {
 
-	if (handler.errorsFound()) {
-	    // error messages have already been logged by the handler
-	    throw new Exception("Invalid XML file. NOTE: XInclude statements have " + (xincludesResolved ? "" : "not ")
-		    + "been resolved before validation.");
+	    String xsdLocation = xsdLocationOpt.get();
+
+	    try {
+		if (xsdLocation.startsWith("http")) {
+		    schema = sf.newSchema(URI.create(xsdLocation).toURL());
+		} else {
+		    File schemaFile = new File(xsdLocation);
+		    schema = sf.newSchema(schemaFile);
+		}
+	    } catch (SAXException e) {
+		throw new Exception("Schema could not be created from XSD location '" + xsdLocation + "'.");
+	    } catch (MalformedURLException e) {
+		throw new Exception("XSD location URL '" + xsdLocation + "' is malformed.");
+	    }
+
+	} else {
+	    schema = sf.newSchema();
+	}
+
+	if (schema != null) {
+
+	    Validator v = schema.newValidator();
+	    v.setErrorHandler(handler);
+	    v.setFeature("http://apache.org/xml/features/validation/schema", true);
+	    v.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
+
+	    v.validate(xmlSource);
+
+	    if (handler.errorsFound()) {
+		handler.addMessage("NOTE: XInclude statements have " + (xincludesResolved ? "" : "not ")
+			+ "been resolved before validation.");
+	    }
+
 	}
     }
 }

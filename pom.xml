@@ -19,11 +19,15 @@
 		<tag>HEAD</tag>
 	</scm>
 	<repositories>
-		<repository>
-			<id>ShapeChange</id>
-			<name>ShapeChange (plus additional components) release repository</name>
-			<url>https://shapechange.net/resources/dist/</url>
-		</repository>
+		<!-- first, search on Maven Central -->
+	    <repository>
+	        <id>central</id>
+	        <name>Central Repository</name>
+	        <url>https://repo.maven.apache.org/maven2</url>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository>
 		<repository>
 			<id>ii-maven</id>
 			<name>interactive instruments maven snapshots repository</name>
@@ -36,6 +40,12 @@
 		
 <!--		<url>https://dl.interactive-instruments.de/repository/maven-releases/</url>-->
 <!--		 		</repository>-->
+		<!-- Search in ShapeChange-repository last -->
+		<repository>
+			<id>ShapeChange</id>
+			<name>ShapeChange (plus additional components) release repository</name>
+			<url>https://shapechange.net/resources/dist/</url>
+		</repository>
 	</repositories>
 	<url>http://shapechange.net/</url>
 	<description>ShapeChange - processing application schemas for geographic
@@ -88,19 +98,31 @@
 				<version>2.0.17</version>
 				<!-- <scope>test</scope> -->
 			</dependency>
-			<!--
-			https://mvnrepository.com/artifact/org.opengis.cite.xerces/xercesImpl-xsd11 -->
+
+			<!-- https://blog.adamretter.org.uk/xerces-xsd11-maven/ -->
 			<dependency>
-				<groupId>org.opengis.cite.xerces</groupId>
-				<artifactId>xercesImpl-xsd11</artifactId>
-				<version>2.12-beta-r1667115</version>
-				<exclusions>
+			    <groupId>org.exist-db.thirdparty.xerces</groupId>
+			    <artifactId>xercesImpl</artifactId>
+			    <version>2.12.2</version>
+			    <classifier>xml-schema-1.1</classifier>
+    				<exclusions>
 					<exclusion>
 						<groupId>xml-apis</groupId>
 						<artifactId>xml-apis</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+			    <groupId>org.exist-db.thirdparty.org.eclipse.wst.xml</groupId>
+			    <artifactId>xpath2</artifactId>
+			    <version>1.2.0</version>
+			</dependency>
+			<dependency>
+			    <groupId>edu.princeton.cup</groupId>
+			    <artifactId>java-cup</artifactId>
+			    <version>10k</version>
+			</dependency>
+
 			<!--
 			https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
 			<dependency>
@@ -390,13 +412,13 @@
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.4.1</version>
 				</plugin>
-				<plugin>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.11.2</version>
-					<configuration>
-						<doclint>-missing</doclint>
-					</configuration>
-				</plugin>
+<!--				<plugin>-->
+<!--					<artifactId>maven-javadoc-plugin</artifactId>-->
+<!--					<version>3.11.2</version>-->
+<!--					<configuration>-->
+<!--						<doclint>-missing</doclint>-->
+<!--					</configuration>-->
+<!--				</plugin>-->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
@@ -540,22 +562,22 @@
 			    <groupId>org.openrewrite.maven</groupId>
 			    <artifactId>rewrite-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<inherited>false</inherited>				
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<!-- https://stackoverflow.com/a/74170889/3469138 -->
-							<goal>aggregate-no-fork</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--			<plugin>-->
+<!--				<artifactId>maven-javadoc-plugin</artifactId>-->
+<!--				<inherited>false</inherited>				-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<phase>compile</phase>-->
+<!--						<goals>-->
+<!--							 https://stackoverflow.com/a/74170889/3469138 -->
+<!--							<goal>aggregate-no-fork</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${project.build.directory}/gh-pages</outputDirectory>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 		<extensions>
 			<extension>

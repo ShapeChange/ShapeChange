@@ -28,8 +28,17 @@
 		<artifactId>slf4j-simple</artifactId>
 	</dependency>
 	<dependency>
-		<groupId>org.opengis.cite.xerces</groupId>
-		<artifactId>xercesImpl-xsd11</artifactId>
+	    <groupId>org.exist-db.thirdparty.xerces</groupId>
+	    <artifactId>xercesImpl</artifactId>
+		<classifier>xml-schema-1.1</classifier>
+	</dependency>
+	<dependency>
+	    <groupId>org.exist-db.thirdparty.org.eclipse.wst.xml</groupId>
+	    <artifactId>xpath2</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>edu.princeton.cup</groupId>
+	    <artifactId>java-cup</artifactId>
 	</dependency>
 	<dependency>
 		<groupId>org.apache.commons</groupId>
@@ -128,6 +137,16 @@
 	<dependency>
 		<groupId>mil.nga.geopackage</groupId>
 		<artifactId>geopackage</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-api</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-engine</artifactId>
+		<scope>test</scope>
 	</dependency>
   </dependencies>
   <build>

@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -1467,13 +1468,30 @@ public class Options {
 
 	// validate configuration
 	try {
+
 	    // 1. validate original config (has locator information)
-	    XSDUtil.validate(getConfigurationInputStream(), getConfigurationSystemId());
-	    // 2. validate config, with xincludes resolved (does not have locator
-	    // information)
-	    XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true, getConfigurationSystemId());
+	    ShapeChangeErrorHandler handler1 = new ShapeChangeErrorHandler();
+	    XSDUtil.validate(getConfigurationInputStream(), getConfigurationSystemId(), handler1, Optional.empty());
+
+	    if (!handler1.errorsFound()) {
+
+		// 2. validate config, with xincludes resolved (does not have locator
+		// information)
+		ShapeChangeErrorHandler handler2 = new ShapeChangeErrorHandler();
+		XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true, getConfigurationSystemId(),
+			handler2, Optional.empty());
+
+		if (handler2.errorsFound()) {
+		    throw new ShapeChangeAbortException("Invalid configuration file.");
+		}
+
+	    } else {
+		throw new ShapeChangeAbortException("Invalid configuration file.");
+	    }
+
 	} catch (Exception e) {
-	    throw new ShapeChangeAbortException("Invalid configuration file.");
+	    throw new ShapeChangeAbortException(
+		    "Exception occurred while validating the configuration. Message: " + e.getMessage());
 	}
 
 	// parse file

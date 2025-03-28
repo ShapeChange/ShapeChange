@@ -32,50 +32,83 @@
 
 package de.interactive_instruments.shapechange.core;
 
+import java.io.PrintWriter;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-/** Error handler of the XML parser. */
+/**
+ * Error handler of the XML parser.
+ * 
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
 public class ShapeChangeErrorHandler implements ErrorHandler {
 
-	/** Errors found during document validation */
-	protected boolean errorsFound = false;
+    /** Errors found during document validation */
+    protected boolean errorsFound = false;
 
-	public boolean errorsFound() {
-		return errorsFound;
-	}
+    protected PrintWriter printer;
 
-	public void fatalError(SAXParseException e) throws SAXException {
-		String m = e.getMessage();
-		if (m != null) {
-			System.err.println(m + locator(e));
-		} else {
-			e.printStackTrace(System.err);
-		}
-		errorsFound = true;
-	}
+    /**
+     * Creates an error handler that writes to System.err.
+     */
+    public ShapeChangeErrorHandler() {
+	this.printer = new PrintWriter(System.err);
+    }
 
-	public void error(SAXParseException e) throws SAXException {
-		String m = e.getMessage();
-		if (m != null) {
-			System.err.println(m + locator(e));
-		} else {
-			e.printStackTrace(System.err);
-		}
-		errorsFound = true;
-	}
+    /**
+     * Creates an error handler that writes to the given PrintWriter.
+     * 
+     * @param printer the writer to print to
+     */
+    public ShapeChangeErrorHandler(PrintWriter printer) {
+	this.printer = printer;
+    }
 
-	public void warning(SAXParseException e) throws SAXException {
-		String m = e.getMessage();
-		if (m != null) {
-			System.err.println(m + locator(e));
-		} else {
-			e.printStackTrace(System.err);
-		}
+    /**
+     * @return <code>true</code>, if errors or fatal errors have been detected
+     *         (note: warnings are ignored), else <code>false</code>
+     */
+    public boolean errorsFound() {
+	return errorsFound;
+    }
+
+    public void fatalError(SAXParseException e) throws SAXException {
+	String m = e.getMessage();
+	if (m != null) {
+	    printer.println(locator(e, "Fatal") + m);
+	} else {
+	    e.printStackTrace(System.err);
 	}
-	
-	private String locator(SAXParseException e) {
-		return " (line "+e.getLineNumber()+", column "+e.getColumnNumber()+")";
+	errorsFound = true;
+    }
+
+    public void error(SAXParseException e) throws SAXException {
+	String m = e.getMessage();
+	if (m != null) {
+	    printer.println(locator(e, "Error") + m);
+	} else {
+	    e.printStackTrace(System.err);
 	}
+	errorsFound = true;
+    }
+
+    public void warning(SAXParseException e) throws SAXException {
+	String m = e.getMessage();
+	if (m != null) {
+	    printer.println(locator(e, "Warn") + m);
+	} else {
+	    e.printStackTrace(System.err);
+	}
+    }
+
+    public void addMessage(String msg) {
+	printer.println(msg);
+    }
+
+    private String locator(SAXParseException e, String category) {
+	return category + " (" + e.getLineNumber() + ":" + e.getColumnNumber() + ") ";
+    }
 }
