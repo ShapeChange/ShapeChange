@@ -543,11 +543,11 @@
    </element>
    <element name="cardinality" default="1" minOccurs="0">
     <annotation>
-     <documentation>The multiplicity of the property as a string, in typical UML notation. Examples: 0..1, 1..4, 1..*, *.</documentation>
+     <documentation>The multiplicity of the property as a string, in typical UML notation. Examples: 0..1, 1..4, 1..*, *. Note that value '0' is allowed, too, because it is used in some ISO schemas, but that it typically should not be used in application schemas.</documentation>
     </annotation>
     <simpleType>
      <restriction base="string">
-      <pattern value="[1-9]\d*|\*|((0|[1-9]\d*)\.\.([1-9]\d*|\*))"/>
+      <pattern value="\d+|\*|((0|[1-9]\d*)\.\.([1-9]\d*|\*))"/>
      </restriction>
     </simpleType>
    </element>
