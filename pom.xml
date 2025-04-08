@@ -268,13 +268,13 @@
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
-				<version>5.4.0</version>
+				<version>5.4.1</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml</artifactId>
-				<version>5.4.0</version>
+				<version>5.4.1</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
@@ -287,7 +287,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>33.4.0-jre</version>
+				<version>33.4.6-jre</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 			<dependency>
@@ -358,7 +358,7 @@
 				<plugin>
 				    <groupId>org.openrewrite.maven</groupId>
 				    <artifactId>rewrite-maven-plugin</artifactId>
-				    <version>6.3.1</version>
+				    <version>6.4.0</version>
 			        <dependencies>
 			          <dependency>
 			            <groupId>org.openrewrite.recipe</groupId>
@@ -369,7 +369,7 @@
 					  <dependency>
 						    <groupId>org.openrewrite</groupId>
 						    <artifactId>rewrite-java-21</artifactId>
-						    <version>8.48.0</version>
+						    <version>8.49.0</version>
 						</dependency>
 			        </dependencies>
 				</plugin>
