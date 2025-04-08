@@ -702,6 +702,12 @@ NOTE: In UML 1, property navigability indicated ownership. A navigable associati
     <documentation>sc:associationId shall only be used on association roles.</documentation>
    </annotation>
   </assert>
+  <assert test="not(sc:isAttribute/text() = ('0', 'false')) or (exists(sc:associationId))" saxon:message="sc:associationId must be set on association roles."
+   xerces:message="sc:associationId must be set on association roles.">
+   <annotation>
+    <documentation>sc:associationId must be set on association roles.</documentation>
+   </annotation>
+  </assert>
  </complexType>
  <element name="Association" type="sc:AssociationType">
   <annotation>
