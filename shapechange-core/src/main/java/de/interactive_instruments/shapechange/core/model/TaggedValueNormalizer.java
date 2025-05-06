@@ -129,8 +129,8 @@ public class TaggedValueNormalizer {
 	    "dissolveAssociationInlineOrByReference", "extensibility", "obligation", "originalClassName",
 	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
 	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
-	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet")
-	    .collect(Collectors.toSet());
+	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet",
+	    "isPropertyChoiceUnion").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values

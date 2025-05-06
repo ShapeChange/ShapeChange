@@ -973,6 +973,10 @@ public class XsdDocument implements MessageSource {
 		 */
 	    }
 
+	} else if (isDataTypeWithPropertyChoiceUnion(ci)) {
+
+	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "choice");
+
 	} else if (ci.matches("rule-xsd-cls-sequence")) {
 	    ret = document.createElementNS(Options.W3C_XML_SCHEMA, "sequence");
 	    if (ci.matches("rule-xsd-cls-mixin-classes")) {
@@ -2302,6 +2306,11 @@ public class XsdDocument implements MessageSource {
 		addMinMaxOccurs(e1, m);
 	    }
 
+	    if (pi.cardinality().minOccurs == 0 && isDataTypeWithPropertyChoiceUnion(pi.inClass())) {
+		// switch minOccurs to 1, i.e., use the default
+		e1.removeAttribute("minOccurs");
+	    }
+
 	    /*
 	     * 20120702 [js] Add restrictions given in the EA model using TaggedValues
 	     * 'length' and 'size' / 'pattern'
@@ -2465,6 +2474,11 @@ public class XsdDocument implements MessageSource {
 	}
 
 	return e1;
+    }
+
+    private boolean isDataTypeWithPropertyChoiceUnion(ClassInfo ci) {
+	return ci.category() == Options.DATATYPE && ci.matches("rule-xsd-cls-datatype-withPropertyChoice")
+		&& "true".equalsIgnoreCase(ci.taggedValue("isPropertyChoiceUnion"));
     }
 
     private boolean asArray(PropertyInfo propi) {
@@ -3036,8 +3050,10 @@ public class XsdDocument implements MessageSource {
 
 	    if (ci.pkg() == null || ci.pkg().xmlns() == null) {
 		MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
-		if (mc != null)
+		if (mc != null) {
+		    mc.addDetail(null, 400, "Class", propi.inClass().fullName());
 		    mc.addDetail(null, 400, "Class", ci.fullName());
+		}
 
 	    } else if (ci.matches("rule-xsd-cls-standard-19139-property-types")) {
 
@@ -3318,8 +3334,10 @@ public class XsdDocument implements MessageSource {
 
 		if (ci.pkg() == null || ci.pkg().xmlns() == null) {
 		    MessageContext mc = result.addError(this, 141, ci.name(), propi.inClass().name());
-		    if (mc != null)
+		    if (mc != null) {
+			mc.addDetail(null, 400, "Class", propi.inClass().fullName());
 			mc.addDetail(null, 400, "Class", ci.fullName());
+		    }
 		} else {
 
 		    if (!propi.nilReasonAllowed() && !(propi.voidable() && propi.matches("rule-xsd-prop-nillable"))

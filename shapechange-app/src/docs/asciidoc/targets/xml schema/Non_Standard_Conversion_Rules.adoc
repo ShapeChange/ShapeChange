@@ -441,6 +441,15 @@ details, see the OGC
 https://docs.ogc.org/per/17-020r1.html[NAS Profiling
 Engineering Report] (OGC document number 17-020r1).
 
+[[rule-xsd-cls-datatype-withPropertyChoice]]
+==== rule-xsd-cls-datatype-withPropertyChoice
+
+If a «DataType» has tagged value "isPropertyChoiceUnion" with value "true",
+then encode it like a property choice union, i.e., with xsd:choice instead
+of xsd:sequence, and minOccurs = 1 for all its properties. Note that the 
+properties of such a data type are expected to all have a minimum multiplicity 
+of 0.
+
 [[rule-xsd-cls-enum-subtypes]]
 ==== rule-xsd-cls-enum-subtypes
 
