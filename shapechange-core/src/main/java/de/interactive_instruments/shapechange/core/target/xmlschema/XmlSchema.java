@@ -1376,6 +1376,7 @@ public class XmlSchema implements Target, MessageSource {
 	r.addRule("rule-xsd-cls-codelist-constraints2");
 	r.addRule("rule-xsd-cls-codelist-constraints-codeAbsenceInModelAllowed");
 	r.addRule("rule-xsd-cls-codelist-gmlsf");
+	r.addRule("rule-xsd-cls-datatype-withPropertyChoice");
 	r.addRule("rule-xsd-cls-enum-subtypes");
 	r.addRule("rule-xsd-cls-enum-supertypes");
 	r.addRule("rule-xsd-cls-gmlFeatureCollection");

@@ -337,4 +337,11 @@ public class XMLSchemaTest extends BasicTestSCXML {
 		new String[] { "xsd" }, "testResults/xsd/propertyTypeContentAlwaysOptional",
 		"src/integrationtests/xsd/propertyTypeContentAlwaysOptional/reference");
     }
+    
+    public void test_datatypeWithPropertyChoice() {
+
+	multiTest("src/integrationtests/xsd/datatypeWithPropertyChoice/testEA_datatypeWithPropertyChoice.xml",
+		new String[] { "xsd" }, "testResults/xsd/datatypeWithPropertyChoice",
+		"src/integrationtests/xsd/datatypeWithPropertyChoice/reference");
+    }
 }

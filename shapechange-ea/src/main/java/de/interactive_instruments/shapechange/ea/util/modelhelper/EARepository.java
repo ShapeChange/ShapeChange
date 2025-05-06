@@ -60,14 +60,40 @@ public class EARepository {
     private Set<EAPackage> packages = new HashSet<>();
     private Set<EAElement> elements = new HashSet<>();
 
+    /**
+     * Parses the given EA repository, storing information about both packages as
+     * well as the elements contained therein.
+     * 
+     * @param rep the EA repository to read
+     */
     public EARepository(Repository rep) {
 
 	for (Package p : rep.GetModels()) {
-	    readPackage(p, "");
+	    readPackage(p, "", false);
 	}
     }
 
-    private void readPackage(Package pkg, String pathToPackage) {
+    /**
+     * Parses the given EA repository, storing information about packages and the
+     * elements contained therein, depending upon the value of parameter
+     * readOnlyPackageStructure.
+     * 
+     * @param rep                      the EA repository to read
+     * @param readOnlyPackageStructure <code>true</code> if only information about
+     *                                 the package structure is of interest (which
+     *                                 can speed up parsing the EA repository),
+     *                                 <code>false</code> if information about both
+     *                                 the packages as well as the elements
+     *                                 contained therein shall be parsed.
+     */
+    public EARepository(Repository rep, boolean readOnlyPackageStructure) {
+
+	for (Package p : rep.GetModels()) {
+	    readPackage(p, "", readOnlyPackageStructure);
+	}
+    }
+
+    private void readPackage(Package pkg, String pathToPackage, boolean readOnlyPackageStructure) {
 
 	String name = pkg.GetName().trim();
 	String fullName = pathToPackage + name;
@@ -80,18 +106,20 @@ public class EARepository {
 	    EAPackage eaPkg = new EAPackage(name, fullName, pkgElmtId, pkg.GetPackageID());
 	    this.packages.add(eaPkg);
 
-	    Collection<Element> c = pkg.GetElements();
-	    c.Refresh();
-	    for (Element elmt : c) {
-		EAElement eaElmt = new EAElement(elmt, pathToOwnedElements);
-		this.elements.add(eaElmt);
+	    if (!readOnlyPackageStructure) {
+		Collection<Element> c = pkg.GetElements();
+		c.Refresh();
+		for (Element elmt : c) {
+		    EAElement eaElmt = new EAElement(elmt, pathToOwnedElements);
+		    this.elements.add(eaElmt);
+		}
 	    }
 	}
 
 	Collection<Package> childPackages = pkg.GetPackages();
 	childPackages.Refresh();
 	for (Package cp : childPackages) {
-	    readPackage(cp, pathToOwnedElements);
+	    readPackage(cp, pathToOwnedElements, readOnlyPackageStructure);
 	}
 
     }

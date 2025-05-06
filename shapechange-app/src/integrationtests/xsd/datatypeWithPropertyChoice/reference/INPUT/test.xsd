@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="TestDatatype"
+            substitutionGroup="gml:AbstractObject"
+            type="t:TestDatatypeType"/>
+   <complexType name="TestDatatypeType">
+      <choice>
+         <element name="opt1" type="integer"/>
+         <element maxOccurs="unbounded" name="opt2" type="string"/>
+      </choice>
+   </complexType>
+   <complexType name="TestDatatypePropertyType">
+      <sequence>
+         <element ref="t:TestDatatype"/>
+      </sequence>
+   </complexType>
+   <element name="TestUnion"
+            substitutionGroup="gml:AbstractObject"
+            type="t:TestUnionType"/>
+   <complexType name="TestUnionType">
+      <choice>
+         <element name="opt1" type="integer"/>
+         <element maxOccurs="unbounded" name="opt2" type="string"/>
+      </choice>
+   </complexType>
+   <complexType name="TestUnionPropertyType">
+      <sequence>
+         <element ref="t:TestUnion"/>
+      </sequence>
+   </complexType>
+</schema>

@@ -77,6 +77,33 @@ public class EAPackageUtil extends AbstractEAUtil {
     }
 
     /**
+     * Updates the tagged values with given name (which can be a fully qualified
+     * name) in the tagged values of the given package. Does NOT delete those tagged
+     * values. NOTE: This method is especially useful when setting tagged values
+     * that are defined by an MDG / UML Profile, since these tagged values cannot be
+     * created programmatically (they are created by EA - for further details, see
+     * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * 
+     * @param pkg               the package in which the tagged values shall be
+     *                          updated
+     * @param name              (fully qualified or unqualified) name of the tagged
+     *                          value to update, must not be <code>null</code>
+     * @param value             value of the tagged value to update, can be
+     *                          <code>null</code>
+     * @param createAsMemoField If set to <code>true</code>, the values shall be
+     *                          encoded using &lt;memo&gt; fields, regardless of the
+     *                          actual length of each value.
+     * @throws EAException If updating the package did not succeed, this exception
+     *                     contains the error message.
+     */
+    public static void updateTaggedValue(Package pkg, String name, String value, boolean createAsMemoField)
+	    throws EAException {
+
+	Element e = pkg.GetElement();
+	EAElementUtil.updateTaggedValue(e, name, value, createAsMemoField);
+    }
+
+    /**
      * Searches in the package hierarchy with the given package at the top. First
      * checks if the given package has the given name. Otherwise, recursively
      * searches in child packages.

@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.interactive_instruments.shapechange.app.TestInstance;
+import de.interactive_instruments.shapechange.core.ShapeChangeErrorHandler;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
 
@@ -97,46 +99,61 @@ public class SCXMLTestResourceConverter {
 
 		// validate config, as gatekeeper action:
 		// 1. validate original config
-		// 2. validate config, with xincludes resolved
-		XSDUtil.validate(configPath);
-		XSDUtil.validate(XMLUtil.loadXml(configPath), true, configPath);
 
-		// load original config, for creation of SCXML export configs
-		/*
-		 * WARNING: The in-memory document will be updated if SCXML really is created!
-		 * log, transformers, and targets from the original config will be removed, only
-		 * the input will be kept and a new model export target section added.
-		 */
+		ShapeChangeErrorHandler handler1 = new ShapeChangeErrorHandler();
+		XSDUtil.validate(configPath, handler1, Optional.empty());
 
-		Document doc1 = XMLUtil.loadXml(configPath);
+		if (!handler1.errorsFound()) {
 
-		boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
+		    // 2. validate config, with xincludes resolved
+		    ShapeChangeErrorHandler handler2 = new ShapeChangeErrorHandler();
+		    XSDUtil.validate(XMLUtil.loadXml(configPath), true, configPath, handler2, Optional.empty());
 
-		if ("true".equalsIgnoreCase(System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
-			&& notPureScxmlTest) {
+		    if (!handler2.errorsFound()) {
+			// load original config, for creation of SCXML export configs
+			/*
+			 * WARNING: The in-memory document will be updated if SCXML really is created!
+			 * log, transformers, and targets from the original config will be removed, only
+			 * the input will be kept and a new model export target section added.
+			 */
 
-		    // create SCXML based models
-		    createScxml(doc1, configPath);
+			Document doc1 = XMLUtil.loadXml(configPath);
 
-		    /*
-		     * Load original config again (it would be incorrect to use doc1, because it may
-		     * have been updated and used as export configuration).
-		     */
-		    Document doc2 = XMLUtil.loadXml(configPath);
-		    switchModelsToScxml(doc2, configPath);
-		}
+			boolean notPureScxmlTest = hasModelTypeOtherThanSCXML(doc1);
 
-		String pathToRelevantConfig;
-		if (notPureScxmlTest) {
-		    pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
-		    System.out.println("Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
+			if ("true".equalsIgnoreCase(
+				System.getProperty(UPDATE_OR_CREATE_SCXML_RESOURCES_SYSTEM_PROPERTY_NAME))
+				&& notPureScxmlTest) {
+
+			    // create SCXML based models
+			    createScxml(doc1, configPath);
+
+			    /*
+			     * Load original config again (it would be incorrect to use doc1, because it may
+			     * have been updated and used as export configuration).
+			     */
+			    Document doc2 = XMLUtil.loadXml(configPath);
+			    switchModelsToScxml(doc2, configPath);
+			}
+
+			String pathToRelevantConfig;
+			if (notPureScxmlTest) {
+			    pathToRelevantConfig = getFileForScxmlBasedConfiguration(configPath).getPath();
+			    System.out.println(
+				    "Unit test execution uses SCXML based configuration " + pathToRelevantConfig);
+			} else {
+			    pathToRelevantConfig = configPath;
+			    System.out.println("Unit test execution uses (original) SCXML based configuration "
+				    + pathToRelevantConfig);
+			}
+
+			return pathToRelevantConfig;
+		    } else {
+			throw new Exception("Validation of ShapeChange configuration failed.");
+		    }
 		} else {
-		    pathToRelevantConfig = configPath;
-		    System.out.println(
-			    "Unit test execution uses (original) SCXML based configuration " + pathToRelevantConfig);
+		    throw new Exception("Validation of ShapeChange configuration failed.");
 		}
-
-		return pathToRelevantConfig;
 
 	    } finally {
 		if (tmpDir.exists()) {
