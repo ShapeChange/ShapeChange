@@ -16,32 +16,81 @@
     <name>Test1_ValueConcepts</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
   <Package id="_P180">
     <name>Test2_AttributeValueConcepts</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
   <Package id="_P181">
     <name>Test3_RoleConcepts</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
   <Package id="_P182">
     <name>Test4_ChangeProposal_NEW</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
   <Package id="_P183">
     <name>Test5_ChangeProposal_SUP</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
   <Package id="_P184">
     <name>Test6_ChangeProposal_RET</name>
     <title>leaf</title>
     <parent idref="_P162"></parent>
+    <taggedValues></taggedValues>
   </Package>
+  <FeatureType id="_C157">
+    <name>AttEnumA_T1Feature</name>
+    <title>EnumerationAFeatureEntityAlias</title>
+    <characterizedBy idref="_A157_129"></characterizedBy>
+    <characterizedBy idref="_A157_127"></characterizedBy>
+    <characterizedBy idref="_A157_128"></characterizedBy>
+    <package idref="_P179"></package>
+    <type>Enumeration Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A157_129">
+    <name>enum1</name>
+    <title>1</title>
+    <definition>enum1 VC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A157_127">
+    <name>enum2</name>
+    <title>2</title>
+    <definition>enum2 VC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A157_128">
+    <name>enum3</name>
+    <title>3</title>
+    <definition>enum3 VC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
   <FeatureType id="_C16409">
     <name>T1Feature</name>
     <definition>T1Feature FC definition.</definition>
@@ -62,9 +111,9 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">AttEnumA_T1Feature</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
-    <enumeratedBy idref="_A157_129"></enumeratedBy>
-    <enumeratedBy idref="_A157_127"></enumeratedBy>
-    <enumeratedBy idref="_A157_128"></enumeratedBy>
+    <enumeratedBy idref="_A157_129_VALUE"></enumeratedBy>
+    <enumeratedBy idref="_A157_127_VALUE"></enumeratedBy>
+    <enumeratedBy idref="_A157_128_VALUE"></enumeratedBy>
   </FeatureAttribute>
   <FeatureAttribute id="_A16409_50935">
     <name>attOther</name>
@@ -96,8 +145,8 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">T2Feature_attEnumB</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
-    <enumeratedBy idref="_A16411_50937"></enumeratedBy>
-    <enumeratedBy idref="_A16411_50938"></enumeratedBy>
+    <enumeratedBy idref="_A16411_50937_VALUE"></enumeratedBy>
+    <enumeratedBy idref="_A16411_50938_VALUE"></enumeratedBy>
   </FeatureAttribute>
   <FeatureAttribute id="_A16410_50939">
     <name>attOther</name>
@@ -110,21 +159,49 @@
     <ValueDataType idref="_C16016">Integer</ValueDataType>
     <ValueDomainType>0</ValueDomainType>
   </FeatureAttribute>
+  <FeatureType id="_C16411">
+    <name>T2Feature_attEnumB</name>
+    <characterizedBy idref="_A16411_50937"></characterizedBy>
+    <characterizedBy idref="_A16411_50938"></characterizedBy>
+    <package idref="_P180"></package>
+    <type>Enumeration Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A16411_50937">
+    <name>enumA</name>
+    <definition>enumA AVC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A16411_50938">
+    <name>enumB</name>
+    <definition>enumB AVC definition.</definition>
+    <cardinality>1</cardinality>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
   <FeatureType id="_C16412">
     <name>T3FeatureA</name>
     <definition>T3FeatureA FC definition.</definition>
     <description>T3FeatureA FC description</description>
-    <characterizedBy idref="_AT51450"></characterizedBy>
+    <characterizedBy idref="_ATas51450"></characterizedBy>
     <package idref="_P181"></package>
     <type>Feature Type</type>
     <taggedValues></taggedValues>
   </FeatureType>
-  <FeatureRelationship id="__T51450">
+  <FeatureRelationship id="__Tas51450">
     <name>(unbestimmt)</name>
-    <roles idref="_AT51450"></roles>
-    <roles idref="_AS51450"></roles>
+    <roles idref="_ATas51450"></roles>
+    <roles idref="_ASas51450"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT51450">
+  <RelationshipRole id="_ATas51450">
     <name>roleOfT3FeatureA</name>
     <definition>roleOfT3FeatureA RC definition</definition>
     <cardinality>1</cardinality>
@@ -133,10 +210,10 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C16413" category="feature type">T3FeatureB</FeatureTypeIncluded>
-    <relation idref="__T51450"></relation>
-    <InverseRole idref="_AS51450"></InverseRole>
+    <relation idref="__Tas51450"></relation>
+    <InverseRole idref="_ASas51450"></InverseRole>
   </RelationshipRole>
-  <RelationshipRole id="_AS51450">
+  <RelationshipRole id="_ASas51450">
     <name>roleOfT3FeatureB</name>
     <definition>roleOfT3FeatureB RC definition</definition>
     <cardinality>1</cardinality>
@@ -145,13 +222,13 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C16412" category="feature type">T3FeatureA</FeatureTypeIncluded>
-    <relation idref="__T51450"></relation>
-    <InverseRole idref="_AT51450"></InverseRole>
+    <relation idref="__Tas51450"></relation>
+    <InverseRole idref="_ATas51450"></InverseRole>
   </RelationshipRole>
   <FeatureType id="_C16413">
     <name>T3FeatureB</name>
     <definition>T3FeatureB FC definition</definition>
-    <characterizedBy idref="_AS51450"></characterizedBy>
+    <characterizedBy idref="_ASas51450"></characterizedBy>
     <package idref="_P181"></package>
     <type>Feature Type</type>
     <taggedValues></taggedValues>
@@ -183,6 +260,7 @@
     <characterizedBy idref="_A16425_50942"></characterizedBy>
     <characterizedBy idref="_A16425_50940"></characterizedBy>
     <package idref="_P183"></package>
+    <type>Mixin</type>
     <constraint>
       <name>attOld_size</name>
       <expression>inv: self.attOld.size() &lt;= 25</expression>
@@ -237,27 +315,27 @@
     <type>Feature Type</type>
     <taggedValues></taggedValues>
   </FeatureType>
-  <Value id="_A157_129">
+  <Value id="_A157_129_VALUE">
     <label>1</label>
     <code>enum1</code>
     <definition>enum1 VC definition.</definition>
   </Value>
-  <Value id="_A157_127">
+  <Value id="_A157_127_VALUE">
     <label>2</label>
     <code>enum2</code>
     <definition>enum2 VC definition.</definition>
   </Value>
-  <Value id="_A157_128">
+  <Value id="_A157_128_VALUE">
     <label>3</label>
     <code>enum3</code>
     <definition>enum3 VC definition.</definition>
   </Value>
-  <Value id="_A16411_50937">
+  <Value id="_A16411_50937_VALUE">
     <label>enumA</label>
     <code>enumA</code>
     <definition>enumA AVC definition.</definition>
   </Value>
-  <Value id="_A16411_50938">
+  <Value id="_A16411_50938_VALUE">
     <label>enumB</label>
     <code>enumB</code>
     <definition>enumB AVC definition.</definition>

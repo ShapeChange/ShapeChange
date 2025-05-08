@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2024 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2025 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  */
 package de.interactive_instruments.shapechange.ea.util;
 
-import org.sparx.Constraint;
+import org.sparx.AttributeConstraint;
 
 import shadow.org.apache.commons.lang3.StringUtils;
 
@@ -39,29 +39,29 @@ import shadow.org.apache.commons.lang3.StringUtils;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class EAConstraintUtil extends AbstractEAUtil {
+public class EAAttributeConstraintUtil extends AbstractEAUtil {
 
-    public static void setEANotes(Constraint c, String notes) throws EAException {
+    public static void setEANotes(AttributeConstraint ac, String notes) throws EAException {
 
-	c.SetNotes(notes);
+	ac.SetNotes(notes);
 
-	if (!c.Update()) {
-	    throw new EAException(createMessage(message(101), c.GetName(), c.GetLastError()));
+	if (!ac.Update()) {
+	    throw new EAException(createMessage(message(101), ac.GetName(), ac.GetLastError()));
 	}
     }
-    
-    public static void appendToEANotes(Constraint c, String additionalText) throws EAException {
 
-	String existingText = c.GetNotes();
+    public static void appendToEANotes(AttributeConstraint ac, String additionalText) throws EAException {
+
+	String existingText = ac.GetNotes();
 
 	if (StringUtils.isBlank(existingText)) {
-	    c.SetNotes(additionalText);
+	    ac.SetNotes(additionalText);
 	} else {
-	    c.SetNotes(existingText + "\n\n" + additionalText);
+	    ac.SetNotes(existingText + "\n\n" + additionalText);
 	}
 
-	if (!c.Update()) {
-	    throw new EAException(createMessage(message(102), c.GetName(), c.GetLastError()));
+	if (!ac.Update()) {
+	    throw new EAException(createMessage(message(102), ac.GetName(), ac.GetLastError()));
 	}
 
     }
@@ -70,11 +70,11 @@ public class EAConstraintUtil extends AbstractEAUtil {
 
 	switch (mnr) {
 	case 101:
-	    return "EA error encountered while updating 'Notes' of EA constraint '$1$'. Error message is: $2$";
+	    return "EA error encountered while updating 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
 	case 102:
-	    return "EA error encountered while appending to 'Notes' of EA constraint '$1$'. Error message is: $2$";
+	    return "EA error encountered while appending to 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
 	default:
-	    return "(" + EAConstraintUtil.class.getName() + ") Unknown message with number: " + mnr;
+	    return "(" + EAAttributeConstraintUtil.class.getName() + ") Unknown message with number: " + mnr;
 	}
     }
 }

@@ -286,6 +286,29 @@ Required / optional: optional
 Default value: _none - the model element is assumed to match this
 filter_
 
+[[class_isabstract]]
+====== Class is abstract
+
+Type: boolean
+
+Explanation: If the model element is a class and one of the following 
+two conditions is met, then this filter criterium evaluates to true:
+
+* the value of this filter criterium is set to true, and the class is abstract
+* the value of this filter criterium is set to false, and the class is not abstract
+
+This criterium is useful in case that processing shall only be applied to abstract
+or non-abstract classes.
+
+NOTE: If the filter is set to false, it will also match non-abstract enumerations
+and code lists. If that is not desired, additional filter criteria like the
+model element stereotype filter should be used.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
 [[Setting_Tagged_Values_Example]]
 ==== Example
 

@@ -5,7 +5,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="original">
-		<parameter name="representTaggedValues" value="tvA,tvB" />
+		<parameter name="representTaggedValues" value="tvA,tvB,tvC" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
 			value="src/integrationtests/commonTransformer/setTaggedValues/common_settaggedvalues.qea" />
@@ -47,6 +47,7 @@
 				<TaggedValue name="tvA" value="A" modelElementName="FT_A"/>
 				<TaggedValue name="tvB" value="B" modelElementName="a" modelElementType="Attribute" modelElementOwnerStereotype="^(?!enumeration).*$"/>
 				<TaggedValue name="tvB" value="B" modelElementName="x" modelElementType="AssociationRole"/>
+				<TaggedValue name="tvC" value="C" modelElementType="Class" classIsAbstract="true"/>
 			</taggedValues>			
 		</Transformer>
 	</transformers>

@@ -32,6 +32,7 @@
 package de.interactive_instruments.shapechange.ea.util;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -232,7 +233,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	    throw new EAException(createMessage(message(103), att.GetName(), att.GetLastError()));
 	}
     }
-    
+
     public static void setEAClassifierID(Attribute att, int classifierId) throws EAException {
 
 	att.SetClassifierID(classifierId);
@@ -241,7 +242,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	    throw new EAException(createMessage(message(110), att.GetName(), att.GetLastError()));
 	}
     }
-    
+
     public static void setEAType(Attribute att, String type) throws EAException {
 
 	att.SetType(type);
@@ -250,7 +251,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	    throw new EAException(createMessage(message(111), att.GetName(), att.GetLastError()));
 	}
     }
-    
+
     public static void setEALowerBound(Attribute att, String lowerBound) throws EAException {
 
 	att.SetLowerBound(lowerBound);
@@ -259,7 +260,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	    throw new EAException(createMessage(message(112), att.GetName(), att.GetLastError()));
 	}
     }
-    
+
     public static void setEAUpperBound(Attribute att, String upperBound) throws EAException {
 
 	att.SetUpperBound(upperBound);
@@ -512,6 +513,25 @@ public class EAAttributeUtil extends AbstractEAUtil {
     }
 
     /**
+     * @param att            Attribute in which to look up the constraint
+     * @param constraintName Name of the constraint
+     * @return the constraint, if found
+     */
+    public static Optional<org.sparx.AttributeConstraint> getConstraint(Attribute att, String constraintName) {
+
+	Collection<org.sparx.AttributeConstraint> cons = att.GetConstraints();
+	cons.Refresh();
+
+	for (org.sparx.AttributeConstraint con : cons) {
+	    if (constraintName.equals(con.GetName())) {
+		return Optional.of(con);
+	    }
+	}
+
+	return Optional.empty();
+    }
+
+    /**
      * @param att  Attribute to which the new constraint shall be added.
      * @param name Name of the new constraint
      * @param type Type of the new constraint
@@ -632,7 +652,7 @@ public class EAAttributeUtil extends AbstractEAUtil {
 	    return "EA error encountered while updating 'LowerBound' on EA attribute '$1$'. Error message is: $2$";
 	case 113:
 	    return "EA error encountered while updating 'UpperBound' on EA attribute '$1$'. Error message is: $2$";
-	
+
 	default:
 	    return "(" + EAAttributeUtil.class.getName() + ") Unknown message with number: " + mnr;
 	}
