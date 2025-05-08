@@ -34,7 +34,7 @@
    <annotation>
     <documentation>Every ID in an input or inputs XML-attribute must be the ID of a configured transformer or input element. Check if any input or inputs XML-attribute contains the ID of a validator.</documentation>
    </annotation>
-  </assert>  
+  </assert>
  </complexType>
  <element name="input">
   <complexType>
@@ -530,6 +530,7 @@
   <attribute name="propertyValueTypeStereotype" type="string"/>
   <attribute name="propertyValueTypeName" type="string"/>
   <attribute name="applicationSchemaName" type="string"/>
+  <attribute name="classIsAbstract" type="boolean"/>
  </attributeGroup>
  <element name="TaggedValue" type="sc:TaggedValueType"/>
  <complexType name="TaggedValueType">
@@ -560,8 +561,8 @@
   <complexContent>
    <extension base="sc:AdvancedProcessConfigurationType">
     <choice maxOccurs="unbounded">
-        <element ref="sc:DescriptorValue"/>
-       </choice>
+     <element ref="sc:DescriptorValue"/>
+    </choice>
    </extension>
   </complexContent>
  </complexType>

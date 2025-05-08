@@ -61,4 +61,28 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
+<element abstract="true"
+            name="FT_C"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FT_CType">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="tvC">C</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType abstract="true" name="FT_CType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FT_CPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FT_C"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
 </schema>

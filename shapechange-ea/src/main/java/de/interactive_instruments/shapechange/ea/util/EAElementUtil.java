@@ -749,6 +749,27 @@ public class EAElementUtil extends AbstractEAUtil {
     }
 
     /**
+     * @param e                        Element for which the constraint with given
+     *                                 name shall be deleted.
+     * @param nameOfConstraintToDelete Name of the constraint to be deleted
+     * @throws EAException tbd
+     */
+    public static void deleteConstraint(Element e, String nameOfConstraintToDelete) throws EAException {
+
+	Collection<org.sparx.Constraint> cons = e.GetConstraints();
+	cons.Refresh();
+
+	for (short i = 0; i < cons.GetCount(); i++) {
+	    org.sparx.Constraint con = cons.GetAt(i);
+	    if (con.GetName().equals(nameOfConstraintToDelete)) {
+		cons.Delete(i);
+	    }
+	}
+
+	cons.Refresh();
+    }
+
+    /**
      * @param e    Element to which the new constraint shall be added.
      * @param name Name of the new constraint
      * @param type Type of the new constraint

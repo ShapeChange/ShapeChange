@@ -78,6 +78,7 @@ public class ModelElementSelectionInfo implements MessageSource {
     private Pattern propertyValueTypeNamePattern = null;
     private String applicationSchemaName = null;
     private Pattern applicationSchemaNamePattern = null;
+    private Boolean classIsAbstract = null;
 
     /**
      * Default model element selection, with <code>null</code> for all filter
@@ -90,7 +91,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 
     public ModelElementSelectionInfo(ModelElementType modelElementType, String modelElementStereotype,
 	    String modelElementName, String modelElementOwnerName, String modelElementOwnerStereotype,
-	    String propertyValueTypeStereotype, String propertyValueTypeName, String applicationSchemaName) {
+	    String propertyValueTypeStereotype, String propertyValueTypeName, String applicationSchemaName,
+	    Boolean classIsAbstract) {
 
 	super();
 	this.modelElementType = modelElementType;
@@ -101,6 +103,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	this.propertyValueTypeStereotype = propertyValueTypeStereotype;
 	this.propertyValueTypeName = propertyValueTypeName;
 	this.applicationSchemaName = applicationSchemaName;
+	this.classIsAbstract = classIsAbstract;
     }
 
     public void validate() throws ModelElementSelectionParseException {
@@ -339,6 +342,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	boolean modelElementOwnerStereotypeMatch = true;
 	boolean applicationSchemaNameMatch = true;
 	boolean modelElementTypeMatch = true;
+	boolean classIsAbstractMatch = true;
 
 	if (hasModelElementType()) {
 
@@ -592,9 +596,21 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
+	if (classIsAbstract != null && infoType instanceof ClassInfo ci) {
+
+	    classIsAbstractMatch = false;
+
+	    if (classIsAbstract & ci.isAbstract() || !classIsAbstract & !ci.isAbstract()) {
+		classIsAbstractMatch = true;
+		result.addDebug(this, 105, ci.name());
+	    } else {
+		result.addDebug(this, 106, ci.name());
+	    }
+	}
+
 	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
 		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && propertyValueTypeNameMatch
-		&& modelElementTypeMatch && applicationSchemaNameMatch;
+		&& modelElementTypeMatch && applicationSchemaNameMatch && classIsAbstractMatch;
     }
 
     public static ModelElementSelectionInfo parse(Element element) {
@@ -662,9 +678,16 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
+	Boolean classIsAbstract = null;
+
+	if (element.hasAttribute("classIsAbstract")) {
+	    String tmp = element.getAttribute("classIsAbstract").trim();
+	    classIsAbstract = StringUtils.equalsAny(tmp, "1", "true");
+	}
+
 	return new ModelElementSelectionInfo(modelElementType, modelElementStereotype, modelElementName,
 		modelElementOwnerName, modelElementOwnerStereotype, propertyValueTypeStereotype, propertyValueTypeName,
-		applicationSchemaName);
+		applicationSchemaName, classIsAbstract);
     }
 
     /**
@@ -751,6 +774,10 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    return "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
 	case 104:
 	    return "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
+	case 105:
+	    return "??Class '$1$' matches the classIsAbstract filter criterium.";
+	case 106:
+	    return "??Class '$1$' does not match the classIsAbstract filter criterium.";
 	default:
 	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	}
