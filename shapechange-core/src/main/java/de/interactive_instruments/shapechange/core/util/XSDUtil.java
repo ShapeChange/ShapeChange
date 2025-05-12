@@ -32,6 +32,7 @@
 package de.interactive_instruments.shapechange.core.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -83,15 +84,20 @@ public class XSDUtil {
      *                       Otherwise (i.e., the Optional is empty), the schema
      *                       file(s) identified using the xsi:schemaLocation
      *                       attribute within the source is used for validation.
-     * @throws Exception If an exception occurred during the validation.
+     * @throws ValidationException If an exception occurred during the validation.
      */
     public static void validate(String xmlPath, ShapeChangeErrorHandler handler, Optional<String> xsdLocationOpt)
-	    throws Exception {
+	    throws ValidationException {
 
-	InputStream xmlStream = XMLUtil.inputStreamFromXml(xmlPath);
+	InputStream xmlStream;
+	try {
+	    xmlStream = XMLUtil.inputStreamFromXml(xmlPath);
+	} catch (XmlHandlingException e) {
+	    throw new ValidationException("Validation failed.",e);
+	}
 
 	if (xmlStream == null) {
-	    throw new Exception("No XML file found at " + xmlPath);
+	    throw new ValidationException("No XML file found at " + xmlPath);
 	}
 
 	validate(xmlStream, xmlPath, handler, xsdLocationOpt);
@@ -127,10 +133,10 @@ public class XSDUtil {
      *                       Otherwise (i.e., the Optional is empty), the schema
      *                       file(s) identified using the xsi:schemaLocation
      *                       attribute within the source is used for validation.
-     * @throws Exception If an exception occurred during the validation.
+     * @throws ValidationException If an exception occurred during the validation.
      */
     public static void validate(InputStream xmlStream, String systemId, ShapeChangeErrorHandler handler,
-	    Optional<String> xsdLocationOpt) throws Exception {
+	    Optional<String> xsdLocationOpt) throws ValidationException {
 
 	/*
 	 * 2024-06-11 JE: We want locator infos (line and column numbers) in validation
@@ -182,10 +188,10 @@ public class XSDUtil {
      *                          Otherwise (i.e., the Optional is empty), the schema
      *                          file(s) identified using the xsi:schemaLocation
      *                          attribute within the source is used for validation.
-     * @throws Exception If an exception occurred during the validation.
+     * @throws ValidationException If an exception occurred during the validation.
      */
     public static void validate(Document domDocument, boolean xincludesResolved, String systemId,
-	    ShapeChangeErrorHandler handler, Optional<String> xsdLocationOpt) throws Exception {
+	    ShapeChangeErrorHandler handler, Optional<String> xsdLocationOpt) throws ValidationException {
 
 	// NOTE: Will (typically) not have locator infos (line and column numbers)!
 	Source source = new DOMSource(domDocument);
@@ -230,10 +236,10 @@ public class XSDUtil {
      *                          Otherwise (i.e., the Optional is empty), the schema
      *                          file(s) identified using the xsi:schemaLocation
      *                          attribute within the source is used for validation.
-     * @throws Exception If an exception occurred during the validation.
+     * @throws ValidationException If an exception occurred during the validation.
      */
     public static void validate(Source xmlSource, boolean xincludesResolved, ShapeChangeErrorHandler handler,
-	    Optional<String> xsdLocationOpt) throws Exception {
+	    Optional<String> xsdLocationOpt) throws ValidationException {
 
 	System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/XML/XMLSchema/v1.1",
 		"org.apache.xerces.jaxp.validation.XMLSchema11Factory");
@@ -254,29 +260,36 @@ public class XSDUtil {
 		    schema = sf.newSchema(schemaFile);
 		}
 	    } catch (SAXException e) {
-		throw new Exception("Schema could not be created from XSD location '" + xsdLocation + "'.");
+		throw new ValidationException("Schema could not be created from XSD location '" + xsdLocation + "'.",
+			e);
 	    } catch (MalformedURLException e) {
-		throw new Exception("XSD location URL '" + xsdLocation + "' is malformed.");
+		throw new ValidationException("XSD location URL '" + xsdLocation + "' is malformed.", e);
 	    }
 
 	} else {
-	    schema = sf.newSchema();
+	    try {
+		schema = sf.newSchema();
+	    } catch (SAXException e) {
+		throw new ValidationException("Exception occurred while creating schema object.", e);
+	    }
 	}
 
 	if (schema != null) {
+	    try {
+		Validator v = schema.newValidator();
+		v.setErrorHandler(handler);
+		v.setFeature("http://apache.org/xml/features/validation/schema", true);
+		v.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
 
-	    Validator v = schema.newValidator();
-	    v.setErrorHandler(handler);
-	    v.setFeature("http://apache.org/xml/features/validation/schema", true);
-	    v.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
+		v.validate(xmlSource);
 
-	    v.validate(xmlSource);
-
-	    if (handler.errorsFound()) {
-		handler.addMessage("NOTE: XInclude statements have " + (xincludesResolved ? "" : "not ")
-			+ "been resolved before validation.");
+		if (handler.errorsFound()) {
+		    handler.addMessage("NOTE: XInclude statements have " + (xincludesResolved ? "" : "not ")
+			    + "been resolved before validation.");
+		}
+	    } catch (SAXException | IOException e) {
+		throw new ValidationException("Exception occurred during XML Schema validation.", e);
 	    }
-
 	}
     }
 }

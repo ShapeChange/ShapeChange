@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2025 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,37 +29,21 @@
  * 53113 Bonn
  * Germany
  */
+package de.interactive_instruments.shapechange.core.util;
 
-package de.interactive_instruments.shapechange.core;
+/**
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
+ *
+ */
+public class XmlHandlingException extends Exception {
 
-import java.io.Serial;
+    private static final long serialVersionUID = 7221813873020087980L;
 
-/** The abort exception is only thrown in case of a fatal error. */
-public class ShapeChangeAbortException extends Exception {
-    @Serial
-    private static final long serialVersionUID = 9198956685101864680L;
-
-    private String msgText;
-
-    public ShapeChangeAbortException() {
-	msgText = null;
+    public XmlHandlingException(String msg) {
+	super(msg);
     }
-
-    public ShapeChangeAbortException(String msg) {
-	msgText = msg;
-    }
-
-    @Override
-    public String toString() {
-	if (msgText == null)
-	    return "ShapeChange has encountered a fatal error and is aborting.";
-	else
-	    return "ShapeChange has encountered a fatal error and is aborting. " + System.getProperty("line.separator")
-		    + "Abort message: " +
-		    /* System.getProperty("line.separator") + */msgText;
-    }
-
-    public String getMessage() {
-	return toString();
+    
+    public XmlHandlingException(String msg, Throwable cause) {
+	super(msg, cause);
     }
 }

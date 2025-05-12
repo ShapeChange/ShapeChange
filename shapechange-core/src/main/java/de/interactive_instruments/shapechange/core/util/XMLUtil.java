@@ -193,15 +193,16 @@ public class XMLUtil {
      * @param xmlPath the location of the XML document; either the path to a local
      *                file, or the URL of an HTTP resource
      * @return the DOM document parsed from the XML
-     * @throws Exception If an exception occurred, or an error was detected, while
-     *                   loading/parsing the XML document.
+     * @throws XmlHandlingException If an exception occurred, or an error was
+     *                              detected, while loading/parsing the XML
+     *                              document.
      */
-    public static Document loadXml(String xmlPath) throws Exception {
+    public static Document loadXml(String xmlPath) throws XmlHandlingException {
 
 	InputStream xmlStream = inputStreamFromXml(xmlPath);
 
 	if (xmlStream == null) {
-	    throw new Exception("No XML file found at " + xmlPath);
+	    throw new XmlHandlingException("No XML file found at " + xmlPath);
 	}
 
 	return loadXml(xmlStream);
@@ -224,10 +225,11 @@ public class XMLUtil {
      * 
      * @param xmlStream Input stream with content of an XML document.
      * @return the DOM document parsed from the XML
-     * @throws Exception If an exception occurred, or an error was detected, while
-     *                   loading/parsing the XML document.
+     * @throws XmlHandlingException If an exception occurred, or an error was
+     *                              detected, while loading/parsing the XML
+     *                              document.
      */
-    public static Document loadXml(InputStream xmlStream) throws Exception {
+    public static Document loadXml(InputStream xmlStream) throws XmlHandlingException {
 
 	DocumentBuilder builder = null;
 	ShapeChangeErrorHandler handler = new ShapeChangeErrorHandler();
@@ -254,16 +256,16 @@ public class XMLUtil {
 	    builder.setErrorHandler(handler);
 
 	} catch (FactoryConfigurationError e) {
-	    throw new Exception("Unable to get a document builder factory.");
+	    throw new XmlHandlingException("Unable to get a document builder factory.");
 	} catch (ParserConfigurationException e) {
-	    throw new Exception("XML Parser was unable to be configured.");
+	    throw new XmlHandlingException("XML Parser was unable to be configured.");
 	}
 
 	try {
 
 	    Document document = builder.parse(xmlStream);
 	    if (handler.errorsFound()) {
-		throw new Exception("Errors found while parsing XML file.");
+		throw new XmlHandlingException("Errors found while parsing XML file.");
 	    } else {
 		return document;
 	    }
@@ -271,18 +273,18 @@ public class XMLUtil {
 	} catch (SAXException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
-		throw new Exception("Error while loading XML file: " + m);
+		throw new XmlHandlingException("Error while loading XML file: " + m);
 	    } else {
 		e.printStackTrace(System.err);
-		throw new Exception("Error while loading XML file");
+		throw new XmlHandlingException("Error while loading XML file");
 	    }
 	} catch (IOException e) {
 	    String m = e.getMessage();
 	    if (m != null) {
-		throw new Exception("Error while loading XML file: " + m);
+		throw new XmlHandlingException("Error while loading XML file: " + m);
 	    } else {
 		e.printStackTrace(System.err);
-		throw new Exception("Error while loading XML file");
+		throw new XmlHandlingException("Error while loading XML file");
 	    }
 	}
     }
@@ -294,10 +296,10 @@ public class XMLUtil {
      * @param xmlPath the location of the XML document; either the path to a local
      *                file, or the URL of an HTTP resource
      * @return the input stream for reading the content of the XML document
-     * @throws Exception If an exception occurred, while getting the input stream
-     *                   for the XML document.
+     * @throws XmlHandlingException If an exception occurred, while getting the
+     *                              input stream for the XML document.
      */
-    public static InputStream inputStreamFromXml(String xmlPath) throws Exception {
+    public static InputStream inputStreamFromXml(String xmlPath) throws XmlHandlingException {
 
 	InputStream xmlStream = null;
 
@@ -306,15 +308,15 @@ public class XMLUtil {
 	    try {
 		xmlStream = (URI.create(xmlPath).toURL()).openStream();
 	    } catch (MalformedURLException e) {
-		throw new Exception("No XML file found at " + xmlPath + " (malformed URL)");
+		throw new XmlHandlingException("No XML file found at " + xmlPath + " (malformed URL)");
 	    } catch (IOException e) {
-		throw new Exception("No XML file found at " + xmlPath + " (IO exception)");
+		throw new XmlHandlingException("No XML file found at " + xmlPath + " (IO exception)");
 	    }
 	} else {
 	    try {
 		xmlStream = new FileInputStream(file);
 	    } catch (FileNotFoundException e) {
-		throw new Exception("No XML file found at " + xmlPath);
+		throw new XmlHandlingException("No XML file found at " + xmlPath);
 	    }
 	}
 

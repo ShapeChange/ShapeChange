@@ -98,6 +98,7 @@ import de.interactive_instruments.shapechange.core.model.generic.reader.GenericP
 import de.interactive_instruments.shapechange.core.model.generic.reader.GenericPropertyContentHandler;
 import de.interactive_instruments.shapechange.core.sbvr.Sbvr2FolParser;
 import de.interactive_instruments.shapechange.core.sbvr.SbvrConstants;
+import de.interactive_instruments.shapechange.core.util.ValidationException;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
 
 /**
@@ -1087,7 +1088,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 
 		    try {
 			XSDUtil.validate(instanceDocument, false, handler, Optional.of(scxmlXsdLocation));
-		    } catch (Exception e) {
+		    } catch (ValidationException e) {
 			result.addError(this, 30508, scxmlXsdLocation, e.getMessage());
 		    }
 

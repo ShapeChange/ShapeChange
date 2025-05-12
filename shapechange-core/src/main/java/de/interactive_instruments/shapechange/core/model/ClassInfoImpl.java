@@ -246,10 +246,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean includeByValuePropertyType() {
-	String s = taggedValue("byValuePropertyType");
-	if (s != null && s.toLowerCase().equals("true"))
-	    return true;
-	return false;
+	return "true".equalsIgnoreCase(taggedValue("byValuePropertyType"));
     }
 
     /**
@@ -261,10 +258,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean includePropertyType() {
-	String s = taggedValue("noPropertyType");
-	if (s != null && s.toLowerCase().equals("true"))
-	    return false;
-	return true;
+	return !"true".equalsIgnoreCase(taggedValue("noPropertyType"));
     }
 
     /**
@@ -276,11 +270,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean isCollection() {
-	String s = taggedValue("isCollection");
-	if (s != null && s.toLowerCase().equals("true")) {
-	    return true;
-	}
-	return false;
+	return "true".equalsIgnoreCase(taggedValue("isCollection"));
     }
 
     /**
@@ -292,13 +282,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean asDictionary() {
-	if (category() != Options.CODELIST)
-	    return false;
-	String s = taggedValue("asDictionary");
-	if (s != null && s.toLowerCase().equals("true")) {
-	    return true;
-	}
-	return false;
+	return category() == Options.CODELIST && "true".equalsIgnoreCase(taggedValue("asDictionary"));
     }
 
     /**
@@ -310,13 +294,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean asDictionaryGml33() {
-	if (category() != Options.CODELIST)
-	    return false;
-	String s = taggedValue("asDictionary");
-	if (s != null && s.toLowerCase().equals("false")) {
-	    return false;
-	}
-	return true;
+	return category() == Options.CODELIST && !"false".equalsIgnoreCase(taggedValue("asDictionary"));
     }
 
     /**
@@ -328,11 +306,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean asGroup() {
-	String s = taggedValue("gmlAsGroup");
-	if (s != null && s.toLowerCase().equals("true")) {
-	    return !this.isUnionDirect();
-	}
-	return false;
+	return "true".equalsIgnoreCase(taggedValue("gmlAsGroup")) && !this.isUnionDirect();
     }
 
     /**
@@ -344,29 +318,15 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean asCharacterString() {
-	String s = taggedValue("gmlAsCharacterString");
-	if (s != null && s.toLowerCase().equals("true")) {
-	    return !this.isUnionDirect();
-	}
-	return false;
+	return "true".equalsIgnoreCase(taggedValue("gmlAsCharacterString")) && !this.isUnionDirect();
     }
 
     private boolean isMixin() {
-	if (matches("rule-xsd-cls-mixin-classes")) {
-	    String tv = taggedValue("gmlMixin");
-	    if (tv != null && tv.equalsIgnoreCase("true"))
-		return true;
-	}
-	return false;
+	return matches("rule-xsd-cls-mixin-classes") && "true".equalsIgnoreCase(taggedValue("gmlMixin"));
     }
 
     private boolean isGMLMixinSetToFalse() {
-	if (matches("rule-xsd-cls-mixin-classes")) {
-	    String tv = taggedValue("gmlMixin");
-	    if (tv != null && tv.equalsIgnoreCase("false"))
-		return true;
-	}
-	return false;
+	return matches("rule-xsd-cls-mixin-classes") && "false".equalsIgnoreCase(taggedValue("gmlMixin"));
     }
 
     /**
@@ -650,12 +610,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
      */
     @Override
     public boolean suppressed() {
-	String supval = taggedValue("suppress");
-	if (supval != null && supval.equalsIgnoreCase("true"))
-	    return true;
-	if (stereotype("adeelement"))
-	    return true;
-	return false;
+	return "true".equalsIgnoreCase(taggedValue("suppress")) || stereotype("adeelement");
     }
 
     /**

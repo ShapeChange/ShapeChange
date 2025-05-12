@@ -74,8 +74,10 @@ import de.interactive_instruments.shapechange.core.target.ontology.GeneralDataPr
 import de.interactive_instruments.shapechange.core.target.ontology.GeneralObjectProperty;
 import de.interactive_instruments.shapechange.core.target.ontology.RdfGeneralProperty;
 import de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema;
+import de.interactive_instruments.shapechange.core.util.ValidationException;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
+import de.interactive_instruments.shapechange.core.util.XmlHandlingException;
 import de.interactive_instruments.shapechange.core.AIXMSchemaInfos.AIXMSchemaInfo;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.Stereotypes;
@@ -1473,23 +1475,21 @@ public class Options {
 	    ShapeChangeErrorHandler handler1 = new ShapeChangeErrorHandler();
 	    XSDUtil.validate(getConfigurationInputStream(), getConfigurationSystemId(), handler1, Optional.empty());
 
-	    if (!handler1.errorsFound()) {
-
-		// 2. validate config, with xincludes resolved (does not have locator
-		// information)
-		ShapeChangeErrorHandler handler2 = new ShapeChangeErrorHandler();
-		XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true, getConfigurationSystemId(),
-			handler2, Optional.empty());
-
-		if (handler2.errorsFound()) {
-		    throw new ShapeChangeAbortException("Invalid configuration file.");
-		}
-
-	    } else {
+	    if (handler1.errorsFound()) {
 		throw new ShapeChangeAbortException("Invalid configuration file.");
 	    }
 
-	} catch (Exception e) {
+	    // 2. validate config, with xincludes resolved (does not have locator
+	    // information)
+	    ShapeChangeErrorHandler handler2 = new ShapeChangeErrorHandler();
+	    XSDUtil.validate(XMLUtil.loadXml(getConfigurationInputStream()), true, getConfigurationSystemId(), handler2,
+		    Optional.empty());
+
+	    if (handler2.errorsFound()) {
+		throw new ShapeChangeAbortException("Invalid configuration file.");
+	    }
+
+	} catch (ValidationException | XmlHandlingException e) {
 	    throw new ShapeChangeAbortException(
 		    "Exception occurred while validating the configuration. Message: " + e.getMessage());
 	}
@@ -1499,7 +1499,7 @@ public class Options {
 	Document document;
 	try {
 	    document = XMLUtil.loadXml(getConfigurationInputStream());
-	} catch (Exception e) {
+	} catch (XmlHandlingException e) {
 	    throw new ShapeChangeAbortException("Exception occurred while parsing the configuration file.");
 	}
 

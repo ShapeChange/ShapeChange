@@ -79,6 +79,7 @@ public class ShapeChangeErrorHandler implements ErrorHandler {
 	String m = e.getMessage();
 	if (m != null) {
 	    printer.println(locator(e, "Fatal") + m);
+	    printer.flush();
 	} else {
 	    e.printStackTrace(System.err);
 	}
@@ -89,6 +90,7 @@ public class ShapeChangeErrorHandler implements ErrorHandler {
 	String m = e.getMessage();
 	if (m != null) {
 	    printer.println(locator(e, "Error") + m);
+	    printer.flush();
 	} else {
 	    e.printStackTrace(System.err);
 	}
@@ -99,6 +101,7 @@ public class ShapeChangeErrorHandler implements ErrorHandler {
 	String m = e.getMessage();
 	if (m != null) {
 	    printer.println(locator(e, "Warn") + m);
+	    printer.flush();
 	} else {
 	    e.printStackTrace(System.err);
 	}
@@ -106,6 +109,7 @@ public class ShapeChangeErrorHandler implements ErrorHandler {
 
     public void addMessage(String msg) {
 	printer.println(msg);
+	printer.flush();
     }
 
     private String locator(SAXParseException e, String category) {

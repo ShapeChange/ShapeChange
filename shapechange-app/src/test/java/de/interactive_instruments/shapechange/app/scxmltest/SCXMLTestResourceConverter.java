@@ -98,8 +98,7 @@ public class SCXMLTestResourceConverter {
 		tmpDir = createTmpDir(configPath);
 
 		// validate config, as gatekeeper action:
-		// 1. validate original config
-
+		// 1. validate original config		
 		ShapeChangeErrorHandler handler1 = new ShapeChangeErrorHandler();
 		XSDUtil.validate(configPath, handler1, Optional.empty());
 
