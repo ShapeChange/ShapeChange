@@ -1175,6 +1175,23 @@ NOTE: The order in which the properties are encoded in the provider definition(s
 NOTE: The conversion of properties from other kinds of classifiers, especially enumerations and code lists, is described in the according subsections of the <<ldproxy2_schemaconversionrules_types>> section.
 
 
+[[ldproxy2_schemaconversionrules_properties_propertyid]]
+==== Property ID
+
+Default behavior is to encode the property name as the ID of the property in the ldproxy configuration. 
+
+Since ShapeChange v4.1.0, the default can be changed by adding 
+`rule-ldp2-all-propertyIdByTaggedValue` to the encoding rule that applies to 
+the (main) application schema that is being converted. The conversion
+rule requires that target parameter `taggedValueForPropertyId` has a 
+non-empty value. The parameter identifies the name of a tagged value.
+The tagged value - in lower-case - is used as the ID of the property.
+If the tag is blank for a given property, then the default behavior
+applies - i.e., the property name is used as ID. The conversion rule
+can be useful in situations where the application schema elements
+have short code values assigned to them via tagged values, and the
+resulting ldproxy configuration shall make use of those codes.
+
 
 [[ldproxy2_schemaconversionrules_properties_sourcepaths]]
 ==== Source Paths

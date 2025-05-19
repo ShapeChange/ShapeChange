@@ -1,0 +1,60 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 4326
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: idx
+  sortKey: idx
+types:
+  featuretype1:
+    sourcePath: /featuretype1
+    type: OBJECT
+    objectType: FeatureType1
+    label: FeatureType1
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID
+      a:
+        sourcePath: att1
+        type: INTEGER
+        label: att1
+        constraints:
+          required: true
+      b:
+        sourcePath: att2
+        type: DATETIME
+        role: PRIMARY_INSTANT
+        label: att2
+        constraints:
+          required: true
+      r:
+        sourcePath: ft1toft2_fk
+        type: FEATURE_REF
+        valueType: INTEGER
+        label: ft1ToFt2
+        constraints:
+          required: true
+        refType: featuretype2
+  featuretype2:
+    sourcePath: /featuretype2
+    type: OBJECT
+    objectType: FeatureType2
+    label: FeatureType2
+    properties:
+      oid:
+        sourcePath: idx
+        type: INTEGER
+        role: ID

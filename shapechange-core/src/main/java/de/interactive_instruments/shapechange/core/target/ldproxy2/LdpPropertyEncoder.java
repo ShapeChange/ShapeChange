@@ -578,10 +578,10 @@ public class LdpPropertyEncoder {
 			handleEmbedding(pi, propMemberDefBuilder);
 		    }
 
-		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).type(typeForBuilder)
-			    .propertyMap(propertyMapForBuilder).build();
+		    ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(LdpInfo.id(pi))
+			    .type(typeForBuilder).propertyMap(propertyMapForBuilder).build();
 
-		    propertyDefs.put(pi.name(), propMemberDef);
+		    propertyDefs.put(LdpInfo.id(pi), propMemberDef);
 		}
 
 	    } else {
@@ -730,13 +730,14 @@ public class LdpPropertyEncoder {
 		    }
 		}
 
-		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(pi.name()).label(LdpInfo.label(pi))
-			.description(LdpInfo.description(pi)).type(typeForBuilder).objectType(objectTypeForBuilder)
-			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
-			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
-			.transformations(transformations).propertyMap(propertyMapForBuilder).build();
+		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(LdpInfo.id(pi))
+			.label(LdpInfo.label(pi)).description(LdpInfo.description(pi)).type(typeForBuilder)
+			.objectType(objectTypeForBuilder).constraints(constraints).role(propRoleForBuilder)
+			.constantValue(constantValueForBuilder).geometryType(geometryTypeForBuilder)
+			.linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder).transformations(transformations)
+			.propertyMap(propertyMapForBuilder).build();
 
-		propertyDefs.put(pi.name(), propMemberDef);
+		propertyDefs.put(LdpInfo.id(pi), propMemberDef);
 	    }
 	}
 
@@ -1179,7 +1180,9 @@ public class LdpPropertyEncoder {
 		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
 			.dateFormat(Ldproxy2Target.dateTimeFormat).build();
 		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			typeDefinitionCi, propertyPath(nowVisitedList) + ".processStep.dateTime", trf);
+			typeDefinitionCi, propertyPath(nowVisitedList)
+				+ (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.dat" : ".processStep.dateTime"),
+			trf);
 	    }
 
 	    if (pi.matches(Ldproxy2Constants.RULE_ALL_QUERYABLES)
@@ -1261,7 +1264,7 @@ public class LdpPropertyEncoder {
     }
 
     private String propertyPath(List<PropertyInfo> propertyList) {
-	return propertyList.stream().map(pi -> pi.name()).collect(Collectors.joining("."));
+	return propertyList.stream().map(pi -> LdpInfo.id(pi)).collect(Collectors.joining("."));
     }
 
     private String constantValue(PropertyInfo pi) {

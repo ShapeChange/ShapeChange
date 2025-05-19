@@ -86,7 +86,7 @@ public class LdpUtil {
     }
 
     public static String queryableId(PropertyInfo pi) {
-	return pi.name() + queryableSuffix(pi);
+	return LdpInfo.id(pi) + queryableSuffix(pi);
     }
 
     public static String queryableSuffix(PropertyInfo pi) {

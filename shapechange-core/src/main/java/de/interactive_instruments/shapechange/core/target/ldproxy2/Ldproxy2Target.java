@@ -164,8 +164,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
     public static String providerConfigLabelTemplate = null;
 
+    public static boolean propertyIdByTaggedValue = false;
+    public static String taggedValueForPropertyId = null;
+
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
-    
+
     public static String coretable = "features";
     public static String coretablePkColumn = "pk";
     public static String coretableIdColumn = null;
@@ -266,9 +269,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		mainAppSchema = pi;
 	    }
 
+	    propertyIdByTaggedValue = mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_PROPIDBYTV);
+
 	    String mainIdDefault = mainAppSchema.name().replaceAll("\\W", "_").toLowerCase(Locale.ENGLISH);
-	    mainId = options.parameterAsString(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_API_ID, mainIdDefault, false, true);
+	    mainId = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_API_ID, mainIdDefault,
+		    false, true);
 
 	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
 
@@ -326,6 +331,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    labelTemplate = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 		    "[[alias]]", false, true);
 
+	    taggedValueForPropertyId = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE, null, false, true);
+	    if (propertyIdByTaggedValue && StringUtils.isBlank(taggedValueForPropertyId)) {
+		result.addError(this, 138, mainAppSchema.name());
+	    }
+
 	    maxNameLength = options.parameterAsInteger(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_MAX_NAME_LENGTH, 63);
 
@@ -368,7 +379,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    srid = options.parameterAsInteger(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID, 4326);
 	    sridConfigured = options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_SRID);
-	    
+
 	    embeddingForFeatureRefs = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_EMBEDDING_FOR_FEATURE_REFS, false);
 
@@ -1076,7 +1087,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	dbSchemaNames = new TreeSet<String>();
 
 	collectionIdFormat = "lowerCase";
-	
+
 //	documentationTemplate = null;
 //	documentationNoValue = null;
 
@@ -1113,6 +1124,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	srid = 4326;
 	sridConfigured = false;
 	serviceConfigTemplatePathString = null;
+	taggedValueForPropertyId = null;
+	propertyIdByTaggedValue = false;
 
 	outputDirectory = null;
 	dataDirectoryFile = null;
@@ -1182,6 +1195,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_GENERIC_VALUE_TYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE);
+	r.addRule(Ldproxy2Constants.RULE_ALL_PROPIDBYTV);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
     }
 
@@ -1328,6 +1342,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    return "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
 	case 137:
 	    return "GeoInfoDok encoding of property '$1$' (value type is '$2$', max mult is '$3$', in fragment '$4$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry.";
+	case 138:
+	    return "Conversion rule '" + Ldproxy2Constants.RULE_ALL_PROPIDBYTV
+		    + "' applies to (main) application schema '$1$', but target parameter '"
+		    + Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE
+		    + "' either is not set or has no value. The conversion rule will be ignored.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";

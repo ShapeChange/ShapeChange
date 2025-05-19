@@ -164,4 +164,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/unionLikeDataType/results",
 			"src/integrationtests/ldproxy2/unionLikeDataType/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_propertyIdByTaggedValue() {
+		
+		multiTest("src/integrationtests/ldproxy2/propertyIdByTaggedValue/test_ldproxy2_propertyIdByTaggedValue.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/propertyIdByTaggedValue/results",
+			"src/integrationtests/ldproxy2/propertyIdByTaggedValue/reference/results");
+	}
 }

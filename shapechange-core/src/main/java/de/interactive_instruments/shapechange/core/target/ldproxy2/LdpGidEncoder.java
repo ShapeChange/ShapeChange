@@ -32,6 +32,7 @@
 package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,10 +60,47 @@ public class LdpGidEncoder {
     public void gidLiLineageSchema(LinkedHashMap<String, FeatureSchema> propertyMapForBuilder,
 	    LdpSourcePathInfos sourcePathInfosForBuilder) {
 
+	String processStep = Ldproxy2Target.propertyIdByTaggedValue ? "prs" : "processStep";
+	String processor = Ldproxy2Target.propertyIdByTaggedValue ? "pro" : "processor";
+	String source = Ldproxy2Target.propertyIdByTaggedValue ? "src" : "source";
+	String description = Ldproxy2Target.propertyIdByTaggedValue ? "des" : "description";
+	String dateTime = Ldproxy2Target.propertyIdByTaggedValue ? "dat" : "dateTime";
+	String organisationName = Ldproxy2Target.propertyIdByTaggedValue ? "org" : "organisationName";
+	String individualName = Ldproxy2Target.propertyIdByTaggedValue ? "ind" : "individualName";
+	String role = Ldproxy2Target.propertyIdByTaggedValue ? "rol" : "role";
+
 	boolean setSourcePaths = sourcePathInfosForBuilder != null
 		&& !(Ldproxy2Target.enableFragments && sourcePathInfosForBuilder.getContext().isInFragment());
 	boolean createObjectTypes = !Ldproxy2Target.enableFragments || sourcePathInfosForBuilder == null
 		|| sourcePathInfosForBuilder.getContext().isInFragment();
+
+	/*
+	 * set labels only if property id is given by tagged value and when objectType
+	 * is encoded (especially relevant for encoding with fragments)
+	 */
+	Optional<String> label_processStep = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("processStep")
+		: Optional.empty();
+	Optional<String> label_processor = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("processor")
+		: Optional.empty();
+	Optional<String> label_source = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("source")
+		: Optional.empty();
+	Optional<String> label_description = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("description")
+		: Optional.empty();
+	Optional<String> label_dateTime = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("dateTime")
+		: Optional.empty();
+	Optional<String> label_organisationName = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("organisationName")
+		: Optional.empty();
+	Optional<String> label_individualName = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("individualName")
+		: Optional.empty();
+	Optional<String> label_role = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes ? Optional.of("role")
+		: Optional.empty();
 
 	String valueSourcePathOrColumnPrefix = null;
 	PropertyInfo pi = null;
@@ -77,7 +115,7 @@ public class LdpGidEncoder {
 	// --- processStep(s)
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessStepBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processStepBuilder = new ImmutableFeatureSchema.Builder();
-	processStepBuilder.name("processStep");
+	processStepBuilder.name(processStep).label(label_processStep);
 	if (createObjectTypes) {
 	    processStepBuilder.objectType("LI_ProcessStep");
 	}
@@ -96,7 +134,7 @@ public class LdpGidEncoder {
 	    // --- processStep.source
 	    LinkedHashMap<String, FeatureSchema> propertyMapForSourceBuilder = new LinkedHashMap<>();
 	    ImmutableFeatureSchema.Builder sourceBuilder = new ImmutableFeatureSchema.Builder();
-	    sourceBuilder.name("source").type(Type.OBJECT);
+	    sourceBuilder.name(source).label(label_source).type(Type.OBJECT);
 	    if (createObjectTypes) {
 		sourceBuilder.objectType("LI_Source");
 	    }
@@ -104,7 +142,7 @@ public class LdpGidEncoder {
 	    {
 		// source.description
 		ImmutableFeatureSchema.Builder sourceDescriptionBuilder = new ImmutableFeatureSchema.Builder();
-		sourceDescriptionBuilder.name("description").type(Type.STRING);
+		sourceDescriptionBuilder.name(description).label(label_description).type(Type.STRING);
 		if (setSourcePaths) {
 		    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 			sourceDescriptionBuilder.sourcePath("src_des");
@@ -113,17 +151,17 @@ public class LdpGidEncoder {
 			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
 		    }
 		}
-		propertyMapForSourceBuilder.put("description", sourceDescriptionBuilder.build());
+		propertyMapForSourceBuilder.put(description, sourceDescriptionBuilder.build());
 	    }
 
-	    propertyMapForProcessStepBuilder.put("source",
+	    propertyMapForProcessStepBuilder.put(source,
 		    sourceBuilder.propertyMap(propertyMapForSourceBuilder).build());
 	}
 
 	{
 	    // processStep.description
 	    ImmutableFeatureSchema.Builder processStepDescriptionBuilder = new ImmutableFeatureSchema.Builder();
-	    processStepDescriptionBuilder.name("description").type(Type.STRING);
+	    processStepDescriptionBuilder.name(description).label(label_description).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDescriptionBuilder.sourcePath("des");
@@ -132,13 +170,13 @@ public class LdpGidEncoder {
 		    processStepDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_des");
 		}
 	    }
-	    propertyMapForProcessStepBuilder.put("description", processStepDescriptionBuilder.build());
+	    propertyMapForProcessStepBuilder.put(description, processStepDescriptionBuilder.build());
 	}
 
 	{
 	    // processStep.dateTime
 	    ImmutableFeatureSchema.Builder processStepDateTimeBuilder = new ImmutableFeatureSchema.Builder();
-	    processStepDateTimeBuilder.name("dateTime").type(Type.DATETIME);
+	    processStepDateTimeBuilder.name(dateTime).label(label_dateTime).type(Type.DATETIME);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDateTimeBuilder.sourcePath("dat");
@@ -147,13 +185,13 @@ public class LdpGidEncoder {
 		    processStepDateTimeBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_dat");
 		}
 	    }
-	    propertyMapForProcessStepBuilder.put("dateTime", processStepDateTimeBuilder.build());
+	    propertyMapForProcessStepBuilder.put(dateTime, processStepDateTimeBuilder.build());
 	}
 
 	// --- processor
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessorBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processorBuilder = new ImmutableFeatureSchema.Builder();
-	processorBuilder.name("processor").type(Type.OBJECT);
+	processorBuilder.name(processor).label(label_processor).type(Type.OBJECT);
 	if (createObjectTypes) {
 	    processorBuilder.objectType("CI_ResponsibleParty");
 	}
@@ -161,7 +199,7 @@ public class LdpGidEncoder {
 	{
 	    // processor.organisationName
 	    ImmutableFeatureSchema.Builder processorOrganisationNameBuilder = new ImmutableFeatureSchema.Builder();
-	    processorOrganisationNameBuilder.name("organisationName").type(Type.STRING);
+	    processorOrganisationNameBuilder.name(organisationName).label(label_organisationName).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorOrganisationNameBuilder.sourcePath("pro_resp_org");
@@ -170,13 +208,13 @@ public class LdpGidEncoder {
 		    processorOrganisationNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_org");
 		}
 	    }
-	    propertyMapForProcessorBuilder.put("organisationName", processorOrganisationNameBuilder.build());
+	    propertyMapForProcessorBuilder.put(organisationName, processorOrganisationNameBuilder.build());
 	}
 
 	{
 	    // processor.individualName
 	    ImmutableFeatureSchema.Builder processorIndividualNameBuilder = new ImmutableFeatureSchema.Builder();
-	    processorIndividualNameBuilder.name("individualName").type(Type.STRING);
+	    processorIndividualNameBuilder.name(individualName).label(label_individualName).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorIndividualNameBuilder.sourcePath("pro_resp_ind");
@@ -185,13 +223,13 @@ public class LdpGidEncoder {
 		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
 		}
 	    }
-	    propertyMapForProcessorBuilder.put("individualName", processorIndividualNameBuilder.build());
+	    propertyMapForProcessorBuilder.put(individualName, processorIndividualNameBuilder.build());
 	}
 
 	{
 	    // processor.role
 	    ImmutableFeatureSchema.Builder processorRoleBuilder = new ImmutableFeatureSchema.Builder();
-	    processorRoleBuilder.name("role").type(Type.STRING);
+	    processorRoleBuilder.name(role).label(label_role).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorRoleBuilder.sourcePath("pro_resp_rol_cdv");
@@ -200,13 +238,13 @@ public class LdpGidEncoder {
 		    processorRoleBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_rol_cdv");
 		}
 	    }
-	    propertyMapForProcessorBuilder.put("role", processorRoleBuilder.build());
+	    propertyMapForProcessorBuilder.put(role, processorRoleBuilder.build());
 	}
 
-	propertyMapForProcessStepBuilder.put("processor",
+	propertyMapForProcessStepBuilder.put(processor,
 		processorBuilder.propertyMap(propertyMapForProcessorBuilder).build());
 
-	propertyMapForBuilder.put("processStep",
+	propertyMapForBuilder.put(processStep,
 		processStepBuilder.propertyMap(propertyMapForProcessStepBuilder).build());
     }
 

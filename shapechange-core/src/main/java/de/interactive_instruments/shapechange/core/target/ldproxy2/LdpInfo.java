@@ -362,4 +362,15 @@ public class LdpInfo {
 
 	return collectionIds;
     }
+
+    public static String id(PropertyInfo pi) {
+
+	String tv = null;
+
+	if (Ldproxy2Target.propertyIdByTaggedValue && StringUtils.isNotBlank(Ldproxy2Target.taggedValueForPropertyId)) {
+	    tv = pi.taggedValue(Ldproxy2Target.taggedValueForPropertyId);
+	}
+
+	return StringUtils.isBlank(tv) ? pi.name() : tv.toLowerCase(Locale.ENGLISH);
+    }
 }

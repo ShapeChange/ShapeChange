@@ -134,6 +134,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_NATIVE_TIME_ZONE = "nativeTimeZone";
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
+    public static final String PARAM_PROP_ID_TAGGED_VALUE = "taggedValueForPropertyId";
     public static final String PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE = "providerConfigLabelTemplate";
     public static final String PARAM_QUERYABLES = "queryables";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
@@ -191,6 +192,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_GENERIC_VALUE_TYPE = "rule-ldp2-cls-genericValueType";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
+    public static final String RULE_ALL_PROPIDBYTV = "rule-ldp2-all-propertyIdByTaggedValue";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
     
     public static final String SQL_PREFIX_FLATTENED_TO_PARENT_TABLE = "flattenedTo:";
