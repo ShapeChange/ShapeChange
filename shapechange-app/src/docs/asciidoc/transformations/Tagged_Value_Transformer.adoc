@@ -44,6 +44,16 @@ _de.interactive_instruments.shapechange.core.transformation.taggedvalues.TaggedV
 [[Rules]]
 === Rules
 
+[[rule-trf-taggedValue-createClassifierNamespaceTags]]
+==== rule-trf-taggedValue-createClassifierNamespaceTags
+
+For each class of the schemas selected for processing,
+this rule sets tagged value _namespace_ to the value of
+the target namespace of the schema that owns the class. 
+If no target namespace is defined for the schema, the 
+empty string will be set as tag value.
+
+
 [[rule-trf-taggedValue-createOriginalSchemaInformationTags]]
 ==== rule-trf-taggedValue-createOriginalSchemaInformationTags
 

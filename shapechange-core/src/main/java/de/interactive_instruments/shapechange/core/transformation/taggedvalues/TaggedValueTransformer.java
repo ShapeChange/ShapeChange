@@ -106,18 +106,18 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
 	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_INHERITANCE)) {
 	    result.addProcessFlowInfo(null, 20103, TaggedValueTransformerConstants.RULE_TV_INHERITANCE);
-	    applyRuleTaggedValueInheritance(genModel, trfConfig);
+	    applyRuleTaggedValueInheritance(trfConfig);
 	}
 
 	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE)) {
 	    result.addProcessFlowInfo(null, 20103, TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE);
-	    applyRuleTaggedValueCopyFromValueType(genModel, trfConfig);
+	    applyRuleTaggedValueCopyFromValueType(trfConfig);
 	}
 
 	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS)) {
 	    result.addProcessFlowInfo(null, 20103,
 		    TaggedValueTransformerConstants.RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS);
-	    applyRuleCreateOriginalSchemaInformationTags(genModel, trfConfig);
+	    applyRuleCreateOriginalSchemaInformationTags(trfConfig);
 	}
 
 	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_PROPERTY_VALUE_TYPE_INFO_TAG)) {
@@ -136,6 +136,12 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	    result.addProcessFlowInfo(null, 20103,
 		    TaggedValueTransformerConstants.RULE_TV_CREATE_ROLE_SOURE_OR_TARGET_TAG);
 	    applyRuleCreateAssociationRoleSourceOrNameTag(trfConfig);
+	}
+
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_CLASSIFIER_NAMESPACE_TAGS)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_CLASSIFIER_NAMESPACE_TAGS);
+	    applyRuleCreateClassifierNamespaceTags(trfConfig);
 	}
 
 	// apply post-processing (nothing to do right now)
@@ -208,8 +214,7 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
     }
 
-    private void applyRuleCreateOriginalSchemaInformationTags(GenericModel genModel2,
-	    TransformerConfiguration trfConfig) {
+    private void applyRuleCreateOriginalSchemaInformationTags(TransformerConfiguration trfConfig) {
 
 	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
 
@@ -233,7 +238,17 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	}
     }
 
-    private void applyRuleTaggedValueCopyFromValueType(GenericModel genModel2, TransformerConfiguration trfConfig) {
+    private void applyRuleCreateClassifierNamespaceTags(TransformerConfiguration trfConfig) {
+
+	for (GenericClassInfo genCi : genModel.selectedSchemaClasses()) {
+
+	    PackageInfo schemaPi = genModel.schemaPackage(genCi);
+	    genCi.setTaggedValue("namespace", StringUtils.defaultIfBlank(schemaPi.targetNamespace(), ""), false);
+	    genCi.setTaggedValue(TaggedValueTransformerConstants.TV_ORIG_CLASS_NAME, genCi.name(), false);
+	}
+    }
+
+    private void applyRuleTaggedValueCopyFromValueType(TransformerConfiguration trfConfig) {
 
 	List<String> tvsToCopyAsList = trfConfig.parameterAsStringList(
 		TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY, null, true, true);
@@ -279,7 +294,7 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 
     }
 
-    private void applyRuleTaggedValueInheritance(GenericModel genModel, TransformerConfiguration trfConfig) {
+    private void applyRuleTaggedValueInheritance(TransformerConfiguration trfConfig) {
 
 	List<String> generalIn = trfConfig.parameterAsStringList(
 		TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST, null, true, true);

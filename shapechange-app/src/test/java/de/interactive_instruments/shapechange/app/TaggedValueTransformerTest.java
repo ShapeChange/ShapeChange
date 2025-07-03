@@ -78,4 +78,13 @@ public class TaggedValueTransformerTest extends BasicTestSCXML {
 		new String[] { "xsd", "xml" }, "testResults/taggedValueTransformer/createDiverseAssociationRoleTags/results",
 		"src/integrationtests/taggedValueTransformer/createDiverseAssociationRoleTags/reference/results");
     }
+    
+    @Test
+    public void testCreateClassifierNamespaceTags() {
+
+	multiTest(
+		"src/integrationtests/taggedValueTransformer/createClassifierNamespaceTags/test_createClassifierNamespaceTags.xml",
+		new String[] { "xsd" }, "testResults/taggedValueTransformer/createClassifierNamespaceTags/xsd",
+		"src/integrationtests/taggedValueTransformer/createClassifierNamespaceTags/reference/xsd");
+    }
 }

@@ -125,6 +125,7 @@ public class TaggedValueTransformerConstants {
      */
     public static final String RULE_TV_COPY_FROM_VALUE_TYPE = "rule-trf-taggedValue-copyFromValueType";
 
+    public static final String RULE_TV_CREATE_CLASSIFIER_NAMESPACE_TAGS = "rule-trf-taggedValue-createClassifierNamespaceTags";
     public static final String RULE_TV_CREATE_ORIGINAL_SCHEMA_INFO_TAGS = "rule-trf-taggedValue-createOriginalSchemaInformationTags";
     public static final String TV_ORIG_SCHEMA_NAME = "originalSchemaName";
     public static final String TV_ORIG_CLASS_NAME = "originalClassName";

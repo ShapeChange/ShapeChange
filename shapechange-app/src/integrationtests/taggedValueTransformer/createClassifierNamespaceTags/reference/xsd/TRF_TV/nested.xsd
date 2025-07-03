@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:n="http://example.org/shapechange/schema/nested"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/nested"
+        version="1.0">
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="NS_DataType1"
+            substitutionGroup="gml:AbstractObject"
+            type="n:NS_DataType1Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="namespace">http://example.org/shapechange/schema/nested</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="NS_DataType1Type">
+      <sequence/>
+   </complexType>
+   <complexType name="NS_DataType1PropertyType">
+      <sequence>
+         <element ref="n:NS_DataType1"/>
+      </sequence>
+   </complexType>
+   <simpleType name="NS_Enumeration1Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="namespace">http://example.org/shapechange/schema/nested</sc:taggedValue>
+         </appinfo>
+      </annotation>
+      <restriction base="string"/>
+   </simpleType>
+   <element name="NS_FeatureType1"
+            substitutionGroup="gml:AbstractFeature"
+            type="n:NS_FeatureType1Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="namespace">http://example.org/shapechange/schema/nested</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="NS_FeatureType1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="att" type="string"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="NS_FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="n:NS_FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="NS_Type1"
+            substitutionGroup="gml:AbstractGML"
+            type="n:NS_Type1Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="namespace">http://example.org/shapechange/schema/nested</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="NS_Type1Type">
+      <complexContent>
+         <extension base="gml:AbstractGMLType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="NS_Type1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="n:NS_Type1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="NS_Union1"
+            substitutionGroup="gml:AbstractObject"
+            type="n:NS_Union1Type">
+      <annotation>
+         <appinfo>
+            <sc:taggedValue tag="namespace">http://example.org/shapechange/schema/nested</sc:taggedValue>
+         </appinfo>
+      </annotation>
+   </element>
+   <complexType name="NS_Union1Type"/>
+   <complexType name="NS_Union1PropertyType">
+      <sequence>
+         <element ref="n:NS_Union1"/>
+      </sequence>
+   </complexType>
+</schema>
