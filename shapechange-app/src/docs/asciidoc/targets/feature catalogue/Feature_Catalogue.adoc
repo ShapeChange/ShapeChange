@@ -373,6 +373,28 @@ to define the path to the custom template).
 
 +++Applies to Rule(s)+++: _none – general behaviour_
 
+[[miscellaneousContentDirectoryPath]]
+==== miscellaneousContentDirectoryPath
+
+(since v4.1.0)
+
++++Alias+++: _none_
+
++++Required / Optional+++: optional
+
++++Type+++: String
+
++++Default Value+++: _none_
+
++++Explanation+++: The path to a directory with miscellaneous
+files and directories, that shall be copied to the output directory which
+contains the resulting feature catalogue. 
+
+NOTE: This parameter currently only applies to the FRAMEHTML output format.
+
++++Applies to Rule(s)+++: _none – general behaviour_
+
+
 [[name]]
 ==== name
 

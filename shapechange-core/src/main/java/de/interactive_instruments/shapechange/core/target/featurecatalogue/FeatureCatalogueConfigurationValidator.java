@@ -31,6 +31,7 @@
  */
 package de.interactive_instruments.shapechange.core.target.featurecatalogue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.stream.Stream;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
@@ -59,7 +61,8 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageCont
 public class FeatureCatalogueConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
-	    FeatureCatalogue.PARAM_CSS_PATH, FeatureCatalogue.PARAM_DELETE_XML_FILE, FeatureCatalogue.PARAM_DOCX_STYLE,
+	    FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH, FeatureCatalogue.PARAM_CSS_PATH,
+	    FeatureCatalogue.PARAM_DELETE_XML_FILE, FeatureCatalogue.PARAM_DOCX_STYLE,
 	    FeatureCatalogue.PARAM_DOCX_TEMPLATE_FILE_PATH, FeatureCatalogue.PARAM_DONT_TRANSFORM,
 	    FeatureCatalogue.PARAM_FEATURE_TERM, FeatureCatalogue.PARAM_INCLUDE_ALIAS,
 	    FeatureCatalogue.PARAM_INCLUDE_CODELIST_URI, FeatureCatalogue.PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS,
@@ -273,6 +276,29 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	    }
 	}
 
+	String miscContentDirectoryPath = pConfig.getParameterValue(FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
+	if (StringUtils.isNotBlank(miscContentDirectoryPath)) {
+	    File miscContentFolder = new File(miscContentDirectoryPath);
+
+	    if (!miscContentFolder.exists()) {
+		isValid = false;
+		MessageContext mc = result.addError(this, 107, miscContentFolder.getAbsolutePath());
+		if (mc != null) {
+		    mc.addDetail(this, 0, inputs);
+		    mc.addDetail(this, 1, FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
+		}
+	    }
+	    
+	    if (!miscContentFolder.isDirectory()) {
+		isValid = false;
+		MessageContext mc = result.addError(this, 108, miscContentFolder.getAbsolutePath());
+		if (mc != null) {
+		    mc.addDetail(this, 0, inputs);
+		    mc.addDetail(this, 1, FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
+		}
+	    }
+	}
+
 	return isValid;
     }
 
@@ -338,7 +364,10 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	    return "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
 	case 106:
 	    return "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
-
+	case 107:
+	    return "The referenced directory with miscellaneous content does not exist: $1$.";
+	case 108:
+	    return "The referenced directory with miscellaneous content is not a directory: $1$.";
 	default:
 	    return "(" + FeatureCatalogue.class.getName() + ") Unknown message with number: " + mnr;
 	}

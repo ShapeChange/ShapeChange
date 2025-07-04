@@ -198,6 +198,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
     public static final String PARAM_REFERENCE_MODEL_TYPE = "referenceModelType";
     public static final String PARAM_REFERENCE_MODEL_FILENAME_OR_CONSTRING = "referenceModelFileNameOrConnectionString";
+    public static final String PARAM_MISC_CONTENT_DIR_PATH = "miscellaneousContentDirectoryPath";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_SCOPE = "scope";
     public static final String PARAM_VERSION_NUMBER = "versionNumber";
@@ -264,6 +265,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      */
     private static SortedMap<String, ClassInfo> inputSchemaClassesByFullNameInSchema = null;
 
+    private static String miscContentDirectoryPath = null;
     private static boolean inheritedConstraints = true;
     private static boolean inheritedProperties = false;
     private static TreeSet<PropertyInfo> exportedRoles = new TreeSet<PropertyInfo>();
@@ -384,6 +386,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	javaOptions = null;
 	lang = "en";
 	logoFilePath = null;
+	miscContentDirectoryPath = null;
 	noAlphabeticSortingForProperties = "false";
 	outputDirectory = null;
 	outputFilename = null;
@@ -2204,6 +2207,14 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		if (logoFileName != null) {
 		    transformationParameters.put("logoFileName", logoFileName);
 		}
+	    } else if (StringUtils.isNotBlank(miscContentDirectoryPath)) {
+		File miscContentFolder = new File(miscContentDirectoryPath);
+		try {
+		    FileUtils.copyDirectory(miscContentFolder, outputDir);
+		} catch (IOException e) {
+		    result.addError(this, 33, miscContentFolder.getAbsolutePath(), outputDir.getAbsolutePath(),
+			    e.getMessage());
+		}
 	    }
 
 	    if (xmlName != null && xmlName.length() > 0 && xslframeHtmlFileName != null
@@ -3081,6 +3092,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		includeTitle = false;
 	}
 
+	miscContentDirectoryPath = options.parameterAsString(this.getClass().getName(), PARAM_MISC_CONTENT_DIR_PATH,
+		null, false, true);
+
 	if (model != null) {
 	    encoding = model.characterEncoding();
 	}
@@ -3290,6 +3304,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    return "Directory '$1$' could not be created.";
 	case 32:
 	    return "Removed empty XSLT transformation target file at $1$.";
+	case 33:
+	    return "Exception occurred when copying content from miscellaneous content directory at '$1$' to directory '$2$'. Message is: $3$.";
 
 	case 308:
 	    return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
