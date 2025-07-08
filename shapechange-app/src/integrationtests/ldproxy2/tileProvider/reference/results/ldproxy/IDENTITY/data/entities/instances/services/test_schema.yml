@@ -1,0 +1,38 @@
+---
+id: test_schema
+label: MyServiceLabel
+description: '...'
+enabled: true
+serviceType: OGC_API
+api:
+- buildingBlock: TILES
+  enabled: true
+collections:
+  FT1:
+    id: FT1
+    label: FT1
+    enabled: true
+  FT2:
+    id: FT2
+    label: FT2
+    enabled: true
+  FT2Sub1Sub1:
+    id: FT2Sub1Sub1
+    label: FT2Sub1Sub1
+    enabled: true
+  FT3:
+    id: FT3
+    label: FT3
+    enabled: true
+  FT5:
+    id: FT5
+    label: FT5
+    enabled: true
+  FT5Sub1:
+    id: FT5Sub1
+    label: FT5Sub1
+    enabled: true
+  T:
+    id: T
+    label: T
+    enabled: true

@@ -73,7 +73,7 @@ Some configuration data can simply be copied using template files. <<table_templ
 [[ldproxy2_schemaconversionrules_documentation]]
 === Documentation
 
-// The updated ldproxy target uses platform identifier 'ldp2'. It is considered to be the next iteration of the ldproxy target - fullstop. For now, we will keep the old ldproxy target.
+// The updated ldproxy target uses platform identifier 'ldp2'. The target is the next iteration for generating ldproxy configuration files. The first iteration, with platform identifier 'ldp', has been removed.
 
 With __rule-ldp2-all-documentation__, descriptive information of application schema elements (for ldproxy that primarily means classes and their properties) can be encoded within the ldproxy configuration, more specifically: in _label_ and _description_ members of type definitions.
 
@@ -107,16 +107,22 @@ Schema packages have the stereotype «applicationSchema», «schema», or an ali
 
 This ldproxy target is a so-called "ShapeChange Single Target", i.e. it converts all xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schemas selected for processing] in one go, rather than handling each of these schemas separately.
 
-The target creates a single provider configuration (in folder data/entities/providers) as well as a single service configuration file (in folder data/entities/services). The names of these files are given by the name of the xref:../get started/The_element_input.adoc#mainAppSchema[main schema], in all lower case, and non-word characters replaced by '\_'. The resulting name is also used as the id within these files. However, if target parameter _apiId_ is set, then its value is used as file name and id. The encoding details for each of the two configuration files are documented in sections <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>> and <<ldproxy2_schemaconversionrules_schemapackage_serviceconfig>>.
+The target creates a feature provider configuration (in folder data/entities/providers) as well as a single service configuration file (in folder data/entities/services). The names of these files are given by the name of the xref:../get started/The_element_input.adoc#mainAppSchema[main schema], in all lower case, and non-word characters replaced by '\_'. The resulting name is also used as the id within these files. However, if target parameter _apiId_ is set, then its value is used as file name and id. The encoding details for each of the two configuration files are documented in sections <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>> and <<ldproxy2_schemaconversionrules_schemapackage_serviceconfig>>.
 
-NOTE: If a single API (provider and service configuration) shall be created for each schema, set the xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schema selection parameter] appropriately. If multiple schemas need to be processed, and each shall result in a different API, then either run ShapeChange multiple times (updating the schema selection parameters each time) or define multiple ldproxy targets (each selecting a different schema for processing).
+NOTE: If a single API (feature provider and service configuration) shall be created for each schema, set the xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[schema selection parameter] appropriately. If multiple schemas need to be processed, and each shall result in a different API, then either run ShapeChange multiple times (updating the schema selection parameters each time) or define multiple ldproxy targets (each selecting a different schema for processing).
+
+It is also possible to create a tile provider configuration 
+(in folder data/entities/providers) - 
+see <<ldproxy2_schemaconversionrules_schemapackage_tileproviderconfig>>. 
+The name of this file is the name of the feature provider configuration file,
+with name suffix "-tiles". The id is created in a similar fashion.
 
 
 
 [[ldproxy2_schemaconversionrules_schemapackage_providerconfig]]
-==== Provider Configuration
+==== Feature Provider Configuration
 
-The following information items are added to the provider configuration file:
+The following information items are added to the feature provider configuration file:
 
 // source: https://github.com/interactive-instruments/ldproxy/tree/master/docs/de/configuration/providers and https://github.com/interactive-instruments/ldproxy/blob/master/docs/de/configuration/providers/sql.md
 
@@ -154,6 +160,60 @@ NOTE: Members of the provider configuration, whose value is equal to the default
 
 NOTE: The deployment-specific values of the `connectionInfo` member - i.e. the database, host, user, and password - should either be set via environment variables, or via an overriding configuration file. The override would be placed in folder store/overrides/providers and carry the same name as the provider configuration whose connection infos shall be overridden.
 
+
+
+[[ldproxy2_schemaconversionrules_schemapackage_tileproviderconfig]]
+==== Tile Provider Configuration
+
+(since v4.1.0)
+
+If target parameter _enableTiles_ is set to 'true',
+a tile provider configuration is generated, with the following information items:
+
+// source: https://docs.ldproxy.net/providers/tile/ and https://docs.ldproxy.net/providers/tile/10-features.html
+
+* id: the provider name (derived from the main schema, as defined in section <<ldproxy2_schemaconversionrules_schemapackage>>), with suffix "-tiles"
+* enabled: true
+* providerType: TILE
+* providerSubType: FEATURES
+* tilesetDefaults:
+** sparse: value of optional target parameter _tilesetDefaultSparse_ (boolean value; default: false)
+** center:
+*** lon: value of optional target parameter _tilesetDefaultCenterLon_ (double value; default: 0.0)
+*** lat: value of optional target parameter _tilesetDefaultCenterLat_ (double value; default: 0.0)
+** levels:
+*** WebMercatorQuad:
+**** min: value of optional target parameter _tilesetDefaultMinLevelWebMercatorQuad_ (integer value >= 0; default: 0)
+**** max: value of optional target parameter _tilesetDefaultMaxLevelWebMercatorQuad_ (integer value > min; default: 24)
+**** default: value of optional target parameter _tilesetDefaultDefaultLevelWebMercatorQuad_ (integer value; default: min value)
+* tilesets:
+** The "all" tileset will always be created.
+** For each collection from the feature provider configuration, where a 
+  primary geometry is defined, an according tileset item is added (with just the id
+  of the collection).
+* caches:
+** Two cache definitions will be encoded, dynamic seeded and dynamic unseeded.
+** dynamic seeded cache:
+*** type: DYNAMIC
+*** storage: PER_JOB
+*** seeded: true
+*** levels:
+**** WebMercatorQuad:
+***** min: _min_ value from tileset defaults
+***** max: value of optional target parameter _dynamicTilesCacheSeededMaxLevelWebMercatorQuad_ (integer value > min; default: max(10, tileset defaults min))
+** dynamic unseeded cache:
+*** type: DYNAMIC
+*** storage: PER_JOB
+*** seeded: false
+*** levels:
+**** WebMercatorQuad:
+***** min: 1 + _max_ value from dynamic seeded cache
+***** max: _max_ value from tileset defaults
+
+By setting target parameter __enableTiles__ to 'true', 
+ShapeChange will add ldproxy building block 
+https://docs.ldproxy.net/de/services/building-blocks/tiles.html[Tiles]
+to the service configuration as enabled.
 
 
 [[ldproxy2_schemaconversionrules_schemapackage_serviceconfig]]
@@ -377,7 +437,7 @@ Building block
 https://docs.ldproxy.net/de/services/building-blocks/features_-_geojson.html[Features - GeoJSON]
 is enabled by default for an ldproxy instance. By setting 
 target parameter _enableFeaturesGeoJson_ to 'false', 
-ShapeChange will add ldproxy to the service configuration as disabled.
+ShapeChange will add the building block to the service configuration as disabled.
 
 Currently, specific configuration items for this building block are added
 through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
@@ -1018,42 +1078,99 @@ An error will be logged. The target will create an identifier member.
 [[ldproxy2_schemaconversionrules_types_primarygeometry]]
 ===== Primary Geometry
 
-If a type with identity has multiple geometry properties, one of them must be designated as primary geometry in order for ldproxy to a) use this geometry for bbox-queries, and to b) encode this property within the GeoJSON _geometry_ or the JSON-FG _where_ member. 
+If a type with identity has one or more geometry properties, one of them 
+should be designated as primary geometry in order for ldproxy to a) use 
+this geometry for bbox-queries, and to b) encode this property within 
+the GeoJSON _geometry_ or the JSON-FG _place_ member. 
 
-NOTE: Relevant geometry properties must directly be defined by the type with identity (or one of its supertypes). 
-In other words, the target does not look at geometry properties in inlined (data) types when searching for the primary geometry.
+NOTE: Relevant geometry properties must directly be defined by the type 
+with identity (or one of its supertypes). In other words, the target does 
+not look at geometry properties in inlined (data) types when searching 
+for the primary geometry.
 
-NOTE: If the type only has a single geometry property, ldproxy automatically deduces that it is the primary geometry.
+If a type has one or more geometry properties, and none is explicitly 
+assigned the role of primary geometry, ldproxy automatically uses the 
+first geometry property as primary geometry (first in the list of 
+properties in the feature provider definition of the type).
 
-The property that contains the primary geometry is identified by setting tagged value _defaultGeometry_ on the property to the value `true`. If multiple such properties exist, none of them is selected as primary geometry (because no informed choice can be made) and an error will be logged.
+The property that contains the primary geometry is identified by setting 
+tagged value _defaultGeometry_ on the property to the value `true`. 
+If multiple such properties exist (e.g. through inheritance), none of them 
+is encoded by ShapeChange as primary geometry (because no informed choice 
+can be made) and an error will be logged.
 
 The primary geometry property is encoded with `role: PRIMARY_GEOMETRY`.
 
-NOTE: If the primary geometry property has a maximum multiplicity greater than 1, then ShapeChange will log a warning and assume a maximum multiplicity of exactly 1.
+NOTE: If the primary geometry property has a maximum multiplicity greater 
+than 1, then ShapeChange will log a warning and assume a maximum multiplicity 
+of exactly 1.
 
 NOTE: Additional geometry properties are encoded like all other UML properties.
 
-NOTE: The ldproxy target expects all geometry properties to have a maximum multiplicity of exactly 1. That is because ldproxy supports multi-geometry types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used in implementations that rely upon the https://www.ogc.org/publications/standard/sfa/[Simple Feature Access standard] (such as spatial databases which typically implement the https://www.ogc.org/publications/standard/sfs/[Simple Feature Access - Part 2: SQL Option]), but does not define a transformation of a geometry property with max multiplicity greater than 1 to such a multi-geometry type. An according model transformation could be defined and implemented in ShapeChange as a future enhancement. In any case: If the ldproxy target encounters a geometry property with maximum multiplicity greater than 1, it logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
+NOTE: The ldproxy target expects all geometry properties to have a maximum 
+multiplicity of exactly 1. That is because ldproxy supports multi-geometry 
+types (e.g. MULTI_POINT and GEOMETRY_COLLECTION), which are typically used 
+in implementations that rely upon the 
+https://www.ogc.org/publications/standard/sfa/[Simple Feature Access standard] 
+(such as spatial databases which typically implement the 
+https://www.ogc.org/publications/standard/sfs/[Simple Feature Access - Part 2: SQL Option]), 
+but does not define a transformation of a geometry property with max 
+multiplicity greater than 1 to such a multi-geometry type. An according 
+model transformation could be defined and implemented in ShapeChange as 
+a future enhancement. In any case: If the ldproxy target encounters a 
+geometry property with maximum multiplicity greater than 1, it logs an 
+error and continues processing, assuming a maximum multiplicity of exactly 1.
 
 
 
 [[ldproxy2_schemaconversionrules_types_primarytemporalproperties]]
 ===== Primary Temporal Properties
 
-If a type with identity has multiple temporal properties, i.e. properties whose type is mapped to DATE or DATETIME, then the ldproxy target looks for tagged values _defaultInstant_, _defaultIntervalStart_, and _defaultIntervalEnd_ with value `true` on these properties, in order to determine whether one of them defines the temporal extent of the type.
+If a type with identity has one or more temporal properties, i.e. properties 
+whose type is mapped to DATE or DATETIME, then the ldproxy target looks for 
+tagged values _defaultInstant_, _defaultIntervalStart_, and 
+_defaultIntervalEnd_ with value `true` on these properties, in order to 
+determine whether one of them defines the temporal extent of the type.
 
-* Use of _defaultInstant_ and _defaultIntervalStart_ / _defaultIntervalEnd_ are mutually exclusive. If _defaultInstant_ is `true` on one of these properties, then the other tags must not be `true`, and vice-versa. An error will be logged if that is not the case.
-* If _defaultInstant_ is `true` on one property, then the according property will be encoded with `role: PRIMARY_INSTANT`. If more than one such property was found, an error will be logged.
-* If _defaultIntervalStart_ is `true` on one property, then the according property will be encoded with `role: PRIMARY_INTERVAL_START`. If more than one such property was found, an error will be logged.
-* If _defaultIntervalEnd_ is `true` on one property, then the according property will be encoded with `role: PRIMARY_INTERVAL_END`. If more than one such property was found, an error will be logged.
+* Use of _defaultInstant_ and _defaultIntervalStart_ / _defaultIntervalEnd_ 
+are mutually exclusive. If _defaultInstant_ is `true` on one of these properties, 
+then the other tags must not be `true`, and vice-versa. An error will be 
+logged if that is not the case.
+* If _defaultInstant_ is `true` on one property, then the according property 
+will be encoded with `role: PRIMARY_INSTANT`. If more than one such property was 
+found, an error will be logged.
+* If _defaultIntervalStart_ is `true` on one property, then the according 
+property will be encoded with `role: PRIMARY_INTERVAL_START`. If more than one 
+such property was found, an error will be logged.
+* If _defaultIntervalEnd_ is `true` on one property, then the according property 
+will be encoded with `role: PRIMARY_INTERVAL_END`. If more than one such property 
+was found, an error will be logged.
 
-WARNING: If none of the temporal properties of the type with identity is marked as PRIMARY_INSTANT, PRIMARY_INTERVAL_START, or PRIMARY_INTERVAL_END, then the first temporal property (following the order in which the properties are encoded in the provider type definition) will automatically be marked as PRIMARY_INSTANT. This reflects the behavior of ldproxy. If this is not desirable for a given type, then define which of the temporal properties should be used as primary instant or interval start / end.
+WARNING: If none of the temporal properties of the type with identity is 
+marked as PRIMARY_INSTANT, PRIMARY_INTERVAL_START, or PRIMARY_INTERVAL_END, 
+then ldproxy will automatically choose the first temporal property 
+(following the order in which the properties are encoded in the feature provider 
+type definition) as PRIMARY_INSTANT. If this is not desirable for a given type, 
+then define which of the temporal properties should be used as primary 
+instant or interval start / end.
 
-NOTE: The search for temporal properties that define primary instant / interval is performed on top-level properties only. I.e., properties of inlined (data) types are not considered by this search.
+NOTE: The search for temporal properties that define primary instant / interval 
+is performed on top-level properties only. I.e., properties of inlined (data) 
+types are not considered by this search.
 
-NOTE: The ldproxy target expects all default temporal properties to have a maximum multiplicity of exactly 1. If a default temporal property with maximum multiplicity greater than 1 is encountered, the target logs an error and continues processing, assuming a maximum multiplicity of exactly 1.
+NOTE: The ldproxy target expects all default temporal properties to have a 
+maximum multiplicity of exactly 1. If a default temporal property with 
+maximum multiplicity greater than 1 is encountered, the target logs an 
+error and continues processing, assuming a maximum multiplicity of exactly 1.
 
-NOTE: A property with value type TM_Period cannot directly be used for the definition of the temporal extent of a feature, at least not with this ShapeChange target, since ldproxy expects the information of a temporal interval to be given via two separate time instants (the interval start and end). In the future, a ShapeChange transformation could be added, to convert a property with value type TM_Period (and some indicator that the property defines the temporal extent of a type with identity) to two properties, with value type TM_Instant, and with the tags _defaultIntervalStart_ / _defaultIntervalEnd_.
+NOTE: A property with value type TM_Period cannot directly be used for the 
+definition of the temporal extent of a feature, at least not with this 
+ShapeChange target, since ldproxy expects the information of a temporal 
+interval to be given via two separate time instants (the interval start and end). 
+In the future, a ShapeChange transformation could be added, to convert a 
+property with value type TM_Period (and some indicator that the property 
+defines the temporal extent of a type with identity) to two properties, 
+with value type TM_Instant, and with the tags _defaultIntervalStart_ / _defaultIntervalEnd_.
 
 NOTE: Additional temporal properties are encoded like all other UML properties.
 
@@ -1906,6 +2023,39 @@ Encoding of metadata types (from ISO 19115) is restricted to relevant components
 Currently, only a subset of LI_Lineage is supported by the conversion.
 Support for additional metadata model elements can be added in future
 versions of ShapeChange.
+
+
+[[ldproxy2_schemaconversionrules_specificrules_storedqueries]]
+==== Stored Queries
+
+(since v4.1.0)
+
+Stored query files are created, if according `LdproxyStoredQuery` elements are
+placed within the `advancedProcessConfigurations` element of the ldproxy target configuration.
+
+NOTE: This feature is intended to generate rudimentary stored query files, which may
+very likely need to be updated manually. However, tedious repetitive work to create
+the base query structures for relevant collections of the API is meant to be automated
+with this stored query generation feature.
+
+The structure of the `LdproxyStoredQuery` element is defined in the 
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange Configuration XML Schema]. It has the following child elements:
+
+* id (cardinality: 1, type: string): identifier of the stored query, also the name for the resulting file
+* title (cardinality: 0..1, type: string, default: _none_): title of the stored query
+* description (cardinality: 0..1, type: string, default: _none_): description of the stored query 
+* limit (cardinality: 0..1, type: positive integer, default: _none_): maximum number of hits to return
+* crs (cardinality: 0..1, type: string): CRS to use when executing the stored query
+* queryDefinition (cardinality: 1): Defines the kind of query to be created.
+** PropertyEqualTo: The stored query shall retrieve objects based upon an equality check 
+of a parameter against a particular feature property.
+*** property (cardinality: 1, type: string): The name of the feature property. 
+If collection specific properties must be used, manually edit the property 
+name after generation, as necessary. 
+*** parameter (cardinality: 1, type: string): The name of the stored query parameter. 
+An according string-typed parameter will be added to the resulting stored query.
+
+NOTE: A `profiles` section needs to be copied manually to the resulting stored query file(s).
 
 
 [[ldproxy2_encodingrules]]

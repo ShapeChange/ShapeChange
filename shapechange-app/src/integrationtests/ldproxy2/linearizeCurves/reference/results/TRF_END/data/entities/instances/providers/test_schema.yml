@@ -34,7 +34,6 @@ types:
       att2:
         sourcePath: att2
         type: GEOMETRY
-        role: PRIMARY_GEOMETRY
         geometryType: POINT
         constraints:
           required: true

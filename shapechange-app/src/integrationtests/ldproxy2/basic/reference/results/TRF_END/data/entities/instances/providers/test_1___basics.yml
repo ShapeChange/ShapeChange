@@ -608,7 +608,6 @@ types:
       attNonPrimaryDate:
         sourcePath: attnonprimarydate
         type: DATE
-        role: PRIMARY_INSTANT
         constraints:
           required: true
       attOtherNonPrimaryDate:

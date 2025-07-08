@@ -56,13 +56,6 @@ import de.ii.xtraplatform.features.domain.SchemaBase.Scope;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.geometries.domain.SimpleFeatureGeometry;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
-import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
@@ -70,6 +63,13 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -753,6 +753,24 @@ public class LdpPropertyEncoder {
 	}
 
 	return propertyDefs;
+    }
+
+    public boolean isTypeWithGeometricProperty(ClassInfo ci) {
+
+	for (PropertyInfo pi : ci.propertiesAll()) {
+
+	    if (!LdpInfo.isEncoded(pi) || target.isIgnored(pi)) {
+		continue;
+	    }
+
+	    Type ldpType = target.ldproxyType(pi);
+
+	    if (ldpType == Type.GEOMETRY && geometryType(pi).isPresent()) {
+		return true;
+	    }
+	}
+
+	return false;
     }
 
     private void handleEmbedding(PropertyInfo pi, Builder propMemberDefBuilder) {

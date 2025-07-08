@@ -155,6 +155,16 @@ public class Ldproxy2Constants {
      */
 //    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
     
+    // PARAMETERS TO GENERATE A TILE PROVIDER CONFIGURATION
+    public static final String PARAM_ENABLE_TILES = "enableTiles";
+    public static final String PARAM_TILESET_DEFAULT_SPARSE = "tilesetDefaultSparse";
+    public static final String PARAM_TILESET_DEFAULT_CENTER_LON = "tilesetDefaultCenterLon";
+    public static final String PARAM_TILESET_DEFAULT_CENTER_LAT = "tilesetDefaultCenterLat";
+    public static final String PARAM_TILESET_DEFAULT_MIN_LEVEL_WMQ = "tilesetDefaultMinLevelWebMercatorQuad";
+    public static final String PARAM_TILESET_DEFAULT_MAX_LEVEL_WMQ = "tilesetDefaultMaxLevelWebMercatorQuad";
+    public static final String PARAM_TILESET_DEFAULT_DEFAULT_LEVEL_WMQ = "tilesetDefaultDefaultLevelWebMercatorQuad";
+    public static final String PARAM_DYNAMIC_TILES_CACHE_SEEDED_MAX_LEVEL_WMQ = "dynamicTilesCacheSeededMaxLevelWebMercatorQuad";
+    
     public static final String PARAM_CORETABLE_SOURCE_COLUMN = "coretableSourceColumn";
     public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
     public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";

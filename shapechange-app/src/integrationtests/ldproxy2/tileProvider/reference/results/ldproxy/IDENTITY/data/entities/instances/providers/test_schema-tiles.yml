@@ -1,0 +1,41 @@
+---
+id: test_schema-tiles
+enabled: true
+providerType: TILE
+providerSubType: FEATURES
+tilesetDefaults:
+  center:
+    lon: 1.1
+    lat: 2.2
+  sparse: true
+  levels:
+    WebMercatorQuad:
+      min: 8
+      max: 18
+      default: 12
+tilesets:
+  FT1:
+    id: FT1
+  FT2:
+    id: FT2
+  FT2Sub1Sub1:
+    id: FT2Sub1Sub1
+  __all__:
+    id: __all__
+    combine:
+    - '*'
+caches:
+- type: DYNAMIC
+  storage: PER_JOB
+  seeded: true
+  levels:
+    WebMercatorQuad:
+      min: 8
+      max: 16
+- type: DYNAMIC
+  storage: PER_JOB
+  seeded: false
+  levels:
+    WebMercatorQuad:
+      min: 17
+      max: 18

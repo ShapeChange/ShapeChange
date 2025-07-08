@@ -29,7 +29,6 @@ types:
       attDate:
         sourcePath: attdate
         type: DATE
-        role: PRIMARY_INSTANT
         constraints:
           required: true
       attInt:
@@ -45,7 +44,6 @@ types:
       attPoint:
         sourcePath: attpoint
         type: GEOMETRY
-        role: PRIMARY_GEOMETRY
         geometryType: POINT
         constraints:
           required: true

@@ -32,8 +32,10 @@
 package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -61,6 +63,7 @@ import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.ogcapi.projections.app.ImmutableProjectionsConfiguration;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.ii.ogcapi.sorting.domain.ImmutableSortingConfiguration;
+import de.ii.ogcapi.tiles.domain.ImmutableTilesConfiguration;
 import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs;
@@ -74,6 +77,16 @@ import de.ii.xtraplatform.features.sql.domain.ImmutableConnectionInfoSql;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
 import de.ii.xtraplatform.features.sql.domain.ImmutableQueryGeneratorSettings;
 import de.ii.xtraplatform.features.sql.domain.ImmutableSqlPathDefaults;
+import de.ii.xtraplatform.tiles.domain.Cache;
+import de.ii.xtraplatform.tiles.domain.Cache.Storage;
+import de.ii.xtraplatform.tiles.domain.ImmutableCache;
+import de.ii.xtraplatform.tiles.domain.ImmutableLonLat;
+import de.ii.xtraplatform.tiles.domain.ImmutableMinMax;
+import de.ii.xtraplatform.tiles.domain.ImmutableTileProviderFeaturesData;
+import de.ii.xtraplatform.tiles.domain.ImmutableTilesetFeatures;
+import de.ii.xtraplatform.tiles.domain.ImmutableTilesetFeaturesDefaults;
+import de.ii.xtraplatform.tiles.domain.MinMax;
+import de.ii.xtraplatform.tiles.domain.TilesetFeatures;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
@@ -100,7 +113,8 @@ public class LdpConfigBuilder {
 
     protected LdproxyCfgWriter cfg;
     protected ImmutableOgcApiDataV2 serviceConfig = null;
-    protected ImmutableFeatureProviderSqlData providerConfig = null;
+    protected ImmutableFeatureProviderSqlData featureProviderConfig = null;
+    protected ImmutableTileProviderFeaturesData tileProviderConfig = null;
     protected SortedMap<String, ImmutableCodelist> codelistById = new TreeMap<>();
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
@@ -159,7 +173,7 @@ public class LdpConfigBuilder {
 	    createCodelist(ci);
 	}
 
-	SortedMap<String, FeatureSchema> providerFragmentDefinitions = new TreeMap<>();
+	SortedMap<String, FeatureSchema> featureProviderFragmentDefinitions = new TreeMap<>();
 
 	if (Ldproxy2Target.enableFragments) {
 
@@ -235,7 +249,7 @@ public class LdpConfigBuilder {
 		    fragmentBuilder.merge(partialObjectSchemas);
 		}
 
-		providerFragmentDefinitions.put(fragmentName, fragmentBuilder.build());
+		featureProviderFragmentDefinitions.put(fragmentName, fragmentBuilder.build());
 
 		if (bbFeaturesGmlBuilder != null) {
 		    // note: we also track namespaces for mixins
@@ -247,7 +261,7 @@ public class LdpConfigBuilder {
 	     * In special cases, additional fragment definitions need to be created.
 	     */
 	    for (Entry<String, ImmutableFeatureSchema> e : this.additionalFragments.entrySet()) {
-		providerFragmentDefinitions.put(e.getKey(), e.getValue());
+		featureProviderFragmentDefinitions.put(e.getKey(), e.getValue());
 	    }
 	}
 
@@ -497,6 +511,12 @@ public class LdpConfigBuilder {
 	    }
 	}
 
+	ImmutableTilesConfiguration.Builder tilesBuilder = null;
+	if (Ldproxy2Target.enableTiles) {
+	    tilesBuilder = cfg.builder().ogcApiExtension().tiles();
+	    tilesBuilder.enabled(true);
+	}
+
 	/*
 	 * ================================
 	 * 
@@ -539,6 +559,9 @@ public class LdpConfigBuilder {
 	if (sortingBuilder != null) {
 	    generalExtensionConfigurations.add(sortingBuilder.build());
 	}
+	if (tilesBuilder != null) {
+	    generalExtensionConfigurations.add(tilesBuilder.build());
+	}
 
 	serviceConfig = cfg.builder().entity().api().id(Ldproxy2Target.mainId).entityStorageVersion(2)
 		.label(Ldproxy2Target.serviceLabel).description(Ldproxy2Target.serviceDescription)
@@ -548,7 +571,7 @@ public class LdpConfigBuilder {
 	/*
 	 * =================================
 	 * 
-	 * BUILD THE PROVIDER CONFIGURATION
+	 * BUILD THE FEATURE PROVIDER CONFIGURATION
 	 * 
 	 * =================================
 	 */
@@ -573,24 +596,104 @@ public class LdpConfigBuilder {
 	    nativeCrsOpt = Optional.empty();
 	}
 
-	ImmutableFeatureProviderSqlData.Builder providerConfigBuilder = cfg.builder().entity().provider()
+	ImmutableFeatureProviderSqlData.Builder featureProviderConfigBuilder = cfg.builder().entity().provider()
 		.id(Ldproxy2Target.mainId).connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
 		.queryGeneration(queryGeneration).nativeCrs(nativeCrsOpt).types(providerTypeDefinitions)
-		.fragments(providerFragmentDefinitions);
+		.fragments(featureProviderFragmentDefinitions);
 
 	if (Ldproxy2Target.nativeTimeZone != null) {
-	    providerConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
+	    featureProviderConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
 	}
 
 	if (StringUtils.isNotBlank(Ldproxy2Target.providerConfigLabelTemplate)) {
-	    providerConfigBuilder.labelTemplate(Ldproxy2Target.providerConfigLabelTemplate);
+	    featureProviderConfigBuilder.labelTemplate(Ldproxy2Target.providerConfigLabelTemplate);
 	}
 
-	providerConfig = providerConfigBuilder.build();
+	featureProviderConfig = featureProviderConfigBuilder.build();
+
+	/*
+	 * =================================
+	 * 
+	 * BUILD THE TILE PROVIDER CONFIGURATION
+	 * 
+	 * =================================
+	 */
+
+	if (Ldproxy2Target.enableTiles) {
+
+	    // tilesetDefaults
+	    ImmutableLonLat center = new ImmutableLonLat.Builder().lon(Ldproxy2Target.tilesetDefaultCenterLon)
+		    .lat(Ldproxy2Target.tilesetDefaultCenterLat).build();
+	    Map<String, MinMax> defaultLevels = new HashMap<>();
+	    ImmutableMinMax mm = new ImmutableMinMax.Builder().min(Ldproxy2Target.tilesetDefaultMinLevelWebMercatorQuad)
+		    .max(Ldproxy2Target.tilesetDefaultMaxLevelWebMercatorQuad)
+		    .getDefault(Ldproxy2Target.tilesetDefaultDefaultLevelWebMercatorQuad).build();
+	    defaultLevels.put("WebMercatorQuad", mm);
+	    ImmutableTilesetFeaturesDefaults tsfd = new ImmutableTilesetFeaturesDefaults.Builder().center(center)
+		    .sparse(Ldproxy2Target.tilesetDefaultSparse).levels(defaultLevels).build();
+
+	    /*
+	     * tilesets (only for collections with primary geometry (i.e., a single default
+	     * geometry))
+	     */
+	    Map<String, TilesetFeatures> tilesets = new TreeMap<>();
+	    for (ClassInfo ci : objectFeatureMixinAndDataTypes) {
+
+		if (ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE
+			|| ci.category() == Options.UNION || ci.isAbstract()) {
+		    continue;
+		}
+
+		if (this.propertyEncoder.isTypeWithGeometricProperty(ci)) {
+		    String typeDefName = LdpInfo.configIdentifierName(ci);
+
+		    ImmutableTilesetFeatures tilesetFeatures = new ImmutableTilesetFeatures.Builder().id(typeDefName)
+			    .build();
+
+		    tilesets.put(typeDefName, tilesetFeatures);
+		}
+	    }
+
+	    // add "all" tileset
+	    String ALL_ID = "__all__";
+	    ImmutableTilesetFeatures allTilesetFeatures = new ImmutableTilesetFeatures.Builder().id(ALL_ID)
+		    .combine(List.of("*")).build();
+	    tilesets.put(ALL_ID, allTilesetFeatures);
+
+	    // dynamic caches - seeded and unseeded
+	    Map<String, MinMax> levelsSeededCache = new HashMap<>();
+	    ImmutableMinMax mmSeededCache = new ImmutableMinMax.Builder()
+		    .min(Ldproxy2Target.tilesetDefaultMinLevelWebMercatorQuad)
+		    .max(Ldproxy2Target.dynamicTilesCacheSeededMaxLevelWebMercatorQuad).build();
+	    levelsSeededCache.put("WebMercatorQuad", mmSeededCache);
+	    ImmutableCache seededDynamicCache = new ImmutableCache.Builder().type(Cache.Type.DYNAMIC).seeded(true)
+		    .storage(Storage.PER_JOB).levels(levelsSeededCache).build();
+
+	    Map<String, MinMax> levelsUnseededCache = new HashMap<>();
+	    ImmutableMinMax mmUnseededCache = new ImmutableMinMax.Builder()
+		    .min(Ldproxy2Target.dynamicTilesCacheSeededMaxLevelWebMercatorQuad + 1)
+		    .max(Ldproxy2Target.tilesetDefaultMaxLevelWebMercatorQuad).build();
+	    levelsUnseededCache.put("WebMercatorQuad", mmUnseededCache);
+	    ImmutableCache unseededDynamicCache = new ImmutableCache.Builder().type(Cache.Type.DYNAMIC).seeded(false)
+		    .storage(Storage.PER_JOB).levels(levelsUnseededCache).build();
+
+	    ImmutableTileProviderFeaturesData.Builder tileProviderConfigBuilder = new ImmutableTileProviderFeaturesData.Builder()
+		    .id(Ldproxy2Target.mainId + "-tiles").providerType("TILE").providerSubType("FEATURES")
+		    .tilesetDefaults(tsfd).tilesets(tilesets).caches(List.of(seededDynamicCache, unseededDynamicCache));
+
+	    tileProviderConfig = tileProviderConfigBuilder.build();
+	}
+
+//	ImmutableQueryExpression.Builder iqeb = cfg.builder().value().query();
+//	iqeb.
     }
 
-    public ImmutableFeatureProviderSqlData getProviderConfig() {
-	return this.providerConfig;
+    public ImmutableFeatureProviderSqlData getFeatureProviderConfig() {
+	return this.featureProviderConfig;
+    }
+
+    public ImmutableTileProviderFeaturesData getTileProviderConfig() {
+	return this.tileProviderConfig;
     }
 
     public ImmutableOgcApiDataV2 getServiceConfig() {

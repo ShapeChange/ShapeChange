@@ -60,19 +60,7 @@ import de.ii.xtraplatform.crs.domain.EpsgCrs;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
-import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
-import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
-import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
-import de.interactive_instruments.shapechange.core.util.XMLUtil;
+import de.ii.xtraplatform.tiles.domain.ImmutableTileProviderFeaturesData;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
@@ -87,6 +75,19 @@ import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.SingleTarget;
 import de.interactive_instruments.shapechange.core.target.TargetUtil;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlSourcePathProvider;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
+import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
+import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
+import de.interactive_instruments.shapechange.core.util.XMLUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -181,6 +182,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
      */
 //    public static boolean coretableJsonFeatureRefWithAnyCollectionId = false;
 
+    public static boolean enableTiles = false;
+    public static boolean tilesetDefaultSparse = false;
+    public static double tilesetDefaultCenterLon = 0.0;
+    public static double tilesetDefaultCenterLat = 0.0;
+    public static int tilesetDefaultMinLevelWebMercatorQuad = 0;
+    public static int tilesetDefaultMaxLevelWebMercatorQuad = 24;
+    public static int tilesetDefaultDefaultLevelWebMercatorQuad = 0;
+    public static int dynamicTilesCacheSeededMaxLevelWebMercatorQuad = 10;
+
     public static String coretableRelationsTable = "references";
     public static String coretableSourceColumn = null;
     public static String coretableRefColumn = "ref";
@@ -222,7 +232,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private boolean schemaNotEncoded = false;
 
     private Map<ClassInfo, LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
-
+    
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -609,6 +619,32 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, "version", false, true);
 	    }
 
+	    enableTiles = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_ENABLE_TILES, false);
+
+	    tilesetDefaultSparse = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_SPARSE, false);
+
+	    tilesetDefaultCenterLon = options.parameterAsDouble(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_CENTER_LON, 0.0);
+
+	    tilesetDefaultCenterLat = options.parameterAsDouble(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_CENTER_LAT, 0.0);
+
+	    tilesetDefaultMinLevelWebMercatorQuad = options.parameterAsInteger(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MIN_LEVEL_WMQ, 0);
+
+	    tilesetDefaultMaxLevelWebMercatorQuad = options.parameterAsInteger(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MAX_LEVEL_WMQ, 24);
+
+	    // IMPORTANT: must be parsed after tilesetDefaultMinLevelWebMercatorQuad
+	    tilesetDefaultDefaultLevelWebMercatorQuad = options.parameterAsInteger(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_DEFAULT_LEVEL_WMQ, tilesetDefaultMinLevelWebMercatorQuad);
+
+	    dynamicTilesCacheSeededMaxLevelWebMercatorQuad = options.parameterAsInteger(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_DYNAMIC_TILES_CACHE_SEEDED_MAX_LEVEL_WMQ,
+		    Math.max(10, tilesetDefaultMinLevelWebMercatorQuad));
+
 	    // identify map entries defined in the target configuration
 	    List<ProcessMapEntry> mapEntries = options.getCurrentProcessConfig().getMapEntries();
 
@@ -852,7 +888,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	return false;
     }
-
+    
     @Override
     public void write() {
 
@@ -918,10 +954,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    sourcePathProvider);
 
 	    configBuilder.process();
-
-	    ImmutableFeatureProviderSqlData providerConfig = configBuilder.getProviderConfig();
+	    
+	    ImmutableFeatureProviderSqlData featureProviderConfig = configBuilder.getFeatureProviderConfig();
 	    ImmutableOgcApiDataV2 serviceConfig = configBuilder.getServiceConfig();
-
+	    ImmutableTileProviderFeaturesData tileProviderConfig = configBuilder.getTileProviderConfig();
+	    
 	    // write api
 	    try {
 		if (serviceConfigTemplateFile.exists()) {
@@ -929,13 +966,18 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		} else {
 		    cfg.writeEntity(serviceConfig);
 		}
-		cfg.writeEntity(providerConfig);
+		cfg.writeEntity(featureProviderConfig);
 
 		SortedMap<String, ImmutableCodelist> codelistById = configBuilder.getCodeListMap();
 		for (String codelistId : codelistById.keySet()) {
 		    ImmutableCodelist ic = codelistById.get(codelistId);
 		    cfg.writeValue(ic, codelistId);
 		}
+		
+		if(tileProviderConfig != null) {
+		    cfg.writeEntity(tileProviderConfig);
+		}
+		
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    } finally {
@@ -1173,6 +1215,15 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	coretableInverseRelationNameColumn = "rel_inv";
 	coretableVersion = null;
 	coretableVersionColumn = "version";
+
+	enableTiles = false;
+	tilesetDefaultSparse = false;
+	tilesetDefaultCenterLon = 0.0;
+	tilesetDefaultCenterLat = 0.0;
+	tilesetDefaultMinLevelWebMercatorQuad = 0;
+	tilesetDefaultMaxLevelWebMercatorQuad = 24;
+	tilesetDefaultDefaultLevelWebMercatorQuad = 0;
+	dynamicTilesCacheSeededMaxLevelWebMercatorQuad = 10;
     }
 
     @Override

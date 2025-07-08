@@ -169,7 +169,6 @@ types:
       pZ:
         sourcePath: pz
         type: GEOMETRY
-        role: PRIMARY_GEOMETRY
         geometryType: POINT
         label: pZ
         constraints:

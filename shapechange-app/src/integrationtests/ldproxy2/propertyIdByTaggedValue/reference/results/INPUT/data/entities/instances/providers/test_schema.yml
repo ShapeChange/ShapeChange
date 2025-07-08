@@ -36,7 +36,6 @@ types:
       b:
         sourcePath: att2
         type: DATETIME
-        role: PRIMARY_INSTANT
         label: att2
         constraints:
           required: true

@@ -1,0 +1,362 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 31467
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: pk
+  sortKey: pk
+types:
+  FT1:
+    sourcePath: "/features{filter=featuretype='FT1'}"
+    type: OBJECT
+    label: FT1
+    schema: "#/fragments/FT1"
+  FT2:
+    sourcePath: "/features{filter=featuretype='FT2'}"
+    type: OBJECT
+    label: FT2
+    schema: "#/fragments/FT2"
+  FT2Sub1Sub1:
+    sourcePath: "/features{filter=featuretype='FT2Sub1Sub1'}"
+    type: OBJECT
+    label: FT2Sub1Sub1
+    schema: "#/fragments/FT2Sub1Sub1"
+  FT3:
+    sourcePath: "/features{filter=featuretype='FT3'}"
+    type: OBJECT
+    label: FT3
+    schema: "#/fragments/FT3"
+  FT5:
+    sourcePath: "/features{filter=featuretype='FT5'}"
+    type: OBJECT
+    label: FT5
+    schema: "#/fragments/FT5"
+  FT5Sub1:
+    sourcePath: "/features{filter=featuretype='FT5Sub1'}"
+    type: OBJECT
+    label: FT5Sub1
+    schema: "#/fragments/FT5Sub1"
+  T:
+    sourcePath: "/features{filter=featuretype='T'}"
+    type: OBJECT
+    label: T
+    schema: "#/fragments/T"
+fragments:
+  DT:
+    type: OBJECT
+    objectType: DT
+    properties:
+      attDt1A:
+        sourcePath: attDt1A
+        type: GEOMETRY
+        geometryType: POINT
+        label: attDt1A
+        constraints:
+          required: true
+      attDt1B:
+        sourcePath: attDt1B
+        type: OBJECT_ARRAY
+        objectType: DT2
+        label: attDt1B
+        constraints:
+          required: true
+          minOccurrence: 1
+        schema: "#/fragments/DT2"
+  DT2:
+    type: OBJECT
+    objectType: DT2
+    properties:
+      attDt2A:
+        sourcePath: attDt2A
+        type: FLOAT
+        label: attDt2A
+        constraints:
+          required: true
+      roleFT3:
+        sourcePath: roleFT3
+        type: FEATURE_REF
+        valueType: STRING
+        label: roleFT3
+        constraints:
+          required: true
+        refType: FT3
+      roleFT2:
+        sourcePath: "[roleFT2=id]features"
+        type: FEATURE_REF
+        label: roleFT2
+        constraints:
+          required: true
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+            constraints:
+              required: true
+          title:
+            sourcePath: "[JSON]properties/attFt2Title"
+            type: STRING
+            label: FT2-title
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT2
+              - FT2Sub1Sub1
+              required: true
+  FT1:
+    type: OBJECT
+    objectType: FT1
+    label: FT1
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      att1:
+        sourcePath: "[JSON]properties/att1"
+        type: FLOAT
+        label: att1
+      att2:
+        sourcePath: geometry
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: POINT
+        label: att2
+        constraints:
+          required: true
+      att3:
+        sourcePath: "[JSON]properties/att3"
+        type: VALUE_ARRAY
+        valueType: STRING
+        label: att3
+        constraints:
+          required: true
+          minOccurrence: 1
+      attDt:
+        sourcePath: "[JSON]properties/attDt"
+        type: OBJECT
+        objectType: DT
+        label: attDt
+        constraints:
+          required: true
+        schema: "#/fragments/DT"
+      roleT:
+        sourcePath: "[id=base_id]references{filter=rel='roleT'}/[related_id=id]features"
+        type: FEATURE_REF
+        label: roleT
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+            constraints:
+              required: true
+          title:
+            sourcePath: "[JSON]properties/attTTitle"
+            type: STRING
+            label: T-title
+        refType: T
+      roleFT2:
+        sourcePath: "[id=base_id]references{filter=rel='roleFT2'}/[related_id=id]features"
+        type: FEATURE_REF_ARRAY
+        label: roleFT2
+        constraints:
+          minOccurrence: 0
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+            constraints:
+              required: true
+          title:
+            sourcePath: "[JSON]properties/attFt2Title"
+            type: STRING
+            label: FT2-title
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT2
+              - FT2Sub1Sub1
+              required: true
+      roleFT3:
+        sourcePath: "[id=base_id]references{filter=rel='roleFT3'}/related_id"
+        type: FEATURE_REF
+        valueType: STRING
+        label: roleFT3
+        constraints:
+          required: true
+        refType: FT3
+      roleFT5:
+        sourcePath: "[id=base_id]references{filter=rel='roleFT5'}/[related_id=id]features"
+        type: FEATURE_REF
+        label: roleFT5
+        constraints:
+          required: true
+        properties:
+          id:
+            sourcePath: id
+            type: STRING
+            constraints:
+              required: true
+          type:
+            sourcePath: featuretype
+            type: STRING
+            constraints:
+              enum:
+              - FT5
+              - FT5Sub1
+              required: true
+  FT2:
+    type: OBJECT
+    objectType: FT2
+    label: FT2
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attFt2A:
+        sourcePath: geometry
+        type: GEOMETRY
+        role: PRIMARY_GEOMETRY
+        geometryType: LINE_STRING
+        label: attFt2A
+        constraints:
+          required: true
+      attFt2Title:
+        sourcePath: "[JSON]properties/attFt2Title"
+        type: STRING
+        label: attFt2Title
+      roleFT1:
+        sourcePath: "[id=related_id]references{filter=rel_inv='roleFT1'}/base_id"
+        type: FEATURE_REF
+        valueType: STRING
+        label: roleFT1
+        constraints:
+          required: true
+        refType: FT1
+  FT2Sub1:
+    type: OBJECT
+    objectType: FT2Sub1
+    label: FT2Sub1
+    schema: "#/fragments/FT2"
+  FT2Sub1Sub1:
+    type: OBJECT
+    objectType: FT2Sub1Sub1
+    label: FT2Sub1Sub1
+    merge:
+    - schema: "#/fragments/FT2Sub1"
+    - schema: "#/fragments/Mixin"
+    - properties:
+        attFt2subsub:
+          sourcePath: "[JSON]properties/attFt2subsub"
+          type: BOOLEAN
+          label: attFt2subsub
+          constraints:
+            required: true
+  FT3:
+    type: OBJECT
+    objectType: FT3
+    label: FT3
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attFt3A:
+        sourcePath: "[JSON]properties/attFt3A"
+        type: STRING
+        label: attFt3A
+        constraints:
+          codelist: MyEnumeration
+          enum:
+          - enum1
+          - enum2
+          required: true
+      attFt3B:
+        sourcePath: "[JSON]properties/attFt3B"
+        type: STRING
+        label: attFt3B
+        constraints:
+          codelist: MyCodelist
+          required: true
+      attFt3C:
+        sourcePath: "[JSON]properties/attFt3C"
+        type: VALUE_ARRAY
+        valueType: STRING
+        label: attFt3C
+        constraints:
+          codelist: MyEnumeration
+          enum:
+          - enum1
+          - enum2
+          required: true
+          minOccurrence: 1
+      attFt3D:
+        sourcePath: "[JSON]properties/attFt3D"
+        type: VALUE_ARRAY
+        valueType: STRING
+        label: attFt3D
+        constraints:
+          codelist: MyCodelist
+          required: true
+          minOccurrence: 1
+  FT5:
+    type: OBJECT
+    objectType: FT5
+    label: FT5
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      att1:
+        sourcePath: "[JSON]properties/att1"
+        type: INTEGER
+        label: att1
+        constraints:
+          required: true
+  FT5Sub1:
+    type: OBJECT
+    objectType: FT5Sub1
+    label: FT5Sub1
+    schema: "#/fragments/FT5"
+  Mixin:
+    type: OBJECT
+    objectType: Mixin
+    label: Mixin
+    properties:
+      attMixin:
+        sourcePath: "[JSON]properties/attMixin"
+        type: FLOAT
+        label: attMixin
+        constraints:
+          required: true
+  T:
+    type: OBJECT
+    objectType: T
+    label: T
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attTTitle:
+        sourcePath: "[JSON]properties/attTTitle"
+        type: STRING
+        label: attTTitle
+        constraints:
+          required: true

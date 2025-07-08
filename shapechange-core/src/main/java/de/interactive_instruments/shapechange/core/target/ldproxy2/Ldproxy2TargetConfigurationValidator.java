@@ -79,9 +79,11 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_CORETABLE_SOURCE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_VERSION,
-	    Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, Ldproxy2Constants.PARAM_DATE_FORMAT,
-	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
-	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES,
+	    Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, Ldproxy2Constants.PARAM_ENABLE_TILES,
+	    Ldproxy2Constants.PARAM_DATE_FORMAT, Ldproxy2Constants.PARAM_DATE_TIME_FORMAT,
+	    Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE, Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE,
+	    Ldproxy2Constants.PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES,
+	    Ldproxy2Constants.PARAM_DYNAMIC_TILES_CACHE_SEEDED_MAX_LEVEL_WMQ,
 	    Ldproxy2Constants.PARAM_EMBEDDING_FOR_FEATURE_REFS, Ldproxy2Constants.PARAM_ENABLE_CODELISTS,
 	    Ldproxy2Constants.PARAM_ENABLE_CRS, Ldproxy2Constants.PARAM_ENABLE_FILTER,
 	    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, Ldproxy2Constants.PARAM_FEATURES_JSONFG,
@@ -100,6 +102,10 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH, Ldproxy2Constants.PARAM_SORTING_ENABLE,
 	    Ldproxy2Constants.PARAM_SORTING_INCLUDED, Ldproxy2Constants.PARAM_SORTING_EXCLUDED,
 	    Ldproxy2Constants.PARAM_SORTING_PATH_SEPARATOR, Ldproxy2Constants.PARAM_SRID,
+	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_CENTER_LAT, Ldproxy2Constants.PARAM_TILESET_DEFAULT_CENTER_LON,
+	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_DEFAULT_LEVEL_WMQ,
+	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MAX_LEVEL_WMQ,
+	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MIN_LEVEL_WMQ, Ldproxy2Constants.PARAM_TILESET_DEFAULT_SPARSE,
 	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES,
 	    Ldproxy2Constants.PARAM_GML_OUTPUT, Ldproxy2Constants.PARAM_GML_SF_LEVEL,
 	    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
@@ -161,7 +167,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_PK_COLUMN);
-	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE);	
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_LABEL);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH);
