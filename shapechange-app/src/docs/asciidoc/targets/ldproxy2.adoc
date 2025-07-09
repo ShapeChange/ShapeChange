@@ -2030,7 +2030,7 @@ versions of ShapeChange.
 
 (since v4.1.0)
 
-Stored query files are created, if according `LdproxyStoredQuery` elements are
+Stored query files are created, if an according `LdproxyStoredQueryDefinitions` elements is
 placed within the `advancedProcessConfigurations` element of the ldproxy target configuration.
 
 NOTE: This feature is intended to generate rudimentary stored query files, which may
@@ -2038,8 +2038,11 @@ very likely need to be updated manually. However, tedious repetitive work to cre
 the base query structures for relevant collections of the API is meant to be automated
 with this stored query generation feature.
 
-The structure of the `LdproxyStoredQuery` element is defined in the 
-https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange Configuration XML Schema]. It has the following child elements:
+The structure of the `LdproxyStoredQueryDefinitions` element is defined in the 
+https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChange Configuration XML Schema].  It has the `storedQuery` child element (cardinality 1..*), which can be used to
+define multiple `LdproxyStoredQuery` elements.
+
+The structure of the `LdproxyStoredQuery` element has the following child elements:
 
 * id (cardinality: 1, type: string): identifier of the stored query, also the name for the resulting file
 * title (cardinality: 0..1, type: string, default: _none_): title of the stored query
@@ -2047,8 +2050,8 @@ https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChang
 * limit (cardinality: 0..1, type: positive integer, default: _none_): maximum number of hits to return
 * crs (cardinality: 0..1, type: string): CRS to use when executing the stored query
 * queryDefinition (cardinality: 1): Defines the kind of query to be created.
-** PropertyEqualTo: The stored query shall retrieve objects based upon an equality check 
-of a parameter against a particular feature property.
+** PropertyEqualToCollectionQuery: The stored query shall retrieve objects based upon an 
+equality check of a parameter against a particular feature property.
 *** property (cardinality: 1, type: string): The name of the feature property. 
 If collection specific properties must be used, manually edit the property 
 name after generation, as necessary. 

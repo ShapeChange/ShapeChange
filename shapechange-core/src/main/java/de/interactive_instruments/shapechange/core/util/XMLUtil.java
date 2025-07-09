@@ -123,7 +123,7 @@ public class XMLUtil {
     }
 
     /**
-     * @param parentElement Element in which to look up the children with given name
+     * @param parentElement Element in which to look up the (direct and indirect) children with given name
      * @param elementName   name of child elements to look up
      * @return List of child elements of the given parent element that have the
      *         given element name. Can be empty but not <code>null</code>.

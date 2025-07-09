@@ -1635,4 +1635,52 @@
    </extension>
   </complexContent>
  </complexType>
+ <element name="LdproxyStoredQueryDefinitions" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:LdproxyStoredQueryDefinitionsType">
+  <unique name="uniqueStoredQueryIds">
+   <annotation>
+    <documentation>The id of LdproxyStoredQuery elements must be unique.</documentation>
+   </annotation>
+   <selector xpath="./*/sc:LdproxyStoredQuery"/>
+   <field xpath="@id"/>
+  </unique>
+ </element>
+ <complexType name="LdproxyStoredQueryDefinitionsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="unbounded" name="storedQuery">
+      <complexType>
+       <sequence>
+        <element name="LdproxyStoredQuery">
+         <complexType>
+          <sequence>
+           <element minOccurs="0" name="title" type="string"/>
+           <element minOccurs="0" name="description" type="string"/>
+           <element minOccurs="0" name="limit" type="positiveInteger"/>
+           <element minOccurs="0" name="crs" type="string"/>
+           <element maxOccurs="unbounded" name="queryDefinition">
+            <complexType>
+             <sequence>
+              <element name="PropertyEqualToCollectionQuery">
+               <complexType>
+                <sequence>
+                 <element name="property" type="string"/>
+                 <element name="parameter" type="string"/>
+                </sequence>
+               </complexType>
+              </element>
+             </sequence>
+            </complexType>
+           </element>
+          </sequence>
+          <attribute name="id" type="string" use="required"/>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
 </schema>

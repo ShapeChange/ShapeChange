@@ -169,7 +169,7 @@ public class Ldproxy2Test extends BasicTestSCXML {
 	public void test_ldproxy2_propertyIdByTaggedValue() {
 		
 		multiTest("src/integrationtests/ldproxy2/propertyIdByTaggedValue/test_ldproxy2_propertyIdByTaggedValue.xml",
-			new String[] { "yaml", "yml" }, "testResults/ldproxy2/propertyIdByTaggedValue/results",
+			new String[] { "yaml", "yml", "json" }, "testResults/ldproxy2/propertyIdByTaggedValue/results",
 			"src/integrationtests/ldproxy2/propertyIdByTaggedValue/reference/results");
 	}
 	
@@ -179,5 +179,13 @@ public class Ldproxy2Test extends BasicTestSCXML {
 		multiTest("src/integrationtests/ldproxy2/tileProvider/test_ldproxy2_tileProvider.xml",
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/tileProvider/results",
 			"src/integrationtests/ldproxy2/tileProvider/reference/results");
+	}
+	
+	@Test
+	public void test_ldproxy2_storedQueries() {
+		
+		multiTest("src/integrationtests/ldproxy2/storedQueries/test_ldproxy2_storedQueries.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/storedQueries/results",
+			"src/integrationtests/ldproxy2/storedQueries/reference/results");
 	}
 }

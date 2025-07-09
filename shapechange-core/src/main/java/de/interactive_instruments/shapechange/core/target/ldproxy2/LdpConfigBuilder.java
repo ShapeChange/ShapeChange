@@ -55,6 +55,8 @@ import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
 import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
 import de.ii.ogcapi.features.jsonfg.domain.ImmutableJsonFgConfiguration;
 import de.ii.ogcapi.features.resulttype.domain.ImmutableResultTypeConfiguration;
+import de.ii.ogcapi.features.search.domain.ImmutableSingleQueryWithParameters;
+import de.ii.ogcapi.features.search.domain.ImmutableStoredQueryExpression;
 import de.ii.ogcapi.filter.domain.ImmutableFilterConfiguration;
 import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
 import de.ii.ogcapi.foundation.domain.FeatureTypeConfigurationOgcApi;
@@ -98,6 +100,13 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBu
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.LdproxyStoredQuery;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.LdproxyStoredQueryDefinitions;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.PropertyEqualToCollectionQuery;
+import shadow.com.fasterxml.jackson.core.JsonProcessingException;
+import shadow.com.fasterxml.jackson.databind.ObjectMapper;
+import shadow.com.fasterxml.jackson.databind.node.IntNode;
+import shadow.com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -116,6 +125,7 @@ public class LdpConfigBuilder {
     protected ImmutableFeatureProviderSqlData featureProviderConfig = null;
     protected ImmutableTileProviderFeaturesData tileProviderConfig = null;
     protected SortedMap<String, ImmutableCodelist> codelistById = new TreeMap<>();
+    protected SortedMap<String, ImmutableStoredQueryExpression> storedQueriesByStoredQueryId = new TreeMap<>();
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
@@ -684,8 +694,64 @@ public class LdpConfigBuilder {
 	    tileProviderConfig = tileProviderConfigBuilder.build();
 	}
 
-//	ImmutableQueryExpression.Builder iqeb = cfg.builder().value().query();
-//	iqeb.
+	// generate stored queries
+	LdproxyStoredQueryDefinitions storedQueryDefinitions = Ldproxy2Target.storedQueryDefinitions;
+	if (!storedQueryDefinitions.isEmpty()) {
+
+	    for (LdproxyStoredQuery sqDef : storedQueryDefinitions.getStoredQueryDefinitions().values()) {
+
+		PropertyEqualToCollectionQuery petDef = sqDef.getQueryDefinitions().getFirst();
+
+		try {
+
+		    ObjectMapper mapper = new ObjectMapper();
+
+		    ImmutableStoredQueryExpression.Builder sqBuilder = new ImmutableStoredQueryExpression.Builder()
+			    .id(sqDef.getId()).title(sqDef.getTitle()).description(sqDef.getDescription());
+
+		    if (sqDef.getLimit().isPresent()) {
+			sqBuilder = sqBuilder.limit(IntNode.valueOf(sqDef.getLimit().get()));
+		    }
+		    if (sqDef.getCrs().isPresent()) {
+			sqBuilder = sqBuilder.crs(TextNode.valueOf(sqDef.getCrs().get()));
+		    }
+
+		    List<ImmutableSingleQueryWithParameters> queries = new ArrayList<>();
+
+		    List<ClassInfo> relevantClassesForStoredQueries = objectFeatureMixinAndDataTypes.stream()
+			    .filter(ci -> !(ci.category() == Options.MIXIN || ci.category() == Options.DATATYPE
+				    || ci.category() == Options.UNION || ci.isAbstract()))
+			    .sorted((o1, o2) -> o1.name().compareTo(o2.name())).toList();
+
+		    for (ClassInfo ci : relevantClassesForStoredQueries) {
+
+			String typeDefName = LdpInfo.configIdentifierName(ci);
+
+			ImmutableSingleQueryWithParameters.Builder queryBuilder = new ImmutableSingleQueryWithParameters.Builder();
+
+			queryBuilder = queryBuilder.addCollections(TextNode.valueOf(typeDefName));
+
+			String filterJson = "{\r\n" + "        \"op\": \"=\",\r\n"
+				+ "        \"args\": [ {\"property\": \"" + petDef.getProperty()
+				+ "\"}, {\"$parameter\": {\"$ref\": \"#/parameters/" + petDef.getParameter()
+				+ "\"}} ]\r\n" + "      }";
+			queryBuilder = queryBuilder.filter(mapper.readTree(filterJson));
+
+			queries.add(queryBuilder.build());
+		    }
+
+		    sqBuilder.queries(queries);
+
+		    String parameterJson = "{\r\n" + "      \"type\": \"string\"\r\n" + "    }";
+		    sqBuilder = sqBuilder.putParameters(petDef.getParameter(), mapper.readTree(parameterJson));
+
+		    storedQueriesByStoredQueryId.put(sqDef.getId(), sqBuilder.build());
+
+		} catch (JsonProcessingException e) {
+		    result.addError(target, 140, sqDef.getId(), e.getMessage());
+		}
+	    }
+	}
     }
 
     public ImmutableFeatureProviderSqlData getFeatureProviderConfig() {
@@ -702,6 +768,10 @@ public class LdpConfigBuilder {
 
     public SortedMap<String, ImmutableCodelist> getCodeListMap() {
 	return this.codelistById;
+    }
+
+    public SortedMap<String, ImmutableStoredQueryExpression> getStoredQueryMap() {
+	return this.storedQueriesByStoredQueryId;
     }
 
     private void createCodelist(ClassInfo ci) {

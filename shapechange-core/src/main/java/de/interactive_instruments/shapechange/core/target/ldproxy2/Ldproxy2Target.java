@@ -35,6 +35,7 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import org.w3c.dom.Element;
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.collections.queryables.domain.QueryablesConfiguration.PathSeparator;
 import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
+import de.ii.ogcapi.features.search.domain.ImmutableStoredQueryExpression;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs;
@@ -84,10 +86,14 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.LdproxyStoredQueryDefinitions;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
+import shadow.com.fasterxml.jackson.annotation.JsonInclude.Include;
+import shadow.com.fasterxml.jackson.databind.ObjectMapper;
+import shadow.com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -163,6 +169,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static boolean sridConfigured = false;
     public static String uomTvName = null;
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
+    public static LdproxyStoredQueryDefinitions storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
     public static String providerConfigLabelTemplate = null;
 
     public static boolean propertyIdByTaggedValue = false;
@@ -232,7 +239,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     private boolean schemaNotEncoded = false;
 
     private Map<ClassInfo, LdpSpecialPropertiesInfo> specialPropertiesInfoByCi = new HashMap<>();
-    
+
     @Override
     public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
 	    throws ShapeChangeAbortException {
@@ -507,6 +514,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			sqlEncodingInfos.dropInfosForTypes(dropSqlEncodingInfosForTypes);
 		    }
 		}
+
+		List<Element> ldpsqdElmts = XMLUtil.getChildElements(advancedProcessConfigElmt,
+			"LdproxyStoredQueryDefinitions");
+		if (ldpsqdElmts.isEmpty()) {
+		    result.addInfo(this, 139);
+		} else {
+		    for (Element ldpsqdElmt : ldpsqdElmts) {
+			storedQueryDefinitions
+				.addLdproxyStoredQueries(LdproxyStoredQueryDefinitions.fromXml(ldpsqdElmt));
+		    }
+		}
 	    }
 
 	    enableFeaturesGeoJson = options.parameterAsBoolean(this.getClass().getName(),
@@ -619,8 +637,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, "version", false, true);
 	    }
 
-	    enableTiles = options.parameterAsBoolean(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_ENABLE_TILES, false);
+	    enableTiles = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_ENABLE_TILES,
+		    false);
 
 	    tilesetDefaultSparse = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_TILESET_DEFAULT_SPARSE, false);
@@ -888,7 +906,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	return false;
     }
-    
+
     @Override
     public void write() {
 
@@ -954,11 +972,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    sourcePathProvider);
 
 	    configBuilder.process();
-	    
+
 	    ImmutableFeatureProviderSqlData featureProviderConfig = configBuilder.getFeatureProviderConfig();
 	    ImmutableOgcApiDataV2 serviceConfig = configBuilder.getServiceConfig();
 	    ImmutableTileProviderFeaturesData tileProviderConfig = configBuilder.getTileProviderConfig();
-	    
+
 	    // write api
 	    try {
 		if (serviceConfigTemplateFile.exists()) {
@@ -973,11 +991,35 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    ImmutableCodelist ic = codelistById.get(codelistId);
 		    cfg.writeValue(ic, codelistId);
 		}
-		
-		if(tileProviderConfig != null) {
+
+		SortedMap<String, ImmutableStoredQueryExpression> storedQueriesByStoredQueryId = configBuilder
+			.getStoredQueryMap();
+		for (String sqId : storedQueriesByStoredQueryId.keySet()) {
+
+		    ImmutableStoredQueryExpression sq = storedQueriesByStoredQueryId.get(sqId);
+
+		    /*
+		     * 2025-07-09: Writing the stored query via the ldproxy-cfg-lib resulted in
+		     * exceptions (NPE due to missing path, it looked like). Therefore, until that
+		     * is fixed in the lib, we write the stored query via jackson.
+		     */
+//		    cfg.writeValue(sq, sqId);
+
+		    ObjectMapper outMapper = new ObjectMapper();
+		    outMapper.registerModule(new Jdk8Module().configureReadAbsentAsNull(true));
+		    outMapper.setSerializationInclusion(Include.NON_EMPTY);
+
+		    File sqDir = new File(outputDirectory, "data/values/queries/" + Ldproxy2Target.mainId);
+		    Files.createDirectories(sqDir.toPath());
+
+		    File sqFile = new File(sqDir, sqId + ".json");
+		    outMapper.writerWithDefaultPrettyPrinter().writeValue(sqFile, sq);
+		}
+
+		if (tileProviderConfig != null) {
 		    cfg.writeEntity(tileProviderConfig);
 		}
-		
+
 	    } catch (IOException e) {
 		e.printStackTrace();
 	    } finally {
@@ -1193,6 +1235,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	bbGeoJsonBuilder = null;
 	bbJsonFgBuilder = null;
 	sqlEncodingInfos = new SqlEncodingInfos();
+	storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
 
 	mapEntryParamInfos = null;
 
@@ -1398,6 +1441,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    + "' applies to (main) application schema '$1$', but target parameter '"
 		    + Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE
 		    + "' either is not set or has no value. The conversion rule will be ignored.";
+	case 139:
+	    return "The target configuration does not contain ldproxy stored query definitions.";
+	case 140:
+	    return "Exception occurred while generating stored query with id '$1$'. Exception message is: '$2$'.";
 
 	case 10001:
 	    return "Generating ldproxy configuration items for application schema $1$.";
