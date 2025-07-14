@@ -193,4 +193,13 @@ public class FeatureCatalogueTest extends BasicTestSCXML {
 		new String[] { "html" }, "testResults/featureCatalogue/descriptors_bbr/fc/INPUT",
 		"src/integrationtests/featureCatalogue/descriptors_bbr/reference");
     }
+    
+    @Test
+    public void testMiscellaneousContentDirectory() {
+
+	multiTest("src/integrationtests/featureCatalogue/miscellaneousContentDirectory/testEA_featureCatalogue_miscContent.xml",
+		new String[] { "html","txt" }, "testResults/featureCatalogue/miscellaneousContentDirectory/results",
+		"src/integrationtests/featureCatalogue/miscellaneousContentDirectory/reference/results");
+    }
+    
 }
