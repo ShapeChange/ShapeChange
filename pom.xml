@@ -282,7 +282,7 @@
 			<dependency>
 				<groupId>org.docx4j</groupId>
 				<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-				<version>11.5.3</version>
+				<version>11.5.4</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<dependency>
