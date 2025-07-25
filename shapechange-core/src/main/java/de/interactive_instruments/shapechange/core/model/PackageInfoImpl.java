@@ -74,16 +74,16 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			s = super.encodingRule(platform);
 		} else {
 			s = taggedValue(platform + "EncodingRule");
-			if (s == null || s.isEmpty()) {
+			if (StringUtils.isBlank(s)) {
 				PackageInfo o = owner();
 				if (o != null) {
 					s = o.encodingRule(platform);
 				}
-				if (s == null)
+				if (StringUtils.isBlank(s))
 					s = super.encodingRule(platform);
 			}
 		}
-		if (s != null)
+		if (StringUtils.isNotBlank(s))
 			s = s.toLowerCase();
 		return s;
 	}
@@ -91,63 +91,63 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	@Override
 	public String targetNamespace() {
 		String s = options().nsOfPackage(name());
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 			return s;
 		}
 		s = taggedValue("targetNamespace");
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			s = taggedValue("xmlNamespace");
 		}
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			PackageInfo o = owner();
 			if (o != null) {
 				s = o.targetNamespace();
 			}
 		}
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 		}
-		return s;
+		return StringUtils.stripToNull(s);
 	}
 
 	@Override
 	public String xmlns() {
 		String s = options().nsabrOfPackage(name());
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 			return s;
 		}
 		s = taggedValue("xmlns");
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			s = taggedValue("xmlNamespaceAbbreviation");
 		}
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			PackageInfo o = owner();
 			if (o != null) {
 				s = o.xmlns();
 			}
 		}
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 			s = s.replace(":", "").replace("/", "");
 		}
 
-		return s;
+		return StringUtils.stripToNull(s);
 	}
 
 	@Override
 	public String xsdDocument() {
 		String s = options().xsdOfPackage(name());
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 			return s;
 		}
 		s = taggedValue("xsdDocument");
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			s = taggedValue("xsdName");
 		}
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 		    
 			if (isAppSchema()) {
 			    
@@ -170,11 +170,11 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 				result().addWarning(null, 101, name(), id(), s);
 			}
 		}
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 		}
 
-		return s;
+		return StringUtils.stripToNull(s);
 	}
 
 	/**
@@ -193,8 +193,8 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 			for (PackageInfo childPkg : containedPackages()) {
 
-				if ((targetNamespace() == null
-						&& childPkg.targetNamespace() == null)
+				if ((StringUtils.isBlank(targetNamespace())
+						&& StringUtils.isBlank(childPkg.targetNamespace()))
 						|| targetNamespace()
 								.equals(childPkg.targetNamespace())) {
 
@@ -225,20 +225,20 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	 */
 	public String version() {
 		String s = options().versionOfPackage(name());
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 			return s;
 		}
 		s = taggedValue("version");
 		PackageInfo o = owner();
-		if (s == null && o != null) {
+		if (StringUtils.isBlank(s) && o != null) {
 			s = o.version();
 		}
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			s = s.trim();
 		}
 
-		return s;
+		return StringUtils.stripToNull(s);
 	}
 
 	/**
@@ -263,13 +263,13 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	 */
 	public boolean isSchema() {
 		String s = taggedValue("targetNamespace");
-		if (s == null) {
+		if (StringUtils.isBlank(s)) {
 			s = taggedValue("xmlNamespace");
 		}
-		if (s != null) {
+		if (StringUtils.isNotBlank(s)) {
 			return true;
 		}
-		if (options().nsOfPackage(name()) != null) {
+		if (StringUtils.isNotBlank(options().nsOfPackage(name()))) {
 			return true;
 		}
 		return false;
@@ -304,7 +304,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 	@Override
 	public String fullNameInSchema() {
 
-		if (this.targetNamespace() == null) {
+		if (StringUtils.isBlank(this.targetNamespace())) {
 
 			return this.fullName();
 
@@ -313,7 +313,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 			String qualname = this.name();
 			PackageInfo pi = this.owner();
 
-			while (pi != null && (pi.targetNamespace() != null
+			while (pi != null && (StringUtils.isNotBlank(pi.targetNamespace())
 					&& pi.targetNamespace().equals(this.targetNamespace()))) {
 
 				qualname = pi.name() + "::" + qualname;
@@ -339,7 +339,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		String s;
 		if (matches("req-xsd-pkg-targetNamespace")) {
 			s = taggedValue("targetNamespace");
-			if (s == null || s.isEmpty()) {
+			if (StringUtils.isBlank(s)) {
 				if (isAppSchema()) {
 					MessageContext mc = result().addError(null, 146, name(),
 							"targetNamespace");
@@ -362,7 +362,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 		if (matches("req-xsd-pkg-xmlns") && this.isAppSchema()) {
 			s = taggedValue("xmlns");
-			if (s == null || s.isEmpty()) {
+			if (StringUtils.isBlank(s)) {
 				if (isAppSchema()) {
 					MessageContext mc = result().addError(null, 146, name(),
 							"xmlns");
@@ -385,7 +385,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 		if (matches("req-xsd-pkg-xsdDocument") && this.isAppSchema()) {
 			s = taggedValue("xsdDocument");
-			if (s == null || s.isEmpty()) {
+			if (StringUtils.isBlank(s)) {
 				if (isAppSchema()) {
 					MessageContext mc = result().addError(null, 146, name(),
 							"xsdDocument");
@@ -402,7 +402,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 
 		if (matches("rec-xsd-pkg-version")) {
 			s = taggedValue("version");
-			if (s == null || s.isEmpty()) {
+			if (StringUtils.isBlank(s)) {
 				if (isAppSchema()) {
 					MessageContext mc = result().addWarning(null, 146, name(),
 							"version");
@@ -460,7 +460,7 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		// NEW EDB 12/7/12: Check that the xsdDocument tag, if present, ends
 		// with .xsd. If not, create a warning.
 		s = xsdDocument();
-		if (s != null && !s.isEmpty() && !s.endsWith(".xsd")) {
+		if (StringUtils.isNotBlank(s) && !s.endsWith(".xsd")) {
 			MessageContext mc = result().addWarning(null, 167, xsdDocument());
 			if (mc != null)
 				mc.addDetail(null, 400, "Package", fullName());

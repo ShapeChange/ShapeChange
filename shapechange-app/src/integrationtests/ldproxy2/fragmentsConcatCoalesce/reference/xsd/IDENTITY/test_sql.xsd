@@ -287,7 +287,7 @@
                         type="ext:ExternalFeatureTypePropertyType">
                   <annotation>
                      <appinfo>
-                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">:extFtP1</reversePropertyName>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:extFtP1</reversePropertyName>
                      </appinfo>
                   </annotation>
                </element>
@@ -296,7 +296,7 @@
                         type="ext:ExternalFeatureTypePropertyType">
                   <annotation>
                      <appinfo>
-                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">:extFtP2</reversePropertyName>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">null:extFtP2</reversePropertyName>
                      </appinfo>
                   </annotation>
                </element>

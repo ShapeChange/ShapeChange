@@ -603,7 +603,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	jsDocsByPkg.put(pi, jsd);
 
 	for (PackageInfo pix : pi.containedPackages()) {
-	    if (!pix.isSchema()) {
+	    if (!pix.isSchema() || pi.targetNamespace().equals(pix.targetNamespace())) {
 		createJsonSchemaDocuments(pix, jsd, jsonBaseUri, jsonSubdirectory, subDirectoryFile);
 	    }
 	}
