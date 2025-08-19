@@ -21,6 +21,8 @@ api:
   additionalCrs:
   - code: 4326
     forceAxisOrder: NONE
+- buildingBlock: GEO_JSON
+  enabled: true
 collections:
   featuretype:
     id: featuretype

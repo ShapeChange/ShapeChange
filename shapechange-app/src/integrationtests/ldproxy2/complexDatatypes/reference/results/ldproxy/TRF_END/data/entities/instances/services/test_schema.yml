@@ -4,6 +4,9 @@ label: label
 description: '...'
 enabled: true
 serviceType: OGC_API
+api:
+- buildingBlock: GEO_JSON
+  enabled: true
 collections:
   featuretype:
     id: featuretype

@@ -5,6 +5,8 @@ description: '...'
 enabled: true
 serviceType: OGC_API
 api:
+- buildingBlock: GEO_JSON
+  enabled: true
 - buildingBlock: TILES
   enabled: true
 collections:

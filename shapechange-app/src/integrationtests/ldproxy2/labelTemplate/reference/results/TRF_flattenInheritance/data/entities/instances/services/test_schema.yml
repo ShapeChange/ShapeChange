@@ -4,6 +4,9 @@ label: FIXME
 description: FIXME
 enabled: true
 serviceType: OGC_API
+api:
+- buildingBlock: GEO_JSON
+  enabled: true
 collections:
   myfeaturetype:
     id: myfeaturetype

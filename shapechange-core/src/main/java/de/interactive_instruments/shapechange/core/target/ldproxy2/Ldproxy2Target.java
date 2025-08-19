@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.collections.queryables.domain.QueryablesConfiguration.PathSeparator;
-import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
+//import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.ogcapi.features.search.domain.ImmutableStoredQueryExpression;
 import de.ii.ogcapi.foundation.domain.ImmutableOgcApiDataV2;
 import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
@@ -148,9 +148,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String foreignKeyColumnSuffixDatatype = "";
     public static String foreignKeyColumnSuffixCodelist = "";
     public static SortedSet<String> genericValueTypes = null;
-    public static Boolean jsonFgCoordRefSys = null;
-    public static List<String> jsonFgFeatureType = new ArrayList<>();
-    public static List<OPTION> jsonFgIncludeInGeoJson = new ArrayList<>();
+//    public static Boolean jsonFgCoordRefSys = null;
+    public static String jsonFgFeatureType = null;
+//    public static List<OPTION> jsonFgIncludeInGeoJson = new ArrayList<>();
 
     public static String collectionIdFormat = "lowerCase";
 
@@ -540,22 +540,22 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    if (enableFeaturesJsonFg) {
 		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder();
 
-		if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS)) {
-		    jsonFgCoordRefSys = options.parameterAsBoolean(this.getClass().getName(),
-			    Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, true);
-		}
-		jsonFgFeatureType = options.parameterAsStringList(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE, null, true, true);
-		List<String> jsonFgIncludeInGeoJsonIn = options.parameterAsStringList(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, null, true, true);
-		for (String s : jsonFgIncludeInGeoJsonIn) {
-		    try {
-			OPTION jsonFgOption = OPTION.valueOf(s);
-			jsonFgIncludeInGeoJson.add(jsonFgOption);
-		    } catch (IllegalArgumentException e) {
-			// ignore - should be reported by configuration validator
-		    }
-		}
+//		if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS)) {
+//		    jsonFgCoordRefSys = options.parameterAsBoolean(this.getClass().getName(),
+//			    Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, true);
+//		}
+		jsonFgFeatureType = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE, null, false, true);
+//		List<String> jsonFgIncludeInGeoJsonIn = options.parameterAsStringList(this.getClass().getName(),
+//			Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, null, true, true);
+//		for (String s : jsonFgIncludeInGeoJsonIn) {
+//		    try {
+//			OPTION jsonFgOption = OPTION.valueOf(s);
+//			jsonFgIncludeInGeoJson.add(jsonFgOption);
+//		    } catch (IllegalArgumentException e) {
+//			// ignore - should be reported by configuration validator
+//		    }
+//		}
 	    }
 
 	    enableFeaturesResultType = options.parameterAsBoolean(this.getClass().getName(),
@@ -1191,9 +1191,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	foreignKeyColumnSuffixDatatype = "";
 	foreignKeyColumnSuffixCodelist = "";
 	genericValueTypes = null;
-	jsonFgCoordRefSys = null;
-	jsonFgFeatureType = new ArrayList<>();
-	jsonFgIncludeInGeoJson = new ArrayList<>();
+//	jsonFgCoordRefSys = null;
+	jsonFgFeatureType = null;
+//	jsonFgIncludeInGeoJson = new ArrayList<>();
 	labelTemplate = "[[alias]]";
 	linearizeCurves = false;
 	maxNameLength = 63;

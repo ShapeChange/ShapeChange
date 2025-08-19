@@ -5,6 +5,8 @@ description: FIXME
 enabled: true
 serviceType: OGC_API
 api:
+- buildingBlock: GEO_JSON
+  enabled: true
 - buildingBlock: QUERYABLES
   enabled: true
 collections:

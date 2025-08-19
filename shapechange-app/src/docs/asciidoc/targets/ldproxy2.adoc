@@ -453,20 +453,24 @@ ShapeChange will add ldproxy building block
 https://docs.ldproxy.net/de/services/building-blocks/features_-_json-fg.html[Features - JSON-FG]
 to the service configuration as enabled.
 
+//////
 * If target parameter _jsonFgCoordRefSys_ is set (to a boolean value; 
 no default is defined for this target),
 a `coordRefSys` member will be added to the general Features JSON-FG building block 
 in the service configuration.
+//////
 * If target parameter _jsonFgFeatureType_ is set (see description of
 configuration option `featureType` in the ldproxy documentation of building 
 block Features JSON-FG),
 a `featureType` member will be added to the general Features JSON-FG building block 
 in the service configuration.
+//////
 * If target parameter _jsonFgIncludeInGeoJson_ is set (see description of
 configuration option `includeInGeoJson` in the ldproxy documentation of building 
 block Features JSON-FG),
 an `includeInGeoJson` member will be added to the general Features JSON-FG building block 
 in the service configuration.
+//////
 * Additional configuration items for this building block can be added
 through the <<ldproxy2_schemaconversionrules_specificrules_genericvaluetypes>>.
 

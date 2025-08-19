@@ -476,15 +476,15 @@ public class LdpConfigBuilder {
 	    jsonFgBuilder = cfg.builder().ogcApiExtension().jsonFg();
 	    jsonFgBuilder.enabled(true);
 
-	    if (Ldproxy2Target.jsonFgCoordRefSys != null) {
-		jsonFgBuilder.coordRefSys(Ldproxy2Target.jsonFgCoordRefSys);
+//	    if (Ldproxy2Target.jsonFgCoordRefSys != null) {
+//		jsonFgBuilder.coordRefSys(Ldproxy2Target.jsonFgCoordRefSys);
+//	    }
+	    if (StringUtils.isNotBlank(Ldproxy2Target.jsonFgFeatureType)) {
+		jsonFgBuilder.featureTypeV1(Ldproxy2Target.jsonFgFeatureType);
 	    }
-	    if (!Ldproxy2Target.jsonFgFeatureType.isEmpty()) {
-		jsonFgBuilder.featureType(Ldproxy2Target.jsonFgFeatureType);
-	    }
-	    if (!Ldproxy2Target.jsonFgIncludeInGeoJson.isEmpty()) {
-		jsonFgBuilder.includeInGeoJson(Ldproxy2Target.jsonFgIncludeInGeoJson);
-	    }
+//	    if (!Ldproxy2Target.jsonFgIncludeInGeoJson.isEmpty()) {
+//		jsonFgBuilder.includeInGeoJson(Ldproxy2Target.jsonFgIncludeInGeoJson);
+//	    }
 	}
 
 	ImmutableResultTypeConfiguration.Builder featuresResultTypeBuilder = null;

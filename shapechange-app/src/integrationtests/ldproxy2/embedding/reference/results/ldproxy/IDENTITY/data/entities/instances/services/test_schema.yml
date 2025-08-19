@@ -16,13 +16,11 @@ api:
     forceAxisOrder: NONE
 - buildingBlock: FILTER
   enabled: true
+- buildingBlock: GEO_JSON
+  enabled: true
 - buildingBlock: JSON_FG
   enabled: true
-  featureType:
-  - "{{type}}"
-  includeInGeoJson:
-  - featureType
-  - coordRefSys
+  featureTypeV1: "{{type}}"
 collections:
   featuretype1:
     id: featuretype1

@@ -51,9 +51,9 @@
 			<targetParameter name="enableCrs" value="true"/>
 			<targetParameter name="additionalCrs" value="25833, 12345|LON_LAT"/>
 			<targetParameter name="enableFeaturesJsonFg" value="true"/>
-			<targetParameter name="jsonFgCoordRefSys" value="true"/>
+<!--			<targetParameter name="jsonFgCoordRefSys" value="true"/>-->
 			<targetParameter name="jsonFgFeatureType" value="{{type}}"/>
-			<targetParameter name="jsonFgIncludeInGeoJson" value="featureType, coordRefSys"/>
+<!--			<targetParameter name="jsonFgIncludeInGeoJson" value="featureType, coordRefSys"/>-->
 			<targetParameter name="enableFilter" value="true"/>
 			
 			<targetParameter name="_unitTestOverride" value="true"/>
