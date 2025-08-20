@@ -376,7 +376,7 @@
 					  <dependency>
 						    <groupId>org.openrewrite</groupId>
 						    <artifactId>rewrite-java-21</artifactId>
-						    <version>8.59.1</version>
+						    <version>8.60.1</version>
 						</dependency>
 			        </dependencies>
 				</plugin>
