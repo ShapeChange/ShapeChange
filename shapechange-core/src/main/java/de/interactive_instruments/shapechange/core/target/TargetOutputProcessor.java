@@ -93,7 +93,8 @@ public class TargetOutputProcessor implements MessageSource {
     /**
      * If set to "true", an XSL transformation will be applied to output files
      * created by the target, with one of the following file extensions: xml, xsd,
-     * rdf, owl, sch, trix, html, sql, ddl, ttl, nt, trig, nq, json. Default is "false".
+     * rdf, owl, sch, trix, html, sql, ddl, ttl, nt, trig, nq, json. Default is
+     * "false".
      */
     public static final String PARAM_APPLY_XSLT = "processOutput_applyXslt";
     /**
@@ -136,8 +137,9 @@ public class TargetOutputProcessor implements MessageSource {
      * <ul>
      * <li>net.sf.saxon.TransformerFactoryImpl (download the Saxon-HE jar and copy
      * it to the lib folder of your ShapeChange distribution; note: name the file
-     * ‘Saxon-HE-9.5.1-1.jar’ - or explicitly include the jar in your classpath,
-     * using the '-cp' command when invoking java to execute ShapeChange)</li>
+     * ‘Saxon-HE-X.Y.Z.jar’, as defined for your version of ShapeChange - or
+     * explicitly include the jar in your classpath, using the '-cp' command when
+     * invoking java to execute ShapeChange)</li>
      * </ul>
      */
     public static final String PARAM_XSL_TRANSFORMER_FACTORY = "xslTransformerFactory";
@@ -476,16 +478,16 @@ public class TargetOutputProcessor implements MessageSource {
 
 	try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jsonFile));
 		BufferedWriter writer = new BufferedWriter(
-		new OutputStreamWriter(new FileOutputStream(tmpFile), "UTF-8"))) {
+			new OutputStreamWriter(new FileOutputStream(tmpFile), "UTF-8"))) {
 
 	    GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
 	    gsonBuilder.setPrettyPrinting();
 	    gsonBuilder.setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE);
 	    Gson gson = gsonBuilder.create();
-	    
+
 	    LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 	    map = (LinkedHashMap<String, Object>) gson.fromJson(bufferedReader, map.getClass());
-	    
+
 	    LinkedHashMap<String, Object> newMap = (LinkedHashMap<String, Object>) map.clone();
 	    map.clear();
 	    map.put("$comment", comment);
@@ -494,7 +496,7 @@ public class TargetOutputProcessor implements MessageSource {
 	    String newJson = gson.toJson(map);
 
 	    writer.write(newJson);
-	    
+
 	} catch (IOException e) {
 	    result.addProcessFlowError(this, 21, jsonFile.getAbsolutePath(), e.getMessage());
 	}
