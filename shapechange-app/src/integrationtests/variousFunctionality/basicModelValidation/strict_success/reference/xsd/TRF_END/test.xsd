@@ -49,14 +49,14 @@
       <complexContent>
          <extension base="gml:AbstractFeatureType">
             <sequence>
-               <element name="ft1toft2" type="t:FeatureType2PropertyType">
-                  <annotation>
-                     <documentation>Notes Assoziationsrolle ft1toft2</documentation>
-                  </annotation>
-               </element>
                <element name="att1" type="string">
                   <annotation>
                      <documentation>Notes att1</documentation>
+                  </annotation>
+               </element>
+               <element name="ft1toft2" type="t:FeatureType2PropertyType">
+                  <annotation>
+                     <documentation>Notes Assoziationsrolle ft1toft2</documentation>
                   </annotation>
                </element>
             </sequence>
