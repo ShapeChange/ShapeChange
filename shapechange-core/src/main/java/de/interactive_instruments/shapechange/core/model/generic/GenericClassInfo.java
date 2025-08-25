@@ -590,9 +590,9 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
      * Adds the given constraints to the constraints of this class, preventing
      * duplicates (references to same constraint object).
      * 
-     * @param list constraints to add; can be empty or <code>null</code>
-     * NOTE: This may also add constraints defined for a different context element, 
-     * e.g. when flattening types.
+     * @param list constraints to add; can be empty or <code>null</code> NOTE: This
+     *             may also add constraints defined for a different context element,
+     *             e.g. when flattening types.
      */
     public void addConstraints(List<Constraint> list) {
 	if (list == null || list.isEmpty())
@@ -733,7 +733,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	    properties.remove(keyFound);
 
     }
-    
+
     /**
      * Adds the given list of new properties to this class. Their sequence numbers
      * are used as-is. However, the sequence numbers of the already existing
@@ -810,10 +810,10 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		 */
 		int shift = maxMajorComponentNewProps - minMajorComponentExistingProps + 1;
 
-		for (PropertyInfo existingProp : properties.values()) {		    
-		    GenericPropertyInfo genExProp = (GenericPropertyInfo)existingProp;
+		for (PropertyInfo existingProp : properties.values()) {
+		    GenericPropertyInfo genExProp = (GenericPropertyInfo) existingProp;
 		    StructuredNumber newSn = genExProp.sequenceNumber();
-		    newSn.components[0] = newSn.components[0] + shift;		    		    
+		    newSn.components[0] = newSn.components[0] + shift;
 		    genExProp.setTaggedValue("sequenceNumber", newSn.getString(), false);
 		}
 	    }
@@ -1058,7 +1058,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 		} else {
 
 		    StructuredNumber snNewProp = newProp.sequenceNumber();
-		    snNewProp.components[0] = maxMajorComponentExistingProps + 1;		    	    
+		    snNewProp.components[0] = maxMajorComponentExistingProps + 1;
 		    newProp.setTaggedValue("sequenceNumber", snNewProp.getString(), false);
 		}
 
@@ -1086,7 +1086,7 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	    updateFieldsForTaggedValue(tvName, tvValue);
 	}
     }
-    
+
     public void setTaggedValueIfCurrentlyBlank(String tvName, String tvValue, boolean updateFields) {
 
 	String[] currentValues = this.taggedValuesForTag(tvValue);
@@ -1138,6 +1138,23 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
 	} else {
 	    this.profiles = profiles;
 	}
+    }
+
+    /**
+     * Instructs the class to re-sort the properties map. Useful if a sequence
+     * number value represented by a map key changed.
+     */
+    public void resortProperties() {
+	/*
+	 * NOTE: Cannot use the TreeMap constructor that takes a map M as parameter,
+	 * because that approach will preserve the order of map M - which is what we
+	 * want to update here.
+	 */
+	SortedMap<StructuredNumber, PropertyInfo> newProperties = new TreeMap<>();
+	for (Entry<StructuredNumber, PropertyInfo> e : this.properties.entrySet()) {
+	    newProperties.put(e.getKey(), e.getValue());
+	}
+	this.properties = newProperties;
     }
 
     @Override

@@ -697,7 +697,10 @@ public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSour
 	     * StructuredNumber object is used as key in the properties map of its inClass!
 	     */
 	    if (this.sequenceNumber() != null) {
-		this.sequenceNumber().with(tvValue);
+		if (!this.taggedValue(tvName).equals(tvValue)) {
+		    this.sequenceNumber().with(tvValue);
+		    ((GenericClassInfo) this.inClass).resortProperties();
+		}
 	    } else {
 		this.setSequenceNumber(new StructuredNumber(tvValue), false);
 	    }
