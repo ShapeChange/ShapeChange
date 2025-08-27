@@ -82,15 +82,13 @@ public class CodeListLoaderConfigurationValidator extends AbstractConfigurationV
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 100:
-	    return "Value of transformation parameter "
+	case 100 -> "Value of transformation parameter "
 		    + CodeListLoader.PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION
 		    + " is invalid. Configured parameter value '$1$' does not belong to the set of recognized values.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

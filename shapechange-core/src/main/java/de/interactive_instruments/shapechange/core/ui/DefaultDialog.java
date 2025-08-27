@@ -86,7 +86,7 @@ public class DefaultDialog extends JFrame
      public DefaultDialog(Converter c, Options o, ShapeChangeResult r, String m) {
          super("ShapeChange");
          initialise(c, o, r, m);
-     };
+     }
      
  	public void initialise(Converter c, Options o, ShapeChangeResult r, String m) {
         converter = c;
@@ -186,7 +186,7 @@ public class DefaultDialog extends JFrame
          panel.add(fileBox, BorderLayout.CENTER);
          
          return panel;
-     };
+     }
 
      private void addRadioButton(JPanel panel, ButtonGroup group, String label, String value, String parameter) {
          JRadioButton radioButton;
@@ -247,7 +247,7 @@ public class DefaultDialog extends JFrame
          panel.add(mainBox, BorderLayout.CENTER);
 
          return panel;
-     };
+     }
 
      public void actionPerformed(ActionEvent e) {
     	 if(startButton == e.getSource()) {

@@ -517,33 +517,21 @@ public class SbvrRuleLoader implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Invalid format for excel file containing SBVR constraints. Message is: $1$";
-	case 2:
-	    return "Could not read excel file containing SBVR rules. Message is: $1$";
-	case 3:
-	    return "No constraints sheet found in excel file containing SBVR rules.";
-	case 4:
-	    return "Header not found in SBVR rules sheet.";
-	case 5:
-	    return "Did not find required columns in SBVR rules sheet.";
-	case 6:
-	    return "No name found for rule declared in line $1$ of SBVR rules sheet. This kind of message can occur for rows the are seemingly empty in the excel sheet.";
-	case 7:
-	    return "No text found for rule declared in line $1$ of SBVR rules sheet.";
-	case 8:
-	    return "Parsing main class name for rule '$1$' was not successful. This rule will not be added to the model.";
-	case 9:
-	    return "";
-	case 10:
-	    return "No main class name provided for rule '$1$'. Parsing the name from the rule text.";
-	case 36:
-	    return "??The excel spreadsheet with SBVR rules was not found at file location '$1$'.";
+	case 1 -> "Invalid format for excel file containing SBVR constraints. Message is: $1$";
+	case 2 -> "Could not read excel file containing SBVR rules. Message is: $1$";
+	case 3 -> "No constraints sheet found in excel file containing SBVR rules.";
+	case 4 -> "Header not found in SBVR rules sheet.";
+	case 5 -> "Did not find required columns in SBVR rules sheet.";
+	case 6 -> "No name found for rule declared in line $1$ of SBVR rules sheet. This kind of message can occur for rows the are seemingly empty in the excel sheet.";
+	case 7 -> "No text found for rule declared in line $1$ of SBVR rules sheet.";
+	case 8 -> "Parsing main class name for rule '$1$' was not successful. This rule will not be added to the model.";
+	case 9 -> "";
+	case 10 -> "No main class name provided for rule '$1$'. Parsing the name from the rule text.";
+	case 36 -> "??The excel spreadsheet with SBVR rules was not found at file location '$1$'.";
 	
-	default:
-	    return "(" + SbvrRuleLoader.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + SbvrRuleLoader.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

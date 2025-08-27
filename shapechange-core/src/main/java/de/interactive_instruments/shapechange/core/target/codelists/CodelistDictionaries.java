@@ -473,15 +473,13 @@ public class CodelistDictionaries implements Target, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "Code list '$1$' is not configured to be encoded as a dictionary. Either parameter '"
+	case 101 -> "Code list '$1$' is not configured to be encoded as a dictionary. Either parameter '"
 		    + PARAM_CODELISTS
 		    + "' is set to false, or tagged value asDictionary on the code list is false. It will be ignored.";
 
-	default:
-	    return "(" + CodelistDictionaries.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + CodelistDictionaries.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

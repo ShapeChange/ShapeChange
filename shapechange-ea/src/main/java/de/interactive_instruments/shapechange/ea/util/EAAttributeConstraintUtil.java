@@ -68,13 +68,10 @@ public class EAAttributeConstraintUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
-	case 101:
-	    return "EA error encountered while updating 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
-	case 102:
-	    return "EA error encountered while appending to 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
-	default:
-	    return "(" + EAAttributeConstraintUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 101 -> "EA error encountered while updating 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
+	case 102 -> "EA error encountered while appending to 'Notes' of EA attribute constraint '$1$'. Error message is: $2$";
+	default -> "(" + EAAttributeConstraintUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

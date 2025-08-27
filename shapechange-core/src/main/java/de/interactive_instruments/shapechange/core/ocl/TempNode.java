@@ -242,10 +242,10 @@ abstract class TempNode {
 
 			// Establish the class and model context
 			classContext = null;
-			if (ctx instanceof ClassInfo) {
-				classContext = (ClassInfo) ctx;
-			} else if (ctx instanceof PropertyInfo) {
-				classContext = ((PropertyInfo) ctx).inClass();
+			if (ctx instanceof ClassInfo ci) {
+				classContext = ci;
+			} else if (ctx instanceof PropertyInfo pi) {
+				classContext = pi.inClass();
 			} else if (ctx instanceof OperationInfo) {
 				// TODO To-class function currently not available
 				classContext = null;
@@ -889,8 +889,8 @@ abstract class TempNode {
 				// Once we are successful, we mark this implicit and return the
 				// result.
 				if (result != null) {
-					if (result instanceof PropertyCallExp)
-						((PropertyCallExp) result).isImplicit = true;
+					if (result instanceof PropertyCallExp exp)
+						exp.isImplicit = true;
 					return result;
 				}
 			}
@@ -1277,13 +1277,11 @@ abstract class TempNode {
 			// determine metadata type
 			ClassInfo metadataType = null;
 			String propertyOrVarName = null;
-			if(object instanceof OclNode.AttributeCallExp) {
-			    OclNode.AttributeCallExp att = (OclNode.AttributeCallExp)object;
+			if(object instanceof OclNode.AttributeCallExp att) {
 			    PropertyInfo propi = (PropertyInfo)att.selector.modelProperty;
 			    propertyOrVarName = propi.name();
 			    metadataType = propi.propertyMetadataType();			       
-			} else if(object instanceof OclNode.VariableExp) {
-			    OclNode.VariableExp var = (OclNode.VariableExp)object;
+			} else if(object instanceof OclNode.VariableExp var) {
 			    propertyOrVarName = var.declaration.name;
 			    metadataType = var.dataType.metadataType;
 			}
@@ -1419,8 +1417,8 @@ abstract class TempNode {
 		String name() {
 			String scope = "";
 			if (qualification != null) {
-				if (qualification instanceof Identifier)
-					scope = ((Identifier) qualification).name() + "::";
+				if (qualification instanceof Identifier identifier)
+					scope = identifier.name() + "::";
 			}
 			return scope + name;
 		}
@@ -1456,8 +1454,7 @@ abstract class TempNode {
 				boolean quiet) {
 			if (qualification == null)
 				return null;
-			if (qualification instanceof Identifier) {
-				Identifier qualid = (Identifier) qualification;
+			if (qualification instanceof Identifier qualid) {
 				OclNode cls = qualid.connectAsClassOrPackage(p, model, 1,
 						quiet);
 				if (cls == null || !(cls instanceof OclNode.ClassLiteralExp))
@@ -1552,9 +1549,9 @@ abstract class TempNode {
 			Identifier qual = null;
 			OclNode qctx = null;
 			if (qualification != null) {
-				if (qualification instanceof Identifier) {
+				if (qualification instanceof Identifier identifier) {
 					// Connect the qualification to the model
-					qual = (Identifier) qualification;
+					qual = identifier;
 					qctx = qual.connectAsClassOrPackage(p, model, level + 1,
 							quiet);
 					// If this did not work: Quit - a message already has been

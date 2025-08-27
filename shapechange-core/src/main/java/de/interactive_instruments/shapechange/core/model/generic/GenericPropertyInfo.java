@@ -776,16 +776,12 @@ public class GenericPropertyInfo extends PropertyInfoImpl implements MessageSour
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
-	case 2:
-	    return "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "(GenericPropertyInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set field(s) for this tagged value.";
+	case 2 -> "(GenericPropertyInfo) When setting tagged value '$1$', one of the values 'inline', 'byReference', or 'inlineOrByReference' was expected. Found '$2$' - cannot set field for this tagged value.";
 
-	default:
-	    return "(" + GenericPropertyInfo.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + GenericPropertyInfo.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

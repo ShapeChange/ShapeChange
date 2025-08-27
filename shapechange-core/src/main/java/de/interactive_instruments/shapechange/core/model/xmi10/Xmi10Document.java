@@ -1179,34 +1179,23 @@ public class Xmi10Document extends ModelImpl implements Model, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 4:
-	    return "XMI version must be 1.0, found: '$1$'.";
-	case 6:
-	    return "Metamodel must be UML, found: '$1$'.";
-	case 7:
-	    return "The UML version must be 1.3, found: '$1$'.";
+	case 4 -> "XMI version must be 1.0, found: '$1$'.";
+	case 6 -> "Metamodel must be UML, found: '$1$'.";
+	case 7 -> "The UML version must be 1.3, found: '$1$'.";
 	    
-	case 1005:
-	    return "Stereotype <<$1$>> not supported for UML model elements of type '$2$'.";
-	case 1006:
-	    return "The $1$ '$2$' will be ignored.";
-	case 1007:
-	    return "The discriminator for the UML generalization with ID '$1$' is not blank. This genralization is ignored.";
+	case 1005 -> "Stereotype <<$1$>> not supported for UML model elements of type '$2$'.";
+	case 1006 -> "The $1$ '$2$' will be ignored.";
+	case 1007 -> "The discriminator for the UML generalization with ID '$1$' is not blank. This genralization is ignored.";
 	
-	case 10000:
-	    return "Added tagged value '$1$' for element with ID '$2$' with value: '$3$'.";
-	case 10018:
-	    return "Rose Bug Fix for Duplicate Global Data Types: DataType '$1$' replaced by '$2$'.";
-	case 10019:
-	    return "Added stereotype '$1$' for element with ID '$2$'.";
-	case 10020:
-	    return "Application schema found, package name: '$1$'";
+	case 10000 -> "Added tagged value '$1$' for element with ID '$2$' with value: '$3$'.";
+	case 10018 -> "Rose Bug Fix for Duplicate Global Data Types: DataType '$1$' replaced by '$2$'.";
+	case 10019 -> "Added stereotype '$1$' for element with ID '$2$'.";
+	case 10020 -> "Application schema found, package name: '$1$'";
 	
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
-};
+}

@@ -67,10 +67,9 @@ public class ModelCleanerConfigurationValidator extends AbstractConfigurationVal
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

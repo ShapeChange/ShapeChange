@@ -1384,73 +1384,45 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "Context: property '$1$'";
+	case 0 -> "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
 
-	case 3:
-	    return "Context: class JsonSchemaTarget";
-	case 4:
-	    return "Processing class '$1$'.";
-	case 5:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 6:
-	    return "System error: Exception encountered. Message is: '$1$'";
-	case 7:
-	    return "Schema '$1$' is not encoded.";
-	case 8:
-	    return "Class '$1$' is not encoded.";
+	case 3 -> "Context: class JsonSchemaTarget";
+	case 4 -> "Processing class '$1$'.";
+	case 5 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 6 -> "System error: Exception encountered. Message is: '$1$'";
+	case 7 -> "Schema '$1$' is not encoded.";
+	case 8 -> "Class '$1$' is not encoded.";
 
-	case 10:
-	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-	case 12:
-	    return "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
+	case 10 -> "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
+	case 12 -> "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
 
-	case 15:
-	    return "No map entries provided via the configuration.";
+	case 15 -> "No map entries provided via the configuration.";
 //		case 16:
 //			return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17:
-	    return "Type '$1$' is of a category not enabled for conversion, meaning that no JSON Schema definition will be created to represent it.";
-	case 18:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
-	case 19:
-	    return "Type '$1$' is a union. By default, unions are not converted. The encoding rule that applies to '$1$' does not contain a conversion rule that would enable the encoding of the union. No JSON Schema definition will be created to represent '$1$'.";
-	case 20:
-	    return "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type '$2$'. However, "
+	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no JSON Schema definition will be created to represent it.";
+	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 19 -> "Type '$1$' is a union. By default, unions are not converted. The encoding rule that applies to '$1$' does not contain a conversion rule that would enable the encoding of the union. No JSON Schema definition will be created to represent '$1$'.";
+	case 20 -> "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type '$2$'. However, "
 		    + JsonSchemaConstants.RULE_CLS_BASIC_TYPE + " does not apply to '$1$'. The type will be ignored.";
-	case 21:
-	    return "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type. However, that JSON Schema type is not one of 'string', 'number', or 'boolean'. The JSON Schema type is '$2$' - which does not make sense for a basic type. Type '$1$' will be ignored.";
-	case 22:
-	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-	case 23:
-	    return "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
-	case 24:
-	    return "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
-	case 101:
-	    return "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
-	case 102:
-	    return "Creating JSON Schema document '$1$' for package '$2$'.";
-	case 103:
-	    return "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
-	case 104:
-	    return "Invalid JSON Schema annotation(s) encountered (they will be ignored): $1$";
+	case 21 -> "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type. However, that JSON Schema type is not one of 'string', 'number', or 'boolean'. The JSON Schema type is '$2$' - which does not make sense for a basic type. Type '$1$' will be ignored.";
+	case 22 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+	case 23 -> "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
+	case 24 -> "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
+	case 101 -> "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
+	case 102 -> "Creating JSON Schema document '$1$' for package '$2$'.";
+	case 103 -> "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
+	case 104 -> "Invalid JSON Schema annotation(s) encountered (they will be ignored): $1$";
 
-	case 503:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 504:
-	    return "File has been deleted.";
+	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 504 -> "File has been deleted.";
 
-	case 10001:
-	    return "Generating JSON schemas for application schema $1$.";
-	case 10002:
-	    return "Diagnostics-only mode. All output to files is suppressed.";
-	default:
-	    return "(" + JsonSchemaTarget.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 10001 -> "Generating JSON schemas for application schema $1$.";
+	case 10002 -> "Diagnostics-only mode. All output to files is suppressed.";
+	default -> "(" + JsonSchemaTarget.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
     @Override

@@ -126,15 +126,11 @@ public class DefaultNamingScheme implements SqlNamingScheme, MessageSource {
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
-	case 1:
-	    return "Name '$1$' for check constraint is truncated to '$2$'";
-	case 2:
-	    return "Name '$1$' for foreign key constraint is truncated to '$2$'";
-	case 3:
-	    return "Name '$1$' for unique constraint is truncated to '$2$'";
-	default:
-	    return "(" + DefaultNamingScheme.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 1 -> "Name '$1$' for check constraint is truncated to '$2$'";
+	case 2 -> "Name '$1$' for foreign key constraint is truncated to '$2$'";
+	case 3 -> "Name '$1$' for unique constraint is truncated to '$2$'";
+	default -> "(" + DefaultNamingScheme.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

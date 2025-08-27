@@ -480,50 +480,32 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: SqlDdl target configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/sql-ddl/";
-	case 2:
-	    return "At least one of the descriptor identifiers in configuration parameter '"
+	return switch (mnr) {
+	case 0 -> "Context: SqlDdl target configuration element with 'inputs'='$1$'.";
+	case 1 -> "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/sql-ddl/";
+	case 2 -> "At least one of the descriptor identifiers in configuration parameter '"
 		    + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' - the parameter value is '$1$' - does not match the regular expression '$2$'. Correct the parameter value.";
-	case 3:
-	    return "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+	case 3 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' did not contain a well-known identifier. Use well-known identifiers or omit the parameter.";
-	case 4:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
-	case 5:
-	    return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
-	case 6:
-	    return "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
+	case 5 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+	case 6 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' does not match the following regular expression: $1$";
 
-	case 100:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
-	case 101:
-	    return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
-	case 102:
-	    return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
-	case 103:
-	    return "Invalid map entry for type#rule '$1$': the targetType contains a parameterization that is not a non-negative integer.";
-	case 104:
-	    return "Invalid map entry for type#rule '$1$': the map entry has paramter '$2$' but the targetType has a parameterization with two numbers. With parameter '$2$', the targetType of the map entry may only have a single number.";
-	case 105:
-	    return "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
-	case 106:
-	    return "Invalid map entry for type#rule '$1$': value '$2$' provided for characteristic '$3$' of parameter '$4$' is invalid.";
-	case 107:
-	    return SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS
+	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
+	case 101 -> "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+	case 102 -> "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+	case 103 -> "Invalid map entry for type#rule '$1$': the targetType contains a parameterization that is not a non-negative integer.";
+	case 104 -> "Invalid map entry for type#rule '$1$': the map entry has paramter '$2$' but the targetType has a parameterization with two numbers. With parameter '$2$', the targetType of the map entry may only have a single number.";
+	case 105 -> "Invalid map entry for type#rule '$1$': the map entry has both parameter '$2$' and '$3$'. Only one of these parameters is allowed per map entry.";
+	case 106 -> "Invalid map entry for type#rule '$1$': value '$2$' provided for characteristic '$3$' of parameter '$4$' is invalid.";
+	case 107 -> SqlConstants.RULE_TGT_SQL_ALL_SCHEMAS
 		    + " is currently only supported for the PostgreSQL database system. The database system is configured as '$1$'. Either change the database system to PostgreSQL or ensure that the conversion rule is not configured for this target.";
-	case 108:
-	    return "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
-	case 109:
-	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system ($4$) does not support this action for clause '$3$'.";
+	case 108 -> "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109 -> "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system ($4$) does not support this action for clause '$3$'.";
 
-	default:
-	    return "(" + SqlDdlConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + SqlDdlConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

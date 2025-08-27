@@ -962,47 +962,29 @@ public class ReplicationXmlSchema implements Target, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class ReplicationSchema";
-	case 1:
-	    return "Generating replication schema for application schema '$1$'.";
-	case 2:
-	    return ""; // unused (moved to ShapeChangeResult)
-	case 3:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 4:
-	    return "File has been deleted.";
-	case 5:
-	    return ""; // unused (moved to ShapeChangeResult)
-	case 6:
-	    return "Processing class '$1$'.";
-	case 7:
-	    return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
-	case 8:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
-	case 9:
-	    return "No map entries provided via the configuration. Target cannot be executed.";
-	case 10:
-	    return "No map entry defined for type '$1$'. Cannot map this type.";
-	case 11:
-	    return "No target type defined in type mapping for type '$1$'. Using '$2$' instead.";
-	case 12:
-	    return "No map entry defined for type '$1$'. Using 'string' as target type.";
-	case 13:
-	    return "Property '$1$' has an unsupported value type. Using '$2$' as target type.";
-	case 14:
-	    return "Number format exception while converting tagged value '$1$' on property '$2$' of class '$3$' to an integer. Exception message: $4$. Global size setting for target will be used if available.";
-	case 15:
-	    return "Class '$1$' has supertype '$2$'. Inheritance is not supported by this target. Apply "
+	return switch (mnr) {
+	case 0 -> "Context: class ReplicationSchema";
+	case 1 -> "Generating replication schema for application schema '$1$'.";
+	case 2 -> ""; // unused (moved to ShapeChangeResult)
+	case 3 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 4 -> "File has been deleted.";
+	case 5 -> ""; // unused (moved to ShapeChangeResult)
+	case 6 -> "Processing class '$1$'.";
+	case 7 -> "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
+	case 8 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+	case 9 -> "No map entries provided via the configuration. Target cannot be executed.";
+	case 10 -> "No map entry defined for type '$1$'. Cannot map this type.";
+	case 11 -> "No target type defined in type mapping for type '$1$'. Using '$2$' instead.";
+	case 12 -> "No map entry defined for type '$1$'. Using 'string' as target type.";
+	case 13 -> "Property '$1$' has an unsupported value type. Using '$2$' as target type.";
+	case 14 -> "Number format exception while converting tagged value '$1$' on property '$2$' of class '$3$' to an integer. Exception message: $4$. Global size setting for target will be used if available.";
+	case 15 -> "Class '$1$' has supertype '$2$'. Inheritance is not supported by this target. Apply "
 		    + Flattener.RULE_TRF_CLS_FLATTEN_INHERITANCE
 		    + " of the Flattener transformer before executing this target.";
 
-	case 100:
-	    return "Context: property '$1$' in class '$2$'.";
-	default:
-	    return "(" + ReplicationXmlSchema.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 100 -> "Context: property '$1$' in class '$2$'.";
+	default -> "(" + ReplicationXmlSchema.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

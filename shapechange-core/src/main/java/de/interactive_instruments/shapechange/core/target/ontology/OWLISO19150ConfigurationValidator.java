@@ -534,64 +534,38 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: OWLISO19150 target configuration element with 'inputs'='$1$'.";
+	return switch (mnr) {
+	case 0 -> "Context: OWLISO19150 target configuration element with 'inputs'='$1$'.";
 
-	case 100:
-	    return "Configuration parameter '" + OWLISO19150.PARAM_GENERAL_PROPERTY_NSABR
+	case 100 -> "Configuration parameter '" + OWLISO19150.PARAM_GENERAL_PROPERTY_NSABR
 		    + "' is set, with value '$1$'. However, no namespace is configured with that abbreviation.";
-	case 101:
-	    return "Configuration parameter '$1$' is set (maybe using the default), with invalid value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 102:
-	    return "??Found DescriptorTarget with invalid @target value '$1$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 103:
-	    return "??RdfTypeMapEntry with @type '$1$' and @schema '$2$' has invalid @target value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 104:
-	    return "??RdfPropertyMapEntry with @property '$1$' and @schema '$2$' has invalid @target value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 105:
-	    return "??RdfPropertyMapEntry with @property '$1$' and @schema '$2$' has invalid @range value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 106:
-	    return "??StereotypeConversionParameter with @wellknown '$1$' has invalid QName(s) in its @subClassOf, namely: '$2$'. Each value in @subClassOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 107:
-	    return "??TypeConversionParameter with @type '$1$' and @schema '$2$' has invalid QName(s) in its @subClassOf, namely: '$3$'. Each value in @subClassOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 108:
-	    return "??PropertyConversionParameter with @property '$1$' and @schema '$2$' has invalid QName(s) in its @subPropertyOf, namely: '$3$'. Each value in @subPropertyOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 109:
-	    return "??ConstraintMapping with @constraintType '$1$' has invalid (maybe using the default) @target value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 110:
-	    return "Value of field [[$1$]] in @template of DescriptorTarget configuration element for 'target' $2$ does not match regular expression TV(\\(.+?\\))?:(.+)";
-	case 111:
-	    return "Multiple RdfTypeMapEntry elements with @type '$1$' and @schema '$2$' encountered. The combination of type and schema must be unique.";
-	case 112:
-	    return "Value '$1$' of @property in the RdfPropertyMapEntry configuration element (for @property '$1$' and @schema '$2$') is not well-formed.";
-	case 113:
-	    return "Multiple RdfPropertyMapEntry elements with @property '$1$' and @schema '$2$' encountered. The combination of property and schema must be unique.";
-	case 114:
-	    return "The PropertyConversionParameter (for @property '$1$' and @schema '$2$')' with 'global' set to true is not well-formed. The 'property' must be scoped to a class and a schema must be given so that the parameter identifies a single property from the model.";
-	case 115:
-	    return "Value '$1$' of @property in the PropertyConversionParameter configuration element (for @property '$1$' and @schema '$2$') is not well-formed.";
-	case 116:
-	    return "Value '$1$' of @target in the PropertyConversionParameter configuration element (for @property '$2$' and @schema '$3$'"
+	case 101 -> "Configuration parameter '$1$' is set (maybe using the default), with invalid value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 102 -> "??Found DescriptorTarget with invalid @target value '$1$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 103 -> "??RdfTypeMapEntry with @type '$1$' and @schema '$2$' has invalid @target value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 104 -> "??RdfPropertyMapEntry with @property '$1$' and @schema '$2$' has invalid @target value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 105 -> "??RdfPropertyMapEntry with @property '$1$' and @schema '$2$' has invalid @range value '$3$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 106 -> "??StereotypeConversionParameter with @wellknown '$1$' has invalid QName(s) in its @subClassOf, namely: '$2$'. Each value in @subClassOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 107 -> "??TypeConversionParameter with @type '$1$' and @schema '$2$' has invalid QName(s) in its @subClassOf, namely: '$3$'. Each value in @subClassOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 108 -> "??PropertyConversionParameter with @property '$1$' and @schema '$2$' has invalid QName(s) in its @subPropertyOf, namely: '$3$'. Each value in @subPropertyOf must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 109 -> "??ConstraintMapping with @constraintType '$1$' has invalid (maybe using the default) @target value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 110 -> "Value of field [[$1$]] in @template of DescriptorTarget configuration element for 'target' $2$ does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 111 -> "Multiple RdfTypeMapEntry elements with @type '$1$' and @schema '$2$' encountered. The combination of type and schema must be unique.";
+	case 112 -> "Value '$1$' of @property in the RdfPropertyMapEntry configuration element (for @property '$1$' and @schema '$2$') is not well-formed.";
+	case 113 -> "Multiple RdfPropertyMapEntry elements with @property '$1$' and @schema '$2$' encountered. The combination of property and schema must be unique.";
+	case 114 -> "The PropertyConversionParameter (for @property '$1$' and @schema '$2$')' with 'global' set to true is not well-formed. The 'property' must be scoped to a class and a schema must be given so that the parameter identifies a single property from the model.";
+	case 115 -> "Value '$1$' of @property in the PropertyConversionParameter configuration element (for @property '$1$' and @schema '$2$') is not well-formed.";
+	case 116 -> "Value '$1$' of @target in the PropertyConversionParameter configuration element (for @property '$2$' and @schema '$3$'"
 		    + ") is not well-formed. It must not be empty and must include '::' (because it shall identify a global property, scoped to a specific class, and from a specific schema).";
-	case 117:
-	    return "The PropertyConversionParameter configuration element (for @property '$1$'"
+	case 117 -> "The PropertyConversionParameter configuration element (for @property '$1$'"
 		    + " and schema '$2$') has a value for @target but does not have a value for @targetSchema - both must be set or none of them.";
-	case 118:
-	    return "??General property configuration element with name '$1$' has invalid domain value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 119:
-	    return "??General property configuration element with name '$1$' has invalid range value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
-	case 120:
-	    return "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value contains '::' and therefore denotes the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator). The full name is malformed (either it has less than three parts [example: A::B], or at least one of the parts does not represent a name [examples: A::B::::C, A::B::]).";
-	case 121:
-	    return "??General property configuration element with name '$1$' has additionalProperty with invalid property identifier value '$2$'. The value must be a QName of the form '{prefix}:{name}'.";
-	case 122:
-	    return "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value contains ':' (and not '::') and therefore denotes a QName, but the value is not of the required form '{prefix}:{name}'.";
-	case 123:
-	    return "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value neither contains ':' nor '::' and is therefore not of the required format (either a QName or the full name of a UML property).";
+	case 118 -> "??General property configuration element with name '$1$' has invalid domain value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 119 -> "??General property configuration element with name '$1$' has invalid range value '$2$'. The value must be a QName of the form '{prefix}:{name}', where {prefix} matches the abbreviation of one of the namespaces defined in the target configuration.";
+	case 120 -> "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value contains '::' and therefore denotes the full name of a UML property (i.e. the package qualified name of the UML property, starting with the application schema package, and using '::' as separator). The full name is malformed (either it has less than three parts [example: A::B], or at least one of the parts does not represent a name [examples: A::B::::C, A::B::]).";
+	case 121 -> "??General property configuration element with name '$1$' has additionalProperty with invalid property identifier value '$2$'. The value must be a QName of the form '{prefix}:{name}'.";
+	case 122 -> "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value contains ':' (and not '::') and therefore denotes a QName, but the value is not of the required form '{prefix}:{name}'.";
+	case 123 -> "??General property configuration element with name '$1$' has invalid $2$ value '$3$'. The value neither contains ':' nor '::' and is therefore not of the required format (either a QName or the full name of a UML property).";
 
-	default:
-	    return "(" + OWLISO19150ConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + OWLISO19150ConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

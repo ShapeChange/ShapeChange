@@ -83,8 +83,8 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
-	};
-
+	}
+	
 	// Validate tagged values cache, the filtering on tagged values defined
 	// within ShapeChange has already been done during initial loading of the
 	// XMI document...
@@ -99,7 +99,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 
 	public String id() {
 		return id;
-	};
+	}
 
 	public String name() {
 		String s = doc.textOfProperty(op, "Foundation.Core.ModelElement.name");
@@ -110,8 +110,8 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 			s = id;
 		}
 		return s;
-	};
-
+	}
+	
 	// @Override
 	// public Descriptors documentationAll() {
 	// String s = doc.taggedValue(id, "documentation");
@@ -171,7 +171,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 			parameterCount++;
 		}
 		return parameterCount;
-	};
+	}
 
 	private boolean returnParameter(Element e) {
 		if (e == null) {
@@ -182,7 +182,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 			return false;
 		}
 		return true;
-	};
+	}
 
 	public TreeMap<Integer, String> parameterNames() {
 		// get parameters
@@ -210,7 +210,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 			doc.result.addDebug(this, 10011, id, name(), s);
 		}
 		return parameterNames;
-	};
+	}
 
 	public TreeMap<Integer, String> parameterTypes() {
 		Vector<String> pids = doc.idsOfProperty(op,
@@ -232,7 +232,7 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 			parameterTypes.put(++parameterCount, s.trim());
 		}
 		return parameterTypes;
-	};
+	}
 
 	public OperationInfoXmi10(Xmi10Document d, Element e)
 			throws ShapeChangeAbortException {
@@ -245,13 +245,11 @@ public class OperationInfoXmi10 extends OperationInfoImpl
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 10011:
-		    return "The operation with ID '$1$' and name '$2$' has the following parameter: '$3$'";
+		case 10011 -> "The operation with ID '$1$' and name '$2$' has the following parameter: '$3$'";
 		
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

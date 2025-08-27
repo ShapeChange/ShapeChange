@@ -176,20 +176,16 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 		 * NOTE: A leading ?? in a message text suppresses multiple appearance
 		 * of a message in the output.
 		 */
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 1:
-			return "Context: property '$1$'";
-		case 2:
-			return "Context: class '$1$'";
+		case 1 -> "Context: property '$1$'";
+		case 2 -> "Context: class '$1$'";
 
 		// 100-199 Messages for RULE_PREPEND_TEXT
-		case 100:
-			return "An exception occurred while processing the linked document of type '$1$'. Message is: $2$";
+		case 100 -> "An exception occurred while processing the linked document of type '$1$'. Message is: $2$";
 
-		default:
-			return "(" + this.getClass().getName()
+		default -> "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

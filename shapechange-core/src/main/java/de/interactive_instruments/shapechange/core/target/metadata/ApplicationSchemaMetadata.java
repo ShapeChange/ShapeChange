@@ -702,42 +702,26 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class ApplicationSchemaMetadata";
-	case 1:
-	    return "Retrieving metadata for application schema '$1$'.";
-	case 2:
-	    return "XML Schema document with name '$1$' could not be created, invalid filename.";
-	case 3:
-	    return "Could not write output to file '$1$'. Exception message is: $2$.";
-	case 4:
-	    return "File has been deleted.";
-	case 5:
-	    return ""; // unused (moved to ShapeChangeResult)
-	case 6:
-	    return "Processing class '$1$'.";
-	case 7:
-	    return "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
-	case 8:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
-	case 9:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 10:
-	    return "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
+	return switch (mnr) {
+	case 0 -> "Context: class ApplicationSchemaMetadata";
+	case 1 -> "Retrieving metadata for application schema '$1$'.";
+	case 2 -> "XML Schema document with name '$1$' could not be created, invalid filename.";
+	case 3 -> "Could not write output to file '$1$'. Exception message is: $2$.";
+	case 4 -> "File has been deleted.";
+	case 5 -> ""; // unused (moved to ShapeChangeResult)
+	case 6 -> "Processing class '$1$'.";
+	case 7 -> "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
+	case 8 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+	case 9 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 10 -> "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
 
-	case 100:
-	    return "Context: property '$1$' in class '$2$'.";
+	case 100 -> "Context: property '$1$' in class '$2$'.";
 
-	case 200:
-	    return "No classes with direct or indirect use of the type(s) $1$.";
-	case 201:
-	    return "One or more classes with direct or indirect use of the type(s) $1$ was found.";
-	case 202:
-	    return "Type '$1$' directly or indirectly used by the following class(es): $2$";
+	case 200 -> "No classes with direct or indirect use of the type(s) $1$.";
+	case 201 -> "One or more classes with direct or indirect use of the type(s) $1$ was found.";
+	case 202 -> "Type '$1$' directly or indirectly used by the following class(es): $2$";
 
-	default:
-	    return "(" + ApplicationSchemaMetadata.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + ApplicationSchemaMetadata.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

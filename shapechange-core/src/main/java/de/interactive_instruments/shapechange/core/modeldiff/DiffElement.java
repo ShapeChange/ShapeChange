@@ -51,15 +51,11 @@ public class DiffElement implements Comparable<DiffElement> {
 	public enum Operation {
 		DELETE, INSERT, CHANGE;
 		public String toString() {
-			switch (this) {
-			case DELETE:
-				return "DELETE";
-			case INSERT:
-				return "INSERT";
-			case CHANGE:
-				return "CHANGE";
-			}
-			return "(unknown)";
+			return switch (this) {
+			case DELETE -> "DELETE";
+			case INSERT -> "INSERT";
+			case CHANGE -> "CHANGE";
+			};
 		}
 	}
 
@@ -69,53 +65,30 @@ public class DiffElement implements Comparable<DiffElement> {
 	public enum ElementType {
 		NAME, DOCUMENTATION, MULTIPLICITY, VALUETYPE, CLASS, SUPERTYPE, SUBPACKAGE, PROPERTY, ENUM, STEREOTYPE, TAG, ALIAS, DEFINITION, DESCRIPTION, PRIMARYCODE, GLOBALIDENTIFIER, LEGALBASIS, AAAMODELLART, AAAGRUNDDATENBESTAND, AAALANDNUTZUNG, AAAGUELTIGBIS, AAARETIRED;
 		public String toString() {
-			switch (this) {
-			case NAME:
-				return "NAME";
-			case DOCUMENTATION:
-				return "DOCUMENTATION";
-			case MULTIPLICITY:
-				return "MULTIPLICITY";
-			case VALUETYPE:
-				return "VALUETYPE";
-			case CLASS:
-				return "CLASS";
-			case SUPERTYPE:
-				return "SUPERTYPE";
-			case SUBPACKAGE:
-				return "SUBPACKAGE";
-			case PROPERTY:
-				return "PROPERTY";
-			case ENUM:
-				return "ENUM";
-			case STEREOTYPE:
-				return "STEREOTYPE";
-			case TAG:
-				return "TAG";
-			case ALIAS:
-				return "ALIAS";
-			case DEFINITION:
-				return "DEFINITION";
-			case DESCRIPTION:
-				return "DESCRIPTION";
-			case LEGALBASIS:
-				return "LEGALBASIS";
-			case PRIMARYCODE:
-				return "PRIMARYCODE";
-			case GLOBALIDENTIFIER:
-				return "GLOBALIDENTIFIER";
-			case AAAMODELLART:
-				return "AAAMODELLART";
-			case AAAGRUNDDATENBESTAND:
-				return "AAAGRUNDDATENBESTAND";
-			case AAALANDNUTZUNG:
-				return "AAALANDNUTZUNG";
-			case AAAGUELTIGBIS:
-				return "AAAGUELTIGBIS";
-			case AAARETIRED:
-				return "AAARETIRED";
-			}
-			return "(unknown)";
+			return switch (this) {
+			case NAME -> "NAME";
+			case DOCUMENTATION -> "DOCUMENTATION";
+			case MULTIPLICITY -> "MULTIPLICITY";
+			case VALUETYPE -> "VALUETYPE";
+			case CLASS -> "CLASS";
+			case SUPERTYPE -> "SUPERTYPE";
+			case SUBPACKAGE -> "SUBPACKAGE";
+			case PROPERTY -> "PROPERTY";
+			case ENUM -> "ENUM";
+			case STEREOTYPE -> "STEREOTYPE";
+			case TAG -> "TAG";
+			case ALIAS -> "ALIAS";
+			case DEFINITION -> "DEFINITION";
+			case DESCRIPTION -> "DESCRIPTION";
+			case LEGALBASIS -> "LEGALBASIS";
+			case PRIMARYCODE -> "PRIMARYCODE";
+			case GLOBALIDENTIFIER -> "GLOBALIDENTIFIER";
+			case AAAMODELLART -> "AAAMODELLART";
+			case AAAGRUNDDATENBESTAND -> "AAAGRUNDDATENBESTAND";
+			case AAALANDNUTZUNG -> "AAALANDNUTZUNG";
+			case AAAGUELTIGBIS -> "AAAGUELTIGBIS";
+			case AAARETIRED -> "AAARETIRED";
+			};
 		}
 	}
 

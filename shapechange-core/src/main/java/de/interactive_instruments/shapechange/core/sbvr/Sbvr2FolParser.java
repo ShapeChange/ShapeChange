@@ -283,14 +283,12 @@ public class Sbvr2FolParser implements MessageSource {
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 1:
-			return "Translation to First Order Logic expression was not successfull but no errors were reported.";
+		case 1 -> "Translation to First Order Logic expression was not successfull but no errors were reported.";
 
-		default:
-			return "(" + Sbvr2FolParser.class.getName()
+		default -> "(" + Sbvr2FolParser.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

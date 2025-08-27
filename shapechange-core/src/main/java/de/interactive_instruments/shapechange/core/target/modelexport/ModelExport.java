@@ -266,30 +266,21 @@ public class ModelExport implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
-	case 11:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
-	case 12:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 13:
-	    return "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
+	case 11 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
+	case 12 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 13 -> "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
 
-	case 100:
-	    return "Sequence number is undefined for property '$1$'. Using '0'.";
+	case 100 -> "Sequence number is undefined for property '$1$'. Using '0'.";
 
-	default:
-	    return "(ModelExport.java) Unknown message with number: " + mnr;
-	}
+	default -> "(ModelExport.java) Unknown message with number: " + mnr;
+	};
 
     }
 }

@@ -387,23 +387,16 @@ public class MapEntryParamInfos implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "Context: map entry with @type='$1$', @rule='$2$' and @param='$3$'.";
-	case 2:
-	    return "";
-	case 3:
-	    return "Found invalid value for 'param' attribute in map entry. The entry will be ignored. Ensure that the value matches the regular expression "
+	return switch (mnr) {
+	case 1 -> "Context: map entry with @type='$1$', @rule='$2$' and @param='$3$'.";
+	case 2 -> "";
+	case 3 -> "Found invalid value for 'param' attribute in map entry. The entry will be ignored. Ensure that the value matches the regular expression "
 		    + PARAM_VALIDATION_PATTERN + ".";
-	case 4:
-	    return "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
-	case 5:
-	    return "Found duplicate parameter name '$1$' in map entry 'param'. Only the first occurrence of the parameter will be used. If you intended to define multiple characteristics for this parameter, note that multiple characteristics of a parameter are encoded as key-value pairs within a semicolon delimited list (example: theParameter{characteristicA=xyz;characteristicB=42;characteristicC}).";
-	case 6:
-	    return "Found duplicate characteristic id '$1$' for parameter with name '$2$' in map entry 'param'. Only the first occurrence of the characteristic will be used. Note that it depends on the actual characteristic whether it is multi-valued or not. See the documentation of the according characteristic for further details.";
+	case 4 -> "Found another map entry with 'param' attribute for a type/rule mapping for which a 'param' attribute has already been parsed. The 'param' value of the additional map entry will be ignored.";
+	case 5 -> "Found duplicate parameter name '$1$' in map entry 'param'. Only the first occurrence of the parameter will be used. If you intended to define multiple characteristics for this parameter, note that multiple characteristics of a parameter are encoded as key-value pairs within a semicolon delimited list (example: theParameter{characteristicA=xyz;characteristicB=42;characteristicC}).";
+	case 6 -> "Found duplicate characteristic id '$1$' for parameter with name '$2$' in map entry 'param'. Only the first occurrence of the characteristic will be used. Note that it depends on the actual characteristic whether it is multi-valued or not. See the documentation of the according characteristic for further details.";
 
-	default:
-	    return "(" + MapEntryParamInfos.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + MapEntryParamInfos.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

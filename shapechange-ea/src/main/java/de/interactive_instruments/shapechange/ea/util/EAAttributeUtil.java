@@ -624,37 +624,23 @@ public class EAAttributeUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "EA error encountered while updating 'AllowDuplicates' on EA attribute '$1$'. Error message is: $2$";
-	case 102:
-	    return "EA error encountered while updating EA tagged value '$1$' on attribute '$2$' with value '$3$'. Error message is: $4$";
-	case 103:
-	    return "EA error encountered while updating 'IsCollection' on EA attribute '$1$'. Error message is: $2$";
-	case 104:
-	    return "EA error encountered while updating 'IsOrdered' on EA attribute '$1$'. Error message is: $2$";
-	case 105:
-	    return "EA error encountered while updating 'Length' on EA attribute '$1$' with value '$2$'. Error message is: $3$";
-	case 106:
-	    return "EA error encountered while updating 'Precision' on EA attribute '$1$'. Error message is: $2$";
-	case 107:
-	    return "EA error encountered while updating 'Scale' on EA attribute '$1$'. Error message is: $2$";
-	case 108:
-	    return "EA error encountered while updating new EA constraint '$1$' for attribute '$2$'. Error message is: $3$";
-	case 109:
-	    return "EA error encountered while updating 'StereotypeEx' of EA attribute '$1$'. Error message is: $2$";
-	case 110:
-	    return "EA error encountered while updating 'ClassifierID' on EA attribute '$1$'. Error message is: $2$";
-	case 111:
-	    return "EA error encountered while updating 'Type' on EA attribute '$1$'. Error message is: $2$";
-	case 112:
-	    return "EA error encountered while updating 'LowerBound' on EA attribute '$1$'. Error message is: $2$";
-	case 113:
-	    return "EA error encountered while updating 'UpperBound' on EA attribute '$1$'. Error message is: $2$";
+	case 101 -> "EA error encountered while updating 'AllowDuplicates' on EA attribute '$1$'. Error message is: $2$";
+	case 102 -> "EA error encountered while updating EA tagged value '$1$' on attribute '$2$' with value '$3$'. Error message is: $4$";
+	case 103 -> "EA error encountered while updating 'IsCollection' on EA attribute '$1$'. Error message is: $2$";
+	case 104 -> "EA error encountered while updating 'IsOrdered' on EA attribute '$1$'. Error message is: $2$";
+	case 105 -> "EA error encountered while updating 'Length' on EA attribute '$1$' with value '$2$'. Error message is: $3$";
+	case 106 -> "EA error encountered while updating 'Precision' on EA attribute '$1$'. Error message is: $2$";
+	case 107 -> "EA error encountered while updating 'Scale' on EA attribute '$1$'. Error message is: $2$";
+	case 108 -> "EA error encountered while updating new EA constraint '$1$' for attribute '$2$'. Error message is: $3$";
+	case 109 -> "EA error encountered while updating 'StereotypeEx' of EA attribute '$1$'. Error message is: $2$";
+	case 110 -> "EA error encountered while updating 'ClassifierID' on EA attribute '$1$'. Error message is: $2$";
+	case 111 -> "EA error encountered while updating 'Type' on EA attribute '$1$'. Error message is: $2$";
+	case 112 -> "EA error encountered while updating 'LowerBound' on EA attribute '$1$'. Error message is: $2$";
+	case 113 -> "EA error encountered while updating 'UpperBound' on EA attribute '$1$'. Error message is: $2$";
 
-	default:
-	    return "(" + EAAttributeUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + EAAttributeUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

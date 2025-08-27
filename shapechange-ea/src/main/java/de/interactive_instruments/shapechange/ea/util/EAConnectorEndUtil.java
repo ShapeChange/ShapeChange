@@ -621,40 +621,25 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "EA error encountered while updating EA tagged value '$1$' of connector end '$2$' with value '$3$'. Error message is: $4$";
-	case 102:
-	    return "EA error encountered while updating 'Cardinality' of EA connector end '$1$'. Error message is: $2$";
-	case 103:
-	    return "EA error encountered while updating 'Role' of EA connector end '$1$'. Error message is: $2$";
-	case 104:
-	    return "EA error encountered while updating 'Navigable' of EA connector end '$1$'. Error message is: $2$";
-	case 105:
-	    return "EA error encountered while updating 'Containment' of EA connector end '$1$' with value '$2$'. Error message is: $3$";
-	case 106:
-	    return "EA error encountered while updating 'Alias' of EA connector end '$1$'. Error message is: $2$";
-	case 107:
-	    return "EA error encountered while updating 'Notes' of EA connector end '$1$'. Error message is: $2$";
-	case 108:
-	    return "EA error encountered while updating 'StereotypeEx' of EA connector end '$1$'. Error message is: $2$";
-	case 109:
-	    return "EA error encountered while updating 'Ordering' of EA connector end '$1$'. Error message is: $2$";
-	case 110:
-	    return "EA error encountered while updating 'AllowDuplicates' of EA connector end '$1$'. Error message is: $2$";
-	case 111:
-	    return "EA error encountered while updating 'Aggregation' of EA connector end '$1$'. Error message is: $2$";
-	case 112:
-	    return "EA error encountered while updating 'Stereotype' of EA connector end '$1$'. Error message is: $2$";
-	case 113:
-	    return "EA error encountered while updating 'OwnedByClassifier' of EA connector end '$1$'. Error message is: $2$";
-	case 114:
-	    return "EA error encountered while updating 'Derived' of EA connector end '$1$'. Error message is: $2$";
+	case 101 -> "EA error encountered while updating EA tagged value '$1$' of connector end '$2$' with value '$3$'. Error message is: $4$";
+	case 102 -> "EA error encountered while updating 'Cardinality' of EA connector end '$1$'. Error message is: $2$";
+	case 103 -> "EA error encountered while updating 'Role' of EA connector end '$1$'. Error message is: $2$";
+	case 104 -> "EA error encountered while updating 'Navigable' of EA connector end '$1$'. Error message is: $2$";
+	case 105 -> "EA error encountered while updating 'Containment' of EA connector end '$1$' with value '$2$'. Error message is: $3$";
+	case 106 -> "EA error encountered while updating 'Alias' of EA connector end '$1$'. Error message is: $2$";
+	case 107 -> "EA error encountered while updating 'Notes' of EA connector end '$1$'. Error message is: $2$";
+	case 108 -> "EA error encountered while updating 'StereotypeEx' of EA connector end '$1$'. Error message is: $2$";
+	case 109 -> "EA error encountered while updating 'Ordering' of EA connector end '$1$'. Error message is: $2$";
+	case 110 -> "EA error encountered while updating 'AllowDuplicates' of EA connector end '$1$'. Error message is: $2$";
+	case 111 -> "EA error encountered while updating 'Aggregation' of EA connector end '$1$'. Error message is: $2$";
+	case 112 -> "EA error encountered while updating 'Stereotype' of EA connector end '$1$'. Error message is: $2$";
+	case 113 -> "EA error encountered while updating 'OwnedByClassifier' of EA connector end '$1$'. Error message is: $2$";
+	case 114 -> "EA error encountered while updating 'Derived' of EA connector end '$1$'. Error message is: $2$";
 
-	default:
-	    return "(" + EAConnectorUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + EAConnectorUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

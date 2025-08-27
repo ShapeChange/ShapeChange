@@ -561,33 +561,23 @@ public class CodeListLoader implements Transformer, MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: property '$1$'";
-	case 2:
-	    return "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
+	case 2 -> "Context: class '$1$'";
 
 	// 100-199 Messages for RULE_LOAD_CODES
-	case 100:
-	    return "Could not load charset '$1$' defined for source of code list '$2$'. Message is: $3$. UTF-8 will be used as fallback.";
-	case 101:
-	    return "No representation defined for source of code list '$1$'. Check tagged value "
+	case 100 -> "Could not load charset '$1$' defined for source of code list '$2$'. Message is: $3$. UTF-8 will be used as fallback.";
+	case 101 -> "No representation defined for source of code list '$1$'. Check tagged value "
 		    + TV_CL_SOURCE_REPRESENTATION + " or transformation parameter "
 		    + PARAM_LOAD_CODES_DEFAULT_CL_SOURCE_REPRESENTATION + ". The code list will be ignored.";
-	case 102:
-	    return "Representation for source of code list '$1$' could not be identified. Message is: $2$. The code list will be ignored.";
-	case 103:
-	    return "Code list register could not be determined for codelist with source '$1$'. Remember to set parameter "
+	case 102 -> "Representation for source of code list '$1$' could not be identified. Message is: $2$. The code list will be ignored.";
+	case 103 -> "Code list register could not be determined for codelist with source '$1$'. Remember to set parameter "
 		    + PARAM_LOAD_CODES_RE3GISTRY_REGISTER + " when using local sources (i.e., not retrieved via http).";
-	case 104:
-	    return "Exception occurred while reading source file for code list '$1$'. Message is: '$2$'. The code list will be ignored.";
-	case 105:
-	    return "Source file for code list '$1$' not found at location '$2$'. The code list will be ignored.";
-	case 106:
-	    return "Could not copy source file for code list '$1$' from '$2$' to '$3$'. Message is: $4$. The code list will be ignored.";
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	case 104 -> "Exception occurred while reading source file for code list '$1$'. Message is: '$2$'. The code list will be ignored.";
+	case 105 -> "Source file for code list '$1$' not found at location '$2$'. The code list will be ignored.";
+	case 106 -> "Could not copy source file for code list '$1$' from '$2$' to '$3$'. Message is: $4$. The code list will be ignored.";
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

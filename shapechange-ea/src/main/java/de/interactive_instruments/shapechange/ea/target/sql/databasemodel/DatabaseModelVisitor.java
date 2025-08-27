@@ -877,44 +877,26 @@ public class DatabaseModelVisitor implements StatementVisitor, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "";
-	case 2:
-	    return "";
-	case 3:
-	    return "";
-	case 4:
-	    return "";
-	case 100:
-	    return "Package with name '$1$' already exists. It will be deleted.";
-	case 101:
-	    return "Required configuration file '$1$' does not exist.";
-	case 102:
-	    return "Could not create temporary local copy of XMI file with data model pattern (at '$1$'). Exception message is: $2$";
-	case 103:
-	    return "Importing data model pattern from '$1$' was not successful. Error message is: $2$";
-	case 104:
-	    return "Exception encountered while creating table '$1$'. Exception message: '$2$'";
-	case 105:
-	    return "Exception encountered while creating check constraint '$1$' (operation) on table '$2$'. Exception message: '$3$'";
-	case 106:
-	    return "Exception encountered while creating foreign key constraint '$1$' on table '$2$'. Exception message: '$3$'";
-	case 107:
-	    return "??Postprocessing - Exception encountered while updating position of methods in table '$1$'. Exception message: '$2$'";
-	case 108:
-	    return "Could not create foreign key constraint '$1$' on table '$2$' because no primary key method was found on reference table '$3$'.";
-	case 109:
-	    return "Exception encountered while creating index '$1$' on table '$2$'. Exception message: '$3$'";
-	case 110:
-	    return "Exception encountered while creating unique constraint '$1$' on table '$2$'. Exception message: '$3$'";
-	case 111:
-	    return "Could not create foreign key constraint '$1$' on table '$2$' because no ElementID was found for referenced table '$3$'. Does that table belong to a schema that was not selected for processing?";
-	case 112:
-	    return "Exception encountered while creating spatial index '$1$' on table '$2$' (column '$3$') from SpatiaLite CreateSpatialIndex. Exception message: '$4$'";
+	return switch (mnr) {
+	case 1 -> "";
+	case 2 -> "";
+	case 3 -> "";
+	case 4 -> "";
+	case 100 -> "Package with name '$1$' already exists. It will be deleted.";
+	case 101 -> "Required configuration file '$1$' does not exist.";
+	case 102 -> "Could not create temporary local copy of XMI file with data model pattern (at '$1$'). Exception message is: $2$";
+	case 103 -> "Importing data model pattern from '$1$' was not successful. Error message is: $2$";
+	case 104 -> "Exception encountered while creating table '$1$'. Exception message: '$2$'";
+	case 105 -> "Exception encountered while creating check constraint '$1$' (operation) on table '$2$'. Exception message: '$3$'";
+	case 106 -> "Exception encountered while creating foreign key constraint '$1$' on table '$2$'. Exception message: '$3$'";
+	case 107 -> "??Postprocessing - Exception encountered while updating position of methods in table '$1$'. Exception message: '$2$'";
+	case 108 -> "Could not create foreign key constraint '$1$' on table '$2$' because no primary key method was found on reference table '$3$'.";
+	case 109 -> "Exception encountered while creating index '$1$' on table '$2$'. Exception message: '$3$'";
+	case 110 -> "Exception encountered while creating unique constraint '$1$' on table '$2$'. Exception message: '$3$'";
+	case 111 -> "Could not create foreign key constraint '$1$' on table '$2$' because no ElementID was found for referenced table '$3$'. Does that table belong to a schema that was not selected for processing?";
+	case 112 -> "Exception encountered while creating spatial index '$1$' on table '$2$' (column '$3$') from SpatiaLite CreateSpatialIndex. Exception message: '$4$'";
 
-	default:
-	    return "(" + DatabaseModelVisitor.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + DatabaseModelVisitor.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

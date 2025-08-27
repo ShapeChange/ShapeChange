@@ -548,29 +548,19 @@ public class EAConnectorUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "EA error encountered while updating EA tagged value '$1$' on connector '$2$' with value '$3$'. Error message is: $4$";
-	case 102:
-	    return "EA error encountered while updating 'Name' on connector '$1$'. Error message is: $2$";
-	case 103:
-	    return "EA error encountered while updating 'Stereotype' on connector '$1$'. Error message is: $2$";
-	case 104:
-	    return "EA error encountered while updating 'Direction' on connector '$1$'. Error message is: $2$";
-	case 105:
-	    return "EA error encountered while updating 'StereotypeEx' on connector '$1$'. Error message is: $2$";
-	case 106:
-	    return "EA error encountered while updating 'StyleEx' on connector '$1$'. Error message is: $2$";
-	case 107:
-	    return "EA error encountered while updating 'Alias' of EA connector '$1$'. Error message is: $2$";
-	case 108:
-	    return "EA error encountered while updating 'Notes' of EA connector '$1$'. Error message is: $2$";
-	case 109:
-	    return "EA error encountered while updating 'SupplierID' of EA connector '$1$'. Error message is: $2$";
+	case 101 -> "EA error encountered while updating EA tagged value '$1$' on connector '$2$' with value '$3$'. Error message is: $4$";
+	case 102 -> "EA error encountered while updating 'Name' on connector '$1$'. Error message is: $2$";
+	case 103 -> "EA error encountered while updating 'Stereotype' on connector '$1$'. Error message is: $2$";
+	case 104 -> "EA error encountered while updating 'Direction' on connector '$1$'. Error message is: $2$";
+	case 105 -> "EA error encountered while updating 'StereotypeEx' on connector '$1$'. Error message is: $2$";
+	case 106 -> "EA error encountered while updating 'StyleEx' on connector '$1$'. Error message is: $2$";
+	case 107 -> "EA error encountered while updating 'Alias' of EA connector '$1$'. Error message is: $2$";
+	case 108 -> "EA error encountered while updating 'Notes' of EA connector '$1$'. Error message is: $2$";
+	case 109 -> "EA error encountered while updating 'SupplierID' of EA connector '$1$'. Error message is: $2$";
 
-	default:
-	    return "(" + EAConnectorUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + EAConnectorUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

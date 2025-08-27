@@ -973,71 +973,45 @@ public class UmlModel implements SingleTarget, MessageSource {
 	 * </ul>
 	 */
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: class UmlModel";
-	case 1:
-	    return "Context: class $1$";
+	case 0 -> "Context: class UmlModel";
+	case 1 -> "Context: class $1$";
 
 	// 50-100: Initialization related messages
-	case 50:
-	    return "Could not write the model, because the target has not been initialized properly.";
-	case 51:
-	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
+	case 50 -> "Could not write the model, because the target has not been initialized properly.";
+	case 51 -> "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + " is malformed. Execution will be aborted. Exception message is: '$2$'.";
-	case 52:
-	    return "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	case 52 -> "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-	case 53:
-	    return "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
-	case 54:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 53 -> "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
+	case 54 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
 
 	// 101-200: issues with the model
-	case 101:
-	    return "Supertype with id '$1$' of class '$2$' was not found in the model.";
-	case 102:
-	    return "Supertype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
-	case 103:
-	    return "Subtype with id '$1$' of class '$2$' was not found in the model.";
-	case 104:
-	    return "Subtype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
-	case 105:
-	    return "Generalisation relationship between subtype '$1$' and supertype '$2$' cannot be created because '$3$' is not part of the target model.";
-	case 106:
-	    return "??Profile '$1$', configured to be used in the mapping of stereotype '$2$', is not loaded in the EA repository. The stereotype will not be assigned correctly in the EA repository. Make sure to load the profile into the EA repository that will be used as output file (typically the template file, configured via target parameter '"
+	case 101 -> "Supertype with id '$1$' of class '$2$' was not found in the model.";
+	case 102 -> "Supertype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
+	case 103 -> "Subtype with id '$1$' of class '$2$' was not found in the model.";
+	case 104 -> "Subtype '$1$' of class '$2$' is not part of the schemas selected for processing. The generalization relationship will not be created.";
+	case 105 -> "Generalisation relationship between subtype '$1$' and supertype '$2$' cannot be created because '$3$' is not part of the target model.";
+	case 106 -> "??Profile '$1$', configured to be used in the mapping of stereotype '$2$', is not loaded in the EA repository. The stereotype will not be assigned correctly in the EA repository. Make sure to load the profile into the EA repository that will be used as output file (typically the template file, configured via target parameter '"
 		    + UmlModelConstants.PARAM_EA_TEMPLATE + "').";
 
 	// 10001-10100: EA exceptions
-	case 10001:
-	    return "EA exception encountered: $1$";
-	case 10002:
-	    return "EA exception encountered while cloning attribute '$1$' of class '$2$'. Error message: $3$";
-	case 10003:
-	    return "EA exception encountered while cloning standard items for model element (class or package) '$1$'. Error message: $2$";
-	case 10004:
-	    return "EA exception encountered while cloning standard items for association '$1$'. Error message: $2$";
-	case 10005:
-	    return "EA exception encountered while establishing the association class relationship between class '$1$' and the association between classes '$2$' and '$3$'. Error message: $4$";
-	case 10006:
-	    return "Relationship between association class '$1$' and the association between classes '$2$' and '$3$' could not be established because the association class '$1$' is not part of the target model.";
-	case 10007:
-	    return "EA exception encountered while cloning package '$1$'. Error message: $2$";
-	case 10008:
-	    return "EA exception encountered while cloning class '$1$'. Error message: $2$";
-	case 10009:
-	    return "EA exception encountered while updating association '$1$' between classes '$2$' and '$3$'. Exception message is: $4$";
-	case 10010:
-	    return "EA exception encountered while updating generalisation relationship between classes '$1$' (subtype) and '$2$' (supertype). Exception message is: $4$";
-	case 10011:
-	    return "EA exception encountered while updating the author of the 'ShapeChangeOutput' package).";
-	case 10012:
-	    return "EA exception encountered while updating the status of the 'ShapeChangeOutput' package).";
+	case 10001 -> "EA exception encountered: $1$";
+	case 10002 -> "EA exception encountered while cloning attribute '$1$' of class '$2$'. Error message: $3$";
+	case 10003 -> "EA exception encountered while cloning standard items for model element (class or package) '$1$'. Error message: $2$";
+	case 10004 -> "EA exception encountered while cloning standard items for association '$1$'. Error message: $2$";
+	case 10005 -> "EA exception encountered while establishing the association class relationship between class '$1$' and the association between classes '$2$' and '$3$'. Error message: $4$";
+	case 10006 -> "Relationship between association class '$1$' and the association between classes '$2$' and '$3$' could not be established because the association class '$1$' is not part of the target model.";
+	case 10007 -> "EA exception encountered while cloning package '$1$'. Error message: $2$";
+	case 10008 -> "EA exception encountered while cloning class '$1$'. Error message: $2$";
+	case 10009 -> "EA exception encountered while updating association '$1$' between classes '$2$' and '$3$'. Exception message is: $4$";
+	case 10010 -> "EA exception encountered while updating generalisation relationship between classes '$1$' (subtype) and '$2$' (supertype). Exception message is: $4$";
+	case 10011 -> "EA exception encountered while updating the author of the 'ShapeChangeOutput' package).";
+	case 10012 -> "EA exception encountered while updating the status of the 'ShapeChangeOutput' package).";
 
-	default:
-	    return "(" + UmlModel.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + UmlModel.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

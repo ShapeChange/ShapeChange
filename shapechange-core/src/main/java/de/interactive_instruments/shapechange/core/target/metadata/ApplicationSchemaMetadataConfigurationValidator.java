@@ -114,20 +114,15 @@ public class ApplicationSchemaMetadataConfigurationValidator extends AbstractCon
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
-	case 100:
-	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 1 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
+	case 100 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
 
-	default:
-	    return "(ApplicationSchemaMetadata.java) Unknown message with number: " + mnr;
-	}
+	default -> "(ApplicationSchemaMetadata.java) Unknown message with number: " + mnr;
+	};
     }
 
 }

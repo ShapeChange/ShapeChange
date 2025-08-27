@@ -668,17 +668,16 @@ public class OclParser {
 			result.addSourceReference(token);
 			// If a Literal is prefixed and if the type of the literal fits
 			// the prefix, fold the prefix into the literal ...
-			if (rest instanceof TempNode.Literal) {
-				TempNode.Literal<?> literal = (TempNode.Literal<?>) rest;
+			if (rest instanceof TempNode.Literal<?> literal) {
 				Object value = literal.getValue();
 				TempNode result2 = null;
 				if (type == Token.Type.MINUS) {
-					if (value instanceof Long)
-						result2 = new TempNode.Literal<Long>(-(Long) value);
-					else if (value instanceof Double)
-						result2 = new TempNode.Literal<Double>(-(Double) value);
-				} else if (type == Token.Type.NOT && value instanceof Boolean)
-					result2 = new TempNode.Literal<Boolean>(!(Boolean) value);
+					if (value instanceof Long long1)
+						result2 = new TempNode.Literal<Long>(-long1);
+					else if (value instanceof Double double1)
+						result2 = new TempNode.Literal<Double>(-double1);
+				} else if (type == Token.Type.NOT && value instanceof Boolean boolean1)
+					result2 = new TempNode.Literal<Boolean>(!boolean1);
 				if (result2 != null) {
 					result2.addSourceReference(result);
 					result = result2;
@@ -988,9 +987,8 @@ public class OclParser {
 			}
 
 			// Yes, a ). The expression must be a string constant ...
-			if (!(expr instanceof TempNode.Literal
-					&& ((TempNode.Literal<?>) expr)
-							.getValue() instanceof String)) {
+			if (!(expr instanceof TempNode.Literal<?> literal
+					&& literal.getValue() instanceof String)) {
 				mess = messages.new Message(11);
 				SourceReference[] sourceRefs = expr.getSourceReferences();
 				for (int i = 0; i < sourceRefs.length; i++)

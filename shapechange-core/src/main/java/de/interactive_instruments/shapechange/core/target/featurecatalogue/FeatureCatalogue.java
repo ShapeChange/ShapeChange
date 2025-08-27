@@ -3263,55 +3263,32 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      */
     protected String messageText(int mnr) {
 
-	switch (mnr) {
-	case 12:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 13:
-	    return "File '$1$' does not exist or is not accessible.";
-	case 14:
-	    return "Could not parse image metadata from temporary XML file at '$1$'. Aborting now. Exception message was: $2$";
-	case 15:
-	    return "URI syntax exception for configuration parameter '$1$'. Value was: '$2$'. Using default URI stated in XSLT. Exception message: $3$";
-	case 16:
-	    return "Could not copy stylesheet '$1$' from '$2$' to '$3$'.";
-	case 17:
-	    return "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
-	case 18:
-	    return "XSLT stylesheet $1$ not found.";
-	case 19:
-	    return "DOCX template $1$ not found.";
-	case 20:
-	    return "Could not delete temporary directory created for docx transformation; IOException message is: $1$";
-	case 21:
-	    return "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
-	case 22:
-	    return "Interruption exception during execution of external java executable.";
-	case 23:
-	    return "Execution of XSLT write with external java executable did not succeed (return code was '$2$'). Error message is: $1$.";
-	case 24:
-	    return "Execution of XSLT write with external java executable did not succeed (return code was '$2$'). No error message was provided.";
-	case 25:
-	    return "Execution of XSLT write with external java executable produced the following log message(s): $1$";
-	case 26:
-	    return "Invoking external JRE with command: $1$";
-	case 27:
-	    return "Message from external java executable: $1$";
-	case 28:
-	    return "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
-	case 30:
-	    return "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
-	case 31:
-	    return "Directory '$1$' could not be created.";
-	case 32:
-	    return "Removed empty XSLT transformation target file at $1$.";
-	case 33:
-	    return "Exception occurred when copying content from miscellaneous content directory at '$1$' to directory '$2$'. Message is: $3$.";
+	return switch (mnr) {
+	case 12 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 13 -> "File '$1$' does not exist or is not accessible.";
+	case 14 -> "Could not parse image metadata from temporary XML file at '$1$'. Aborting now. Exception message was: $2$";
+	case 15 -> "URI syntax exception for configuration parameter '$1$'. Value was: '$2$'. Using default URI stated in XSLT. Exception message: $3$";
+	case 16 -> "Could not copy stylesheet '$1$' from '$2$' to '$3$'.";
+	case 17 -> "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
+	case 18 -> "XSLT stylesheet $1$ not found.";
+	case 19 -> "DOCX template $1$ not found.";
+	case 20 -> "Could not delete temporary directory created for docx transformation; IOException message is: $1$";
+	case 21 -> "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
+	case 22 -> "Interruption exception during execution of external java executable.";
+	case 23 -> "Execution of XSLT write with external java executable did not succeed (return code was '$2$'). Error message is: $1$.";
+	case 24 -> "Execution of XSLT write with external java executable did not succeed (return code was '$2$'). No error message was provided.";
+	case 25 -> "Execution of XSLT write with external java executable produced the following log message(s): $1$";
+	case 26 -> "Invoking external JRE with command: $1$";
+	case 27 -> "Message from external java executable: $1$";
+	case 28 -> "Exception occurred when copying content from temporary image directory at '$1$' to directory '$2$'. Message is: $3$.";
+	case 30 -> "Exception occurred while trying to read and store logo file from '$1$'. Exception message is: $2$";
+	case 31 -> "Directory '$1$' could not be created.";
+	case 32 -> "Removed empty XSLT transformation target file at $1$.";
+	case 33 -> "Exception occurred when copying content from miscellaneous content directory at '$1$' to directory '$2$'. Message is: $3$.";
 
-	case 308:
-	    return "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
+	case 308 -> "No schema with name '$1$' found in the reference model. Consequently, no diff was performed.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

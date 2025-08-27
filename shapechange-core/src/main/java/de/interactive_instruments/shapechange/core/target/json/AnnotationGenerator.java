@@ -109,8 +109,7 @@ public class AnnotationGenerator implements MessageSource {
 	    String multiValueConnectorToken = " ";
 	    JsonSchemaType jsonValueType = JsonSchemaType.STRING;
 
-	    if (annElmt instanceof SimpleAnnotationElement) {
-		SimpleAnnotationElement ann = (SimpleAnnotationElement) annElmt;
+	    if (annElmt instanceof SimpleAnnotationElement ann) {
 		template = "[[" + ann.getDescriptorOrTaggedValue() + "]]";
 		multiValueBehavior = MultiValueBehavior.CREATE_MULTIPLE_ANNOTATION_VALUES;
 		jsonValueType = ann.getType();
@@ -153,7 +152,7 @@ public class AnnotationGenerator implements MessageSource {
 		    if (values.size() == 1) {
 
 			for (StringBuilder b : builders) {
-			    b.append(values.get(0));
+			    b.append(values.getFirst());
 			}
 
 		    } else {
@@ -251,7 +250,7 @@ public class AnnotationGenerator implements MessageSource {
 
 		    } else if (jsonValues.size() == 1 && !annElmt.isArrayValue()) {
 
-			vToAdd = jsonValues.get(0);
+			vToAdd = jsonValues.getFirst();
 
 		    } else {
 			// create JSON array
@@ -393,15 +392,12 @@ public class AnnotationGenerator implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 100:
-	    return "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
-	case 101:
-	    return "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
+	case 100 -> "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
+	case 101 -> "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
 
-	default:
-	    return "(" + AnnotationGenerator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + AnnotationGenerator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

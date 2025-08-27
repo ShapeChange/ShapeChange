@@ -136,26 +136,20 @@ public class DatabaseModelWriterEA implements DatabaseModelWriter, MessageSource
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 	
-	case 27:
-	    return "Exception occurred while creating database model. Exception message is: $1$";
-	case 28:
-	    return "URL '$1$' provided for configuration parameter "
+	case 27 -> "Exception occurred while creating database model. Exception message is: $1$";
+	case 28 -> "URL '$1$' provided for configuration parameter "
 		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
 		    + " is malformed. The data model will be created in a new EA repository within the output directory.";
-	case 29:
-	    return "Exception encountered while copying the data model EA repository file defined by configuration parameter "
+	case 29 -> "Exception encountered while copying the data model EA repository file defined by configuration parameter "
 		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
 		    + " to the output directory. The data model will be created in a new EA repository within the output directory.";
-	case 30:
-	    return "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
-	case 31:
-	    return "Using local EA repository file '$1$' for creation of the data model.";
+	case 30 -> "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
+	case 31 -> "Using local EA repository file '$1$' for creation of the data model.";
 	
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

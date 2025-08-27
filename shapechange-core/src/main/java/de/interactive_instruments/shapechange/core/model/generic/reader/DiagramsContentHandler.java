@@ -193,13 +193,11 @@ public class DiagramsContentHandler extends AbstractContentHandler implements Me
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 30802: //x
-		    return "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
+		case 30802 -> "(Generic model element reader) NumberFormatException while parsing content of ImageMetadata element with id '$1$' and name '$2$'. Message is: $3$.";
 		
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

@@ -173,52 +173,39 @@ public class TaggedValueTransformerConfigurationValidator extends AbstractConfig
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
-	case 10:
-	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
+	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
 
 	// Validation messages
-	case 100:
-	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-	case 101:
-	    return "?? Duplicate tag in parameter '"
+	case 100 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 101 -> "?? Duplicate tag in parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
 		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
-	case 102:
-	    return "?? Tag '$1$' specified by parameter '"
+	case 102 -> "?? Tag '$1$' specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
 		    + "' is not specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST + "'. The tag will be ignored.";
-	case 103:
-	    return "?? Tag '$1$' specified by parameter '"
+	case 103 -> "?? Tag '$1$' specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
 		    + "' is also specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_OVERWRITE_LIST
 		    + "'. The tag will be ignored in the append list. These tags will therefore be overwritten, which may or may not be the intent.";
-	case 104:
-	    return "?? Duplicate tag in parameter '" + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
+	case 104 -> "?? Duplicate tag in parameter '" + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
 		    + "': '$1$'. This is not critical, since duplicate tags are ignored, but you may want to clean up the configuration.";
-	case 105:
-	    return "?? Tag '$1$' specified by parameter '"
+	case 105 -> "?? Tag '$1$' specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_APPEND_LIST
 		    + "' is not specified by parameter '"
 		    + TaggedValueTransformerConstants.PARAM_TV_INHERITANCE_GENERAL_LIST + "'. The tag will be ignored.";
 
-	case 200:
-	    return "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
+	case 200 -> "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
 		    + "' was not set or does not contain any value. '";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

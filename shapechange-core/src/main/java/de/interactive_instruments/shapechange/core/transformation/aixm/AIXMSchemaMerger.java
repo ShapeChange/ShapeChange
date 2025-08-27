@@ -681,26 +681,18 @@ public class AIXMSchemaMerger implements Transformer, MessageSource {
 
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 0:
-			return "Context: class AIXMSchemaMerger";
-		case 1:
-			return "Could not find the core AIXM schema. None amongst the selected schemas has a target namespace equal to '"
+		case 0 -> "Context: class AIXMSchemaMerger";
+		case 1 -> "Could not find the core AIXM schema. None amongst the selected schemas has a target namespace equal to '"
 					+ coreAIXMSchemaTargetNamespace + "'.";
-		case 2:
-			return "Class '$1$' is an <<extension>> type. It has more than one supertype which is not allowed.";
-		case 3:
-			return "Class '$1$' is an <<extension>> type. Its supertype '$2$' is not a <<feature>> or <<object>> - this is not allowed.";
-		case 4:
-			return "Class '$1$' is an <<extension>> type. It has a supertype that is not part of the schemas selected for processing. '$1$' will be ignored. Ensure that all AIXM schemas - the core schema and the extension schemas - are properly selected via the input configuration.";
-		case 5:
-			return "The association between classes '$1$' and '$2$' (with one role being '$3$' and the other one being '$4$') is navigable in both directions. This is not allowed in AIXM.";
-		case 6:
-			return "The id() of Info object with full name '$1$' is already contained in AIXM schema infos. Info object '$1$' will not be added to the schema infos.";
-		default:
-			return "(" + AIXMSchemaMerger.class.getName()
+		case 2 -> "Class '$1$' is an <<extension>> type. It has more than one supertype which is not allowed.";
+		case 3 -> "Class '$1$' is an <<extension>> type. Its supertype '$2$' is not a <<feature>> or <<object>> - this is not allowed.";
+		case 4 -> "Class '$1$' is an <<extension>> type. It has a supertype that is not part of the schemas selected for processing. '$1$' will be ignored. Ensure that all AIXM schemas - the core schema and the extension schemas - are properly selected via the input configuration.";
+		case 5 -> "The association between classes '$1$' and '$2$' (with one role being '$3$' and the other one being '$4$') is navigable in both directions. This is not allowed in AIXM.";
+		case 6 -> "The id() of Info object with full name '$1$' is already contained in AIXM schema infos. Info object '$1$' will not be added to the schema infos.";
+		default -> "(" + AIXMSchemaMerger.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

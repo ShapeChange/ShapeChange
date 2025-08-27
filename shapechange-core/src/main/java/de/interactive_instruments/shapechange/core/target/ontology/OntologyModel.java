@@ -814,7 +814,7 @@ public class OntologyModel implements MessageSource {
 	if (schemas != null && schemas.size() == 1) {
 
 	    String[] qnameParts = pcp.getTarget().split("::");
-	    PackageInfo schema = schemas.first();
+	    PackageInfo schema = schemas.getFirst();
 	    SortedSet<ClassInfo> schemaCis = model.classes(schema);
 	    for (ClassInfo schemaCi : schemaCis) {
 		if (schemaCi.name().equals(qnameParts[0])) {
@@ -1392,9 +1392,7 @@ public class OntologyModel implements MessageSource {
 		}
 	    }
 
-	    if (gp instanceof GeneralDataProperty) {
-
-		GeneralDataProperty gdp = (GeneralDataProperty) gp;
+	    if (gp instanceof GeneralDataProperty gdp) {
 
 		if (gdp.isFunctional()) {
 		    op.addRDFType(OWL2.FunctionalProperty);
@@ -1716,7 +1714,7 @@ public class OntologyModel implements MessageSource {
 		    if (values.size() == 1) {
 
 			for (StringBuilder b : builders) {
-			    b.append(values.get(0));
+			    b.append(values.getFirst());
 			}
 
 		    } else {
@@ -2779,10 +2777,10 @@ public class OntologyModel implements MessageSource {
 
 	List<Constraint> cons;
 
-	if (i instanceof ClassInfo) {
-	    cons = ((ClassInfo) i).constraints();
-	} else if (i instanceof PropertyInfo) {
-	    cons = ((PropertyInfo) i).constraints();
+	if (i instanceof ClassInfo ci) {
+	    cons = ci.constraints();
+	} else if (i instanceof PropertyInfo pi) {
+	    cons = pi.constraints();
 	} else {
 	    return;
 	}
@@ -2801,8 +2799,7 @@ public class OntologyModel implements MessageSource {
 
 		String text;
 
-		if (c instanceof OclConstraint) {
-		    OclConstraint oclCon = (OclConstraint) c;
+		if (c instanceof OclConstraint oclCon) {
 		    String[] comments = oclCon.comments();
 		    text = StringUtils.join(comments, " ");
 		} else {
@@ -2885,8 +2882,8 @@ public class OntologyModel implements MessageSource {
 
 		    } else if (desc.equalsIgnoreCase("comment")) {
 
-			if (c instanceof OclConstraint) {
-			    String[] s = ((OclConstraint) c).comments();
+			if (c instanceof OclConstraint constraint) {
+			    String[] s = constraint.comments();
 			    if (s != null && s.length > 0) {
 				for (String ex : s) {
 				    if (ex.trim().length() > 0) {
@@ -2916,7 +2913,7 @@ public class OntologyModel implements MessageSource {
 
 			if (values.size() == 1) {
 
-			    builder.append(values.get(0));
+			    builder.append(values.getFirst());
 
 			} else {
 
@@ -3296,132 +3293,71 @@ public class OntologyModel implements MessageSource {
      */
     public String message(int mnr) {
 
-	switch (mnr) {
-	case -2:
-	    return "Context: property '$1$'";
-	case -1:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "ParserConfigurationException when creating document for package '$1$'.";
-	case 3:
-	    return "Ontology document has already been finalized. Cannot add class '$1$'";
-	case 4:
-	    return "Could not add namespace declaration info for (rdf) namespace '$1$' because no abbreviation/prefix was found for it.";
-	case 5:
-	    return "Unsupported class category ($1$). Ensure that the encoding rule includes a rule that enables the conversion of this type of class – unless your intention is to exclude this class category.";
-	case 6:
-	    return "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
-	case 7:
-	    return "??Could not find a type mapping and also no class within the model to map class '$1$'.";
-	case 8:
-	    return "No stereotype mapping defined for class '$1$' (a $2$).";
-	case 9:
-	    return "Unsupported class category encountered while processing the stereotype '$2$' of class '$1$'.";
-	case 10:
-	    return "Duplicate property mapping encountered in union (for type named '$1$').";
-	case 11:
-	    return "In ontology '$1$' the prefix '$2$' is used for multiple URIs: '$3$' and '$4$'.";
-	case 12:
-	    return "";
-	case 13:
-	    return "Inverse property of '$1$' not found. The owl:inverseOf property has not been added.";
-	case 14:
-	    return "??Type '$1$' is not covered by an RdfTypeMapEntry and also not contained in one of the schemas selected for processing. Cannot map or create the class.";
-	case 15:
-	    return "??Association classes are not supported by this target. Association class '$1$' not represented in the ontology. Use the AssociationClassMapper transformation to convert association classes before executing the ontology target.";
-	case 16:
-	    return "Property mapping with potentially inconsistent ranges. Type of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
-	case 17:
-	    return "Property mapping with potentially inconsistent definitions. Definition of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
-	case 18:
-	    return "Property mapping with potentially inconsistent descriptions. Description of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
-	case 19:
-	    return "Property mapping with potentially inconsistent alias names. Alias of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
-	case 20:
-	    return "Property '$1$' has been dropped as specified in the configuration.";
-	case 21:
-	    return "Property '$1$' has been mapped to '$2$' as specified in the configuration.";
-	case 22:
-	    return "??Class '$1$' has been mapped to '$2$' as specified in the configuration.";
-	case 23:
-	    return "Property mapping with inconsistent ranges: '$2$' and '$3$'. One is a datatype and one a class.";
-	case 24:
-	    return "Code list '$1$' is managed separately and the range is represented by the class '$2$'.";
-	case 25:
-	    return "Cannot compare property specifications, because property 2 was not found in the model.";
-	case 26:
-	    return "Rule $1$ is in effect, but tagged value '$2$' was not found. Ignoring the rule for computing the ontology name of package '$3$'.";
-	case 27:
-	    return "The encoding rule does not contain a specific rule for creating the ontology name. Using "
+	return switch (mnr) {
+	case -2 -> "Context: property '$1$'";
+	case -1 -> "Context: class '$1$'";
+	case 1 -> "ParserConfigurationException when creating document for package '$1$'.";
+	case 3 -> "Ontology document has already been finalized. Cannot add class '$1$'";
+	case 4 -> "Could not add namespace declaration info for (rdf) namespace '$1$' because no abbreviation/prefix was found for it.";
+	case 5 -> "Unsupported class category ($1$). Ensure that the encoding rule includes a rule that enables the conversion of this type of class – unless your intention is to exclude this class category.";
+	case 6 -> "Could not identify a mapping for the supertype '$1$' of class '$2$'.";
+	case 7 -> "??Could not find a type mapping and also no class within the model to map class '$1$'.";
+	case 8 -> "No stereotype mapping defined for class '$1$' (a $2$).";
+	case 9 -> "Unsupported class category encountered while processing the stereotype '$2$' of class '$1$'.";
+	case 10 -> "Duplicate property mapping encountered in union (for type named '$1$').";
+	case 11 -> "In ontology '$1$' the prefix '$2$' is used for multiple URIs: '$3$' and '$4$'.";
+	case 12 -> "";
+	case 13 -> "Inverse property of '$1$' not found. The owl:inverseOf property has not been added.";
+	case 14 -> "??Type '$1$' is not covered by an RdfTypeMapEntry and also not contained in one of the schemas selected for processing. Cannot map or create the class.";
+	case 15 -> "??Association classes are not supported by this target. Association class '$1$' not represented in the ontology. Use the AssociationClassMapper transformation to convert association classes before executing the ontology target.";
+	case 16 -> "Property mapping with potentially inconsistent ranges. Type of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
+	case 17 -> "Property mapping with potentially inconsistent definitions. Definition of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
+	case 18 -> "Property mapping with potentially inconsistent descriptions. Description of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
+	case 19 -> "Property mapping with potentially inconsistent alias names. Alias of property 1 is '$1$', while that of property 2 (to which 1 is mapped) is '$2$'.";
+	case 20 -> "Property '$1$' has been dropped as specified in the configuration.";
+	case 21 -> "Property '$1$' has been mapped to '$2$' as specified in the configuration.";
+	case 22 -> "??Class '$1$' has been mapped to '$2$' as specified in the configuration.";
+	case 23 -> "Property mapping with inconsistent ranges: '$2$' and '$3$'. One is a datatype and one a class.";
+	case 24 -> "Code list '$1$' is managed separately and the range is represented by the class '$2$'.";
+	case 25 -> "Cannot compare property specifications, because property 2 was not found in the model.";
+	case 26 -> "Rule $1$ is in effect, but tagged value '$2$' was not found. Ignoring the rule for computing the ontology name of package '$3$'.";
+	case 27 -> "The encoding rule does not contain a specific rule for creating the ontology name. Using "
 		    + OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_ISO191502 + " to construct the ontology name for '$1$'.";
-	case 28:
-	    return "Could not identify a mapping for the subtype '$1$' of class '$2$'. Cannot create a disjoint classes axiom for this subtype.";
-	case 29:
-	    return "??The encoding rule contains both '$1$' and '$2$', which are mutually exclusive. Using '$2$'.";
-	case 30:
-	    return "??No constraint mapping is defined for constraints of type '$1$'. Using defaults (template='[[name]]: [[text]]', noValue='', multiValueConnectorToken=' ').";
-	case 31:
-	    return "Property shall be mapped to global property '$1$' in schema '$2$', but no applicable ontology was found. The property cannot be mapped.";
-	case 32:
-	    return "Universal quantification not created for property, because an RdfPropertyMapEntry is defined for it and the map entry does not declare a specific range.";
-	case 33:
-	    return "Qualified cardinality restrictions cannot be created for property, because no specific range is known. Using a unqualified cardinality restrictions instead.";
-	case 34:
-	    return "Property '$1$' is mapped to global property '$2$' as specified in the configuration.";
-	case 35:
-	    return "Range for property is undefined. This is ok if the property is mapped to an RDF/OWL property with global range declaration. Universal quantification is not created for this property.";
-	case 36:
-	    return "Property shall be mapped to global property '$1$' in schema '$2$', but this global property could not be found. The range will be computed based upon the given property.";
-	case 37:
-	    return "??No RdfTypeMapEntry is defined for the value type '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
-	case 38:
-	    return "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
-	case 39:
-	    return "??No namespace configured for namespace abbreviation '$1$'. Cannot create an import and namespace declaration.";
-	case 40:
-	    return "??The default type implementation is '$1$'.";
-	case 41:
-	    return "??Default type implementation is used to implement type '$1$'.";
-	case 42:
-	    return "Default type implementation is used as range of property '$1$'.";
-	case 43:
-	    return "??Code list '$1$' is encoded according to $2$.";
-	case 44:
-	    return "??None of the code list conversion rules applies to code list '$1$'. The default type implementation is used to implement the code list.";
-	case 45:
-	    return "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
-	case 46:
-	    return "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
-	case 47:
-	    return "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
-	case 48:
-	    return "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
-	case 49:
-	    return "Property '$1$' is defined to be both functional and inverse-functional. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
-	case 50:
-	    return "Property '$1$' is defined to be both reflexive and irreflexive. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
-	case 51:
-	    return "Property '$1$' is defined to be both symmetric and asymmetric. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
-	case 52:
-	    return "Component '$1$' of tagged value 'owlLogicalCharacteristics' from property '$2$' was not recognized and will be ignored.";
-	case 53:
-	    return "Domain of general property '$1$' shall be defined as a union of the domains of its direct and indirect sub properties. No sub property was found, therefore no domain will be specified for '$1$'";
-	case 54:
-	    return "??Expected QName, but found '$1$'. Mapping to '$2$'. Fix the QName (typically in the configuration, but potentially also in a tagged value). Check configuration entries and tagged values where a QName is expected (search for '$1$'). Look in the output for occurrences of '$2$' (keep in mind that this URI may have been turned into a QName itself when searching for it in the output files); that may give you a hint on the origin of the non-QName '$1$'.";
-	case 55:
-	    return "??Could not find a namespace for prefix '$1$' of QName '$2$'. Fix the QName. Check configuration entries and tagged values where a QName is expected (search for '$2$').";
+	case 28 -> "Could not identify a mapping for the subtype '$1$' of class '$2$'. Cannot create a disjoint classes axiom for this subtype.";
+	case 29 -> "??The encoding rule contains both '$1$' and '$2$', which are mutually exclusive. Using '$2$'.";
+	case 30 -> "??No constraint mapping is defined for constraints of type '$1$'. Using defaults (template='[[name]]: [[text]]', noValue='', multiValueConnectorToken=' ').";
+	case 31 -> "Property shall be mapped to global property '$1$' in schema '$2$', but no applicable ontology was found. The property cannot be mapped.";
+	case 32 -> "Universal quantification not created for property, because an RdfPropertyMapEntry is defined for it and the map entry does not declare a specific range.";
+	case 33 -> "Qualified cardinality restrictions cannot be created for property, because no specific range is known. Using a unqualified cardinality restrictions instead.";
+	case 34 -> "Property '$1$' is mapped to global property '$2$' as specified in the configuration.";
+	case 35 -> "Range for property is undefined. This is ok if the property is mapped to an RDF/OWL property with global range declaration. Universal quantification is not created for this property.";
+	case 36 -> "Property shall be mapped to global property '$1$' in schema '$2$', but this global property could not be found. The range will be computed based upon the given property.";
+	case 37 -> "??No RdfTypeMapEntry is defined for the value type '$1$'. Also, the value type was not found in the model. Cannot map the value type.";
+	case 38 -> "Property has tagged value 'broaderListedValue' which does not identify another property of the class the property is in. Setting skos:topConceptOf for this property.";
+	case 39 -> "??No namespace configured for namespace abbreviation '$1$'. Cannot create an import and namespace declaration.";
+	case 40 -> "??The default type implementation is '$1$'.";
+	case 41 -> "??Default type implementation is used to implement type '$1$'.";
+	case 42 -> "Default type implementation is used as range of property '$1$'.";
+	case 43 -> "??Code list '$1$' is encoded according to $2$.";
+	case 44 -> "??None of the code list conversion rules applies to code list '$1$'. The default type implementation is used to implement the code list.";
+	case 45 -> "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
+	case 46 -> "General property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
+	case 47 -> "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. No property with that full name was found in the model.";
+	case 48 -> "Property '$1$' defines property with full name (in schema) '$2$' as '$3$'. The property was found in the model, but no OWL implementation is available.";
+	case 49 -> "Property '$1$' is defined to be both functional and inverse-functional. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+	case 50 -> "Property '$1$' is defined to be both reflexive and irreflexive. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+	case 51 -> "Property '$1$' is defined to be both symmetric and asymmetric. These property axioms are mutually exclusive. Since there is no way to tell what is correct, both axioms will be encoded.";
+	case 52 -> "Component '$1$' of tagged value 'owlLogicalCharacteristics' from property '$2$' was not recognized and will be ignored.";
+	case 53 -> "Domain of general property '$1$' shall be defined as a union of the domains of its direct and indirect sub properties. No sub property was found, therefore no domain will be specified for '$1$'";
+	case 54 -> "??Expected QName, but found '$1$'. Mapping to '$2$'. Fix the QName (typically in the configuration, but potentially also in a tagged value). Check configuration entries and tagged values where a QName is expected (search for '$1$'). Look in the output for occurrences of '$2$' (keep in mind that this URI may have been turned into a QName itself when searching for it in the output files); that may give you a hint on the origin of the non-QName '$1$'.";
+	case 55 -> "??Could not find a namespace for prefix '$1$' of QName '$2$'. Fix the QName. Check configuration entries and tagged values where a QName is expected (search for '$2$').";
 
-	case 10000:
-	    return "--- Context - Class: $1$";
-	case 10001:
-	    return "--- Context - Property: $1$";
-	case 10003:
-	    return "--- Context - Property 1: $1$";
-	case 10004:
-	    return "--- Context - Property 2: $1$";
+	case 10000 -> "--- Context - Class: $1$";
+	case 10001 -> "--- Context - Property: $1$";
+	case 10003 -> "--- Context - Property 1: $1$";
+	case 10004 -> "--- Context - Property 2: $1$";
 
-	default:
-	    return "(" + OntologyModel.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + OntologyModel.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

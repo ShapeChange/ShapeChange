@@ -3308,115 +3308,65 @@ public class GenericModel extends ModelImpl implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: property '$1$'";
-	case 2:
-	    return "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
+	case 2 -> "Context: class '$1$'";
 
-	case 25:
-	    return "Model repository file named '$1$' not found";
+	case 25 -> "Model repository file named '$1$' not found";
 
-	case 20110:
-	    return "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
-	case 20111:
-	    return "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
+	case 20110 -> "The constraint '$1$' on '$2$' will be converted into a simple TextConstraint.";
+	case 20111 -> "The constraint '$1$' on '$2$' was not recognized as a constraint to be validated.";
 
-	case 30300:
-	    return "(GenericModel.java) Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
-	case 30301:
-	    return "(GenericModel.java) $1$";
-	case 30302:
-	    return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30303:
-	    return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30304:
-	    return "(GenericModel.java) Unrecognized constraint context model element type: '$1$'";
-	case 30305:
-	    return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30306:
-	    return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
-	case 30307:
-	    return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30308:
-	    return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
-	case 30309:
-	    return "(GenericModel.java) Unrecognized constraint type: '$1$'.";
-	case 30310:
-	    return "(GenericModel.java) Package '$1$' is not of type 'GenericPackageInfo'. Cannot add class '$2$'";
-	case 30311:
-	    return "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to add new property '$2$').";
-	case 30312:
-	    return "(GenericModel.java) Property $1$.$2$ is not of type 'GenericPropertyInfo' (most likely because the property belongs to a class that is not part of the selected schema). Cannot remove the property.";
-	case 30313:
-	    return "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to remove property '$2$')";
-	case 30314:
-	    return "(GenericModel.java) Class with id '$1$' not found. Cannot remove subtype '$2$'";
-	case 30315:
-	    return "(GenericModel.java) Association class '$1$' not of type GenericClassInfo. Cannot remove it.";
-	case 30316:
-	    return "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'.";
-	case 30317:
-	    return "(GenericModel.java) Property with name '$1$' and id '$2$' is not of type 'GenericPropertyInfo'.";
-	case 30318:
-	    return "(GenericModel.java) Property with id '$1$' (name: '$2$', in class: '$3$') already exists in the generic model (details about that property [property name / in class name]: $4$). The property will be ignored (not added to its class).";
-	case 30319:
-	    return "(GenericModel.java) GenericPropertyInfo that should be used to represent the property '$1$' is not in the same class (property in class is '$2$', generic property in class is '$3$'). The property will not be added to class '$2$'.";
-	case 30320:
-	    return "(GenericModel.java) PropertyInfo with sequenceNumber '$1$' in class '$2$' is null. The property will be ignored.";
-	case 30321:
-	    return "(GenericModel.java) No GenericPropertyInfo found that represents property '$1$' in class '$2$'. The property will be ignored.";
-	case 30322:
-	    return "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'. Cannot remove it from the model.";
-	case 30323:
-	    return "(GenericModel.java) Subtype of '$1$' with name '$2$' found in the model but it is not a GenericClassInfo (likely because it does not belong to a schema selected for processing). Cannot remove the supertype relationship to '$1$' in the subtype '$2$'.";
-	case 30324:
-	    return "(GenericModel.java) Subtype of '$1$' with id '$2$' not found in the model. Cannot remove the supertype relationship to '$1$' in the subtype.";
-	case 30325:
-	    return "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30326:
-	    return "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
-	case 30327:
-	    return "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
-	case 30328:
-	    return "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
-	case 30329:
-	    return "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
-	case 30330:
-	    return "Field '$1$' of code/enum '$2$' is $3$, which is not the applicable default. Using default for this property.";
+	case 30300 -> "(GenericModel.java) Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
+	case 30301 -> "(GenericModel.java) $1$";
+	case 30302 -> "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30303 -> "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericTextConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30304 -> "(GenericModel.java) Unrecognized constraint context model element type: '$1$'";
+	case 30305 -> "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30306 -> "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
+	case 30307 -> "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30308 -> "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericOclConstraint named '$1$'. - Context model element name is '$2$'. - Context class name is '$3$'.";
+	case 30309 -> "(GenericModel.java) Unrecognized constraint type: '$1$'.";
+	case 30310 -> "(GenericModel.java) Package '$1$' is not of type 'GenericPackageInfo'. Cannot add class '$2$'";
+	case 30311 -> "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to add new property '$2$').";
+	case 30312 -> "(GenericModel.java) Property $1$.$2$ is not of type 'GenericPropertyInfo' (most likely because the property belongs to a class that is not part of the selected schema). Cannot remove the property.";
+	case 30313 -> "(GenericModel.java) Class '$1$' is not of type 'GenericClassInfo' (was trying to remove property '$2$')";
+	case 30314 -> "(GenericModel.java) Class with id '$1$' not found. Cannot remove subtype '$2$'";
+	case 30315 -> "(GenericModel.java) Association class '$1$' not of type GenericClassInfo. Cannot remove it.";
+	case 30316 -> "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'.";
+	case 30317 -> "(GenericModel.java) Property with name '$1$' and id '$2$' is not of type 'GenericPropertyInfo'.";
+	case 30318 -> "(GenericModel.java) Property with id '$1$' (name: '$2$', in class: '$3$') already exists in the generic model (details about that property [property name / in class name]: $4$). The property will be ignored (not added to its class).";
+	case 30319 -> "(GenericModel.java) GenericPropertyInfo that should be used to represent the property '$1$' is not in the same class (property in class is '$2$', generic property in class is '$3$'). The property will not be added to class '$2$'.";
+	case 30320 -> "(GenericModel.java) PropertyInfo with sequenceNumber '$1$' in class '$2$' is null. The property will be ignored.";
+	case 30321 -> "(GenericModel.java) No GenericPropertyInfo found that represents property '$1$' in class '$2$'. The property will be ignored.";
+	case 30322 -> "(GenericModel.java) Class with name '$1$' and id '$2$' is not of type 'GenericClassInfo'. Cannot remove it from the model.";
+	case 30323 -> "(GenericModel.java) Subtype of '$1$' with name '$2$' found in the model but it is not a GenericClassInfo (likely because it does not belong to a schema selected for processing). Cannot remove the supertype relationship to '$1$' in the subtype '$2$'.";
+	case 30324 -> "(GenericModel.java) Subtype of '$1$' with id '$2$' not found in the model. Cannot remove the supertype relationship to '$1$' in the subtype.";
+	case 30325 -> "(GenericModel.java) Could not find GenericPropertyInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30326 -> "(GenericModel.java) Could not find GenericClassInfo to update context info with for GenericFolConstraint named '$1$'. - Context model element name is '$2$'.";
+	case 30327 -> "(Generic model) The zip file at '$1$' contains more than one entry. Only the entry '$2$' will be loaded. Other entries will be ignored.";
+	case 30328 -> "(Generic model) The zip file at '$1$' does not contain any entry. The model will be empty.";
+	case 30329 -> "One or more OclConstraints or FolConstraints were invalid and have been transformed into TextConstraints. For further details, consult the validation messages that were logged on INFO level before this message. This is not an issue if these constraints are not processed by subsequent transformations or targets.";
+	case 30330 -> "Field '$1$' of code/enum '$2$' is $3$, which is not the applicable default. Using default for this property.";
 
-	case 30400:
-	    return "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
-	case 30401:
-	    return "Input parameter 'applyDescriptorSourcesWhenLoadingScxml' is set to 'true'. Descriptors elements in SCXML will be ignored. Descriptors of model elements loaded from SCXML will be determined based upon configured descriptor sources.";
+	case 30400 -> "While parsing content of Class element with id '$1$' and name '$2$', linked document does not exist at '$3$'.";
+	case 30401 -> "Input parameter 'applyDescriptorSourcesWhenLoadingScxml' is set to 'true'. Descriptors elements in SCXML will be ignored. Descriptors of model elements loaded from SCXML will be determined based upon configured descriptor sources.";
 
-	case 30500:
-	    return "--- SCXML VALIDATION RESULTS - START ---";
-	case 30501:
-	    return "--- SCXML VALIDATION RESULTS - END ---";
-	case 30502:
-	    return "Warning: $1$";
-	case 30503:
-	    return "Error: $1$";
-	case 30504:
-	    return "SCXML is invalid. Execution will stop now.";
-	case 30505:
-	    return "--- SCXML IS VALID ---";
-	case 30506:
-	    return "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
-	case 30507:
-	    return "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
-	case 30508:
-	    return "An exception occurred while validating SCXML from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
-	case 30509:
-	    return "Validation messages:\n$1$";
+	case 30500 -> "--- SCXML VALIDATION RESULTS - START ---";
+	case 30501 -> "--- SCXML VALIDATION RESULTS - END ---";
+	case 30502 -> "Warning: $1$";
+	case 30503 -> "Error: $1$";
+	case 30504 -> "SCXML is invalid. Execution will stop now.";
+	case 30505 -> "--- SCXML IS VALID ---";
+	case 30506 -> "SCXML XSD location URL '$1$' (defined via input parameter 'scxmlXsdLocation') is malformed. Validation of SCXML will be skipped. Message from Java MalformedURLException is: $2$.";
+	case 30507 -> "Schema could not be created from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
+	case 30508 -> "An exception occurred while validating SCXML from SCXML XSD location '$1$' (defined via input parameter 'scxmlXsdLocation'). Validation of SCXML will be skipped. Message from Java SAXException is: $2$.";
+	case 30509 -> "Validation messages:\n$1$";
 	    
-	case 30803: // x
-	    return "Exception occurred while reading the model XML. Message is: $1$.";
+	case 30803 -> "Exception occurred while reading the model XML. Message is: $1$.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

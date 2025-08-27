@@ -582,21 +582,15 @@ public class TransformationManager implements MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 20104:
-	    return "No associations between feature and feature / object types found in schema '$1$'.";
-	case 20105:
-	    return "Association exists between '$1$' and '$2$'.";
-	case 20107:
-	    return "Navigable via property '$1$' of class '$2$'.";
-	case 20108:
-	    return "$1$ associations between feature and feature / object types found in schema '$2$'.";
-	case 20109:
-	    return "---------- TransformationManager postprocessing: validating constraints ----------";
+	case 20104 -> "No associations between feature and feature / object types found in schema '$1$'.";
+	case 20105 -> "Association exists between '$1$' and '$2$'.";
+	case 20107 -> "Navigable via property '$1$' of class '$2$'.";
+	case 20108 -> "$1$ associations between feature and feature / object types found in schema '$2$'.";
+	case 20109 -> "---------- TransformationManager postprocessing: validating constraints ----------";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

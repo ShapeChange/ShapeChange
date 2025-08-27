@@ -1271,20 +1271,14 @@ public class Profiler implements Transformer, MessageSource {
 
 	public String message(int mnr) {
 
-		switch (mnr) {
-		case 1:
-			return "Context: class $1$";
-		case 2:
-			return "Context: property $1$";
-		case 100:
-			return "??Configuration parameter '" + PARAM_PROFILES
+		return switch (mnr) {
+		case 1 -> "Context: class $1$";
+		case 2 -> "Context: property $1$";
+		case 100 -> "??Configuration parameter '" + PARAM_PROFILES
 					+ "' specifies more than one profile (found: $1$ profiles). Profile metadata is only processed if the parameter identifies exactly one profile.";
-		case 101:
-			return "";
-		case 102:
-			return "";
-		case 103:
-			return "";
+		case 101 -> "";
+		case 102 -> "";
+		case 103 -> "";
 
 		// case 20202:
 		// return "<UNUSED_20202>";
@@ -1294,38 +1288,26 @@ public class Profiler implements Transformer, MessageSource {
 		// case 20204:
 		// return "The profile set of class '$1$' does not contain the profile
 		// set of its property '$2$': $3$";
-		case 20205:
-			return "The application schema package '$1$' is completely empty after profiling.";
-		case 20207:
-			return "Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
-		case 20208:
-			return "System Error: Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
-		case 20209:
-			return "$1$";
-		case 20210:
-			return "GenericPropertyInfo '$1$' is the context model element of the constraint named '$2$'. The property does no longer exist in the model after profiling, thus the constraint is removed.";
-		case 20211:
-			return "GenericClassInfo '$1$' is the context model element of the constraint named '$2$'. The class does no longer exist in the model after profiling, thus the constraint is removed.";
-		case 20212:
-			return "Unrecognized constraint context model element type: '$1$'.";
-		case 20213:
-			return "Unrecognized constraint type: '$1$'.";
+		case 20205 -> "The application schema package '$1$' is completely empty after profiling.";
+		case 20207 -> "Removing constraint '$1$' from class '$2$' because the constraint targets a property that is missing in the class or its supertypes (to highest level)";
+		case 20208 -> "System Error: Constraint '$1$' in Class '$2$' not of type 'GenericText/OclConstraint'.";
+		case 20209 -> "$1$";
+		case 20210 -> "GenericPropertyInfo '$1$' is the context model element of the constraint named '$2$'. The property does no longer exist in the model after profiling, thus the constraint is removed.";
+		case 20211 -> "GenericClassInfo '$1$' is the context model element of the constraint named '$2$'. The class does no longer exist in the model after profiling, thus the constraint is removed.";
+		case 20212 -> "Unrecognized constraint context model element type: '$1$'.";
+		case 20213 -> "Unrecognized constraint type: '$1$'.";
 		// case 20214:
 		// return "The profile set of class '$1$' does not contain the profile
 		// set of its subtype '$2$': $3$. Because of the chosen transformation
 		// rule(s), '$1$' and all its subtypes will be removed, so that the
 		// profile mismatch between super- and subtype does not lead to model
 		// inconsistencies.";
-		case 20215:
-			return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
-		case 20219:
-			return "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
-		case 20220:
-			return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
+		case 20215 -> "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be removed from the model (which should be ok, given that it is (likely) not part of the selected schema destined for final processing in target(s)).";
+		case 20219 -> "Error parsing transformation parameter '$1$': '$2$'. Assuming no profiles as value for the parameter. This may lead to unexpected results.";
+		case 20220 -> "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$'). Using default value.";
 
-		default:
-			return "(Unknown message in " + this.getClass().getName()
+		default -> "(Unknown message in " + this.getClass().getName()
 					+ ". Message number was: " + mnr + ")";
-		}
+		};
 	}
 }

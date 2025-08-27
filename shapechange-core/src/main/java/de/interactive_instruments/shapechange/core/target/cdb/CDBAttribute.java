@@ -50,11 +50,11 @@ public class CDBAttribute {
 
 	public enum Type {
 		TEXT, NUMERIC, BOOLEAN
-	};
+	}
 
 	public enum Format {
 		FLOATINGPOINT, INTEGER
-	};
+	}
 
 	protected int code;
 	protected String symbol;

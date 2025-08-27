@@ -34,4 +34,4 @@ package de.interactive_instruments.shapechange.core.ui;
 
 public interface StatusReader {
 	public void statusChanged(int status);
-};
+}

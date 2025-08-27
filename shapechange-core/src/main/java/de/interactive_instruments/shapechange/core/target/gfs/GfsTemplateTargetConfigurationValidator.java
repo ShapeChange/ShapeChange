@@ -287,34 +287,22 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: GfsTemplateTarget configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
-	case 2:
-	    return "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
-	case 4:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	return switch (mnr) {
+	case 0 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$'.";
+	case 1 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 2 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
+	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
 
-	case 104:
-	    return "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
-	case 105:
-	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
-	case 106:
-	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not allowed for target type $4$";
-	case 107:
-	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not one of the recognized values: $4$";
-	case 108:
-	    return "Invalid map entry for type '$1$': the target type is undefined.";
-	case 109:
-	    return "Invalid map entry for type '$1$': target type '$2$' is not one of the allowed values. Check for typos or whitespace characters and correct the target type.";
-	case 110:
-	    return "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
+	case 104 -> "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 105 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
+	case 106 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not allowed for target type $4$";
+	case 107 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not one of the recognized values: $4$";
+	case 108 -> "Invalid map entry for type '$1$': the target type is undefined.";
+	case 109 -> "Invalid map entry for type '$1$': target type '$2$' is not one of the allowed values. Check for typos or whitespace characters and correct the target type.";
+	case 110 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
 
-	default:
-	    return "(" + GfsTemplateTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
+	default -> "(" + GfsTemplateTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
 		    + mnr;
-	}
+	};
     }
 }

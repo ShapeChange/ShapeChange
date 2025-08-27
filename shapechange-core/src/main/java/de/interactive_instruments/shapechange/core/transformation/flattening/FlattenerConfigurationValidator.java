@@ -161,21 +161,16 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: Transformer configuration element with 'id'='$1$'.";
-	case 100:
-	    return "Parameter '" + Flattener.PARAM_REMOVE_TYPE + "' is required for the execution of '"
+	return switch (mnr) {
+	case 0 -> "Context: Transformer configuration element with 'id'='$1$'.";
+	case 100 -> "Parameter '" + Flattener.PARAM_REMOVE_TYPE + "' is required for the execution of '"
 		    + Flattener.RULE_TRF_ALL_REMOVETYPE
 		    + "'. The configuration does not contain this parameter with a non-empty string.";
-	case 101:
-	    return "Configuration parameter '$1$' must be 'IGNORE' or 'OVERWRITE'. Found: $2$ ";
+	case 101 -> "Configuration parameter '$1$' must be 'IGNORE' or 'OVERWRITE'. Found: $2$ ";
 
-	case 20348:
-	    return "Configuration parameter '$1$' contains unknown descriptor '$2$'. ";
+	case 20348 -> "Configuration parameter '$1$' contains unknown descriptor '$2$'. ";
 
-	default:
-	    return "(" + FlattenerConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + FlattenerConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

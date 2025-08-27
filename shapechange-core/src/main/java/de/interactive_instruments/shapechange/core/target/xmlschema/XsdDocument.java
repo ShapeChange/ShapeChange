@@ -313,8 +313,7 @@ public class XsdDocument implements MessageSource {
 	}
 
 	Element e2 = null;
-	if (info instanceof PackageInfo) {
-	    PackageInfo pi = (PackageInfo) info;
+	if (info instanceof PackageInfo pi) {
 	    if (info.matches("rule-xsd-pkg-gmlProfileSchema")
 		    && options.GML_NS.equals("http://www.opengis.net/gml/3.2")) {
 		String profile = pi.gmlProfileSchema();
@@ -376,8 +375,7 @@ public class XsdDocument implements MessageSource {
 	    addImport(Options.SCAI_NS_PREFIX, Options.SCAI_NS);
 	}
 
-	if (info instanceof PropertyInfo) {
-	    PropertyInfo propi = (PropertyInfo) info;
+	if (info instanceof PropertyInfo propi) {
 	    ClassInfo ci = model.classById(propi.typeInfo().id);
 	    if (ci != null) {
 		if (info.matches("rule-xsd-prop-targetElement")
@@ -888,8 +886,8 @@ public class XsdDocument implements MessageSource {
 	}
 
 	addStandardAnnotation(e4, ci);
-    };
-
+    }
+    
     /**
      * complexType name='[ci.name()+"Type"]' abstract='[ci.isAbstract()]'
      * 
@@ -1068,7 +1066,7 @@ public class XsdDocument implements MessageSource {
 	}
 
 	return ret;
-    };
+    }
 
     public void pValueTypeGroup(ClassInfo ci) {
 	Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "group");
@@ -1104,8 +1102,8 @@ public class XsdDocument implements MessageSource {
 		    mc.addDetail(null, 400, "Property", propi.fullName());
 	    }
 	}
-    };
-
+    }
+    
     /**
      * group name='[ci.name()+"Group"]'
      * 
@@ -1138,7 +1136,7 @@ public class XsdDocument implements MessageSource {
 	e1.appendChild(ret);
 
 	return ret;
-    };
+    }
 
     private void addGroupReferences(ClassInfo ci, Element e, boolean recursive) {
 
@@ -1162,7 +1160,7 @@ public class XsdDocument implements MessageSource {
 		}
 	    }
 	}
-    };
+    }
 
     private void addMixinProperties(ClassInfo ci, Element e, SchematronSchema schDoc) {
 
@@ -1178,8 +1176,8 @@ public class XsdDocument implements MessageSource {
 		}
 	    }
 	}
-    };
-
+    }
+    
     /**
      * Walk down the subtype tree to find the first instantiable types and list
      * their element.
@@ -1370,7 +1368,7 @@ public class XsdDocument implements MessageSource {
 		    addAttribute(e3, "ref", ci.qname());
 	    }
 	}
-    };
+    }
 
     public void pPropertyTypeWithGroup(ClassInfo ci) {
 
@@ -1431,8 +1429,8 @@ public class XsdDocument implements MessageSource {
 	e9.appendChild(e10);
 	addAttribute(e10, "name", "Langtext");
 	addAttribute(e10, "type", "string");
-    };
-
+    }
+    
     /** create anonymous basic type */
     private Element pAnonymousBasicType(ClassInfo ci) {
 
@@ -1900,8 +1898,8 @@ public class XsdDocument implements MessageSource {
 	    if (mc != null)
 		mc.addDetail(null, 400, "Class", ci.fullName());
 	}
-    };
-
+    }
+    
     /**
      * Create code list encoding according to standard GML 3.2 encoding rule (union
      * between enumeration and other-pattern)
@@ -1939,7 +1937,7 @@ public class XsdDocument implements MessageSource {
 	Element e3 = document.createElementNS(Options.W3C_XML_SCHEMA, "pattern");
 	e4.appendChild(e3);
 	addAttribute(e3, "value", "other: \\w{2,}");
-    };
+    }
 
     private boolean includeProperty(PropertyInfo pi) {
 
@@ -2050,8 +2048,8 @@ public class XsdDocument implements MessageSource {
 	    maxOccursTxt = options.internalize(maxOccursTxt);
 	    addAttribute(e, "maxOccurs", maxOccursTxt);
 	}
-    };
-
+    }
+    
     /**
      * Process a single property.
      * 
@@ -4482,100 +4480,61 @@ public class XsdDocument implements MessageSource {
      * @return Message text or null
      */
     protected String messageText(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: class '$1$'";
-	case 2:
-	    return "Context: property '$1$'";
+	case 1 -> "Context: class '$1$'";
+	case 2 -> "Context: property '$1$'";
 
-	case 12:
-	    return "Directory named '$1$' does not exist or is not accessible.";
+	case 12 -> "Directory named '$1$' does not exist or is not accessible.";
 
-	case 116:
-	    return "Target object element(s) missing in property type for property '$1$'.";
-	case 119:
-	    return "No element for type '$1$' is defined. Only object and data types are represented by elements.";
-	case 122:
-	    return "The type with the name '$1$' has no tagged value 'base' or valid supertype and cannot be mapped to a basic type.";
-	case 123:
-	    return "The type with the name '$1$' has no ID and cannot be mapped to a basic type.";
-	case 124:
-	    return "Failed to create basic type '$1$'.";
-	case 128:
-	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML attribute, but the type is not a simple type.";
-	case 129:
-	    return "Union '$1$' as the value type of '$2$' could not be mapped as it does not contain the expected number of exactly one property to be encoded in the application schema.";
-	case 130:
-	    return "No type can be provided for the property '$1$'.";
-	case 141:
-	    return "The class '$1$' referenced from class '$2$' is not part of any package nor is it mapped to a well-known XML Schema type. The class is ignored.";
-	case 145:
-	    return "ADE class '$1$' cannot be suppressed, as it has no supertype.";
-	case 154:
-	    return "??No rule to name the '$1$' of class '$2$' is configured. Please check the current configuration.";
-	case 155:
-	    return "??No rule for a choice/sequence/all container for class '$1$' is configured, sequence is used. Please check the current configuration.";
-	case 156:
-	    return "??Failed to create enumeration type '$1$EnumerationType'.";
-	case 157:
-	    return "??Class of property '$1$' cannot be determined. The property is ignored.";
-	case 158:
-	    return "??MapEntry contains empty mapping target. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
-	case 166:
-	    return "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
-	case 169:
-	    return "The property '$1$' cannot be assigned a type as it is mapped to an XML Schema list attribute, but the type '$2$' is not a simple type.";
-	case 170:
-	    return "??The property '$1$' cannot be made an array propery as it is not restricted to inline content. Set 'inlineOrByReference' to 'inline' on the property.";
-	case 172:
-	    return "??The property '$1$' cannot be made an array propery as the type map does not specify an XML element for type '$2$'.";
-	case 173:
-	    return "??The property '$1$' cannot be made an array propery as the type '$2$' is not represented by an object element in XML.";
-	case 174:
-	    return "??MapEntry contains mapping target '$1$' from unknown schema. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
-	case 175:
-	    return "??'$1$' is a complex type with simple content which cannot be used in a qualifier. 'string' is used instead.";
-	case 177:
-	    return "??A qualifier has type '$1$' which could not be identified unambiguously in model. 'string' is used instead.";
-	case 178:
-	    return "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
-	case 179:
-	    return "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
-	case 180:
-	    return "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
-	case 181:
-	    return "Encountered DOMException, setting XML attribute '$1$' to value '$2$'. Exception message is: $3$";
+	case 116 -> "Target object element(s) missing in property type for property '$1$'.";
+	case 119 -> "No element for type '$1$' is defined. Only object and data types are represented by elements.";
+	case 122 -> "The type with the name '$1$' has no tagged value 'base' or valid supertype and cannot be mapped to a basic type.";
+	case 123 -> "The type with the name '$1$' has no ID and cannot be mapped to a basic type.";
+	case 124 -> "Failed to create basic type '$1$'.";
+	case 128 -> "The property '$1$' cannot be assigned a type as it is mapped to an XML attribute, but the type is not a simple type.";
+	case 129 -> "Union '$1$' as the value type of '$2$' could not be mapped as it does not contain the expected number of exactly one property to be encoded in the application schema.";
+	case 130 -> "No type can be provided for the property '$1$'.";
+	case 141 -> "The class '$1$' referenced from class '$2$' is not part of any package nor is it mapped to a well-known XML Schema type. The class is ignored.";
+	case 145 -> "ADE class '$1$' cannot be suppressed, as it has no supertype.";
+	case 154 -> "??No rule to name the '$1$' of class '$2$' is configured. Please check the current configuration.";
+	case 155 -> "??No rule for a choice/sequence/all container for class '$1$' is configured, sequence is used. Please check the current configuration.";
+	case 156 -> "??Failed to create enumeration type '$1$EnumerationType'.";
+	case 157 -> "??Class of property '$1$' cannot be determined. The property is ignored.";
+	case 158 -> "??MapEntry contains empty mapping target. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
+	case 166 -> "Class '$1$' cannot be mapped to an object element and is not included in the mapping of class '$2$'.";
+	case 169 -> "The property '$1$' cannot be assigned a type as it is mapped to an XML Schema list attribute, but the type '$2$' is not a simple type.";
+	case 170 -> "??The property '$1$' cannot be made an array propery as it is not restricted to inline content. Set 'inlineOrByReference' to 'inline' on the property.";
+	case 172 -> "??The property '$1$' cannot be made an array propery as the type map does not specify an XML element for type '$2$'.";
+	case 173 -> "??The property '$1$' cannot be made an array propery as the type '$2$' is not represented by an object element in XML.";
+	case 174 -> "??MapEntry contains mapping target '$1$' from unknown schema. Verify the configuration and look for 'fixme:fixme' in the created schemas.";
+	case 175 -> "??'$1$' is a complex type with simple content which cannot be used in a qualifier. 'string' is used instead.";
+	case 177 -> "??A qualifier has type '$1$' which could not be identified unambiguously in model. 'string' is used instead.";
+	case 178 -> "??'$1$' is a data type and cannot be used in a qualifier. 'string' is used instead.";
+	case 179 -> "??'$1$' is a type of an unsupported category for a qualifier. 'string' is used instead.";
+	case 180 -> "Could not find a map entry for the value type '$1$' of property '$2$' or the value type itself (in the model). Thus, constraining facets could not be created.";
+	case 181 -> "Encountered DOMException, setting XML attribute '$1$' to value '$2$'. Exception message is: $3$";
 
-	case 1009:
-	    return "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
-	case 1010:
-	    return "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
+	case 1009 -> "The property '$1$' is tagged as a metadata property. This is only possible for properties with complex content.";
+	case 1010 -> "Support for nilReason attributes was requested in property '$1$'. This is not possible for properties which have a local $2$ as their value.";
 
 	/*
 	 * 1000 - 1999: Schematron assertions (for code lists, etc.)
 	 */
-	case 1000:
-	    return "??Representation '$1$' of code list '$2$' is not recognized. No representation specific schematron assertions will be created for this code list.";
-	case 1001:
-	    return "??Code list URI of code list '$1$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list.";
+	case 1000 -> "??Representation '$1$' of code list '$2$' is not recognized. No representation specific schematron assertions will be created for this code list.";
+	case 1001 -> "??Code list URI of code list '$1$' is undefined. Schematron assertions that require the presence of this URI will not be created for the code list.";
 
 	/*
 	 * 2000-2999: Additional messages defined directly by this class (not
 	 * ShapeChangeResult)
 	 */
-	case 2000:
-	    return "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
-	case 2001:
-	    return "Could not find QName for value type '$1$' of property '$2$' in basic type '$3$'. Using 'FIXME' instead.";
+	case 2000 -> "Union '$1$' is subtype of union '$2$'. Both have attributes. This would lead to an XML Schema that requires choices of both unions to be encoded via two XML elements. This is contrary to the modeling intent of a union (where a single element would be encoded). The attributes of the subtype will be ignored. It is recommended that you review and revise your model. One situation where it is ok to have a subtype union is where the subtype does not have any attribute and only defines OCL constraints to restrict the options from the supertype union.";
+	case 2001 -> "Could not find QName for value type '$1$' of property '$2$' in basic type '$3$'. Using 'FIXME' instead.";
 
-	case 10021:
-	    return "Import to namespace '$1$' added.";
-	case 10022:
-	    return "Found: '$1$'";
+	case 10021 -> "Import to namespace '$1$' added.";
+	case 10022 -> "Found: '$1$'";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
-};
+}

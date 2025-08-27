@@ -532,34 +532,22 @@ public class TargetOutputProcessor implements MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 10:
-	    return "Exception occurred while moving file from '$1$' to '$2$'. Exception message is: '$3$'.";
-	case 15:
-	    return "Exception occurred while writing comment to text file located at '$1$'. Exception message is: '$2$'.";
-	case 18:
-	    return "XSLT stylesheet $1$ not found.";
-	case 20:
-	    return "Exception occurred while writing comment to XML file located at '$1$'. Exception message is: '$2$'.";
-	case 21:
-	    return "Exception occurred while writing comment to JSON file located at '$1$'. Exception message is: '$2$'.";
+	case 10 -> "Exception occurred while moving file from '$1$' to '$2$'. Exception message is: '$3$'.";
+	case 15 -> "Exception occurred while writing comment to text file located at '$1$'. Exception message is: '$2$'.";
+	case 18 -> "XSLT stylesheet $1$ not found.";
+	case 20 -> "Exception occurred while writing comment to XML file located at '$1$'. Exception message is: '$2$'.";
+	case 21 -> "Exception occurred while writing comment to JSON file located at '$1$'. Exception message is: '$2$'.";
 
-	case 100:
-	    return "---------- Processing output: START ----------";
-	case 101:
-	    return "---------- Processing output: COMPLETE ----------";
-	case 102:
-	    return "--- Modifying file names ...";
-	case 103:
-	    return "--- Adding comments ...";
-	case 104:
-	    return "--- Applying XSL transformation ...";
-	case 105:
-	    return "---------- Processing output: no output files produced by target ----------";
+	case 100 -> "---------- Processing output: START ----------";
+	case 101 -> "---------- Processing output: COMPLETE ----------";
+	case 102 -> "--- Modifying file names ...";
+	case 103 -> "--- Adding comments ...";
+	case 104 -> "--- Applying XSL transformation ...";
+	case 105 -> "---------- Processing output: no output files produced by target ----------";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

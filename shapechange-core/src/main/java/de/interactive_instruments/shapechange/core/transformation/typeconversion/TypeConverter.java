@@ -844,47 +844,35 @@ public class TypeConverter implements Transformer, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
-	case 10:
-	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
+	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
 
 	// Messages for RULE_DISSOLVE_ASSOCIATIONS
-	case 100:
-	    return "Association class '$1$' will be removed.";
+	case 100 -> "Association class '$1$' will be removed.";
 
 	// Messages for RULE_PROPERTYMETADATA_STEREOTYPE_TO_PROPERTY
-	case 200:
-	    return "Metadata type '$1$' identified by configuration parameter " + PARAM_DEFAULT_METADATA_TYPE
+	case 200 -> "Metadata type '$1$' identified by configuration parameter " + PARAM_DEFAULT_METADATA_TYPE
 		    + " was not found in the model. This is ok if all <<propertyMetadata>> properties have their metadata type correctly defined via tagged value 'metadataType'. Otherwise, i.e. the tagged value is not set correctly on such a property, a new metadata property will not be created for the property.";
-	case 201:
-	    return "Property '$1$' of class '$2$' has the property metadata stereotype. However, no metadata type was defined for the property (by tagged value 'metadataType' or via configuration parameter '"
+	case 201 -> "Property '$1$' of class '$2$' has the property metadata stereotype. However, no metadata type was defined for the property (by tagged value 'metadataType' or via configuration parameter '"
 		    + PARAM_DEFAULT_METADATA_TYPE
 		    + "'), or the type could not be found in the model (using the defined identification process). A new metadata property will NOT be created for property '$1$'.";
 
 	// Messages for RULE_NILREASON_PROPERTY_FOR_NILLABLE_PROPERTY
-	case 300:
-	    return "Void reason type '$1$' identified by configuration parameter " + PARAM_DEFAULT_VOID_REASON_TYPE
+	case 300 -> "Void reason type '$1$' identified by configuration parameter " + PARAM_DEFAULT_VOID_REASON_TYPE
 		    + " was not found in the model. This is ok if all nillable properties have their void reason type correctly defined via tagged value 'voidReasonType'. Otherwise, i.e. the tagged value is not set correctly on such a property, a new nil reason property will not be created for the property.";
-	case 301:
-	    return "Property '$1$' of class '$2$' is nillable. However, no void reason type was defined for the property (by tagged value 'voidReasonType' or via configuration parameter '"
+	case 301 -> "Property '$1$' of class '$2$' is nillable. However, no void reason type was defined for the property (by tagged value 'voidReasonType' or via configuration parameter '"
 		    + PARAM_DEFAULT_VOID_REASON_TYPE
 		    + "'), or the type could not be found in the model (using the defined identification process). A new nil reason property will be created for property '$1$', with value type 'CharacterString'.";
 
 	// Messages for RULE_SWITCH_VALUE_TYPE
-	case 400:
-	    return "Value type '$1$' of association role '$2$' was not found in the model. Cannot move the association.";
+	case 400 -> "Value type '$1$' of association role '$2$' was not found in the model. Cannot move the association.";
 
-	default:
-	    return "(" + TypeConverter.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + TypeConverter.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

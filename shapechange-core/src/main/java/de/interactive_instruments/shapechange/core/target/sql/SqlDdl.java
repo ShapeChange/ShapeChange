@@ -1126,11 +1126,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	for (Statement stmt : stmtsForDdlCreation) {
 
-	    if (stmt instanceof CreateTable) {
+	    if (stmt instanceof CreateTable ct) {
 
 		countTables++;
-
-		CreateTable ct = (CreateTable) stmt;
 		Table t = ct.getTable();
 
 		if (t.isAssociativeTable()) {
@@ -1238,7 +1236,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	    try (BufferedReader originalDdlReader = new BufferedReader(
 		    new InputStreamReader(new FileInputStream(outputFile), StandardCharsets.UTF_8));
 		    BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(new OutputStreamWriter(
-			    new FileOutputStream(outputWithoutEmptyLines), StandardCharsets.UTF_8));) {
+			    new FileOutputStream(outputWithoutEmptyLines), StandardCharsets.UTF_8))) {
 
 		String aLine = null;
 		while ((aLine = originalDdlReader.readLine()) != null) {
@@ -1419,101 +1417,63 @@ public class SqlDdl implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class SqlDdl";
+	return switch (mnr) {
+	case 0 -> "Context: class SqlDdl";
 	// case 1:
 	// return "";
-	case 2:
-	    return "Processing class '$1$'.";
-	case 3:
-	    return "Directory named '$1$' does not exist or is not accessible.";
+	case 2 -> "Processing class '$1$'.";
+	case 3 -> "Directory named '$1$' does not exist or is not accessible.";
 	// case 4:
 	// return "Number format exception while converting the value of
 	// configuration parameter '$1$' to an integer. Exception message: $2$.
 	// Using $3$ as default value for '$1$'.";
-	case 5:
-	    return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
-	case 6:
-	    return "Unknown database system '$1$'";
-	case 7:
-	    return "Schema '$1$' is not encoded.";
-	case 8:
-	    return "Class '$1$' is not encoded.";
-	case 9:
-	    return "Determined database system is '$1$'.";
-	case 15:
-	    return "No map entries provided via the configuration.";
-	case 16:
-	    return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17:
-	    return "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
-	case 18:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 6 -> "Unknown database system '$1$'";
+	case 7 -> "Schema '$1$' is not encoded.";
+	case 8 -> "Class '$1$' is not encoded.";
+	case 9 -> "Determined database system is '$1$'.";
+	case 15 -> "No map entries provided via the configuration.";
+	case 16 -> "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
+	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
+	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 
-	case 22:
-	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-	case 23:
-	    return "At least one of the descriptor identifiers in configuration parameter '"
+	case 22 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+	case 23 -> "At least one of the descriptor identifiers in configuration parameter '"
 		    + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' (parameter value is '$1$') does not match the regular expression '$2$'. Identifiers that do not match this expression will be ignored.";
-	case 24:
-	    return "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+	case 24 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' did not contain a well-known identifier. Using default value 'documentation'.";
-	case 25:
-	    return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
-	case 26:
-	    return "Exception occurred while transferring contents of file '$1$': $2$";
-	case 27:
-	    return "Exception occurred while creating database model. Exception message is: $1$";
-	case 28:
-	    return "URL '$1$' provided for configuration parameter "
+	case 25 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+	case 26 -> "Exception occurred while transferring contents of file '$1$': $2$";
+	case 27 -> "Exception occurred while creating database model. Exception message is: $1$";
+	case 28 -> "URL '$1$' provided for configuration parameter "
 		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
 		    + " is malformed. The data model will be created in a new EA repository within the output directory.";
-	case 29:
-	    return "Exception encountered while copying the data model EA repository file defined by configuration parameter "
+	case 29 -> "Exception encountered while copying the data model EA repository file defined by configuration parameter "
 		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
 		    + " to the output directory. The data model will be created in a new EA repository within the output directory.";
-	case 30:
-	    return "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
-	case 31:
-	    return "Using local EA repository file '$1$' for creation of the data model.";
-	case 32:
-	    return "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
+	case 30 -> "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
+	case 31 -> "Using local EA repository file '$1$' for creation of the data model.";
+	case 32 -> "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
 
-	case 108:
-	    return "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
-	case 109:
-	    return "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
+	case 108 -> "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109 -> "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
 
-	case 400:
-	    return "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
-	case 401:
-	    return "Number of CREATE TABLE statements for associative tables representing associations: $1$";
-	case 402:
-	    return "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
-	case 403:
-	    return "Number of CREATE TABLE statements for datatype usage specific tables: $1$";
-	case 404:
-	    return "Number of CREATE TABLE statements for tables representing feature types: $1$";
-	case 405:
-	    return "Number of CREATE TABLE statements for tables representing (object) types: $1$";
-	case 406:
-	    return "Number of CREATE TABLE statements for tables representing data types: $1$";
-	case 407:
-	    return "Number of CREATE TABLE statements for tables representing code lists: $1$";
-	case 408:
-	    return "Number of CREATE TABLE statements for tables representing enumerations: $1$";
-	case 409:
-	    return "Number of CREATE TABLE statements for tables representing unions: $1$";
+	case 400 -> "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
+	case 401 -> "Number of CREATE TABLE statements for associative tables representing associations: $1$";
+	case 402 -> "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
+	case 403 -> "Number of CREATE TABLE statements for datatype usage specific tables: $1$";
+	case 404 -> "Number of CREATE TABLE statements for tables representing feature types: $1$";
+	case 405 -> "Number of CREATE TABLE statements for tables representing (object) types: $1$";
+	case 406 -> "Number of CREATE TABLE statements for tables representing data types: $1$";
+	case 407 -> "Number of CREATE TABLE statements for tables representing code lists: $1$";
+	case 408 -> "Number of CREATE TABLE statements for tables representing enumerations: $1$";
+	case 409 -> "Number of CREATE TABLE statements for tables representing unions: $1$";
 
-	case 503:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 504:
-	    return "File has been deleted.";
+	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 504 -> "File has been deleted.";
 
-	default:
-	    return "(" + SqlDdl.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + SqlDdl.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

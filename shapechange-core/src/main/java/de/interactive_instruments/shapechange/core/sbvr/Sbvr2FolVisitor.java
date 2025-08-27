@@ -1840,7 +1840,7 @@ public class Sbvr2FolVisitor extends SBVRBaseVisitor<FolExpression> {
 				public int compare(ClassLiteral o1, ClassLiteral o2) {
 					return o1.getSchemaElement().name()
 							.compareTo(o2.getSchemaElement().name());
-				};
+				}
 			});
 
 			AndOr andor = new AndOr();

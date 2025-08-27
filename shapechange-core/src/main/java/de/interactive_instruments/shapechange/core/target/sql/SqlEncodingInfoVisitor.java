@@ -698,22 +698,15 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "";
-	case 2:
-	    return "";
-	case 3:
-	    return "";
-	case 4:
-	    return "";
-	case 100:
-	    return "Table '$1$' represents a case that is not recognized by the SqlEncodingInfoVisitor. This is a system error. Please contact the ShapeChange developers.";
-	case 101:
-	    return "??Could not determine primary key column(s) for table '$1$'. Using '$2$' as fallback. If the table is defined by a map entry, do provide information about the primary key columns in the map entry.";
+	return switch (mnr) {
+	case 1 -> "";
+	case 2 -> "";
+	case 3 -> "";
+	case 4 -> "";
+	case 100 -> "Table '$1$' represents a case that is not recognized by the SqlEncodingInfoVisitor. This is a system error. Please contact the ShapeChange developers.";
+	case 101 -> "??Could not determine primary key column(s) for table '$1$'. Using '$2$' as fallback. If the table is defined by a map entry, do provide information about the primary key columns in the map entry.";
 
-	default:
-	    return "(" + SqlEncodingInfoVisitor.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + SqlEncodingInfoVisitor.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

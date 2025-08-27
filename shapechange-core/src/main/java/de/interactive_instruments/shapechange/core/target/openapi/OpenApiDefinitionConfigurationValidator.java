@@ -165,27 +165,18 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "No 'advancedProcessConfigurations' element present in the configuration.";
-	case 4:
-	    return "Required target parameter '$1$' is not set in the configuration.";
-	case 5:
-	    return "The configuration does not define the required conformance class http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core.";
-	case 6:
-	    return "Target parameter '$1$' is set in the configuration, but does not have an actual value.";
-	case 7:
-	    return "Target parameter 'baseTemplate' has value: '$1$'. Could not load JSON from that location. Exception message is: $2$";
-	case 8:
-	    return "Configuration parameter '$1$' has invalid value '$2$'";
+	case 1 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "No 'advancedProcessConfigurations' element present in the configuration.";
+	case 4 -> "Required target parameter '$1$' is not set in the configuration.";
+	case 5 -> "The configuration does not define the required conformance class http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core.";
+	case 6 -> "Target parameter '$1$' is set in the configuration, but does not have an actual value.";
+	case 7 -> "Target parameter 'baseTemplate' has value: '$1$'. Could not load JSON from that location. Exception message is: $2$";
+	case 8 -> "Configuration parameter '$1$' has invalid value '$2$'";
 
-	default:
-	    return "(OpenApiDefinitionConfigurationValidator.java) Unknown message with number: " + mnr;
-	}
+	default -> "(OpenApiDefinitionConfigurationValidator.java) Unknown message with number: " + mnr;
+	};
     }
 }

@@ -218,28 +218,21 @@ public class ArcGISWorkspaceConfigurationValidator extends AbstractConfiguration
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 5:
-	    return "Could not create output directory. Exception message: '$1$'.";
-	case 6:
-	    return "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
+	case 1 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 5 -> "Could not create output directory. Exception message: '$1$'.";
+	case 6 -> "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + " is malformed. Exception message is: '$2$'.";
-	case 7:
-	    return "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	case 7 -> "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-	case 8:
-	    return "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
+	case 8 -> "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
 
 	// 100-199 MDG related messages
-	case 100:
-	    return "The MDG Technology 'ArcGIS' is not enabled in your EA environment. Writing an ArcGIS workspace requires that this technology is enabled. Enable this technology in your EA environment before executing ShapeChange.";
+	case 100 -> "The MDG Technology 'ArcGIS' is not enabled in your EA environment. Writing an ArcGIS workspace requires that this technology is enabled. Enable this technology in your EA environment before executing ShapeChange.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

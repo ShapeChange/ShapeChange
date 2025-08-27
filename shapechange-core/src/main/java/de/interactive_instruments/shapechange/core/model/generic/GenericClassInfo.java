@@ -1160,21 +1160,15 @@ public class GenericClassInfo extends ClassInfoImpl implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "(GenericClassInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set class field(s) for this tagged value.";
+	return switch (mnr) {
+	case 1 -> "(GenericClassInfo) When setting tagged value '$1$', a boolean value (either 'false' or 'true') was expected. Found '$2$' - cannot set class field(s) for this tagged value.";
 
-	case 30200:
-	    return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'ADD' the duplicate will nevertheless be added, resulting in two properties with the same name in the class.";
-	case 30201:
-	    return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE' the duplicate will be ignored and the existing property kept. The isRestriction setting of the existing property will not be changed.";
-	case 30202:
-	    return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE_UNRESTRICT' the duplicate will be ignored and the existing property kept. In case that the existing property is a restriction, it is set to not being a restriction.";
-	case 30203:
-	    return "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'OVERWRITE' the duplicate/new property will overwrite the existing one.";
+	case 30200 -> "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'ADD' the duplicate will nevertheless be added, resulting in two properties with the same name in the class.";
+	case 30201 -> "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE' the duplicate will be ignored and the existing property kept. The isRestriction setting of the existing property will not be changed.";
+	case 30202 -> "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'IGNORE_UNRESTRICT' the duplicate will be ignored and the existing property kept. In case that the existing property is a restriction, it is set to not being a restriction.";
+	case 30203 -> "(GenericModel.java) Duplicate property encountered. Property with name '$1$' already exists in class '$2$'. Because the duplicate property behavior is set to 'OVERWRITE' the duplicate/new property will overwrite the existing one.";
 
-	default:
-	    return "(" + GenericClassInfo.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + GenericClassInfo.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

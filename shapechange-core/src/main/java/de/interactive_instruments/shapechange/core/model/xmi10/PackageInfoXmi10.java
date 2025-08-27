@@ -77,7 +77,7 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 	
 	public String id() {
 		return id;
-	};
+	}
 
 	public String name() {
 		String s = doc.textOfProperty(pkg, "Foundation.Core.ModelElement.name");
@@ -88,7 +88,7 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 			s = s.trim();
 		}
 		return s;
-	};
+	}
 
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
@@ -97,8 +97,8 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 		
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
-	};
-
+	}
+	
 	// Validate tagged values cache, the filtering on tagged values defined 
 	// within ShapeChange has already been done during initial loading of the 
 	// XMI document...
@@ -118,7 +118,7 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 			s = doc.getOwnerIdAsString(pkg);
 		}
 		return doc.fPackages.get(s);
-	};
+	}
 
 	public SortedSet<String> supplierIds() {
 		SortedSet<String> suppliers = new TreeSet<String>();
@@ -137,11 +137,11 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 			}
 		}
 		return suppliers;
-	};
+	}
 
 	public XsdDocument gmlApplicationSchemaDocument() {
 		return gmlASD;
-	};
+	}
 
 	public PackageInfoXmi10(Xmi10Document d, Element e)
 			throws ShapeChangeAbortException {
@@ -181,13 +181,11 @@ public class PackageInfoXmi10 extends PackageInfoImpl implements PackageInfo, Me
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 10001:
-		    return "The package with ID '$1$' and name '$2$' was created. Namespace: '$3$'.";
+		case 10001 -> "The package with ID '$1$' and name '$2$' was created. Namespace: '$3$'.";
 		
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

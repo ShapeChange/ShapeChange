@@ -234,25 +234,18 @@ public class BasicModelValidator extends AbstractModelValidator {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "Context: property '$1$'";
-	case 2:
-	    return "Context: $1$";
+	case 0 -> "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
+	case 2 -> "Context: $1$";
 
-	case 100:
-	    return "Invalid content test element(s) encountered (they will be ignored): $1$";
-	case 101:
-	    return "??Descriptor content test: descriptor or tagged value '$1$' is not recognized.";
-	case 102:
-	    return "Descriptor content test failed (descriptorOrTaggedValue '$1$', regex '$2$', value '$3$').";
+	case 100 -> "Invalid content test element(s) encountered (they will be ignored): $1$";
+	case 101 -> "??Descriptor content test: descriptor or tagged value '$1$' is not recognized.";
+	case 102 -> "Descriptor content test failed (descriptorOrTaggedValue '$1$', regex '$2$', value '$3$').";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

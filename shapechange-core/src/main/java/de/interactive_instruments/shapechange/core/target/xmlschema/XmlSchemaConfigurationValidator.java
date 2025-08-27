@@ -173,20 +173,15 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: XmlSchema target configuration element with 'inputs'='$1$'.";
+	return switch (mnr) {
+	case 0 -> "Context: XmlSchema target configuration element with 'inputs'='$1$'.";
 
-	case 100:
-	    return "Configuration parameter 'representDescriptors' contains unknown descriptors. Parameter value is: '$1$'. Unknown descriptors are: '$2$'.";
-	case 101:
-	    return "Configuration parameter 'schematronQueryBinding', if set, must have a value equal to (ignoring case) 'xslt2'. Found parameter value: '$1$'.";
+	case 100 -> "Configuration parameter 'representDescriptors' contains unknown descriptors. Parameter value is: '$1$'. Unknown descriptors are: '$2$'.";
+	case 101 -> "Configuration parameter 'schematronQueryBinding', if set, must have a value equal to (ignoring case) 'xslt2'. Found parameter value: '$1$'.";
 
-	case 200:
-	    return "Parameter '$1$' defines a namespace for the schematron extension function '$2$'. However, the corresponding parameter that actually defines that function ('schematronExtension.$2$.function') was not found. The parameter will therefore be ignored.";
+	case 200 -> "Parameter '$1$' defines a namespace for the schematron extension function '$2$'. However, the corresponding parameter that actually defines that function ('schematronExtension.$2$.function') was not found. The parameter will therefore be ignored.";
 
-	default:
-	    return "(" + XmlSchemaConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + XmlSchemaConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

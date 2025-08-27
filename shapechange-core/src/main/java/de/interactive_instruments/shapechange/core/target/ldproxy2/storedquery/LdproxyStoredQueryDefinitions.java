@@ -105,16 +105,13 @@ public class LdproxyStoredQueryDefinitions implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "";
-	case 2:
-	    return "";
+	case 1 -> "";
+	case 2 -> "";
 
-	default:
-	    return "(LdproxyStoredQueryDefinitions.java) Unknown message with number: " + mnr;
-	}
+	default -> "(LdproxyStoredQueryDefinitions.java) Unknown message with number: " + mnr;
+	};
 
     }
 }

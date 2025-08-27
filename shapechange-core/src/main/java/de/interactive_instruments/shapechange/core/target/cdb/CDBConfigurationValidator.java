@@ -97,14 +97,12 @@ public class CDBConfigurationValidator extends AbstractConfigurationValidator {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
 	// 100-199 messages related to map entries
-	case 100:
-	    return "The target type of map entry with type '$1$' and rule '$2$' is invalid. It must be one of (ignoring case): Text, Numeric, Boolean.";
+	case 100 -> "The target type of map entry with type '$1$' and rule '$2$' is invalid. It must be one of (ignoring case): Text, Numeric, Boolean.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

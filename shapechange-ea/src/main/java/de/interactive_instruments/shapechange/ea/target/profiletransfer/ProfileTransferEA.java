@@ -915,63 +915,37 @@ public class ProfileTransferEA implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: $1$";
-	case 2:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "Transferring profiles for class '$1$'.";
-	case 10:
-	    return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to transfer profiles to is an EA repository.";
-	case 11:
-	    return "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
-	case 12:
-	    return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer will not be executed.";
-	case 13:
-	    return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer will not be executed.";
-	case 14:
-	    return "Enterprise Architect repository file named '$1$' not found.";
-	case 15:
-	    return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, an exception occurred when copying the file: $1$. The transfer will not be executed.";
-	case 16:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
-	case 17:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', username is: '$2$', password is: '$3$', exception message is: '$4$'";
-	case 18:
-	    return "Could not transfer profiles to class '$1$'. Exception message is: $2$.";
-	case 19:
-	    return "Could not transfer profiles to property '$1$' in class '$2$'. Exception message is: $3$.";
-	case 20:
-	    return "??The target EA repository contains the schema '$1$' with namespace '$2$' for which profiles shall be transferred. However, the input model does not contain a schema with that name. Consequently, no profiles can be transferred for this schema.";
-	case 21:
-	    return "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') for which profiles shall be transferred. However, the according schema in the input model does not contain a class with that name. Consequently, no profiles can be transferred for the class.";
-	case 22:
-	    return "Profiles tagged value of class '$1$' in schema '$2$' of the target EA repository is malformed: $3$. Existing profiles will be overwritten by profiles from corresponding input model element.";
-	case 23:
-	    return "Unexpected exception occurred while transferring the profiles of class '$1$' in schema '$2$' of the target EA repository: $3$.";
-	case 24:
-	    return "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') with property '$4$' for which profiles shall be transferred. However, the according class in the input model does not contain a property with that name. Consequently, no profiles can be transferred for the property.";
-	case 25:
-	    return "Profiles tagged value of attribute '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
-	case 26:
-	    return "Unexpected exception occurred while transferring the profiles of attribute '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
-	case 27:
-	    return "Profiles tagged value of association role '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
-	case 28:
-	    return "Unexpected exception occurred while transferring the profiles of association role '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
-	case 29:
-	    return "Using EA repository connection info provided by target configuration.";
-	case 30:
-	    return "Using EA repository connection info provided by input configuration.";
-	case 31:
-	    return "Parameter '" + PARAM_REPO_CONNECTION_STRING
+	case 1 -> "Context: $1$";
+	case 2 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 3 -> "Transferring profiles for class '$1$'.";
+	case 10 -> "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to transfer profiles to is an EA repository.";
+	case 11 -> "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
+	case 12 -> "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer will not be executed.";
+	case 13 -> "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer will not be executed.";
+	case 14 -> "Enterprise Architect repository file named '$1$' not found.";
+	case 15 -> "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, an exception occurred when copying the file: $1$. The transfer will not be executed.";
+	case 16 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
+	case 17 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', username is: '$2$', password is: '$3$', exception message is: '$4$'";
+	case 18 -> "Could not transfer profiles to class '$1$'. Exception message is: $2$.";
+	case 19 -> "Could not transfer profiles to property '$1$' in class '$2$'. Exception message is: $3$.";
+	case 20 -> "??The target EA repository contains the schema '$1$' with namespace '$2$' for which profiles shall be transferred. However, the input model does not contain a schema with that name. Consequently, no profiles can be transferred for this schema.";
+	case 21 -> "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') for which profiles shall be transferred. However, the according schema in the input model does not contain a class with that name. Consequently, no profiles can be transferred for the class.";
+	case 22 -> "Profiles tagged value of class '$1$' in schema '$2$' of the target EA repository is malformed: $3$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+	case 23 -> "Unexpected exception occurred while transferring the profiles of class '$1$' in schema '$2$' of the target EA repository: $3$.";
+	case 24 -> "The target EA repository contains class '$1$' (in schema '$2$' with namespace '$3$') with property '$4$' for which profiles shall be transferred. However, the according class in the input model does not contain a property with that name. Consequently, no profiles can be transferred for the property.";
+	case 25 -> "Profiles tagged value of attribute '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+	case 26 -> "Unexpected exception occurred while transferring the profiles of attribute '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
+	case 27 -> "Profiles tagged value of association role '$1$.$2$' in schema '$3$' of the target EA repository is malformed: $4$. Existing profiles will be overwritten by profiles from corresponding input model element.";
+	case 28 -> "Unexpected exception occurred while transferring the profiles of association role '$1$.$2$' in schema '$3$' of the target EA repository: $4$.";
+	case 29 -> "Using EA repository connection info provided by target configuration.";
+	case 30 -> "Using EA repository connection info provided by input configuration.";
+	case 31 -> "Parameter '" + PARAM_REPO_CONNECTION_STRING
 		    + "' is set in the configuration of this target, but it does not contain a valid value. Provide such a value or remove the target parameter in order for the target to look up the EA repository connection info in the input configuration.";
 
-	default:
-	    return "(" + ProfileTransferEA.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + ProfileTransferEA.class.getName() + ") Unknown message with number: " + mnr;
+	};
 
     }
 }

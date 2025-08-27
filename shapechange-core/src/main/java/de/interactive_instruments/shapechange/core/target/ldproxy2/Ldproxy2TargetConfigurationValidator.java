@@ -627,51 +627,30 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
-	case 2:
-	    return "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
-	case 4:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	return switch (mnr) {
+	case 0 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$'.";
+	case 1 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 2 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
+	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
 
-	case 100:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
-	case 101:
-	    return "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
-	case 102:
-	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
-	case 103:
-	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
-	case 104:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
-	case 105:
-	    return "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
-	case 106:
-	    return "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
-	case 107:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value (case matters for this parameter).";
-	case 108:
-	    return "Invalid map entry for type '$1$': the target type is undefined.";
-	case 109:
-	    return "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
-	case 110:
-	    return "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
-	case 111:
-	    return "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
-	case 112:
-	    return "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
-	case 113:
-	    return "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
-	case 114:
-	    return "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
-	case 115:
-	    return "Component value '$1$' of parameter '$2$' is not a valid value (general note: case matters for this parameter).";
+	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
+	case 101 -> "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
+	case 102 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
+	case 103 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
+	case 104 -> "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
+	case 105 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
+	case 106 -> "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 107 -> "Parameter '$1$' is set to '$2$'. This is not a valid value (case matters for this parameter).";
+	case 108 -> "Invalid map entry for type '$1$': the target type is undefined.";
+	case 109 -> "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
+	case 110 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
+	case 111 -> "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
+	case 112 -> "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
+	case 113 -> "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+	case 114 -> "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+	case 115 -> "Component value '$1$' of parameter '$2$' is not a valid value (general note: case matters for this parameter).";
 
-	default:
-	    return "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

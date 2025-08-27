@@ -90,12 +90,10 @@ public class CountSuffixUniqueNamingStrategy
 
 	@Override
 	public String message(int mnr) {
-		switch (mnr) {
-		case 1:
-			return "Could not make name '$1$' unique. Last possible name '$2$' is already taken.";
-		default:
-			return "(" + CountSuffixUniqueNamingStrategy.class.getName()
+		return switch (mnr) {
+		case 1 -> "Could not make name '$1$' unique. Last possible name '$2$' is already taken.";
+		default -> "(" + CountSuffixUniqueNamingStrategy.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

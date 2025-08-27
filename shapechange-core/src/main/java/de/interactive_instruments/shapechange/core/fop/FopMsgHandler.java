@@ -49,7 +49,7 @@ public class FopMsgHandler extends Handler {
 	public FopMsgHandler(ShapeChangeResult r, Target x) {
 		result = r;
 		xfBase = x;
-	};
+	}
 
 	@Override
 	public void close() throws SecurityException {

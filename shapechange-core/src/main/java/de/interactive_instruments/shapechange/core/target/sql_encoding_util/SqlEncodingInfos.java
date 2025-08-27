@@ -349,16 +349,13 @@ public class SqlEncodingInfos implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "No SQL encoding infos to write to file '$1$'.";
-	case 2:
-	    return "Encountered an exception while writing SQL encoding infos to file '$1$'. Exception message is: $2$";
+	case 1 -> "No SQL encoding infos to write to file '$1$'.";
+	case 2 -> "Encountered an exception while writing SQL encoding infos to file '$1$'. Exception message is: $2$";
 
-	default:
-	    return "(SqlEncodingInfos.java) Unknown message with number: " + mnr;
-	}
+	default -> "(SqlEncodingInfos.java) Unknown message with number: " + mnr;
+	};
 
     }
 }

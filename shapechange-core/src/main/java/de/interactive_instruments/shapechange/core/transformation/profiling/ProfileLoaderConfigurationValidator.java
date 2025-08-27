@@ -140,28 +140,18 @@ public class ProfileLoaderConfigurationValidator extends AbstractConfigurationVa
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "Context: class $1$";
-	case 2:
-	    return "Context: property $1$";
-	case 3:
-	    return "Context: association role (end1) '$1$'";
-	case 4:
-	    return "Context: association role (end2) '$1$'";
-	case 100:
-	    return "Transformation parameter '$1$' is required, but was not found in the configuration.";
-	case 101:
-	    return "Value '$1$' of transformation parameter '$2$' does not identify an existing directory that can be read.";
-	case 102:
-	    return "The directory '$1$', from which profiles shall be loaded, is empty.";
-	case 103:
-	    return "Syntax exception while compiling the regular expression defined by transformation parameter '$1$': '$2$'.";
-	case 104:
-	    return "Element '$2$' from the value of transformation parameter '$1$' is unknown (even when ignoring case). The element will be ignored.";
+	return switch (mnr) {
+	case 1 -> "Context: class $1$";
+	case 2 -> "Context: property $1$";
+	case 3 -> "Context: association role (end1) '$1$'";
+	case 4 -> "Context: association role (end2) '$1$'";
+	case 100 -> "Transformation parameter '$1$' is required, but was not found in the configuration.";
+	case 101 -> "Value '$1$' of transformation parameter '$2$' does not identify an existing directory that can be read.";
+	case 102 -> "The directory '$1$', from which profiles shall be loaded, is empty.";
+	case 103 -> "Syntax exception while compiling the regular expression defined by transformation parameter '$1$': '$2$'.";
+	case 104 -> "Element '$2$' from the value of transformation parameter '$1$' is unknown (even when ignoring case). The element will be ignored.";
 
-	default:
-	    return "(Unknown message in " + this.getClass().getName() + ". Message number was: " + mnr + ")";
-	}
+	default -> "(Unknown message in " + this.getClass().getName() + ". Message number was: " + mnr + ")";
+	};
     }
 }

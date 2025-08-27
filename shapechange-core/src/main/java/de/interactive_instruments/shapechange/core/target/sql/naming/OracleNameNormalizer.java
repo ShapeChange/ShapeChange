@@ -65,12 +65,10 @@ public class OracleNameNormalizer extends UpperCaseNameNormalizer
 
 	@Override
 	public String message(int mnr) {
-		switch (mnr) {
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
-		default:
-			return "(" + OracleNameNormalizer.class.getName()
+		return switch (mnr) {
+		case 1 -> "Name '$1$' is truncated to '$2$'";
+		default -> "(" + OracleNameNormalizer.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

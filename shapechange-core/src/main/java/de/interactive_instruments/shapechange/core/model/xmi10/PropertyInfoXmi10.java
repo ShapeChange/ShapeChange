@@ -88,7 +88,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 	public String id() {
 		return id;
-	};
+	}
 
 	public String name() {
 		String s = doc.textOfProperty(prp, "Foundation.Core.ModelElement.name");
@@ -115,8 +115,8 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		}
 
 		return s;
-	};
-
+	}
+	
 	// Validate tagged values cache, the filtering on tagged values defined
 	// within ShapeChange has already been done during initial loading of the
 	// XMI document...
@@ -138,11 +138,11 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 			}
 		}
 		return false;
-	};
+	}
 
 	public boolean isAttribute() {
 		return attribute;
-	};
+	}
 
 	public Type typeInfo() {
 		Type ti = new Type();
@@ -186,7 +186,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 			ti.name = parts[0].trim();
 		}
 		return ti;
-	};
+	}
 
 	public Multiplicity cardinality() {
 		Multiplicity m = new Multiplicity();
@@ -289,7 +289,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 		}
 
 		return m;
-	};
+	}
 
 	public boolean isNavigable() {
 		if (attribute) {
@@ -299,7 +299,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 					"Foundation.Core.AssociationEnd.isNavigable", "xmi.value")
 					.equals("true");
 		}
-	};
+	}
 
 	public boolean isOrdered() {
 		if (attribute) {
@@ -309,12 +309,12 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 					"Foundation.Core.AssociationEnd.ordering", "xmi.value")
 					.equals("ordered");
 		}
-	};
+	}
 
 	public boolean isUnique() {
 		// does not seem to be implemented in XMI 1.0
 		return true;
-	};
+	}
 
 	public boolean isComposition() {
 		if (attribute)
@@ -322,7 +322,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		/* XMI tests on associations disabled due to issue with EA XMI */
 		return false;
-	};
+	}
 
 	public boolean isAggregation() {
 		if (attribute)
@@ -330,7 +330,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		/* XMI tests on associations disabled due to issue with EA XMI */
 		return false;
-	};
+	}
 
 	public String inlineOrByReference() {
 		String s = doc.taggedValue(id, "inlineOrByReference");
@@ -343,7 +343,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 			s = super.inlineOrByReferenceFromEncodingRule();
 
 		return s.toLowerCase();
-	};
+	}
 
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
@@ -352,11 +352,11 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
-	};
+	}
 
 	public StructuredNumber sequenceNumber() {
 		return sequenceNumber;
-	};
+	}
 
 	public String initialValue() {
 		String initialValue = null;
@@ -382,7 +382,7 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 			}
 		}
 		return initialValue;
-	};
+	}
 
 	public PropertyInfoXmi10(Xmi10Document d, Element e,
 			AssociationInfoXmi10 ai) throws ShapeChangeAbortException {
@@ -456,15 +456,12 @@ public class PropertyInfoXmi10 extends PropertyInfoImpl
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 137:
-		    return "Property with id '$1' and name '$2' has no type.";
-		case 138:
-		    return "Property with id '$1' and name '$2' has a type with no name.";
+		case 137 -> "Property with id '$1' and name '$2' has no type.";
+		case 138 -> "Property with id '$1' and name '$2' has a type with no name.";
 		
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

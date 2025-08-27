@@ -331,8 +331,7 @@ public class XmlSchema implements Target, MessageSource {
 	    if (ci.matches("rule-xsd-cls-mixin-classes"))
 		break;
 	}
-	;
-
+	
 	// Content model
 	switch (cat) {
 	case Options.ENUMERATION:
@@ -1434,62 +1433,38 @@ public class XmlSchema implements Target, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-	case 10:
-	    return "Class '$1$' in package '$2$' is not associated with an XSD document.";
-	case 15:
-	    return "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 10 -> "Class '$1$' in package '$2$' is not associated with an XSD document.";
+	case 15 -> "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 
-	case 1000:
-	    return "Skipping XML Schema output, as configured.";
-	case 1001:
-	    return "No namespace was found for namespace abbreviation '$1$', configured via tagged value 'xsdForcedImports' on schema package '$2$'. No import will be created for this namespace abbreviation.";
+	case 1000 -> "Skipping XML Schema output, as configured.";
+	case 1001 -> "No namespace was found for namespace abbreviation '$1$', configured via tagged value 'xsdForcedImports' on schema package '$2$'. No import will be created for this namespace abbreviation.";
 
 	/*
 	 * 2000 - 2999: Schematron assertions (for value or nilReason etc.)
 	 */
-	case 2002:
-	    return "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check for value or nilReason will not be created.";
-	case 2003:
-	    return "??The value type of property '$1$' of class '$2$' is encoded as an attribute (group). A schematron assertion to check for value or nilReason will not be created.";
-	case 2004:
-	    return "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check for value or nilReason will not be created for the property.";
-	case 2005:
-	    return "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check for value or nilReason will not be created for the property.";
-	case 2006:
-	    return "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check nilReason values will not be created.";
-	case 2007:
-	    return "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
-	case 2008:
-	    return "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
-	case 2009:
-	    return "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
-	case 2010:
-	    return "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
-	case 2011:
-	    return "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
-	case 2012:
-	    return "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
-	case 2013:
-	    return "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
+	case 2002 -> "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check for value or nilReason will not be created.";
+	case 2003 -> "??The value type of property '$1$' of class '$2$' is encoded as an attribute (group). A schematron assertion to check for value or nilReason will not be created.";
+	case 2004 -> "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2005 -> "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2006 -> "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check nilReason values will not be created.";
+	case 2007 -> "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
+	case 2008 -> "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
+	case 2009 -> "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
+	case 2010 -> "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
+	case 2011 -> "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
+	case 2012 -> "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
+	case 2013 -> "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
 
-	case 10012:
-	    return "Generating XML Schema for application schema '$1$'.";
-	case 10016:
-	    return "Processing class '$1$', rule '$2$'.";
-	case 10017:
-	    return "Creating XSD document '$1$' for package '$2$'.";
+	case 10012 -> "Generating XML Schema for application schema '$1$'.";
+	case 10016 -> "Processing class '$1$', rule '$2$'.";
+	case 10017 -> "Creating XSD document '$1$' for package '$2$'.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

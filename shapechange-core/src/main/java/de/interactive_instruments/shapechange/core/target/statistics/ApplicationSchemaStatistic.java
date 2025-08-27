@@ -218,8 +218,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 						+ ss.numberOfFeatureRelationships());
 
 				writer.println(indent1 + "Percent of relationships to features: "
-						+ String.format("%.2f",
-								ss.percentOfFeatureRelationships()));
+						+ "%.2f".formatted(
+						ss.percentOfFeatureRelationships()));
 
 				writer.println(indent1 + "Number of attributes with complex data type from schema, and max mult 1, in schema: "
 					+ ss.getNumAttsWithSchemaDatatypeAndMaxMultOne());
@@ -242,8 +242,8 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 
 					writer.println(indent2
 							+ "Percent of relationships to features: "
-							+ String.format("%.2f",
-									cs.percentOfFeatureRelationships()));
+							+ "%.2f".formatted(
+							cs.percentOfFeatureRelationships()));
 					
 					writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult 1: "
 						+ cs.getNumAttsWithSchemaDatatypeAndMaxMultOne());
@@ -273,39 +273,24 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 
 	private String categoryAsString(ClassInfo classInfo) {
 
-		switch (classInfo.category()) {
+		return switch (classInfo.category()) {
 
-		case Options.FEATURE:
-			return "<<featureType>>";
-		case Options.OBJECT:
-			return "<<type>>";
-		case Options.DATATYPE:
-			return "<<dataType>>";
-		case Options.ENUMERATION:
-			return "<<enumeration>>";
-		case Options.CODELIST:
-			return "<<codeList>>";
-		case Options.ATTRIBUTECONCEPT:
-			return "<<attributeConcept>>";
-		case Options.ROLECONCEPT:
-			return "<<roleConcept>>";
-		case Options.FEATURECONCEPT:
-			return "<<featureConcept";
-		case Options.BASICTYPE:
-			return "<<basicType>>";
-		case Options.MIXIN:
-			return "<<type>> (mixin)";
-		case Options.UNION:
-			return "<<union>>";
-		case Options.OKSTRAFID:
-			return "<<fachId>>";
-		case Options.OKSTRAKEY:
-			return "<<schluesseltabelle>>";
-		case Options.VALUECONCEPT:
-			return "<<valueConcept>>";
-		default:
-			return "<unknown stereotyped> class";
-		}
+		case Options.FEATURE -> "<<featureType>>";
+		case Options.OBJECT -> "<<type>>";
+		case Options.DATATYPE -> "<<dataType>>";
+		case Options.ENUMERATION -> "<<enumeration>>";
+		case Options.CODELIST -> "<<codeList>>";
+		case Options.ATTRIBUTECONCEPT -> "<<attributeConcept>>";
+		case Options.ROLECONCEPT -> "<<roleConcept>>";
+		case Options.FEATURECONCEPT -> "<<featureConcept";
+		case Options.BASICTYPE -> "<<basicType>>";
+		case Options.MIXIN -> "<<type>> (mixin)";
+		case Options.UNION -> "<<union>>";
+		case Options.OKSTRAFID -> "<<fachId>>";
+		case Options.OKSTRAKEY -> "<<schluesseltabelle>>";
+		case Options.VALUECONCEPT -> "<<valueConcept>>";
+		default -> "<unknown stereotyped> class";
+		};
 	}
 
 	@Override
@@ -334,14 +319,11 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
-		case 0:
-			return "Context: class ApplicationSchemaStatistic";
-		case 100: 
-		    return "Could not create output directory. Exception message is: $1$";
-		default:
-			return "(" + ApplicationSchemaStatistic.class.getName()
+		return switch (mnr) {
+		case 0 -> "Context: class ApplicationSchemaStatistic";
+		case 100 -> "Could not create output directory. Exception message is: $1$";
+		default -> "(" + ApplicationSchemaStatistic.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

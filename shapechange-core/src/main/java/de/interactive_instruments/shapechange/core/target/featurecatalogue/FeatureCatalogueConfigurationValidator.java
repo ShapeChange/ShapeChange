@@ -331,45 +331,29 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: FeatureCatalogue target configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/feature-catalogue/";
-	case 2:
-	    return FeatureCatalogue.PARAM_JAVA_EXE_PATH + " is: $1$";
-	case 3:
-	    return FeatureCatalogue.PARAM_JAVA_OPTIONS + " is: $1$";
-	case 4:
-	    return "Message from external java executable: $1$";
-	case 5:
-	    return "Value of parameter '$1$' is invalid. Found: $2$";
+	return switch (mnr) {
+	case 0 -> "Context: FeatureCatalogue target configuration element with 'inputs'='$1$'.";
+	case 1 -> "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/feature-catalogue/";
+	case 2 -> FeatureCatalogue.PARAM_JAVA_EXE_PATH + " is: $1$";
+	case 3 -> FeatureCatalogue.PARAM_JAVA_OPTIONS + " is: $1$";
+	case 4 -> "Message from external java executable: $1$";
+	case 5 -> "Value of parameter '$1$' is invalid. Found: $2$";
 
-	case 100:
-	    return "Parameter '" + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
+	case 100 -> "Parameter '" + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
 		    + "' is set to '$1$'. A Transformer with this factory could not be instantiated. Make the implementation of the transformer factory available on the classpath.";
-	case 101:
-	    return "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
+	case 101 -> "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
 		    + "' was not found in the configuration.";
-	case 102:
-	    return "Parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
+	case 102 -> "Parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
 		    + "' contains 'DOCX' and/or 'FRAMEHTML'. These formats require an XSLT 2.0 processor, which should be set via the configuration parameter '"
 		    + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
 		    + "'. That parameter was not found, and the default TransformerFactory implementation is not 'net.sf.saxon.TransformerFactoryImpl' (which is known to be an XSLT 2.0 processor); ensure that the parameter is configured correctly.";
-	case 103:
-	    return "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
-	case 104:
-	    return "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
-	case 105:
-	    return "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
-	case 106:
-	    return "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
-	case 107:
-	    return "The referenced directory with miscellaneous content does not exist: $1$.";
-	case 108:
-	    return "The referenced directory with miscellaneous content is not a directory: $1$.";
-	default:
-	    return "(" + FeatureCatalogue.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 103 -> "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
+	case 104 -> "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+	case 105 -> "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+	case 106 -> "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
+	case 107 -> "The referenced directory with miscellaneous content does not exist: $1$.";
+	case 108 -> "The referenced directory with miscellaneous content is not a directory: $1$.";
+	default -> "(" + FeatureCatalogue.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

@@ -520,41 +520,26 @@ public class ModelProfileValidator implements MessageSource {
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
-		case 1:
-			return "Context: class $1$";
-		case 2:
-			return "Context: property $1$";
-		case 3:
-			return "Context: association role (end1) '$1$'";
-		case 4:
-			return "Context: association role (end2) '$1$'";
-		case 100:
-			return "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$.";
-		case 101:
-			return "The geometry values defined in the parameter of profile '$1$' are not fully contained in the set of geometries defined for the class '$2$' (via tagged value 'geometry'). The following values are missing in the geometry definition of the class: $3$.";
-		case 102:
-			return "The multiplicity value defined in the parameter of profile '$1$' is (at least partly) outside of the range defined by the multiplicity of property '$2$' in class '$3$'.";
-		case 103:
-			return "The isNavigable parameter of profile '$1$' cannot be applied to property '$2$' in class '$3$' because that property is an attribute.";
-		case 104:
-			return "None of the geometry values defined in the parameter of profile '$1$' is contained in the set of geometries defined for the class '$2$' (via tagged value 'geometry'). The geometry definition of the class is: $3$. The geometry definition of the profile is: $4$.";
-		case 105:
-			return "The isNavigable parameter of profile '$1$' on the ends of the association will result in the whole association to no longer be navigable. It is better practice to completely remove the properties from the profile, instead of using the 'isNavigable' profile parameter to do so.";
-		case 106:
-			return "Required property '$1$' of class '$2$' does not belong to all profiles of the class. If one of these profiles would be created, the property would no longer belong to the class, which would result in an inconsistency.";
-		case 107:
-			return "Class '$1$' is the type of property '$2$' (which is in class '$3$'). The profile set of type '$1$' does not contain the profile set of the property. $4$";
-		case 108:
-			return "The set of profiles of required property '$1$' in class '$2$' does not equal the set of profiles of the class. The profile definition is inconsistent.";
+		return switch (mnr) {
+		case 1 -> "Context: class $1$";
+		case 2 -> "Context: property $1$";
+		case 3 -> "Context: association role (end1) '$1$'";
+		case 4 -> "Context: association role (end2) '$1$'";
+		case 100 -> "The profile set of class '$1$' does not contain the profile set of its subtype '$2$': $3$.";
+		case 101 -> "The geometry values defined in the parameter of profile '$1$' are not fully contained in the set of geometries defined for the class '$2$' (via tagged value 'geometry'). The following values are missing in the geometry definition of the class: $3$.";
+		case 102 -> "The multiplicity value defined in the parameter of profile '$1$' is (at least partly) outside of the range defined by the multiplicity of property '$2$' in class '$3$'.";
+		case 103 -> "The isNavigable parameter of profile '$1$' cannot be applied to property '$2$' in class '$3$' because that property is an attribute.";
+		case 104 -> "None of the geometry values defined in the parameter of profile '$1$' is contained in the set of geometries defined for the class '$2$' (via tagged value 'geometry'). The geometry definition of the class is: $3$. The geometry definition of the profile is: $4$.";
+		case 105 -> "The isNavigable parameter of profile '$1$' on the ends of the association will result in the whole association to no longer be navigable. It is better practice to completely remove the properties from the profile, instead of using the 'isNavigable' profile parameter to do so.";
+		case 106 -> "Required property '$1$' of class '$2$' does not belong to all profiles of the class. If one of these profiles would be created, the property would no longer belong to the class, which would result in an inconsistency.";
+		case 107 -> "Class '$1$' is the type of property '$2$' (which is in class '$3$'). The profile set of type '$1$' does not contain the profile set of the property. $4$";
+		case 108 -> "The set of profiles of required property '$1$' in class '$2$' does not equal the set of profiles of the class. The profile definition is inconsistent.";
 
-		case 20204:
-			return "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
+		case 20204 -> "The profile set of class '$1$' does not contain the profile set of its property '$2$': $3$";
 		
 			
-		default:
-			return "(" + this.getClass().getName()
+		default -> "(" + this.getClass().getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

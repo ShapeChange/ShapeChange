@@ -134,4 +134,4 @@ public interface Target extends Process {
      */
     public String getDefaultEncodingRule();
 
-};
+}

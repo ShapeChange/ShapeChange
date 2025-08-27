@@ -541,60 +541,39 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: JsonSchemaTarget configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "Context: JsonSchemaTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	return switch (mnr) {
+	case 0 -> "Context: JsonSchemaTarget configuration element with 'inputs'='$1$'.";
+	case 1 -> "Context: JsonSchemaTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
 
-	case 100:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
-	case 101:
-	    return "Invalid map entry: target type is not a simple JSON Schema type but parameter 'keywords' is set. Setting keywords for a schema reference is not supported.";
-	case 102:
-	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has no value (which is required for the parameter).";
-	case 103:
-	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has one or more values ('$3$'), at least one of which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
-	case 104:
-	    return "Invalid map entry: parameter '$1$' with characteristic '$2$' is set, but the value of the characteristic is not a non-negative number (found: '$3$') (which is required for that characteristic).";
-	case 105:
-	    return "Invalid map entry: parameter '$1$' is invalid. Details: $2$";
-	case 106:
-	    return "Invalid map entry: parameter '$1$' has characteristic '$2$', which is not supported for the target type of the map entry (which is '$3$').";
-	case 107:
-	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
-	case 108:
-	    return "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as integer (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
-	case 109:
-	    return "Value '$1$' in @descriptorOrTaggedValue of SimpleAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
-	case 110:
-	    return "Value of field [[$1$]] in @valueTemplate of TemplateAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
-	case 111:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value. Details: $3$";
-	case 112:
-	    return "Invalid JSON Schema annotation(s) encountered: $1$";
-	case 113:
-	    return "Parameter '$1$' contains the following invalid values: '$2$'";
-	case 114:
-	    return "Invalid map entry: parameter '$1$' is invalid. Characteristic "
+	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
+	case 101 -> "Invalid map entry: target type is not a simple JSON Schema type but parameter 'keywords' is set. Setting keywords for a schema reference is not supported.";
+	case 102 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has no value (which is required for the parameter).";
+	case 103 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has one or more values ('$3$'), at least one of which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
+	case 104 -> "Invalid map entry: parameter '$1$' with characteristic '$2$' is set, but the value of the characteristic is not a non-negative number (found: '$3$') (which is required for that characteristic).";
+	case 105 -> "Invalid map entry: parameter '$1$' is invalid. Details: $2$";
+	case 106 -> "Invalid map entry: parameter '$1$' has characteristic '$2$', which is not supported for the target type of the map entry (which is '$3$').";
+	case 107 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as double (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
+	case 108 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' has value '$3$', which cannot be parsed as integer (which is required for that characteristic and/or the target type of the map entry, which is '$4$').";
+	case 109 -> "Value '$1$' in @descriptorOrTaggedValue of SimpleAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 110 -> "Value of field [[$1$]] in @valueTemplate of TemplateAnnotation configuration element with @annotation '$2$' does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 111 -> "Parameter '$1$' is set to '$2$'. This is not a valid value. Details: $3$";
+	case 112 -> "Invalid JSON Schema annotation(s) encountered: $1$";
+	case 113 -> "Parameter '$1$' contains the following invalid values: '$2$'";
+	case 114 -> "Invalid map entry: parameter '$1$' is invalid. Characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES
 		    + " is defined but has no value.";
-	case 115:
-	    return "Invalid map entry: parameter '$1$' is invalid. Characteristic "
+	case 115 -> "Invalid map entry: parameter '$1$' is invalid. Characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_COLLECTION_ID_TYPES
 		    + " is defined with invalid value '$2$'. Only use valid values.";
-	case 116:
-	    return "Invalid map entry: parameter '$1$' is invalid. Required characteristic "
+	case 116 -> "Invalid map entry: parameter '$1$' is invalid. Required characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
 		    + " is undefined or has no value.";
-	case 117:
-	    return "Invalid map entry: parameter '$1$' is invalid. The value of characteristic "
+	case 117 -> "Invalid map entry: parameter '$1$' is invalid. The value of characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
 		    + " does not contain the mandatory variable '(featureId)'. The value is: $2$";
 
-	default:
-	    return "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
+	default -> "(" + JsonSchemaTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
 		    + mnr;
-	}
+	};
     }
 }

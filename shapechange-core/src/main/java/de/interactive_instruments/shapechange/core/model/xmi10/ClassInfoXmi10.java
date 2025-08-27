@@ -84,7 +84,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 
 	public String id() {
 		return id;
-	};
+	}
 
 	public String name() {
 		String s = doc.textOfProperty(cla, "Foundation.Core.ModelElement.name");
@@ -104,7 +104,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 			s = parts[0].trim();
 		}
 		return s;
-	};
+	}
 
 	protected Multiplicity roseHiddenCardinality() {
 		String s = doc.textOfProperty(cla, "Foundation.Core.ModelElement.name");
@@ -121,7 +121,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 		} else {
 			return null;
 		}
-	};
+	}
 
 	protected String roseHiddenLabels() {
 		String s = doc.textOfProperty(cla, "Foundation.Core.ModelElement.name");
@@ -136,19 +136,19 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 		} else {
 			return null;
 		}
-	};
+	}
 
 	public boolean isAbstract() {
 		return doc.attributeOfProperty(cla,
 				"Foundation.Core.GeneralizableElement.isAbstract", "xmi.value")
 				.equals("true");
-	};
+	}
 
 	public boolean isLeaf() {
 		return doc.attributeOfProperty(cla,
 				"Foundation.Core.GeneralizableElement.isLeaf", "xmi.value")
 				.equals("true");
-	};
+	}
 
 	public PackageInfo pkg() {
 		String propId = doc.idOfProperty(cla,
@@ -161,7 +161,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 			doc.result.addInfo(this, 1001, name(), id, propId);
 		}
 		return pkg;
-	};
+	}
 
 	public void validateStereotypesCache() {
 		if (stereotypesCache == null) {
@@ -170,9 +170,7 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 
 		if (stereotypesCache == null)
 			stereotypesCache = options().stereotypesFactory();
-	};
-
-	// Validate tagged values cache, the filtering on tagged values defined
+	}// Validate tagged values cache, the filtering on tagged values defined
 	// within ShapeChange has already been done during initial loading of the
 	// XMI document...
 	public void validateTaggedValuesCache() {
@@ -189,14 +187,14 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 		if (res == null)
 			res = new TreeSet<String>();
 		return res;
-	};
+	}
 
 	public SortedSet<String> subtypes() {
 		SortedSet<String> res = doc.fSubtypes.get(id);
 		if (res == null)
 			res = new TreeSet<String>();
 		return res;
-	};
+	}
 
 	protected TreeMap<StructuredNumber, PropertyInfo> properties = null;
 
@@ -391,13 +389,11 @@ public class ClassInfoXmi10 extends ClassInfoImpl implements ClassInfo, MessageS
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 1001:
-		    return "Class '$1$' with ID '$2$' cannot be identified as being part of any package. The package is probably ignored, for example, because it carries an unsupported stereotype. The ID of the missing package is: '$3$'";
+		case 1001 -> "Class '$1$' with ID '$2$' cannot be identified as being part of any package. The package is probably ignored, for example, because it carries an unsupported stereotype. The ID of the missing package is: '$3$'";
 		
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

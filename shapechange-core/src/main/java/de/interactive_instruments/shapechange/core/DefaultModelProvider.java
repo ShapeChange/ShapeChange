@@ -158,26 +158,18 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 17:
-	    return "Unknown model type: '$1$'.";
-	case 19:
-	    return "Model object could not be instantiated: '$1$'.";
-	case 20:
-	    return "Model object could not be accessed: '$1$'.";
-	case 24:
-	    return "Repository filename or connection string was not provided. Cannot connect to a repository.";
-	case 26:
-	    return "Model type not provided.";
-	case 27:
-	    return "Using custom model implementation: '$1$'.";
-	case 28:
-	    return "Loading of input model is skipped. No model transformations or targets are configured.";
+	case 17 -> "Unknown model type: '$1$'.";
+	case 19 -> "Model object could not be instantiated: '$1$'.";
+	case 20 -> "Model object could not be accessed: '$1$'.";
+	case 24 -> "Repository filename or connection string was not provided. Cannot connect to a repository.";
+	case 26 -> "Model type not provided.";
+	case 27 -> "Using custom model implementation: '$1$'.";
+	case 28 -> "Loading of input model is skipped. No model transformations or targets are configured.";
 	    
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

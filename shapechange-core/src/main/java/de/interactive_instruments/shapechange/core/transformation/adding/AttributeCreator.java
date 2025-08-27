@@ -902,29 +902,20 @@ public class AttributeCreator implements Transformer, MessageSource {
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 0:
-			return "Context: class AttributeCreator";
-		case 1:
-			return "No 'advancedProcessConfigurations' element present in the configuration. No attributes will be added to the model.";
-		case 2:
-			return "Syntax exception for regular expression value of attribute '$1$' in '$2$' of $3$ AttributeDefinition element. AttributeDefinition will be ignored.";
-		case 3:
-			return "'$1$' element of $2$ AttributeDefinition element is empty which is not allowed. AttributeDefinition will be ignored.";
-		case 4:
-			return "$1$ AttributeDefinition element states that '$2$' shall be the type of the new attribute with name '$3$', but the model does not contain a class with that name. Using 'unknown' as type id and category of value.";
-		case 5:
-			return "No classes were selected for definition of attribute '$1$'. AttributeDefinition will be ignored.";
-		case 6:
-			return "Property with name '$1$' already exists in class '$2$'. Because overwriting an existing property is not allowed the AttributeDefinition will be ignored.";
-		case 7:
-			return "Unknown descriptor '$1$' encountered while loading the attribute definition. The according descriptor element will be ignored.";
+		case 0 -> "Context: class AttributeCreator";
+		case 1 -> "No 'advancedProcessConfigurations' element present in the configuration. No attributes will be added to the model.";
+		case 2 -> "Syntax exception for regular expression value of attribute '$1$' in '$2$' of $3$ AttributeDefinition element. AttributeDefinition will be ignored.";
+		case 3 -> "'$1$' element of $2$ AttributeDefinition element is empty which is not allowed. AttributeDefinition will be ignored.";
+		case 4 -> "$1$ AttributeDefinition element states that '$2$' shall be the type of the new attribute with name '$3$', but the model does not contain a class with that name. Using 'unknown' as type id and category of value.";
+		case 5 -> "No classes were selected for definition of attribute '$1$'. AttributeDefinition will be ignored.";
+		case 6 -> "Property with name '$1$' already exists in class '$2$'. Because overwriting an existing property is not allowed the AttributeDefinition will be ignored.";
+		case 7 -> "Unknown descriptor '$1$' encountered while loading the attribute definition. The according descriptor element will be ignored.";
 
-		default:
-			return "(" + AttributeDefinition.class.getName()
+		default -> "(" + AttributeDefinition.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 
 }

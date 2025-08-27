@@ -399,7 +399,7 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	File geopackageFile = new File(outputDirectory, outputFilename);
 	GeoPackageManager.create(geopackageFile);
 
-	try (GeoPackage geoPackage = GeoPackageManager.open(geopackageFile, true);) {
+	try (GeoPackage geoPackage = GeoPackageManager.open(geopackageFile, true)) {
 
 	    // initialise SRS definitions
 	    SpatialReferenceSystemDao srsDao = geoPackage.getSpatialReferenceSystemDao();
@@ -811,36 +811,22 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    return null;
 	} else {
 
-	    switch (me.getTargetType().toUpperCase(Locale.ENGLISH)) {
-	    case "BLOB":
-		return GeoPackageDataType.BLOB;
-	    case "BOOLEAN":
-		return GeoPackageDataType.BOOLEAN;
-	    case "DATE":
-		return GeoPackageDataType.DATE;
-	    case "DATETIME":
-		return GeoPackageDataType.DATETIME;
-	    case "DOUBLE":
-		return GeoPackageDataType.DOUBLE;
-	    case "FLOAT":
-		return GeoPackageDataType.FLOAT;
-	    case "INT":
-		return GeoPackageDataType.INT;
-	    case "INTEGER":
-		return GeoPackageDataType.INTEGER;
-	    case "MEDIUMINT":
-		return GeoPackageDataType.MEDIUMINT;
-	    case "REAL":
-		return GeoPackageDataType.REAL;
-	    case "SMALLINT":
-		return GeoPackageDataType.SMALLINT;
-	    case "TEXT":
-		return GeoPackageDataType.TEXT;
-	    case "TINYINT":
-		return GeoPackageDataType.TINYINT;
-	    default:
-		return null;
-	    }
+	    return switch (me.getTargetType().toUpperCase(Locale.ENGLISH)) {
+	    case "BLOB" -> GeoPackageDataType.BLOB;
+	    case "BOOLEAN" -> GeoPackageDataType.BOOLEAN;
+	    case "DATE" -> GeoPackageDataType.DATE;
+	    case "DATETIME" -> GeoPackageDataType.DATETIME;
+	    case "DOUBLE" -> GeoPackageDataType.DOUBLE;
+	    case "FLOAT" -> GeoPackageDataType.FLOAT;
+	    case "INT" -> GeoPackageDataType.INT;
+	    case "INTEGER" -> GeoPackageDataType.INTEGER;
+	    case "MEDIUMINT" -> GeoPackageDataType.MEDIUMINT;
+	    case "REAL" -> GeoPackageDataType.REAL;
+	    case "SMALLINT" -> GeoPackageDataType.SMALLINT;
+	    case "TEXT" -> GeoPackageDataType.TEXT;
+	    case "TINYINT" -> GeoPackageDataType.TINYINT;
+	    default -> null;
+	    };
 	}
     }
 
@@ -852,46 +838,27 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	    return null;
 	} else {
 
-	    switch (me.getTargetType().toUpperCase(Locale.ENGLISH)) {
-	    case "CIRCULARSTRING":
-		return GeometryType.CIRCULARSTRING;
-	    case "COMPOUNDCURVE":
-		return GeometryType.COMPOUNDCURVE;
-	    case "CURVE":
-		return GeometryType.CURVE;
-	    case "CURVEPOLYGON":
-		return GeometryType.CURVEPOLYGON;
-	    case "GEOMETRY":
-		return GeometryType.GEOMETRY;
-	    case "GEOMETRYCOLLECTION":
-		return GeometryType.GEOMETRYCOLLECTION;
-	    case "LINESTRING":
-		return GeometryType.LINESTRING;
-	    case "MULTICURVE":
-		return GeometryType.MULTICURVE;
-	    case "MULTILINESTRING":
-		return GeometryType.MULTILINESTRING;
-	    case "MULTIPOINT":
-		return GeometryType.MULTIPOINT;
-	    case "MULTIPOLYGON":
-		return GeometryType.MULTIPOLYGON;
-	    case "MULTISURFACE":
-		return GeometryType.MULTISURFACE;
-	    case "POINT":
-		return GeometryType.POINT;
-	    case "POLYGON":
-		return GeometryType.POLYGON;
-	    case "POLYHEDRALSURFACE":
-		return GeometryType.POLYHEDRALSURFACE;
-	    case "SURFACE":
-		return GeometryType.SURFACE;
-	    case "TIN":
-		return GeometryType.TIN;
-	    case "TRIANGLE":
-		return GeometryType.TRIANGLE;
-	    default:
-		return null;
-	    }
+	    return switch (me.getTargetType().toUpperCase(Locale.ENGLISH)) {
+	    case "CIRCULARSTRING" -> GeometryType.CIRCULARSTRING;
+	    case "COMPOUNDCURVE" -> GeometryType.COMPOUNDCURVE;
+	    case "CURVE" -> GeometryType.CURVE;
+	    case "CURVEPOLYGON" -> GeometryType.CURVEPOLYGON;
+	    case "GEOMETRY" -> GeometryType.GEOMETRY;
+	    case "GEOMETRYCOLLECTION" -> GeometryType.GEOMETRYCOLLECTION;
+	    case "LINESTRING" -> GeometryType.LINESTRING;
+	    case "MULTICURVE" -> GeometryType.MULTICURVE;
+	    case "MULTILINESTRING" -> GeometryType.MULTILINESTRING;
+	    case "MULTIPOINT" -> GeometryType.MULTIPOINT;
+	    case "MULTIPOLYGON" -> GeometryType.MULTIPOLYGON;
+	    case "MULTISURFACE" -> GeometryType.MULTISURFACE;
+	    case "POINT" -> GeometryType.POINT;
+	    case "POLYGON" -> GeometryType.POLYGON;
+	    case "POLYHEDRALSURFACE" -> GeometryType.POLYHEDRALSURFACE;
+	    case "SURFACE" -> GeometryType.SURFACE;
+	    case "TIN" -> GeometryType.TIN;
+	    case "TRIANGLE" -> GeometryType.TRIANGLE;
+	    default -> null;
+	    };
 	}
     }
 
@@ -936,74 +903,43 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class GeoPackageTemplate";
-	case 1:
-	    return "Property '$1$'";
-	case 2:
-	    return "Class '$1$'";
-	case 3:
-	    return "Processing class '$1$'.";
-	case 4:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 5:
-	    return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
-	case 6:
-	    return "";
-	case 7:
-	    return "Schema '$1$' is not encoded.";
-	case 8:
-	    return "Class '$1$' is not encoded.";
+	return switch (mnr) {
+	case 0 -> "Context: class GeoPackageTemplate";
+	case 1 -> "Property '$1$'";
+	case 2 -> "Class '$1$'";
+	case 3 -> "Processing class '$1$'.";
+	case 4 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 6 -> "";
+	case 7 -> "Schema '$1$' is not encoded.";
+	case 8 -> "Class '$1$' is not encoded.";
 
-	case 16:
-	    return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17:
-	    return "Type '$1$' is of a category not enabled for conversion, meaning that it will not be represented in the GeoPackage template.";
-	case 18:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
-	case 19:
-	    return "Property '$1$' is not encoded.";
+	case 16 -> "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
+	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that it will not be represented in the GeoPackage template.";
+	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 19 -> "Property '$1$' is not encoded.";
 
-	case 25:
-	    return "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+	case 25 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 
-	case 100:
-	    return "Class '$1$' has more than one geometry properties. All geometric properties except '$2$' will be ignored.";
-	case 101:
-	    return "Property '$1$' has geometry value type '$2$', for which no map entry is configured that maps that type to one of the geometry types recognized by GeoPackage. The property will be encoded with type GEOMETRY.";
-	case 102:
-	    return "Property '$1$' has value type '$2$', for which no map entry is configured that maps that type to one of the data types recognized by GeoPackage. The property will be encoded with type TEXT.";
-	case 103:
-	    return "Property '$1$' has max multiplicity greater than 1. This is currently not supported by the target. The property will be encoded as if it had max multiplicity = 1.";
-	case 104:
-	    return "Class '$1$' has no relevant properties. It will be ignored.";
-	case 105:
-	    return "SQL Exception occurred while creating data column constraints for enumeration '$1$'. Exception message is: $2$";
-	case 106:
-	    return "";
-	case 107:
-	    return "SQL Exception occurred while creating a data columns table entry for property '$1$'. Exception message is: $2$";
-	case 108:
-	    return "SQL Exception occurred while creating the GeoPackage template. Exception message is: $1$";
-	case 109:
-	    return "Class '$1$' has multiple geometric properties. Only property '$2$' will be encoded. Property '$3$' is ignored.";
-	case 110:
-	    return "Property '$1$' of class '$2$' is an identifier property with type '$3$'. It will be encoded with GeoPackage data type INTEGER.";
-	case 111:
-	    return "Property '$1$' of class '$2$' has tagged value gpkgZ with unrecognized value '$3$'. Using value defined by target parameter gpkgZ (which is '$4$').";
-	case 112:
-	    return "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
-	case 113:
-	    return "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
+	case 100 -> "Class '$1$' has more than one geometry properties. All geometric properties except '$2$' will be ignored.";
+	case 101 -> "Property '$1$' has geometry value type '$2$', for which no map entry is configured that maps that type to one of the geometry types recognized by GeoPackage. The property will be encoded with type GEOMETRY.";
+	case 102 -> "Property '$1$' has value type '$2$', for which no map entry is configured that maps that type to one of the data types recognized by GeoPackage. The property will be encoded with type TEXT.";
+	case 103 -> "Property '$1$' has max multiplicity greater than 1. This is currently not supported by the target. The property will be encoded as if it had max multiplicity = 1.";
+	case 104 -> "Class '$1$' has no relevant properties. It will be ignored.";
+	case 105 -> "SQL Exception occurred while creating data column constraints for enumeration '$1$'. Exception message is: $2$";
+	case 106 -> "";
+	case 107 -> "SQL Exception occurred while creating a data columns table entry for property '$1$'. Exception message is: $2$";
+	case 108 -> "SQL Exception occurred while creating the GeoPackage template. Exception message is: $1$";
+	case 109 -> "Class '$1$' has multiple geometric properties. Only property '$2$' will be encoded. Property '$3$' is ignored.";
+	case 110 -> "Property '$1$' of class '$2$' is an identifier property with type '$3$'. It will be encoded with GeoPackage data type INTEGER.";
+	case 111 -> "Property '$1$' of class '$2$' has tagged value gpkgZ with unrecognized value '$3$'. Using value defined by target parameter gpkgZ (which is '$4$').";
+	case 112 -> "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
+	case 113 -> "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
 
-	case 503:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 504:
-	    return "File has been deleted.";
+	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 504 -> "File has been deleted.";
 
-	default:
-	    return "(" + GeoPackageTemplate.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + GeoPackageTemplate.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

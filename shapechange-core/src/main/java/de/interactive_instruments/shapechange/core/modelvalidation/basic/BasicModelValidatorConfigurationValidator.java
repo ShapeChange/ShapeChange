@@ -113,24 +113,17 @@ public class BasicModelValidatorConfigurationValidator extends AbstractConfigura
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: BasicConfigurationValidator configuration element with 'id'='$1$'.";
+	return switch (mnr) {
+	case 0 -> "Context: BasicConfigurationValidator configuration element with 'id'='$1$'.";
 
-	case 100:
-	    return "Parameter '$1$' is set to '$2$'. This is not a valid value.";
+	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
 
-	case 109:
-	    return "Tagged value identification value '$1$' in @descriptorOrTaggedValue XML-attribute of DescriptorContentTest configuration element does not match regular expression TV(\\(.+?\\))?:(.+)";
-	case 110:
-	    return "";
-	case 111:
-	    return "";
-	case 112:
-	    return "Invalid content test element(s) encountered: $1$";
+	case 109 -> "Tagged value identification value '$1$' in @descriptorOrTaggedValue XML-attribute of DescriptorContentTest configuration element does not match regular expression TV(\\(.+?\\))?:(.+)";
+	case 110 -> "";
+	case 111 -> "";
+	case 112 -> "Invalid content test element(s) encountered: $1$";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

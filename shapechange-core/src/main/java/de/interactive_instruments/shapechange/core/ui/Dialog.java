@@ -43,4 +43,4 @@ public interface Dialog {
 		throws ShapeChangeAbortException;
 	
 	public void setVisible(boolean vis);
-};
+}

@@ -65,12 +65,10 @@ public class SQLServerNameNormalizer extends AbstractNameNormalizer
 
 	@Override
 	public String message(int mnr) {
-		switch (mnr) {
-		case 1:
-			return "Name '$1$' is truncated to '$2$'";
-		default:
-			return "(" + SQLServerNameNormalizer.class.getName()
+		return switch (mnr) {
+		case 1 -> "Name '$1$' is truncated to '$2$'";
+		default -> "(" + SQLServerNameNormalizer.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

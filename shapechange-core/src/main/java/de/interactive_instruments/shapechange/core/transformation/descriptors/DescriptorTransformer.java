@@ -265,35 +265,24 @@ public class DescriptorTransformer implements MessageSource, Transformer {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-	case 4:
-	    return "Context: supertype '$1$'";
-	case 5:
-	    return "Context: subtype '$1$'";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 4 -> "Context: supertype '$1$'";
+	case 5 -> "Context: subtype '$1$'";
 
-	case 10:
-	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
+	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
 
 	// 100-199 Messages for RULE_UPDATE_DESCRIPTORS
-	case 100:
-	    return "No 'advancedProcessConfigurations' element present in the configuration. Descriptors will not be updated.";
-	case 101:
-	    return "";
-	case 102:
-	    return "Invalid DescriptorValue element(s) encountered. " + RULE_UPDATE_DESCRIPTORS
+	case 100 -> "No 'advancedProcessConfigurations' element present in the configuration. Descriptors will not be updated.";
+	case 101 -> "";
+	case 102 -> "Invalid DescriptorValue element(s) encountered. " + RULE_UPDATE_DESCRIPTORS
 		    + " will be ignored. Details: $1$";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

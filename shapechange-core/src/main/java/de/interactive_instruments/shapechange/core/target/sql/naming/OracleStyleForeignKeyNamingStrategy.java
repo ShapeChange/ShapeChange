@@ -95,14 +95,12 @@ public class OracleStyleForeignKeyNamingStrategy
 	 */
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 1:
-			return "??More than eleven occurrences of foreign key '$1$'.";
+		case 1 -> "??More than eleven occurrences of foreign key '$1$'.";
 
-		default:
-			return "(" + OracleStyleForeignKeyNamingStrategy.class.getName()
+		default -> "(" + OracleStyleForeignKeyNamingStrategy.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

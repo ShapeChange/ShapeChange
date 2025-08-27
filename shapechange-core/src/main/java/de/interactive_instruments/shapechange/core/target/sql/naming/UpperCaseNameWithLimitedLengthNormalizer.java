@@ -64,12 +64,10 @@ public class UpperCaseNameWithLimitedLengthNormalizer extends UpperCaseNameNorma
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
-	case 1:
-	    return "Name '$1$' is truncated to '$2$'";
-	default:
-	    return "(" + UpperCaseNameWithLimitedLengthNormalizer.class.getName() + ") Unknown message with number: "
+	return switch (mnr) {
+	case 1 -> "Name '$1$' is truncated to '$2$'";
+	default -> "(" + UpperCaseNameWithLimitedLengthNormalizer.class.getName() + ") Unknown message with number: "
 		    + mnr;
-	}
+	};
     }
 }

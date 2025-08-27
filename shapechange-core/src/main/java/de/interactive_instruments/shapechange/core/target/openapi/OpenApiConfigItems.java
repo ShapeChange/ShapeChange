@@ -207,21 +207,15 @@ public class OpenApiConfigItems implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 10:
-	    return "'$1$' attribute of $2$ ConformanceClass element is empty, with no default being defined for the conformance class. ConformanceClass will be ignored.";
-	case 11:
-	    return "'$1$' attribute of $2$ ConformanceClass element is empty which is not allowed. ConformanceClass will be ignored.";
-	case 12:
-	    return "'$1$' attribute of $2$ QueryParameter element is empty which is not allowed. QueryParameter will be ignored.";
-	case 14:
-	    return "Could not load JSON overlay for $1$ ConformanceClass with uri '$2$' from: '$3$'. ConformanceClass will be ignored. Exception message is: $4$";
-	case 16:
-	    return "Could not load JSON overlay for $1$ QueryParameter with name '$2$' from: '$3$'. QueryParameter will be ignored. Exception message is: $4$";
+	case 10 -> "'$1$' attribute of $2$ ConformanceClass element is empty, with no default being defined for the conformance class. ConformanceClass will be ignored.";
+	case 11 -> "'$1$' attribute of $2$ ConformanceClass element is empty which is not allowed. ConformanceClass will be ignored.";
+	case 12 -> "'$1$' attribute of $2$ QueryParameter element is empty which is not allowed. QueryParameter will be ignored.";
+	case 14 -> "Could not load JSON overlay for $1$ ConformanceClass with uri '$2$' from: '$3$'. ConformanceClass will be ignored. Exception message is: $4$";
+	case 16 -> "Could not load JSON overlay for $1$ QueryParameter with name '$2$' from: '$3$'. QueryParameter will be ignored. Exception message is: $4$";
 
-	default:
-	    return "(OpenApiConfigItems.java) Unknown message with number: " + mnr;
-	}
+	default -> "(OpenApiConfigItems.java) Unknown message with number: " + mnr;
+	};
     }
 }

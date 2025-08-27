@@ -72,18 +72,14 @@ public class ProfilerConfigurationValidator extends AbstractConfigurationValidat
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 100:
-	    return "Required parameter '" + Profiler.PARAM_PROFILES + "' not set.";
-	case 20206: //x
-	    return "Error parsing component of '$1$' configuration parameter: $2$";
-	case 20221: //x
-	    return "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
+	case 100 -> "Required parameter '" + Profiler.PARAM_PROFILES + "' not set.";
+	case 20206 -> "Error parsing component of '$1$' configuration parameter: $2$";
+	case 20221 -> "Value of configuration parameter '$1$' does not match one of the defined values (was: '$2$').";
 	    
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 
 }

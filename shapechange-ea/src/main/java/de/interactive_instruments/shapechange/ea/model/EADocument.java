@@ -886,36 +886,22 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
      */
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-	case 4:
-	    return "Context: supertype '$1$'";
-	case 5:
-	    return "Context: subtype '$1$'";
-	case 33:
-	    return "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
-	case 34:
-	    return "Could not delete directory $1$";
-	case 35:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
-	case 43:
-	    return "Connecting to $1$";
-	case 44:
-	    return "Connected to $1$";
-	case 45:
-	    return "Starting reading $1$";
-	case 46:
-	    return "Finished reading $1$";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 4 -> "Context: supertype '$1$'";
+	case 5 -> "Context: subtype '$1$'";
+	case 33 -> "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
+	case 34 -> "Could not delete directory $1$";
+	case 35 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
+	case 43 -> "Connecting to $1$";
+	case 44 -> "Connected to $1$";
+	case 45 -> "Starting reading $1$";
+	case 46 -> "Finished reading $1$";
 
-	default:
-	    return "(" + EADocument.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + EADocument.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

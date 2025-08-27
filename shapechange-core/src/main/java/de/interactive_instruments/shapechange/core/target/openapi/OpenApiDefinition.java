@@ -914,58 +914,36 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "Context: property '$1$'";
+	case 0 -> "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
 
-	case 3:
-	    return "Context: class OpenAPI target";
-	case 4:
-	    return "Processing class '$1$'.";
-	case 5:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 6:
-	    return "System error: Exception raised '$1$'. '$2$'";
-	case 7:
-	    return "Schema '$1$' is not encoded (via the applicable OpenAPI or the JSON Schema encoding rule).";
-	case 8:
-	    return "Class '$1$' is not encoded (via the applicable OpenAPI or the JSON Schema encoding rule).";
-	case 9:
-	    return "";
+	case 3 -> "Context: class OpenAPI target";
+	case 4 -> "Processing class '$1$'.";
+	case 5 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 6 -> "System error: Exception raised '$1$'. '$2$'";
+	case 7 -> "Schema '$1$' is not encoded (via the applicable OpenAPI or the JSON Schema encoding rule).";
+	case 8 -> "Class '$1$' is not encoded (via the applicable OpenAPI or the JSON Schema encoding rule).";
+	case 9 -> "";
 
-	case 10:
-	    return "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-	case 11:
-	    return "The OpenApiConfigItems element, a required item within the advancedProcessConfigurations element of the OpenApiDefinition "
+	case 10 -> "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
+	case 11 -> "The OpenApiConfigItems element, a required item within the advancedProcessConfigurations element of the OpenApiDefinition "
 		    + "target configuration, could not be loaded. Consult the log file for further details.";
-	case 12:
-	    return "Target parameter 'baseTemplate' has value: $1$. Could not load JSON from that location. Exception message is: $2$";
-	case 13:
-	    return "Feature type '$1$' is not encoded, because it matches none of the feature type conversion rules defined for the OpenAPI definition target.";
-	case 15:
-	    return "";
-	case 17:
-	    return "Type '$1$' is of a category not enabled for conversion, meaning that the OpenAPI definition will not represent it.";
-	case 18:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 12 -> "Target parameter 'baseTemplate' has value: $1$. Could not load JSON from that location. Exception message is: $2$";
+	case 13 -> "Feature type '$1$' is not encoded, because it matches none of the feature type conversion rules defined for the OpenAPI definition target.";
+	case 15 -> "";
+	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that the OpenAPI definition will not represent it.";
+	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 
-	case 100:
-	    return "Exception occurred while writing OpenAPI definition to file: $1$. Exception message is: $2$.";
+	case 100 -> "Exception occurred while writing OpenAPI definition to file: $1$. Exception message is: $2$.";
 
-	case 503:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 504:
-	    return "File has been deleted.";
+	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 504 -> "File has been deleted.";
 
-	case 10001:
-	    return "Generating OpenAPI definition for application schema $1$.";
-	case 10002:
-	    return "Diagnostics-only mode. All output to files is suppressed.";
-	default:
-	    return "(" + OpenApiDefinition.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 10001 -> "Generating OpenAPI definition for application schema $1$.";
+	case 10002 -> "Diagnostics-only mode. All output to files is suppressed.";
+	default -> "(" + OpenApiDefinition.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

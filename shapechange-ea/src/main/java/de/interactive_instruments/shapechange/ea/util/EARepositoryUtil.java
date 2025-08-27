@@ -509,16 +509,12 @@ public class EARepositoryUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "EA error encountered while updating new EA class element '$1$'. Error message is: $2$";
-	case 102:
-	    return "EA error encountered while updating new EA (generalization) connector between classes '$1$' and '$2$'. Error message is: $3$";
-	case 103:
-	    return "EA error encountered while updating new EA package '$1$'. Error message is: $2$";
-	default:
-	    return "(" + EARepositoryUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 101 -> "EA error encountered while updating new EA class element '$1$'. Error message is: $2$";
+	case 102 -> "EA error encountered while updating new EA (generalization) connector between classes '$1$' and '$2$'. Error message is: $3$";
+	case 103 -> "EA error encountered while updating new EA package '$1$'. Error message is: $2$";
+	default -> "(" + EARepositoryUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

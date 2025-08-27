@@ -55,8 +55,8 @@ public abstract class AssociationInfoImpl extends InfoImpl implements Associatio
 	    s = s.toLowerCase().trim();
 	}
 	return s;
-    };
-
+    }
+    
     /**
      * {@inheritDoc}
      * <p>

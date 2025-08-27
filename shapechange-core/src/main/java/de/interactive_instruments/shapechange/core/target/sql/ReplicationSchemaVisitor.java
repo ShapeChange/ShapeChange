@@ -635,19 +635,13 @@ public class ReplicationSchemaVisitor implements StatementVisitor, MessageSource
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "Could not find enumeration '$1$' in the model.";
-	case 2:
-	    return "??No target type defined in map entry with type '$1$'. Using '$2$' instead.";
-	case 3:
-	    return "Column '$1$' in table '$2$' neither represents a specific property nor an object identifier. Using '$3$' as type.";
-	case 4:
-	    return "Could not parse tagged value size (value = $1$, error message = $2$)";
-	case 100:
-	    return "Context: $1$";
-	default:
-	    return "(" + ReplicationSchemaVisitor.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 1 -> "Could not find enumeration '$1$' in the model.";
+	case 2 -> "??No target type defined in map entry with type '$1$'. Using '$2$' instead.";
+	case 3 -> "Column '$1$' in table '$2$' neither represents a specific property nor an object identifier. Using '$3$' as type.";
+	case 4 -> "Could not parse tagged value size (value = $1$, error message = $2$)";
+	case 100 -> "Context: $1$";
+	default -> "(" + ReplicationSchemaVisitor.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

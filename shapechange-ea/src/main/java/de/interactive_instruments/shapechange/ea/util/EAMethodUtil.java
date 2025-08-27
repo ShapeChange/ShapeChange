@@ -285,20 +285,14 @@ public class EAMethodUtil extends AbstractEAUtil {
 
 	public static String message(int mnr) {
 
-		switch (mnr) {
-		case 101:
-			return "EA error encountered while updating 'StereotypeEx' of EA method '$1$'. Error message is: $2$";
-		case 102:
-			return "EA error encountered while updating new EA parameter '$1$' on method '$2$'. Error message is: $3$";
-		case 103:
-			return "EA error encountered while updating 'Code' of EA method '$1$'. Error message is: $2$";
-		case 104:
-			return "EA error encountered while updating 'Pos' of EA method '$1$'. Error message is: $2$";
-		case 105:
-			return "EA error encountered while updating EA tagged value '$1$' of element '$2$' with value '$3$'. Error message is: $4$";
-		default:
-			return "(" + EAMethodUtil.class.getName()
+		return switch (mnr) {
+		case 101 -> "EA error encountered while updating 'StereotypeEx' of EA method '$1$'. Error message is: $2$";
+		case 102 -> "EA error encountered while updating new EA parameter '$1$' on method '$2$'. Error message is: $3$";
+		case 103 -> "EA error encountered while updating 'Code' of EA method '$1$'. Error message is: $2$";
+		case 104 -> "EA error encountered while updating 'Pos' of EA method '$1$'. Error message is: $2$";
+		case 105 -> "EA error encountered while updating EA tagged value '$1$' of element '$2$' with value '$3$'. Error message is: $4$";
+		default -> "(" + EAMethodUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

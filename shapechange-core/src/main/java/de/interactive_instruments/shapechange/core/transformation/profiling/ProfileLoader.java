@@ -748,49 +748,29 @@ public class ProfileLoader implements Transformer, MessageSource {
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
-		case 1:
-			return "Context: class $1$";
-		case 2:
-			return "Context: property $1$";
-		case 100:
-			return "Syntax exception while compiling the regular expression defined by transformation parameter '$1$': '$2$'. The parameter will be ignored.";
-		case 101:
-			return "Value '$1$' of transformation parameter '$2$' does not identify an existing directory that can be read.";
-		case 102:
-			return "The directory '$1$', from which profiles shall be loaded, is empty.";
-		case 103:
-			return "Model could not be loaded from '$1$'. It will be ignored. Details: $2$";
-		case 104:
-			return "Schema from input model with name '$1$' has no equivalent package in the loaded model. Consequently, no diff was performed.";
-		case 105:
-			return "------ Start model diff (compare model loaded from '$1$' against input model)";
-		case 106:
-			return "------ End model diff (compare model loaded from '$1$' against input model)";
-		case 107:
-			return "Model difference - version of schema '$1$' from input model is '$2$', version of reference schema from loaded model is '$3$'.";
-		case 108:
-			return "Model difference - $1$";
-		case 109:
-			return "Validating profiles in resulting model.";
-		case 110:
-			return "------ Start validating profiles in model loaded from '$1$'.";
-		case 111:
-			return "------ Start validating profiles in input model.";
-		case 112:
-			return "Removing profiles in input model.";
-		case 113:
-			return "Converting profile definitions in input model to explicit definitions.";
-		case 114:
-			return "Loading profiles from model located at '$1$'.";
-		case 115:
-			return "------ End validating profiles in input model.";
-		case 116:
-			return "------ End validating profiles in model loaded from '$1$'.";
+		return switch (mnr) {
+		case 1 -> "Context: class $1$";
+		case 2 -> "Context: property $1$";
+		case 100 -> "Syntax exception while compiling the regular expression defined by transformation parameter '$1$': '$2$'. The parameter will be ignored.";
+		case 101 -> "Value '$1$' of transformation parameter '$2$' does not identify an existing directory that can be read.";
+		case 102 -> "The directory '$1$', from which profiles shall be loaded, is empty.";
+		case 103 -> "Model could not be loaded from '$1$'. It will be ignored. Details: $2$";
+		case 104 -> "Schema from input model with name '$1$' has no equivalent package in the loaded model. Consequently, no diff was performed.";
+		case 105 -> "------ Start model diff (compare model loaded from '$1$' against input model)";
+		case 106 -> "------ End model diff (compare model loaded from '$1$' against input model)";
+		case 107 -> "Model difference - version of schema '$1$' from input model is '$2$', version of reference schema from loaded model is '$3$'.";
+		case 108 -> "Model difference - $1$";
+		case 109 -> "Validating profiles in resulting model.";
+		case 110 -> "------ Start validating profiles in model loaded from '$1$'.";
+		case 111 -> "------ Start validating profiles in input model.";
+		case 112 -> "Removing profiles in input model.";
+		case 113 -> "Converting profile definitions in input model to explicit definitions.";
+		case 114 -> "Loading profiles from model located at '$1$'.";
+		case 115 -> "------ End validating profiles in input model.";
+		case 116 -> "------ End validating profiles in model loaded from '$1$'.";
 
-		default:
-			return "(Unknown message in " + this.getClass().getName()
+		default -> "(Unknown message in " + this.getClass().getName()
 					+ ". Message number was: " + mnr + ")";
-		}
+		};
 	}
 }

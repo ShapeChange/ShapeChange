@@ -166,29 +166,20 @@ public class DiffTargetConfigurationValidator extends AbstractConfigurationValid
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
+	case 1 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "Rule '$1$' is contained in the target configuration. Parameter '$2$' required by that rule was not provided or is invalid. Provide a valid value for this parameter.";
 
-	case 100:
-	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-	case 101:
-	    return "File identified by parameter '$1$' does not exist. File path is '$2$'";
-	case 102:
-	    return "File identified by parameter '$1$' cannot be read. File path is '$2$'";
-	case 103:
-	    return "Parameter '$1$' is set in the configuration, but does not contain an actual value.";
-	case 104:
-	    return "Parameter '$1$' has invalid value(s): $2$";
+	case 100 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 101 -> "File identified by parameter '$1$' does not exist. File path is '$2$'";
+	case 102 -> "File identified by parameter '$1$' cannot be read. File path is '$2$'";
+	case 103 -> "Parameter '$1$' is set in the configuration, but does not contain an actual value.";
+	case 104 -> "Parameter '$1$' has invalid value(s): $2$";
 
-	default:
-	    return "(DiffTargetConfigurationValidator.java) Unknown message with number: " + mnr;
-	}
+	default -> "(DiffTargetConfigurationValidator.java) Unknown message with number: " + mnr;
+	};
     }
 
 }

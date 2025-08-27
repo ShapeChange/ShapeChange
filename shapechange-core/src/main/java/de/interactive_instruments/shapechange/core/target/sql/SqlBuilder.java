@@ -3379,130 +3379,81 @@ public class SqlBuilder implements MessageSource {
      */
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class SqlBuilder";
-	case 1:
-	    return "Context: class '$1$'";
-	case 2:
-	    return "Context: property '$1$'";
-	case 3:
-	    return "Context: '$1$'";
+	return switch (mnr) {
+	case 0 -> "Context: class SqlBuilder";
+	case 1 -> "Context: class '$1$'";
+	case 2 -> "Context: property '$1$'";
+	case 3 -> "Context: '$1$'";
 
-	case 5:
-	    return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
-	case 6:
-	    return "??Number format exception while converting the tagged value '$1$' with value '$2$' to an integer.";
+	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 6 -> "??Number format exception while converting the tagged value '$1$' with value '$2$' to an integer.";
 
-	case 8:
-	    return "??Many-to-many relationship represented by association between types with identity and maximum multiplicity > 1 on all navigable ends (in this case for classes: '$1$' [context is property '$2$'] <-> '$3$' [context is property '$4$']) is only supported if creation for associative tables is enabled (via inclusion of rule "
+	case 8 -> "??Many-to-many relationship represented by association between types with identity and maximum multiplicity > 1 on all navigable ends (in this case for classes: '$1$' [context is property '$2$'] <-> '$3$' [context is property '$4$']) is only supported if creation for associative tables is enabled (via inclusion of rule "
 		    + SqlConstants.RULE_TGT_SQL_ALL_ASSOCIATIVETABLES
 		    + "). Because the rule is not included, the relationship will be ignored.";
-	case 9:
-	    return "??Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
+	case 9 -> "??Type '$1$' of property '$2$' in class '$3$' is not part of the schema that is being processed, no map entry is defined for it, and "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES
 		    + " is not enabled. Please ensure that map entries are defined for external types used in the schema - or allow referencing of external types in general by enabling "
 		    + SqlConstants.RULE_TGT_SQL_CLS_REFERENCES_TO_EXTERNAL_TYPES
 		    + ". Assigning textual type to the property.";
-	case 10:
-	    return "Type '$1$' of property '$2$' in class '$3$' could not be found in the model. Assigning textual type to the property.";
-	case 11:
-	    return "Attribute '$1$' in class '$2$' has maximum multiplicity greater than one. Creation of associative tables is not enabled. The property will thus be ignored.";
-	case 12:
-	    return "Creating associative table to represent attribute '$1$' in class '$2$'. Tagged value '"
+	case 10 -> "Type '$1$' of property '$2$' in class '$3$' could not be found in the model. Assigning textual type to the property.";
+	case 11 -> "Attribute '$1$' in class '$2$' has maximum multiplicity greater than one. Creation of associative tables is not enabled. The property will thus be ignored.";
+	case 12 -> "Creating associative table to represent attribute '$1$' in class '$2$'. Tagged value '"
 		    + SqlConstants.TV_ASSOCIATIVETABLE
 		    + "' not set on this attribute, thus using default naming pattern, which leads to table name: '$3$'.";
-	case 13:
-	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
+	case 13 -> "Creating associative table to represent association between $1$ and $2$. Tagged value '"
 		    + SqlConstants.TV_ASSOCIATIVETABLE
 		    + "' not set on this association, thus using default naming pattern, which leads to table name: '$3$'.";
-	case 14:
-	    return "??Derived property '$1$' in class '$2$' has been ignored.";
-	case 15:
-	    return "??Property '$1$' in class '$2$' is not encoded.";
-	case 16:
-	    return "??The type of property '$1$' in class '$2$' is '$3$'. It is contained in the schema that is being processed. However, it is of a category not enabled for conversion, meaning that no table will be created to represent the type '$3$'. The property '$1$' in class '$2$' will therefore be ignored.";
-	case 17:
-	    return "Could not find type '$1$' in the model. It was required to identify the correct map entry that applies for this type (based upon the encoding rule that applies to the type), when trying to determine if property '$2$' (that has this type) is a geometry typed property. Proceeding with the map entry that is retrieved when using the encoding rule that applies to the property.";
-	case 18:
-	    return "Could not find enumeration '$1$' in the model - or no enum values defined for it. Check constraint for '$2$' will not be created.";
-	case 19:
-	    return "Class $1$ is not encoded and no map entry (that applies in the SQL encoding) is defined for it. The relationship between class $1$ (context property is $2$) and class $3$ (context property is $4$), which in the model is defined via an association, thus does not exist in the SQL encoding.";
-	case 20:
-	    return "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
-	case 21:
-	    return "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries, or conversion of the category of classes to which the type belongs is generally not supported by the target. It will be mapped to 'unknown'.";
-	case 22:
-	    return "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
-	case 23:
-	    return "Creating table with name '$1$'";
-	case 24:
-	    return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be set as primary key.";
-	case 25:
-	    return "Identifier attribute '$1$' has max multiplicity > 1.";
-	case 26:
-	    return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
-	case 27:
-	    return "??Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
-	case 28:
-	    return "Type '$1$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+	case 14 -> "??Derived property '$1$' in class '$2$' has been ignored.";
+	case 15 -> "??Property '$1$' in class '$2$' is not encoded.";
+	case 16 -> "??The type of property '$1$' in class '$2$' is '$3$'. It is contained in the schema that is being processed. However, it is of a category not enabled for conversion, meaning that no table will be created to represent the type '$3$'. The property '$1$' in class '$2$' will therefore be ignored.";
+	case 17 -> "Could not find type '$1$' in the model. It was required to identify the correct map entry that applies for this type (based upon the encoding rule that applies to the type), when trying to determine if property '$2$' (that has this type) is a geometry typed property. Proceeding with the map entry that is retrieved when using the encoding rule that applies to the property.";
+	case 18 -> "Could not find enumeration '$1$' in the model - or no enum values defined for it. Check constraint for '$2$' will not be created.";
+	case 19 -> "Class $1$ is not encoded and no map entry (that applies in the SQL encoding) is defined for it. The relationship between class $1$ (context property is $2$) and class $3$ (context property is $4$), which in the model is defined via an association, thus does not exist in the SQL encoding.";
+	case 20 -> "??More than eleven occurrences of foreign key '$1$'. Resulting schema will be ambiguous.";
+	case 21 -> "?? The type '$1$' was not found in the schema(s) selected for processing or in map entries, or conversion of the category of classes to which the type belongs is generally not supported by the target. It will be mapped to 'unknown'.";
+	case 22 -> "An association exists between class $1$ (context property is $2$) and class $3$ (context property is $4$). The association represents a 1:n relationship, which would be encoded by adding a foreign key field to the table representing $1$. A map entry is defined for $1$. Thus, the table defined in that map entry, which represents $1$, should have a foreign key field to reference the table that represents $3$.";
+	case 23 -> "Creating table with name '$1$'";
+	case 24 -> "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be set as primary key.";
+	case 25 -> "Identifier attribute '$1$' has max multiplicity > 1.";
+	case 26 -> "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type could not be found in the model. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
+	case 27 -> "??Tagged value 'scale' is not blank (i.e., it is defined and not whitespace only), while tagged value 'precision' is blank. Scale cannot be defined without precision. Tagged value 'scale' will be ignored.";
+	case 28 -> "Type '$1$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
 		    + SqlConstants.TV_NUMERIC_TYPE
 		    + "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
-	case 29:
-	    return "Type '$1$' of property '$2$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+	case 29 -> "Type '$1$' of property '$2$' is numerically valued. However, the numeric type could not be determined. Check tagged value '"
 		    + SqlConstants.TV_NUMERIC_TYPE
 		    + "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
-	case 30:
-	    return "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type is neither an enumeration nor represented by a table. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
-	case 31:
-	    return "Type '$1$' - which is the conceptual type of '$2$' column in table '$3$' (which represents a code list) - is numerically valued. However, the numeric type could not be determined. Check tagged value '"
+	case 30 -> "Type '$1$' is configured to be used as conceptual type of the '$2$' column in table '$3$' (which represents a code list). However, the type is neither an enumeration nor represented by a table. The column will have the common data type for foreign keys (defined via the configuration). No specific constraints will be created for the $2$ column.";
+	case 31 -> "Type '$1$' - which is the conceptual type of '$2$' column in table '$3$' (which represents a code list) - is numerically valued. However, the numeric type could not be determined. Check tagged value '"
 		    + SqlConstants.TV_NUMERIC_TYPE
 		    + "' on the type and that an appropriate map entry (with valid target type) exists for it in the configuration.";
-	case 32:
-	    return "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
-	case 33:
-	    return "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
-	case 34:
-	    return "Foreign key constraint referential action '$1$' defined by tagged value '$2$' is unknown. The referential action is ignored.";
-	case 35:
-	    return "Foreign key constraint referential action '$1$' is defined by tagged value '$2$'. The database system does not support this action for clause '$3$'. The referential action is ignored.";
-	case 36:
-	    return "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
-	case 37:
-	    return "Foreign key referential action is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key referential action is ignored.";
-	case 38:
-	    return "Model element that defines the referential action: '$1$'";
-	case 39:
-	    return "Creating associative table to represent association between $1$ and $2$. Tagged value '"
+	case 32 -> "No enum values defined for enumeration '$1$'. Check constraint for column '$2$' in table '$3$' will not be created.";
+	case 33 -> "No unique constraint is created for column '$1$' of table '$2$', since the property represented by the column is multi-valued.";
+	case 34 -> "Foreign key constraint referential action '$1$' defined by tagged value '$2$' is unknown. The referential action is ignored.";
+	case 35 -> "Foreign key constraint referential action '$1$' is defined by tagged value '$2$'. The database system does not support this action for clause '$3$'. The referential action is ignored.";
+	case 36 -> "Could not parse value '$1$' of tag '$2$' to a double value. The tagged value will be ignored.";
+	case 37 -> "Foreign key referential action is 'SET NULL', but column '$1$' is 'NOT NULL'. The foreign key referential action is ignored.";
+	case 38 -> "Model element that defines the referential action: '$1$'";
+	case 39 -> "Creating associative table to represent association between $1$ and $2$. Tagged value '"
 		    + SqlConstants.TV_SQLSCHEMA
 		    + "' not set on this association, thus using default naming pattern, which leads to database schema name: '$3$'.";
-	case 40:
-	    return "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
+	case 40 -> "Creating associative table to represent attribute '$1$' in class '$2$' for referenced table '$3$'. Tagged value '"
 		    + SqlConstants.TV_ASSOCIATIVETABLE
 		    + "' is ignored on this attribute, because a usage specific table must be created, which leads to table name: '$4$'.";
 
-	case 100:
-	    return "Context: property '$1$'.";
-	case 101:
-	    return "Context: class '$1$'.";
-	case 102:
-	    return "Context: table '$1$', column '$2$'.";
+	case 100 -> "Context: property '$1$'.";
+	case 101 -> "Context: class '$1$'.";
+	case 102 -> "Context: table '$1$', column '$2$'.";
 
-	case 1001:
-	    return "---------- Checking for reflexive relationships and cyles in data types ----------";
-	case 1002:
-	    return "--- Reflexive relationship detected for data type '$1$' (via properties: $2$).";
-	case 1003:
-	    return "--- No reflexive relationships detected.";
-	case 1004:
-	    return "--- Found cycle:";
-	case 1005:
-	    return "   Class '$1$' -> class '$2$' (via properties: $3$)";
-	case 1006:
-	    return "--- No cycles found.";
+	case 1001 -> "---------- Checking for reflexive relationships and cyles in data types ----------";
+	case 1002 -> "--- Reflexive relationship detected for data type '$1$' (via properties: $2$).";
+	case 1003 -> "--- No reflexive relationships detected.";
+	case 1004 -> "--- Found cycle:";
+	case 1005 -> "   Class '$1$' -> class '$2$' (via properties: $3$)";
+	case 1006 -> "--- No cycles found.";
 
-	default:
-	    return "(" + SqlBuilder.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + SqlBuilder.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

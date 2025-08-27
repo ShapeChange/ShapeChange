@@ -271,26 +271,18 @@ public class ModelCleaner implements Transformer, MessageSource {
 
 	public String message(int mnr) {
 
-		switch (mnr) {
-		case 0:
-			return "Context: class ModelCleaner";
-		case 1:
-			return "No non-empty string value provided for configuration parameter '$1$'. Execution of rule '$2$' aborted.";
-		case 2:
-			return "Configuration parameter '$1$' required for execution of rule '$2$' was not provided. Execution of rule '$2$' aborted.";
-		case 3:
-			return "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of rule '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of rule '$2$' aborted.";
-		case 4:
-			return "$1$::$2$: set '" + TV_IMPLEMENTED_BY_NILREASON
+		return switch (mnr) {
+		case 0 -> "Context: class ModelCleaner";
+		case 1 -> "No non-empty string value provided for configuration parameter '$1$'. Execution of rule '$2$' aborted.";
+		case 2 -> "Configuration parameter '$1$' required for execution of rule '$2$' was not provided. Execution of rule '$2$' aborted.";
+		case 3 -> "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of rule '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of rule '$2$' aborted.";
+		case 4 -> "$1$::$2$: set '" + TV_IMPLEMENTED_BY_NILREASON
 					+ "' tagged value to true.";
-		case 5:
-			return "Union $1$: set 'hasNilReason' field to true.";
-		case 6:
-			return "$1$::$2$: set 'implementedByNilReason' field to true.";
-		default:
-			return "(" + ModelCleaner.class.getName()
+		case 5 -> "Union $1$: set 'hasNilReason' field to true.";
+		case 6 -> "$1$::$2$: set 'implementedByNilReason' field to true.";
+		default -> "(" + ModelCleaner.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 
 }

@@ -508,13 +508,11 @@ public class GenericPackageInfo extends PackageInfoImpl implements MessageSource
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 30500:
-	    return "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
+	case 30500 -> "(GenericPackageInfo.java) Child package '$1$' of package '$2$' is not an application schema but also not an instance of GenericPackageInfo. Cannot set the target namespace on '$3$'.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

@@ -72,15 +72,12 @@ public class FopErrorListener implements ErrorListener, MessageSource {
         @Override
         public String message(int mnr) {
 
-        	switch (mnr) {
+        	return switch (mnr) {
 
-        	case 303:
-        	    return "Warning while transforming '$1$'. Message: $2$";
-        	case 305:
-        	    return "Fatal error while transforming '$1$'. Message: $2$";
+        	case 303 -> "Warning while transforming '$1$'. Message: $2$";
+        	case 305 -> "Fatal error while transforming '$1$'. Message: $2$";
         	
-        	default:
-        	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-        	}
+        	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+        	};
         }
 }

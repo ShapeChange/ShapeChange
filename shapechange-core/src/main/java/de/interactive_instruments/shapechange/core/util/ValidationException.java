@@ -31,13 +31,16 @@
  */
 package de.interactive_instruments.shapechange.core.util;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class ValidationException extends Exception {
 
-    private static final long serialVersionUID = -7355704948690726481L;
+	@Serial
+	private static final long serialVersionUID = -7355704948690726481L;
 
     public ValidationException(String msg) {
 	super(msg);

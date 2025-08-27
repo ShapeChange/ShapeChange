@@ -91,27 +91,19 @@ public class TypeConverterConfigurationValidator extends AbstractConfigurationVa
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
-	case 10:
-	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
+	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$.";
 
 	// Validation messages
-	case 100:
-	    return "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
-	case 101:
-	    return "Value '$1$' of parameter '$2$' is not allowed. It must be one of: $3$";
+	case 100 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 101 -> "Value '$1$' of parameter '$2$' is not allowed. It must be one of: $3$";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

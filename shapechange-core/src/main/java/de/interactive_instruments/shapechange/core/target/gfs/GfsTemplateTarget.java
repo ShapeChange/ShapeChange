@@ -1001,78 +1001,47 @@ public class GfsTemplateTarget implements Target, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 0:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "Context: property '$1$'";
+	case 0 -> "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
 
-	case 3:
-	    return "Context: class GfsTemplateTarget";
-	case 4:
-	    return "Processing class '$1$'.";
-	case 5:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 6:
-	    return "System error: Exception encountered. Message is: '$1$'";
-	case 7:
-	    return "Schema '$1$' is not encoded.";
-	case 8:
-	    return "Class '$1$' is not encoded.";
-	case 9:
-	    return "Stack trace is: $1$";
+	case 3 -> "Context: class GfsTemplateTarget";
+	case 4 -> "Processing class '$1$'.";
+	case 5 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 6 -> "System error: Exception encountered. Message is: '$1$'";
+	case 7 -> "Schema '$1$' is not encoded.";
+	case 8 -> "Class '$1$' is not encoded.";
+	case 9 -> "Stack trace is: $1$";
 
-	case 14:
-	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-	case 15:
-	    return "No map entries provided via the configuration.";
+	case 14 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+	case 15 -> "No map entries provided via the configuration.";
 //	case 16:
 //	    return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17:
-	    return "Type '$1$' is of a category not enabled for conversion, meaning that no gfs template items will be created to represent it.";
-	case 18:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no gfs template items will be created to represent it.";
+	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 
-	case 100:
-	    return "??Value type '$1$' of property '$2$' is not encoded. The property would be used in one or more property paths, but must be ignored, since the value type is not encoded. Check if type '$1$' and all properties that use it as value type shall really not be encoded. If that is the case, this warning can be ignored.";
-	case 101:
-	    return "Could not write the output file(s) (stack trace is available on log level debug): $1$";
-	case 102:
-	    return "??The property at the end of the property path '$1$' has a value type that is mapped with 'typeDetails' parameter and 'gmlMeasureType' characteristic set to 'true'. However, target parameter 'xmlAttributesToEncode' does not include 'uom'. Therefore, no additional property definition for the 'uom' XML attribute is created for this path.";
-	case 103:
-	    return "??The property at the end of the property path '$1$' has a code list as value type, which has tagged value 'asDictionary' not set to 'false'. In addition, target parameter "
+	case 100 -> "??Value type '$1$' of property '$2$' is not encoded. The property would be used in one or more property paths, but must be ignored, since the value type is not encoded. Check if type '$1$' and all properties that use it as value type shall really not be encoded. If that is the case, this warning can be ignored.";
+	case 101 -> "Could not write the output file(s) (stack trace is available on log level debug): $1$";
+	case 102 -> "??The property at the end of the property path '$1$' has a value type that is mapped with 'typeDetails' parameter and 'gmlMeasureType' characteristic set to 'true'. However, target parameter 'xmlAttributesToEncode' does not include 'uom'. Therefore, no additional property definition for the 'uom' XML attribute is created for this path.";
+	case 103 -> "??The property at the end of the property path '$1$' has a code list as value type, which has tagged value 'asDictionary' not set to 'false'. In addition, target parameter "
 		    + GfsTemplateConstants.PARAM_GML_CODE_LIST_ENCODING_VERSION
 		    + " has value 3.3. The code value should therefore be encoded in GML using an xlink:href XML attribute. However, target parameter 'xmlAttributesToEncode' does not include 'href'. Therefore, no property definition is created for this path.";
-	case 104:
-	    return "??The property at the end of the property path '$1$' has a type with identity as value type which is implemented as a 'FeatureProperty'. The value is (expected to be) encoded by-reference, in GML using an xlink:href attribute. However, target parameter 'xmlAttributesToEncode' does not include 'href'. Therefore, no property definition is created for this path.";
-	case 105:
-	    return "??Type '$1$', which is the value type of the last property in property path '$2$', is not mapped, but was also not found in the model. The property path is ignored.";
-	case 106:
-	    return "??Type '$1$', which is the value type of the last property in property path '$2$', has subtype '$3$'. That subtype is an abstract leaf class. No property paths will be created for the properties of that subtype.";
-	case 107:
-	    return "Property '$1$' of type '$2$' has tag '$3$' with invalid integer value ('$4$'). The tag is ignored.";
-	case 108:
-	    return "??Property path '$1$' - with end property having a geometry type that is implemented as gfs geometry type '$2$' - leads to a multiplicity thas is greater than one, which cannot be represented (and thus max multiplicity = 1 is used instead). This can be significant if the geometry type is not a multi-geometry.";
-	case 109:
-	    return "??Map entry with targetType '$1$' is invalid, because the targetType is not one of the recognized gfs property types. Using 'String' instead.";
-	case 110:
-	    return "??Type '$1$', which is the value type of the last property in property path '$2$', is of a category that is not supported by the path creation logic. The property path is ignored.";
-	case 111:
-	    return "??Property path '$1$' would lead to a property circle, because the value type of the last property in the path (the value type being '$2$') is already used as value type in one of the previous path properties. The property path is therefore ignored.";
-	case 112:
-	    return "??No target type is defined in map entry for type '$1$'. Assuming type 'String'.";
-	case 113:
-	    return "??Type definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. Assuming type 'String'.";
-	case 114:
-	    return "??Type '$1$' is marked to not be encoded. Could not identify a type for it. Assuming type 'String'.";
+	case 104 -> "??The property at the end of the property path '$1$' has a type with identity as value type which is implemented as a 'FeatureProperty'. The value is (expected to be) encoded by-reference, in GML using an xlink:href attribute. However, target parameter 'xmlAttributesToEncode' does not include 'href'. Therefore, no property definition is created for this path.";
+	case 105 -> "??Type '$1$', which is the value type of the last property in property path '$2$', is not mapped, but was also not found in the model. The property path is ignored.";
+	case 106 -> "??Type '$1$', which is the value type of the last property in property path '$2$', has subtype '$3$'. That subtype is an abstract leaf class. No property paths will be created for the properties of that subtype.";
+	case 107 -> "Property '$1$' of type '$2$' has tag '$3$' with invalid integer value ('$4$'). The tag is ignored.";
+	case 108 -> "??Property path '$1$' - with end property having a geometry type that is implemented as gfs geometry type '$2$' - leads to a multiplicity thas is greater than one, which cannot be represented (and thus max multiplicity = 1 is used instead). This can be significant if the geometry type is not a multi-geometry.";
+	case 109 -> "??Map entry with targetType '$1$' is invalid, because the targetType is not one of the recognized gfs property types. Using 'String' instead.";
+	case 110 -> "??Type '$1$', which is the value type of the last property in property path '$2$', is of a category that is not supported by the path creation logic. The property path is ignored.";
+	case 111 -> "??Property path '$1$' would lead to a property circle, because the value type of the last property in the path (the value type being '$2$') is already used as value type in one of the previous path properties. The property path is therefore ignored.";
+	case 112 -> "??No target type is defined in map entry for type '$1$'. Assuming type 'String'.";
+	case 113 -> "??Type definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. Assuming type 'String'.";
+	case 114 -> "??Type '$1$' is marked to not be encoded. Could not identify a type for it. Assuming type 'String'.";
 
-	case 10001:
-	    return "Generating gfs template items for application schema $1$.";
-	case 10002:
-	    return "Diagnostics-only mode. All output to files is suppressed.";
-	default:
-	    return "(" + GfsTemplateTarget.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	case 10001 -> "Generating gfs template items for application schema $1$.";
+	case 10002 -> "Diagnostics-only mode. All output to files is suppressed.";
+	default -> "(" + GfsTemplateTarget.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

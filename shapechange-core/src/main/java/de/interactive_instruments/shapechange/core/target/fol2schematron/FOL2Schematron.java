@@ -1106,32 +1106,20 @@ public class FOL2Schematron implements Target, MessageSource {
      */
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 1:
-	    return "Generating Schematron from First Order Logic constraints for application schema '$1$'.";
-	case 2:
-	    return "Processing class '$1$'.";
-	case 3:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 4:
-	    return "Class '$1$' is an AIXM <<extension>> for which constraints are being ignored (only constraints in actual AIXM <<feature>> and <<object>> types are relevant).";
-	case 5:
-	    return "??Processing a AIXM schemas but Options does not contain AIXMSchemaInfos. Ensure that the selected AIXM schema have been merged before executing this target.";
-	case 6:
-	    return "??No AIXMSchemaInfo found for Info object '$1$'.";
-	case 7:
-	    return "Expected variable in left hand side of is-type-of expression.";
-	case 101:
-	    return "Failure to compile FOL constraint named \"$2$\" in class \"$3$\". Node class \"$1$\" not implemented.";
-	case 104:
-	    return "Implementation restriction - in FOL constraint \"$1$\" in class \"$2$\" argument to operator \"$3$\" must be class constant.";
-	case 106:
-	    return "Failure to compile FOL constraint named \"$2$\" in class \"$3$\". Property call construct named \"$1$\" not implemented.";
-	case 126:
-	    return "Implementation restriction - in FOL constraint \"$1$\" in class \"$2$\" comparison between structured non-object types not supported.";
-	default:
-	    return "(Unknown message: " + mnr + ")";
-	}
+	return switch (mnr) {
+	case 1 -> "Generating Schematron from First Order Logic constraints for application schema '$1$'.";
+	case 2 -> "Processing class '$1$'.";
+	case 3 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 4 -> "Class '$1$' is an AIXM <<extension>> for which constraints are being ignored (only constraints in actual AIXM <<feature>> and <<object>> types are relevant).";
+	case 5 -> "??Processing a AIXM schemas but Options does not contain AIXMSchemaInfos. Ensure that the selected AIXM schema have been merged before executing this target.";
+	case 6 -> "??No AIXMSchemaInfo found for Info object '$1$'.";
+	case 7 -> "Expected variable in left hand side of is-type-of expression.";
+	case 101 -> "Failure to compile FOL constraint named \"$2$\" in class \"$3$\". Node class \"$1$\" not implemented.";
+	case 104 -> "Implementation restriction - in FOL constraint \"$1$\" in class \"$2$\" argument to operator \"$3$\" must be class constant.";
+	case 106 -> "Failure to compile FOL constraint named \"$2$\" in class \"$3$\". Property call construct named \"$1$\" not implemented.";
+	case 126 -> "Implementation restriction - in FOL constraint \"$1$\" in class \"$2$\" comparison between structured non-object types not supported.";
+	default -> "(Unknown message: " + mnr + ")";
+	};
     }
 
     /**

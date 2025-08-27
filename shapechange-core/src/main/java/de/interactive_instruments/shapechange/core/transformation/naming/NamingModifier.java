@@ -570,20 +570,15 @@ public class NamingModifier implements Transformer, MessageSource {
 
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class NamingModifier";
-	case 3:
-	    return "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of rule '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of rule '$2$' aborted.";
-	case 4:
-	    return "Multiple suffixes (identified by configuration parameter '" + PARAM_SUFFIXES_TO_IGNORE
+	return switch (mnr) {
+	case 0 -> "Context: class NamingModifier";
+	case 3 -> "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of rule '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of rule '$2$' aborted.";
+	case 4 -> "Multiple suffixes (identified by configuration parameter '" + PARAM_SUFFIXES_TO_IGNORE
 		    + "' match the end of the model element name. Suffix '$1$' was chosen.";
 
-	case 104:
-	    return "Invalid ProcessRuleModelElementSelection element(s) encountered. Details: $1$";
+	case 104 -> "Invalid ProcessRuleModelElementSelection element(s) encountered. Details: $1$";
 
-	default:
-	    return "(" + NamingModifier.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + NamingModifier.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

@@ -138,37 +138,30 @@ public class NamingModifierConfigurationValidator extends AbstractConfigurationV
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
 	// Validation messages
-	case 100:
-	    return "Parameter '" + NamingModifier.PARAM_SUFFIX_REGEX + "' is required for rule '"
+	case 100 -> "Parameter '" + NamingModifier.PARAM_SUFFIX_REGEX + "' is required for rule '"
 		    + NamingModifier.RULE_TRF_ADD_SUFFIX
 		    + "' if no ProcessRuleModelElementSelection element is defined for that rule in the advanced process configuration, but no actual value was found in the configuration.";
-	case 101:
-	    return "Neither parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
+	case 101 -> "Neither parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
 		    + "' nor any ProcessRuleModelElementSelection element (in the advanced process configuration) is defined for rule '"
 		    + NamingModifier.RULE_TRF_ADD_SUFFIX
 		    + "'. Either the (deprecated) parameter or a ProcessRuleModelElementSelection element must be defined.";
-	case 102:
-	    return "Both parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
+	case 102 -> "Both parameter '" + NamingModifier.PARAM_SUFFIX_REGEX
 		    + "' and one or more ProcessRuleModelElementSelection elements (in the advanced process configuration) are defined for rule '"
 		    + NamingModifier.RULE_TRF_ADD_SUFFIX
 		    + "'. Either the (deprecated) parameter or a ProcessRuleModelElementSelection element must be defined - not both.";
-	case 103:
-	    return "Pattern syntax exception encountered while parsing (deprecated) parameter '"
+	case 103 -> "Pattern syntax exception encountered while parsing (deprecated) parameter '"
 		    + NamingModifier.PARAM_SUFFIX_REGEX + "' for rule '" + NamingModifier.RULE_TRF_ADD_SUFFIX
 		    + "'. Fix the regular expression. The exception message is: $1$";
 
-	case 104:
-	    return "Invalid ProcessRuleModelElementSelection element(s) encountered. Details: $1$";
+	case 104 -> "Invalid ProcessRuleModelElementSelection element(s) encountered. Details: $1$";
 
-	case 105:
-	    return "ProcessRuleModelElementSelection element(s) for " + NamingModifier.RULE_TRF_ADD_SUFFIX
+	case 105 -> "ProcessRuleModelElementSelection element(s) for " + NamingModifier.RULE_TRF_ADD_SUFFIX
 		    + " with @modelElementType set to association or package encountered, which is invalid for this rule.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

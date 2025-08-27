@@ -438,40 +438,27 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-	case 4:
-	    return "Context: supertype '$1$'";
-	case 5:
-	    return "Context: subtype '$1$'";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 4 -> "Context: supertype '$1$'";
+	case 5 -> "Context: subtype '$1$'";
 
-	case 10:
-	    return "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
+	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
 
 	// Messages for RULE_TV_INHERITANCE
-	case 100:
-	    return "Adding tagged value $1$=$2$ to $3$.";
-	case 101:
-	    return "Overwriting tagged value $1$=$2$ in $3$. Previous value was: $4$";
-	case 102:
-	    return "Appending '$1$' to tagged value $2$ in $3$. New value is: $4$.";
-	case 103:
-	    return "Retaining tagged value $1$=$2$ in $3$.";
+	case 100 -> "Adding tagged value $1$=$2$ to $3$.";
+	case 101 -> "Overwriting tagged value $1$=$2$ in $3$. Previous value was: $4$";
+	case 102 -> "Appending '$1$' to tagged value $2$ in $3$. New value is: $4$.";
+	case 103 -> "Retaining tagged value $1$=$2$ in $3$.";
 
-	case 200:
-	    return "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
+	case 200 -> "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
 		    + "' was not set or does not contain any value. '"
 		    + TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE + "' will not have any effect.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

@@ -94,12 +94,10 @@ public class EAParameterUtil extends AbstractEAUtil {
 
 	public static String message(int mnr) {
 
-		switch (mnr) {
-		case 101:
-			return "EA error encountered while updating 'Type' of EA parameter '$1$'. Error message is: $2$";
-		default:
-			return "(" + EAMethodUtil.class.getName()
+		return switch (mnr) {
+		case 101 -> "EA error encountered while updating 'Type' of EA parameter '$1$'. Error message is: $2$";
+		default -> "(" + EAMethodUtil.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

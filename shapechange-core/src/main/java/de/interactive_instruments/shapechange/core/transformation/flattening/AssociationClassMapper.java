@@ -263,24 +263,20 @@ public class AssociationClassMapper implements Transformer, MessageSource {
 		 * </ul>
 		 */
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 0:
-			return "Context: class AssociationClassMapper";
+		case 0 -> "Context: class AssociationClassMapper";
 
 		// 1-100: Initialization related messages
 
 		// 101-200: Transformation related messages
-		case 101:
-			return "";
-		case 102:
-			return "Association role: '$1$'";
+		case 101 -> "";
+		case 102 -> "Association role: '$1$'";
 
 		// 10001-10100: Exceptions
 
-		default:
-			return "(" + AssociationClassMapper.class.getName()
+		default -> "(" + AssociationClassMapper.class.getName()
 					+ ") Unknown message with number: " + mnr;
-		}
+		};
 	}
 }

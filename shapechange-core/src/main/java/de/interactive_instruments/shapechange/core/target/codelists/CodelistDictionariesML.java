@@ -744,17 +744,13 @@ public class CodelistDictionariesML implements Target, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 100:
-	    return "Code list '$1$' does not specify any code. It will be ignored.";
-	case 101:
-	    return "Code list '$1$' is not configured to be encoded as a dictionary. It will be ignored.";
-	case 102:
-	    return "??Configuration entry for locale reference is missing for language '$1$'";
+	case 100 -> "Code list '$1$' does not specify any code. It will be ignored.";
+	case 101 -> "Code list '$1$' is not configured to be encoded as a dictionary. It will be ignored.";
+	case 102 -> "??Configuration entry for locale reference is missing for language '$1$'";
 
-	default:
-	    return "(" + CodelistDictionariesML.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + CodelistDictionariesML.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

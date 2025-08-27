@@ -76,16 +76,14 @@ public class DescriptorTransformerConfigurationValidator extends AbstractConfigu
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
 	/*
 	 * Validation messages for RULE_UPDATE_DESCRIPTORS
 	 */
-	case 100:
-	    return "Invalid DescriptorValue element(s) encountered. Details: $1$";
+	case 100 -> "Invalid DescriptorValue element(s) encountered. Details: $1$";
 	    
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

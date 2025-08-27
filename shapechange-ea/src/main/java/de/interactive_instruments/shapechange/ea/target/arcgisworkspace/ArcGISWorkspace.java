@@ -4416,232 +4416,128 @@ public class ArcGISWorkspace implements SingleTarget, MessageSource {
 	 * </ul>
 	 */
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case -2:
-	    return "Context: property '$1$'";
-	case -1:
-	    return "Context: class '$1$'";
-	case 0:
-	    return "Context: class ArcGISWorkspace";
+	case -2 -> "Context: property '$1$'";
+	case -1 -> "Context: class '$1$'";
+	case 0 -> "Context: class ArcGISWorkspace";
 
 	// 1-100: Initialization related messages
-	case 1:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 2:
-	    return "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
-	case 3:
-	    return "File has been deleted.";
-	case 4:
-	    return "File could not be deleted. Exception message: '$1$'.";
-	case 5:
-	    return "Could not create output directory. Exception message: '$1$'.";
-	case 6:
-	    return "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
+	case 1 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 2 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 3 -> "File has been deleted.";
+	case 4 -> "File could not be deleted. Exception message: '$1$'.";
+	case 5 -> "Could not create output directory. Exception message: '$1$'.";
+	case 6 -> "URL '$1$' provided for configuration parameter " + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + " is malformed. Execution will be aborted. Exception message is: '$2$'.";
-	case 7:
-	    return "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	case 7 -> "EA repository file with ArcGIS workspace template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + ArcGISWorkspaceConstants.PARAM_WORKSPACE_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-	case 8:
-	    return "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
-	case 9:
-	    return "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
-	case 10:
-	    return "Encountered package '$1$' (child of package '$2$') which is an application schema. The package will be ignored.";
-	case 11:
-	    return "Target configuration map entry for type '$1$' does not have a target type. The map entry will be ignored.";
-	case 12:
-	    return "Value of configuration parameter '" + ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA
+	case 8 -> "Exception encountered when copying ArcGIS workspace template EA repository file to output destination. Message is: $1$.";
+	case 9 -> "No value provided for configuration parameter '$1$', defaulting to: '$2$'.";
+	case 10 -> "Encountered package '$1$' (child of package '$2$') which is an application schema. The package will be ignored.";
+	case 11 -> "Target configuration map entry for type '$1$' does not have a target type. The map entry will be ignored.";
+	case 12 -> "Value of configuration parameter '" + ArcGISWorkspaceConstants.PARAM_VALUE_RANGE_DELTA
 		    + "' could not be parsed as a double value. The default value of "
 		    + ArcGISWorkspaceConstants.NUM_RANGE_DELTA + " will be used for processing.";
-	case 13:
-	    return "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
+	case 13 -> "Value of configuration parameter '$1$' could not be parsed as an integer value. The default value of '$2$' will be used for processing.";
 
 	// 101-200: ArcGIS workspace template related messages
-	case 101:
-	    return "Invalid ArcGIS workspace template: expected package with stereotype <<ArcGIS>> as child of root package.";
-	case 102:
-	    return "Invalid ArcGIS workspace template: could not find required package '$1$'.";
+	case 101 -> "Invalid ArcGIS workspace template: expected package with stereotype <<ArcGIS>> as child of root package.";
+	case 102 -> "Invalid ArcGIS workspace template: could not find required package '$1$'.";
 
 	// 201-300: other messages
-	case 201:
-	    return "Class '$1$' will be ignored.";
-	case 202:
-	    // see also 206
-	    return "Unknown subtype encountered for class '$1$' - ID of subtype is '$2$'.";
-	case 203:
-	    return "Different ArcGIS geometry types encountered in supertypes of class '$1$'. Geometry type will be determined based upon first occurrence of supertype with geometry type that is not 'unknown' (or 'unknown' will be used if no such supertype exists).";
-	case 204:
-	    return "Could not set abstract on class '$1$'. Exception message is: '$2$'.";
-	case 205:
-	    return "Length of normalized name '$1$' (original name is '$2$') of property in class '$3$' or of the class itself exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
-	case 206:
-	    // see also 202
-	    return "Unknown supertype encountered for class '$1$' - ID of supertype is '$2$'.";
-	case 207:
-	    return "Generalisation '$1$' - '$2$' not set because the first class is not part of the target model.";
-	case 208:
-	    return "Generalisation '$1$' - '$2$' not set because the second class is not part of the target model.";
-	case 209:
-	    return "Processing class with category $1$ is not supported. Class '$2$' will be ignored.";
-	case 210:
-	    return "Class '$1$' has geometry property of unknown type. The class will be ignored.";
-	case 211:
-	    return "Class '$1$' has multiple geometry properties. All but one will be ignored.";
-	case 212:
-	    return "Property '$1$' of class '$2$' has max occurrence > 1. The property will be ignored.";
-	case 213:
-	    return "Property '$1$' of class '$2$' is of a geometry type. The property will be ignored.";
-	case 214:
-	    return "Property '$1$' of class '$2$' is of a <<union>> type. The property will be ignored.";
-	case 215:
-	    return "Property '$1$' of class '$2$' is of a <<dataType>> type. The property will be ignored.";
-	case 216:
-	    return "Class '$1$' is the type of property '$2$' (from class '$3$') but was not found in the model. A proper link to '$1$' cannot be set.";
-	case 217:
-	    return "Unrecognized case of property conversion. Context is property '$1$' (category of value is '$2$') in class '$3$'.";
-	case 218:
-	    return "Cannot establish a <<RelationshipClass>> association for property '$1$' in class '$2$' to class '$3$' (which is the type of the property) because that class is not part of the application schema.";
-	case 219:
-	    return "Subtype with id '$1$' of type '$2$' not found in the model. Cannot create a <<RelationshipClass>> association for this subtype.";
-	case 220:
-	    return "Subtype '$1$' of type '$2$' is not part of the application schema. Cannot create a <<RelationshipClass>> association for this subtype.";
-	case 221:
-	    return "Could not properly establish <<RelationshipClass>> association between classes '$1$' and '$2$' due to an EA exception. Error message is: $3$";
-	case 222:
-	    return "Type '$1$' of property '$2$' in class '$3$' does not belong to the application schema. The property will be ignored.";
-	case 223:
-	    return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not a feature or object type.";
-	case 224:
-	    return "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not contained in the application schema.";
-	case 225:
-	    return "Cannot create association between classes '$1$' and '$2$' because at least one of them has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-	case 226:
-	    return "Length of normalized name '$1$' for new association class (as well as the according relationship class) exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-	case 227:
-	    return "Length of normalized name '$1$' for foreign key field in new association class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-	case 228:
-	    return "Detected numeric range constraint in class '$1$' but could not find the property name in it. OCL is: $2$";
-	case 229:
-	    return "Detected numeric range constraint for property named '$1$' in class '$2$' but could not actually find the property in that class. The property name has been parsed from the OCL text, which is: $3$";
-	case 230:
-	    return "Could not create <<RangeDomain>> with name '$1$' due to an EA exception: $2$";
-	case 231:
-	    return "Could not parse lower boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
-	case 232:
-	    return "Could not parse upper boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
-	case 233:
-	    return "Association between class '$1$' (which is the inClass for property '$2$') and class '$3$' (which is the type of the property) will be ignored because class '$3$' is not contained in the application schema.";
-	case 234:
-	    return "Length of normalized name '$1$' for new relationship class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
-	case 235:
-	    return "No conversion rule is configured to handle the reflexive association found on class '$1$'. The association will be ignored.";
-	case 236:
-	    return "No conversion rule is configured to handle the reflexive relationship found on class '$1$', property '$2$'. The property will be ignored.";
-	case 237:
-	    return "Cannot create one to many relationship between classes '$1$' and '$2$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-	case 238:
-	    return "One to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-	case 239:
-	    return "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
-	case 240:
-	    return "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
-	case 241:
-	    return "Could not parse lower boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
-	case 242:
-	    return "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
-	case 243:
-	    return "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
-	case 244:
-	    return "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
-	case 245:
-	    return "Tagged value '" + ArcGISWorkspaceConstants.TV_NUMERIC_TYPE
+	case 201 -> "Class '$1$' will be ignored.";
+	case 202 -> "Unknown subtype encountered for class '$1$' - ID of subtype is '$2$'.";
+	case 203 -> "Different ArcGIS geometry types encountered in supertypes of class '$1$'. Geometry type will be determined based upon first occurrence of supertype with geometry type that is not 'unknown' (or 'unknown' will be used if no such supertype exists).";
+	case 204 -> "Could not set abstract on class '$1$'. Exception message is: '$2$'.";
+	case 205 -> "Length of normalized name '$1$' (original name is '$2$') of property in class '$3$' or of the class itself exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
+	case 206 -> "Unknown supertype encountered for class '$1$' - ID of supertype is '$2$'.";
+	case 207 -> "Generalisation '$1$' - '$2$' not set because the first class is not part of the target model.";
+	case 208 -> "Generalisation '$1$' - '$2$' not set because the second class is not part of the target model.";
+	case 209 -> "Processing class with category $1$ is not supported. Class '$2$' will be ignored.";
+	case 210 -> "Class '$1$' has geometry property of unknown type. The class will be ignored.";
+	case 211 -> "Class '$1$' has multiple geometry properties. All but one will be ignored.";
+	case 212 -> "Property '$1$' of class '$2$' has max occurrence > 1. The property will be ignored.";
+	case 213 -> "Property '$1$' of class '$2$' is of a geometry type. The property will be ignored.";
+	case 214 -> "Property '$1$' of class '$2$' is of a <<union>> type. The property will be ignored.";
+	case 215 -> "Property '$1$' of class '$2$' is of a <<dataType>> type. The property will be ignored.";
+	case 216 -> "Class '$1$' is the type of property '$2$' (from class '$3$') but was not found in the model. A proper link to '$1$' cannot be set.";
+	case 217 -> "Unrecognized case of property conversion. Context is property '$1$' (category of value is '$2$') in class '$3$'.";
+	case 218 -> "Cannot establish a <<RelationshipClass>> association for property '$1$' in class '$2$' to class '$3$' (which is the type of the property) because that class is not part of the application schema.";
+	case 219 -> "Subtype with id '$1$' of type '$2$' not found in the model. Cannot create a <<RelationshipClass>> association for this subtype.";
+	case 220 -> "Subtype '$1$' of type '$2$' is not part of the application schema. Cannot create a <<RelationshipClass>> association for this subtype.";
+	case 221 -> "Could not properly establish <<RelationshipClass>> association between classes '$1$' and '$2$' due to an EA exception. Error message is: $3$";
+	case 222 -> "Type '$1$' of property '$2$' in class '$3$' does not belong to the application schema. The property will be ignored.";
+	case 223 -> "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not a feature or object type.";
+	case 224 -> "Association between classes '$1$' and '$2$' will be ignored because at least one of the two classes is not contained in the application schema.";
+	case 225 -> "Cannot create association between classes '$1$' and '$2$' because at least one of them has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+	case 226 -> "Length of normalized name '$1$' for new association class (as well as the according relationship class) exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+	case 227 -> "Length of normalized name '$1$' for foreign key field in new association class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+	case 228 -> "Detected numeric range constraint in class '$1$' but could not find the property name in it. OCL is: $2$";
+	case 229 -> "Detected numeric range constraint for property named '$1$' in class '$2$' but could not actually find the property in that class. The property name has been parsed from the OCL text, which is: $3$";
+	case 230 -> "Could not create <<RangeDomain>> with name '$1$' due to an EA exception: $2$";
+	case 231 -> "Could not parse lower boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
+	case 232 -> "Could not parse upper boundary value '$1$' in numeric range constraint to a double value. Class that contains the constraint is: '$2$'. Constraint name is: '$3$'. OCL is: $4$.";
+	case 233 -> "Association between class '$1$' (which is the inClass for property '$2$') and class '$3$' (which is the type of the property) will be ignored because class '$3$' is not contained in the application schema.";
+	case 234 -> "Length of normalized name '$1$' for new relationship class exceeds maximum length restriction (which is $2$ characters). The name will be clipped to fit the maximum length.";
+	case 235 -> "No conversion rule is configured to handle the reflexive association found on class '$1$'. The association will be ignored.";
+	case 236 -> "No conversion rule is configured to handle the reflexive relationship found on class '$1$', property '$2$'. The property will be ignored.";
+	case 237 -> "Cannot create one to many relationship between classes '$1$' and '$2$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+	case 238 -> "One to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+	case 239 -> "Many to many relationship between classes '$1$' and '$2$' is incomplete. Could not create relationship between '$3$' and '$4$' because class '$3$' has not been established in the ArcGIS workspace (the reason could be that the class is not part of the application schema).";
+	case 240 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
+	case 241 -> "Could not parse lower boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+	case 242 -> "Could not parse upper boundary value '$1$' in tagged value '$2$' to a double value. The tagged value will be ignored.";
+	case 243 -> "Could not parse value '$1$' of tagged value '$2$' to an integer value. The tagged value will be ignored.";
+	case 244 -> "Could not find the code list or enumeration that is the value type '$1$' of property '$2$' in the model. The length can therefore not be computed from the codes/enums.";
+	case 245 -> "Tagged value '" + ArcGISWorkspaceConstants.TV_NUMERIC_TYPE
 		    + "' is not blank. It has value '$1$'. No map entry was found with this value as type. The tagged value will be ignored.";
-	case 246:
-	    return "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be used as primary key in relationship classes.";
-	case 247:
-	    return "Identifier attribute '$1$' has max multiplicity > 1.";
-	case 248:
-	    return "Class '$1$' does not have an <<identifier>> attribute.";
-	case 249:
-	    return "Reflexive relationship property '$1$' of class '$2$' has max cardinality > 1. The <<Field>> that is created for the property will only support representation of a single relationship.";
-	case 250:
-	    return "Could not add tagged values to represent on class '$1$'. Exception message is: '$2$'.";
-	case 251:
-	    return "Could not add tagged values to represent on property '$1$'. Exception message is: '$2$'.";
-	case 252:
-	    return "Class '$1$' is an ArcGIS Subtype. Therefore, it must define tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype amongst the other children of its parent. The tagged value is undefined or empty. Using subtype code -1.";
-	case 253:
-	    return "Class '$1$' is an ArcGIS Subtype. Value '$2$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Using subtype code -1.";
-	case 254:
-	    return "Enumeration '$1$' defines a set of subtypes. This enumeration will not be encoded as a coded value domain.";
-	case 255:
-	    return "Code list '$1$' defines a set of subtypes. This code list will not be encoded as a coded value domain.";
-	case 256:
-	    return "Value '$1$' of tag 'arcgisDefaultSubtype' cannot be parsed to an integer. Using subtype code -1.";
-	case 257:
-	    return "Class '$1$' is supposed to define a set of subtypes, but actually has no properties.";
-	case 258:
-	    return "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Therefore, it must have tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype. The tagged value is undefined or empty. Ignoring this subtype.";
-	case 259:
-	    return "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Value '$3$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Ignoring this subtype.";
-	case 260:
-	    return "Duplicate subtype code '$1$' detected in properties of class '$2$' which defines a set of ArcGIS Subtypes. Subtype '$3$' will be ignored.";
-	case 261:
-	    return "Class '$1$' is the parent of ArcGIS subtypes. Its property '$2$' has a codelist or enumeration as type, whose name is '$3$'. That type was not found in the model. Consequently, it is not possible to check if the codes/enums only apply to specific subtypes.";
-	case 262:
-	    return "Length of normalized name '$1$' (full name would be '$2$') of coded value domain for subtype '$3$' exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
-	case 263:
-	    return "??Invalid format of tagged value 'arcgisSubtypeInitialValues' of property '$1$'. The tagged value will be ignored. Ensure that the tagged value contains a comma-separated list of key-value pairs (with subtype name as key, initial value as value, and colon as separator).";
-	case 264:
-	    return "??Tagged value 'arcgisSubtypeInitialValues' of property '$1$' contains subtype '$2$', which was not found in the set of subtypes defined for class '$3$'. The subtype will be ignored.";
-	case 265:
-	    return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', but '$2$' does not. This is not allowed. An ArcGIS subtype may only restrict the properties of its supertype. The property will be ignored.";
-	case 266:
-	    return "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', which has a geometry type ('$4$'). This is not allowed. An ArcGIS subtype may not redefine the geometry type of its supertype. The property will be ignored.";
-	case 267:
-	    return "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
-	case 268:
-	    return "Class '$1$' has more than one supertype. The target only supports one generalization relationship per subtype.";
-	case 269:
-	    return "--- Subtype '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
-	case 270:
-	    return "Change of '$2$' required for field '$3$' of ArcGIS parent '$1$' and/or (one or more of) its subtypes.";
-	case 271:
-	    return "--- Parent '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
-	case 272:
-	    return "Removing coded value domain '$1$'.";
+	case 246 -> "Multiple attributes with stereotype <<identifier>> found for class '$1$'. The first - arbitrary one - will be used as primary key in relationship classes.";
+	case 247 -> "Identifier attribute '$1$' has max multiplicity > 1.";
+	case 248 -> "Class '$1$' does not have an <<identifier>> attribute.";
+	case 249 -> "Reflexive relationship property '$1$' of class '$2$' has max cardinality > 1. The <<Field>> that is created for the property will only support representation of a single relationship.";
+	case 250 -> "Could not add tagged values to represent on class '$1$'. Exception message is: '$2$'.";
+	case 251 -> "Could not add tagged values to represent on property '$1$'. Exception message is: '$2$'.";
+	case 252 -> "Class '$1$' is an ArcGIS Subtype. Therefore, it must define tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype amongst the other children of its parent. The tagged value is undefined or empty. Using subtype code -1.";
+	case 253 -> "Class '$1$' is an ArcGIS Subtype. Value '$2$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Using subtype code -1.";
+	case 254 -> "Enumeration '$1$' defines a set of subtypes. This enumeration will not be encoded as a coded value domain.";
+	case 255 -> "Code list '$1$' defines a set of subtypes. This code list will not be encoded as a coded value domain.";
+	case 256 -> "Value '$1$' of tag 'arcgisDefaultSubtype' cannot be parsed to an integer. Using subtype code -1.";
+	case 257 -> "Class '$1$' is supposed to define a set of subtypes, but actually has no properties.";
+	case 258 -> "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Therefore, it must have tagged value 'arcgisSubtypeCode' with an integer that uniquely identifies the subtype. The tagged value is undefined or empty. Ignoring this subtype.";
+	case 259 -> "Property '$1$' of class '$2$' defines an ArcGIS Subtype. Value '$3$' of tag 'arcgisSubtypeCode' cannot be parsed to an integer. Ignoring this subtype.";
+	case 260 -> "Duplicate subtype code '$1$' detected in properties of class '$2$' which defines a set of ArcGIS Subtypes. Subtype '$3$' will be ignored.";
+	case 261 -> "Class '$1$' is the parent of ArcGIS subtypes. Its property '$2$' has a codelist or enumeration as type, whose name is '$3$'. That type was not found in the model. Consequently, it is not possible to check if the codes/enums only apply to specific subtypes.";
+	case 262 -> "Length of normalized name '$1$' (full name would be '$2$') of coded value domain for subtype '$3$' exceeds maximum length restriction (which is $4$ characters). The name will be clipped to fit the maximum length.";
+	case 263 -> "??Invalid format of tagged value 'arcgisSubtypeInitialValues' of property '$1$'. The tagged value will be ignored. Ensure that the tagged value contains a comma-separated list of key-value pairs (with subtype name as key, initial value as value, and colon as separator).";
+	case 264 -> "??Tagged value 'arcgisSubtypeInitialValues' of property '$1$' contains subtype '$2$', which was not found in the set of subtypes defined for class '$3$'. The subtype will be ignored.";
+	case 265 -> "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', but '$2$' does not. This is not allowed. An ArcGIS subtype may only restrict the properties of its supertype. The property will be ignored.";
+	case 266 -> "Class '$1$' is an explicitly modelled ArcGIS subtype of class '$2$'. '$1$' defines property '$3$', which has a geometry type ('$4$'). This is not allowed. An ArcGIS subtype may not redefine the geometry type of its supertype. The property will be ignored.";
+	case 267 -> "Class '$1$' is the supertype of a set of explicitly modelled ArcGIS subtypes. Its property '$2$' has non-empty tagged value 'arcgisDefaultSubtype'. However, the type of that property is '$3$' instead of 'Integer'. Integer will be used as type.";
+	case 268 -> "Class '$1$' has more than one supertype. The target only supports one generalization relationship per subtype.";
+	case 269 -> "--- Subtype '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+	case 270 -> "Change of '$2$' required for field '$3$' of ArcGIS parent '$1$' and/or (one or more of) its subtypes.";
+	case 271 -> "--- Parent '$1$': setting tag '$2$' of field '$3$' to value '$4$'.";
+	case 272 -> "Removing coded value domain '$1$'.";
 
 	// 10001-10100: EA exceptions
-	case 10001:
-	    return "EA exception encountered: $1$";
-	case 10002:
-	    return "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
-	case 10003:
-	    return "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
-	case 10004:
-	    return "EA exception encountered while creating <<AttributeIndex>> attribute for property '$1$' in class '$2$'. Error message: $3$";
-	case 10005:
-	    return "EA exception encountered while creating <<Field>> attribute for reflexive relationship property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
-	case 10006:
-	    return "EA exception encountered while creating generalization relationship between class '$1$' and its subtype '$2$': $3$";
-	case 10007:
-	    return "EA exception encountered while updating tag '$1$' in field '$2$' of ArcGIS parent '$3$' and its subtypes. Error message: $4$";
+	case 10001 -> "EA exception encountered: $1$";
+	case 10002 -> "EA exception encountered while creating generalization relationship between classes '$1$' and '$2$': $3$";
+	case 10003 -> "EA exception encountered while creating <<Field>> attribute for property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+	case 10004 -> "EA exception encountered while creating <<AttributeIndex>> attribute for property '$1$' in class '$2$'. Error message: $3$";
+	case 10005 -> "EA exception encountered while creating <<Field>> attribute for reflexive relationship property '$1$' in class '$2$'. The property will be ignored. Error message: $3$";
+	case 10006 -> "EA exception encountered while creating generalization relationship between class '$1$' and its subtype '$2$': $3$";
+	case 10007 -> "EA exception encountered while updating tag '$1$' in field '$2$' of ArcGIS parent '$3$' and its subtypes. Error message: $4$";
 
 	// 20001 - 20100: message context
-	case 20001:
-	    return "Property: $1$";
+	case 20001 -> "Property: $1$";
 
-	case 30000:
-	    return "=============== Postprocessing ===============";
-	case 30001:
-	    return "---------- Removing unused coded value domains  ----------";
-	case 30002:
-	    return "---------- Aligning field length, scale, precision, isNullable of ArcGIS parent and subtypes  ----------";
+	case 30000 -> "=============== Postprocessing ===============";
+	case 30001 -> "---------- Removing unused coded value domains  ----------";
+	case 30002 -> "---------- Aligning field length, scale, precision, isNullable of ArcGIS parent and subtypes  ----------";
 
-	default:
-	    return "(" + ArcGISWorkspace.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + ArcGISWorkspace.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

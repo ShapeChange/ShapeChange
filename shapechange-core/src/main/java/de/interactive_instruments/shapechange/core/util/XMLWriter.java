@@ -205,7 +205,7 @@ import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.Operati
 public class XMLWriter extends XMLFilterImpl {
 
     private enum State {
-	SEEN_NOTHING, SEEN_DATA, SEEN_ELEMENT;
+	SEEN_NOTHING, SEEN_DATA, SEEN_ELEMENT
     }
 
     private State state = State.SEEN_NOTHING;

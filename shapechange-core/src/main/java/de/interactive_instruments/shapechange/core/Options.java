@@ -1374,43 +1374,26 @@ public class Options {
 
     public String categoryName(int category) {
 
-	switch (category) {
+	return switch (category) {
 
-	case Options.AIXMEXTENSION:
-	    return "aixmextension";
-	case Options.UNKNOWN:
-	    return "unknown";
-	case Options.FEATURE:
-	    return "feature";
-	case Options.CODELIST:
-	    return "codelist";
-	case Options.ENUMERATION:
-	    return "enumeration";
-	case Options.MIXIN:
-	    return "mixin";
-	case Options.DATATYPE:
-	    return "datatype";
-	case Options.OBJECT:
-	    return "object";
-	case Options.BASICTYPE:
-	    return "basic type";
-	case Options.UNION:
-	    return "union";
-	case Options.OKSTRAKEY:
-	    return "okstra key";
-	case Options.OKSTRAFID:
-	    return "okstra fid";
-	case Options.FEATURECONCEPT:
-	    return "feature concept";
-	case Options.ATTRIBUTECONCEPT:
-	    return "attribute concept";
-	case Options.VALUECONCEPT:
-	    return "value concept";
-	case Options.ROLECONCEPT:
-	    return "role concept";
-	default:
-	    return "unknown category";
-	}
+	case Options.AIXMEXTENSION -> "aixmextension";
+	case Options.UNKNOWN -> "unknown";
+	case Options.FEATURE -> "feature";
+	case Options.CODELIST -> "codelist";
+	case Options.ENUMERATION -> "enumeration";
+	case Options.MIXIN -> "mixin";
+	case Options.DATATYPE -> "datatype";
+	case Options.OBJECT -> "object";
+	case Options.BASICTYPE -> "basic type";
+	case Options.UNION -> "union";
+	case Options.OKSTRAKEY -> "okstra key";
+	case Options.OKSTRAFID -> "okstra fid";
+	case Options.FEATURECONCEPT -> "feature concept";
+	case Options.ATTRIBUTECONCEPT -> "attribute concept";
+	case Options.VALUECONCEPT -> "value concept";
+	case Options.ROLECONCEPT -> "role concept";
+	default -> "unknown category";
+	};
     }
 
     private String getConfigurationSystemId() {
@@ -3448,8 +3431,8 @@ public class Options {
 	if (s != null)
 	    return s;
 	return stereotype;
-    };
-
+    }
+    
     /**
      * Normalize a tag fetched from the model.
      * 
@@ -3464,8 +3447,8 @@ public class Options {
 	if (s != null)
 	    return s;
 	return tag;
-    };
-
+    }
+    
     /**
      * Determines if the given package should not be processed (i.e., should be
      * skipped), based upon the configuration parameters 'appSchemaName',

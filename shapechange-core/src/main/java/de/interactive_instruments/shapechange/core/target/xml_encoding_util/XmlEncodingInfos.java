@@ -327,16 +327,13 @@ public class XmlEncodingInfos implements MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "No XML encoding infos to write to file '$1$'.";
-	case 2:
-	    return "Encountered an exception while writing XML encoding infos to file '$1$'. Exception message is: $2$";
+	case 1 -> "No XML encoding infos to write to file '$1$'.";
+	case 2 -> "Encountered an exception while writing XML encoding infos to file '$1$'. Exception message is: $2$";
 
-	default:
-	    return "(XmlEncodingInfos.java) Unknown message with number: " + mnr;
-	}
+	default -> "(XmlEncodingInfos.java) Unknown message with number: " + mnr;
+	};
 
     }
 

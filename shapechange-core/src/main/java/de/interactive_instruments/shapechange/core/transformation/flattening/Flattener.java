@@ -7512,138 +7512,76 @@ public class Flattener implements Transformer, MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: property '$1$'";
-	case 2:
-	    return "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
+	case 2 -> "Context: class '$1$'";
 
-	case 20001:
-	    return "No non-empty string value provided for configuration parameter '$1$'. Execution of '$2$' aborted.";
-	case 20002:
-	    return "Configuration parameter '$1$' required for execution of '$2$' was not provided. Execution of '$2$' aborted.";
-	case 20003:
-	    return "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of '$2$' aborted.";
+	case 20001 -> "No non-empty string value provided for configuration parameter '$1$'. Execution of '$2$' aborted.";
+	case 20002 -> "Configuration parameter '$1$' required for execution of '$2$' was not provided. Execution of '$2$' aborted.";
+	case 20003 -> "Syntax exception for regular expression value of configuration parameter '$1$' (required for execution of '$2$'). Regular expression value was: $3$. Exception message: $4$. Execution of '$2$' aborted.";
 
-	case 20102:
-	    return "Value of configuration parameter '$1$' after parsing is '$2$'.";
+	case 20102 -> "Value of configuration parameter '$1$' after parsing is '$2$'.";
 
-	case 20301:
-	    return "The type '$2$' of property '$1$' was not found.";
-	case 20302:
-	    return "The type '$1$' to replace type '$2$' was not found. Replacing type without changing the id.";
-	case 20303:
-	    return "The ClassInfo for type '$1$' was not found in the model.";
-	case 20304:
-	    return "maxOccurs parameter configured to be '$1$' - using default value 3";
-	case 20305:
-	    return "maxOccurs tagged value for property '$1$' in class '$2$' was set to '$3$' - using global value: '$4$'";
-	case 20306:
-	    return "No type information given via configuration parameter 'enforceOptionality'. Rule will not be executed.";
-	case 20307:
-	    return "applyRulePropUnionDirectOptionality encountered unknown content model of Union-Direct type for type '$1$'.";
-	case 20308:
-	    return "Context: $1$ '$2$'";
-	case 20309:
-	    return "Cannot apply rule for flattening name if no value is provided via the configuration parameter '$1$'.";
-	case 20310:
-	    return "Invalid pattern encountered for configuration parameter '$1$': $2$";
-	case 20311:
-	    return "When creating copy of the subtype hierarchy for '$1$', subtype with id '$2$' either was not found in the model or is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). A copy won't be created for this subtype.";
-	case 20312:
-	    return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
-	case 20313:
-	    return "Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
-	case 20314:
-	    return "Could not find supertype with id '$1$' for class with name '$2$' in the model.";
-	case 20315:
-	    return "Cannot properly update type of property named '$1$' to the union type named '$2$'.";
-	case 20316:
-	    return "Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
-	case 20317:
-	    return "========== $1$ phase ==========";
-	case 20318:
-	    return "Model does not contain class '$1$' which is the target type to which the type of property '$2$' (from class '$3$') shall be mapped. Setting type.id of property to UNKNOWN.";
-	case 20319:
-	    return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). The contents of '$2$' won't be copied to '$1$', which should be fine because '$1$' is not part of a schema selected for processing.";
-	case 20320:
-	    return "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be added to the list of subtypes for class '$2$'. $3$";
-	case 20321:
-	    return "??Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Thus it cannot be removed from the model.";
-	case 20322:
-	    return "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (updating the id for subtype '$2$' in $1$'s subtype list from '$3$' to that of its copy, which has id '$4$').";
-	case 20323:
-	    return "Class '$1$' - which is an enumeration - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot add ONINA enums to the enumeration.";
-	case 20324:
-	    return "No type information given via configuration parameter 'removeType'. Rule will not be executed.";
-	case 20325:
-	    return "??isFlatTarget tagged value setting(s) will lead to removal of whole association (with one end being property '$1$' in class '$2$' - the other end being property '$3$' in class '$4$').";
-	case 20326:
-	    return "--- Found cycle:";
-	case 20327:
-	    return "   Class '$1$' -> class '$2$' (via properties: $3$)";
-	case 20328:
-	    return "--- No cycles found.";
-	case 20329:
-	    return "---------- Checking for reflexive relationships and cyles in types to process (for type flattening) ----------";
-	case 20330:
-	    return "--- Reflexive relationship detected for class '$1$' (via properties: $2$).";
-	case 20331:
-	    return "--- No reflexive relationships detected.";
-	case 20332:
-	    return "The Flattener configuration lists type '$1$' for removal but could not find it in the model.";
-	case 20333:
-	    return "??Homogeneous geometry rule would update the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. The association won't be updated and will thus eventually be removed.";
-	case 20334:
-	    return "??Creating a copy of an association to connect classes '$1$' and '$2$'. The original association has an association class. Copying the association class is currently not supported. The association copy will therefore not have an association class.";
-	case 20335:
-	    return "??The map for geometry type specific copies of '$1$' is empty.";
-	case 20336:
-	    return "??Inheritance rule would create subtype specific copies of the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. Copies of the association won't be created.";
-	case 20337:
-	    return "??The list of subtypes of superclass '$1$' is empty.";
-	case 20338:
-	    return "??Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
-	case 20339:
-	    return "??No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
-	case 20340:
-	    return "??The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
-	case 20341:
-	    return "Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
-	case 20342:
-	    return "Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
-	case 20343:
-	    return "Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
-	case 20344:
-	    return "'$1$' matches regex '$2$', provided in parameter '$3$'";
-	case 20345:
-	    return "'$1$' does not match regex '$2$', provided in parameter '$3$'";
-	case 20346:
-	    return "After the transformation, class '$1$' has multiple properties with the same name (either in the class itself, or through inheritance from supertypes). The names of duplicate properties are: '$2$'.";
-	case 20347:
-	    return "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
-	case 20348:
-	    return "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
-	case 20349:
-	    return "??Dissolving mixins will not take into account associations that reference mixin '$1$'.";
-	case 20350:
-	    return "The lower bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
-	case 20351:
-	    return "The upper bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
+	case 20301 -> "The type '$2$' of property '$1$' was not found.";
+	case 20302 -> "The type '$1$' to replace type '$2$' was not found. Replacing type without changing the id.";
+	case 20303 -> "The ClassInfo for type '$1$' was not found in the model.";
+	case 20304 -> "maxOccurs parameter configured to be '$1$' - using default value 3";
+	case 20305 -> "maxOccurs tagged value for property '$1$' in class '$2$' was set to '$3$' - using global value: '$4$'";
+	case 20306 -> "No type information given via configuration parameter 'enforceOptionality'. Rule will not be executed.";
+	case 20307 -> "applyRulePropUnionDirectOptionality encountered unknown content model of Union-Direct type for type '$1$'.";
+	case 20308 -> "Context: $1$ '$2$'";
+	case 20309 -> "Cannot apply rule for flattening name if no value is provided via the configuration parameter '$1$'.";
+	case 20310 -> "Invalid pattern encountered for configuration parameter '$1$': $2$";
+	case 20311 -> "When creating copy of the subtype hierarchy for '$1$', subtype with id '$2$' either was not found in the model or is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). A copy won't be created for this subtype.";
+	case 20312 -> "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (removing class '$2$' as subtype, and adding its geometry specific copies).";
+	case 20313 -> "Class '$1$' has a geometry property. The following supertypes also have one: $2$. Flattening of homogeneous geometries with subtypes is enabled. This only works if all subtypes of a type with geometry do not have a geometry property themselves. The class '$1$' will not be fanned out based upon its own geometry typed properties.";
+	case 20314 -> "Could not find supertype with id '$1$' for class with name '$2$' in the model.";
+	case 20315 -> "Cannot properly update type of property named '$1$' to the union type named '$2$'.";
+	case 20316 -> "Class '$1$' has a geometry property. The following supertypes have a different set of restrictions regarding allowed geometry types: $2$. Flattening of homogeneous geometries with subtypes is enabled. This is a potential inconsistency (potential because the map entries defined for the flattening also influence how a feature type with geometry properties is fanned out).";
+	case 20317 -> "========== $1$ phase ==========";
+	case 20318 -> "Model does not contain class '$1$' which is the target type to which the type of property '$2$' (from class '$3$') shall be mapped. Setting type.id of property to UNKNOWN.";
+	case 20319 -> "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). The contents of '$2$' won't be copied to '$1$', which should be fine because '$1$' is not part of a schema selected for processing.";
+	case 20320 -> "??Class '$1$' - which is a subtype of '$2$' - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). It (and its possibly existing subtypes) won't be added to the list of subtypes for class '$2$'. $3$";
+	case 20321 -> "??Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Thus it cannot be removed from the model.";
+	case 20322 -> "Class '$1$' is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot reliably update subtype info for this class (updating the id for subtype '$2$' in $1$'s subtype list from '$3$' to that of its copy, which has id '$4$').";
+	case 20323 -> "Class '$1$' - which is an enumeration - is not an instance of GenericClassInfo (likely reason: it belongs to a package that is not part of the schema selected for processing). Cannot add ONINA enums to the enumeration.";
+	case 20324 -> "No type information given via configuration parameter 'removeType'. Rule will not be executed.";
+	case 20325 -> "??isFlatTarget tagged value setting(s) will lead to removal of whole association (with one end being property '$1$' in class '$2$' - the other end being property '$3$' in class '$4$').";
+	case 20326 -> "--- Found cycle:";
+	case 20327 -> "   Class '$1$' -> class '$2$' (via properties: $3$)";
+	case 20328 -> "--- No cycles found.";
+	case 20329 -> "---------- Checking for reflexive relationships and cyles in types to process (for type flattening) ----------";
+	case 20330 -> "--- Reflexive relationship detected for class '$1$' (via properties: $2$).";
+	case 20331 -> "--- No reflexive relationships detected.";
+	case 20332 -> "The Flattener configuration lists type '$1$' for removal but could not find it in the model.";
+	case 20333 -> "??Homogeneous geometry rule would update the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. The association won't be updated and will thus eventually be removed.";
+	case 20334 -> "??Creating a copy of an association to connect classes '$1$' and '$2$'. The original association has an association class. Copying the association class is currently not supported. The association copy will therefore not have an association class.";
+	case 20335 -> "??The map for geometry type specific copies of '$1$' is empty.";
+	case 20336 -> "??Inheritance rule would create subtype specific copies of the association between classes '$1$' and '$2$' but cannot do so because class '$3$' belongs to a schema that has not been selected for processing. Copies of the association won't be created.";
+	case 20337 -> "??The list of subtypes of superclass '$1$' is empty.";
+	case 20338 -> "??Ignoring reflexive relationship that would be caused by property '$1$' in class '$2$'. The property will simply be removed.";
+	case 20339 -> "??No 'value' or 'values' property found in <<union>> '$1$'. ONINA processing/modelling rules expect that a XxxReason <<union>> class has a 'value' or 'values' property.";
+	case 20340 -> "??The type of property '$1$' in class '$2$' shall be set to the type '$3$'. That type cannot be found in the model. Setting the category of value of the property to 'unknown'.";
+	case 20341 -> "Rule '$1$' is enabled but the transformer configuration does not contain parameter '$2$' with a valid integer value greater than 1. Behavior for '$1$' will be ignored.";
+	case 20342 -> "Multiplicity flattening would usually dissolve the bi-directional association between class '$1$' (property '$2$') and class '$3$' (property '$4$'). Because the rule is to keep all bi-directional associations, the association will not be dissolved and multiplicity flattening won't be applied to it.";
+	case 20343 -> "Parameter '$1$' is required for the execution of '$2$' but has not been provided. The rule will not be applied.";
+	case 20344 -> "'$1$' matches regex '$2$', provided in parameter '$3$'";
+	case 20345 -> "'$1$' does not match regex '$2$', provided in parameter '$3$'";
+	case 20346 -> "After the transformation, class '$1$' has multiple properties with the same name (either in the class itself, or through inheritance from supertypes). The names of duplicate properties are: '$2$'.";
+	case 20347 -> "Removing name components resulted in at least one class with properties that have the same name. For further details, consult the messages that were logged on INFO level before this message.";
+	case 20348 -> "Configuration parameter '$1$' contains unknown descriptor '$2$'. The descriptor will be ignored.";
+	case 20349 -> "??Dissolving mixins will not take into account associations that reference mixin '$1$'.";
+	case 20350 -> "The lower bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
+	case 20351 -> "The upper bound of the multiplicity of property '$1$' is '$2$', consider flattening the multiplicity before using rule '$3$'";
 
-	case 20400:
-	    return "Exception occurred while loading linked document of type '$1$'. Exception message is: $2$";
-	case 20401:
-	    return "Exception occurred while merging linked documents of supertype '$1$' and its subtype '$2$'. Exception message is: $3$";
+	case 20400 -> "Exception occurred while loading linked document of type '$1$'. Exception message is: $2$";
+	case 20401 -> "Exception occurred while merging linked documents of supertype '$1$' and its subtype '$2$'. Exception message is: $3$";
 
-	case 20500:
-	    return "Subtype '$1$' is already mapped to root class '$2$'. Ignoring a mapping to root class '$3$'.";
-	case 20501:
-	    return "Multiple properties with same name '$1$', value type, and multiplicity detected in subtypes of type '$2$'.";
+	case 20500 -> "Subtype '$1$' is already mapped to root class '$2$'. Ignoring a mapping to root class '$3$'.";
+	case 20501 -> "Multiple properties with same name '$1$', value type, and multiplicity detected in subtypes of type '$2$'.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

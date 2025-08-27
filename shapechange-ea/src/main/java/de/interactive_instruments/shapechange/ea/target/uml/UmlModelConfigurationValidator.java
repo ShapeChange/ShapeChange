@@ -243,25 +243,19 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 
     @Override
     public String message(int mnr) {
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 32:
-	    return "Could not create output directory at $1$. Tests with an actual output repository will thus not be performed.";
-	case 51:
-	    return "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
+	case 32 -> "Could not create output directory at $1$. Tests with an actual output repository will thus not be performed.";
+	case 51 -> "URL '$1$' provided for configuration parameter " + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + " is malformed. Exception message is: '$2$'.";
-	case 52:
-	    return "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
+	case 52 -> "EA repository template at '$1$' does not exist or cannot be read. Check the value of the configuration parameter '"
 		    + UmlModelConstants.PARAM_EA_TEMPLATE
 		    + "' and ensure that: a) it contains the path to the template file and b) the file can be read by ShapeChange.";
-	case 53:
-	    return "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
+	case 53 -> "Exception encountered when copying EA repository template file to output destination. Message is: $1$.";
 
-	case 100:
-	    return "The target configuration contains map entries with qualified stereotypes as target types. The following profiles from these map entries are not loaded: $1$. That is only an issue if the actual encoding attempts to use map entries with these profiles.";
+	case 100 -> "The target configuration contains map entries with qualified stereotypes as target types. The following profiles from these map entries are not loaded: $1$. That is only an issue if the actual encoding attempts to use map entries with these profiles.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

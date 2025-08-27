@@ -250,39 +250,25 @@ public class ProfileTransferEAConfigurationValidator extends AbstractConfigurati
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "";
-	case 10:
-	    return "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to which profiles are transferred is an EA repository.";
-	case 11:
-	    return "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
-	case 12:
-	    return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer would not be executed.";
-	case 13:
-	    return "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer would not be executed.";
-	case 14:
-	    return "Enterprise Architect repository file named '$1$' not found.";
-	case 16:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
-	case 17:
-	    return "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', username is: '$2$', password is: '$3$', exception message is: '$4$'";
-	case 29:
-	    return "Using EA repository connection info provided by target configuration.";
-	case 30:
-	    return "Using EA repository connection info provided by input configuration.";
-	case 31:
-	    return "Parameter '" + ProfileTransferEA.PARAM_REPO_CONNECTION_STRING
+	case 1 -> "";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "";
+	case 10 -> "The input parameter 'inputModelType' was not set or does not equal (ignoring case) 'EA7'. This target can only be executed if the model to which profiles are transferred is an EA repository.";
+	case 11 -> "Neither the input parameter 'inputFile' nor the input parameter 'repositoryFileNameOrConnectionString' are set. This target requires one of these parameters in order to connect to the EA repository.";
+	case 12 -> "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the directory named '$1$' does not exist or is not accessible. The transfer would not be executed.";
+	case 13 -> "The target is configured to copy the EA project file to the output directory, before transferring the profile infos. However, the EA repository is a server based repository, not an EA project file. The transfer would not be executed.";
+	case 14 -> "Enterprise Architect repository file named '$1$' not found.";
+	case 16 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', exception message is: '$2$'";
+	case 17 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$1$', username is: '$2$', password is: '$3$', exception message is: '$4$'";
+	case 29 -> "Using EA repository connection info provided by target configuration.";
+	case 30 -> "Using EA repository connection info provided by input configuration.";
+	case 31 -> "Parameter '" + ProfileTransferEA.PARAM_REPO_CONNECTION_STRING
 		    + "' is set in the configuration of this target, but it does not contain a valid value. Provide such a value or remove the target parameter in order for the target to look up the EA repository connection info in the input configuration.";
 
-	default:
-	    return "(" + ProfileTransferEAConfigurationValidator.class.getName() + ") Unknown message with number: "
+	default -> "(" + ProfileTransferEAConfigurationValidator.class.getName() + ") Unknown message with number: "
 		    + mnr;
-	}
+	};
     }
 }

@@ -351,7 +351,7 @@ public class Converter implements MessageSource {
 	    result.toFile(options.parameter("logFile"));
 	    target = null;
 	}
-    }; // convert()
+    }// convert()
 
     /**
      * Shuts down the given model and sets it to <code>null</code>.
@@ -1029,62 +1029,37 @@ public class Converter implements MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 14:
-	    return "No model has been loaded to convert.";
-	case 165:
-	    return "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
+	case 14 -> "No model has been loaded to convert.";
+	case 165 -> "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
 
-	case 500:
-	    return "Executed deferred output write for target class '$1$' for input ID: '$2$'.";
-	case 501:
-	    return "Now processing transformation '$1$' for input ID: '$2$'.";
-	case 502:
-	    return "Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
-	case 503:
-	    return "Now processing target '$1$' for input '$2$'.";
-	case 504:
-	    return "Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
-	case 505:
-	    return "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
-	case 506:
-	    return "Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
-	case 507:
-	    return "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
-	case 508:
-	    return "??The ConfigurationValidator for transformer, target, or validator class '$1$' was found but could not be loaded. Exception message is: $2$";
-	case 509:
-	    return "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
-	case 510:
-	    return "---------- Semantic validation of ShapeChange configuration: START ----------";
-	case 511:
-	    return "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
-	case 512:
-	    return "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
-	case 513:
-	    return "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
+	case 500 -> "Executed deferred output write for target class '$1$' for input ID: '$2$'.";
+	case 501 -> "Now processing transformation '$1$' for input ID: '$2$'.";
+	case 502 -> "Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+	case 503 -> "Now processing target '$1$' for input '$2$'.";
+	case 504 -> "Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+	case 505 -> "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
+	case 506 -> "Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
+	case 507 -> "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
+	case 508 -> "??The ConfigurationValidator for transformer, target, or validator class '$1$' was found but could not be loaded. Exception message is: $2$";
+	case 509 -> "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
+	case 510 -> "---------- Semantic validation of ShapeChange configuration: START ----------";
+	case 511 -> "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
+	case 512 -> "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
+	case 513 -> "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
 		    + Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG + "' to 'true'.";
-	case 514:
-	    return "--- Validating transformer with @id '$1$' ...";
-	case 515:
-	    return "--- Validating target with @class '$1$' and @inputs '$2$' ...";
-	case 516:
-	    return "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
-	case 517:
-	    return "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
-	case 518:
-	    return "--- Validating model validator with @id '$1$' ...";
-	case 519:
-	    return "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
-	case 520:
-	    return "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
+	case 514 -> "--- Validating transformer with @id '$1$' ...";
+	case 515 -> "--- Validating target with @class '$1$' and @inputs '$2$' ...";
+	case 516 -> "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+	case 517 -> "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+	case 518 -> "--- Validating model validator with @id '$1$' ...";
+	case 519 -> "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
+	case 520 -> "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
 
-	case 1012:
-	    return "Application schema found, package name: '$1$', target namespace: '$2$'";
+	case 1012 -> "Application schema found, package name: '$1$', target namespace: '$2$'";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

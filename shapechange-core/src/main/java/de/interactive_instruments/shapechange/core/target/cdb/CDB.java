@@ -967,79 +967,47 @@ public class CDB implements SingleTarget, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class '$1$'";
-	case 1:
-	    return "Context: property '$1$'";
+	return switch (mnr) {
+	case 0 -> "Context: class '$1$'";
+	case 1 -> "Context: property '$1$'";
 
-	case 2:
-	    return "XML document with name '$1$' could not be created, invalid filename.";
-	case 3:
-	    return "File '$1$' already exists. Attempting to delete it...";
-	case 4:
-	    return "File has been deleted.";
-	case 5:
-	    return "Exception occurred while writing document to file '$1$'. Exception message is: $2$"; 
-	case 6:
-	    return "Processing class '$1$'.";
-	case 7:
-	    return "Schema '$1$' is not encoded.";
-	case 8:
-	    return "Class '$1$' is not encoded.";
-	case 9:
-	    return "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
-	case 10:
-	    return "Type '$1$' is ignored.";
-	case 11:
-	    return "No relevant feature type found. Consequently, no dictionaries are created.";
-	case 12:
-	    return "The target configuration does not contain an advanced process configuration element with CDB unit definitions. This is fine, unless relevant properties define units of measure.";
-	case 13:
-	    return "'$1$' element of $2$ CDBUnitDefinition element is empty which is not allowed. CDBUnitDefinition will be ignored.";
-	case 14:
-	    return "??No map entry exists for type '$1$'. Furthermore, the type could either not be found in the model or is not one of the types that are automatically mapped to 'Text'. Properties with this type will be ignored.";
-	case 15:
-	    return "No map entries provided via the configuration.";
-	case 16:
-	    return "'code' attribute of $1$ CDBUnitDefinition element cannot be parsed to an integer. Code value is '$2$'. CDBUnitDefinition will be ignored.";
-	case 17:
-	    return "'symbol' attribute of $1$ CDBUnitDefinition element is empty which is not allowed. CDBUnitDefinition will be ignored.";
+	case 2 -> "XML document with name '$1$' could not be created, invalid filename.";
+	case 3 -> "File '$1$' already exists. Attempting to delete it...";
+	case 4 -> "File has been deleted.";
+	case 5 -> "Exception occurred while writing document to file '$1$'. Exception message is: $2$"; 
+	case 6 -> "Processing class '$1$'.";
+	case 7 -> "Schema '$1$' is not encoded.";
+	case 8 -> "Class '$1$' is not encoded.";
+	case 9 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 10 -> "Type '$1$' is ignored.";
+	case 11 -> "No relevant feature type found. Consequently, no dictionaries are created.";
+	case 12 -> "The target configuration does not contain an advanced process configuration element with CDB unit definitions. This is fine, unless relevant properties define units of measure.";
+	case 13 -> "'$1$' element of $2$ CDBUnitDefinition element is empty which is not allowed. CDBUnitDefinition will be ignored.";
+	case 14 -> "??No map entry exists for type '$1$'. Furthermore, the type could either not be found in the model or is not one of the types that are automatically mapped to 'Text'. Properties with this type will be ignored.";
+	case 15 -> "No map entries provided via the configuration.";
+	case 16 -> "'code' attribute of $1$ CDBUnitDefinition element cannot be parsed to an integer. Code value is '$2$'. CDBUnitDefinition will be ignored.";
+	case 17 -> "'symbol' attribute of $1$ CDBUnitDefinition element is empty which is not allowed. CDBUnitDefinition will be ignored.";
 
 	// 100-149 messages for semantic comparisons of features
-	case 100:
-	    return "Feature mapping with potentially inconsistent labels. Label of existing feature is '$1$', while that of the other feature (which will be ignored) is '$2$'.";
-	case 101:
-	    return "Feature mapping with potentially inconsistent concept definition. Definition of existing feature is '$1$', while that of the other feature (which will be ignored) is '$2$'.";
-	case 102:
-	    return "Context: existing feature '$1$'";
-	case 103:
-	    return "Context: other feature '$1$'";
+	case 100 -> "Feature mapping with potentially inconsistent labels. Label of existing feature is '$1$', while that of the other feature (which will be ignored) is '$2$'.";
+	case 101 -> "Feature mapping with potentially inconsistent concept definition. Definition of existing feature is '$1$', while that of the other feature (which will be ignored) is '$2$'.";
+	case 102 -> "Context: existing feature '$1$'";
+	case 103 -> "Context: other feature '$1$'";
 
 	// 150-199 messages for semantic comparisons of attributes
-	case 150:
-	    return "Context: existing property '$1$'";
-	case 151:
-	    return "Context: other property '$1$'";
-	case 152:
-	    return "Property mapping with potentially inconsistent description. Description of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
-	case 153:
-	    return "Property mapping with potentially inconsistent value type. Type of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
-	case 154:
-	    return "Property mapping with potentially inconsistent value format. Format of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
-	case 155:
-	    return "Property mapping with potentially inconsistent value length. Length of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
-	case 156:
-	    return "Property mapping with potentially inconsistent value range. Range of existing property representation is [$1$-$2$], while that of the other property representation (which will be ignored) is [$3$-$4$].";
-	case 157:
-	    return "Property mapping with potential inconsistency.";
+	case 150 -> "Context: existing property '$1$'";
+	case 151 -> "Context: other property '$1$'";
+	case 152 -> "Property mapping with potentially inconsistent description. Description of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
+	case 153 -> "Property mapping with potentially inconsistent value type. Type of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
+	case 154 -> "Property mapping with potentially inconsistent value format. Format of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
+	case 155 -> "Property mapping with potentially inconsistent value length. Length of existing property representation is '$1$', while that of the other property representation (which will be ignored) is '$2$'.";
+	case 156 -> "Property mapping with potentially inconsistent value range. Range of existing property representation is [$1$-$2$], while that of the other property representation (which will be ignored) is [$3$-$4$].";
+	case 157 -> "Property mapping with potential inconsistency.";
 
 	// 200-299 messages related to units of measure
-	case 200:
-	    return "No CDBUnitDefinition found for recommended measure '$1$' of property '$2$'.";
+	case 200 -> "No CDBUnitDefinition found for recommended measure '$1$' of property '$2$'.";
 
-	default:
-	    return "(" + CDB.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + CDB.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

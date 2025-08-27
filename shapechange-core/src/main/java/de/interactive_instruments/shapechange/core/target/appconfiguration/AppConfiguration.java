@@ -506,23 +506,15 @@ public class AppConfiguration implements Target, MessageSource {
      */
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: class AppConfiguration";
-	case 1:
-	    return "Generating app configuration for application schema '$1$'.";
-	case 2:
-	    return "Processing class '$1$'.";
-	case 3:
-	    return "Directory named '$1$' does not exist or is not accessible.";
-	case 4:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Using $3$ as default value for '$1$'.";
-	case 5:
-	    return "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
-	case 100:
-	    return "Context: property '$1$' in class '$2$'.";
-	default:
-	    return "(" + AppConfiguration.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 0 -> "Context: class AppConfiguration";
+	case 1 -> "Generating app configuration for application schema '$1$'.";
+	case 2 -> "Processing class '$1$'.";
+	case 3 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Using $3$ as default value for '$1$'.";
+	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 100 -> "Context: property '$1$' in class '$2$'.";
+	default -> "(" + AppConfiguration.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

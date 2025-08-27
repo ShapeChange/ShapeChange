@@ -215,8 +215,8 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	if (s != null)
 	    s = s.toLowerCase().trim();
 	return s;
-    };
-
+    }
+    
     // Standard ISO 19136 tagged value: If a class with the stereotype
     // <<Type>> has a canonical XML Schema encoding (e.g. from XML Schema) the
     // XML Schema typename corresponding to the data type shall be given as the
@@ -928,8 +928,7 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	    }
 	    break;
 	}
-	;
-
+	
 	if (matches("req-xsd-cls-generalization-consistent")
 		&& (category() == Options.DATATYPE || category() == Options.FEATURE || category() == Options.OBJECT)) {
 	    int count = 0;

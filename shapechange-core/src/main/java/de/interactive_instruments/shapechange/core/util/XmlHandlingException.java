@@ -31,13 +31,16 @@
  */
 package de.interactive_instruments.shapechange.core.util;
 
+import java.io.Serial;
+
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class XmlHandlingException extends Exception {
 
-    private static final long serialVersionUID = 7221813873020087980L;
+	@Serial
+	private static final long serialVersionUID = 7221813873020087980L;
 
     public XmlHandlingException(String msg) {
 	super(msg);

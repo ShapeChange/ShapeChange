@@ -123,21 +123,15 @@ public class ModelValidationManager implements MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 100:
-	    return "";
-	case 101:
-	    return "";
-	case 102:
-	    return "";
-	case 103:
-	    return "";
-	case 104:
-	    return "---------- Executing model validator '$1$' ----------";
+	case 100 -> "";
+	case 101 -> "";
+	case 102 -> "";
+	case 103 -> "";
+	case 104 -> "---------- Executing model validator '$1$' ----------";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

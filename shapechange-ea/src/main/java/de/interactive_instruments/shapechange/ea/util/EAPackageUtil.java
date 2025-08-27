@@ -242,19 +242,14 @@ public class EAPackageUtil extends AbstractEAUtil {
 
     public static String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 101:
-	    return "EA error encountered while adding child package '$1$' to EA package '$2$'. Error message is: $3$";
-	case 102:
-	    return "EA error encountered while adding a dependency relationship to EA package '$1$'. Error message is: $2$";
-	case 103:
-	    return "EA error encountered while updating 'Name' of EA package '$1$'. Error message is: $2$";
-	case 104:
-	    return "EA error encountered while updating 'ParentID' of EA package '$1$'. Error message is: $2$";
+	case 101 -> "EA error encountered while adding child package '$1$' to EA package '$2$'. Error message is: $3$";
+	case 102 -> "EA error encountered while adding a dependency relationship to EA package '$1$'. Error message is: $2$";
+	case 103 -> "EA error encountered while updating 'Name' of EA package '$1$'. Error message is: $2$";
+	case 104 -> "EA error encountered while updating 'ParentID' of EA package '$1$'. Error message is: $2$";
 
-	default:
-	    return "(" + EAPackageUtil.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + EAPackageUtil.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

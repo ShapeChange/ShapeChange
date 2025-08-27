@@ -184,24 +184,16 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: GeoPackageTemplate target configuration element with 'inputs'='$1$'.";
-	case 1:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "Value of target parameter 'organizationCoordSysId' is '$1$', which does not match any ID of the minimal SRSs defined for every GeoPackage (-1, 0, 4326) or of the SRSs defined via the advanced process configuration.";
-	case 4:
-	    return "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
-	case 5:
-	    return "Value of target parameter 'srsOrganization' is '$1$', which does not match (ignoring case) any organization of the minimal SRSs defined for every GeoPackage ('NONE', 'EPSG') or of the SRSs defined via the advanced process configuration.";
-	case 6:
-	    return "Value of target parameter '$1$' is '$2$', which does not match any of the allowed values: $3$";
-	default:
-	    return "(GeoPackageTemplateConfigurationValidator.java) Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 0 -> "Context: GeoPackageTemplate target configuration element with 'inputs'='$1$'.";
+	case 1 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "Value of target parameter 'organizationCoordSysId' is '$1$', which does not match any ID of the minimal SRSs defined for every GeoPackage (-1, 0, 4326) or of the SRSs defined via the advanced process configuration.";
+	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
+	case 5 -> "Value of target parameter 'srsOrganization' is '$1$', which does not match (ignoring case) any organization of the minimal SRSs defined for every GeoPackage ('NONE', 'EPSG') or of the SRSs defined via the advanced process configuration.";
+	case 6 -> "Value of target parameter '$1$' is '$2$', which does not match any of the allowed values: $3$";
+	default -> "(GeoPackageTemplateConfigurationValidator.java) Unknown message with number: " + mnr;
+	};
     }
 
 }

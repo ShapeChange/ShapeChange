@@ -192,11 +192,9 @@ public class SQLServerStrategy implements DatabaseStrategy, MessageSource {
     
     @Override
     public String message(int mnr) {
-	switch (mnr) {
-	case 0:
-	    return "Context: class SQLServerStrategy";
-	default:
-	    return "(" + SQLServerStrategy.class.getName() + ") Unknown message with number: " + mnr;
-	}
+	return switch (mnr) {
+	case 0 -> "Context: class SQLServerStrategy";
+	default -> "(" + SQLServerStrategy.class.getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

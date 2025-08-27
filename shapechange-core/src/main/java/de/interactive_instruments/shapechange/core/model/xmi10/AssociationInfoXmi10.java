@@ -97,11 +97,11 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 	
 	public PropertyInfo end1() {
 		return end1;
-	};
+	}
 
 	public PropertyInfo end2() {
 		return end2;
-	};
+	}
 
 	public AssociationInfoXmi10(Xmi10Document d, Element e)
 			throws ShapeChangeAbortException {
@@ -155,16 +155,13 @@ public class AssociationInfoXmi10 extends AssociationInfoImpl implements Associa
 	@Override
 	public String message(int mnr) {
 
-		switch (mnr) {
+		return switch (mnr) {
 
-		case 103:
-		    return "??The association with name '$1$' and ID '$2$' does not have 2 connections: $3$ connections. All Roles will be ignored.";
+		case 103 -> "??The association with name '$1$' and ID '$2$' does not have 2 connections: $3$ connections. All Roles will be ignored.";
 		
-		case 10002:
-		    return "The association end with name '$1$' is the reverse property to '$2$'.";
+		case 10002 -> "The association end with name '$1$' is the reverse property to '$2$'.";
 				    
-		default:
-		    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-		}
+		default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+		};
 	}
 }

@@ -627,44 +627,31 @@ public class ConstraintConverter implements Transformer, MessageSource {
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
-	case 0:
-	    return "Context: property '$1$'.";
-	case 1:
-	    return "Context: class '$1$'.";
-	case 2:
-	    return "Context: association class '$1$'.";
-	case 3:
-	    return "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	return switch (mnr) {
+	case 0 -> "Context: property '$1$'.";
+	case 1 -> "Context: class '$1$'.";
+	case 2 -> "Context: association class '$1$'.";
+	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
 	// Messages for RULE_
-	case 100:
-	    return "Invalid value(s) for configuration parameters '" + PARAM_GEOM_REP_CONSTRAINT_REGEX + "' and/or '"
+	case 100 -> "Invalid value(s) for configuration parameters '" + PARAM_GEOM_REP_CONSTRAINT_REGEX + "' and/or '"
 		    + PARAM_GEOM_REP_TYPES + "'. For further details, check the configuration validator log messages.";
-	case 101:
-	    return "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
-	case 102:
-	    return "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
+	case 101 -> "Found multiple ($1$) constraints to restrict geometry representation on type '$2$'. An arbitrary constraint is chosen.";
+	case 102 -> "Overwriting tagged value 'geometry' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
 
 	// Messages for RULE_TRF_CLS_CONSTRAINTS_CODELIST_RESTRICTION_TO_TV
-	case 200:
-	    return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Property '$3$' identified by the type restriction was not found for the class. The constraint will be ignored.";
-	case 201:
-	    return "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Type '$3$' identified by the type restriction was not found in the model. The constraint will be ignored.";
-	case 202:
-	    return "Code list restriction identified for type restriction constraint '$1$' of class '$2$'. Property '$3$' is restricted to code list '$4$'.";
+	case 200 -> "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Property '$3$' identified by the type restriction was not found for the class. The constraint will be ignored.";
+	case 201 -> "Presence of code list restriction could not be determined for type restriction constraint '$1$' of class '$2$'. Type '$3$' identified by the type restriction was not found in the model. The constraint will be ignored.";
+	case 202 -> "Code list restriction identified for type restriction constraint '$1$' of class '$2$'. Property '$3$' is restricted to code list '$4$'.";
 
 	// Messages for RULE_TRF_CLS_CONSTRAINTS_VALUETYPERESTRICTIONTOPROPTV_EXCL
-	case 300:
-	    return "Invalid value(s) for configuration parameters '" + PARAM_VALUETYPE_REP_CONSTRAINT_REGEX
+	case 300 -> "Invalid value(s) for configuration parameters '" + PARAM_VALUETYPE_REP_CONSTRAINT_REGEX
 		    + "' and/or '" + PARAM_VALUETYPE_REP_TYPES
 		    + "'. For further details, check the configuration validator log messages.";
-	case 301:
-	    return "Overwriting tagged value '" + VALUE_TYPE_OPTIONS_TV_NAME
+	case 301 -> "Overwriting tagged value '" + VALUE_TYPE_OPTIONS_TV_NAME
 		    + "' in type '$1$'. Old value: '$2$'. New value: '$3$'.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

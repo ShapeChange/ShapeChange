@@ -109,16 +109,12 @@ public class ModelExportConfigurationValidator extends AbstractConfigurationVali
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
-	case 2:
-	    return "Output directory '$1$' does not exist or is not accessible.";
-	case 3:
-	    return "Target parameter '$1$' is set in the configuration. However, it does not define any profiles, and thus will be ignored. To avoid this warning, set at least one profile via the parameter, or remove it from the configuration.";
-	default:
-	    return "(ModelExport.java) Unknown message with number: " + mnr;
-	}
+	case 1 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
+	case 2 -> "Output directory '$1$' does not exist or is not accessible.";
+	case 3 -> "Target parameter '$1$' is set in the configuration. However, it does not define any profiles, and thus will be ignored. To avoid this warning, set at least one profile via the parameter, or remove it from the configuration.";
+	default -> "(ModelExport.java) Unknown message with number: " + mnr;
+	};
     }
 }

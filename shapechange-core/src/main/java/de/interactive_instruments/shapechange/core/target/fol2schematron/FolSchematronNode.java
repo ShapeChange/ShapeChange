@@ -398,9 +398,7 @@ public abstract class FolSchematronNode {
 		// clone() override
 		public BindingContext clone() {
 
-			BindingContext copy = new BindingContext(state);
-
-			return copy;
+			return new BindingContext(state);
 		}
 
 		// Reset state
@@ -1595,29 +1593,22 @@ public abstract class FolSchematronNode {
 
 		public boolean implementedAsXmlAttribute(int idx) {
 
-			boolean result = false;
-
-			switch (attributes[idx].absType) {
+			return switch (attributes[idx].absType) {
 
 			case 0: // Normal attribute
-				result = implementedAsXmlAttribute(
+				yield implementedAsXmlAttribute(
 						attributes[idx].main.getSchemaElement());
-				break;
 			case 1: // Normal absorption
-				result = implementedAsXmlAttribute(
+				yield implementedAsXmlAttribute(
 						attributes[idx].absAttr.getSchemaElement());
-				break;
-			case 2: // Nil-implementation attribute with a "reason" selector
-			}
-
-			return result;
+			case 2:
+				default: yield false; // Nil-implementation attribute with a "reason" selector
+			};
 		}
 
 		public boolean implementedAsXmlAttribute(PropertyInfo pi) {
 
-			boolean result = XmlSchema.implementedAsXmlAttribute(pi);
-
-			return result;
+			return XmlSchema.implementedAsXmlAttribute(pi);
 		}
 
 		/**
@@ -1634,21 +1625,16 @@ public abstract class FolSchematronNode {
 		 */
 		public boolean hasSimpleType(int idx) {
 
-			boolean result = true;
-
-			switch (attributes[idx].absType) {
+			return switch (attributes[idx].absType) {
 
 			case 0: // Normal attribute
-				result = hasSimpleType(attributes[idx].main.getSchemaElement());
-				break;
+				yield hasSimpleType(attributes[idx].main.getSchemaElement());
 			case 1: // Normal absorption
-				result = hasSimpleType(
+				yield hasSimpleType(
 						attributes[idx].absAttr.getSchemaElement());
-				break;
-			case 2: // Nil-implementation attribute with a "reason" selector
-			}
-
-			return result;
+			case 2:
+				default: yield true; // Nil-implementation attribute with a "reason" selector
+			};
 		}
 
 		/**
@@ -2138,8 +2124,7 @@ public abstract class FolSchematronNode {
 			}
 
 			// Return what we have
-			XpathFragment xpt = new XpathFragment(11, value, type);
-			return xpt;
+			return new XpathFragment(11, value, type);
 		}
 	}
 

@@ -59,7 +59,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 
     public enum ModelElementType {
 	ASSOCIATION, CLASS, PACKAGE, PROPERTY, ATTRIBUTE, ASSOCIATIONROLE
-    };
+    }
 
     private Boolean isValid = null;
 
@@ -760,26 +760,17 @@ public class ModelElementSelectionInfo implements MessageSource {
 	 * NOTE: A leading ?? in a message text suppresses multiple appearance of a
 	 * message in the output.
 	 */
-	switch (mnr) {
+	return switch (mnr) {
 
-	case 1:
-	    return "Context: $1$";
-	case 100:
-	    return "??'$1$' matches regex '$2$'";
-	case 101:
-	    return "??'$1$' does not match regex '$2$'";
-	case 102:
-	    return "Could not find application schema for Info type '$1$'";
-	case 103:
-	    return "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
-	case 104:
-	    return "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
-	case 105:
-	    return "??Class '$1$' matches the classIsAbstract filter criterium.";
-	case 106:
-	    return "??Class '$1$' does not match the classIsAbstract filter criterium.";
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	case 1 -> "Context: $1$";
+	case 100 -> "??'$1$' matches regex '$2$'";
+	case 101 -> "??'$1$' does not match regex '$2$'";
+	case 102 -> "Could not find application schema for Info type '$1$'";
+	case 103 -> "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
+	case 104 -> "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
+	case 105 -> "??Class '$1$' matches the classIsAbstract filter criterium.";
+	case 106 -> "??Class '$1$' does not match the classIsAbstract filter criterium.";
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }

@@ -102,14 +102,12 @@ public class CodelistDictionariesMLConfigurationValidator extends AbstractConfig
     @Override
     public String message(int mnr) {
 
-	switch (mnr) {
+	return switch (mnr) {
 
 	// 100 - 199: parameter validation
-	case 100:
-	    return "Configuration parameter for locale reference is missing for language '$1$'. A locale reference must be provided for each language other than the default language.";
+	case 100 -> "Configuration parameter for locale reference is missing for language '$1$'. A locale reference must be provided for each language other than the default language.";
 
-	default:
-	    return "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
-	}
+	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
+	};
     }
 }
