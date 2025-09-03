@@ -1254,8 +1254,10 @@
       <p>
        <xsl:choose>
         <xsl:when test="$line/@idref and key('modelElement', $line/@idref)">
+         <xsl:variable name="lineIdrefModelElement" select="key('modelElement',$line/@idref,$catalog)"/>
+         <xsl:variable name="lineIdrefPath" select="$packages[id = $lineIdrefModelElement/package/@idref]/path"/>
          <a
-          href="{concat($backpath,$packages[id = key('modelElement',$line/@idref,$catalog)/package/@idref]/path,'/',key('modelElement',$line/@idref,$catalog)/name,'.html')}">
+          href="{concat($backpath,$lineIdrefPath,'/',$lineIdrefModelElement/name,'.html')}">
 
           <!-- If this entry is about the type of a feature type, localize the $line. -->
           <!-- This is a workaround for avoiding the #RTREEFRAG issue when using call-template inside a with-param. -->
@@ -1453,10 +1455,9 @@
   </tr>
  </xsl:template>
 
- <xsl:template match="RelationshipRole" mode="detail">
+ <xsl:template match="RelationshipRole" mode="detail">  
+  <xsl:param name="backpath"/>
   <xsl:variable name="featureAtt" select="."/>
-  <xsl:variable name="backpath"
-   select="$packages[id = key('modelElement', $featureAtt/FeatureTypeIncluded/@idref, $catalog)/package/@idref]/backpath"/>
   <tr>
    <td>
     <p>
