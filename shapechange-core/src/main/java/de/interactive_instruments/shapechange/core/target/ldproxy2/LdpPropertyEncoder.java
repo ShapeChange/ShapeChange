@@ -55,7 +55,7 @@ import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Scope;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
-import de.ii.xtraplatform.geometries.domain.SimpleFeatureGeometry;
+import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
@@ -218,14 +218,13 @@ public class LdpPropertyEncoder {
 	    Optional<Type> valueTypeForBuilder = valueTypeForBuilder(pi, identifierPi, pi.cardinality().maxOccurs == 1,
 		    ldpType);
 
-	    Optional<SimpleFeatureGeometry> geometryTypeForBuilder = Optional.empty();
+	    Optional<GeometryType> geometryTypeForBuilder = Optional.empty();
 	    Optional<Boolean> linearizeCurvesOpt = Optional.empty();
 	    if (ldpType == Type.GEOMETRY) {
 		geometryTypeForBuilder = geometryType(pi);
 		if (Ldproxy2Target.linearizeCurves && geometryTypeForBuilder.isPresent()) {
-		    SimpleFeatureGeometry sfg = geometryTypeForBuilder.get();
-		    if (sfg != SimpleFeatureGeometry.POINT && sfg != SimpleFeatureGeometry.MULTI_POINT
-			    && sfg != SimpleFeatureGeometry.NONE) {
+		    GeometryType geomType = geometryTypeForBuilder.get();
+		    if (geomType != GeometryType.POINT && geomType != GeometryType.MULTI_POINT) {
 			linearizeCurvesOpt = Optional.of(true);
 		    }
 		}
@@ -1326,13 +1325,13 @@ public class LdpPropertyEncoder {
 		&& (target.isMappedToLink(pi) || !LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)));
     }
 
-    private Optional<SimpleFeatureGeometry> geometryType(PropertyInfo pi) {
+    private Optional<GeometryType> geometryType(PropertyInfo pi) {
 
 	String typeName = pi.typeInfo().name;
 	String typeId = pi.typeInfo().id;
 	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
 
-	SimpleFeatureGeometry res = SimpleFeatureGeometry.ANY;
+	GeometryType res = GeometryType.ANY;
 
 	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
 
@@ -1346,7 +1345,7 @@ public class LdpPropertyEncoder {
 		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
 		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE);
 
-	    res = SimpleFeatureGeometry.valueOf(t.toUpperCase(Locale.ENGLISH));
+	    res = GeometryType.valueOf(t.toUpperCase(Locale.ENGLISH));
 
 	} else {
 	    // is checked via target configuration validator (which can be switched off)
