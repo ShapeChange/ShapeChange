@@ -288,7 +288,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>33.4.8-jre</version>
+				<version>33.5.0-jre</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
 			<dependency>
