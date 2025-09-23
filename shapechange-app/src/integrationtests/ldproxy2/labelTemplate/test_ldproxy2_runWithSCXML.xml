@@ -55,6 +55,7 @@
               mode="enabled">
          <targetParameter name="outputDirectory"
                           value="testResults/ldproxy2/labelTemplate/results"/>
+         <targetParameter name="cfgTemplatePath" value="sc-resources/templates/ldproxy2/cfgTemplate.yml"/>
          <targetParameter name="sortedOutput" value="true"/>
          <targetParameter name="associativeTableColumnSuffix" value="_id"/>
          <targetParameter name="dateFormat" value="dd.MM.yyyy"/>

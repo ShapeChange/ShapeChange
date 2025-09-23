@@ -45,8 +45,8 @@
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="associativeTableColumnSuffix"
 				value="_id" />
-<!-- 			<targetParameter name="cfgTemplatePath" -->
-<!-- 				value="sc-resources/templates/ldproxy2/cfgTemplate.yml" /> -->
+ 			<targetParameter name="cfgTemplatePath" 
+ 				value="sc-resources/templates/ldproxy2/cfgTemplate.yml" /> 
 			<targetParameter name="dateFormat" value="dd.MM.yyyy" />
 			<targetParameter name="dateTimeFormat"
 				value="dd.MM.yyyy HH:mm:ss" />
