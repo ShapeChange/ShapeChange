@@ -7,8 +7,11 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    # Disable actual pull requests for maven dependencies
-    # open-pull-requests-limit: 0
+    # Change the limit on the maximum number of pull requests for version updates open at any time.
+    # Default value: 5
+    # Set to 0 in order to disable opening PRs for maven dependencies.
+    # see https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference#open-pull-requests-limit-
+    open-pull-requests-limit: 10
     ignore:
       - dependency-name: "de.interactive_instruments:ldproxy-cfg"
         # ignore patch versions
