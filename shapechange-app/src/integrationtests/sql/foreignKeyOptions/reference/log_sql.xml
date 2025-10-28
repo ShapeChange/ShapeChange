@@ -1,96 +1,231 @@
-<?xml version="1.0" encoding="UTF-8"?><ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result" xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result" config="src/integrationtests/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml" end="Wed Mar 28 08:53:09 CEST 2018" resultCode="0" start="Wed Mar 28 08:52:12 CEST 2018" version="2.5.2-SNAPSHOT">
-  <Messages>
-    <Info message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
-    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
-    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
-    <Info message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
-    <Info message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
-    <Info message="Connecting to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
-    <Info message="Connected to C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
-    <Info message="Starting reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
-    <Info message="Finished reading C:\REPOSITORIES\ii\JE\ShapeChange\src\test\resources\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
-    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
-    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
-    <Info message="Determined database system is 'PostgreSQL'."/>
-    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
-    <Warning message="Foreign key option is 'SET NULL', but column 'featuretype1_id' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'featuretype1_roleft1a', column 'featuretype1_id'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Warning message="Foreign key option is 'SET NULL', but column 'featuretype2_id' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'featuretype1_roleft1a', column 'featuretype2_id'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Warning message="Foreign key option is 'SET NULL', but column 'roleft2b_fk' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'featuretype2', column 'roleft2b_fk'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType2::roleFT2B'"/>
-    </Warning>
-    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
-    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
-    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
-    <Info message="Determined database system is 'SQLServer'."/>
-    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
-    <Warning message="Foreign key option is 'SET NULL', but column 'FeatureType1_id' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FeatureType1_roleFT1A', column 'FeatureType1_id'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Warning message="Foreign key option is 'SET NULL', but column 'FeatureType2_id' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FeatureType1_roleFT1A', column 'FeatureType2_id'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Warning message="Foreign key option is 'SET NULL', but column 'roleFT2B_fk' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FeatureType2', column 'roleFT2B_fk'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType2::roleFT2B'"/>
-    </Warning>
-    <Info message="Foreign key constraint option 'RESTRICT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this option for clause 'ON UPDATE'. The option is ignored.">
-      <Detail message="Context: table 'FeatureType2', column 'roleFT2B_fk'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType2::roleFT2B'"/>
-    </Info>
-    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
-    <Info message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
-    <Info message="Now processing target 'SQL DDL' for input 'INPUT'."/>
-    <Info message="Determined database system is 'Oracle'."/>
-    <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
-    <Info message="Foreign key constraint option 'SET DEFAULT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this option for clause 'ON UPDATE'. The option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE1', column 'ROLEFT1B_FK'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType1::roleFT1B'"/>
-    </Info>
-    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
-    <Warning message="Name 'FK_FEATURETYPE1_ROLEFT1A_FEATU' for foreign key constraint is truncated to 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID'"/>
-    <Warning message="Foreign key option is 'SET NULL', but column 'FEATURETYPE1_ID' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE1_ID'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Info message="Foreign key constraint option 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this option for clause 'ON UPDATE'. The option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE1_ID'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Info>
-    <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
-    <Warning message="Name 'FK_FEATURETYPE1_ROLEFT1A_FEAT0' for foreign key constraint is truncated to 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID'"/>
-    <Warning message="Foreign key option is 'SET NULL', but column 'FEATURETYPE2_ID' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE2_ID'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Warning>
-    <Info message="Foreign key constraint option 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this option for clause 'ON UPDATE'. The option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE2_ID'."/>
-      <Detail message="Model element that defines the option: 'Association_FT1_FT2'"/>
-    </Info>
-    <Warning message="Foreign key option is 'SET NULL', but column 'ROLEFT2B_FK' is 'NOT NULL'. The foreign key option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE2', column 'ROLEFT2B_FK'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType2::roleFT2B'"/>
-    </Warning>
-    <Info message="Foreign key constraint option 'RESTRICT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this option for clause 'ON UPDATE'. The option is ignored.">
-      <Detail message="Context: table 'FEATURETYPE2', column 'ROLEFT2B_FK'."/>
-      <Detail message="Model element that defines the option: 'Test Schema::FeatureType2::roleFT2B'"/>
-    </Info>
-    <Info message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#10;-------------------------------------------------"/>
-  </Messages>
-  <Results>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/postgresql/INPUT/database_model_postgresql.sql" target="SQL DDL">database_model_postgresql.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/postgresql/INPUT/database_model_postgresql.qea" target="SQL DDL">database_model_postgresql.qea</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/ddl_sqlserver/INPUT/database_model_sqlserver.sql" target="SQL DDL">database_model_sqlserver.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/ddl_sqlserver/INPUT/database_model_sqlserver.qea" target="SQL DDL">database_model_sqlserver.qea</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/ddl_oracle/INPUT/database_model_oracle.sql" target="SQL DDL">database_model_oracle.sql</Result>
-    <Result href="file:/C:/REPOSITORIES/ii/JE/ShapeChange/testResults/sql/foreignKeyOptions/ddl_oracle/INPUT/database_model_oracle.qea" target="SQL DDL">database_model_oracle.qea</Result>
-  </Results>
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/sql/foreignKeyOptions/testEA_sql_foreignKeyOptions.xml"
+                   end="Tue Oct 21 09:37:09 CEST 2025"
+                   resultCode="0"
+                   start="Tue Oct 21 09:35:49 CEST 2025"
+                   version="4.1.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\sql\foreignKeyOptions\test_sql_foreignKeyOptions.qea"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+      <Info message="Determined database system is 'PostgreSQL'."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2C') and FeatureType1 (context property 'roleFT1D'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1D'."/>
+      <Info message="Creating associative table to represent attribute 'attMultiValue' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attMultiValue'."/>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'featuretype1_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'featuretype1_roleft1a', column 'featuretype1_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'featuretype2_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'featuretype1_roleft1a', column 'featuretype2_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'roleft2b_fk' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'featuretype2', column 'roleft2b_fk'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Warning>
+      <Info message="Package with name 'PostgreSQL' already exists. It will be deleted."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+      <Info message="Determined database system is 'SQLServer'."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2C') and FeatureType1 (context property 'roleFT1D'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1D'."/>
+      <Info message="Creating associative table to represent attribute 'attMultiValue' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attMultiValue'."/>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'FeatureType1_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FeatureType1_roleFT1A', column 'FeatureType1_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'FeatureType2_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FeatureType1_roleFT1A', column 'FeatureType2_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'roleFT2B_fk' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FeatureType2', column 'roleFT2B_fk'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Warning>
+      <Info message="Foreign key constraint referential action 'RESTRICT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FeatureType2', column 'roleFT2B_fk'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Info>
+      <Info message="Package with name 'SQLServer2012' already exists. It will be deleted."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+      <Info message="Determined database system is 'Oracle'."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2C') and FeatureType1 (context property 'roleFT1D'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1D'."/>
+      <Info message="Creating associative table to represent attribute 'attMultiValue' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attMultiValue'."/>
+      <Info message="Foreign key constraint referential action 'SET DEFAULT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE1', column 'ROLEFT1B_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType1::roleFT1B'"/>
+      </Info>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE1', column 'ROLEFT1C_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'FeatureType1_FeatureType2'"/>
+      </Info>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE1', column 'ROLEFT1E_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'FeatureType1_FeatureType2'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'FEATURETYPE1_ID' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE1_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE1_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEATU'"/>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1A_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1A_FEAT0'"/>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'FEATURETYPE2_ID' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE2_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1A', column 'FEATURETYPE2_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1D_FEATURETYPE1_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1D_FEATU'"/>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1D_FEATURETYPE1_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1D_FEATU'"/>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1D', column 'FEATURETYPE1_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'FeatureType1_FeatureType2'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1D_FEATURETYPE2_ID' is truncated to 'FK_FEATURETYPE1_ROLEFT1D_FEATU'"/>
+      <Warning message="Name 'fk_FEATURETYPE1_ROLEFT1D_FEATURETYPE2_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE1_ROLEFT1D_FEAT0'"/>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE1_ROLEFT1D', column 'FEATURETYPE2_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'FeatureType1_FeatureType2'"/>
+      </Info>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'ROLEFT2B_FK' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE2', column 'ROLEFT2B_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Warning>
+      <Info message="Foreign key constraint referential action 'RESTRICT' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE2', column 'ROLEFT2B_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Info>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'FEATURETYPE2', column 'ROLEFT2D_FK'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'FeatureType1_FeatureType2'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE3_ATTDATATYPE_FEATURETYPE3_ID' is truncated to 'FK_FEATURETYPE3_ATTDATATYPE_FE'"/>
+      <Warning message="Name 'fk_FEATURETYPE3_ATTDATATYPE_FEATURETYPE3_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE3_ATTDATATYPE_FE'"/>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE3_ATTDATATYPE', column 'FEATURETYPE3_ID'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType3::attDataType'"/>
+      </Info>
+      <Warning message="Name 'fk_FEATURETYPE3_ATTMULTIVALUE_FEATURETYPE3_ID' is truncated to 'FK_FEATURETYPE3_ATTMULTIVALUE_'"/>
+      <Warning message="Name 'fk_FEATURETYPE3_ATTMULTIVALUE_FEATURETYPE3_ID' for foreign key constraint is truncated to 'FK_FEATURETYPE3_ATTMULTIVALUE_'"/>
+      <Info message="Foreign key constraint referential action 'CASCADE' is defined by tagged value 'sqlOnUpdate'. The database system does not support this action for clause 'ON UPDATE'. The referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'FEATURETYPE3_ATTMULTIVALUE', column 'FEATURETYPE3_ID'."/>
+      </Info>
+      <Info message="Package with name 'Oracle' already exists. It will be deleted."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/sql/foreignKeyOptions'"/>
+      <ProcessFlowInfo message="Now processing target 'SQL DDL' for input 'INPUT'."/>
+      <Info message="Determined database system is 'SQLite'."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in data types ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2A') and FeatureType1 (context property 'roleFT1A'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1A'."/>
+      <Info message="Creating associative table to represent association between FeatureType2 (context property 'roleFT2C') and FeatureType1 (context property 'roleFT1D'). Tagged value 'associativeTable' not set on this association, thus using default naming pattern, which leads to table name: 'FeatureType1_roleFT1D'."/>
+      <Info message="Creating associative table to represent attribute 'attMultiValue' in class 'FeatureType3'. Tagged value 'associativeTable' not set on this attribute, thus using default naming pattern, which leads to table name: 'FeatureType3_attMultiValue'."/>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'featuretype1_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'featuretype1_roleft1a', column 'featuretype1_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'featuretype2_id' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns=""
+                 message="Context: table 'featuretype1_roleft1a', column 'featuretype2_id'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Association_FT1_FT2'"/>
+      </Warning>
+      <Warning message="Foreign key referential action is 'SET NULL', but column 'roleft2b_fk' is 'NOT NULL'. The foreign key referential action is ignored.">
+         <Detail xmlns="" message="Context: table 'featuretype2', column 'roleft2b_fk'."/>
+         <Detail xmlns=""
+                 message="Model element that defines the referential action: 'Test Schema::FeatureType2::roleFT2B'"/>
+      </Warning>
+      <Info message="Package with name 'SQLite' already exists. It will be deleted."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.sql.SqlDdl' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/postgresql/INPUT/database_model_postgresql.qea"
+              target="SQL DDL">database_model_postgresql.qea</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/postgresql/INPUT/database_model_postgresql.sql"
+              target="SQL DDL">database_model_postgresql.sql</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/ddl_sqlserver/INPUT/database_model_sqlserver.qea"
+              target="SQL DDL">database_model_sqlserver.qea</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/ddl_sqlserver/INPUT/database_model_sqlserver.sql"
+              target="SQL DDL">database_model_sqlserver.sql</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/ddl_oracle/INPUT/database_model_oracle.qea"
+              target="SQL DDL">database_model_oracle.qea</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/ddl_oracle/INPUT/database_model_oracle.sql"
+              target="SQL DDL">database_model_oracle.sql</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/sqlite/INPUT/database_model_sqlite.qea"
+              target="SQL DDL">database_model_sqlite.qea</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/sql/foreignKeyOptions/sqlite/INPUT/database_model_sqlite.sql"
+              target="SQL DDL">database_model_sqlite.sql</Result>
+   </Results>
 </ShapeChangeResult>

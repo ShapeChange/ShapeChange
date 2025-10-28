@@ -361,7 +361,7 @@ In general, ShapeChange knows the following foreign key referential actions:
 
 NOTE: When parsing the tagged value 'sqlOnDelete' and 'sqlOnUpdate', 
 as well as the target parameters 
-xef:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
+xref:./SQL_DDL.adoc#foreignKeyOnUpdate[foreignKeyOnUpdate] and 
 xref:./SQL_DDL.adoc#foreignKeyOnDelete[foreignKeyOnDelete], 
 case as well as leading, trailing, and intermediate (i.e. between words)
 whitespace is ignored. ShapeChange can parse, for example, the values
