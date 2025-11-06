@@ -56,17 +56,17 @@ public class Multiplicity {
 		int maxv = Integer.MIN_VALUE;
 		int lower;
 		int upper;
-		for (int i = 0; i < ranges.length; i++) {
-			if (ranges[i].indexOf("..") > 0) {
-				String[] minmax = ranges[i].split("\\.\\.", 2);
+		for (String range : ranges) {
+			if (range.indexOf("..") > 0) {
+				String[] minmax = range.split("\\.\\.", 2);
 				lower = Multiplicity.boundFromString(minmax[0],0);
 				upper = Multiplicity.boundFromString(minmax[1],Integer.MAX_VALUE);
 			} else {
-				if (ranges[i].length() == 0 || ranges[i].equals("*") || ranges[i].equals("n")) {
+				if (range.length() == 0 || range.equals("*") || range.equals("n")) {
 					lower = 0;
 					upper = Integer.MAX_VALUE;
 				} else {
-					lower = Integer.parseInt(ranges[i]);
+					lower = Integer.parseInt(range);
 					upper = lower;
 				}
 			}
@@ -88,7 +88,7 @@ public class Multiplicity {
 		return minOccurs + (maxOccurs==minOccurs ? "" : ".." + (maxOccurs==Integer.MAX_VALUE ? "*" : maxOccurs));
 	}	
 
-	static public int boundFromString(String bound, int def) throws NumberFormatException {
+	public static int boundFromString(String bound, int def) throws NumberFormatException {
 		int res;
 		if(bound.length()==0)
 			res = def;

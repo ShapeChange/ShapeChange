@@ -42,234 +42,219 @@ import de.interactive_instruments.shapechange.core.ProcessMapEntry;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class CDBAttribute {
 
-	public enum Type {
-		TEXT, NUMERIC, BOOLEAN
+    public enum Type {
+	TEXT, NUMERIC, BOOLEAN
+    }
+
+    public enum Format {
+	FLOATINGPOINT, INTEGER
+    }
+
+    protected int code;
+    protected String symbol;
+    protected String name;
+    protected String description;
+    protected Type type;
+    protected Format format = null;
+    protected CDBRange range = null;
+    protected String length = null;
+    protected CDBUnit unit = null;
+    protected PropertyInfo propertyInfo;
+
+    public CDBAttribute(PropertyInfo pi, MapEntryParamInfos mapEntryParamInfos) {
+	super();
+
+	propertyInfo = pi;
+	String piEncodingRule = pi.encodingRule("cdb");
+	Options options = pi.options();
+
+	symbol = pi.name();
+
+	name = StringUtils.defaultIfBlank(pi.aliasName(), pi.name()).trim();
+
+	description = pi.definition();
+
+	if (StringUtils.isNotBlank(pi.description())) {
+	    description = description + " [descr] " + pi.description().trim();
 	}
 
-	public enum Format {
-		FLOATINGPOINT, INTEGER
-	}
+	/*
+	 * Try to find mapping for the property type. If one exists, use its target type
+	 * as type, and see if it defines a specific format. Otherwise, use 'Text' as
+	 * type and keep null as format.
+	 * 
+	 * NOTE: The check that the property type actually exists in the model and is a
+	 * feature type, enumeration, or code list is performed outside of this class.
+	 */
+	type = Type.TEXT;
+	ProcessMapEntry pme = options.targetMapEntry(pi.typeInfo().name, piEncodingRule);
 
-	protected int code;
-	protected String symbol;
-	protected String name;
-	protected String description;
-	protected Type type;
-	protected Format format = null;
-	protected CDBRange range = null;
-	protected String length = null;
-	protected CDBUnit unit = null;
-	protected PropertyInfo propertyInfo;
+	if (pme != null) {
 
-	public CDBAttribute(PropertyInfo pi,
-			MapEntryParamInfos mapEntryParamInfos) {
-		super();
+	    // identify type
+	    type = Type.valueOf(pme.getTargetType().toUpperCase(Locale.ENGLISH));
 
-		propertyInfo = pi;
-		String piEncodingRule = pi.encodingRule("cdb");
-		Options options = pi.options();
+	    // identify format
+	    if (mapEntryParamInfos.hasParameter(pi.typeInfo().name, piEncodingRule,
+		    CDB.MAPENTRY_PARAM_NUMERIC_FORMAT)) {
 
-		symbol = pi.name();
-		
-		name = StringUtils.defaultIfBlank(pi.aliasName(), pi.name()).trim();
+		Map<String, String> characteristics = mapEntryParamInfos.getCharacteristics(pi.typeInfo().name,
+			piEncodingRule, CDB.MAPENTRY_PARAM_NUMERIC_FORMAT);
 
-		description = pi.definition();
+		for (String characteristic : characteristics.keySet()) {
 
-		if (StringUtils.isNotBlank(pi.description())) {
-			description = description + " [descr] " + pi.description().trim();
+		    if (characteristic.equalsIgnoreCase("Floating-Point")
+			    || characteristic.equalsIgnoreCase("FloatingPoint")) {
+
+			format = Format.FLOATINGPOINT;
+			break;
+
+		    } else if (characteristic.equalsIgnoreCase("Integer")) {
+
+			format = Format.INTEGER;
+			break;
+		    }
 		}
-
-		/*
-		 * Try to find mapping for the property type. If one exists, use its
-		 * target type as type, and see if it defines a specific format.
-		 * Otherwise, use 'Text' as type and keep null as format.
-		 * 
-		 * NOTE: The check that the property type actually exists in the model
-		 * and is a feature type, enumeration, or code list is performed outside
-		 * of this class.
-		 */
-		type = Type.TEXT;
-		ProcessMapEntry pme = options.targetMapEntry(pi.typeInfo().name,
-				piEncodingRule);
-
-		if (pme != null) {
-
-			// identify type
-			type = Type
-					.valueOf(pme.getTargetType().toUpperCase(Locale.ENGLISH));
-
-			// identify format
-			if (mapEntryParamInfos.hasParameter(pi.typeInfo().name,
-					piEncodingRule, CDB.MAPENTRY_PARAM_NUMERIC_FORMAT)) {
-
-				Map<String, String> characteristics = mapEntryParamInfos
-						.getCharacteristics(pi.typeInfo().name, piEncodingRule,
-								CDB.MAPENTRY_PARAM_NUMERIC_FORMAT);
-
-				if (characteristics != null) {
-
-					for (String characteristic : characteristics.keySet()) {
-
-						if (characteristic.equalsIgnoreCase("Floating-Point")
-								|| characteristic
-										.equalsIgnoreCase("FloatingPoint")) {
-
-							format = Format.FLOATINGPOINT;
-							break;
-
-						} else if (characteristic.equalsIgnoreCase("Integer")) {
-
-							format = Format.INTEGER;
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		// identify range
-		String rangeMin = StringUtils
-				.stripToNull(pi.taggedValue("rangeMinimum"));
-		String rangeMax = StringUtils
-				.stripToNull(pi.taggedValue("rangeMaximum"));
-
-		if (rangeMin != null || rangeMax != null) {
-
-			range = new CDBRange(null, rangeMin, rangeMax);
-		}
-
-		length = StringUtils.stripToNull(pi.taggedValue("length"));
+	    }
 	}
 
-	/**
-	 * @return the code
-	 */
-	public int getCode() {
-		return code;
+	// identify range
+	String rangeMin = StringUtils.stripToNull(pi.taggedValue("rangeMinimum"));
+	String rangeMax = StringUtils.stripToNull(pi.taggedValue("rangeMaximum"));
+
+	if (rangeMin != null || rangeMax != null) {
+
+	    range = new CDBRange(null, rangeMin, rangeMax);
 	}
 
-	/**
-	 * @return the symbol, cannot be <code>null</code>
-	 */
-	public String getSymbol() {
-		return symbol;
-	}
+	length = StringUtils.stripToNull(pi.taggedValue("length"));
+    }
 
-	/**
-	 * @return the name, cannot be <code>null</code>
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the code
+     */
+    public int getCode() {
+	return code;
+    }
 
-	/**
-	 * @return the description, cannot be <code>null</code>
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * @return the symbol, cannot be <code>null</code>
+     */
+    public String getSymbol() {
+	return symbol;
+    }
 
-	/**
-	 * @return the value unit, can be <code>null</code>
-	 */
-	public CDBUnit getUnit() {
-		return unit;
-	}
+    /**
+     * @return the name, cannot be <code>null</code>
+     */
+    public String getName() {
+	return name;
+    }
 
-	/**
-	 * @param code
-	 *            the code to set
-	 */
-	public void setCode(int code) {
-		this.code = code;
-	}
+    /**
+     * @return the description, cannot be <code>null</code>
+     */
+    public String getDescription() {
+	return description;
+    }
 
-	/**
-	 * @param unit
-	 *            the unit to set
-	 */
-	public void setUnit(CDBUnit unit) {
-		this.unit = unit;
-	}
+    /**
+     * @return the value unit, can be <code>null</code>
+     */
+    public CDBUnit getUnit() {
+	return unit;
+    }
 
-	/**
-	 * @return the value type, cannot be <code>null</code>
-	 */
-	public Type getType() {
-		return type;
-	}
+    /**
+     * @param code the code to set
+     */
+    public void setCode(int code) {
+	this.code = code;
+    }
 
-	/**
-	 * @return the value format, can be <code>null</code>
-	 */
-	public Format getFormat() {
-		return format;
-	}
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnit(CDBUnit unit) {
+	this.unit = unit;
+    }
 
-	/**
-	 * @return the value range, can be <code>null</code>
-	 */
-	public CDBRange getRange() {
-		return range;
-	}
+    /**
+     * @return the value type, cannot be <code>null</code>
+     */
+    public Type getType() {
+	return type;
+    }
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(Type type) {
-		this.type = type;
-	}
+    /**
+     * @return the value format, can be <code>null</code>
+     */
+    public Format getFormat() {
+	return format;
+    }
 
-	/**
-	 * @return the PropertyInfo that this attribute represents
-	 */
-	public PropertyInfo propertyInfo() {
-		return this.propertyInfo;
-	}
+    /**
+     * @return the value range, can be <code>null</code>
+     */
+    public CDBRange getRange() {
+	return range;
+    }
 
-	/**
-	 * @return <code>true</code> if a specific format is defined for this
-	 *         attribute, else <code>false</code>
-	 */
-	public boolean hasFormat() {
-		return this.format != null;
-	}
+    /**
+     * @param type the type to set
+     */
+    public void setType(Type type) {
+	this.type = type;
+    }
 
-	/**
-	 * @return <code>true</code> if a specific range is defined for this
-	 *         attribute, else <code>false</code>
-	 */
-	public boolean hasRange() {
-		return this.range != null;
-	}
+    /**
+     * @return the PropertyInfo that this attribute represents
+     */
+    public PropertyInfo propertyInfo() {
+	return this.propertyInfo;
+    }
 
-	/**
-	 * @return the value length, can be <code>null</code>
-	 */
-	public String getLength() {
-		return this.length;
-	}
+    /**
+     * @return <code>true</code> if a specific format is defined for this attribute,
+     *         else <code>false</code>
+     */
+    public boolean hasFormat() {
+	return this.format != null;
+    }
 
-	/**
-	 * @return <code>true</code> if a specific length is defined for this
-	 *         attribute, else <code>false</code>
-	 */
-	public boolean hasLength() {
-		return this.length != null;
-	}
+    /**
+     * @return <code>true</code> if a specific range is defined for this attribute,
+     *         else <code>false</code>
+     */
+    public boolean hasRange() {
+	return this.range != null;
+    }
 
-	/**
-	 * @return <code>true</code> if a specific unit is defined for this
-	 *         attribute, else <code>false</code>
-	 */
-	public boolean hasUnit() {
-		return this.unit != null;
-	}
+    /**
+     * @return the value length, can be <code>null</code>
+     */
+    public String getLength() {
+	return this.length;
+    }
+
+    /**
+     * @return <code>true</code> if a specific length is defined for this attribute,
+     *         else <code>false</code>
+     */
+    public boolean hasLength() {
+	return this.length != null;
+    }
+
+    /**
+     * @return <code>true</code> if a specific unit is defined for this attribute,
+     *         else <code>false</code>
+     */
+    public boolean hasUnit() {
+	return this.unit != null;
+    }
 }

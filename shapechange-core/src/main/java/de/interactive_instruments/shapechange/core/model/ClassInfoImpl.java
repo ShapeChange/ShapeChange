@@ -572,9 +572,9 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
 	SortedSet<String> idsuper = supertypes();
 	for (String sid : idsuper) {
 	    ClassInfo sci = model().classById(sid);
-	    if (sci == null)
-		continue;
-	    return sci.isSubtype(ci);
+	    if (sci != null) {
+		return sci.isSubtype(ci);
+	    }
 	}
 	return false;
     }
@@ -747,8 +747,6 @@ public abstract class ClassInfoImpl extends InfoImpl implements ClassInfo {
     public void postprocessAfterLoadingAndValidate() {
 	if (postprocessed)
 	    return;
-
-	super.postprocessAfterLoadingAndValidate();
 
 	String s, s2;
 

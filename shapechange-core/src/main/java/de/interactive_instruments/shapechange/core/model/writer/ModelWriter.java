@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -124,7 +125,7 @@ public class ModelWriter extends AbstractModelWriter {
 
 	try {
 
-	    OutputStream fout = new FileOutputStream(outputXmlFile);
+	    OutputStream fout = Files.newOutputStream(outputXmlFile.toPath());
 	    OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, this.encoding);
 

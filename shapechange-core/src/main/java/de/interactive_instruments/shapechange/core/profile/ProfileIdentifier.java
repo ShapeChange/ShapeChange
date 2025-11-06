@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.core.profile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.google.common.base.Joiner;
 
@@ -255,11 +256,9 @@ public class ProfileIdentifier implements Comparable<ProfileIdentifier> {
 	@Override
 	public int compareTo(ProfileIdentifier other) {
 
-		if (other == null) {
-			throw new NullPointerException();
-		} else {
-			return this.toString().compareTo(other.toString());
-		}
+	    Objects.requireNonNull(other);
+	
+	    return this.toString().compareTo(other.toString());
 	}
 
 }

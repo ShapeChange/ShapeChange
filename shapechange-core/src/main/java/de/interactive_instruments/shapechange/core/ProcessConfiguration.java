@@ -361,14 +361,14 @@ public class ProcessConfiguration {
 	 * @param parameterName
 	 *                          Name of the parameter to get the value list for.
 	 * @return The list of values computed from the process parameter with given
-	 *         name. <code>null</code> if no such parameter was declared in the
+	 *         name. Empty if no such parameter was declared in the
 	 *         configuration.
 	 */
 	public String[] getListParameterValue(String parameterName) {
 		String p = parameters.get(parameterName);
-		if (p == null)
-			return null;
-		else {
+		if (p == null) {
+			return new String[0];
+		} else {
 			String[] values = p.split(",");
 			for (int i = 0; i < values.length; i++) {
 				values[i] = values[i].trim();

@@ -48,7 +48,7 @@ import de.interactive_instruments.shapechange.core.Options;
  *         dot de)
  *
  */
-public class StereotypesCacheSet extends StereotypesImpl {
+public final class StereotypesCacheSet extends StereotypesImpl {
 
 	/**
 	 * Optimization:
@@ -93,7 +93,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public int size() {
+	public final int size() {
 		if (st == null && stSet == null) {
 			return 0;
 		} else if (st != null) {
@@ -104,7 +104,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public boolean contains(String stereotype) {
+	public final boolean contains(String stereotype) {
 
 		if (st != null) {
 			return st.equals(stereotype);
@@ -116,7 +116,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public String[] asArray() {
+	public final String[] asArray() {
 
 		String[] result;
 
@@ -133,7 +133,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 	
 	@Override
-	public SortedSet<String> asSet() {
+	public final SortedSet<String> asSet() {
 		
 		SortedSet<String> result = new TreeSet<String>();
 		
@@ -147,7 +147,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public void add(String stereotype) {
+	public final void add(String stereotype) {
 
 		if (stereotype == null || stereotype.trim().length() == 0) {
 
@@ -187,7 +187,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public void remove(String stereotype) {
+	public final void remove(String stereotype) {
 
 		if (stereotype == null || stereotype.trim().length() == 0) {
 
@@ -231,7 +231,7 @@ public class StereotypesCacheSet extends StereotypesImpl {
 	}
 
 	@Override
-	public String getOne() {
+	public final String getOne() {
 
 		if (st != null) {
 			return st;

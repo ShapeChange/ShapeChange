@@ -41,6 +41,8 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -204,7 +206,7 @@ public class ShapeChangeResult {
 	}
     }
 
-    public void init() {
+    public final void init() {
 	duplicateMessageCheck = new HashSet<String>(50);
     }
 
@@ -755,8 +757,7 @@ public class ShapeChangeResult {
 		File outHTML = new File(filename.replace(".xml", ".html"));
 		if (outHTML.exists())
 		    outHTML.delete();
-		BufferedWriter outputHTML = new BufferedWriter(
-			new OutputStreamWriter(new FileOutputStream(outHTML), "UTF-8"));
+		BufferedWriter outputHTML = Files.newBufferedWriter(outHTML.toPath(), StandardCharsets.UTF_8);
 		
 		if (xsltSource != null) {
 		    Source xmlSource = new DOMSource(document);

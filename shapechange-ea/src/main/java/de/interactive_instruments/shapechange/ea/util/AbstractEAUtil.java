@@ -75,11 +75,12 @@ public abstract class AbstractEAUtil {
      */
     public static String stereotypesCSV(Set<String> stereotypes) {
 	String res = "";
-	if (stereotypes != null)
+	if (stereotypes != null) {
 	    for (String s : stereotypes) {
 		res += (res.isEmpty() ? "" : ",");
 		res += s;
 	    }
+	}
 	return res;
     }
 

@@ -71,7 +71,7 @@ public class TransformerConfiguration extends ProcessConfiguration {
     private Map<String, Map<String, ProcessMapEntry>> mapEntriesByRule = new HashMap<String, Map<String, ProcessMapEntry>>();
 
     /**
-     * List of tagged values defined for the transformer; <code>null</code> if none
+     * List of tagged values defined for the transformer; empty if none
      * are defined.
      */
     private List<TaggedValueConfigurationEntry> taggedValues;
@@ -193,7 +193,7 @@ public class TransformerConfiguration extends ProcessConfiguration {
     }
 
     public boolean hasTaggedValues() {
-	return taggedValues != null;
+	return !taggedValues.isEmpty();
     }
 
     public List<TaggedValueConfigurationEntry> getTaggedValues() {

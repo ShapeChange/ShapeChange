@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -326,7 +327,7 @@ public class XsltWriter {
 			} else {
 				File xsl = new File(xsltMainFileUri);
 				// FeatureCatalogue.java already checked that file exists
-				stream = new FileInputStream(xsl);
+				stream = Files.newInputStream(xsl.toPath());
 			}
 
 			// create an instance of TransformerFactory

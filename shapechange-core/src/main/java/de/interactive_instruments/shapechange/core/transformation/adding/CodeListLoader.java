@@ -32,8 +32,8 @@
 package de.interactive_instruments.shapechange.core.transformation.adding;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
@@ -41,6 +41,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -305,7 +306,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 	    return;
 	}
 
-	try (FileInputStream fis = new FileInputStream(tmpFile);
+	try (InputStream fis = Files.newInputStream(tmpFile.toPath());
 		BOMInputStream bomis = BOMInputStream.builder().setInputStream(fis).setInclude(false).get();
 		Reader reader = new InputStreamReader(bomis, clSourceCharset)) {
 
@@ -472,7 +473,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 	 * String#trim(). Apache Commons IO BOMInputStream can be used to remove the
 	 * BOM.
 	 */
-	try (FileInputStream fis = new FileInputStream(tmpFile);
+	try (InputStream fis = Files.newInputStream(tmpFile.toPath());
 		BOMInputStream bomis = BOMInputStream.builder().setInputStream(fis).setInclude(false).get();
 		Reader reader = new InputStreamReader(bomis, clSourceCharset)) {
 

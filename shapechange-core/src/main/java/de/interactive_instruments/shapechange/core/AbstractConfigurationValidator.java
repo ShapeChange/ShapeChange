@@ -126,15 +126,15 @@ public abstract class AbstractConfigurationValidator implements ConfigurationVal
 
 		    if (allowedParameterWithNearStringDistance != null) {
 			if (reportUnrecognizedParametersAsWarnings) {
-			    result.addWarning(null, 1000000, parameter, allowedParameterWithNearStringDistance);
+			    result.addWarning(null, 1_000_000, parameter, allowedParameterWithNearStringDistance);
 			} else {
-			    result.addError(null, 1000000, parameter, allowedParameterWithNearStringDistance);
+			    result.addError(null, 1_000_000, parameter, allowedParameterWithNearStringDistance);
 			}
 		    } else {
 			if (reportUnrecognizedParametersAsWarnings) {
-			    result.addWarning(null, 1000001, parameter);
+			    result.addWarning(null, 1_000_001, parameter);
 			} else {
-			    result.addError(null, 1000001, parameter);
+			    result.addError(null, 1_000_001, parameter);
 			}
 		    }
 

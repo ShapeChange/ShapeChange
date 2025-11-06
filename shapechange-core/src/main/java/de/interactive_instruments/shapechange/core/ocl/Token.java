@@ -160,13 +160,13 @@ abstract class Token {
 	// translation functions above.
 	
 	// A static map to translate fixed tokens into Token codes. 
-	static private HashMap<String,Token.Type> 
+	private static HashMap<String,Token.Type> 
 		fixedTokens = new HashMap<String,Token.Type>();
 	// A static map to translate Token codes into fixed Strings.
-	static private HashMap<Token.Type,String>
+	private static HashMap<Token.Type,String>
 		fixedStrings = new HashMap<Token.Type,String>();
 	// A private static function, feeding its input into both HashMaps.
-	static private void feedMaps( String lexstr, Type type ) {
+	private static void feedMaps( String lexstr, Type type ) {
 		fixedTokens.put( lexstr, type );
 		fixedStrings.put( type, lexstr );
 	}

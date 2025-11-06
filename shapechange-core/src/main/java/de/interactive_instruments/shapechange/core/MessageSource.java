@@ -56,5 +56,5 @@ public interface MessageSource {
      * @param mnr the number of the message
      * @return the message
      */
-    public String message(int mnr);
+    String message(int mnr);
 }

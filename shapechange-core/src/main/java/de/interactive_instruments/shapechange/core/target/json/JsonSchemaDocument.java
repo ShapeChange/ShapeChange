@@ -35,6 +35,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -604,7 +606,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    supertype.name(), supertype.encodingRule(JsonSchemaConstants.PLATFORM),
 			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
 
-		    if (supertypeEncodingInfoCharacteristics != null) {
+		    if (!supertypeEncodingInfoCharacteristics.isEmpty()) {
 			EncodingInfos encInfos = EncodingInfos.from(supertypeEncodingInfoCharacteristics);
 			if (encInfos.getIdMemberPath().isPresent()) {
 			    return encInfos;
@@ -2229,7 +2231,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    supertype.name(), supertype.encodingRule(JsonSchemaConstants.PLATFORM),
 			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
 
-		    if (supertypeEncodingInfoCharacteristics != null) {
+		    if (!supertypeEncodingInfoCharacteristics.isEmpty()) {
 			EncodingInfos encInfos = EncodingInfos.from(supertypeEncodingInfoCharacteristics);
 			if (encInfos.getEntityTypeMemberPath().isPresent()) {
 			    return encInfos;
@@ -2356,7 +2358,7 @@ public class JsonSchemaDocument implements MessageSource {
 			    supertype.name(), ci.encodingRule(JsonSchemaConstants.PLATFORM),
 			    JsonSchemaConstants.ME_PARAM_ENCODING_INFOS);
 
-		    if (supertypeEncodingInfoCharacteristics != null) {
+		    if (!supertypeEncodingInfoCharacteristics.isEmpty()) {
 
 			EncodingInfos supertypeExternalSchemaEncodingInfos = EncodingInfos
 				.from(supertypeEncodingInfoCharacteristics);
@@ -3670,8 +3672,7 @@ public class JsonSchemaDocument implements MessageSource {
 
 	String jsonstring = gson.toJson(gValue);
 
-	try (BufferedWriter writer = new BufferedWriter(
-		new OutputStreamWriter(new FileOutputStream(jsonSchemaOutputFile), "UTF-8"))) {
+	try (BufferedWriter writer = Files.newBufferedWriter(jsonSchemaOutputFile.toPath(), StandardCharsets.UTF_8)) {
 
 	    writer.write(jsonstring);
 

@@ -145,9 +145,7 @@ public abstract class FolSchematronNode {
 	 *            The variable Variable object
 	 * @return Node the variable is bound to or null
 	 */
-	public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
-		return null;
-	}
+	public abstract FolSchematronNode nodeVariableIsBoundTo(Variable vardecl);
 
 	public XpathFragment objValueFromVariable(Variable var) {
 
@@ -282,11 +280,9 @@ public abstract class FolSchematronNode {
 	 * only sensible for iterators and attributes.
 	 * 
 	 * 
-	 * @return The retrieved Attribute node if there is such a thing
+	 * @return The retrieved Attribute node if there is such a thing, else <code>null</code>
 	 */
-	public AttributeNode generatingAttribute() {
-		return null;
-	}
+	public abstract AttributeNode generatingAttribute();
 
 	/**
 	 * 
@@ -497,7 +493,7 @@ public abstract class FolSchematronNode {
 	 *            BindingContext this node shall be compiled in
 	 * @return Object containing the Xpath fragment
 	 */
-	abstract public XpathFragment translate(BindingContext ctx);
+	public abstract XpathFragment translate(BindingContext ctx);
 
 	/**
 	 * ************************************************************************
@@ -623,6 +619,16 @@ public abstract class FolSchematronNode {
 
 			return result;
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -704,6 +710,16 @@ public abstract class FolSchematronNode {
 
 			return child_xpt[0];
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -757,6 +773,16 @@ public abstract class FolSchematronNode {
 
 			return xpt;
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -788,6 +814,16 @@ public abstract class FolSchematronNode {
 			xpt.atEnd.setState(BindingContext.CtxState.NONE);
 
 			return xpt;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -839,6 +875,16 @@ public abstract class FolSchematronNode {
 			xptobj.fragment += "[@xsi:nil='true']";
 			schemaObject.registerNamespace("xsi");
 			return xptobj;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -955,6 +1001,16 @@ public abstract class FolSchematronNode {
 
 			return xptobj;
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -1017,6 +1073,16 @@ public abstract class FolSchematronNode {
 			schemaObject.registerNamespace(eft.nsPrefix, eft.namespace);
 
 			return xptobj;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1096,6 +1162,16 @@ public abstract class FolSchematronNode {
 			xpt1.type = XpathType.NUMBER;
 			xpt1.atEnd = new BindingContext(BindingContext.CtxState.NONE);
 			return xpt1;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1320,6 +1396,11 @@ public abstract class FolSchematronNode {
 
 		public FolSchematronNode value() {
 			return value;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
 		}
 	}
 
@@ -2053,6 +2134,11 @@ public abstract class FolSchematronNode {
 		public void setVariable(VariableNode varnode) {
 			this.var = varnode;
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
 	}
 
 	private static ClassInfo getTypeClassInfo(PropertyInfo pi) {
@@ -2125,6 +2211,16 @@ public abstract class FolSchematronNode {
 
 			// Return what we have
 			return new XpathFragment(11, value, type);
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -2235,6 +2331,16 @@ public abstract class FolSchematronNode {
 		public FolSchematronNode condition() {
 			return condition;
 		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -2257,6 +2363,16 @@ public abstract class FolSchematronNode {
 		// Dummy, will never be called.
 		public XpathFragment translate(BindingContext ctx) {
 			return null;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -2311,6 +2427,16 @@ public abstract class FolSchematronNode {
 		@Override
 		public XpathFragment translate(BindingContext ctx) {
 			return null;
+		}
+
+		@Override
+		public FolSchematronNode nodeVariableIsBoundTo(Variable vardecl) {
+		    return null;
+		}
+
+		@Override
+		public AttributeNode generatingAttribute() {
+		    return null;
 		}
 	}
 }

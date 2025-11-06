@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -75,7 +76,7 @@ public class ModelDiffWriter extends AbstractModelWriter {
 
 	try {
 
-	    OutputStream fout = new FileOutputStream(outputXmlFile);
+	    OutputStream fout = Files.newOutputStream(outputXmlFile.toPath());
 	    OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, this.encoding);
 

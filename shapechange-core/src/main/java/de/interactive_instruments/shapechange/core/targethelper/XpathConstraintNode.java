@@ -176,11 +176,9 @@ public abstract class XpathConstraintNode {
 	 * only sensible for iterators and attributes.
 	 * 
 	 * 
-	 * @return The retrieved Attribute node if there is such a thing
+	 * @return The retrieved Attribute node if there is such a thing, else <code>null</code>
 	 */
-	public Attribute generatingAttribute() {
-		return null;
-	}
+	public abstract Attribute generatingAttribute();
 
 	/**
 	 * 
@@ -465,7 +463,7 @@ public abstract class XpathConstraintNode {
 	 *            BindingContext this node shall be compiled in
 	 * @return Object containing the Xpath fragment
 	 */
-	abstract public XpathFragment translate(BindingContext ctx);
+	public abstract XpathFragment translate(BindingContext ctx);
 
 	/**
 	 * ************************************************************************
@@ -585,6 +583,11 @@ public abstract class XpathConstraintNode {
 
 			return result;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -657,6 +660,11 @@ public abstract class XpathConstraintNode {
 
 			return child_xpt[0];
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -714,6 +722,11 @@ public abstract class XpathConstraintNode {
 			}
 
 			return xpt;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -807,6 +820,11 @@ public abstract class XpathConstraintNode {
 			}
 
 			return xpt;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1024,6 +1042,11 @@ public abstract class XpathConstraintNode {
 			}
 
 			return xpt;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1273,6 +1296,11 @@ public abstract class XpathConstraintNode {
 			return xpt;
 		}
 
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
+
 	}
 
 	/**
@@ -1390,6 +1418,11 @@ public abstract class XpathConstraintNode {
 
 			return xptobj;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -1506,6 +1539,11 @@ public abstract class XpathConstraintNode {
 
 			return xptobj;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -1568,6 +1606,11 @@ public abstract class XpathConstraintNode {
 
 			return xpt;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -1623,6 +1666,11 @@ public abstract class XpathConstraintNode {
 			result.atEnd.setState(BindingContext.CtxState.NONE);
 
 			return result;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1686,6 +1734,11 @@ public abstract class XpathConstraintNode {
 
 			return xptobj;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -1725,6 +1778,11 @@ public abstract class XpathConstraintNode {
 			XpathFragment result = new XpathFragment(11, "***ERROR[123]***");
 
 			return result;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1788,6 +1846,11 @@ public abstract class XpathConstraintNode {
 			xpathHelper.registerNamespace(eft.nsPrefix, eft.namespace);
 
 			return xptobj;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -1867,6 +1930,11 @@ public abstract class XpathConstraintNode {
 			xpt1.type = XpathType.NUMBER;
 			xpt1.atEnd = new BindingContext(BindingContext.CtxState.NONE);
 			return xpt1;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -2709,6 +2777,11 @@ public abstract class XpathConstraintNode {
 			XpathFragment xpt = new XpathFragment(11, value, type);
 			return xpt;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -2826,6 +2899,11 @@ public abstract class XpathConstraintNode {
 
 			return xptthn;
 		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
+		}
 	}
 
 	/**
@@ -2848,6 +2926,11 @@ public abstract class XpathConstraintNode {
 		// Dummy, will never be called.
 		public XpathFragment translate(BindingContext ctx) {
 			return null;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 
@@ -2895,6 +2978,11 @@ public abstract class XpathConstraintNode {
 		@Override
 		public XpathFragment translate(BindingContext ctx) {
 			return null;
+		}
+
+		@Override
+		public Attribute generatingAttribute() {
+		    return null;
 		}
 	}
 }

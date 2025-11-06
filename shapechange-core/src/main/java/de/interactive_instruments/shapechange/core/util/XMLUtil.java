@@ -41,6 +41,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -314,8 +316,8 @@ public class XMLUtil {
 	    }
 	} else {
 	    try {
-		xmlStream = new FileInputStream(file);
-	    } catch (FileNotFoundException e) {
+		xmlStream = Files.newInputStream(file.toPath());
+	    } catch (IOException e) {
 		throw new XmlHandlingException("No XML file found at " + xmlPath);
 	    }
 	}
@@ -356,8 +358,7 @@ public class XMLUtil {
 	    }
 	}
 
-	try (BufferedWriter writer = new BufferedWriter(
-		new OutputStreamWriter(new FileOutputStream(destination), "UTF-8"))) {
+	try (BufferedWriter writer = Files.newBufferedWriter(destination.toPath(), StandardCharsets.UTF_8)) {
 
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 

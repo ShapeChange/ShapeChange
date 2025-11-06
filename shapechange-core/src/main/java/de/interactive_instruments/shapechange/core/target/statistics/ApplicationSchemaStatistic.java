@@ -31,12 +31,11 @@
  */
 package de.interactive_instruments.shapechange.core.target.statistics;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,8 +70,6 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 	private static String outputFilename = null;
 	private static final String indent1 = "  ";
 	private static final String indent2 = indent1 + indent1;
-
-	private int streamBufferSize = 8 * 1042 * 1042;
 
 	private static boolean initialised = false;
 	private static boolean printed = false;
@@ -202,8 +199,7 @@ public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 		
 		File file = new File(outputDirectory, fileName);
 				
-		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(file), "UTF-8"),this.streamBufferSize))){
+		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8))){
 			
 			for (SchemaStatistic ss : schemaStats) {
 

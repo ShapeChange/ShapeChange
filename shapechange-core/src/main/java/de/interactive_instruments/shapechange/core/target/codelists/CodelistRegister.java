@@ -42,6 +42,8 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -1093,7 +1095,7 @@ public class CodelistRegister implements SingleTarget {
 		    if (gml && xslgmlfileName != null)
 			xsltWrite(dir, fname + ".atom", "/" + xslgmlfileName, fname + ".gml", i);
 
-		    OutputStream fout = new FileOutputStream(dir + "/" + fname + ".var");
+		    OutputStream fout = Files.newOutputStream(Path.of(dir + "/" + fname + ".var"));
 		    OutputStreamWriter outputVAR = new OutputStreamWriter(fout);
 		    outputVAR.write("URI: " + fname + "\n\n");
 		    outputVAR.write("URI: " + fname + ".atom\n");
@@ -1181,7 +1183,7 @@ public class CodelistRegister implements SingleTarget {
 	    } else {
 		File xsl = new File(xsltPath + "/" + xsltfileName);
 		if (xsl.exists())
-		    stream = new FileInputStream(xsl);
+		    stream = Files.newInputStream(xsl.toPath());
 		else {
 		    result.addError("XSLT stylesheet " + xsl.getAbsolutePath() + " not found.");
 		    return;

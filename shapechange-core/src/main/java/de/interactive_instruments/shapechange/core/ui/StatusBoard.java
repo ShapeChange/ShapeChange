@@ -37,7 +37,7 @@ import java.util.Iterator;
 
 import de.interactive_instruments.shapechange.core.ui.StatusReader;
 
-public class StatusBoard {
+public final class StatusBoard {
 
 	private static StatusBoard statusBoard = null;
 	

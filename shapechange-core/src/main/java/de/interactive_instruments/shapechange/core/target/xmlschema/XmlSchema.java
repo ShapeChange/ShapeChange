@@ -1076,7 +1076,7 @@ public class XmlSchema implements Target, MessageSource {
      * @param ci ClassInfo of class to be inquired
      * @return Flag returning the requested information
      */
-    static public boolean classHasObjectElement(ClassInfo ci) {
+    public static boolean classHasObjectElement(ClassInfo ci) {
 
 	// test, if we have a map entry to an element for this encoding rule
 	MapEntry me = ci.options().elementMapEntry(ci.name(), ci.encodingRule("xsd"));
@@ -1153,7 +1153,7 @@ public class XmlSchema implements Target, MessageSource {
      * @param ci ClassInfo of class to be inquired
      * @return Flag returning the requested information
      */
-    static public boolean classCanBeReferenced(ClassInfo ci) {
+    public static boolean classCanBeReferenced(ClassInfo ci) {
 
 	/*
 	 * For the GML encoding, checking if the type has an object element and is a

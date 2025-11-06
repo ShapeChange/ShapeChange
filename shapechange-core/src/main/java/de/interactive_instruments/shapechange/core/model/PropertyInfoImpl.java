@@ -250,8 +250,6 @@ public abstract class PropertyInfoImpl extends InfoImpl implements PropertyInfo 
 	if (postprocessed)
 	    return;
 
-	super.postprocessAfterLoadingAndValidate();
-
 	if (inClass().category() != Options.BASICTYPE && inClass().category() != Options.ENUMERATION
 		&& inClass().category() != Options.CODELIST) {
 

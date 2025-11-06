@@ -94,7 +94,7 @@ public class GenericPackageInfo extends PackageInfoImpl implements MessageSource
     public Set<GenericPackageInfo> getAllPackages(Set<GenericPackageInfo> set) {
 
 	if (set == null)
-	    return null;
+	    return new TreeSet<>();
 
 	if (!childPi.isEmpty()) {
 

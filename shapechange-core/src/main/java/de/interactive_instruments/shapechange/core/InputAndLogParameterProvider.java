@@ -45,26 +45,26 @@ public interface InputAndLogParameterProvider {
      * @return names of (additional) allowed input parameters; can be
      *         <code>null</code>
      */
-    public SortedSet<String> allowedInputParametersWithStaticNames();
+    SortedSet<String> allowedInputParametersWithStaticNames();
 
     /**
      * @return Regular expressions for (additional) allowed input parameters with
      *         dynamic names (if one of the regexes matches a parameter name, that
      *         parameter is allowed); can be <code>null</code>
      */
-    public List<Pattern> regexesForAllowedInputParametersWithDynamicNames();
+    List<Pattern> regexesForAllowedInputParametersWithDynamicNames();
 
     /**
      * @return names of (additional) allowed log parameters; can be
      *         <code>null</code>
      */
-    public SortedSet<String> allowedLogParametersWithStaticNames();
+    SortedSet<String> allowedLogParametersWithStaticNames();
 
     /**
      * @return Regular expressions for (additional) allowed log parameters with
      *         dynamic names (if one of the regexes matches a parameter name, that
      *         parameter is allowed); can be <code>null</code>
      */
-    public List<Pattern> regexesForAllowedLogParametersWithDynamicNames();
+    List<Pattern> regexesForAllowedLogParametersWithDynamicNames();
 
 }

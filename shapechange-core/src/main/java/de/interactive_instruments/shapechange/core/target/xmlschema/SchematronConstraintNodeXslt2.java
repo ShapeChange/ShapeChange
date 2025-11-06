@@ -49,6 +49,7 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.ocl.OclNode;
 import de.interactive_instruments.shapechange.core.ocl.OclNode.AttributeCallExp;
 import de.interactive_instruments.shapechange.core.ocl.OclNode.DataType;
+import de.interactive_instruments.shapechange.core.ocl.OclNode.Declaration;
 import de.interactive_instruments.shapechange.core.ocl.OclNode.MultiplicityMapping;
 
 /**
@@ -132,11 +133,9 @@ public abstract class SchematronConstraintNodeXslt2 {
      * the variable is bound to.
      *
      * @param vardecl The variable Declaration object
-     * @return Node the variable is bound to or null
+     * @return Node the variable is bound to or <code>null</code>
      */
-    public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl) {
-	return null;
-    }
+    public abstract SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(OclNode.Declaration vardecl);
 
     /**
      * This method determines whether the given expression is a Variable or an
@@ -157,11 +156,9 @@ public abstract class SchematronConstraintNodeXslt2 {
      * the objects represented by this node. Note that invocation is only sensible
      * for iterators and attributes.
      *
-     * @return The retrieved Attribute node if there is such a thing
+     * @return The retrieved Attribute node if there is such a thing, else <code>null</code>
      */
-    public Attribute generatingAttribute() {
-	return null;
-    }
+    public abstract Attribute generatingAttribute();
 
     /**
      * This predicate finds out whether the given node may produce a set.
@@ -492,6 +489,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return result;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -560,6 +567,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return child_xpt[0];
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -615,6 +632,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    return xpt;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -695,6 +722,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xpt;
 	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /** This class represents the ForAll iterator predicate. */
@@ -769,6 +801,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    return xpt;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -1012,6 +1049,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xpt;
 	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /** This class represents the Select iterator filter. */
@@ -1230,6 +1272,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xpt;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -1346,6 +1398,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return obj;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -1446,6 +1508,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    return xptobj;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -1622,6 +1694,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xptobj;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -1686,6 +1768,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xpt;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -1738,6 +1830,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    result.atEnd.setState(BindingContext.CtxState.NONE);
 
 	    return result;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -1801,6 +1903,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return xptobj;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -1845,6 +1957,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    xptobj.atEnd.setState(BindingContext.CtxState.NONE);
 
 	    return xptobj;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -1919,6 +2041,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    xpt1.atEnd = new BindingContext(BindingContext.CtxState.NONE);
 
 	    return xpt1;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -2141,6 +2273,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    return xpt;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
 	}
     }
 
@@ -2895,6 +3032,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	    return result;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
     }
 
     /** This wraps any form of Literal value from the OclNode. */
@@ -3047,6 +3189,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    XpathFragment xpt = new XpathFragment(20, value, type);
 	    return xpt;
 	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /**
@@ -3110,6 +3262,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    }
 
 	    return xptcon;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
 	}
     }
 
@@ -3177,6 +3339,11 @@ public abstract class SchematronConstraintNodeXslt2 {
 	    XpathFragment xpt = body.translate(ctx);
 	    return xpt;
 	}
+
+	@Override
+	public Attribute generatingAttribute() {
+	    return null;
+	}
     }
 
     /** This is generated for unimplemented material. */
@@ -3194,6 +3361,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	// Dummy, will never be called.
 	public XpathFragment translate(BindingContext ctx) {
+	    return null;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
 	    return null;
 	}
     }
@@ -3237,6 +3414,16 @@ public abstract class SchematronConstraintNodeXslt2 {
 
 	@Override
 	public XpathFragment translate(BindingContext ctx) {
+	    return null;
+	}
+
+	@Override
+	public SchematronConstraintNodeXslt2 nodeVariableIsBoundTo(Declaration vardecl) {
+	    return null;
+	}
+
+	@Override
+	public Attribute generatingAttribute() {
 	    return null;
 	}
     }

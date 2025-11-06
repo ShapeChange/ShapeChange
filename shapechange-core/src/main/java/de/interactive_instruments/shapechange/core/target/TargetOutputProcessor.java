@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -400,8 +401,8 @@ public class TargetOutputProcessor implements MessageSource {
 	File directory = txtFile.getParentFile();
 	File tmpFile = new File(directory, txtFile.getName() + ".tmp");
 
-	try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmpFile), "UTF8"));
-		BufferedReader in = new BufferedReader(new FileReader(txtFile))) {
+	try (BufferedWriter out = Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8);
+		BufferedReader in = Files.newBufferedReader(txtFile.toPath())) {
 
 	    out.write(comment);
 	    out.newLine();
@@ -476,9 +477,8 @@ public class TargetOutputProcessor implements MessageSource {
 	File directory = jsonFile.getParentFile();
 	File tmpFile = new File(directory, jsonFile.getName() + ".tmp");
 
-	try (BufferedReader bufferedReader = new BufferedReader(new FileReader(jsonFile));
-		BufferedWriter writer = new BufferedWriter(
-			new OutputStreamWriter(new FileOutputStream(tmpFile), "UTF-8"))) {
+	try (BufferedReader bufferedReader = Files.newBufferedReader(jsonFile.toPath());
+		BufferedWriter writer = Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8)) {
 
 	    GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
 	    gsonBuilder.setPrettyPrinting();

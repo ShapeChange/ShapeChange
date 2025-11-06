@@ -127,7 +127,7 @@ public abstract class OclNode {
 
     // Find out if a UML class or any of its super-classes is in the above
     // HashMap of ISO 19103 class names.
-    static public BuiltInType iso19103AssumedBuiltInType(ClassInfo ci) {
+    public static BuiltInType iso19103AssumedBuiltInType(ClassInfo ci) {
 	// Find out from the name of the class itself
 	BuiltInType bit = iso19103Map.get(ci.name());
 	if (bit != null)
@@ -150,7 +150,7 @@ public abstract class OclNode {
 
     // Static tables defining all BuiltIns and operations and their traits
 
-    static public class BuiltInDescr {
+    public static class BuiltInDescr {
 	String name;
 	BuiltInType applType;
 	BuiltInType[] arguTypes;
@@ -635,7 +635,7 @@ public abstract class OclNode {
      * represented, such as ClassLiteralExp, where the data type is CLASS.
      *
      */
-    public static abstract class LiteralExp extends OclNode {
+    public abstract static class LiteralExp extends OclNode {
 
 	/**
 	 * 

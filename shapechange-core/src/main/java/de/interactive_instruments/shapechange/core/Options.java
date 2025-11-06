@@ -33,13 +33,12 @@
 package de.interactive_instruments.shapechange.core;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,14 +46,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,6 +67,14 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.base.Splitter;
 
+import de.interactive_instruments.shapechange.core.AIXMSchemaInfos.AIXMSchemaInfo;
+import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.model.Stereotypes;
+import de.interactive_instruments.shapechange.core.model.StereotypesCacheSet;
+import de.interactive_instruments.shapechange.core.model.TaggedValueNormalizer;
+import de.interactive_instruments.shapechange.core.model.TaggedValues;
+import de.interactive_instruments.shapechange.core.model.TaggedValuesCacheArray;
+import de.interactive_instruments.shapechange.core.model.TaggedValuesCacheMap;
 import de.interactive_instruments.shapechange.core.target.featurecatalogue.FeatureCatalogue;
 import de.interactive_instruments.shapechange.core.target.ontology.GeneralDataProperty;
 import de.interactive_instruments.shapechange.core.target.ontology.GeneralObjectProperty;
@@ -78,14 +84,6 @@ import de.interactive_instruments.shapechange.core.util.ValidationException;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.util.XSDUtil;
 import de.interactive_instruments.shapechange.core.util.XmlHandlingException;
-import de.interactive_instruments.shapechange.core.AIXMSchemaInfos.AIXMSchemaInfo;
-import de.interactive_instruments.shapechange.core.model.PackageInfo;
-import de.interactive_instruments.shapechange.core.model.Stereotypes;
-import de.interactive_instruments.shapechange.core.model.StereotypesCacheSet;
-import de.interactive_instruments.shapechange.core.model.TaggedValueNormalizer;
-import de.interactive_instruments.shapechange.core.model.TaggedValues;
-import de.interactive_instruments.shapechange.core.model.TaggedValuesCacheArray;
-import de.interactive_instruments.shapechange.core.model.TaggedValuesCacheMap;
 import jakarta.xml.bind.DatatypeConverter;
 
 /**
@@ -777,8 +775,8 @@ public class Options {
 	fTargets.put(k1, k2);
     }
 
-    public Vector<String> targets() {
-	Vector<String> res = new Vector<String>();
+    public List<String> targets() {
+	List<String> res = new ArrayList<>();
 	for (String t : fTargets.keySet()) {
 	    res.add(t);
 	}
@@ -974,7 +972,7 @@ public class Options {
 
 	return res;
     }
-    
+
     /**
      * @param className     Fully qualified name of the target class for which the
      *                      value of the parameter with given name shall be
@@ -1104,7 +1102,7 @@ public class Options {
 	return pnames.toArray(new String[0]);
     }
 
-    public void setParameter(String k1, String s1) {
+    public final void setParameter(String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
 	    fParameters.put(k1.trim(), s);
@@ -1112,7 +1110,7 @@ public class Options {
 	    fParameters.put(k1.trim(), s1);
     }
 
-    public void setParameter(String t, String k1, String s1) {
+    public final void setParameter(String t, String k1, String s1) {
 	String s = replaceValue(s1);
 	if (s != null)
 	    fParameters.put(t + "::" + k1.trim(), s);
@@ -1120,7 +1118,7 @@ public class Options {
 	    fParameters.put(t + "::" + k1.trim(), s1);
     }
 
-    public String replaceValue(String k1) {
+    public final String replaceValue(String k1) {
 	return fReplace.get(k1);
     }
 
@@ -1443,8 +1441,8 @@ public class Options {
 		File file = new File(minConfigFile);
 		if (file.exists())
 		    try {
-			configStream = new FileInputStream(file);
-		    } catch (FileNotFoundException e1) {
+			configStream = Files.newInputStream(file.toPath());
+		    } catch (IOException e1) {
 			throw new ShapeChangeAbortException("Minimal configuration file not found: " + minConfigFile);
 		    }
 		else {
@@ -1467,6 +1465,10 @@ public class Options {
 	    if (file == null || !file.exists()) {
 		try {
 		    configStream = (URI.create(configFile).toURL()).openStream();
+		} catch (IllegalArgumentException e) {
+		    throw new ShapeChangeAbortException(
+			    "IllegalArgumentException occurred while trying to download configuration from "
+				    + configFile + ". Exception message is: " + e.getMessage());
 		} catch (MalformedURLException e) {
 		    throw new ShapeChangeAbortException(
 			    "No configuration file found at " + configFile + " (malformed URL)");
@@ -1476,8 +1478,8 @@ public class Options {
 		}
 	    } else {
 		try {
-		    configStream = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+		    configStream = Files.newInputStream(file.toPath());
+		} catch (IOException e) {
 		    throw new ShapeChangeAbortException("No configuration file found at " + configFile);
 		}
 	    }
@@ -3272,7 +3274,7 @@ public class Options {
     /**
      * @param trfE "Transformer" element from the configuration
      * @return list of tagged values defined for the transformer or
-     *         <code>null</code> if no tagged values are defined for it.
+     *         empty if no tagged values are defined for it.
      */
     private List<TaggedValueConfigurationEntry> parseTaggedValues(Element trfE) {
 
@@ -3321,10 +3323,7 @@ public class Options {
 	    }
 	}
 
-	if (result.isEmpty())
-	    return null;
-	else
-	    return result;
+	return result;
     }
 
     private ProcessMode parseMode(Element processElement) {
@@ -3432,7 +3431,7 @@ public class Options {
 	    return s;
 	return stereotype;
     }
-    
+
     /**
      * Normalize a tag fetched from the model.
      * 
@@ -3448,7 +3447,7 @@ public class Options {
 	    return s;
 	return tag;
     }
-    
+
     /**
      * Determines if the given package should not be processed (i.e., should be
      * skipped), based upon the configuration parameters 'appSchemaName',

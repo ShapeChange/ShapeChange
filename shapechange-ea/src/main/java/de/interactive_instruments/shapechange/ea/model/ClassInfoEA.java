@@ -121,7 +121,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
     protected TreeSet<ClassInfoEA> baseclassInfoSet = null;
 
     /** Subclasses */
-    protected TreeSet<ClassInfoEA> subclassInfoSet = new TreeSet<ClassInfoEA>();
+    protected TreeSet<ClassInfoEA> subclassInfoSet = new TreeSet<>();
 
     /** The EA element addressed by this ClassInfo */
     protected org.sparx.Element eaClassElement = null;
@@ -137,8 +137,8 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
     protected boolean isLeaf = false;
 
     /** Roles registered as properties of the class */
-    protected Vector<PropertyInfoEA> registeredRoles = new Vector<PropertyInfoEA>();
-    protected Vector<PropertyInfoEA> registeredRolesAsAttributes = new Vector<PropertyInfoEA>();
+    protected Vector<PropertyInfoEA> registeredRoles = new Vector<>();
+    protected Vector<PropertyInfoEA> registeredRolesAsAttributes = new Vector<>();
 
     /** Cache map for tagged values */
     // this map is already defined in InfoImpl
@@ -259,7 +259,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 		    }
 
 		    if (baseclassInfoSet == null) {
-			baseclassInfoSet = new TreeSet<ClassInfoEA>();
+			baseclassInfoSet = new TreeSet<>();
 		    }
 		    baseclassInfoSet.add(baseCI);
 
@@ -436,7 +436,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
     @Override
     public boolean checkSupertypes(int cat) {
 	// Prepare set of base classes
-	TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
+	TreeSet<ClassInfoEA> bcis = new TreeSet<>();
 	if (baseclassInfoSet != null)
 	    bcis = baseclassInfoSet;
 	// Consider all baseclasses in turn, break as soon as a first non-
@@ -462,9 +462,9 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	}
 	// Trace for debugging
 	if (res)
-	    document.result.addDebug(null, 10003, name(), "" + cat, "TRUE");
+	    document.result.addDebug(null, 10_003, name(), Integer.toString(cat), "TRUE");
 	else
-	    document.result.addDebug(null, 10003, name(), "" + cat, "FALSE");
+	    document.result.addDebug(null, 10_003, name(), Integer.toString(cat), "FALSE");
 	// Return, what we found out
 	return res;
     } // checkSupertypes()
@@ -494,7 +494,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 		return pi;
 	}
 	// Go and search in base classes
-	TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
+	TreeSet<ClassInfoEA> bcis = new TreeSet<>();
 	if (baseclassInfoSet != null)
 	    bcis = baseclassInfoSet;
 	for (ClassInfoEA bci : bcis) {
@@ -558,7 +558,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
     /** Provide the ids of all subclasses of this class. */
     public SortedSet<String> subtypes() {
 	// Convert subclass object set to subclass id set.
-	SortedSet<String> subids = new TreeSet<String>();
+	SortedSet<String> subids = new TreeSet<>();
 	for (ClassInfoEA sci : subclassInfoSet)
 	    subids.add(sci.id());
 	return subids;
@@ -569,7 +569,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
      */
     public SortedSet<String> supertypes() {
 	// Convert base class object set to base class id set.
-	SortedSet<String> baseids = new TreeSet<String>();
+	SortedSet<String> baseids = new TreeSet<>();
 	if (baseclassInfoSet != null)
 	    for (ClassInfoEA bci : baseclassInfoSet)
 		baseids.add(bci.id());
@@ -883,7 +883,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 
 	if (constraintsCache == null) {
 	    // Allocate cache
-	    constraintsCache = new Vector<Constraint>();
+	    constraintsCache = new Vector<>();
 	    // Constraints disabled?
 	    if (!document.options.constraintLoadingEnabled())
 		return;
@@ -941,7 +941,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 
     private HashSet<ClassInfoEA> supertypesAsClassInfoEA() {
 	// Create base class object set
-	HashSet<ClassInfoEA> baseClasses = new HashSet<ClassInfoEA>(1);
+	HashSet<ClassInfoEA> baseClasses = new HashSet<>(1);
 	if (baseclassInfoSet != null)
 	    for (ClassInfoEA bci : baseclassInfoSet)
 		baseClasses.add(bci);
@@ -961,7 +961,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	if (propertiesCache == null) {
 
 	    // Allocate the cache
-	    propertiesCache = new TreeMap<StructuredNumber, PropertyInfo>();
+	    propertiesCache = new TreeMap<>();
 
 	    // Load attributes ...
 	    Collection<Attribute> attrs = eaClassElement.GetAttributes();
@@ -1028,7 +1028,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
     private void validateOperationsCache() {
 	if (operationsCache == null) {
 	    // Allocate the cache
-	    operationsCache = new TreeMap<Integer, OperationInfo>();
+	    operationsCache = new TreeMap<>();
 	    // Load methods ...
 	    Collection<Method> meths = eaClassElement.GetMethods();
 	    int i = 0;
@@ -1075,7 +1075,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	    }
 	}
 	// Go and search in base classes
-	TreeSet<ClassInfoEA> bcis = new TreeSet<ClassInfoEA>();
+	TreeSet<ClassInfoEA> bcis = new TreeSet<>();
 	if (baseclassInfoSet != null)
 	    bcis = baseclassInfoSet;
 	for (ClassInfoEA bci : bcis) {
@@ -1111,7 +1111,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 	if (supplierIds == null) {
 
 	    // Prepare set to return
-	    supplierIds = new TreeSet<String>();
+	    supplierIds = new TreeSet<>();
 	    // Ask EA for the connectors attached to the package object and loop
 	    // over the connectors returned
 	    // Only compute them once for the whole class
@@ -1138,7 +1138,7 @@ public class ClassInfoEA extends ClassInfoImpl implements ClassInfo, MessageSour
 			 * Now, this is an element id, not a package id. So we have to identify the
 			 * package, which owns the element addressed.
 			 */
-			ClassInfoEA suppClass = (ClassInfoEA) document.fClassById.get(suppIdS);
+			ClassInfoEA suppClass = document.fClassById.get(suppIdS);
 
 			if (suppClass != null) {
 			    // From this only the id is required

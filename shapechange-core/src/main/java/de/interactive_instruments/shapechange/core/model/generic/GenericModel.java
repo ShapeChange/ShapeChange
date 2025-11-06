@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1076,7 +1077,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		    }
 
 		} else {
-		    inputStreamForValidation = new FileInputStream(modelfile);
+		    inputStreamForValidation = Files.newInputStream(modelfile.toPath());
 		}
 
 		if (inputStreamForValidation != null) {
@@ -1132,7 +1133,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
 		}
 
 	    } else {
-		inputStream = new FileInputStream(modelfile);
+		inputStream = Files.newInputStream(modelfile.toPath());
 	    }
 
 	    if (inputStream != null) {
@@ -1661,7 +1662,7 @@ public class GenericModel extends ModelImpl implements MessageSource {
     public TreeSet<String> copy(SortedSet<String> hs) {
 
 	if (hs == null)
-	    return null;
+	    return new TreeSet<>();
 
 	TreeSet<String> res = new TreeSet<String>();
 	for (String s : hs) {

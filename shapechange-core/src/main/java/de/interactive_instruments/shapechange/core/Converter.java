@@ -76,17 +76,16 @@ public class Converter implements MessageSource {
     public static final int STATUS_VALIDATION_START = 207;
 
     /** Result object. */
-    protected ShapeChangeResult result = null;
-    protected Options options = null;
-    protected Target target = null;
-    protected Set<String> processIdsToIgnore = new HashSet<String>();
-    protected TargetOutputProcessor outputProcessor = null;
+    protected ShapeChangeResult result;
+    protected Options options;
+    protected Target target;
+    protected Set<String> processIdsToIgnore = new HashSet<>();
+    protected TargetOutputProcessor outputProcessor;
     private PackageInfo mainSchemaForSingleTargets;
 
     public Converter(Options o, ShapeChangeResult r) {
 	options = o;
 	result = r;
-	target = null;
 	outputProcessor = new TargetOutputProcessor(r);
     }
 
@@ -185,7 +184,7 @@ public class Converter implements MessageSource {
 	boolean isValid = bcv.isValid(null, options, result);
 
 	// validate enabled transformer and target configurations
-	List<ProcessConfiguration> processConfigs = new ArrayList<ProcessConfiguration>();
+	List<ProcessConfiguration> processConfigs = new ArrayList<>();
 
 	processConfigs.addAll(options.getTransformerConfigs().values());
 	processConfigs.addAll(options.getTargetConfigurations());
@@ -354,15 +353,14 @@ public class Converter implements MessageSource {
     }// convert()
 
     /**
-     * Shuts down the given model and sets it to <code>null</code>.
+     * Shuts down the given model.
      * 
      * @param model
      */
     private void release(Model model) {
-	if (model != null)
+	if (model != null) {
 	    model.shutdown();
-
-	model = null;
+	}
     }
 
     /**
@@ -763,8 +761,7 @@ public class Converter implements MessageSource {
 		    StatusBoard.getStatusBoard().statusChanged(STATUS_TARGET_PROCESS);
 
 		    ClassInfo[] classArr = getClasses(model, pi);
-		    for (int cidx = 0; cidx < classArr.length; cidx++) {
-			ClassInfo k = classArr[cidx];
+		    for (ClassInfo k : classArr) {
 			target.process(k);
 		    }
 
@@ -932,16 +929,16 @@ public class Converter implements MessageSource {
 
 	    // test
 	    try {
-		ClassInfo.class.getMethod(compField, (Class[]) paramTypes);
+		ClassInfo.class.getMethod(compField, paramTypes);
 	    } catch (NoSuchMethodException e) {
 		result.addProcessFlowError(this, 165, sortedOpt, target.getClass().getName());
 		return classArr;
 	    }
 
-	    final Method compMeth = ClassInfo.class.getMethod(compField, (Class[]) paramTypes);
+	    final Method compMeth = ClassInfo.class.getMethod(compField, paramTypes);
 	    final Object[] compMethArgs = pargs;
 
-	    Arrays.sort(classArr, new Comparator<ClassInfo>() {
+	    Arrays.sort(classArr, new Comparator<>() {
 		public int compare(ClassInfo ci1, ClassInfo ci2) {
 		    try {
 			// TBD: if two classes had the same name, a
@@ -976,9 +973,8 @@ public class Converter implements MessageSource {
      */
     private void resetAllSingleTargets() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
 	    IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-	Vector<String> targets = options.targets();
-	for (Iterator<String> j = targets.iterator(); j.hasNext();) {
-	    String classname = j.next();
+	List<String> targets = options.targets();
+	for (String classname : targets) {
 	    Class<?> theClass = Class.forName(classname);
 	    target = (Target) theClass.getConstructor().newInstance();
 

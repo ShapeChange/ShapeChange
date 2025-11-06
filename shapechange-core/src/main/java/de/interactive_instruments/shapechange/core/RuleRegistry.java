@@ -47,7 +47,7 @@ import de.interactive_instruments.shapechange.core.target.Target;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class RuleRegistry {
+public final class RuleRegistry {
 
     /**
      * Hash table for all schema requirements and conversion rules defined by all
@@ -87,10 +87,7 @@ public class RuleRegistry {
 	loadRulesAndRequirements();
     }
 
-    /**
-     * 
-     */
-    protected void loadRulesAndRequirements() {
+    private void loadRulesAndRequirements() {
 
 	for (Class<?> tc : targetRegistry.getTargetClasses()) {
 

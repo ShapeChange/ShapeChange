@@ -545,10 +545,9 @@ public class Xmi10Document extends ModelImpl implements Model, MessageSource {
 	NodeList nl1 = elmt.getChildNodes();
 	for (int j = 0; j < nl1.getLength(); j++) {
 	    Node n1 = nl1.item(j);
-	    if (n1.getNodeType() != Node.ELEMENT_NODE) {
-		continue;
-	    }
-	    return (Element) n1;
+	    if (n1.getNodeType() == Node.ELEMENT_NODE) {
+		return (Element) n1;
+	    }	    
 	}
 	return null;
     }

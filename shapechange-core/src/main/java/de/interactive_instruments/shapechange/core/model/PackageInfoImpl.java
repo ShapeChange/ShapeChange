@@ -331,8 +331,6 @@ public abstract class PackageInfoImpl extends InfoImpl implements PackageInfo {
 		if (postprocessed)
 			return;
 
-		super.postprocessAfterLoadingAndValidate();
-
 		/*
 		 * Verify tagged values
 		 */

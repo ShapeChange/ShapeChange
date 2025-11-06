@@ -106,7 +106,7 @@ public class OracleStrategy implements DatabaseStrategy, MessageSource {
 		index.addColumn(column);
 		index.addSpec("INDEXTYPE IS MDSYS.SPATIAL_INDEX");
 
-		if (geometryCharacteristics != null && geometryCharacteristics
+		if (!geometryCharacteristics.isEmpty() && geometryCharacteristics
 				.containsKey(GEOM_PARAM_LAYER_GTYPE)) {
 
 			String layergtype = geometryCharacteristics

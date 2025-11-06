@@ -34,11 +34,7 @@ package de.interactive_instruments.shapechange.core.target.sql;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -57,6 +53,21 @@ import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
+import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.Multiplicity;
+import de.interactive_instruments.shapechange.core.Options;
+import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.ProcessRuleSet;
+import de.interactive_instruments.shapechange.core.RuleRegistry;
+import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.Info;
+import de.interactive_instruments.shapechange.core.model.Model;
+import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.target.TargetUtil;
 import de.interactive_instruments.shapechange.core.target.sql.expressions.SdoDimArrayExpression;
 import de.interactive_instruments.shapechange.core.target.sql.expressions.SdoDimElement;
 import de.interactive_instruments.shapechange.core.target.sql.naming.CheckConstraintNamingStrategy;
@@ -92,21 +103,6 @@ import de.interactive_instruments.shapechange.core.target.sql.structure.Statemen
 import de.interactive_instruments.shapechange.core.target.sql.structure.Table;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
-import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
-import de.interactive_instruments.shapechange.core.MessageSource;
-import de.interactive_instruments.shapechange.core.Multiplicity;
-import de.interactive_instruments.shapechange.core.Options;
-import de.interactive_instruments.shapechange.core.ProcessMapEntry;
-import de.interactive_instruments.shapechange.core.ProcessRuleSet;
-import de.interactive_instruments.shapechange.core.RuleRegistry;
-import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.model.Info;
-import de.interactive_instruments.shapechange.core.model.Model;
-import de.interactive_instruments.shapechange.core.model.PackageInfo;
-import de.interactive_instruments.shapechange.core.target.SingleTarget;
-import de.interactive_instruments.shapechange.core.target.TargetUtil;
 
 /**
  * Creates SQL DDL for an application schema.
@@ -1213,8 +1209,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	// --- Write DDL to file
 	File outputFile = new File(outputDirectory, fileName);
 
-	try (BufferedWriter writer = new BufferedWriter(
-		new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"))) {
+	try (BufferedWriter writer = Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.UTF_8)) {
 
 	    String ddlTop = readDdl(SqlConstants.PARAM_FILE_DDL_TOP);
 	    if (ddlTop != null) {
@@ -1233,10 +1228,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    File outputWithoutEmptyLines = new File(outputDirectory, fileName + ".tmp");
 
-	    try (BufferedReader originalDdlReader = new BufferedReader(
-		    new InputStreamReader(new FileInputStream(outputFile), StandardCharsets.UTF_8));
-		    BufferedWriter ddlWithoutEmptyLinesWriter = new BufferedWriter(new OutputStreamWriter(
-			    new FileOutputStream(outputWithoutEmptyLines), StandardCharsets.UTF_8))) {
+	    try (BufferedReader originalDdlReader = Files.newBufferedReader(outputFile.toPath(), StandardCharsets.UTF_8);
+		    BufferedWriter ddlWithoutEmptyLinesWriter = Files.newBufferedWriter(outputWithoutEmptyLines.toPath(), StandardCharsets.UTF_8)) {
 
 		String aLine = null;
 		while ((aLine = originalDdlReader.readLine()) != null) {

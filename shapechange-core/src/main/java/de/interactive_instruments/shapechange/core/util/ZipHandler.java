@@ -34,11 +34,10 @@ package de.interactive_instruments.shapechange.core.util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -78,7 +77,7 @@ public class ZipHandler {
 	 */
 	public void zip(File directoryToZip, File toFile) throws Exception {
 
-		FileOutputStream fos = new FileOutputStream(toFile);
+		OutputStream fos = Files.newOutputStream(toFile.toPath());
 		ZipOutputStream zos = new ZipOutputStream(fos);
 
 		addDirectory(directoryToZip, zos, "");
@@ -98,14 +97,14 @@ public class ZipHandler {
 	 */
 	public static void zipFile(File fileToZip, File toFile) throws IOException {
 
-		FileOutputStream fout = new FileOutputStream(toFile);
+		OutputStream fout = Files.newOutputStream(toFile.toPath());
 		ZipOutputStream zout = new ZipOutputStream(fout);
 
 		byte[] tmpBuf = new byte[1024];
 
 		// add an actual file to the zip
 		BufferedInputStream bis = new BufferedInputStream(
-				new FileInputStream(fileToZip));
+			Files.newInputStream(fileToZip.toPath()));
 
 		zout.putNextEntry(new ZipEntry("" + fileToZip.getName()));
 
@@ -150,7 +149,7 @@ public class ZipHandler {
 
 			try {
 				is = zipFile.getInputStream(entry);
-				os = new FileOutputStream(file);
+				os = Files.newOutputStream(file.toPath());
 
 				for (int len; (len = is.read(buffer)) != -1;) {
 					os.write(buffer, 0, len);
@@ -252,7 +251,7 @@ public class ZipHandler {
 
 		// add an actual file to the zip
 		BufferedInputStream bis = new BufferedInputStream(
-				new FileInputStream(fileToZip));
+			Files.newInputStream(fileToZip.toPath()));
 
 		zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
 

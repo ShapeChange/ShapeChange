@@ -150,7 +150,7 @@ public class SbvrRuleLoader implements MessageSource {
     /**
      * @param sbvrXls
      * @return mapping of schema package name to SBVR rules that apply to classes in
-     *         this schema *
+     *         this schema (the map can be empty but not <code>null</code>)
      *         <ul>
      *         <li>key: class name</li>
      *         <li>value: mapping of schema package name to SBVR rule info
@@ -169,7 +169,7 @@ public class SbvrRuleLoader implements MessageSource {
 	TreeMap<String, TreeMap<String, List<SbvrRuleInfo>>> rules = new TreeMap<String, TreeMap<String, List<SbvrRuleInfo>>>();
 
 	if (sbvrXls == null)
-	    return null;
+	    return new TreeMap<>();
 
 	Sheet rulesSheet = null;
 
@@ -186,7 +186,7 @@ public class SbvrRuleLoader implements MessageSource {
 	if (rulesSheet == null) {
 
 	    result.addError(this, 3);
-	    return null;
+	    return new TreeMap<>();
 	}
 
 	// read header row to determine which columns contain relevant
@@ -197,7 +197,7 @@ public class SbvrRuleLoader implements MessageSource {
 
 	if (header == null) {
 	    result.addError(this, 4);
-	    return null;
+	    return new TreeMap<>();
 	}
 
 	boolean classNameFound = false;
@@ -248,7 +248,7 @@ public class SbvrRuleLoader implements MessageSource {
 	if (!ruleNameFound && !ruleTextFound) {
 	    // log message that required fields were not found
 	    result.addError(this, 5);
-	    return null;
+	    return new TreeMap<>();
 	}
 
 	/*

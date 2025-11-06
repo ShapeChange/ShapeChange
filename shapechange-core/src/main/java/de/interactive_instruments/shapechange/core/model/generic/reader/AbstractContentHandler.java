@@ -68,28 +68,28 @@ public abstract class AbstractContentHandler implements ContentHandler {
 	}
 
 	@Override
-	public void setDocumentLocator(Locator locator) {
+	public void setDocumentLocator(Locator locator) { // NOPMD by echte on 06.11.25, 08:40
 		// irrelevant
 	}
 
 	@Override
-	public void startDocument() throws SAXException {
+	public void startDocument() throws SAXException { // NOPMD by echte on 06.11.25, 08:40
 		// irrelevant
 	}
 
 	@Override
-	public void endDocument() throws SAXException {
+	public void endDocument() throws SAXException { // NOPMD by echte on 06.11.25, 08:40
 		// irrelevant
 	}
 
 	@Override
-	public void startPrefixMapping(String prefix, String uri)
+	public void startPrefixMapping(String prefix, String uri) // NOPMD by echte on 06.11.25, 08:40
 			throws SAXException {
 		// irrelevant
 	}
 
 	@Override
-	public void endPrefixMapping(String prefix) throws SAXException {
+	public void endPrefixMapping(String prefix) throws SAXException { // NOPMD by echte on 06.11.25, 08:40
 		// irrelevant
 	}
 
@@ -116,19 +116,19 @@ public abstract class AbstractContentHandler implements ContentHandler {
 	}
 
 	@Override
-	public void ignorableWhitespace(char[] ch, int start, int length)
+	public void ignorableWhitespace(char[] ch, int start, int length) // NOPMD by echte on 06.11.25, 08:40
 			throws SAXException {
 		// irrelevant
 	}
 
 	@Override
-	public void processingInstruction(String target, String data)
+	public void processingInstruction(String target, String data) // NOPMD by echte on 06.11.25, 08:40
 			throws SAXException {
 		// irrelevant
 	}
 
 	@Override
-	public void skippedEntity(String name) throws SAXException {
+	public void skippedEntity(String name) throws SAXException { // NOPMD by echte on 06.11.25, 08:41
 		// irrelevant
 	}
 

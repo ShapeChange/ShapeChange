@@ -2522,12 +2522,12 @@ public class XsdDocument implements MessageSource {
 		}
 	    }
 	}
-	return null;
+	return new ArrayList<>();
     }
 
     private boolean processQualifiers(Element e, PropertyInfo propi) {
 	List<Qualifier> qv = qualifiers(propi);
-	if (qv != null) {
+	if (!qv.isEmpty()) {
 	    for (Qualifier q : qv)
 		processQualifier(e, propi, q);
 	    return true;
@@ -2778,7 +2778,7 @@ public class XsdDocument implements MessageSource {
 			asArrayTargetElement = me2.p1;
 		}
 
-		boolean withQualifiers = qualifiers(propi) != null && !isAttribute;
+		boolean withQualifiers = !qualifiers(propi).isEmpty() && !isAttribute;
 
 		// FIXME 2014-01-21 JE: does this correctly take into account
 		// the inlineOrByReference setting?
@@ -3129,7 +3129,7 @@ public class XsdDocument implements MessageSource {
 		    /*
 		     * 5. the property has qualifiers
 		     */
-		    embedPropertyType = embedPropertyType || qualifiers(propi) != null;
+		    embedPropertyType = embedPropertyType || !qualifiers(propi).isEmpty();
 
 		    /*
 		     * 6. the property has metadata
@@ -3187,7 +3187,7 @@ public class XsdDocument implements MessageSource {
 		    /*
 		     * 6. the property has qualifiers
 		     */
-		    embedPropertyType = embedPropertyType || qualifiers(propi) != null;
+		    embedPropertyType = embedPropertyType || !qualifiers(propi).isEmpty();
 
 		    /*
 		     * 7. the property has metadata
@@ -4093,7 +4093,7 @@ public class XsdDocument implements MessageSource {
 		    if (addMetadata) {
 			addMetadata(e1);
 		    }
-		} else if (qualifiers(propi) != null || addNilReason || addMetadata) {
+		} else if (!qualifiers(propi).isEmpty() || addNilReason || addMetadata) {
 		    Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 		    e.appendChild(e1);
 		    Element e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");
@@ -4130,7 +4130,7 @@ public class XsdDocument implements MessageSource {
 		    // nothing to do, special type construction necessary
 		} else if (propi.isAggregation() || propi.isComposition()) {
 		    // nothing to do, special type construction necessary
-		} else if (qualifiers(propi) != null || addMetadata) {
+		} else if (!qualifiers(propi).isEmpty() || addMetadata) {
 		    Element e1 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexType");
 		    e.appendChild(e1);
 		    Element e4 = document.createElementNS(Options.W3C_XML_SCHEMA, "complexContent");

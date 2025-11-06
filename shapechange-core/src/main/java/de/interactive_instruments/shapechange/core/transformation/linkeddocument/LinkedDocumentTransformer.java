@@ -32,8 +32,9 @@
 package de.interactive_instruments.shapechange.core.transformation.linkeddocument;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -49,8 +50,8 @@ import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessRuleSet;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.TransformerConfiguration;
 import de.interactive_instruments.shapechange.core.model.generic.GenericClassInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
 import de.interactive_instruments.shapechange.core.transformation.Transformer;
@@ -128,8 +129,7 @@ public class LinkedDocumentTransformer implements Transformer, MessageSource {
 							".docx", options.linkedDocumentsTmpDir());
 					trfFile.deleteOnExit();
 
-					FileInputStream linkedDocSupertypeIS = new FileInputStream(
-							genCi.getLinkedDocument());
+					InputStream linkedDocSupertypeIS = Files.newInputStream(genCi.getLinkedDocument().toPath());
 					WordprocessingMLPackage wmlPackage = WordprocessingMLPackage
 							.load(linkedDocSupertypeIS);
 					MainDocumentPart mdp = wmlPackage.getMainDocumentPart();

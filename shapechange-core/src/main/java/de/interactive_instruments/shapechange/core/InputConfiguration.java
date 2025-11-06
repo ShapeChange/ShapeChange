@@ -53,7 +53,7 @@ public class InputConfiguration {
      */
     private Map<String, String> stereotypeAliasesByAlias;
     private Map<String, String> tagAliasesByAlias;
-    private SortedMap<String, String> descriptorSources = new TreeMap<String, String>();
+    private SortedMap<String, String> descriptorSources = new TreeMap<>();
 
     /**
      * key: packageName, value: package info
@@ -99,11 +99,7 @@ public class InputConfiguration {
     }
 
     public boolean hasParameter(String paramName) {
-	if (parametersByName != null && parametersByName.containsKey(paramName)) {
-	    return true;
-	} else {
-	    return false;
-	}
+	return parametersByName != null && parametersByName.containsKey(paramName);
     }
 
     /**
@@ -132,6 +128,7 @@ public class InputConfiguration {
 	return packageInfosByName;
     }
 
+    @Override
     public String toString() {
 
 	StringBuffer sb = new StringBuffer();

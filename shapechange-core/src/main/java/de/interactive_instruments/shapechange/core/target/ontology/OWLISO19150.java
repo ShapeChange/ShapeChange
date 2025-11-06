@@ -36,6 +36,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1186,7 +1187,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	File outFile = new File(outputDirectoryFile, filename);
 
-	try (OutputStream fout = new FileOutputStream(outFile); OutputStream bout = new BufferedOutputStream(fout)) {
+	try (OutputStream fout = Files.newOutputStream(outFile.toPath()); OutputStream bout = new BufferedOutputStream(fout)) {
 
 	    String canpath = new File(fname).getCanonicalPath();
 	    r.addDebug(this, 20000, ontName, canpath);

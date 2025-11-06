@@ -43,7 +43,7 @@ import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 
-public class TargetUtil {
+public final class TargetUtil {
 	
 	public static final String PARAM_MAIN_APP_SCHEMA = "mainAppSchema";
 

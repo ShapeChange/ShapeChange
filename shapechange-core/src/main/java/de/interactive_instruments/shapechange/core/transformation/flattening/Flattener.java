@@ -34,6 +34,9 @@ package de.interactive_instruments.shapechange.core.transformation.flattening;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1474,12 +1477,12 @@ public class Flattener implements Transformer, MessageSource {
 	String[] propNameCodeComponentsToRemove = trfConfig
 		.getListParameterValue(PARAM_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT);
 
-	if (propNameCodeComponentsToRemove == null) {
+	if (propNameCodeComponentsToRemove.length == 0) {
 	    propNameCodeComponentsToRemove = trfConfig
 		    .getListParameterValue(PARAM_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT);
 	}
 
-	if (propNameCodeComponentsToRemove == null || propNameCodeComponentsToRemove.length == 0)
+	if (propNameCodeComponentsToRemove.length == 0)
 	    return;
 
 	for (GenericPropertyInfo genPi : genModel.selectedSchemaProperties()) {
@@ -1555,7 +1558,7 @@ public class Flattener implements Transformer, MessageSource {
 	// if any - types shall be removed from the model.
 	String[] typesToRemove = trfConfig.getListParameterValue(PARAM_REMOVE_TYPE);
 
-	if (typesToRemove == null || typesToRemove.length == 0) {
+	if (typesToRemove.length == 0) {
 	    result.addWarning(this, 20324);
 	    return;
 	}
@@ -4584,7 +4587,7 @@ public class Flattener implements Transformer, MessageSource {
 	Map<String, Integer> specificMaxOccursByIdPattern = new HashMap<String, Integer>();
 
 	String[] specificMaxOccurs = trfConfig.getListParameterValue(PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES);
-	if (specificMaxOccurs != null && specificMaxOccurs.length > 0) {
+	if (specificMaxOccurs.length > 0) {
 	    for (String smo : specificMaxOccurs) {
 		String[] smoParts = smo.split("::");
 		if (smoParts.length != 3 || smoParts[0].length() == 0 || smoParts[1].length() == 0) {
@@ -6182,9 +6185,9 @@ public class Flattener implements Transformer, MessageSource {
 
 	    try {
 		File linkedDocSupertype = superclass.getLinkedDocument();
-		FileInputStream linkedDocSupertypeIS = new FileInputStream(linkedDocSupertype);
+		InputStream linkedDocSupertypeIS = Files.newInputStream(linkedDocSupertype.toPath());
 		topPackage = WordprocessingMLPackage.load(linkedDocSupertypeIS);
-	    } catch (FileNotFoundException | Docx4JException e) {
+	    } catch (IOException | Docx4JException e) {
 
 		MessageContext mc = result.addError(this, 20400, superclass.name(), e.getMessage());
 		if (mc != null) {
@@ -6814,7 +6817,7 @@ public class Flattener implements Transformer, MessageSource {
 
 	// if no type names are given via the enforceOptionality parameter,
 	// return
-	if (typesToEnforceOptionality == null) {
+	if (typesToEnforceOptionality.length == 0) {
 	    result.addWarning(this, 20306);
 	    return;
 	} else {

@@ -912,10 +912,7 @@ public abstract class InfoImpl implements Info {
 	 * recommendations. All rules applicable to all model elements are validated
 	 * here, the more specific rules are all validated in the subclasses.
 	 */
-	public void postprocessAfterLoadingAndValidate() {
-		// We don't look at postprocessed, this will be handled in the
-		// subclasses.
-	}
+	public abstract void postprocessAfterLoadingAndValidate();
 
 	/**
 	 * @deprecated (since="2.5.0") With UML 2, there may be multiple values per

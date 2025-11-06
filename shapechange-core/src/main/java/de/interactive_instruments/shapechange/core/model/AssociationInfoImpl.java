@@ -141,7 +141,6 @@ public abstract class AssociationInfoImpl extends InfoImpl implements Associatio
 	if (postprocessed) {
 	    return;
 	}
-	super.postprocessAfterLoadingAndValidate();
 
 	postprocessed = true;
     }

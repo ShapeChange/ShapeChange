@@ -32,8 +32,9 @@
 package de.interactive_instruments.shapechange.core.util.docx;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -108,7 +109,7 @@ public class DocxUtil {
 		 * 
 		 */
 
-		FileInputStream bottomIs = new FileInputStream(bottomFile);
+		InputStream bottomIs = Files.newInputStream(bottomFile.toPath());
 
 		MainDocumentPart topMainPart = topPackage.getMainDocumentPart();
 

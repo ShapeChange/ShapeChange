@@ -86,8 +86,6 @@ public abstract class OperationInfoImpl extends InfoImpl
 		if (postprocessed)
 			return;
 
-		super.postprocessAfterLoadingAndValidate();
-
 		postprocessed = true;
 	}
 }

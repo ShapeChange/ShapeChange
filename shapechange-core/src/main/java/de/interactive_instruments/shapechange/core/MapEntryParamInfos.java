@@ -38,6 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 
@@ -109,7 +110,7 @@ public class MapEntryParamInfos implements MessageSource {
      * If no non-empty and valid parameter value is provided for a type defined in a
      * type mapping, then no information will be contained for that type in the map.
      */
-    private Map<String, Map<String, Map<String, String>>> paramCache;
+    private Map<String, Map<String, Map<String, String>>> paramCache; 
     private Collection<ProcessMapEntry> mapEntries;
 
     private ShapeChangeResult result;
@@ -152,7 +153,7 @@ public class MapEntryParamInfos implements MessageSource {
 
 			} else {
 
-			    Map<String, Map<String, String>> charactByParameterName = new HashMap<String, Map<String, String>>();
+			    Map<String, Map<String, String>> charactByParameterName = new HashMap<>();
 
 			    paramCache.put(pmeKey, charactByParameterName);
 
@@ -171,7 +172,7 @@ public class MapEntryParamInfos implements MessageSource {
 				    continue;
 				}
 
-				Map<String, String> characteristics = new HashMap<String, String>();
+				Map<String, String> characteristics = new HashMap<>();
 				charactByParameterName.put(parameterName, characteristics);
 
 				String parameterValue = pim.group(2);
@@ -191,10 +192,10 @@ public class MapEntryParamInfos implements MessageSource {
 					String suffixToAppend = "";
 
 					if (characteristic.endsWith("==")) {
-					    valueToMatch = StringUtils.removeEnd(characteristic, "==");
+					    valueToMatch = Strings.CS.removeEnd(characteristic, "==");
 					    suffixToAppend = "==";
 					} else if (characteristic.endsWith("=")) {
-					    valueToMatch = StringUtils.removeEnd(characteristic, "=");
+					    valueToMatch = Strings.CS.removeEnd(characteristic, "=");
 					    suffixToAppend = "=";
 					}
 
@@ -268,7 +269,7 @@ public class MapEntryParamInfos implements MessageSource {
 
 	Map<String, String> characteristics = this.getCharacteristics(typeName, encodingRule, parameter);
 
-	if (characteristics == null) {
+	if (characteristics.isEmpty()) {
 	    return false;
 	} else {
 	    if (characteristics.containsKey(characteristic)) {
@@ -285,7 +286,7 @@ public class MapEntryParamInfos implements MessageSource {
      * @param parameter    tbd
      * @return A map with the characteristics defined for the parameter in the map
      *         entry that applies to the named type under the given encoding rule,
-     *         or <code>null</code> if they don't exist.
+     *         or an empty map if they don't exist.
      */
     public Map<String, String> getCharacteristics(String typeName, String encodingRule, String parameter) {
 
@@ -302,7 +303,7 @@ public class MapEntryParamInfos implements MessageSource {
 
 	if (relevantMapEntry == null) {
 
-	    return null;
+	    return new HashMap<>();
 
 	} else {
 
@@ -311,11 +312,16 @@ public class MapEntryParamInfos implements MessageSource {
 	    if (!paramCache.containsKey(pmeKey)) {
 
 		// then no valid parameter was defined in the map entry
-		return null;
+		return new HashMap<>();
 
 	    } else {
 
-		return paramCache.get(pmeKey).get(parameter);
+		Map<String, String> tmp = paramCache.get(pmeKey).get(parameter);
+		if(tmp == null) {
+		    return new HashMap<>();
+		} else {
+		    return tmp;
+		}
 	    }
 	}
     }
@@ -369,7 +375,7 @@ public class MapEntryParamInfos implements MessageSource {
 
 	Map<String, String> characteristics = this.getCharacteristics(typeName, encodingRule, parameter);
 
-	if (characteristics == null) {
+	if (characteristics.isEmpty()) {
 	    return null;
 	} else {
 	    return characteristics.get(characteristic);

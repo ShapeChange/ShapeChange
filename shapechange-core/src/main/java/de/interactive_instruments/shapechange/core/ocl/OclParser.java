@@ -143,7 +143,7 @@ public class OclParser {
 	// infix operations of OCL. Each statically constructed InfixType object
 	// stands for one level in the OCL operator binding hierarchy.
 
-	static private class InfixType {
+	private static class InfixType {
 		EnumSet<Token.Type> operators;
 		InfixType nextStronger;
 

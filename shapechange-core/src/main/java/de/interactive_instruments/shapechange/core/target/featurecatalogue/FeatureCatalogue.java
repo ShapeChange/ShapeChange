@@ -43,6 +43,8 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -481,7 +483,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		String encoding_ = encoding == null ? "UTF-8" : model.characterEncoding();
 
-		OutputStream fout = new FileOutputStream(outputDirectory + "/" + xmlName);
+		OutputStream fout = Files.newOutputStream(Path.of(outputDirectory + "/" + xmlName));
 		OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 		OutputStreamWriter outputXML = new OutputStreamWriter(bout, encoding_);
 
@@ -2641,7 +2643,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		// Setup output
 		OutputStream out = null;
 		try {
-		    out = new java.io.FileOutputStream(outFile);
+		    out = Files.newOutputStream(outFile.toPath());
 		    out = new java.io.BufferedOutputStream(out);
 		} catch (Exception e) {
 		    result.addError(null, 304, outFile.getName(), e.getMessage());
@@ -2968,7 +2970,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	File tmpXmlFile = new File(outDir, xmlName);
 
 	try {
-	    InputSource tmpXmlSource = new InputSource(new FileInputStream(tmpXmlFile));
+	    InputSource tmpXmlSource = new InputSource(Files.newInputStream(tmpXmlFile.toPath()));
 
 	    SAXParserFactory pfactory = SAXParserFactory.newInstance();
 	    pfactory.setNamespaceAware(true);

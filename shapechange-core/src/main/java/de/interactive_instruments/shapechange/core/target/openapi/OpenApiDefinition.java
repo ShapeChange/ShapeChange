@@ -41,6 +41,8 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -247,7 +249,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	    stream = urlConnection.getInputStream();
 	} else {
 	    File f = new File(uri);
-	    stream = new FileInputStream(f);
+	    stream = Files.newInputStream(f.toPath());
 	}
 
 	JsonReader reader = Json.createReader(stream);
@@ -533,8 +535,7 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    File outputFile = new File(outputDirectory, outputFilename);
 
-	    try (JsonWriter writer = factory.createWriter(
-		    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8")))) {
+	    try (JsonWriter writer = factory.createWriter(Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.UTF_8))) {
 		writer.write(res5);
 		result.addResult(this.getTargetName(), outputFile.getParent(), outputFile.getName(), null);
 	    } catch (Exception e) {
