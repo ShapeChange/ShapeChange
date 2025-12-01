@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/flattener/removePackages/test_flattener_removePackages.xml"
+                   end="Fri Nov 28 07:20:48 CET 2025"
+                   resultCode="0"
+                   start="Fri Nov 28 07:20:37 CET 2025"
+                   version="4.1.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'trf' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'trf' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\flattener\removePackages\test_flattener_removePackages.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\flattener\removePackages\test_flattener_removePackages.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\flattener\removePackages\test_flattener_removePackages.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\flattener\removePackages\test_flattener_removePackages.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'trf' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="========== processing phase =========="/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-all-removePackage ----------"/>
+      <ProcessFlowInfo message="========== postprocessing phase =========="/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'trf' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'trf'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'trf'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/flattening/removePackages/results/xsd/trf/test.xsd"
+              scope="http://example.org/shapechange/schema/test"
+              target="XML Schema">test.xsd</Result>
+   </Results>
+</ShapeChangeResult>

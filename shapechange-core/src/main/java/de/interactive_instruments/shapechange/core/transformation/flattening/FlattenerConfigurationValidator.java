@@ -78,7 +78,7 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	    Flattener.PARAM_MAXOCCURS_FOR_SPECIFIC_PROPERTIES, Flattener.PARAM_MEASURE_TYPES,
 	    Flattener.PARAM_MEASURE_UOM_TV, Flattener.PARAM_NAMESPACE_SUFFIX_PARAMETER,
 	    Flattener.PARAM_OBJECT_TO_FEATURE_TYPE_NAV_REGEX, Flattener.PARAM_REMOVE_INHERITANCE_INCLUDE_REGEX,
-	    Flattener.PARAM_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT,
+	    Flattener.PARAM_REMOVE_PACKAGE, Flattener.PARAM_REMOVE_PROPERTY_NAME_AND_ALIAS_COMPONENT,
 	    Flattener.PARAM_REMOVE_PROPERTY_NAME_AND_CODE_COMPONENT, Flattener.PARAM_REMOVE_TYPE,
 	    Flattener.PARAM_REPLACE_UNION_EXCLUDE_REGEX, Flattener.PARAM_SEPARATOR_FOR_GEOMETRY_TYPE_SUFFIX,
 	    Flattener.PARAM_SEPARATOR_FOR_PROPERTY_FROM_NON_UNION, Flattener.PARAM_SEPARATOR_FOR_PROPERTY_FROM_UNION,
@@ -164,8 +164,8 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	return switch (mnr) {
 	case 0 -> "Context: Transformer configuration element with 'id'='$1$'.";
 	case 100 -> "Parameter '" + Flattener.PARAM_REMOVE_TYPE + "' is required for the execution of '"
-		    + Flattener.RULE_TRF_ALL_REMOVETYPE
-		    + "'. The configuration does not contain this parameter with a non-empty string.";
+		+ Flattener.RULE_TRF_ALL_REMOVETYPE
+		+ "'. The configuration does not contain this parameter with a non-empty string.";
 	case 101 -> "Configuration parameter '$1$' must be 'IGNORE' or 'OVERWRITE'. Found: $2$ ";
 
 	case 20348 -> "Configuration parameter '$1$' contains unknown descriptor '$2$'. ";

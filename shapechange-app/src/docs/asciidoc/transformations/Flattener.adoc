@@ -188,6 +188,28 @@ type that have been identified before.
 Removes all navigable properties from a feature type if the value type
 of the property also is a feature type.
 
+[[rule-trf-all-removePackage]]
+==== rule-trf-all-removePackage
+
+(since v4.1.0)
+
+Removes the packages identified by the <<removePackage>> parameter from the
+application schema in the model. This includes all subpackages as well
+as contained classes. For each class that is removed, all of its inheritance 
+relationships are removed as well. However, properties (attributes or 
+associations / association roles) whose value type is such a removed class
+will be kept (an association role is thereby turned into an attribute).
+
+Parameters:
+
+[cols=",",]
+|===
+|*_Parameter Name_* |*_Required / Optional (for Execution of Rule)_*
+
+|<<removePackage>> | Required (if the parameter is omitted,
+a warning will be logged and the rule not executed)
+|===
+
 [[rule-trf-all-removeType]]
 ==== rule-trf-all-removeType
 
@@ -1297,6 +1319,7 @@ this case, the order of execution is especially important. The Flattener
 executes flattening rules and requirements in the following order:
 
 . rule-trf-all-removeType
+. rule-trf-all-removePackage
 . rule-trf-cls-dissolve-mixins
 . rule-trf-prop-removeObjectToFeatureTypeNavigability
 . rule-trf-all-removeFeatureTypeRelationships
@@ -2237,6 +2260,28 @@ expression can be escaped accordingly.
 Applies to Rule(s)
 
 * rule-trf-prop-remove-name-and-code-component
+
+[[removePackage]]
+==== removePackage
+
+(since v4.1.0)
+
+Alias: _none_
+
+Type: (comma separated) list of Strings
+
+Default Value: _none_
+
+Behavior:
+
+Any of the packages (identified by fully qualified name in the model, 
+for example "Model root::Package 1::Package 2") listed in
+this parameter will be removed from the model.
+
+Applies to Rule(s)
+
+* <<rule-trf-all-removePackage>>
+
 
 [[removeType]]
 ==== removeType

@@ -205,4 +205,10 @@ public class FlattenerTest extends BasicTestSCXML {
 	multiTest("src/integrationtests/flattener/inheritance3/testEA_Flattening_inheritance3.xml", new String[] { "xsd" },
 		"testResults/flattening/inheritance3/results", "src/integrationtests/flattener/inheritance3/reference/results");
     }
+    
+    @Test
+    public void test_flatten_removePackages() {
+	multiTest("src/integrationtests/flattener/removePackages/test_flattener_removePackages.xml", new String[] { "xsd" },
+		"testResults/flattening/removePackages/results", "src/integrationtests/flattener/removePackages/reference/results");
+    }
 }
