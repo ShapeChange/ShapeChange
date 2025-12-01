@@ -461,9 +461,10 @@ public class SqlBuilder implements MessageSource {
 		continue;
 	    }
 
-	    if (typeCi != null && typeCi.isAbstract()
+	    if (typeCi != null 
+		    && options.targetMapEntry(pi.typeInfo().name, pi.encodingRule("sql")) == null 
+		    && typeCi.isAbstract()
 		    && typeCi.matches(SqlConstants.RULE_TGT_SQL_ALL_EXCLUDE_ABSTRACT)) {
-		// TBD: exclude if map entry is defined for the abstract type?
 		continue;
 	    }
 
