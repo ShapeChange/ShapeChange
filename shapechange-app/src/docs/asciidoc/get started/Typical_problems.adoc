@@ -48,7 +48,8 @@ resources/config/testEA.xml__
 
 * Contact your system administrators and ask them for the settings to
 access HTTP resources from Java Virtual Machines (e.g. using
-the -Dhttp.proxyHost -Dhttp.proxyPort parameters).
+the -Dhttps.proxyHost -Dhttps.proxyPort parameters; for plain HTTP,
+use http.proxyHost and http.proxyPort).
 
 |A FileNotFound exception is raised when generating a feature catalogue
 or the log file |Verify that the path to the ShapeChange folder is
