@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2012 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.ElementType;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.Operation;
-import name.fraser.neil.plaintext.diff_match_patch;
-import name.fraser.neil.plaintext.diff_match_patch.Diff;
+import de.interactive_instruments.shapechange.plaintext.diff_match_patch;
+import de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff;
 
 public class Differ {
 
@@ -307,15 +307,15 @@ public class Differ {
 		}
 	    } else {
 		if (sRef != null) {
-		    strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(
-			    name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
+		    strdiffs.add(new de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff(
+			    de.interactive_instruments.shapechange.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
 		    strdiffs.addAll(strDiffer.diff_main(sRef, s1));
 		    sRef = null;
 		} else if (!first && !s1.isEmpty()) {
-		    strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(
-			    name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
-		    strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(
-			    name.fraser.neil.plaintext.diff_match_patch.Operation.INSERT, s1));
+		    strdiffs.add(new de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff(
+			    de.interactive_instruments.shapechange.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
+		    strdiffs.add(new de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff(
+			    de.interactive_instruments.shapechange.plaintext.diff_match_patch.Operation.INSERT, s1));
 		}
 	    }
 	    heading = !heading;
@@ -341,10 +341,10 @@ public class Differ {
 		}
 	    } else {
 		if (!first && sRef == null && !s2.isEmpty()) {
-		    strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(
-			    name.fraser.neil.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
-		    strdiffs.add(new name.fraser.neil.plaintext.diff_match_patch.Diff(
-			    name.fraser.neil.plaintext.diff_match_patch.Operation.DELETE, s2));
+		    strdiffs.add(new de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff(
+			    de.interactive_instruments.shapechange.plaintext.diff_match_patch.Operation.EQUAL, "-==-" + head + "-==-"));
+		    strdiffs.add(new de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff(
+			    de.interactive_instruments.shapechange.plaintext.diff_match_patch.Operation.DELETE, s2));
 		}
 	    }
 	    heading = !heading;

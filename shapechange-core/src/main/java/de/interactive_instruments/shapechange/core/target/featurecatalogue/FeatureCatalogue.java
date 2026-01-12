@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2015 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,6 @@ package de.interactive_instruments.shapechange.core.target.featurecatalogue;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -91,12 +89,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.interactive_instruments.shapechange.core.transformation.TransformationConstants;
-import de.interactive_instruments.shapechange.core.ui.StatusBoard;
-import de.interactive_instruments.shapechange.core.util.XMLUtil;
-import de.interactive_instruments.shapechange.core.util.XMLWriter;
-import de.interactive_instruments.shapechange.core.util.XsltWriter;
-import de.interactive_instruments.shapechange.core.util.ZipHandler;
 import de.interactive_instruments.shapechange.core.DefaultModelProvider;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
@@ -104,8 +96,8 @@ import de.interactive_instruments.shapechange.core.RuleRegistry;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.Type;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.Type;
 import de.interactive_instruments.shapechange.core.fop.FopErrorListener;
 import de.interactive_instruments.shapechange.core.fop.FopMsgHandler;
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
@@ -119,14 +111,20 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.model.TaggedValues;
 import de.interactive_instruments.shapechange.core.model.TextConstraint;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
-import de.interactive_instruments.shapechange.core.target.DeferrableOutputWriter;
-import de.interactive_instruments.shapechange.core.target.SingleTarget;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement;
-import de.interactive_instruments.shapechange.core.modeldiff.Differ;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.ElementType;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.Operation;
+import de.interactive_instruments.shapechange.core.modeldiff.Differ;
+import de.interactive_instruments.shapechange.core.target.DeferrableOutputWriter;
+import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.transformation.TransformationConstants;
+import de.interactive_instruments.shapechange.core.ui.StatusBoard;
+import de.interactive_instruments.shapechange.core.util.XMLUtil;
+import de.interactive_instruments.shapechange.core.util.XMLWriter;
+import de.interactive_instruments.shapechange.core.util.XsltWriter;
+import de.interactive_instruments.shapechange.core.util.ZipHandler;
+import de.interactive_instruments.shapechange.plaintext.diff_match_patch;
 import io.github.classgraph.ClassGraph;
-import name.fraser.neil.plaintext.diff_match_patch;
 
 /**
  * @author Clemens Portele (portele at interactive-instruments dot de)

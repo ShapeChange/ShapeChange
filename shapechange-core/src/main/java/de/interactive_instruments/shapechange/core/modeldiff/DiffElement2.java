@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2022 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ package de.interactive_instruments.shapechange.core.modeldiff;
 import java.util.LinkedList;
 
 import de.interactive_instruments.shapechange.core.model.Info;
-import name.fraser.neil.plaintext.diff_match_patch.Diff;
+import de.interactive_instruments.shapechange.plaintext.diff_match_patch.Diff;
 
 /**
  * 
