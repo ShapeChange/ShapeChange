@@ -57,27 +57,43 @@
 
 	<repositories>
 		<repository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>https://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<!--		<repository>-->
-		<!--			<id>ii-maven</id>-->
-		<!--			<name>interactive instruments maven snapshots repository</name>-->
-		<!--			<url>-->
-		<!--
-		https://dl.interactive-instruments.de/repository/maven-snapshots/</url>-->
-		<!--		</repository>-->
-		<repository>
 			<id>ii-maven-releases</id>
 			<name>interactive instruments maven releases repository</name>
 			<url>
 				https://dl.interactive-instruments.de/repository/maven-releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>ii-maven</id>
+			<name>interactive instruments maven snapshots repository</name>
+			<url>
+				https://dl.interactive-instruments.de/repository/maven-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo1.maven.org/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>central</id>
+			<name>Central Portal Snapshots</name>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -536,7 +552,8 @@
 					<extensions>true</extensions>
 					<configuration>
 						<publishingServerId>central</publishingServerId>
-<!--						<skipPublishing>true</skipPublishing>-->
+						<deploymentName>${project.artifactId} ${project.version}</deploymentName>
+						<!--						<skipPublishing>true</skipPublishing>-->
 					</configuration>
 				</plugin>
 				<plugin>
