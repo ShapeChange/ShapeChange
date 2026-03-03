@@ -15,23 +15,21 @@
 :nofooter:
 
 [[Deriving_Schematron_from_SBVR_constraints_for_ISO_19109_compliant]]
-= Deriving Schematron from SBVR constraints for ISO 19109 compliant
-schema
+= Deriving Schematron from SBVR constraints for ISO 19109 compliant schema
 
 The process of deriving ISO Schematron code from constraints expressed
-in SBVR for an [underline]#ISO 19109 compliant application schema# consists of four
-steps, only two of which are required:
+in SBVR for an [underline]#ISO 19109 compliant application schema# consists 
+of three steps, only two of which are required:
 
 . Loading the conceptual schemas (required)
-. Loading the constraints from an excel file (optional)
-. Parsing the constraints to First Order Logic constraints/expressions
-(can be omitted if step 2 has been omitted)
+. Loading the constraints from an excel file and parsing them to First Order Logic constraints/expressions (optional)
 . Translate the FOL constraints to ISO Schematron (required)
 
 NOTE: It is possible to have all constraints in the model itself. Once
 the model has been loaded they will be parsed to FOL while the model is
-being postprocessed.  In that case, the transformations to load them
-from an Excel file and subsequently parse them would not be applicable.
+being post-processed. In that case, the transformation to load them
+from an Excel file and parse them as part of transformation post-processing
+would not be applicable.
 
 The _https://portal.opengeospatial.org/files/?artifact_id=63794[OGC
 Testbed 11 Aviation – Guidance on Using SBVR Engineering Report]_
@@ -54,11 +52,10 @@ https://shapechange.net/resources/example/sbvr2fol2schematron/iso19109_compliant
 be found on the
 xref:../../transformations/Constraint_Loader.adoc[Constraint
 Loader] page
-. Parsing the constraints to First Order Logic constraints/expressions
-.. more details on the configuration of the according transformation can
-be found on the
-xref:../../transformations/First_Order_Logic_Constraint_Parser.adoc[First
-Order Logic Constraint Parser] page
+.. NOTE: Parsing the rules to First Order Logic constraints/expressions and
+validating them is common transformer postprocessing
+functionality (for further details, see
+xref:../../transformations/Common_Transformer_Functionality.adoc#Parsing_and_Validating_Constraints[here]).
 . Translate the FOL constraints to Schematron
 .. ensure that 'TargetXmlSchema' is used as configuration element
 .. ensure that the 'defaultEncodingRule' identifies an encoding rule
@@ -105,14 +102,11 @@ to Schematron] page
         <ProcessParameter name="constraintExcelFile" value="./constraint_informations.xlsx"/>
       </parameters>
     </Transformer>
-    <Transformer
-      class="de.interactive_instruments.shapechange.core.transformation.constraints.FolConstraintParsing"
-      id="step2" input="step1" mode="enabled"/>
   </transformers>
   <targets>
     <TargetXmlSchema
       class="de.interactive_instruments.shapechange.core.target.fol2schematron.FOL2Schematron"
-      inputs="step2" mode="enabled">
+      inputs="step1" mode="enabled">
       <targetParameter name="outputDirectory" value="./results/sch"/>
       <targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
       <xi:include href="https://shapechange.net/resources/config/StandardRules.xml"/>

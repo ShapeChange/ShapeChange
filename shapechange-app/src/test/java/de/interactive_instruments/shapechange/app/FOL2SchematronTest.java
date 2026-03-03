@@ -43,7 +43,7 @@ public class FOL2SchematronTest extends BasicTestSCXML {
 		 * Schematron derived from SBVR (with intermediate translation to FOL)
 		 */
 	    multiTest("src/integrationtests/aixmSchemaMerger/basic/testEA_Sbvr.xml",
-				new String[] { "xml" }, "testResults/fol/fromSbvr/sch/step3",
+				new String[] { "xml" }, "testResults/fol/fromSbvr/sch/step2",
 				"src/integrationtests/aixmSchemaMerger/basic/reference");
 	}
 

@@ -72,7 +72,7 @@ import de.interactive_instruments.shapechange.core.transformation.Transformer;
  * constraints is available in a single piece of code that can be executed at
  * any place in the transformation process of ShapeChange.
  * <p>
- * By default, the transformation parses and valdiates all types of constraints.
+ * By default, the transformation parses and validates all types of constraints.
  * If a profile constraint is encountered, it is converted according to its type
  * before parsing and validating it. The transformation parameters named
  * <i>xxx</i>ConstraintTypeRegex influence to which type the constraint is
