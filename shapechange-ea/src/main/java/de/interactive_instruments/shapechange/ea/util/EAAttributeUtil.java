@@ -560,10 +560,11 @@ public class EAAttributeUtil extends AbstractEAUtil {
     /**
      * Updates the tagged values with given name (which can be a fully qualified
      * name) in the tagged values of the given attribute. Does NOT delete those
-     * tagged values. NOTE: This method is especially useful when setting tagged
-     * values that are defined by an MDG / UML Profile, since these tagged values
-     * cannot be created programmatically (they are created by EA - for further
-     * details, see http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * tagged values and does NOT create a new tag. NOTE: This method is especially
+     * useful when setting tagged values that are defined by an MDG / UML Profile,
+     * since these tagged values cannot be created programmatically (they are
+     * created by EA - for further details, see
+     * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
      * 
      * @param att               the attribute in which the tagged values shall be
      *                          updated
@@ -626,14 +627,18 @@ public class EAAttributeUtil extends AbstractEAUtil {
 
 	return switch (mnr) {
 
-	case 101 -> "EA error encountered while updating 'AllowDuplicates' on EA attribute '$1$'. Error message is: $2$";
-	case 102 -> "EA error encountered while updating EA tagged value '$1$' on attribute '$2$' with value '$3$'. Error message is: $4$";
+	case 101 ->
+	    "EA error encountered while updating 'AllowDuplicates' on EA attribute '$1$'. Error message is: $2$";
+	case 102 ->
+	    "EA error encountered while updating EA tagged value '$1$' on attribute '$2$' with value '$3$'. Error message is: $4$";
 	case 103 -> "EA error encountered while updating 'IsCollection' on EA attribute '$1$'. Error message is: $2$";
 	case 104 -> "EA error encountered while updating 'IsOrdered' on EA attribute '$1$'. Error message is: $2$";
-	case 105 -> "EA error encountered while updating 'Length' on EA attribute '$1$' with value '$2$'. Error message is: $3$";
+	case 105 ->
+	    "EA error encountered while updating 'Length' on EA attribute '$1$' with value '$2$'. Error message is: $3$";
 	case 106 -> "EA error encountered while updating 'Precision' on EA attribute '$1$'. Error message is: $2$";
 	case 107 -> "EA error encountered while updating 'Scale' on EA attribute '$1$'. Error message is: $2$";
-	case 108 -> "EA error encountered while updating new EA constraint '$1$' for attribute '$2$'. Error message is: $3$";
+	case 108 ->
+	    "EA error encountered while updating new EA constraint '$1$' for attribute '$2$'. Error message is: $3$";
 	case 109 -> "EA error encountered while updating 'StereotypeEx' of EA attribute '$1$'. Error message is: $2$";
 	case 110 -> "EA error encountered while updating 'ClassifierID' on EA attribute '$1$'. Error message is: $2$";
 	case 111 -> "EA error encountered while updating 'Type' on EA attribute '$1$'. Error message is: $2$";

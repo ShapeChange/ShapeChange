@@ -222,6 +222,28 @@ public class EAElementUtil extends AbstractEAUtil {
 	cTV.Refresh();
     }
 
+    /**
+     * Deletes the (first) attribute whose name equals the given name in the given
+     * element.
+     * 
+     * @param e                       tbd
+     * @param nameOfAttributeToDelete tbd
+     */
+    public static void deleteAttribute(Element e, String nameOfAttributeToDelete) {
+
+	Collection<Attribute> cAtts = e.GetAttributes();
+	cAtts.Refresh();
+
+	for (short i = 0; i < cAtts.GetCount(); i++) {
+	    Attribute att = cAtts.GetAt(i);
+	    if (att.GetName().equals(nameOfAttributeToDelete)) {
+		cAtts.Delete(i);
+		cAtts.Refresh();
+		break;
+	    }
+	}
+    }
+
     public static void setEAAbstract(Element e, boolean isAbstract) throws EAException {
 
 	e.SetAbstract("true");
@@ -805,16 +827,22 @@ public class EAElementUtil extends AbstractEAUtil {
 	case 103 -> "EA error encountered while updating 'GenType' of EA element '$1$'. Error message is: $2$";
 	case 104 -> "EA error encountered while updating 'Notes' of EA element '$1$'. Error message is: $2$";
 	case 105 -> "EA error encountered while updating 'StereotypeEx' of EA element '$1$'. Error message is: $2$";
-	case 106 -> "EA error encountered while updating EA tagged value '$1$' of element '$2$' with value '$3$'. Error message is: $4$";
+	case 106 ->
+	    "EA error encountered while updating EA tagged value '$1$' of element '$2$' with value '$3$'. Error message is: $4$";
 	case 107 -> "EA error encountered while updating new EA method '$1$' on element '$2$'. Error message is: $3$";
-	case 108 -> "EA error encountered while updating new EA attribute '$1$' on element '$2$'. Error message is: $3$";
-	case 109 -> "EA error encountered while loading linked document for EA element '$1$' from path '$2$'. Error message is: $3$";
+	case 108 ->
+	    "EA error encountered while updating new EA attribute '$1$' on element '$2$'. Error message is: $3$";
+	case 109 ->
+	    "EA error encountered while loading linked document for EA element '$1$' from path '$2$'. Error message is: $3$";
 	case 110 -> "EA error encountered while updating 'Stereotype' of EA element '$1$'. Error message is: $2$";
 	case 111 -> "EA error encountered while updating 'Author' of EA element '$1$'. Error message is: $2$";
 	case 112 -> "EA error encountered while updating 'Status' of EA element '$1$'. Error message is: $2$";
+	case 113 -> "EA error encountered while updating 'Attributes' of EA element '$1$'. Error message is: $2$";
 
-	case 1005 -> "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
-	case 1006 -> "EA error encountered while updating new EA constraint '$1$' for element '$2$'. Error message is: $3$";
+	case 1005 ->
+	    "EA error encountered while updating new EA connector between elements '$1$' and '$2$'. Error message is: $3$";
+	case 1006 ->
+	    "EA error encountered while updating new EA constraint '$1$' for element '$2$'. Error message is: $3$";
 	default -> "(" + EAElementUtil.class.getName() + ") Unknown message with number: " + mnr;
 	};
     }

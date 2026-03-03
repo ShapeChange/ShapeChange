@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.sparx.Attribute;
 import org.sparx.AttributeConstraint;
 import org.sparx.AttributeTag;
@@ -47,9 +47,9 @@ import org.sparx.RoleTag;
 import de.interactive_instruments.shapechange.core.Multiplicity;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.StructuredNumber;
 import de.interactive_instruments.shapechange.core.Type;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Constraint;
@@ -495,8 +495,8 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 	    // Normalize
 	    if (initialValueCache != null) {
 		initialValueCache = initialValueCache.trim();
-		initialValueCache = StringUtils.removeStart(initialValueCache, "\"");
-		initialValueCache = StringUtils.removeEnd(initialValueCache, "\"");
+		initialValueCache = Strings.CS.removeStart(initialValueCache, "\"");
+		initialValueCache = Strings.CS.removeEnd(initialValueCache, "\"");
 		String iv = initialValueCache.toLowerCase();
 		if (iv.equals("true"))
 		    initialValueCache = "true";

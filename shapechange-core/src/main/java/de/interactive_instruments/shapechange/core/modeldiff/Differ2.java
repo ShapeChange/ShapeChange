@@ -53,6 +53,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.Options;
@@ -464,7 +465,7 @@ public class Differ2 {
 	if (pkgMapEntry != null) {
 	    String sourceNamePrefix = pkgMapEntry.getType();
 	    String targetNamePrefix = pkgMapEntry.getTargetType();
-	    fullNameForSearch = targetNamePrefix + StringUtils.removeStart(fullNameForSearch, sourceNamePrefix);
+	    fullNameForSearch = targetNamePrefix + Strings.CS.removeStart(fullNameForSearch, sourceNamePrefix);
 	}
 
 	return targetPackagesByFullNameInSchema.get(fullNameForSearch);
@@ -478,7 +479,7 @@ public class Differ2 {
 	if (pkgMapEntry != null) {
 	    String sourceNamePrefix = pkgMapEntry.getType();
 	    String targetNamePrefix = pkgMapEntry.getTargetType();
-	    fullNameInSchema = targetNamePrefix + StringUtils.removeStart(fullNameInSchema, sourceNamePrefix);
+	    fullNameInSchema = targetNamePrefix + Strings.CS.removeStart(fullNameInSchema, sourceNamePrefix);
 	}
 
 	return fullNameInSchema.contains("::") ? StringUtils.substringAfterLast(fullNameInSchema, "::")
