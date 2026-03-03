@@ -33,12 +33,13 @@ a * ShapeChange - processing application schemas for geographic information
 package de.interactive_instruments.shapechange.core.target.xmlschema;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -59,8 +60,9 @@ import de.interactive_instruments.shapechange.core.ProcessRuleSet;
 import de.interactive_instruments.shapechange.core.RuleRegistry;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.TargetXmlSchemaConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.TargetXmlSchemaConfiguration;
+import de.interactive_instruments.shapechange.core.Type;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Constraint;
 import de.interactive_instruments.shapechange.core.model.Model;
@@ -331,7 +333,7 @@ public class XmlSchema implements Target, MessageSource {
 	    if (ci.matches("rule-xsd-cls-mixin-classes"))
 		break;
 	}
-	
+
 	// Content model
 	switch (cat) {
 	case Options.ENUMERATION:
@@ -544,8 +546,8 @@ public class XmlSchema implements Target, MessageSource {
 	}
 
 	// check if the value type of the property is encoded as an attribute (group)
-	MapEntry mea = options.attributeMapEntry(propi.typeInfo().name, cibase.encodingRule("xsd"));
-	MapEntry meag = options.attributeGroupMapEntry(propi.typeInfo().name, cibase.encodingRule("xsd"));
+	MapEntry mea = options.attributeMapEntry(typeMappingName(propi), cibase.encodingRule("xsd"));
+	MapEntry meag = options.attributeGroupMapEntry(typeMappingName(propi), cibase.encodingRule("xsd"));
 	boolean unionAsGroup = typeCi != null && typeCi.matches("rule-xsd-cls-union-asGroup");
 	if (mea != null || meag != null || unionAsGroup) {
 	    MessageContext mc = result.addDebug(this, 2003, propi.name(), propi.inClass().name());
@@ -576,7 +578,7 @@ public class XmlSchema implements Target, MessageSource {
 	    return;
 	}
 
-	boolean valueIsSimpleType = isSimpleType(typeCi, propi.typeInfo().name, propi.encodingRule("xsd"));
+	boolean valueIsSimpleType = isSimpleType(typeCi, typeMappingName(propi), propi.encodingRule("xsd"));
 
 	schDoc.setQueryBinding("xslt2");
 
@@ -709,7 +711,7 @@ public class XmlSchema implements Target, MessageSource {
 		if (valueIsSimpleType) {
 		    piValueXPath = piElementXPath + "/text()";
 		} else if ("inline".equalsIgnoreCase(propi.inlineOrByReference())
-			|| !options.xmlReferenceable(propi.typeInfo().name, propi.encodingRule("xsd"))) {
+			|| !options.xmlReferenceable(typeMappingName(propi), propi.encodingRule("xsd"))) {
 		    piValueXPath = piElementXPath + "/*";
 		} else if ("byreference".equalsIgnoreCase(propi.inlineOrByReference())) {
 		    piValueXPath = piElementXPath + "/@xlink:href";
@@ -1201,6 +1203,56 @@ public class XmlSchema implements Target, MessageSource {
 	return false;
     }
 
+    /**
+     * Identifies the name to use when mapping the value type of the property.
+     * Typically, this is the name of the value type. However, ISO 19107:2019
+     * introduced 'Collection' with additional information about the contained
+     * element types as an umbrella definition for multiple geometric aggregate
+     * types. This method checks if the value type name is 'Collection' and if the
+     * tag 'collectionGeometryType' on the property has a non-empty value. If that
+     * is not the case, the value type name is returned. Otherwise, the method
+     * identifies several cases (in the comma-separated list of keywords within the
+     * tag value, all converted to lower-case):
+     * <ul>
+     * <li>geometry type is only 'point': returns 'MultiPoint'</li>
+     * <li>geometry type is only 'curve' and/or 'line': returns 'MultiCurve'</li>
+     * <li>geometry type is only 'surface' and/or 'polygon': returns 'MultiSurface'</li>
+     * <li>geometry type is only 'solid': returns 'MultiSolid'</li>
+     * <li>otherwise: returns 'MultiGeometry'</li>
+     * 
+     * @param propi property object
+     * @return the name for mapping the type from the given property
+     */
+    public static String typeMappingName(PropertyInfo propi) {
+
+	Type typeInfo = propi.typeInfo();
+
+	String typeName = typeInfo.name;
+	String collectionGeometryTypeTV = propi.taggedValue("collectionGeometryType");
+
+	if (typeName.equals("Collection") && StringUtils.isNotBlank(collectionGeometryTypeTV)) {
+
+	    Set<String> collectionGeometryTypes = new HashSet<>(
+		    Arrays.asList(StringUtils.split(collectionGeometryTypeTV, " ,")).stream()
+			    .map(s -> s.toLowerCase(Locale.ENGLISH)).toList());
+
+	    if (collectionGeometryTypes.stream().allMatch(s -> "point".equals(s))) {
+		return "MultiPoint";
+	    } else if (collectionGeometryTypes.stream().allMatch(s -> "curve".equals(s) || "line".equals(s))) {
+		return "MultiCurve";
+	    } else if (collectionGeometryTypes.stream().allMatch(s -> "surface".equals(s) || "polygon".equals(s))) {
+		return "MultiSurface";
+	    } else if (collectionGeometryTypes.stream().allMatch(s -> "solid".equals(s))) {
+		return "MultiSolid";
+	    } else {
+		return "MultiGeometry";
+	    }
+
+	} else {
+	    return typeName;
+	}
+    }
+
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
@@ -1437,28 +1489,43 @@ public class XmlSchema implements Target, MessageSource {
 	case 0 -> "Context: property '$1$'.";
 	case 1 -> "Context: class '$1$'.";
 	case 2 -> "Context: association class '$1$'.";
-	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 3 ->
+	    "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 	case 10 -> "Class '$1$' in package '$2$' is not associated with an XSD document.";
-	case 15 -> "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
+	case 15 ->
+	    "Package '$1$' not associated with any XML Schema document. Set tagged value 'xsdDocument' on the according schema package. Alternatively, if a PackageInfo element is used in the input configuration of ShapeChange to mark that package as an application schema, set the XML attribute 'xsdDocument'. Package '$1$' will be associated with XML Schema document '$2$'.";
 
 	case 1000 -> "Skipping XML Schema output, as configured.";
-	case 1001 -> "No namespace was found for namespace abbreviation '$1$', configured via tagged value 'xsdForcedImports' on schema package '$2$'. No import will be created for this namespace abbreviation.";
+	case 1001 ->
+	    "No namespace was found for namespace abbreviation '$1$', configured via tagged value 'xsdForcedImports' on schema package '$2$'. No import will be created for this namespace abbreviation.";
 
 	/*
 	 * 2000 - 2999: Schematron assertions (for value or nilReason etc.)
 	 */
-	case 2002 -> "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check for value or nilReason will not be created.";
-	case 2003 -> "??The value type of property '$1$' of class '$2$' is encoded as an attribute (group). A schematron assertion to check for value or nilReason will not be created.";
-	case 2004 -> "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check for value or nilReason will not be created for the property.";
-	case 2005 -> "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check for value or nilReason will not be created for the property.";
-	case 2006 -> "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check nilReason values will not be created.";
-	case 2007 -> "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
-	case 2008 -> "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
-	case 2009 -> "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
-	case 2010 -> "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
-	case 2011 -> "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
-	case 2012 -> "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
-	case 2013 -> "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
+	case 2002 ->
+	    "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check for value or nilReason will not be created.";
+	case 2003 ->
+	    "??The value type of property '$1$' of class '$2$' is encoded as an attribute (group). A schematron assertion to check for value or nilReason will not be created.";
+	case 2004 ->
+	    "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2005 ->
+	    "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check for value or nilReason will not be created for the property.";
+	case 2006 ->
+	    "??Property '$1$' of class '$2$' is encoded as an attribute. A schematron assertion to check nilReason values will not be created.";
+	case 2007 ->
+	    "??Union '$1$' that has property '$2$' is encoded as an attribute group or as a CharacterString. A schematron assertion to check nilReason values will not be created for the property.";
+	case 2008 ->
+	    "??Mixin '$1$' that has property '$2$' is encoded as an attribute group. A schematron assertion to check nilReason values will not be created for the property.";
+	case 2009 ->
+	    "voidReasonType defined for property '$1$' (directly via tagged value or indirectly via parameter) is '$2$'. This type is not an enumeration or does not define any enum. An assertion to check @nilReason for this property will NOT be created.";
+	case 2010 ->
+	    "No voidReasonType defined or found for property '$1$' (directly via tagged value or indirectly via parameter). An assertion to check @nilReason for this property will NOT be created.";
+	case 2011 ->
+	    "Schematron schema '$1$' will not be written, because it does not contain any schematron rule (with assertion(s)).";
+	case 2012 ->
+	    "defaultVoidReasonType defined by the according target parameter is: '$1$'. The type could not be found in the model, using the rules defined for the parameter. Accordingly, a default void reason type is not set.";
+	case 2013 ->
+	    "voidReasonType defined for property '$1$' of class '$2$' (via tagged value 'voidReasonType') is: '$3$'. The type could not be found in the model, using the rules defined for finding the void reason type (defined by the tagged value). The tagged value will be ignored.";
 
 	case 10012 -> "Generating XML Schema for application schema '$1$'.";
 	case 10016 -> "Processing class '$1$', rule '$2$'.";
