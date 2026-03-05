@@ -44,17 +44,23 @@ import org.sparx.Element;
 public class EAElement extends AbstractEAModelElement {
 
     private int elementId;
+    private int packageId;
     private String metaType;
 
     public EAElement(Element elmt, String pathToElement) {
 
 	super(elmt.GetName().trim(), pathToElement + elmt.GetName().trim());
 	this.elementId = elmt.GetElementID();
+	this.packageId = elmt.GetPackageID();
 	this.metaType = elmt.GetMetaType();
     }
 
     public int getElementId() {
 	return elementId;
+    }
+    
+    public int getPackageId() {
+	return packageId;
     }
 
     public String getMetaType() {

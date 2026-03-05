@@ -61,4 +61,37 @@
 	<XsdMapEntry type="TP_Node" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:NodeType" xmlElement="gml:Node" xmlPropertyType="gml:DirectedNodePropertyType"/>
 	<XsdMapEntry type="TP_Object" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:AbstractTopologyType" xmlElement="gml:AbstractTopology" xmlPropertyType="_P_"/>
 	<XsdMapEntry type="TP_Solid" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:TopoSolidType" xmlElement="gml:TopoSolid" xmlPropertyType="gml:DirectedTopoSolidPropertyType"/>
+	
+	<!-- Mappings for types from ISO 19107:2019; using crosswalk infos from ISO 19107:2019 Annex D (informative) -->
+	<XsdMapEntry type="Arc" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:ArcString" xmlType="gml:ArcStringType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="BSpline" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:BSpline" xmlType="gml:BSplineType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Complex" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:GeometricComplexType" xmlElement="gml:GeometricComplex" xmlPropertyType="gml:GeometricComplexPropertyType"/>
+	<XsdMapEntry type="Cone" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:Cone" xmlType="gml:ConeType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Curve" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:CurveType" xmlElement="gml:Curve" xmlPropertyType="gml:CurvePropertyType"/>
+	<XsdMapEntry type="Cylinder" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:Cylinder" xmlType="gml:CylinderType" xmlPropertyType="_P_"/>
+	<!-- Note: DirectPosition also exists in ISO 19107:2003, thus that map entry can directly be used. -->
+	<XsdMapEntry type="Envelope" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:EnvelopeType" xmlElement="gml:Envelope" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Geodesic" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:GeodesicString" xmlType="gml:GeodesicStringType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Geometry" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:AbstractGeometryType" xmlElement="gml:AbstractGeometry" xmlPropertyType="gml:GeometryPropertyType"/>
+	<XsdMapEntry type="Line" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:LineString" xmlType="gml:LineStringType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="OffsetCurve" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:OffsetCurve" xmlType="gml:OffsetCurveType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="ParametricCurveSurface" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:AbstractGriddedSurface" xmlType="gml:AbstractGriddedSurfaceType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Point" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:PointType" xmlElement="gml:Point" xmlPropertyType="gml:PointPropertyType"/>
+	<XsdMapEntry type="Polygon" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:PolygonPatch" xmlType="gml:PolygonPatchType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="PolyhedralSurface" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:PolyhedralSurfaceType" xmlElement="gml:PolyhedralSurface" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Solid" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:SolidType" xmlElement="gml:Solid" xmlPropertyType="gml:SolidPropertyType"/>
+	<XsdMapEntry type="Sphere" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:Sphere" xmlType="gml:SphereType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="Spiral" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:Clothoid" xmlType="gml:ClothoidType" xmlPropertyType="_P_"/>
+	<!-- No unique mapping for Spline. Should be defined individually, or more analysis is necessary - and maybe a mechanism as for 'Collection'. -->
+	<XsdMapEntry type="Surface" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:SurfaceType" xmlElement="gml:Surface" xmlPropertyType="gml:SurfacePropertyType"/>
+	<XsdMapEntry type="Triangle" xsdEncodingRules="iso19136_2007 gml33" xmlElement="gml:Triangle" xmlType="gml:TriangleType" xmlPropertyType="_P_"/>
+	<XsdMapEntry type="TriangulatedSurface" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:TriangulatedSurfaceType" xmlElement="gml:TriangulatedSurface" xmlPropertyType="_P_"/>
+	<!-- Additional mappings for virtual types, to cover the aggregate cases defined by 'Collection' -->
+	<!-- These types will internally be used by ShapeChange for 'Collection' cases with defined tagged value 'collectionGeometryType' -->
+	<XsdMapEntry type="MultiCurve" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:MultiCurveType" xmlElement="gml:MultiCurve" xmlPropertyType="gml:MultiCurvePropertyType"/>
+	<XsdMapEntry type="MultiGeometry" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:MultiGeometryType" xmlElement="gml:MultiGeometry" xmlPropertyType="gml:MultiGeometryPropertyType"/>
+	<XsdMapEntry type="MultiPoint" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:MultiPointType" xmlElement="gml:MultiPoint" xmlPropertyType="gml:MultiPointPropertyType"/>
+	<XsdMapEntry type="MultiSolid" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:MultiSolidType" xmlElement="gml:MultiSolid" xmlPropertyType="gml:MultiSolidPropertyType"/>
+	<XsdMapEntry type="MultiSurface" xsdEncodingRules="iso19136_2007 gml33" xmlType="gml:MultiSurfaceType" xmlElement="gml:MultiSurface" xmlPropertyType="gml:MultiSurfacePropertyType"/>
+	
 </xsdMapEntries>

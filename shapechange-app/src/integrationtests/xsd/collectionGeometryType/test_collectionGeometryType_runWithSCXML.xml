@@ -7,42 +7,22 @@
    <input id="INPUT">
       <parameter name="inputModelType" value="SCXML"/>
       <parameter name="inputFile"
-                 value="src/integrationtests/aixmSchemaMerger/basic/test_SBVR_AIXM.zip"/>
-      <parameter name="appSchemaNameRegex" value="AppSchema|ExtSchema."/>
-      <parameter name="publicOnly" value="true"/>
-      <parameter name="checkingConstraints" value="enabled"/>
-      <parameter name="folConstraintTypeRegex" value="SBVR"/>
+                 value="src/integrationtests/xsd/collectionGeometryType/test_collectionGeometryType.zip"/>
+      <parameter name="appSchemaNameRegex" value="Test Schema.*"/>
       <parameter name="sortedSchemaOutput" value="true"/>
-      <parameter name="isAIXM" value="true"/>
-      <packages>
-         <PackageInfo ns="http://shapechange.net/test/sbvr2schematron/extA"
-                      nsabr="a"
-                      packageName="ExtSchemaA"
-                      version="1.0"
-                      xsdDocument="ext_a.xsd"/>
-         <PackageInfo ns="http://shapechange.net/test/sbvr2schematron/extB"
-                      nsabr="b"
-                      packageName="ExtSchemaB"
-                      version="1.0"
-                      xsdDocument="ext_b.xsd"/>
-         <PackageInfo ns="http://shapechange.net/test/sbvr2schematron/extC"
-                      nsabr="c"
-                      packageName="ExtSchemaC"
-                      version="1.0"
-                      xsdDocument="ext_c.xsd"/>
-         <PackageInfo ns="http://shapechange.net/test/sbvr2schematron/extD"
-                      nsabr="d"
-                      packageName="ExtSchemaD"
-                      version="1.0"
-                      xsdDocument="ext_d.xsd"/>
-      </packages>
-      <stereotypeAliases>
-         <StereotypeAlias alias="object" wellknown=""/>
-         <StereotypeAlias alias="message" wellknown=""/>
-         <StereotypeAlias alias="choice" wellknown="Union"/>
-         <StereotypeAlias alias="feature" wellknown="FeatureType"/>
-         <StereotypeAlias alias="extension" wellknown="AIXMExtension"/>
-      </stereotypeAliases>
+      <descriptorSources>
+         <DescriptorSource descriptor="documentation" source="ea:notes"/>
+         <DescriptorSource descriptor="globalIdentifier" source="ea:guidtoxml"/>
+         <DescriptorSource descriptor="definition" source="tag" tag="definition"/>
+         <DescriptorSource descriptor="description" source="tag" tag="description"/>
+         <DescriptorSource descriptor="example" source="tag" tag="example"/>
+         <DescriptorSource descriptor="alias" source="tag" tag="alias"/>
+         <DescriptorSource descriptor="legalBasis" source="tag" tag="legalBasis"/>
+         <DescriptorSource descriptor="dataCaptureStatement"
+                           source="tag"
+                           tag="dataCaptureStatement"/>
+         <DescriptorSource descriptor="language" source="tag" tag="language"/>
+      </descriptorSources>
       <stereotypeAliases>
          <StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
          <StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>
@@ -62,39 +42,18 @@
    </input>
    <log>
       <parameter name="reportLevel" value="INFO"/>
-      <parameter name="logFile" value="testResults/fol/fromSbvr/log.xml"/>
+      <parameter name="logFile" value="testResults/xsd/collectionGeometryType/log.xml"/>
    </log>
-   <transformers>
-      <Transformer class="de.interactive_instruments.shapechange.core.transformation.aixm.AIXMSchemaMerger"
-                   id="step1"
-                   input="INPUT"
-                   mode="enabled">
-         <parameters>
-            <ProcessParameter name="coreSchemaTargetNamespace"
-                              value="http://shapechange.net/test/sbvr2schematron"/>
-         </parameters>
-      </Transformer>
-      <Transformer class="de.interactive_instruments.shapechange.core.transformation.constraints.ConstraintLoader"
-                   id="step2"
-                   input="step1"
-                   mode="enabled">
-         <parameters>
-            <ProcessParameter name="constraintExcelFile"
-                              value="src/integrationtests/aixmSchemaMerger/basic/test_SBVR_rules.xlsx"/>
-         </parameters>
-      </Transformer>
-   </transformers>
    <targets>
-      <TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.fol2schematron.FOL2Schematron"
-                       inputs="step2"
+      <TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema"
                        mode="enabled">
-         <targetParameter name="outputDirectory" value="testResults/fol/fromSbvr/sch"/>
-         <targetParameter name="defaultEncodingRule" value="aixm"/>
+         <targetParameter name="outputDirectory" value="testResults/xsd/collectionGeometryType"/>
+         <targetParameter name="sortedOutput" value="true"/>
+         <targetParameter name="defaultEncodingRule" value="myrule"/>
          <rules>
-            <EncodingRule extends="iso19136_2007" name="aixm">
-               <rule name="rule-all-cls-aixmDatatype"/>
-               <rule name="rule-all-prop-uomAsAttribute"/>
-            </EncodingRule>
+            <EncodingRule extends="gml33" name="myrule">
+
+				</EncodingRule>
          </rules>
          <rules>
             <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">

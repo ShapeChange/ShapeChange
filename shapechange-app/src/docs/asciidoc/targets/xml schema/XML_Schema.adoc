@@ -904,3 +904,25 @@ Using an XsdPropertyMapEntry to omit encoding of a UML property
 altogether woud be another, obvious example for a situation in which the
 Schematron conversion of an OCL constraint that uses that property is
 not possible.
+
+[[MappingIso19107Collection]]
+==== Mapping Type Collection from ISO 19107:2019
+
+ISO 19107:2019 defines 'Collection' as an umbrella type for geometry
+aggregates (MultiPoint, etc.). Which geometry types the collection may
+contain needs to be defined per property. One option would be a constraint.
+Another option that ShapeChange can understand is to define tagged value
+xref:../../application schemas/UML_profile.adoc#collectionGeometryType[collectionGeometryType] 
+on the property. When the XmlSchema target encounters
+a property with value type 'Collection', and the property has a non-empty value
+for tagged value 'collectionGeometryType', it automatically switches the type
+name used for looking up a suitable map entry as follows:
+
+* geometry type is only 'point': returns 'MultiPoint'
+* geometry type is only 'curve' and/or 'line': returns 'MultiCurve'
+* geometry type is only 'surface' and/or 'polygon': returns 'MultiSurface'
+* geometry type is only 'solid': returns 'MultiSolid'
+* otherwise: returns 'MultiGeometry'
+
+For example, if a property has value type 'Collection' and tag 'collectionGeometryType'
+with value `curve, line`, then the target will look for a map entry for type 'MultiCurve'.

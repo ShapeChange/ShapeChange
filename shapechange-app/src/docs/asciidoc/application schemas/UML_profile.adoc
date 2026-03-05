@@ -297,6 +297,8 @@ xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codel
 
 |codeListValuePattern |class |codeList |https://portal.opengeospatial.org/files/?artifact_id=46324[document on the OGC portal] |Value access pattern for the code list containing the substitution points \{codeList} and \{value}, where \{codeList} is the base URI of the code list (replaced by the tagged value codeList and \{value} the local identifier of the code list value. Default \\{codeList}/\{value}\  |XML Schema target |xref:../targets/xml schema/Non_Standard_Conversion_Rules.adoc#rule-xsd-cls-codelist-constraints[rule-xsd-cls-codelist-constraints]
 
+|[[collectionGeometryType]]collectionGeometryType |property | | |A comma-separated list of codes from the GeometryType codelist in ISO 19107:2019. To be set whenever the property type is 'Collection' from ISO 19107:2019, and additional information is needed to specify which element types are expected. The tag can be used to provide that information, so that targets can encode the value type with the appropriate aggregate geometry type. |XML Schema target (and more to be added as needed) |xref:../targets/xml schema/XML_Schema.adoc#MappingIso19107Collection[XmlSchema Target: Mapping Type Collection from ISO 19107:2019]
+
 |dataCaptureStatement |all | | |A statement describing how to capture instances of the model element from the real-world. +
 NOTE: This tagged value is the default source for descriptor 'dataCaptureStatement'. | |xref:../get started/The_element_input.adoc#Descriptor_sources[Descriptor sources]
 

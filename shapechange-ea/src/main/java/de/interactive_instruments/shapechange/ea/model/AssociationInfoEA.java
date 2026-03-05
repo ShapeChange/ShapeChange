@@ -117,12 +117,14 @@ public class AssociationInfoEA extends AssociationInfoImpl implements Associatio
 	// Source end ...
 	roles[0] = new Role();
 	ce = eaConnector.GetClientEnd();
+	// The ElementID of the element at the source end of this connector.
 	cid = eaConnector.GetClientID();
 	roles[0].ci = document.fClassById.get(cid.toString());
 	roles[0].eaConnEnd = ce;
 	// Target end ...
 	roles[1] = new Role();
 	ce = eaConnector.GetSupplierEnd();
+	// The ElementID of the element at the target end of this connector.
 	cid = eaConnector.GetSupplierID();
 	roles[1].ci = document.fClassById.get(cid.toString());
 	roles[1].eaConnEnd = ce;

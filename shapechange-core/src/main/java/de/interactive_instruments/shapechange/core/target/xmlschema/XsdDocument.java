@@ -1460,7 +1460,7 @@ public class XsdDocument implements MessageSource {
 			addImport(typeCi.pkg().xmlns(), typeCi.pkg().targetNamespace());
 		    }
 		} else {
-		    MapEntry me = options.baseMapEntry(pi.typeInfo().name, ci.encodingRule("xsd"));
+		    MapEntry me = options.baseMapEntry(XmlSchema.typeMappingName(pi), ci.encodingRule("xsd"));
 		    if (me != null) {
 			itemType = me.p1;
 			addImport(me.p1);
@@ -2114,11 +2114,11 @@ public class XsdDocument implements MessageSource {
 	String asAttRef = "";
 	String asAttGroupRef = "";
 	if (typeCi != null) {
-	    MapEntry me = options.attributeMapEntry(typeCi.name(), cibase.encodingRule("xsd"));
+	    MapEntry me = options.attributeMapEntry(XmlSchema.typeMappingName(pi), cibase.encodingRule("xsd"));
 	    if (me != null) {
 		asAttRef = me.rule;
 	    }
-	    me = options.attributeGroupMapEntry(typeCi.name(), cibase.encodingRule("xsd"));
+	    me = options.attributeGroupMapEntry(XmlSchema.typeMappingName(pi), cibase.encodingRule("xsd"));
 	    if (me != null) {
 		asAttGroupRef = me.rule;
 	    }
@@ -2379,7 +2379,7 @@ public class XsdDocument implements MessageSource {
 		     * Identify base and type content from the value type; this is important for
 		     * correct declaration
 		     */
-		    MapEntry me = options.baseMapEntry(pi.typeInfo().name, pi.encodingRule("xsd"));
+		    MapEntry me = options.baseMapEntry(XmlSchema.typeMappingName(pi), pi.encodingRule("xsd"));
 		    if (me != null) {
 			base = me.p1;
 			baseType = me.p1;
@@ -2623,7 +2623,7 @@ public class XsdDocument implements MessageSource {
 	 * pre-defined element, type, attribute or attributeGroup
 	 */
 	Type ti = propi.typeInfo();
-	MapEntry me = options.typeMapEntry(ti.name, cibase.encodingRule("xsd"));
+	MapEntry me = options.typeMapEntry(XmlSchema.typeMappingName(propi), cibase.encodingRule("xsd"));
 
 	boolean multiplicityAlreadySet = false;
 
@@ -2667,9 +2667,9 @@ public class XsdDocument implements MessageSource {
 		boolean asList = asList(propi);
 
 		if (propi.matches("rule-xsd-prop-att-map-entry") && !isAttribute) {
-		    MapEntry mea = options.attributeMapEntry(ti.name, cibase.encodingRule("xsd"));
+		    MapEntry mea = options.attributeMapEntry(XmlSchema.typeMappingName(propi), cibase.encodingRule("xsd"));
 		    String asAttRef = (mea != null ? mea.rule : "");
-		    MapEntry meag = options.attributeGroupMapEntry(ti.name, cibase.encodingRule("xsd"));
+		    MapEntry meag = options.attributeGroupMapEntry(XmlSchema.typeMappingName(propi), cibase.encodingRule("xsd"));
 		    String asAttGroupRef = (meag != null ? meag.rule : "");
 
 		    if (!asAttRef.equals("") || !asAttGroupRef.equals("")) {
@@ -2768,7 +2768,7 @@ public class XsdDocument implements MessageSource {
 		boolean asArray = asArray(propi);
 		String asArrayTargetElement = null;
 		if (asArray) {
-		    MapEntry me2 = options.elementMapEntry(ti.name, cibase.encodingRule("xsd"));
+		    MapEntry me2 = options.elementMapEntry(XmlSchema.typeMappingName(propi), cibase.encodingRule("xsd"));
 		    if (me2 == null) {
 			asArray = false;
 			MessageContext mc = result.addError(this, 172, pName, ti.name);
