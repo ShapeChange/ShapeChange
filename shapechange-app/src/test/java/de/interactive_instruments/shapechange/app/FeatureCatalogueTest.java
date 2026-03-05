@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ public class FeatureCatalogueTest extends BasicTestSCXML {
     public void testTaggedValues() {
 
 	multiTest("src/integrationtests/featureCatalogue/taggedValues/testEA_featureCatalogue_taggedValues.xml",
-		new String[] { "html", "docx" }, "testResults/featureCatalogue/taggedValues/results",
+		new String[] { "html", "docx", "xml" }, "testResults/featureCatalogue/taggedValues/results",
 		"src/integrationtests/featureCatalogue/taggedValues/reference/results");
     }
 

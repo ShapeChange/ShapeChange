@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type='text/xsl' href='./html.xsl'?>
 <!--Feature catalogue created using ShapeChange-->
 <FeatureCatalogue xsi:noNamespaceSchemaLocation="FC.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -12,10 +12,49 @@
     <versionNumber>1.0</versionNumber>
     <taggedValues></taggedValues>
   </ApplicationSchema>
+  <FeatureType id="_C31">
+    <name>CodeList</name>
+    <code>C_CL</code>
+    <characterizedBy idref="_A31_31"></characterizedBy>
+    <characterizedBy idref="_A31_32"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Code List Type</type>
+    <taggedValues>
+      <taggedValue tag="code">C_CL</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A31_31">
+    <name>code1</name>
+    <code>C_C1</code>
+    <cardinality>1</cardinality>
+    <taggedValues>
+      <taggedValue tag="code">C_C1</taggedValue>
+      <taggedValue tag="tv1">test1</taggedValue>
+      <taggedValue tag="tv2">test2</taggedValue>
+    </taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A31_32">
+    <name>code2</name>
+    <code>C_C2</code>
+    <cardinality>1</cardinality>
+    <taggedValues>
+      <taggedValue tag="code">C_C2</taggedValue>
+    </taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
   <FeatureType id="_C30">
     <name>FeatureType</name>
     <code>C_FT</code>
-    <characterizedBy idref="_AT2"></characterizedBy>
+    <characterizedBy idref="_ATas2"></characterizedBy>
     <characterizedBy idref="_A30_33"></characterizedBy>
     <characterizedBy idref="_A30_34"></characterizedBy>
     <package idref="_P4"></package>
@@ -26,12 +65,12 @@
       <taggedValue tag="tv2">test2</taggedValue>
     </taggedValues>
   </FeatureType>
-  <FeatureRelationship id="__T2">
+  <FeatureRelationship id="__Tas2">
     <name>(unbestimmt)</name>
-    <roles idref="_AT2"></roles>
-    <roles idref="_AS2"></roles>
+    <roles idref="_ATas2"></roles>
+    <roles idref="_ASas2"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT2">
+  <RelationshipRole id="_ATas2">
     <name>role1</name>
     <code>C_R1</code>
     <cardinality>1</cardinality>
@@ -44,10 +83,10 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C32" category="feature type">Type</FeatureTypeIncluded>
-    <relation idref="__T2"></relation>
+    <relation idref="__Tas2"></relation>
   </RelationshipRole>
-  <RelationshipRole id="_AS2">
-    <name>role_S2</name>
+  <RelationshipRole id="_ASas2">
+    <name>role_Sas2</name>
     <cardinality>1</cardinality>
     <isNavigable>false</isNavigable>
     <taggedValues></taggedValues>
@@ -55,8 +94,8 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C30" category="feature type">FeatureType</FeatureTypeIncluded>
-    <relation idref="__T2"></relation>
-    <InverseRole idref="_AT2"></InverseRole>
+    <relation idref="__Tas2"></relation>
+    <InverseRole idref="_ATas2"></InverseRole>
   </RelationshipRole>
   <FeatureAttribute id="_A30_33">
     <name>att1</name>
@@ -72,8 +111,8 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="code list">CodeList</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
-    <enumeratedBy idref="_A31_31"></enumeratedBy>
-    <enumeratedBy idref="_A31_32"></enumeratedBy>
+    <enumeratedBy idref="_A31_31_VALUE"></enumeratedBy>
+    <enumeratedBy idref="_A31_32_VALUE"></enumeratedBy>
   </FeatureAttribute>
   <FeatureAttribute id="_A30_34">
     <name>att2</name>
@@ -96,7 +135,7 @@
       <taggedValue tag="code">C_T</taggedValue>
     </taggedValues>
   </FeatureType>
-  <Value id="_A31_31">
+  <Value id="_A31_31_VALUE">
     <label>code1</label>
     <code>code1</code>
     <taggedValues>
@@ -105,7 +144,7 @@
       <taggedValue tag="tv2">test2</taggedValue>
     </taggedValues>
   </Value>
-  <Value id="_A31_32">
+  <Value id="_A31_32_VALUE">
     <label>code2</label>
     <code>code2</code>
     <taggedValues>
