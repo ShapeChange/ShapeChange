@@ -5,7 +5,7 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
-		<parameter name="addTaggedValues" value="code,dataCaptureStatement" />
+		<parameter name="addTaggedValues" value="code,dataCaptureStatement,lesbarerName" />
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile" value="src/integrationtests/sql/codelists/test_sql.qea" />
 		<parameter name="appSchemaNameRegex" value="Test3" />
@@ -104,7 +104,7 @@
 				value="DEF: [[definition]]; DESC: [[description]]; EX: [[example]]; LB: [[legalBasis]]; DCS: [[dataCaptureStatement]]; PC: [[primaryCode]]" />
 			<targetParameter name="documentationNoValue" value="" />
 			<targetParameter name="descriptorsForCodelist"
-				value="alias(columnName=myAlias;size=255),dataCaptureStatement(columnName=myDataCaptureStatement),definition(columnName=myDefinition),description(columnName=myDescription),documentation(columnName=myDocumentation),example(columnName=myExample),legalBasis(columnName=myLegalBasis),primaryCode(columnName=myPrimaryCode)" />
+				value="alias(columnName=myAlias;size=255),dataCaptureStatement(columnName=myDataCaptureStatement),definition(columnName=myDefinition),description(columnName=myDescription),documentation(columnName=myDocumentation),example(columnName=myExample),legalBasis(columnName=myLegalBasis),primaryCode(columnName=myPrimaryCode),TV:lesbarerName(columnName=lesbarerName)" />
 			<targetParameter name="codeNameColumnName" value="myName" />
 			<targetParameter name="codeNameSize" value="50"/>
 			<xi:include
