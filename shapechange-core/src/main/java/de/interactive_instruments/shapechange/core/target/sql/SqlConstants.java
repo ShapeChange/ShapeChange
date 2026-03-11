@@ -710,10 +710,10 @@ public class SqlConstants {
 
     /**
      * <pre>
-     * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)*\))?
+     * (name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode|TV:[a-zA-Z]+)(\(((columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)(;(columnName|size|columnDocumentation)=([^,;\)]|(?&lt;=\\)[,;\)])+)*\))?
      * </pre>
      */
-    public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode)(\\(((columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)(;(columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)*\\))?";
+    public static final String DESCRIPTORS_FOR_CODELIST_REGEX = "(name|documentation|alias|definition|description|example|legalBasis|dataCaptureStatement|primaryCode|TV:[a-zA-Z]+)(\\(((columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)(;(columnName|size|columnDocumentation)=([^,;\\)]|(?<=\\\\)[,;\\)])+)*\\))?";
 
     public static final String DEFAULT_CODESTATUSCL_TYPE = "CodeStatusCL";
     public static final int DEFAULT_CODESTATUSCL_LENGTH = 50;

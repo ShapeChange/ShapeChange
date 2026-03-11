@@ -2267,12 +2267,14 @@ descriptors are specified by their identifier ('alias', 'definition',
 'primaryCode'). In addition to the descriptors, the following
 identifiers can be used:
 
-* 'documentation' - to include documentation that is derived from
+* `'documentation'` - to include documentation that is derived from
 descriptors using the parameters
 xref:./SQL_DDL.adoc#documentationTemplate[documentationTemplate]
 and
 xref:./SQL_DDL.adoc#documentationNoValue[documentationNoValue]
-* 'name' - to include the name of the code again, if necessary
+* `'name'` - to include the name of the code again, if necessary
+* `'TV:' + {tagged value name}` - to include a specific tagged value 
+(available since v4.1.0)
 
 An identifier can have metadata attached to it (in parentheses). Each
 metadata item is given as a key-value-pair. Metadata items are separated

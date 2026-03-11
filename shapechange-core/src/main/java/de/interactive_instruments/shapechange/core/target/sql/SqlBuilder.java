@@ -2648,6 +2648,11 @@ public class SqlBuilder implements MessageSource {
 			} else if (descName.equalsIgnoreCase("globalIdentifier")) {
 
 			    value = codePi.globalIdentifier();
+			    
+			} else if (descName.startsWith("TV:")) {
+			    
+			    String tvName = descName.substring(3);
+			    value = codePi.taggedValue(tvName);
 			}
 
 			if (value == null) {
