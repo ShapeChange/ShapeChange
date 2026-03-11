@@ -81,6 +81,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
+import org.apache.logging.log4j.util.Strings;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -230,6 +231,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     public static final String PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS = "includeCodelistsAndEnumerations";
     public static final String PARAM_XSL_LOCALIZATION_URI = "xslLocalizationUri";
     public static final String PARAM_LOCALIZATION_MESSAGES_URI = "localizationMessagesUri";
+    public static final String PARAM_ADDITIONAL_TAGGED_VALUES_IN_TEMPORARY_XML = "additionalTaggedValuesInTemporaryXml";
 
     /**
      * Suffix to add to the 'id' attribute of a Value element that represents an
@@ -302,6 +304,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     private static boolean includeCodelistURI = true;
     private static boolean deleteXmlFile = false;
     private static String representTaggedValues = null;
+    private static List<String> additionalTaggedValuesInTemporaryXml = new ArrayList<>();
 
     private static boolean includeDiagrams = false;
     private static boolean includeDiagramDocumentation = false;
@@ -397,6 +400,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	refModel = null;
 	refPackage = null;
 	representTaggedValues = null;
+	additionalTaggedValuesInTemporaryXml = new ArrayList<>();
 	writer = null;
 	xsldocxContentTypesFileName = "docx_contentTypes.xsl";
 	xsldocxfileName = "docx.xsl";
@@ -649,7 +653,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    }
 
 	    if (representTaggedValues != null) {
-		PrintTaggedValues(pi, representTaggedValues, null, false);
+		PrintTaggedValues(pi, representTaggedValues, additionalTaggedValuesInTemporaryXml, null, false);
 	    }
 
 	    writer.endElement("taggedValues");
@@ -968,7 +972,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    writer.startElement("taggedValues");
 
 	    if (representTaggedValues != null) {
-		PrintTaggedValues(pix, representTaggedValues, null, false);
+		PrintTaggedValues(pix, representTaggedValues, additionalTaggedValuesInTemporaryXml, null, false);
 	    }
 
 	    writer.endElement("taggedValues");
@@ -1245,7 +1249,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	 */
 	if (representTaggedValues != null) {
 	    // TBD diff tagged values
-	    PrintTaggedValues(propi, representTaggedValues, null, true);
+	    PrintTaggedValues(propi, representTaggedValues, additionalTaggedValuesInTemporaryXml, null, true);
 	}
 
 	writer.endElement("Value");
@@ -1482,7 +1486,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		if (representTaggedValues != null) {
 		    // TODO diff tagged values
-		    PrintTaggedValues(ci, representTaggedValues, null, false);
+		    PrintTaggedValues(ci, representTaggedValues, additionalTaggedValuesInTemporaryXml, null, false);
 		}
 
 		writer.endElement("taggedValues");
@@ -1540,17 +1544,24 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      * @param printTaggedValuesElement <code>true</code>, if the surrounding
      *                                 &lt;taggedValues&gt; element shall be added,
      *                                 if the Info object has at least one value for
-     *                                 the tags from the list; else
+     *                                 the tags from the two lists (taglist and
+     *                                 additional tagged values); else
      *                                 <code>false</code> (in that case, the
      *                                 &lt;taggedValues&gt; element will never be
      *                                 added and is assumed to be set outside of the
      *                                 method)
      * @throws SAXException
      */
-    private void PrintTaggedValues(Info i, String taglist, Operation op, boolean printTaggedValuesElement)
-	    throws SAXException {
+    private void PrintTaggedValues(Info i, String taglist, List<String> additionalTaggedValuesInTemporaryXml, Operation op,
+	    boolean printTaggedValuesElement) throws SAXException {
 
-	TaggedValues taggedValues = i.taggedValuesForTagList(taglist);
+	String combinedTaglist = StringUtils.stripToEmpty(taglist);
+	if (!additionalTaggedValuesInTemporaryXml.isEmpty()) {
+	    combinedTaglist = combinedTaglist + (combinedTaglist.isEmpty() ? "" : ",")
+		    + Strings.join(additionalTaggedValuesInTemporaryXml, ',');
+	}
+
+	TaggedValues taggedValues = i.taggedValuesForTagList(combinedTaglist);
 
 	if (!taggedValues.isEmpty()) {
 
@@ -1833,7 +1844,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	}
 
 	if (representTaggedValues != null) {
-	    PrintTaggedValues(propi, representTaggedValues, null, false);
+	    PrintTaggedValues(propi, representTaggedValues, additionalTaggedValuesInTemporaryXml, null, false);
 	}
 
 	writer.endElement("taggedValues");
@@ -3002,6 +3013,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	this.transformationParameters.put("lang", lang);
 	this.transformationParameters.put("noAlphabeticSortingForProperties", noAlphabeticSortingForProperties);
 	this.transformationParameters.put("includeCodelistsAndEnumerations", includeCodelistsAndEnumerations);
+	this.transformationParameters.put("representTaggedValues", representTaggedValues);
     }
 
     private void initialiseFromOptions() {
@@ -3078,6 +3090,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    includeCodelistURI = false;
 
 	representTaggedValues = options.parameter("representTaggedValues");
+
+	additionalTaggedValuesInTemporaryXml = options.parameterAsStringList(this.getClass().getName(),
+		PARAM_ADDITIONAL_TAGGED_VALUES_IN_TEMPORARY_XML, null, true, true);
 
 	// TBD: one could check that input has actually loaded the diagrams;
 	// however, in future a transformation could create images as well

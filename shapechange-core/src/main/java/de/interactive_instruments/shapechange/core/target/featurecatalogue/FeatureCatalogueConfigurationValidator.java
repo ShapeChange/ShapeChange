@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2017 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,15 +44,14 @@ import java.util.stream.Stream;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.TargetConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.TargetConfiguration;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -61,8 +60,8 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageCont
 public class FeatureCatalogueConfigurationValidator extends AbstractConfigurationValidator {
 
     protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
-	    FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH, FeatureCatalogue.PARAM_CSS_PATH,
-	    FeatureCatalogue.PARAM_DELETE_XML_FILE, FeatureCatalogue.PARAM_DOCX_STYLE,
+	    FeatureCatalogue.PARAM_ADDITIONAL_TAGGED_VALUES_IN_TEMPORARY_XML, FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH,
+	    FeatureCatalogue.PARAM_CSS_PATH, FeatureCatalogue.PARAM_DELETE_XML_FILE, FeatureCatalogue.PARAM_DOCX_STYLE,
 	    FeatureCatalogue.PARAM_DOCX_TEMPLATE_FILE_PATH, FeatureCatalogue.PARAM_DONT_TRANSFORM,
 	    FeatureCatalogue.PARAM_FEATURE_TERM, FeatureCatalogue.PARAM_INCLUDE_ALIAS,
 	    FeatureCatalogue.PARAM_INCLUDE_CODELIST_URI, FeatureCatalogue.PARAM_INCLUDE_CODELISTS_AND_ENUMERATIONS,
@@ -288,7 +287,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 		    mc.addDetail(this, 1, FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
 		}
 	    }
-	    
+
 	    if (!miscContentFolder.isDirectory()) {
 		isValid = false;
 		MessageContext mc = result.addError(this, 108, miscContentFolder.getAbsolutePath());
@@ -333,24 +332,29 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 
 	return switch (mnr) {
 	case 0 -> "Context: FeatureCatalogue target configuration element with 'inputs'='$1$'.";
-	case 1 -> "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/feature-catalogue/";
+	case 1 ->
+	    "For further details, see the documentation of parameter '$1$' on http://shapechange.net/targets/feature-catalogue/";
 	case 2 -> FeatureCatalogue.PARAM_JAVA_EXE_PATH + " is: $1$";
 	case 3 -> FeatureCatalogue.PARAM_JAVA_OPTIONS + " is: $1$";
 	case 4 -> "Message from external java executable: $1$";
 	case 5 -> "Value of parameter '$1$' is invalid. Found: $2$";
 
 	case 100 -> "Parameter '" + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
-		    + "' is set to '$1$'. A Transformer with this factory could not be instantiated. Make the implementation of the transformer factory available on the classpath.";
-	case 101 -> "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
-		    + "' was not found in the configuration.";
+		+ "' is set to '$1$'. A Transformer with this factory could not be instantiated. Make the implementation of the transformer factory available on the classpath.";
+	case 101 ->
+	    "The required parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT + "' was not found in the configuration.";
 	case 102 -> "Parameter '" + FeatureCatalogue.PARAM_OUTPUT_FORMAT
-		    + "' contains 'DOCX' and/or 'FRAMEHTML'. These formats require an XSLT 2.0 processor, which should be set via the configuration parameter '"
-		    + FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
-		    + "'. That parameter was not found, and the default TransformerFactory implementation is not 'net.sf.saxon.TransformerFactoryImpl' (which is known to be an XSLT 2.0 processor); ensure that the parameter is configured correctly.";
-	case 103 -> "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
-	case 104 -> "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
-	case 105 -> "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
-	case 106 -> "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
+		+ "' contains 'DOCX' and/or 'FRAMEHTML'. These formats require an XSLT 2.0 processor, which should be set via the configuration parameter '"
+		+ FeatureCatalogue.PARAM_XSL_TRANSFORMER_FACTORY
+		+ "'. That parameter was not found, and the default TransformerFactory implementation is not 'net.sf.saxon.TransformerFactoryImpl' (which is known to be an XSLT 2.0 processor); ensure that the parameter is configured correctly.";
+	case 103 ->
+	    "Invalid command for invocation of external java executable. Return code was: $2$. Command was: $1$";
+	case 104 ->
+	    "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+	case 105 ->
+	    "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
+	case 106 ->
+	    "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
 	case 107 -> "The referenced directory with miscellaneous content does not exist: $1$.";
 	case 108 -> "The referenced directory with miscellaneous content is not a directory: $1$.";
 	default -> "(" + FeatureCatalogue.class.getName() + ") Unknown message with number: " + mnr;

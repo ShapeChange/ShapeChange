@@ -31,6 +31,7 @@
     <cardinality>1</cardinality>
     <taggedValues>
       <taggedValue tag="code">C_C1</taggedValue>
+      <taggedValue tag="sequenceNumber">1</taggedValue>
       <taggedValue tag="tv1">test1</taggedValue>
       <taggedValue tag="tv2">test2</taggedValue>
     </taggedValues>
@@ -45,6 +46,7 @@
     <cardinality>1</cardinality>
     <taggedValues>
       <taggedValue tag="code">C_C2</taggedValue>
+      <taggedValue tag="sequenceNumber">2</taggedValue>
     </taggedValues>
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
@@ -63,6 +65,7 @@
       <taggedValue tag="code">C_FT</taggedValue>
       <taggedValue tag="tv1">test1</taggedValue>
       <taggedValue tag="tv2">test2</taggedValue>
+      <taggedValue tag="tv3">test3</taggedValue>
     </taggedValues>
   </FeatureType>
   <FeatureRelationship id="__Tas2">
@@ -76,6 +79,7 @@
     <cardinality>1</cardinality>
     <taggedValues>
       <taggedValue tag="code">C_R1</taggedValue>
+      <taggedValue tag="sequenceNumber">1</taggedValue>
       <taggedValue tag="tv1">test1</taggedValue>
       <taggedValue tag="tv2">test2</taggedValue>
     </taggedValues>
@@ -103,8 +107,10 @@
     <cardinality>1</cardinality>
     <taggedValues>
       <taggedValue tag="code">C_A1</taggedValue>
+      <taggedValue tag="sequenceNumber">2</taggedValue>
       <taggedValue tag="tv1">test1</taggedValue>
       <taggedValue tag="tv2">test2</taggedValue>
+      <taggedValue tag="tv3">test3</taggedValue>
     </taggedValues>
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
@@ -120,6 +126,7 @@
     <cardinality>1</cardinality>
     <taggedValues>
       <taggedValue tag="code">C_A2</taggedValue>
+      <taggedValue tag="sequenceNumber">3</taggedValue>
     </taggedValues>
     <voidable>false</voidable>
     <orderIndicator>0</orderIndicator>
@@ -140,6 +147,7 @@
     <code>code1</code>
     <taggedValues>
       <taggedValue tag="code">C_C1</taggedValue>
+      <taggedValue tag="sequenceNumber">1</taggedValue>
       <taggedValue tag="tv1">test1</taggedValue>
       <taggedValue tag="tv2">test2</taggedValue>
     </taggedValues>
@@ -149,6 +157,7 @@
     <code>code2</code>
     <taggedValues>
       <taggedValue tag="code">C_C2</taggedValue>
+      <taggedValue tag="sequenceNumber">2</taggedValue>
     </taggedValues>
   </Value>
 </FeatureCatalogue>
