@@ -41,7 +41,7 @@ subsequent processing.
 Within the ShapeChange Java framework, each model validator is
 implemented as a Java class.  In keeping with the modularity of
 ShapeChange, each such validator implements the
-de.interactive-instruments.ShapeChange.ModelValidation.ModelValidator
+de.interactive_instruments.shapechange.core.modelvalidation.ModelValidator
 interface, which contains a method "hook" for validating a given model. 
 The fully-qualified name of this class must be provided in the
 configuration file.

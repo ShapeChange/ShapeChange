@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src/integrationtests/variousFunctionality/gfmModelValidator/strict_fail/testEA_gfmModelValidation_strict_fail.xml"
+                   end="Thu Mar 12 15:52:48 CET 2026"
+                   resultCode="0"
+                   start="Thu Mar 12 15:51:07 CET 2026"
+                   version="4.1.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_END' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\variousFunctionality\gfmModelValidator\test_gfmModelValidation.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\variousFunctionality\gfmModelValidator\test_gfmModelValidation.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\variousFunctionality\gfmModelValidator\test_gfmModelValidation.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\variousFunctionality\gfmModelValidator\test_gfmModelValidation.qea"/>
+      <ProcessFlowInfo message="Now validating input model 'INPUT' of transformation/target with id/class 'TRF_END'."/>
+      <Info message="---------- Executing model validator 'valGeneralFeatureModel' ----------"/>
+      <ProcessFlowInfo message="---------- now processing: rule-val-gfm-noAssociationClass ----------"/>
+      <Error message="Class 'FeatureTypeAssoClassFail' shall not be an association class.">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::FeatureTypeAssoClassFail"/>
+      </Error>
+      <ProcessFlowInfo message="---------- now processing: rule-val-gfm-associationOnlyBetweenFeatureTypes ----------"/>
+      <Error message="Association (DataType1Pass.role_Sas3 - FeatureType3Fail.ft3todt1) within schemas selected for processing shall only be modeled between two feature types.">
+         <Detail xmlns="" message="Context: Association_ft3todt1_fail"/>
+      </Error>
+      <Error message="Association (FeatureType3Fail.role_Sas4 - DataType2Fail.dt2toft3) within schemas selected for processing shall only be modeled between two feature types.">
+         <Detail xmlns="" message="Context: Association_dt2toft3_fail"/>
+      </Error>
+      <ProcessFlowInfo message="---------- now processing: rule-val-gfm-dataTypeNoPropertyWithFeatureValueType ----------"/>
+      <Error message="Data type 'DataType2Fail', property 'attFt3' shall not have a feature type as value type.">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::DataType2Fail::attFt3"/>
+      </Error>
+      <Error message="Data type 'DataType2Fail', property 'dt2toft3' shall not have a feature type as value type.">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::DataType2Fail::dt2toft3"/>
+      </Error>
+      <ProcessFlowInfo message="---------- now processing: rule-val-gfm-noPropertyWithDataTypeSupertypeAsValueType ----------"/>
+      <Error message="Data type 'FeatureType3Fail', property 'attDtSupertype' shall not use a data type that is a supertype as value type.">
+         <Detail xmlns=""
+                 message="Context: Model::Schemas::Test Schema::FeatureType3Fail::attDtSupertype"/>
+      </Error>
+      <ProcessFlowInfo message="Validated input model 'INPUT' of transformation/target with id/class 'TRF_END'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results/>
+</ShapeChangeResult>

@@ -1,0 +1,109 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[GFM_Model_Validator]]
+= GFM Model Validator
+
+(since v4.1.0)
+
+[[Introduction]]
+== Introduction
+
+This model validator can check a number of rules regarding
+compliance to the General Feature Model (GFM). 
+
+IMPORTANT: Only model elements from the schemas selected 
+for processing will be tested! The configuration of the actual 
+transformation or target, which provides the execution context
+of the validator, defines which schemas are selected for processing.
+For further details, see the documentation of xref:../transformations/Common_Transformer_Functionality.adoc#Selecting_the_Schemas_to_Process[transformers] and xref:../targets/Output_Targets.adoc#Selecting_the_Schemas_to_Process[targets].
+
+[[Configuration]]
+== Configuration
+
+The following sections specifiy the configuration options for this
+model validator.
+
+[[Class]]
+=== Class
+
+The class for this model validator implementation is
+_de.interactive_instruments.shapechange.core.modelvalidation.gfm.GeneralFeatureModelValidator_
+
+[[Rules]]
+=== Rules
+
+[[rule-val-gfm-associationOnlyBetweenFeatureTypes]]
+==== rule-val-gfm-associationOnlyBetweenFeatureTypes
+
+Checks that an association is only modeled between two feature types.
+
+NOTE: Only checks associations where both ends are within 
+the schemas selected for processing.
+
+Parameters: _none_
+
+[[rule-val-gfm-dataTypeNoPropertyWithFeatureValueType]]
+==== rule-val-gfm-dataTypeNoPropertyWithFeatureValueType
+
+Checks that a data type does not have a property with a feature type as type.
+
+Parameters: _none_
+
+[[rule-val-gfm-noPropertyWithDataTypeSupertypeAsValueType]]
+==== rule-val-gfm-noPropertyWithDataTypeSupertypeAsValueType
+
+Checks that no property has a data type that is a supertype as type.
+
+NOTE: Only checks cases where the value type is from the schemas
+selected for processing.
+
+Parameters: _none_
+
+[[rule-val-gfm-noAssociationClass]]
+==== rule-val-gfm-noAssociationClass
+
+Checks that no class is an association class.
+
+Parameters: _none_
+
+
+[[Parameters]]
+=== Parameters
+
+_None at present_
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+_none at present_
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Validator id="valGeneralFeatureModel" class="de.interactive_instruments.shapechange.core.modelvalidation.gfm.GeneralFeatureModelValidator" mode="enabled" validationMode="strict">
+  <rules>
+    <ProcessRuleSet name="validate">
+      <rule name="rule-val-gfm-noAssociationClass"/>
+      <rule name="rule-val-gfm-associationOnlyBetweenFeatureTypes"/>
+      <rule name="rule-val-gfm-dataTypeNoPropertyWithFeatureValueType"/>
+      <rule name="rule-val-gfm-noPropertyWithDataTypeSupertypeAsValueType"/>
+    </ProcessRuleSet>
+  </rules>
+</Validator>
+----------

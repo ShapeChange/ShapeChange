@@ -65,16 +65,26 @@ public class VariousFunctionalityTest extends BasicTestSCXML {
     @Test
     public void testBasicModelValidation_lax() {
 
-	multiTest("src/integrationtests/variousFunctionality/basicModelValidation/lax/testEA_basicModelValidation_lax.xml",
+	multiTest(
+		"src/integrationtests/variousFunctionality/basicModelValidation/lax/testEA_basicModelValidation_lax.xml",
 		new String[] { "xsd" }, "testResults/variousFunctionality/basicModelValidation/lax",
 		"src/integrationtests/variousFunctionality/basicModelValidation/lax/reference");
     }
-    
+
     @Test
     public void testBasicModelValidation_strict_success() {
 
-	multiTest("src/integrationtests/variousFunctionality/basicModelValidation/strict_success/testEA_basicModelValidation_strict_success.xml",
+	multiTest(
+		"src/integrationtests/variousFunctionality/basicModelValidation/strict_success/testEA_basicModelValidation_strict_success.xml",
 		new String[] { "xsd" }, "testResults/variousFunctionality/basicModelValidation/strict_success",
 		"src/integrationtests/variousFunctionality/basicModelValidation/strict_success/reference");
+    }
+
+    @Test
+    public void testGfmModelValidation_strict_fail() {
+
+	executeAndError(
+		"src/integrationtests/variousFunctionality/gfmModelValidator/strict_fail/testEA_gfmModelValidation_strict_fail.xml",
+		"It is expected that the log contains an error, informing the user about model validation issues.");
     }
 }
