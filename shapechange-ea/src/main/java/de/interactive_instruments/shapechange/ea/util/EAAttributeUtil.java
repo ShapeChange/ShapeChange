@@ -36,6 +36,8 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.sparx.Attribute;
 import org.sparx.AttributeTag;
 import org.sparx.Collection;
@@ -621,6 +623,33 @@ public class EAAttributeUtil extends AbstractEAUtil {
      */
     public static boolean hasStereotype(Attribute att, String... stereotype) {
 	return hasStereotype(att.GetStereotypeEx(), stereotype);
+    }
+
+    /**
+     * Retrieve the initial value defined for the given attribute.
+     * 
+     * @param att Attribute to get the initial value from
+     * @return the initial value defined for the given attribute; <code>null</code>
+     *         if no initial value is defined; leading and trailing whitespace and
+     *         double-quotes are stripped; the strings 'true' and 'false' are
+     *         normalized to lower-case
+     */
+    public static String initialValue(Attribute att) {
+
+	String initialValue = StringUtils.stripToNull(att.GetDefault());
+
+	// Normalize
+	if (initialValue != null) {
+	    initialValue = Strings.CS.removeStart(initialValue, "\"");
+	    initialValue = Strings.CS.removeEnd(initialValue, "\"");
+	    String iv = initialValue.toLowerCase();
+	    if (iv.equals("true"))
+		initialValue = "true";
+	    if (iv.equals("false"))
+		initialValue = "false";
+	}
+
+	return initialValue;
     }
 
     public static String message(int mnr) {
