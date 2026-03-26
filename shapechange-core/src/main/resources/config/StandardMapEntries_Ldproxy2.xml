@@ -13,17 +13,17 @@
 	<MapEntry type="Year" rule="*" targetType="INTEGER" param=""/>
 	<MapEntry type="URI" rule="*" targetType="STRING" param=""/>
 	<MapEntry type="URL" rule="*" targetType="STRING" param=""/>
-	<MapEntry type="Measure" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Distance" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Length" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Angle" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Speed" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Velocity" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Area" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Volume" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Weight" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Height" rule="*" targetType="FLOAT" param=""/>
-	<MapEntry type="Pressure" rule="*" targetType="FLOAT" param=""/>
+	<MapEntry type="Measure" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Distance" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Length" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Angle" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Speed" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Velocity" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Area" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Volume" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Weight" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Height" rule="*" targetType="FLOAT" param="measure"/>
+	<MapEntry type="Pressure" rule="*" targetType="FLOAT" param="measure"/>
 	<MapEntry type="Percentage" rule="*" targetType="FLOAT" param=""/>
 	<MapEntry type="Temperature" rule="*" targetType="FLOAT" param=""/>
 	<MapEntry type="Bearing" rule="*" targetType="FLOAT" param=""/>

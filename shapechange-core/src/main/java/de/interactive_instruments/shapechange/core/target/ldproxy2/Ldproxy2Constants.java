@@ -44,6 +44,9 @@ public class Ldproxy2Constants {
     
     public static final String LI_LINEAGE_FRAGMENT_NAME = "li_lineage";
     public static final String LI_LINEAGE_OBJECT_TYPE = "LI_Lineage";
+    
+    public static final String MEASURE_FRAGMENT_NAME = "measure";
+    public static final String MEASURE_OBJECT_TYPE = "Measure";
 
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING = "initialValueEncoding";
     public static final String ME_PARAM_INITIAL_VALUE_ENCODING_CHARACT_TRUE = "true";
@@ -55,6 +58,9 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_LINK_INFOS = "linkInfos";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE = "urlTemplate";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_TABLE_NAME = "tableName";
+    
+    public static final String ME_PARAM_MEASURE = "measure";
+    
     /**
      * A characteristic for the parameter {@value #ME_PARAM_LINK_INFOS} that gives
      * information about the category of the conceptual type that is identified by
@@ -142,6 +148,8 @@ public class Ldproxy2Constants {
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";
     public static final String PARAM_SRID = "srid";
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
+    public static final String PARAM_MEASURE_VALUE_LABEL = "measureValueLabel";
+    public static final String PARAM_MEASURE_UOM_LABEL = "measureUomLabel";
     
     public static final String PARAM_CORETABLE = "coretable";
     public static final String PARAM_CORETABLE_PK_COLUMN = "coretablePkColumn";
@@ -203,6 +211,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
     public static final String RULE_ALL_PROPIDBYTV = "rule-ldp2-all-propertyIdByTaggedValue";
+    public static final String RULE_PROP_MEASURE = "rule-ldp2-prop-measure";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
     
     public static final String SQL_PREFIX_FLATTENED_TO_PARENT_TABLE = "flattenedTo:";

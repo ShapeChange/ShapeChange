@@ -1,0 +1,80 @@
+---
+id: test_schema
+enabled: true
+providerType: FEATURE
+providerSubType: SQL
+nativeCrs:
+  code: 31467
+  forceAxisOrder: NONE
+connectionInfo:
+  database: FIXME
+  host: FIXME
+  user: FIXME
+  password: FIXME-base64-encoded
+  schemas:
+  - public
+sourcePathDefaults:
+  primaryKey: pk
+  sortKey: pk
+types:
+  FeatureType1:
+    sourcePath: "/features{filter=featuretype='FeatureType1'}"
+    type: OBJECT
+    label: FeatureType1
+    schema: "#/fragments/FeatureType1"
+fragments:
+  FeatureType1:
+    type: OBJECT
+    objectType: FeatureType1
+    label: FeatureType1
+    properties:
+      oid:
+        sourcePath: id
+        type: STRING
+        role: ID
+      attMeasDynamicMulti:
+        sourcePath: "[JSON]properties/attMeasDynamicMulti"
+        type: OBJECT_ARRAY
+        objectType: Measure
+        label: attMeasDynamicMulti
+        constraints:
+          required: true
+          minOccurrence: 1
+        schema: "#/fragments/measure"
+      attMeasDynamicSingle:
+        sourcePath: "[JSON]properties/attMeasDynamicSingle"
+        type: OBJECT
+        objectType: Measure
+        label: attMeasDynamicSingle
+        constraints:
+          required: true
+        schema: "#/fragments/measure"
+      attMeasFixedMulti:
+        sourcePath: "[JSON]properties/attMeasFixedMulti"
+        type: VALUE_ARRAY
+        valueType: FLOAT
+        label: attMeasFixedMulti
+        unit: m
+        constraints:
+          minOccurrence: 0
+      attMeasFixedSingle:
+        sourcePath: "[JSON]properties/attMeasFixedSingle"
+        type: FLOAT
+        label: attMeasFixedSingle
+        unit: m
+  measure:
+    type: OBJECT
+    objectType: Measure
+    properties:
+      value:
+        sourcePath: value
+        type: FLOAT
+        label: Wert
+        constraints:
+          required: true
+      uom:
+        sourcePath: uom
+        type: STRING
+        label: Maßeinheit
+        constraints:
+          required: true

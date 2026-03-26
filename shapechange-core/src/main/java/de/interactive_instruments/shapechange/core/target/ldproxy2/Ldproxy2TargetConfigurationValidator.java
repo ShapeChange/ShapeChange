@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.w3c.dom.Element;
 
 import de.ii.ogcapi.collections.queryables.domain.QueryablesConfiguration.PathSeparator;
@@ -94,6 +95,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    /* Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, */ Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE,
 	    /* Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, */ Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 	    Ldproxy2Constants.PARAM_LINEARIZE_CURVES, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,
+	    Ldproxy2Constants.PARAM_MEASURE_UOM_LABEL, Ldproxy2Constants.PARAM_MEASURE_VALUE_LABEL,
 	    Ldproxy2Constants.PARAM_NATIVE_TIME_ZONE, Ldproxy2Constants.PARAM_OBJECT_IDENTIFIER_NAME,
 	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE,
 	    Ldproxy2Constants.PARAM_PROJECTIONS_ENABLE, Ldproxy2Constants.PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE,
@@ -176,6 +178,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_OUTPUT);
 	isValid = isValid & checkNonNegativeIntegerParameter(Ldproxy2Constants.PARAM_GML_SF_LEVEL);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_UOM_TV_NAME);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_MEASURE_UOM_LABEL);
+	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_MEASURE_VALUE_LABEL);
 	isValid = isValid
 		& checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME);
@@ -325,8 +329,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    for (ModelElementXmlEncoding xeiMexe : xei.getModelElementEncodings()) {
 			String key = xeiMexe.getApplicationSchemaName() + "#" + xeiMexe.getModelElementName();
 			ModelElementXmlEncoding testMexe = testMexeByKey.get(key);
-			if (testMexe != null && (StringUtils.compare(testMexe.getXmlName(), xeiMexe.getXmlName()) != 0
-				|| StringUtils.compare(testMexe.getXmlNamespace(), xeiMexe.getXmlNamespace()) != 0
+			if (testMexe != null && (Strings.CS.compare(testMexe.getXmlName(), xeiMexe.getXmlName()) != 0
+				|| Strings.CS.compare(testMexe.getXmlNamespace(), xeiMexe.getXmlNamespace()) != 0
 				|| Boolean.compare(testMexe.isXmlAttribute(), xeiMexe.isXmlAttribute()) != 0)) {
 
 			    MessageContext mc = result.addError(this, 111, testMexe.getApplicationSchemaName(),
@@ -347,9 +351,9 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    for (XmlNamespace xeiXns : xei.getXmlNamespaces()) {
 
 			XmlNamespace testXns = testXnsByNs.get(xeiXns.getNs());
-			if (testXns != null && (StringUtils.compare(testXns.getNsabr(), xeiXns.getNsabr()) != 0
-				|| StringUtils.compare(testXns.getLocation(), xeiXns.getLocation()) != 0
-				|| StringUtils.compare(testXns.getPackageName(), xeiXns.getPackageName()) != 0)) {
+			if (testXns != null && (Strings.CS.compare(testXns.getNsabr(), xeiXns.getNsabr()) != 0
+				|| Strings.CS.compare(testXns.getLocation(), xeiXns.getLocation()) != 0
+				|| Strings.CS.compare(testXns.getPackageName(), xeiXns.getPackageName()) != 0)) {
 
 			    MessageContext mc = result.addError(this, 112, testXns.getNs());
 			    mc.addDetail(this, 0, targetConfigInputs);
@@ -443,8 +447,8 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		if (mc != null) {
 		    mc.addDetail(this, 2, targetConfigInputs, typeRuleKey);
 		}
-	    } else if (!StringUtils.equalsAnyIgnoreCase(targetType, "FLOAT", "INTEGER", "STRING", "BOOLEAN", "DATETIME",
-		    "DATE", "GEOMETRY", "LINK")) {
+	    } else if (!Strings.CI.equalsAny(targetType, "FLOAT", "INTEGER", "STRING", "BOOLEAN", "DATETIME", "DATE",
+		    "GEOMETRY", "LINK")) {
 		isValid = false;
 		MessageContext mc = result.addError(this, 109, typeName, targetType);
 		if (mc != null) {
@@ -483,8 +487,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
 	    if (characteristicsByParameter.containsKey(Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING)) {
 
-		if (!StringUtils.equalsAnyIgnoreCase(targetType, "FLOAT", "INTEGER", "STRING", "BOOLEAN", "DATETIME",
-			"DATE")) {
+		if (!Strings.CI.equalsAny(targetType, "FLOAT", "INTEGER", "STRING", "BOOLEAN", "DATETIME", "DATE")) {
 
 		    isValid = false;
 		    MessageContext mc = result.addError(this, 101, Ldproxy2Constants.ME_PARAM_INITIAL_VALUE_ENCODING,
@@ -549,6 +552,22 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    }
 		}
 	    }
+
+	    if (characteristicsByParameter.containsKey(Ldproxy2Constants.ME_PARAM_MEASURE)) {
+
+		if (!Strings.CI.equalsAny(targetType, "FLOAT", "INTEGER")) {
+
+		    isValid = false;
+		    MessageContext mc = result.addError(this, 116, Ldproxy2Constants.ME_PARAM_MEASURE, targetType);
+		    if (mc != null) {
+			mc.addDetail(this, 1, targetConfigInputs, typeRuleKey, targetType);
+		    }
+
+		} else {
+		    // nothing more to check
+		}
+	    }
+
 	}
 
 	return isValid;
@@ -566,7 +585,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    String characteristicValue = characteristics.get(meParamCharacteristic);
 
 	    if (StringUtils.isNotBlank(characteristicValue)
-		    && !StringUtils.equalsAnyIgnoreCase(characteristicValue, allowedValues)) {
+		    && !Strings.CI.equalsAny(characteristicValue, allowedValues)) {
 
 		MessageContext mc = result.addError(this, 103, meParamName, meParamCharacteristic, characteristicValue,
 			StringUtils.join(allowedValues, ", "));
@@ -629,26 +648,41 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
 	return switch (mnr) {
 	case 0 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$'.";
-	case 1 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 1 ->
+	    "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
 	case 2 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
-	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	case 4 ->
+	    "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
 
 	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
-	case 101 -> "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
-	case 102 -> "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
-	case 103 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
+	case 101 ->
+	    "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
+	case 102 ->
+	    "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
+	case 103 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
 	case 104 -> "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
-	case 105 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
-	case 106 -> "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 105 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
+	case 106 ->
+	    "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
 	case 107 -> "Parameter '$1$' is set to '$2$'. This is not a valid value (case matters for this parameter).";
 	case 108 -> "Invalid map entry for type '$1$': the target type is undefined.";
-	case 109 -> "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
+	case 109 ->
+	    "Invalid map entry for type '$1$': target type '$2$' does not equal (ignoring case) any of the allowed values: FLOAT, INTEGER, STRING, BOOLEAN, DATETIME, DATE, GEOMETRY, LINK. Check for typos or whitespace characters and correct the target type.";
 	case 110 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
-	case 111 -> "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
-	case 112 -> "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
-	case 113 -> "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
-	case 114 -> "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
-	case 115 -> "Component value '$1$' of parameter '$2$' is not a valid value (general note: case matters for this parameter).";
+	case 111 ->
+	    "??XmlEncodingInfos invalid: found two ModelElementXmlEncoding elements with same @applicationSchemaName ('$1$') and @modelElementName ('$2$'), but different @xmlName, @xmlNamespace, and/or @xmlAttribute values. Configured XML encoding infos must define a unique XML encoding for a model element.";
+	case 112 ->
+	    "??XmlEncodingInfos invalid: found two XmlNamespace elements with same @ns ('$1$'), but different @nsabr, @location, and/or @packageName values. XmlNamespace elements that are configured in XML encoding infos and that have same namespace must not have different XML attribute values.";
+	case 113 ->
+	    "Invalid map entry for type#rule '$1$': no value is provided for the characteristic '$2$' of parameter '$3$'.";
+	case 114 ->
+	    "Invalid map entry for type#rule '$1$': value provided for characteristic '$2$' of parameter '$3$' is invalid. Check that the value matches the regular expression: $4$.";
+	case 115 ->
+	    "Component value '$1$' of parameter '$2$' is not a valid value (general note: case matters for this parameter).";
+	case 116 ->
+	    "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) 'FLOAT' and 'INTEGER'. Found target type: '$2$'.";
 
 	default -> "(" + Ldproxy2TargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
 	};

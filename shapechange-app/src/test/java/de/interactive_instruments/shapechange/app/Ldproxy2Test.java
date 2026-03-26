@@ -188,4 +188,12 @@ public class Ldproxy2Test extends BasicTestSCXML {
 			new String[] { "yaml", "yml" }, "testResults/ldproxy2/storedQueries/results",
 			"src/integrationtests/ldproxy2/storedQueries/reference/results");
 	}
+	
+	@Test
+	public void test_ldproxy2_measure() {
+		
+		multiTest("src/integrationtests/ldproxy2/measure/test_ldproxy2Measure.xml",
+			new String[] { "yaml", "yml" }, "testResults/ldproxy2/measure/results",
+			"src/integrationtests/ldproxy2/measure/reference/results");
+	}
 }

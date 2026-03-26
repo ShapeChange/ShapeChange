@@ -598,7 +598,9 @@ Application schemas typically use types from other schemas, for example the type
 Whenever an external type is used, its implementation details are needed. An external type must be implemented as one of the types supported by ldproxy, or as a link / feature reference. The target type of a map entry must therefore be one of:
 
 * FLOAT, INTEGER, STRING, BOOLEAN, DATETIME and DATE
-** Relevant map entry parameter(s): _initialValueEncoding_ (optional, currently only used for mapping of the conceptual type 'Boolean')
+** Relevant map entry parameter(s): 
+*** _initialValueEncoding_ (optional, currently only used for mapping of the conceptual type 'Boolean')
+*** _measure_ (optional)
 * GEOMETRY
 ** Relevant map entry parameter(s): _geometryInfos_ (required)
 * LINK
@@ -622,6 +624,12 @@ A map entry for the ldproxy target has the following structure:
 *** Characteristic: _false_ (optional): Specifies the value to represent the Boolean value `false` in the mapping that the parameter applies to. Only relevant for mapping of type `Boolean`. Default is `false`.
 *** NOTE: Mappings of initial values for type Boolean are especially important if boolean values are represented in the database using a non-boolean datatype. For example, the value `true` could be represented by integer 1, while `false` would be represented by 0.
 // IRRELEVANT *** Characteristic: _quoted_ (optional): If set to `true` (ignoring case), this characteristic specifies that the default value shall be quoted. Default is `false`. Typically, this characteristic is set to `true` in map entries for types that map to a textual type, but it can also apply to temporal types. It usually does not apply to numeric types. NOTE: Also applies to the representation of a Boolean value.
+** Parameter _measure_ (since v4.1.0): Indicates that the map entry contains a mapping for a
+measure type (specifically from ISO 19103). 
+IMPORTANT: If measure types are not identified via map entries 
+containing this parameter then ShapeChange cannot determine measure 
+typed properties, which is relevant for 
+__rule-ldp2-prop-measure__.
 ** Parameter _geometryInfos_: Indicates that the map entry contains a mapping for a geometry type (specifically from ISO 19107), and provides further information via characteristics.
 *** Characteristic _geometryType_ (required): Specify the actual geometry type, using one of the geometry types supported by ldproxy: POINT, MULTI_POINT, LINE_STRING, MULTI_LINE_STRING, POLYGON, MULTI_POLYGON, GEOMETRY_COLLECTION, ANY
 // JE - not used right now, maybe later: ** Parameter _temporalInfos_: Indicates that the map entry contains a mapping for a temporal type, and provides further information via characteristics.
@@ -1489,18 +1497,30 @@ NOTE: TEMPLATE for later.
 
 
 [[ldproxy2_schemaconversionrules_properties_propertytype]]
-==== Property Type
+==== Property Type 
 
 The `type` member of a property definition depends upon the value type of the property, as well as its multiplicity.
 
 * If the maximum multiplicity of the property is greater than 1, and:
-** the value type is mapped to or implemented by a simple type, then the `type` is VALUE_ARRAY, and an additional `valueType` member is added, with the name of the simple type as value.
+** the value type is mapped to or implemented by a simple type, and:
+*** the map entry has parameter _measure_, <<rule-ldp2-prop-measure>> 
+applies to the property, and the tagged value whose name is defined by 
+target parameter _uomTaggedValueName_ has no value, then the value type 
+is implemented as a measure object, the `type` is OBJECT_ARRAY, and a 
+measure object is created in the property definition as defined <<measure_object,below>>.
+*** otherwise, the `type` is VALUE_ARRAY, and an additional `valueType` member is added, with the name of the simple type as value.
 *** NOTE: The ldproxy target does not support geometry properties with multiplicity greater than 1. Such cases should be modeled as property with max multiplicity 1 and a multi-geometry (e.g. GM_MultiPoint) or geometry collection (GM_Aggregate) as value type. If the ldproxy target encounters a geometry property with max multiplicity greater than 1, it will log an error and continue processing, assuming max multiplicity equal to 1 for the property.
 ** the value type is mapped to LINK or a type with identity, and:
 *** the property matches _rule-ldp2-all-linkObjectAsFeatureRef_, the value type is encoded as a feature reference, the `type` is FEATURE_REF_ARRAY, and either `refUriTemplate` is added, or a `refType` with the identifier of the value type. Further details on the encoding of a FEATURE_REF are given <<feature_ref,here>>.
 *** otherwise, the value type is implemented as a link object, the `type` is OBJECT_ARRAY, and a link object is created in the property definition as defined <<link_object,below>>.
 * Otherwise, i.e. the maximum multiplicity of the property is equal to 1:
-** If the value type is mapped to a simple ldproxy type, then `type` is the target type defined by the map entry.
+** If the value type is mapped to a simple ldproxy type, and:
+*** the map entry has parameter _measure_, <<rule-ldp2-prop-measure>> 
+applies to the property, and the tagged value whose name is defined by 
+target parameter _uomTaggedValueName_ has no value, then the value type 
+is implemented as a measure object, the `type` is OBJECT, and a measure 
+object is created in the property definition as defined <<measure_object,below>>.
+*** otherwise, `type` is the target type defined by the map entry.
 ** Otherwise, if the value type is mapped to a geometry type, then `type` is GEOMETRY and an additional `geometryType` member is added, with value as defined by the map entry (via the according characteristic of map entry parameter _geometryInfos_).
 *** If the data store contains curve geometries specified by SQL/MM, 
 such as CircularString and CurvePolygon, target parameter `linearizeCurves` 
@@ -1532,6 +1552,24 @@ is optional (i.e., it has a minimum multiplicity of 0), then: `coalesce` is used
 *** `type`: STRING
 *** `transformations`:
 **** `stringFormat`: Either the URL template from the map entry, if one is defined for the property value type, or '{{serviceUrl}}/collections/{value_type_name}/items/{{value}}', where value_type_name is the name of the value type (formatted according to target parameter <<collectionIdFormat>>) (and {{serviceUrl}} as well as {{value}} will automatically be replaced by ldproxy).
+
+[[measure_object]]
+The definition of a measure object within a property definition is as follows:
+
+* `objectType: Measure`
+* `sourcePath`: As defined for the property (for details, see 
+section <<ldproxy2_schemaconversionrules_properties_sourcepaths>>)
+* `properties`:
+** `value`:
+*** `label`: value of target parameter `measureValueLabel` (default is: `value`)
+*** `sourcePath`: `value`
+*** `type`: target type defined by the map entry
+*** `constraints required: true`
+** `uom`:
+*** `label`: value of target parameter `measureUomLabel` (default is: `unit of measure`)
+*** `sourcePath`: `uom`
+*** `type`: STRING
+*** `constraints required: true`
 
 [[feature_ref]]
 The definition of a FEATURE_REF within a property definition is as follows:
@@ -1629,6 +1667,15 @@ If target parameter _uomTaggedValueName_ (without default value) is set, the tar
 with that name on each property whose value type maps to the ldproxy FLOAT or INTEGER type. If the tag 
 exists and has a non-blank value, the member `unit` is added to the property definition in the provider 
 configuration, with the tag value as value.
+
+[[rule-ldp2-prop-measure]]
+(since v4.1.0)
+With __rule-ldp2-prop-measure__, the behavior for measure valued properties is extended 
+for cased in which the unit tagged value (identified via target parameter _uomTaggedValueName_) 
+has no value. In other words, the rule only applies to measure typed properties where the 
+unit of measure is not fixed. In such a case, the value type is encoded as a measure object, 
+as defined in section <<ldproxy2_schemaconversionrules_properties_propertytype>>.
+
 
 [[ldproxy2_excluded_scopes]]
 ==== Excluded Scopes

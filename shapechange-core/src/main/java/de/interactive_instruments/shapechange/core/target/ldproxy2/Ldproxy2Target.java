@@ -168,6 +168,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static int srid = 4326;
     public static boolean sridConfigured = false;
     public static String uomTvName = null;
+    public static String measureValueLabel = null;
+    public static String measureUomLabel = null;
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
     public static LdproxyStoredQueryDefinitions storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
     public static String providerConfigLabelTemplate = null;
@@ -452,6 +454,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    enableFilter = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_ENABLE_FILTER,
 		    false);
 
+	    uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME, null,
+		    false, true);
+	    measureValueLabel = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_MEASURE_VALUE_LABEL, "value", false, true);
+	    measureUomLabel = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_MEASURE_UOM_LABEL, "unit of measure", false, true);
+
 	    if (enableFeaturesGml) {
 
 		String gmlIdPrefix = options.parameterAsString(this.getClass().getName(),
@@ -460,8 +469,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES, false);
 		int gmlSfLevel = options.parameterAsInteger(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_SF_LEVEL, -1);
-		uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME,
-			null, false, true);
 
 		String gmlFeatureCollectionElementName = options.parameterAsString(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME, null, false, true);
@@ -1120,6 +1127,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	}
     }
 
+    public boolean isImplementedAsMeasure(PropertyInfo pi) {
+	return isMeasureMapping(pi) && pi.matches(Ldproxy2Constants.RULE_PROP_MEASURE)
+		&& (uomTvName == null || StringUtils.isBlank(pi.taggedValue(uomTvName)));
+    }
+
     public boolean isMappedToLink(ClassInfo ci) {
 
 	return isMappedToLink(ci.name(), ci.id(), ci.encodingRule(Ldproxy2Constants.PLATFORM));
@@ -1136,6 +1148,23 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
 		&& "LINK".equalsIgnoreCase(pme.getTargetType())) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    public boolean isMeasureMapping(PropertyInfo pi) {
+
+	return isMeasureMapping(pi.typeInfo().name, pi.typeInfo().id, pi.encodingRule(Ldproxy2Constants.PLATFORM));
+    }
+
+    public boolean isMeasureMapping(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	if (pme != null && !ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId) && pme.hasTargetType()
+		&& mapEntryParamInfos.hasParameter(pme, Ldproxy2Constants.ME_PARAM_MEASURE)) {
 	    return true;
 	} else {
 	    return false;
@@ -1231,6 +1260,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	sortingPathSeparator = null;
 
 	uomTvName = null;
+	measureUomLabel = null;
+	measureValueLabel = null;
 	bbGmlBuilder = null;
 	bbGeoJsonBuilder = null;
 	bbJsonFgBuilder = null;
@@ -1291,6 +1322,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_PROPIDBYTV);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
+	r.addRule(Ldproxy2Constants.RULE_PROP_MEASURE);
     }
 
     @Override
@@ -1325,64 +1357,100 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	case 8 -> "Class '$1$' is not encoded.";
 
 	case 15 -> "No map entries provided via the configuration.";
-	case 16 -> "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it.";
-	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 16 ->
+	    "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
+	case 17 ->
+	    "Type '$1$' is of a category not enabled for conversion, meaning that no ldproxy configuration items will be created to represent it.";
+	case 18 ->
+	    "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 	case 19 -> "";
-	case 20 -> "Type '$1$' is abstract. Conversion of abstract types is only supported by this target if parameter '"
+	case 20 ->
+	    "Type '$1$' is abstract. Conversion of abstract types is only supported by this target if parameter '"
 		    + Ldproxy2Constants.PARAM_FRAGMENTS + "' is set to 'true'. The type will be ignored.";
-	case 21 -> "Value '$1$' of configuration parameter '$2$' does not result in a valid path. Exception message is: $3$";
+	case 21 ->
+	    "Value '$1$' of configuration parameter '$2$' does not result in a valid path. Exception message is: $3$";
 	case 22 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23 -> "";
 	case 24 -> "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
 
 	case 100 -> Ldproxy2Constants.RULE_CLS_CODELIST_DIRECT
-		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' has no initial value. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {code} in the enum/code mapping.";
+		+ " applies to codelist/enumeration '$1$'. However, code/enum '$2$' has no initial value. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {code} in the enum/code mapping.";
 	case 101 -> Ldproxy2Constants.RULE_CLS_CODELIST_TARGETBYTV
-		    + " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag '$3$'. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {target_value} in the enum/code mapping";
-	case 102 -> "Could not compute a label for codelist/enumeration '$1$'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.";
-	case 103 -> "Type '$1$' has one or more supertypes. Conversion of inheritance relationships is only supported by this target if parameter '"
+		+ " applies to codelist/enumeration '$1$'. However, code/enum '$2$' does not have a non-blank value for tag '$3$'. The code/enum cannot be encoded as defined by the conversion rule. Using the property name as fallback for the {target_value} in the enum/code mapping";
+	case 102 ->
+	    "Could not compute a label for codelist/enumeration '$1$'. A label is required for the ldproxy encoding as a codelist. Check the label template in the target configuration as well as the codelist/enumeration model, to ensure that a label can be created. Using the type name as label.";
+	case 103 ->
+	    "Type '$1$' has one or more supertypes. Conversion of inheritance relationships is only supported by this target if parameter '"
 		    + Ldproxy2Constants.PARAM_FRAGMENTS + "' is set to 'true'. The relationship will be ignored.";
-	case 104 -> "??Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
-	case 105 -> "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultGeometry') as default geometry property. Multiple default geometry properties per type are not allowed. None of the default geometry properties owned by '$1$' will be marked as default geometry.";
-	case 106 -> "??Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
-	case 107 -> "??Type '$1$' has multiple identifier properties (i.e., properties with stereotype 'identifier', and taking into account inherited properties). Multiple identifier properties per type definition are not allowed. None of the identifier properties owned by '$1$' will be encoded (because no informed decision can be made).";
-	case 108 -> "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultInstant') as default (temporal) instant property. Multiple default instant properties per type are not allowed. None of the default instant properties owned by '$1$' will be marked as default instant.";
-	case 109 -> "??Property '$2$' of type '$1$' is marked as default interval start as well as default instant and/or default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
-	case 110 -> "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
-	case 111 -> "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
+	case 104 ->
+	    "??Type '$1$' has <<identifier>> property '$2$', with max multiplicity greater 1. Encoding will assume a max multiplicity of exactly 1.";
+	case 105 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultGeometry') as default geometry property. Multiple default geometry properties per type are not allowed. None of the default geometry properties owned by '$1$' will be marked as default geometry.";
+	case 106 ->
+	    "??Property '$2$' of type '$1$' is marked as default instant as well as as default interval (start and/or end) via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	case 107 ->
+	    "??Type '$1$' has multiple identifier properties (i.e., properties with stereotype 'identifier', and taking into account inherited properties). Multiple identifier properties per type definition are not allowed. None of the identifier properties owned by '$1$' will be encoded (because no informed decision can be made).";
+	case 108 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultInstant') as default (temporal) instant property. Multiple default instant properties per type are not allowed. None of the default instant properties owned by '$1$' will be marked as default instant.";
+	case 109 ->
+	    "??Property '$2$' of type '$1$' is marked as default interval start as well as default instant and/or default interval end via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	case 110 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalStart') as default (temporal) interval start property. Multiple default interval start properties per type are not allowed. None will be marked as default interval start.";
+	case 111 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'defaultIntervalEnd') as default (temporal) interval end property. Multiple default interval end properties per type are not allowed. None will be marked as default interval end.";
 	case 112 -> "??No target type is defined in map entry for type '$1$'. Assuming ldproxy type 'STRING'.";
-	case 113 -> "??Ldproxy type definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. Assuming ldproxy type 'STRING'.";
-	case 114 -> "??Type '$1$' is marked to not be encoded. Could not identify an ldproxy type for it. Assuming ldproxy type 'STRING'.";
-	case 115 -> "??Type '$1$' is not part of the schemas selected for processing. Could not identify an ldproxy type for it. Assuming ldproxy type 'STRING'.";
-	case 116 -> "??Expected simple ldproxy type implementation of value type '$1$' of property '$2$' in class '$3$'. Found '$4$'. Assuming ldproxy type 'STRING'.";
-	case 117 -> "??Circular dependency detected when encoding type '$1$'. The property path '$2$' would create a circle. The last property in that path will not be encoded.";
-	case 118 -> "??No target type is defined in map entry for type '$1$'. Setting source path for properties with this type as value type to 'FIXME'.";
-	case 119 -> "??Value type '$1$' of property '$2$' is neither mapped nor found in the model. Is there a typo in value type name? Has the type not been loaded (e.g. by excluding some package during model loading) or removed (e.g. through a transformation)? Setting source path for the property to 'FIXME'.";
-	case 120 -> "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transformation (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
-	case 121 -> "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
-	case 122 -> "??Value of tag 'ldpRemove' on property '$1$' is invalid. Allowed values are: IN_COLLECTION, ALWAYS, NEVER (case is ignored when parsing the value). Found value '$2$'.";
-	case 123 -> "Exception occurred while copying the template defined by target parameter '$1$' from '$2$' to '$3$'. Exception message is: '$3$'.";
-	case 124 -> "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and either not present in the model, not correctly linked, or not encoded. The property will therefore not be encoded. Either define a mapping for the value type, or ensure that the value type is correctly linked to and that it actually is defined to be encoded by this target.";
-	case 125 -> "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
+	case 113 ->
+	    "??Ldproxy type definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. Assuming ldproxy type 'STRING'.";
+	case 114 ->
+	    "??Type '$1$' is marked to not be encoded. Could not identify an ldproxy type for it. Assuming ldproxy type 'STRING'.";
+	case 115 ->
+	    "??Type '$1$' is not part of the schemas selected for processing. Could not identify an ldproxy type for it. Assuming ldproxy type 'STRING'.";
+	case 116 ->
+	    "??Expected simple ldproxy type implementation of value type '$1$' of property '$2$' in class '$3$'. Found '$4$'. Assuming ldproxy type 'STRING'.";
+	case 117 ->
+	    "??Circular dependency detected when encoding type '$1$'. The property path '$2$' would create a circle. The last property in that path will not be encoded.";
+	case 118 ->
+	    "??No target type is defined in map entry for type '$1$'. Setting source path for properties with this type as value type to 'FIXME'.";
+	case 119 ->
+	    "??Value type '$1$' of property '$2$' is neither mapped nor found in the model. Is there a typo in value type name? Has the type not been loaded (e.g. by excluding some package during model loading) or removed (e.g. through a transformation)? Setting source path for the property to 'FIXME'.";
+	case 120 ->
+	    "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and of a category not supported by this target. The property will not be encoded. Either define a mapping for the value type or apply a model transformation (e.g. flattening inheritance or flattening complex types [including unions]) to cope with this situation.";
+	case 121 ->
+	    "??No geometry type defined via map entry for value type '$2$' of property '$1$'. Ensure that map entries are configured correctly. Proceeding with geometry type ANY.";
+	case 122 ->
+	    "??Value of tag 'ldpRemove' on property '$1$' is invalid. Allowed values are: IN_COLLECTION, ALWAYS, NEVER (case is ignored when parsing the value). Found value '$2$'.";
+	case 123 ->
+	    "Exception occurred while copying the template defined by target parameter '$1$' from '$2$' to '$3$'. Exception message is: '$3$'.";
+	case 124 ->
+	    "??The value type '$1$' of property '$2$' (of class '$3$') is not mapped and either not present in the model, not correctly linked, or not encoded. The property will therefore not be encoded. Either define a mapping for the value type, or ensure that the value type is correctly linked to and that it actually is defined to be encoded by this target.";
+	case 125 ->
+	    "Type '$1$' will be ignored, because a type with equal name (ignoring case) has already been encountered and marked for encoding by the target. The target does not support encoding of multiple types with equal name (ignoring case).";
 	case 126 -> "??The target configuration does not contain advanced process configuration infos.";
-	case 127 -> "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
-	case 128 -> "??Main application schema could not be determined (using parameter '"
-		    + TargetUtil.PARAM_MAIN_APP_SCHEMA
+	case 127 ->
+	    "??Enumeration or code list '$1$', which is used as value type of at least one property that is encoded by the target, is either not encoded, not mapped, or not part of the schemas selected for processing. This is an issue UNLESS an ldproxy codelist with id '$2$' has already been or will be established for the desired deployment by other means (e.g. manually created).";
+	case 128 ->
+	    "??Main application schema could not be determined (using parameter '" + TargetUtil.PARAM_MAIN_APP_SCHEMA
 		    + "' - if set - or by having only a single schema to process). Using '$1$'.";
-	case 129 -> "??Could not find a schema with name '$1$' in the model, or no target namespace is defined for that schema. XML namespace information for that schema is not available. Using value '$2$' as namespace and nsabr for that schema name.";
-	case 130 -> "??Could not find an abbreviation for XML namespace '$1$' (neither in XmlEncodingInfos, nor in the model). Using value '$2$'.";
+	case 129 ->
+	    "??Could not find a schema with name '$1$' in the model, or no target namespace is defined for that schema. XML namespace information for that schema is not available. Using value '$2$' as namespace and nsabr for that schema name.";
+	case 130 ->
+	    "??Could not find an abbreviation for XML namespace '$1$' (neither in XmlEncodingInfos, nor in the model). Using value '$2$'.";
 	case 131 -> "The target configuration does not contain XML encoding infos.";
 	case 132 -> "The target configuration does not contain SQL encoding infos.";
-	case 133 -> "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
-	case 134 -> "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
-	case 135 -> "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
-	case 136 -> "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
-	case 137 -> "GeoInfoDok encoding of property '$1$' (value type is '$2$', max mult is '$3$', in fragment '$4$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry.";
+	case 133 ->
+	    "??Property '$2$' of type '$1$' is marked as default interval end as well as default instant and/or default interval start via according tagged values. That is an invalid combination. The property is not recognized as defining a primary temporal property.";
+	case 134 ->
+	    "Multiple Source Paths detected, but not encoded! Please inform the ShapeChange developers about this error.";
+	case 135 ->
+	    "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
+	case 136 ->
+	    "??Property '$2$' of type '$1$' has invalid value for tag ldpExcludedScopes. '$3$' is not a valid ldproxy schema scope.";
+	case 137 ->
+	    "GeoInfoDok encoding of property '$1$' (value type is '$2$', max mult is '$3$', in fragment '$4$'): No source path info from SQL encoding info, ldpSourcePaths TV, or map entry.";
 	case 138 -> "Conversion rule '" + Ldproxy2Constants.RULE_ALL_PROPIDBYTV
-		    + "' applies to (main) application schema '$1$', but target parameter '"
-		    + Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE
-		    + "' either is not set or has no value. The conversion rule will be ignored.";
+		+ "' applies to (main) application schema '$1$', but target parameter '"
+		+ Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE
+		+ "' either is not set or has no value. The conversion rule will be ignored.";
 	case 139 -> "The target configuration does not contain ldproxy stored query definitions.";
 	case 140 -> "Exception occurred while generating stored query with id '$1$'. Exception message is: '$2$'.";
 

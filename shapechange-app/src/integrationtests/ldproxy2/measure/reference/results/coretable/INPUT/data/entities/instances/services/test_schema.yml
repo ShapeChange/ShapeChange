@@ -1,0 +1,29 @@
+---
+id: test_schema
+label: MyServiceLabel
+description: '...'
+enabled: true
+serviceType: OGC_API
+api:
+- buildingBlock: GEO_JSON
+  enabled: true
+- buildingBlock: GML
+  enabled: true
+  applicationNamespaces:
+    ts: http://shapechange.net/test
+  defaultNamespace: ts
+  schemaLocations:
+    ts: "{{serviceUrl}}/resources/ts.xsd"
+  gmlIdPrefix: _
+- buildingBlock: JSON_FG
+  enabled: true
+- buildingBlock: RESOURCES
+  enabled: true
+collections:
+  FeatureType1:
+    id: FeatureType1
+    label: FeatureType1
+    enabled: true
+    api:
+    - buildingBlock: GML
+      conformance: NONE

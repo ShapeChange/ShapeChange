@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ public class LdpPropertyEncoder {
     protected SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi;
 
     protected LdpGidEncoder gidEncoder = new LdpGidEncoder();
+    protected LdpCommonEncoder commonEncoder = new LdpCommonEncoder();
 
     protected LdpConfigBuilder ldpConfigBuilder;
     protected LdpProvider ldpProvider;
@@ -590,8 +591,35 @@ public class LdpPropertyEncoder {
 		 */
 
 		/*
+		 * Handle cases first, where there is a specific encoding of the property value
+		 * type. Differentiate cases where no special source-path for the property
+		 * itself is required, vs. cases where special source-paths indeed are required.
+		 */
+
+		/*
+		 * Property with measure value type that is implemented as ldproxy Measure
+		 * object type; no special source-path for the property itself is required -
+		 * only fixed ones for the sub-properties in the Measure object.
+		 */
+		if (target.isImplementedAsMeasure(pi)) {
+
+		    objectTypeForBuilder = Optional.of("Measure");
+
+		    if (Ldproxy2Target.enableFragments) {
+			if (!commonEncoder.measureFragmentCreated()) {
+			    ldpConfigBuilder.createAdditionalFragment(Ldproxy2Constants.MEASURE_FRAGMENT_NAME,
+				    commonEncoder.createMeasureFragment(ldpType));
+			}
+			propMemberDefBuilder.schema(LdpUtil.fragmentRef("Measure"));
+		    } else {
+			commonEncoder.measureSchema(propertyMapForBuilder, ldpType);
+		    }
+		}
+
+		/*
 		 * Handle special case of GeoInfoDok encoding and property with LI_Lineage value
-		 * type first.
+		 * type. Uses special source-paths (thus the condition is exclusive with the
+		 * general source-path handling).
 		 */
 		if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
 			&& "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)) {
@@ -610,7 +638,6 @@ public class LdpPropertyEncoder {
 			propMemberDefBuilder.schema(LdpUtil.fragmentRef("LI_Lineage"));
 
 		    } else {
-
 			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
 		    }
 
@@ -969,7 +996,8 @@ public class LdpPropertyEncoder {
     private Optional<Type> valueTypeForBuilder(PropertyInfo pi, PropertyInfo identifierPi, boolean isSingleValued,
 	    Type ldpType) {
 
-	if (!isSingleValued && !(ldpType == Type.OBJECT || ldpType == Type.GEOMETRY || pi == identifierPi)) {
+	if (!isSingleValued && !(ldpType == Type.OBJECT || ldpType == Type.GEOMETRY || pi == identifierPi
+		|| target.isImplementedAsMeasure(pi))) {
 	    return Optional.of(ldpType);
 	} else {
 	    return Optional.empty();
@@ -984,11 +1012,19 @@ public class LdpPropertyEncoder {
 	    } else if (ldpType == Type.GEOMETRY || pi == identifierPi) {
 		// no array for geometry and identifier properties
 		return ldpType;
+	    } else if (target.isImplementedAsMeasure(pi)) {
+		return Type.OBJECT_ARRAY;
 	    } else {
 		return Type.VALUE_ARRAY;
 	    }
 	} else {
-	    return isEncodedAsFeatureRef(pi) ? Type.FEATURE_REF : ldpType;
+	    if (isEncodedAsFeatureRef(pi)) {
+		return Type.FEATURE_REF;
+	    } else if (target.isImplementedAsMeasure(pi)) {
+		return Type.OBJECT;
+	    } else {
+		return ldpType;
+	    }
 	}
     }
 
@@ -1147,8 +1183,9 @@ public class LdpPropertyEncoder {
 
 	    Type ldpType = target.ldproxyType(pi);
 
-	    // handle embedded cases (datatype or link properties)
-	    if (target.isMappedToOrImplementedAsLink(pi)) {
+	    // handle embedded cases (datatype or link properties or properties implemented
+	    // as measure)
+	    if (target.isMappedToOrImplementedAsLink(pi) || target.isImplementedAsMeasure(pi)) {
 
 		// can be ignored when encoding the service configuration
 
