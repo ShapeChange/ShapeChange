@@ -62,16 +62,20 @@ public class ModelExportConfigurationValidator extends AbstractConfigurationVali
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
-		pConfig.getParameters().keySet(), result) && isValid;
+		config.getParameters().keySet(), result) && isValid;
 
 	// ensure that output directory exists
-	String outputDirectory = pConfig.getParameterValue("outputDirectory");
+	String outputDirectory = config.getParameterValue("outputDirectory");
 	if (outputDirectory == null)
 	    outputDirectory = options.parameter("outputDirectory");
 	if (outputDirectory == null)
@@ -92,7 +96,7 @@ public class ModelExportConfigurationValidator extends AbstractConfigurationVali
 	}
 
 	// validate PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES
-	if (pConfig.hasParameter(ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
+	if (config.hasParameter(ModelExportConstants.PARAM_PROFILES_FOR_CLASSES_WITHOUT_EXPLICIT_PROFILES)) {
 
 	    List<String> profilesForClassesWithoutExplicitProfiles = options.parameterAsStringList(
 		    ModelExport.class.getName(),

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2020 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +32,17 @@
 package de.interactive_instruments.shapechange.core;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.target.Target;
 import de.interactive_instruments.shapechange.core.target.TargetOutputProcessor;
 import de.interactive_instruments.shapechange.core.transformation.TransformationManager;
@@ -49,7 +53,23 @@ import de.interactive_instruments.shapechange.core.transformation.Transformation
  */
 public abstract class AbstractConfigurationValidator implements ConfigurationValidator, MessageSource {
 
+    protected ProcessConfiguration config = null;
+    protected Options options = null;
+    protected ShapeChangeResult result = null;
+
     protected LevenshteinDistance levDistance = new LevenshteinDistance(3);
+
+    protected void setProcessConfiguration(ProcessConfiguration pc) {
+	this.config = pc;
+    }
+
+    protected void setOptions(Options o) {
+	this.options = o;
+    }
+
+    protected void setShapeChangeResult(ShapeChangeResult scr) {
+	this.result = scr;
+    }
 
     /**
      * Checks if all relevant parameters from the ShapeChange configuration belong
@@ -143,6 +163,215 @@ public abstract class AbstractConfigurationValidator implements ConfigurationVal
 	}
 
 	return reportUnrecognizedParametersAsWarnings || allParametersValid;
+    }
+
+    /**
+     * Checks if the process configuration has a parameter with given name. If it
+     * is, and if its value is neither 'true' nor 'false' (ignoring case), then the
+     * check will fail and an error will be logged. Otherwise the check will
+     * succeed.
+     * 
+     * @param parameterName name of the parameter for which to check its boolean
+     *                      value, if it is set
+     * @return <code>true</code> if either the parameter is not set in the process
+     *         configuration, or if its value is 'true' or 'false' (ignoring case).
+     *         Otherwise, <code>false</code> is returned.
+     */
+    protected boolean checkIsBooleanValueIfSet(String parameterName) {
+
+	String paramValue = config.getParameterValue(parameterName);
+
+	if (Strings.CI.equalsAny(paramValue, null, "true", "false")) {
+	    return true;
+	}
+
+	MessageContext mc = result.addError(null, 1_000_002, parameterName, paramValue);
+	addMessageDetails(mc);
+	return false;
+    }
+
+    protected boolean checkStringParameterNotBlankIfSet(String paramName) {
+
+	if (config.hasParameter(paramName)) {
+
+	    if (StringUtils.isBlank(config.getParameterValue(paramName))) {
+
+		MessageContext mc = result.addError(null, 1_000_004, paramName);
+		addMessageDetails(mc);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected boolean checkParameterOptionalCharacteristicHasValue(
+	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
+	    String meParamCharacteristic, String typeRuleKey, String targetType) {
+
+	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
+
+	if (characteristics.containsKey(meParamCharacteristic)) {
+
+	    if (StringUtils.isBlank(characteristics.get(meParamCharacteristic))) {
+
+		MessageContext mc = result.addError(null, 1_000_008, meParamName, meParamCharacteristic);
+		addMessageDetailsWithMapParamInfos(mc, typeRuleKey, targetType);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected boolean checkParameterRequiredCharacteristicHasValue(
+	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
+	    String meParamCharacteristic, String typeRuleKey, String targetType) {
+
+	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
+
+	String characteristicValue = characteristics.get(meParamCharacteristic);
+
+	if (StringUtils.isBlank(characteristicValue)) {
+
+	    MessageContext mc = result.addError(null, 1_000_009, meParamName, meParamCharacteristic);
+	    addMessageDetailsWithMapParamInfos(mc, typeRuleKey, targetType);
+	    return false;
+	}
+
+	return true;
+    }
+
+    protected boolean checkParameterCharacteristicHasAllowedValueIgnoringCase(
+	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
+	    String meParamCharacteristic, String[] allowedValues, String typeRuleKey, String targetType) {
+
+	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
+
+	if (characteristics.containsKey(meParamCharacteristic)) {
+
+	    String characteristicValue = characteristics.get(meParamCharacteristic);
+
+	    if (StringUtils.isNotBlank(characteristicValue)
+		    && !Strings.CI.equalsAny(characteristicValue, allowedValues)) {
+
+		MessageContext mc = result.addError(null, 1_000_010, meParamName, meParamCharacteristic,
+			characteristicValue, StringUtils.join(allowedValues, ", "));
+		addMessageDetailsWithMapParamInfos(mc, typeRuleKey, targetType);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected void addMessageDetailsWithMapParamInfos(MessageContext mc, String typeRuleKey, String targetType) {
+	if (mc != null) {
+	    if (config instanceof TransformerConfiguration trfConfig) {
+		mc.addDetail(null, 1_000_996, trfConfig.getId(), typeRuleKey, targetType);
+	    } else if (config instanceof TargetConfiguration tgtConfig) {
+		mc.addDetail(null, 1_000_997, tgtConfig.getClassName(), String.join(", ", tgtConfig.getInputIds()),
+			typeRuleKey, targetType);
+	    }
+	}
+    }
+
+    protected boolean checkParameterHasAllowedValueIgnoringCase(String paramName, String[] allowedValues) {
+
+	if (config.hasParameter(paramName)) {
+
+	    String paramValue = config.getParameterValue(paramName);
+
+	    if (!Strings.CI.equalsAny(paramValue, allowedValues)) {
+
+		MessageContext mc = result.addError(null, 1_000_005, paramName, paramValue);
+		addMessageDetails(mc);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected boolean checkParameterRequiredForRule(String parameterName, String ruleName) {
+
+	String paramValue = config.parameterAsString(parameterName, null, false, true);
+
+	if (paramValue == null) {
+	    MessageContext mc = result.addError(null, 1_000_006, parameterName, ruleName);
+	    addMessageDetails(mc);
+	    return false;
+	} else {
+	    return true;
+	}
+    }
+
+    protected boolean checkIntegerParameter(String paramName) {
+
+	String valueByConfig = config.getParameterValue(paramName);
+
+	if (valueByConfig != null) {
+
+	    try {
+		Integer.parseInt(valueByConfig);
+	    } catch (NumberFormatException e) {
+		MessageContext mc = result.addError(null, 1_000_901, paramName, e.getMessage());
+		addMessageDetails(mc);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected boolean checkNonNegativeIntegerParameter(String paramName) {
+
+	String valueByConfig = config.getParameterValue(paramName);
+
+	if (valueByConfig != null) {
+
+	    try {
+
+		Integer i = Integer.parseInt(valueByConfig);
+		if (i < 0) {
+		    MessageContext mc = result.addError(null, 1_000_007, paramName, valueByConfig);
+		    addMessageDetails(mc);
+		    return false;
+		}
+
+	    } catch (NumberFormatException e) {
+		MessageContext mc = result.addError(null, 1_000_901, paramName, e.getMessage());
+		addMessageDetails(mc);
+		return false;
+	    }
+	}
+
+	return true;
+    }
+
+    protected void addMessageDetails(MessageContext mc) {
+	if (mc != null) {
+	    if (config instanceof TransformerConfiguration trfConfig) {
+		mc.addDetail(null, 1_000_998, trfConfig.getId());
+	    } else if (config instanceof TargetConfiguration tgtConfig) {
+		mc.addDetail(null, 1_000_999, tgtConfig.getClassName(), String.join(", ", tgtConfig.getInputIds()));
+	    }
+	}
+    }
+
+    protected boolean checkEnumeration(String parameterName, String parameterValue, String... enums) {
+
+	String v = parameterValue.trim();
+	for (String e : enums) {
+	    if (v.equals(e)) {
+		return true;
+	    }
+	}
+
+	MessageContext mc = result.addError(null, 1_000_003, parameterName, parameterValue.trim(),
+		StringUtils.join(enums, ", "));
+	addMessageDetails(mc);
+	return false;
     }
 
     public SortedSet<String> getCommonTransformerParameters() {

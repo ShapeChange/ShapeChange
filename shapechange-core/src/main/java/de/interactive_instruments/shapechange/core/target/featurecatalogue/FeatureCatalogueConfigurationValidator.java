@@ -82,20 +82,20 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     private TargetConfiguration tgtConfig = null;
-    private Options options = null;
-    private ShapeChangeResult result = null;
     private String inputs = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	/*
 	 * NOTE: No type check for the configuration is performed, since a mismatch
 	 * would be a system error
 	 */
-	this.tgtConfig = (TargetConfiguration) pConfig;
-	this.options = options;
-	this.result = result;
+	this.tgtConfig = (TargetConfiguration) config;
 
 	inputs = StringUtils.join(tgtConfig.getInputIds(), ", ");
 
@@ -103,7 +103,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
-		pConfig.getParameters().keySet(), result) && isValid;
+		config.getParameters().keySet(), result) && isValid;
 
 	// check parameter types
 	isValid &= checkIsBooleanValueIfSet(FeatureCatalogue.PARAM_DONT_TRANSFORM);
@@ -206,7 +206,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	    }
 	}
 
-	String pathToJavaExe_ = pConfig.getParameterValue(FeatureCatalogue.PARAM_JAVA_EXE_PATH);
+	String pathToJavaExe_ = config.getParameterValue(FeatureCatalogue.PARAM_JAVA_EXE_PATH);
 	if (pathToJavaExe_ != null && pathToJavaExe_.trim().length() > 0) {
 	    String pathToJavaExe = pathToJavaExe_.trim();
 	    String javaOptions = null;
@@ -217,7 +217,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 		pathToJavaExe = pathToJavaExe + "\"";
 	    }
 
-	    String jo_tmp = pConfig.getParameterValue(FeatureCatalogue.PARAM_JAVA_OPTIONS);
+	    String jo_tmp = config.getParameterValue(FeatureCatalogue.PARAM_JAVA_OPTIONS);
 	    if (jo_tmp != null && jo_tmp.trim().length() > 0) {
 		javaOptions = jo_tmp.trim();
 	    }
@@ -275,7 +275,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	    }
 	}
 
-	String miscContentDirectoryPath = pConfig.getParameterValue(FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
+	String miscContentDirectoryPath = config.getParameterValue(FeatureCatalogue.PARAM_MISC_CONTENT_DIR_PATH);
 	if (StringUtils.isNotBlank(miscContentDirectoryPath)) {
 	    File miscContentFolder = new File(miscContentDirectoryPath);
 
@@ -299,32 +299,6 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	}
 
 	return isValid;
-    }
-
-    /**
-     * Checks if the configuration of the target has a parameter with given name. If
-     * it is, and if its value is neither 'true' nor 'false' (ignoring case), then
-     * the check will fail and an error will be logged. Otherwise the check will
-     * succeed.
-     * 
-     * @param parameterName
-     * @return <code>true</code> if either the parameter is not set in the
-     *         configuration of the target, or if its value is 'true' or 'false'
-     *         (ignoring case). Otherwise, <code>false</code> is returned.
-     */
-    private boolean checkIsBooleanValueIfSet(String parameterName) {
-	String paramValue = tgtConfig.getParameterValue(parameterName);
-
-	if (StringUtils.equalsAnyIgnoreCase(paramValue, null, "true", "false")) {
-	    return true;
-	}
-
-	MessageContext mc = result.addError(this, 106, parameterName, paramValue);
-	if (mc != null) {
-	    mc.addDetail(this, 0, inputs);
-	}
-
-	return false;
     }
 
     @Override
@@ -353,8 +327,7 @@ public class FeatureCatalogueConfigurationValidator extends AbstractConfiguratio
 	    "InterruptionException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
 	case 105 ->
 	    "IOException while testing alternative java executable to perform the XSL transformation. Message is: $1$";
-	case 106 ->
-	    "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
+	case 106 -> "";
 	case 107 -> "The referenced directory with miscellaneous content does not exist: $1$.";
 	case 108 -> "The referenced directory with miscellaneous content is not a directory: $1$.";
 	default -> "(" + FeatureCatalogue.class.getName() + ") Unknown message with number: " + mnr;

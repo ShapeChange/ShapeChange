@@ -65,8 +65,12 @@ public class ProfileLoaderConfigurationValidator extends AbstractConfigurationVa
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());

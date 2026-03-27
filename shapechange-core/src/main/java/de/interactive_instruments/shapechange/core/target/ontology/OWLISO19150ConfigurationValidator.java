@@ -84,9 +84,13 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
-	TargetOwlConfiguration config = (TargetOwlConfiguration) pConfig;
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
+	TargetOwlConfiguration tgtConfig = (TargetOwlConfiguration) config;
 
 	boolean isValid = true;
 
@@ -102,7 +106,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	     * Check that the target configuration contains a namespace definition with
 	     * matching abbreviation.
 	     */
-	    if (!config.hasNamespaceWithAbbreviation(generalPropertyNamespaceAbbreviation)) {
+	    if (!tgtConfig.hasNamespaceWithAbbreviation(generalPropertyNamespaceAbbreviation)) {
 		result.addError(this, 100, generalPropertyNamespaceAbbreviation);
 		isValid = false;
 	    }
@@ -115,7 +119,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	String defaultTypeImplementation = config.parameterAsString(OWLISO19150.PARAM_DEFAULT_TYPE_IMPL, null, false,
 		true);
 	if (defaultTypeImplementation != null) {
-	    if (!isValidQName(defaultTypeImplementation, config)) {
+	    if (!isValidQName(defaultTypeImplementation, tgtConfig)) {
 		result.addError(this, 101, OWLISO19150.PARAM_DEFAULT_TYPE_IMPL, defaultTypeImplementation);
 		isValid = false;
 	    }
@@ -123,7 +127,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	String propExternalReference_targetProperty = config.parameterAsString(
 		OWLISO19150.PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY, "rdfs:seeAlso", false, true);
-	if (!isValidQName(propExternalReference_targetProperty, config)) {
+	if (!isValidQName(propExternalReference_targetProperty, tgtConfig)) {
 	    result.addError(this, 101, OWLISO19150.PARAM_PROP_EXTERNAL_REFERENCE_TARGET_PROPERTY,
 		    propExternalReference_targetProperty);
 	    isValid = false;
@@ -133,7 +137,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	Pattern templatePattern = Pattern.compile("\\[\\[(.+?)\\]\\]");
 
-	for (DescriptorTarget dt : config.getDescriptorTargets()) {
+	for (DescriptorTarget dt : tgtConfig.getDescriptorTargets()) {
 
 	    /* Check template */
 	    Matcher matcher = templatePattern.matcher(dt.getTemplate());
@@ -156,7 +160,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	     * declared in the configuration
 	     */
 	    String target = dt.getTarget();
-	    if (!isValidQName(target, config)) {
+	    if (!isValidQName(target, tgtConfig)) {
 		result.addError(this, 102, target);
 		isValid = false;
 	    }
@@ -167,14 +171,14 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	final Map<String, Set<String>> existingSchemaNameByTypeName = new HashMap<String, Set<String>>();
 	final SortedMap<String, SortedSet<String>> duplicateSchemaNameByTypeName = new TreeMap<String, SortedSet<String>>();
 
-	for (RdfTypeMapEntry me : config.getRdfTypeMapEntries().values()) {
+	for (RdfTypeMapEntry me : tgtConfig.getRdfTypeMapEntries().values()) {
 
 	    /*
 	     * check that 'target' is a QName with prefix matching one of the namespaces
 	     * declared in the configuration
 	     */
 	    String target = me.getTarget();
-	    if (!isValidQName(target, config)) {
+	    if (!isValidQName(target, tgtConfig)) {
 		result.addError(this, 103, me.getType(), StringUtils.defaultIfBlank(me.getSchema(), ""), target);
 		isValid = false;
 	    }
@@ -203,7 +207,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	final Map<String, Set<String>> existingSchemaNameByPropertyName = new HashMap<String, Set<String>>();
 	final SortedMap<String, SortedSet<String>> duplicateSchemaNameByPropertyName = new TreeMap<String, SortedSet<String>>();
 
-	for (RdfPropertyMapEntry me : config.getRdfPropertyMapEntries().values()) {
+	for (RdfPropertyMapEntry me : tgtConfig.getRdfPropertyMapEntries().values()) {
 
 	    /*
 	     * Check that 'property' has non-empty content on both sides of "::" if it has
@@ -216,7 +220,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	    // check @target
 	    String target = me.getTarget();
-	    if (!isValidQName(target, config)) {
+	    if (!isValidQName(target, tgtConfig)) {
 		result.addError(this, 104, me.getProperty(), StringUtils.defaultIfBlank(me.getSchema(), ""), target);
 		isValid = false;
 	    }
@@ -224,7 +228,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 	    // check @range, if set
 	    if (me.hasRange()) {
 		String range = me.getRange();
-		if (!isValidQName(range, config)) {
+		if (!isValidQName(range, tgtConfig)) {
 		    result.addError(this, 105, me.getProperty(), StringUtils.defaultIfBlank(me.getSchema(), ""), range);
 		    isValid = false;
 		}
@@ -251,10 +255,10 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	// ===== StereotypeConversionParameter =====
 
-	for (List<StereotypeConversionParameter> scps : config.getStereotypeConversionParameters().values()) {
+	for (List<StereotypeConversionParameter> scps : tgtConfig.getStereotypeConversionParameters().values()) {
 	    for (StereotypeConversionParameter scp : scps) {
 		// check QNames in @subClassOf
-		SortedSet<String> invalidQNames = identifyInvalidQNames(scp.getSubClassOf(), config);
+		SortedSet<String> invalidQNames = identifyInvalidQNames(scp.getSubClassOf(), tgtConfig);
 		if (!invalidQNames.isEmpty()) {
 		    result.addError(this, 106, scp.getWellknown(), StringUtils.join(invalidQNames, ", "));
 		    isValid = false;
@@ -264,9 +268,9 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	// ===== TypeConversionParameter =====
 
-	for (TypeConversionParameter tcp : config.getTypeConversionParameters().values()) {
+	for (TypeConversionParameter tcp : tgtConfig.getTypeConversionParameters().values()) {
 	    // check QNames in @subClassOf
-	    SortedSet<String> invalidQNames = identifyInvalidQNames(tcp.getSubClassOf(), config);
+	    SortedSet<String> invalidQNames = identifyInvalidQNames(tcp.getSubClassOf(), tgtConfig);
 	    if (!invalidQNames.isEmpty()) {
 		result.addError(this, 107, tcp.getType(), StringUtils.defaultIfBlank(tcp.getSchema(), ""),
 			StringUtils.join(invalidQNames, ", "));
@@ -276,7 +280,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	// ===== PropertyConversionParameter =====
 
-	for (PropertyConversionParameter pcp : config.getPropertyConversionParameters().values()) {
+	for (PropertyConversionParameter pcp : tgtConfig.getPropertyConversionParameters().values()) {
 
 	    /*
 	     * Check that 'property' has non-empty content on both sides of "::" if it has
@@ -309,7 +313,7 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	    // check QNames in @subPropertyOf, if set
 	    if (pcp.hasSubPropertyOf()) {
-		SortedSet<String> invalidQNames = identifyInvalidQNames(pcp.getSubPropertyOf(), config);
+		SortedSet<String> invalidQNames = identifyInvalidQNames(pcp.getSubPropertyOf(), tgtConfig);
 		if (!invalidQNames.isEmpty()) {
 		    result.addError(this, 108, pcp.getProperty(), StringUtils.defaultIfBlank(pcp.getSchema(), ""),
 			    StringUtils.join(invalidQNames, ", "));
@@ -330,29 +334,29 @@ public class OWLISO19150ConfigurationValidator extends AbstractConfigurationVali
 
 	// ===== ConstraintMapping =====
 
-	for (ConstraintMapping cm : config.getConstraintMappings().values()) {
+	for (ConstraintMapping cm : tgtConfig.getConstraintMappings().values()) {
 	    // check QName of @target (which has a default value)
 	    String target = cm.getTarget();
-	    if (!isValidQName(target, config)) {
+	    if (!isValidQName(target, tgtConfig)) {
 		result.addError(this, 109, cm.getConstraintType().name(), target);
 		isValid = false;
 	    }
 	}
 
 	// ===== General properties =====
-	for (RdfGeneralProperty gp : config.getGeneralProperties()) {
+	for (RdfGeneralProperty gp : tgtConfig.getGeneralProperties()) {
 
 	    /*
 	     * We cannot check the @namespaceAbbreviation here because it may also be one
 	     * defined for the schemas that shall be processed.
 	     */
 
-	    if (gp.hasDomain() && !isValidQName(gp.getDomain(), config)) {
+	    if (gp.hasDomain() && !isValidQName(gp.getDomain(), tgtConfig)) {
 		result.addError(this, 118, gp.getName(), gp.getDomain());
 		isValid = false;
 	    }
 
-	    if (gp.hasRange() && !isValidQName(gp.getRange(), config)) {
+	    if (gp.hasRange() && !isValidQName(gp.getRange(), tgtConfig)) {
 		result.addError(this, 119, gp.getName(), gp.getRange());
 		isValid = false;
 	    }

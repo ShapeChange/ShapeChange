@@ -34,10 +34,8 @@ package de.interactive_instruments.shapechange.core;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -956,9 +954,35 @@ public class ShapeChangeResult {
 	case 30900 -> "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
 	case 30901 -> "Sequence number is undefined for property '$1$'. Using '0'.";
 
-	case 1000000 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";
-	case 1000001 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing.";
-	    
+	case 1_000_000 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";
+	case 1_000_001 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing.";
+	case 1_000_002 ->
+	    "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
+	case 1_000_003 -> "Value of parameter '$1$' is '$2$', which does not match any of the allowed values: $3$";
+	case 1_000_004 ->
+	    "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 1_000_005 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
+	case 1_000_006 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 1_000_007 -> "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
+	case 1_000_008 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
+	case 1_000_009 ->
+	    "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
+	case 1_000_010 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
+	
+	case 1_000_901 ->
+	    "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	
+	case 1_000_996 ->
+	    "Context: transformer configuration element with @id '$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 1_000_997 ->
+	    "Context: target configuration element with @class '$1$' and @inputs '$2$', map entry with type#rule '$3$' and target type '$4$'."; 
+	case 1_000_998 ->
+	    "Context: transformer configuration element with @id '$1$'.";
+	case 1_000_999 ->
+	    "Context: target configuration element with @class '$1$' and @inputs '$2$'.";
+	
 	default -> "(" + ShapeChangeResult.class.getName() + ") Unknown message with number: " + mnr;
 	};
     }

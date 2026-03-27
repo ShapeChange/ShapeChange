@@ -76,9 +76,13 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration configIn, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
-	TargetConfiguration config = (TargetConfiguration) configIn;
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
+	TargetConfiguration tgtConfig = (TargetConfiguration) pc;
 
 	boolean isValid = true;
 
@@ -92,7 +96,7 @@ public class UmlModelConfigurationValidator extends AbstractConfigurationValidat
 	if (outputDirectoryBase == null)
 	    outputDirectoryBase = ".";
 
-	SortedSet<String> modelProviderIds = config.getInputIds();
+	SortedSet<String> modelProviderIds = tgtConfig.getInputIds();
 
 	for (String modelProviderId : modelProviderIds) {
 

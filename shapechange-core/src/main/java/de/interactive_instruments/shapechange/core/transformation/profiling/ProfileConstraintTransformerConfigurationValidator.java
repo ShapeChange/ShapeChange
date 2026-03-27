@@ -65,7 +65,11 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
+
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
 
 	boolean isValid = true;
 
@@ -93,11 +97,11 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
 		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
 		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
 
-	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
-		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS, config, result);
+	    isValid &= checkParameterRequiredForRule(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
 
-	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
-		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS, config, result);
+	    isValid &= checkParameterRequiredForRule(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_CREATE_GENERAL_OUT_OF_SCOPE_CONSTRAINTS);
 	}
 
 	if (rules.contains(
@@ -109,13 +113,11 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
 		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAME_REGEX,
 		    ProfileConstraintTransformer.PARAM_BASE_SCHEMA_NAMESPACE_REGEX);
 
-	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
-		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
-		    config, result);
+	    isValid &= checkParameterRequiredForRule(ProfileConstraintTransformer.PARAM_PROFILE_SCHEMA_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES);
 
-	    isValid &= checkRequiredParameter(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
-		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES,
-		    config, result);
+	    isValid &= checkParameterRequiredForRule(ProfileConstraintTransformer.PARAM_PROFILE_NAME,
+		    ProfileConstraintTransformer.RULE_TRF_CLS_PROHIBIT_BASE_SCHEMA_TYPES_WITH_DIRECT_UNSUPPRESSED_PROFILE_SCHEMA_SUBTYPES);
 	}
 
 	return isValid;
@@ -135,19 +137,6 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
 	return false;
     }
 
-    private boolean checkRequiredParameter(String parameterName, String ruleName, ProcessConfiguration config,
-	    ShapeChangeResult result) {
-
-	String paramValue = config.parameterAsString(parameterName, null, false, true);
-
-	if (paramValue == null) {
-	    result.addError(this, 100, parameterName, ruleName);
-	    return false;
-	} else {
-	    return true;
-	}
-    }
-
     @Override
     public String message(int mnr) {
 
@@ -155,11 +144,13 @@ public class ProfileConstraintTransformerConfigurationValidator extends Abstract
 	case 0 -> "Context: property '$1$'.";
 	case 1 -> "Context: class '$1$'.";
 	case 2 -> "Context: association class '$1$'.";
-	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-	case 4 -> "Syntax exception for regular expression value of configuration parameter '$1$'. Regular expression value was: $2$. Exception message: $3$.";
+	case 3 ->
+	    "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 4 ->
+	    "Syntax exception for regular expression value of configuration parameter '$1$'. Regular expression value was: $2$. Exception message: $3$.";
 
 	// Validation messages
-	case 100 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 100 -> "";
 	case 101 -> "At least one of the parameters '$1$' must be provided.";
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	};

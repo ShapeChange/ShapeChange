@@ -101,19 +101,19 @@ public class JsonSchemaTargetConfigurationValidator extends AbstractConfiguratio
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration targetConfig = null;
     private String targetConfigInputs = "";
-    private Options options = null;
-    private ShapeChangeResult result = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	this.targetConfig = (TargetConfiguration) config;
 	Set<String> inputIds = targetConfig.getInputIds();
 	if (inputIds != null && !inputIds.isEmpty()) {
 	    this.targetConfigInputs = String.join(" ", inputIds);
 	}
-	this.options = options;
-	this.result = result;
 
 	boolean isValid = true;
 

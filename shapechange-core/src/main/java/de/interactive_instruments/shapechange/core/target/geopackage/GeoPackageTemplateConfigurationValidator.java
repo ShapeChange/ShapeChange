@@ -40,13 +40,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.TargetConfiguration;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import mil.nga.geopackage.srs.SpatialReferenceSystem;
 
@@ -63,21 +60,13 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	    GeoPackageConstants.PARAM_CREATE_SPATIAL_INDEXES, "_unitTestOverride").collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
-    // these fields will be initialized when isValid(...) is called
-    private TargetConfiguration config = null;
-    private Options options = null;
-    private ShapeChangeResult result = null;
-    private String inputs = null;
-
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
-	this.config = (TargetConfiguration) pConfig;
-	this.options = options;
-	this.result = result;
-
-	inputs = StringUtils.join(config.getInputIds(), ", ");
-
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
@@ -85,7 +74,7 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 		config.getParameters().keySet(), result) && isValid;
 
 	// ensure that output directory exists
-	String outputDirectory = pConfig.getParameterValue("outputDirectory");
+	String outputDirectory = config.getParameterValue("outputDirectory");
 	if (outputDirectory == null)
 	    outputDirectory = options.parameter("outputDirectory");
 	if (outputDirectory == null)
@@ -106,42 +95,42 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	}
 
 	// check that gpkgM has value 0, 1, or 2
-	if (pConfig.hasParameter(GeoPackageConstants.PARAM_GPKGM)) {
+	if (config.hasParameter(GeoPackageConstants.PARAM_GPKGM)) {
 	    isValid &= checkEnumeration(GeoPackageConstants.PARAM_GPKGM,
-		    pConfig.getParameterValue(GeoPackageConstants.PARAM_GPKGM), "0", "1", "2");
+		    config.getParameterValue(GeoPackageConstants.PARAM_GPKGM), "0", "1", "2");
 	}
 
 	// now also check gpkgZ
-	if (pConfig.hasParameter(GeoPackageConstants.PARAM_GPKGZ)) {
+	if (config.hasParameter(GeoPackageConstants.PARAM_GPKGZ)) {
 	    isValid &= checkEnumeration(GeoPackageConstants.PARAM_GPKGZ,
-		    pConfig.getParameterValue(GeoPackageConstants.PARAM_GPKGZ), "0", "1", "2");
+		    config.getParameterValue(GeoPackageConstants.PARAM_GPKGZ), "0", "1", "2");
 	}
 
 	// Parse SRSs from advanced process configuration (if set)
 	// NOTE: XSD validation of the configuration will also validate the SRS
 	// definitions
-	List<SpatialReferenceSystem> srsDefs = pConfig.getAdvancedProcessConfigurations() == null ? new ArrayList<>()
-		: GeoPackageTemplate.parseGeoPackageSrsDefinitions(pConfig.getAdvancedProcessConfigurations());
+	List<SpatialReferenceSystem> srsDefs = config.getAdvancedProcessConfigurations() == null ? new ArrayList<>()
+		: GeoPackageTemplate.parseGeoPackageSrsDefinitions(config.getAdvancedProcessConfigurations());
 
 	/*
 	 * Check that organizationCoordSysId matches one of the srsIds of the SRS
 	 * contained in the advanced process configuration.
 	 */
-	if (pConfig.hasParameter(GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID)) {
+	if (config.hasParameter(GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID)) {
 	    try {
 		int orgCoordSysId = Integer
-			.parseInt(pConfig.getParameterValue(GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID));
+			.parseInt(config.getParameterValue(GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID));
 
 		if (!(orgCoordSysId == -1 || orgCoordSysId == 0 || orgCoordSysId == 4326
 			|| srsDefs.stream().anyMatch(srs -> srs.getSrsId() == orgCoordSysId))) {
 		    MessageContext mc = result.addError(this, 3, "" + orgCoordSysId);
-		    mc.addDetail(this, 0, inputs);
+		    addMessageDetails(mc);
 		    isValid = false;
 		}
 	    } catch (NumberFormatException e) {
 		MessageContext mc = result.addError(this, 4, GeoPackageConstants.PARAM_ORGANIZATION_COORD_SYS_ID,
 			e.getMessage());
-		mc.addDetail(this, 0, inputs);
+		addMessageDetails(mc);
 		isValid = false;
 	    }
 	}
@@ -150,35 +139,19 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	 * Check that srsOrganization either is (ignoring case) EPSG or one of the
 	 * additional SRSs
 	 */
-	if (pConfig.hasParameter(GeoPackageConstants.PARAM_SRS_ORGANIZATION)) {
+	if (config.hasParameter(GeoPackageConstants.PARAM_SRS_ORGANIZATION)) {
 
-	    String srsOrg = pConfig.getParameterValue(GeoPackageConstants.PARAM_SRS_ORGANIZATION);
+	    String srsOrg = config.getParameterValue(GeoPackageConstants.PARAM_SRS_ORGANIZATION);
 
 	    if (!("epsg".equalsIgnoreCase(srsOrg) || "none".equalsIgnoreCase(srsOrg)
 		    || srsDefs.stream().anyMatch(srs -> srs.getOrganization().equalsIgnoreCase(srsOrg)))) {
 		MessageContext mc = result.addError(this, 5, "" + srsOrg);
-		mc.addDetail(this, 0, inputs);
+		addMessageDetails(mc);
 		isValid = false;
 	    }
 	}
 
 	return isValid;
-    }
-
-    private boolean checkEnumeration(String parameterName, String parameterValue, String... enums) {
-
-	String v = parameterValue.trim();
-	for (String e : enums) {
-	    if (v.equals(e)) {
-		return true;
-	    }
-	}
-
-	MessageContext mc = result.addError(this, 6, parameterName, parameterValue.trim(),
-		StringUtils.join(enums, ", "));
-	mc.addDetail(this, 0, inputs);
-
-	return false;
     }
 
     @Override
@@ -191,7 +164,6 @@ public class GeoPackageTemplateConfigurationValidator extends AbstractConfigurat
 	case 3 -> "Value of target parameter 'organizationCoordSysId' is '$1$', which does not match any ID of the minimal SRSs defined for every GeoPackage (-1, 0, 4326) or of the SRSs defined via the advanced process configuration.";
 	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
 	case 5 -> "Value of target parameter 'srsOrganization' is '$1$', which does not match (ignoring case) any organization of the minimal SRSs defined for every GeoPackage ('NONE', 'EPSG') or of the SRSs defined via the advanced process configuration.";
-	case 6 -> "Value of target parameter '$1$' is '$2$', which does not match any of the allowed values: $3$";
 	default -> "(GeoPackageTemplateConfigurationValidator.java) Unknown message with number: " + mnr;
 	};
     }

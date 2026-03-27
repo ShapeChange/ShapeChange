@@ -119,19 +119,19 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration targetConfig = null;
     private String targetConfigInputs = "";
-    private Options options = null;
-    private ShapeChangeResult result = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
+
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
 
 	this.targetConfig = (TargetConfiguration) config;
 	Set<String> inputIds = targetConfig.getInputIds();
 	if (inputIds != null && !inputIds.isEmpty()) {
 	    this.targetConfigInputs = String.join(" ", inputIds);
 	}
-	this.options = options;
-	this.result = result;
 
 	boolean isValid = true;
 
@@ -370,63 +370,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	return isValid;
     }
 
-    private boolean checkStringParameterNotBlankIfSet(String paramName) {
-
-	if (targetConfig.hasParameter(paramName)) {
-
-	    if (StringUtils.isBlank(targetConfig.getParameterValue(paramName))) {
-
-		MessageContext mc = result.addError(this, 106, paramName);
-		mc.addDetail(this, 0, targetConfigInputs);
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    private boolean checkIntegerParameter(String paramName) {
-
-	String valueByConfig = targetConfig.getParameterValue(paramName);
-
-	if (valueByConfig != null) {
-
-	    try {
-		Integer.parseInt(valueByConfig);
-	    } catch (NumberFormatException e) {
-		MessageContext mc = result.addError(this, 4, paramName, e.getMessage());
-		mc.addDetail(this, 0, targetConfigInputs);
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    private boolean checkNonNegativeIntegerParameter(String paramName) {
-
-	String valueByConfig = targetConfig.getParameterValue(paramName);
-
-	if (valueByConfig != null) {
-
-	    try {
-
-		Integer i = Integer.parseInt(valueByConfig);
-		if (i < 0) {
-		    result.addError(this, 104, paramName, valueByConfig);
-		    return false;
-		}
-
-	    } catch (NumberFormatException e) {
-		MessageContext mc = result.addError(this, 4, paramName, e.getMessage());
-		mc.addDetail(this, 0, targetConfigInputs);
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
     private boolean checkMapEntryParameters(MapEntryParamInfos mepp) {
 
 	boolean isValid = true;
@@ -574,75 +517,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 
     }
 
-    private boolean checkParameterCharacteristicHasAllowedValueIgnoringCase(
-	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
-	    String meParamCharacteristic, String[] allowedValues, String typeRuleKey, String targetType) {
-
-	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
-
-	if (characteristics.containsKey(meParamCharacteristic)) {
-
-	    String characteristicValue = characteristics.get(meParamCharacteristic);
-
-	    if (StringUtils.isNotBlank(characteristicValue)
-		    && !Strings.CI.equalsAny(characteristicValue, allowedValues)) {
-
-		MessageContext mc = result.addError(this, 103, meParamName, meParamCharacteristic, characteristicValue,
-			StringUtils.join(allowedValues, ", "));
-		if (mc != null) {
-		    mc.addDetail(this, 1, targetConfigInputs, typeRuleKey, targetType);
-		}
-
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    private boolean checkParameterOptionalCharacteristicHasValue(
-	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
-	    String meParamCharacteristic, String typeRuleKey, String targetType) {
-
-	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
-
-	if (characteristics.containsKey(meParamCharacteristic)) {
-
-	    if (StringUtils.isBlank(characteristics.get(meParamCharacteristic))) {
-
-		MessageContext mc = result.addError(this, 105, meParamName, meParamCharacteristic);
-		if (mc != null) {
-		    mc.addDetail(this, 1, targetConfigInputs, typeRuleKey, targetType);
-		}
-
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    private boolean checkParameterRequiredCharacteristicHasValue(
-	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
-	    String meParamCharacteristic, String typeRuleKey, String targetType) {
-
-	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
-
-	String characteristicValue = characteristics.get(meParamCharacteristic);
-
-	if (StringUtils.isBlank(characteristicValue)) {
-
-	    MessageContext mc = result.addError(this, 102, meParamName, meParamCharacteristic);
-	    if (mc != null) {
-		mc.addDetail(this, 1, targetConfigInputs, typeRuleKey, targetType);
-	    }
-
-	    return false;
-	}
-
-	return true;
-    }
-
     @Override
     public String message(int mnr) {
 
@@ -651,21 +525,16 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	case 1 ->
 	    "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
 	case 2 -> "Context: Ldproxy2Target configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
-	case 4 ->
-	    "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	case 4 -> "";
 
 	case 100 -> "Parameter '$1$' is set to '$2$'. This is not a valid value.";
 	case 101 ->
 	    "Invalid map entry: parameter '$1$' is set, which is only applicable to a mapping with target type (one of) '$2$'. Found target type: '$3$'.";
-	case 102 ->
-	    "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
-	case 103 ->
-	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
-	case 104 -> "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
-	case 105 ->
-	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
-	case 106 ->
-	    "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
+	case 102 -> "";
+	case 103 -> "";
+	case 104 -> "";
+	case 105 -> "";
+	case 106 -> "";
 	case 107 -> "Parameter '$1$' is set to '$2$'. This is not a valid value (case matters for this parameter).";
 	case 108 -> "Invalid map entry for type '$1$': the target type is undefined.";
 	case 109 ->

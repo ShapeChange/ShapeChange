@@ -74,18 +74,13 @@ public class XmlSchemaConfigurationValidator extends AbstractConfigurationValida
 	    .of(Pattern.compile("^schematronExtension\\.(\\w+?)\\.function|schematronExtension\\.(\\w+?)\\.namespace$"))
 	    .collect(Collectors.toList());
 
-    // these fields will be initialized when isValid(...) is called
-    private ProcessConfiguration config = null;
-    private Options options = null;
-    private ShapeChangeResult result = null;
-
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
-	this.config = config;
-	this.options = options;
-	this.result = result;
-
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());

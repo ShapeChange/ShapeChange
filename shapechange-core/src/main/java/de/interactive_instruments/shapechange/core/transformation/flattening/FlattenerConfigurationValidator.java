@@ -90,19 +90,23 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
-		pConfig.getParameters().keySet(), result) && isValid;
+		config.getParameters().keySet(), result) && isValid;
 
 	/*
 	 * NOTE: No type check for the configuration is performed, since a mismatch
 	 * would be a system error
 	 */
-	TransformerConfiguration trfConfig = (TransformerConfiguration) pConfig;
+	TransformerConfiguration trfConfig = (TransformerConfiguration) config;
 
 	String id = trfConfig.getId();
 

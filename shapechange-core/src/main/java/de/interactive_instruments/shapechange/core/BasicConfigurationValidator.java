@@ -57,16 +57,20 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
      * Validates the 'input'-section of the ShapeChange configuration. Any
      * invalidity is directly logged in the ShapeChangeResult.
      * 
-     * @param pConfig will be ignored by this class, can therefore be
+     * @param pc will be ignored by this class, can therefore be
      *                <code>null</code>
-     * @param options tbd
-     * @param result  tbd
+     * @param o tbd
+     * @param scr  tbd
      * @return <code>true</code> if the configuration is valid, else
      *         <code>false</code>
      */
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	/*

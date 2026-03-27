@@ -46,14 +46,13 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.interactive_instruments.shapechange.core.target.sql.structure.ForeignKeyConstraint;
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessConfiguration;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.target.sql.structure.ForeignKeyConstraint;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -100,20 +99,15 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 	    SqlConstants.PARAM_WRITE_SQL_ENCODING_INFOS).collect(Collectors.toSet()));
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
-    // these fields will be initialized when isValid(...) is called
-    private ProcessConfiguration config = null;
-    private Options options = null;
-    private ShapeChangeResult result = null;
-
     private String effectiveDatabaseSystem = "PostgreSQL";
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
-	this.config = config;
-	this.options = options;
-	this.result = result;
-
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
@@ -408,27 +402,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 
 	return isValid;
     }
-
-    private boolean checkIntegerParameter(String paramName) {
-
-	boolean isValid = true;
-
-	String valueByConfig = config.getParameterValue(paramName);
-
-	if (valueByConfig != null) {
-
-	    try {
-		Integer.parseInt(valueByConfig);
-	    } catch (NumberFormatException e) {
-		MessageContext mc = result.addWarning(this, 4, paramName, e.getMessage());
-		mc.addDetail(this, 0);
-		isValid = false;
-	    }
-	}
-
-	return isValid;
-    }
-
+    
     private boolean checkDescriptorsForCodeList(ProcessConfiguration config, Options options,
 	    ShapeChangeResult result) {
 
@@ -488,7 +462,7 @@ public class SqlDdlConfigurationValidator extends AbstractConfigurationValidator
 		    + "' - the parameter value is '$1$' - does not match the regular expression '$2$'. Correct the parameter value.";
 	case 3 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' did not contain a well-known identifier. Use well-known identifiers or omit the parameter.";
-	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$.";
+	case 4 -> "";
 	case 5 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 	case 6 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
 		    + "' does not match the following regular expression: $1$";

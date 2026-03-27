@@ -63,16 +63,20 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration pConfig, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
 
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
+	
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTargetParameters());
 	isValid = validateParameters(allowedParametersWithStaticNames, regexForAllowedParametersWithDynamicNames,
-		pConfig.getParameters().keySet(), result) && isValid;
+		config.getParameters().keySet(), result) && isValid;
 
 	// ensure that output directory exists
-	String outputDirectory = pConfig.getParameterValue("outputDirectory");
+	String outputDirectory = config.getParameterValue("outputDirectory");
 	if (outputDirectory == null)
 	    outputDirectory = options.parameter("outputDirectory");
 	if (outputDirectory == null)
@@ -93,7 +97,7 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
 	}
 
 	// ensure that advanced process configuration exists
-	if (pConfig.getAdvancedProcessConfigurations() == null) {
+	if (config.getAdvancedProcessConfigurations() == null) {
 	    isValid = false;
 	    result.addError(this, 3);
 	} else {
@@ -101,7 +105,7 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
 	    try {
 		// parse OpenAPI config items, thereby ensure that overlays are accessible
 		OpenApiConfigItems oapiConfig = new OpenApiConfigItems(result,
-			pConfig.getAdvancedProcessConfigurations());
+			config.getAdvancedProcessConfigurations());
 
 		// ensure that core conformance class is available
 		Optional<ConformanceClass> coreCc = oapiConfig
@@ -152,7 +156,7 @@ public class OpenApiDefinitionConfigurationValidator extends AbstractConfigurati
 	}
 
 	// check if 'collections' parameter is set, and if so, that it is not empty
-	if (pConfig.hasParameter(OpenApiConstants.PARAM_COLLECTIONS)
+	if (config.hasParameter(OpenApiConstants.PARAM_COLLECTIONS)
 		&& options.parameterAsStringList(OpenApiDefinition.class.getName(), OpenApiConstants.PARAM_COLLECTIONS,
 			null, true, true).isEmpty()) {
 	    isValid = false;

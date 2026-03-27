@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
@@ -75,19 +76,19 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
     // these fields will be initialized when isValid(...) is called
     private TargetConfiguration targetConfig = null;
     private String targetConfigInputs = "";
-    private Options options = null;
-    private ShapeChangeResult result = null;
 
     @Override
-    public boolean isValid(ProcessConfiguration config, Options options, ShapeChangeResult result) {
+    public boolean isValid(ProcessConfiguration pc, Options o, ShapeChangeResult scr) {
+
+	setProcessConfiguration(pc);
+	setOptions(o);
+	setShapeChangeResult(scr);
 
 	this.targetConfig = (TargetConfiguration) config;
 	Set<String> inputIds = targetConfig.getInputIds();
 	if (inputIds != null && !inputIds.isEmpty()) {
 	    this.targetConfigInputs = String.join(" ", inputIds);
 	}
-	this.options = options;
-	this.result = result;
 
 	boolean isValid = true;
 
@@ -115,7 +116,7 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 	isValid = isValid
 		& checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_GML_CODE_LIST_ENCODING_VERSION);
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_PROPERTY_NAME_SEPARATOR);
-	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_SORT_PROPERTIES_BY_NAME);	
+	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_SORT_PROPERTIES_BY_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_SRS_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(GfsTemplateConstants.PARAM_XML_ATTRIBUTE_NAME_SEPARATOR);
 
@@ -125,38 +126,6 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 		GfsTemplateConstants.PARAM_GML_CODE_LIST_ENCODING_VERSION, new String[] { "3.2", "3.3" });
 
 	return isValid;
-    }
-
-    private boolean checkParameterHasAllowedValueIgnoringCase(String paramName, String[] allowedValues) {
-
-	if (targetConfig.hasParameter(paramName)) {
-
-	    String paramValue = targetConfig.getParameterValue(paramName);
-
-	    if (!StringUtils.equalsAnyIgnoreCase(paramValue, allowedValues)) {
-
-		MessageContext mc = result.addError(this, 110, paramName, paramValue);
-		mc.addDetail(this, 0, targetConfigInputs);
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    private boolean checkStringParameterNotBlankIfSet(String paramName) {
-
-	if (targetConfig.hasParameter(paramName)) {
-
-	    if (StringUtils.isBlank(targetConfig.getParameterValue(paramName))) {
-
-		MessageContext mc = result.addError(this, 104, paramName);
-		mc.addDetail(this, 0, targetConfigInputs);
-		return false;
-	    }
-	}
-
-	return true;
     }
 
     private boolean checkMapEntryParameters(MapEntryParamInfos mepp) {
@@ -214,25 +183,24 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 		    if (StringUtils.isNotBlank(subtype)) {
 
 			// check that the subtype is one of the allowed ones
-			if (StringUtils.equalsAnyIgnoreCase(subtype, GfsTemplateConstants.GFS_SUBTYPES)) {
+			if (Strings.CI.equalsAny(subtype, GfsTemplateConstants.GFS_SUBTYPES)) {
 
 			    MessageContext mc = null;
 
 			    // now check that the combination is allowed
 			    if (targetType.equalsIgnoreCase("Integer")
-				    && !StringUtils.equalsAnyIgnoreCase(subtype, "Integer64", "Short")) {
+				    && !Strings.CI.equalsAny(subtype, "Integer64", "Short")) {
 				isValid = false;
 				mc = result.addError(this, 106, GfsTemplateConstants.ME_PARAM_TYPE_DETAILS,
 					GfsTemplateConstants.ME_PARAM_TYPE_DETAILS_CHARACT_SUBTYPE, subtype,
 					targetType);
-			    } else if (targetType.equalsIgnoreCase("Real")
-				    && !StringUtils.equalsAnyIgnoreCase(subtype, "Float")) {
+			    } else if (targetType.equalsIgnoreCase("Real") && !Strings.CI.equalsAny(subtype, "Float")) {
 				isValid = false;
 				mc = result.addError(this, 106, GfsTemplateConstants.ME_PARAM_TYPE_DETAILS,
 					GfsTemplateConstants.ME_PARAM_TYPE_DETAILS_CHARACT_SUBTYPE, subtype,
 					targetType);
-			    } else if (targetType.equalsIgnoreCase("String") && !StringUtils
-				    .equalsAnyIgnoreCase(subtype, "Boolean", "Date", "Datetime", "Time")) {
+			    } else if (targetType.equalsIgnoreCase("String")
+				    && !Strings.CI.equalsAny(subtype, "Boolean", "Date", "Datetime", "Time")) {
 				isValid = false;
 				mc = result.addError(this, 106, GfsTemplateConstants.ME_PARAM_TYPE_DETAILS,
 					GfsTemplateConstants.ME_PARAM_TYPE_DETAILS_CHARACT_SUBTYPE, subtype,
@@ -262,47 +230,30 @@ public class GfsTemplateTargetConfigurationValidator extends AbstractConfigurati
 
     }
 
-    private boolean checkParameterOptionalCharacteristicHasValue(
-	    Map<String, Map<String, String>> characteristicsByParameter, String meParamName,
-	    String meParamCharacteristic, String typeRuleKey, String targetType) {
-
-	Map<String, String> characteristics = characteristicsByParameter.get(meParamName);
-
-	if (characteristics.containsKey(meParamCharacteristic)) {
-
-	    if (StringUtils.isBlank(characteristics.get(meParamCharacteristic))) {
-
-		MessageContext mc = result.addError(this, 105, meParamName, meParamCharacteristic);
-		if (mc != null) {
-		    mc.addDetail(this, 1, targetConfigInputs, typeRuleKey, targetType);
-		}
-
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
     @Override
     public String message(int mnr) {
 
 	return switch (mnr) {
 	case 0 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$'.";
-	case 1 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
-	case 2 -> "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
-	case 4 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
+	case 1 ->
+	    "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$' and target type '$3$'.";
+	case 2 ->
+	    "Context: GfsTemplateTarget configuration element with 'inputs'='$1$', map entry with type#rule '$2$'.";
+	case 4 -> "";
 
-	case 104 -> "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
-	case 105 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
-	case 106 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not allowed for target type $4$";
-	case 107 -> "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not one of the recognized values: $4$";
+	case 104 -> "";
+	case 105 -> "";
+	case 106 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not allowed for target type $4$";
+	case 107 ->
+	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$'. The characteristic has value '$3$', which is not one of the recognized values: $4$";
 	case 108 -> "Invalid map entry for type '$1$': the target type is undefined.";
-	case 109 -> "Invalid map entry for type '$1$': target type '$2$' is not one of the allowed values. Check for typos or whitespace characters and correct the target type.";
-	case 110 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
+	case 109 ->
+	    "Invalid map entry for type '$1$': target type '$2$' is not one of the allowed values. Check for typos or whitespace characters and correct the target type.";
+	case 110 -> "";
 
-	default -> "(" + GfsTemplateTargetConfigurationValidator.class.getName() + ") Unknown message with number: "
-		    + mnr;
+	default ->
+	    "(" + GfsTemplateTargetConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
 	};
     }
 }
