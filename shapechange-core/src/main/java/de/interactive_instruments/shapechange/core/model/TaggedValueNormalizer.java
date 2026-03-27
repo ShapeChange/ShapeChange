@@ -107,6 +107,11 @@ public class TaggedValueNormalizer {
 	    "ldpSourcePaths", "ldpExcludedScopes", "ldpQueryable").collect(Collectors.toSet());
 
     /*
+     * the list of tagged values specified by the Coretable target
+     */
+    protected static final Set<String> coretableTags = Stream.of("coretableEncodingRule").collect(Collectors.toSet());
+
+    /*
      * the list of tagged values specified by other encoding rules
      */
     protected static final Set<String> shapeChangeTags = Stream.of("xsdEncodingRule", "xsdAsAttribute", "gmlAsGroup",
@@ -130,7 +135,7 @@ public class TaggedValueNormalizer {
 	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
 	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
 	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet",
-	    "isPropertyChoiceUnion", "collectionGeometryType").collect(Collectors.toSet());
+	    "isPropertyChoiceUnion", "collectionGeometryType", "existentiallyDependentPart").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values
@@ -152,6 +157,7 @@ public class TaggedValueNormalizer {
 	allowedTags.addAll(gpkgTags);
 	allowedTags.addAll(sqlTags);
 	allowedTags.addAll(ldp2Tags);
+	allowedTags.addAll(coretableTags);
 	allowedTags.addAll(shapeChangeTags);
 
 	for (String s : options.parameter("representTaggedValues").split("\\,"))

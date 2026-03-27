@@ -139,6 +139,8 @@
 
 === xref:targets/CDB.adoc[CDB]
 
+=== xref:targets/Coretable.adoc[Coretable]
+
 === xref:targets/dictionaries/Dictionaries.adoc[Dictionaries]
 
 ==== xref:targets/dictionaries/GML_Codelist_Dictionary.adoc[GML codelist dictionary]
