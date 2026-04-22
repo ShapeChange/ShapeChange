@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="1.0">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element name="FeatureType1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureType1Type"/>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="attToKeep" type="integer"/>
+               <element name="otherAttToKeep" type="boolean"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureType2"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureType2Type"/>
+   <complexType name="FeatureType2Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="ft2AttToKeep" type="double"/>
+               <element name="ft2ToFt1" type="t:FeatureType1PropertyType"/>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

@@ -1683,4 +1683,25 @@
    </extension>
   </complexContent>
  </complexType>
+ <element name="PropertyTransformations" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:PropertyTransformationsType"/>
+ <complexType name="PropertyTransformationsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" minOccurs="1" name="transformations">
+      <complexType>
+       <sequence>
+        <element maxOccurs="unbounded" ref="sc:PropertyTransformation"/>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="PropertyTransformation" type="sc:PropertyTransformationType"/>
+ <complexType name="PropertyTransformationType">
+  <attribute name="rule" type="string" use="required"> </attribute>
+  <attributeGroup ref="sc:modelElementSelectionGroup"/>
+ </complexType>
 </schema>

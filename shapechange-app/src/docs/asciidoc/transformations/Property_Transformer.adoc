@@ -1,0 +1,124 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Property_Transformer]]
+= Property Transformer
+
+(since v4.1.0)
+
+[[Introduction]]
+== Introduction
+
+This transformation processes individual properties (attributes
+and association roles).
+
+[[Configuration]]
+== Configuration
+
+The following sections specify the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.shapechange.core.transformation.property.PropertyTransformer_
+
+[[Rules]]
+=== Rules
+
+[[rule-trf-prop-delete]]
+==== rule-trf-prop-delete
+
+(available since v4.1.0)
+
+Processes all properties (in schemas selected for processing) that 
+match one of the `PropertyTransformation` configuration elements defined 
+with XML attribute @rule `rule-trf-prop-delete`.
+
+Each such property is removed from the model. If the property is part 
+of an association, the given property is set to be non-navigable. 
+If both association ends then are no longer navigable, the association 
+is removed with both its properties and any association class.
+
+
+[[Parameters]]
+=== Parameters
+
+At the moment no parameters are defined for this transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+At the moment no map entries are defined for this transformation.
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+The `<advancedProcessConfigurations>` element inside of the `<Transformer>`
+element is used to define property transformations for specific properties.
+
+The following transformations are supported:
+
+* PropertyTransformation - For direct property transformations that do not require
+additional information. An example is the deletion of a property.
+
+[[Advanced_Process_Configuration_propertytransformation]]
+==== PropertyTransformation
+
+The information items defined by a `<PropertyTransformation>` element are
+documented in the following sections.
+
+[[Advanced_Process_Configuration_propertytransformation_rule]]
+===== rule
+
+Explanation: Identifier of the transformation rule to which the
+transformation applies.
+
+Type: string
+
+Multiplicity: 1 (required)
+
+Default value: _none_
+
+[[Advanced_Process_Configuration_propertytransformation_Model_Element_Selection]]
+===== Model Element Selection
+
+A number of attributes are used to select relevant model elements. They
+are the same as described
+xref:./Common_Transformer_Functionality.adoc#Model_element_filter_criteria[here].
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<Transformer id="TRF_END" input="original" class="de.interactive_instruments.shapechange.core.transformation.property.PropertyTransformer">
+	<advancedProcessConfigurations>
+		<PropertyTransformations>
+			<transformations>
+				<PropertyTransformation rule="rule-trf-prop-delete" modelElementOwnerName="FeatureType1" modelElementName="attToRemove"/>
+				<PropertyTransformation rule="rule-trf-prop-delete" modelElementOwnerName="FeatureType1" modelElementName="ft1ToFt2"/>
+			</transformations>
+		</PropertyTransformations>
+	</advancedProcessConfigurations>
+	<rules>
+		<ProcessRuleSet name="ptrule">
+			<rule name="rule-trf-prop-delete"/>
+		</ProcessRuleSet>
+	</rules>
+</Transformer>
+----------

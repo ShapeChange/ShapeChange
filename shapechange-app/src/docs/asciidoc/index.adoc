@@ -122,6 +122,8 @@
 
 ===== xref:transformations/profiling/Profiling_with_explicit_profile_settings_rule_enabled.adoc[Profiling with explicit profile settings rule enabled]
 
+=== xref:transformations/Property_Transformer.adoc[Property transformer]
+
 === xref:transformations/Tagged_Value_Transformer.adoc[Tagged value transformer]
 
 === xref:transformations/Type_Converter.adoc[Type converter]

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="original">
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/propertyTransformer/deletion/test_property_deletion.qea"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/propertyTransformer/deletion/log.xml"/>
+	</log>
+	<transformers>
+		<Transformer id="TRF_END" input="original" class="de.interactive_instruments.shapechange.core.transformation.property.PropertyTransformer">
+			<advancedProcessConfigurations>
+				<PropertyTransformations>
+					<transformations>
+						<PropertyTransformation rule="rule-trf-prop-delete" modelElementOwnerName="FeatureType1" modelElementName="attToRemove"/>
+						<PropertyTransformation rule="rule-trf-prop-delete" modelElementOwnerName="FeatureType1" modelElementName="ft1ToFt2"/>
+					</transformations>
+				</PropertyTransformations>
+			</advancedProcessConfigurations>
+			<rules>
+				<ProcessRuleSet name="ptrule">
+					<rule name="rule-trf-prop-delete"/>
+				</ProcessRuleSet>
+			</rules>
+		</Transformer>
+	</transformers>
+	<targets>
+		<TargetXmlSchema inputs="TRF_END" class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/propertyTransformer/deletion/results"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="myrule"/>
+			<rules>
+				<EncodingRule name="myrule" extends="iso19136_2007">
+					<rule name="rule-xsd-all-tagged-values"/>
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>
