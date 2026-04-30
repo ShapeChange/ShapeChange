@@ -41,7 +41,6 @@ fragments:
         role: ID
       attMeasDynamicMulti:
         type: OBJECT_ARRAY
-        objectType: Measure
         constraints:
           required: true
           minOccurrence: 1
@@ -49,7 +48,6 @@ fragments:
       attMeasDynamicSingle:
         sourcePath: attmeasdynamicsingle
         type: OBJECT
-        objectType: Measure
         constraints:
           required: true
         schema: "#/fragments/measure"

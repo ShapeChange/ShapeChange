@@ -73,7 +73,6 @@ fragments:
   featuretype1:
     type: OBJECT
     objectType: FeatureType1
-    label: FeatureType1
     properties:
       oid:
         sourcePath: _id
@@ -99,7 +98,6 @@ fragments:
   featuretype2:
     type: OBJECT
     objectType: FeatureType2
-    label: FeatureType2
     properties:
       oid:
         sourcePath: _id
@@ -114,7 +112,6 @@ fragments:
   featuretype3:
     type: OBJECT
     objectType: FeatureType3
-    label: FeatureType3
     properties:
       oid:
         sourcePath: _id
@@ -123,7 +120,6 @@ fragments:
   type1:
     type: OBJECT
     objectType: Type1
-    label: Type1
     properties:
       oid:
         sourcePath: _id

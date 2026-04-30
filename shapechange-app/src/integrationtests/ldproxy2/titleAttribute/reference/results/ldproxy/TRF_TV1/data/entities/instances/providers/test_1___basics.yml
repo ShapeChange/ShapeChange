@@ -151,7 +151,6 @@ types:
         sourcePath: "[_id=ts1_featuretype1_id]assoctablets1ft1toextdt/tb_extdt_id"
         type: FEATURE_REF_ARRAY
         valueType: INTEGER
-        objectType: ExtDt
         refUriTemplate: "https://example.org/dt/{{value}}"
       roleToFt2_1:
         sourcePath: "[_id=ts1_featuretype1_id]assoctablets1ft1ft21/[ts1_featuretype2_id=_id]ts1_featuretype2"

@@ -75,7 +75,13 @@ Some configuration data can simply be copied using template files. <<table_templ
 
 // The updated ldproxy target uses platform identifier 'ldp2'. The target is the next iteration for generating ldproxy configuration files. The first iteration, with platform identifier 'ldp', has been removed.
 
-With __rule-ldp2-all-documentation__, descriptive information of application schema elements (for ldproxy that primarily means classes and their properties) can be encoded within the ldproxy configuration, more specifically: in _label_ and _description_ members of type definitions.
+With __rule-ldp2-all-documentation__, descriptive information of application schema elements (for ldproxy that primarily means classes and their properties) can be encoded within the ldproxy configuration, more specifically: in _label_ and _description_ members of type definitions. 
+Note that _label_ and _description_ for a type definition are not encoded 
+in the fragment definition of the type (because that information would be redundant)
+and if fragments are enabled, then _label_ and _description_ for properties are
+only encoded in fragment definitions, not in the type definitions (exceptions are made
+for special cases, such as link objects).
+
 
 [NOTE]
 ======
@@ -796,7 +802,6 @@ fragments:
   t8_class1:
     type: OBJECT
     objectType: T8_Class1
-    label: T8_Class1
     properties:
       oid:
         sourcePath: _id
@@ -825,7 +830,6 @@ fragments:
   t8_class1sub:
     type: OBJECT
     objectType: T8_Class1Sub
-    label: T8_Class1Sub
     merge:
     - schema: '#/fragments/t8_class1'
     - schema: '#/fragments/t8_mixin_c'
@@ -847,7 +851,6 @@ fragments:
   t8_class2:
     type: OBJECT
     objectType: T8_Class2
-    label: T8_Class2
     properties:
       oid:
         sourcePath: _id
@@ -867,7 +870,6 @@ fragments:
   t8_class2sub:
     type: OBJECT
     objectType: T8_Class2Sub
-    label: T8_Class2Sub
     properties:
       attC2Sub:
         sourcePath: attc2sub
@@ -879,7 +881,6 @@ fragments:
   t8_mixin_a:
     type: OBJECT
     objectType: T8_Mixin_A
-    label: T8_Mixin_A
     properties:
       pMixA1:
         sourcePath: pmixa1
@@ -903,7 +904,6 @@ fragments:
   t8_mixin_b:
     type: OBJECT
     objectType: T8_Mixin_B
-    label: T8_Mixin_B
     properties:
       pMixB:
         sourcePath: pmixb
@@ -915,7 +915,6 @@ fragments:
   t8_mixin_c:
     type: OBJECT
     objectType: T8_Mixin_C
-    label: T8_Mixin_C
     properties:
       pMixC:
         sourcePath: pmixc
@@ -926,7 +925,6 @@ fragments:
   t8_mixin_d:
     type: OBJECT
     objectType: T8_Mixin_D
-    label: T8_Mixin_D
     properties:
       pMixD:
         sourcePath: pmixd
@@ -1037,7 +1035,8 @@ The following information items are encoded within the provider configuration:
 // The old ldproxy Target has rule-ldp-cls-oneo-metadata. This would be handled using a model transformation (such as the xref:../transformations/Attribute_Creator.adoc[Attribute Creator]).
 
 NOTE: If target parameter _enableFragments_ is set to `true`, type AND fragment 
-definitions are encoded. For further details, see section <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>>.
+definitions are encoded. For further details, see section <<ldproxy2_schemaconversionrules_schemapackage_providerconfig>>. Label and
+description are not encoded in the fragment definition of the class.
 
 
 [[ldproxy2_schemaconversionrules_types_featureandobjecttype_servicecollection]]

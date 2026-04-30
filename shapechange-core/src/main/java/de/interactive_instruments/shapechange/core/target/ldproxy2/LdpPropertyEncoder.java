@@ -479,8 +479,7 @@ public class LdpPropertyEncoder {
 
 			valueTypeForBuilder = Optional.empty();
 			typeForBuilder = Type.OBJECT;
-			propMemberDefBuilder.schema(LdpUtil.fragmentRef("LI_Lineage"));
-
+			
 			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
 
 		    } else if (sourcePathInfosForBuilder.isMultipleSourcePaths()
@@ -756,12 +755,24 @@ public class LdpPropertyEncoder {
 		    }
 		}
 
-		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.name(LdpInfo.id(pi))
-			.label(LdpInfo.label(pi)).description(LdpInfo.description(pi)).type(typeForBuilder)
-			.objectType(objectTypeForBuilder).constraints(constraints).role(propRoleForBuilder)
-			.constantValue(constantValueForBuilder).geometryType(geometryTypeForBuilder)
-			.linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder).transformations(transformations)
-			.propertyMap(propertyMapForBuilder).build();
+		propMemberDefBuilder.name(LdpInfo.id(pi)).type(typeForBuilder).constraints(constraints)
+			.role(propRoleForBuilder).constantValue(constantValueForBuilder)
+			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
+			.transformations(transformations).propertyMap(propertyMapForBuilder);
+
+		setObjectTypeOnSchemaBuilderForProperty(propMemberDefBuilder, objectTypeForBuilder);
+
+		/*
+		 * Only encode label and description on properties if 1) fragments are not
+		 * enabled at all or 2) the property encoding context is a fragment definition.
+		 * If fragments are enabled, we do not want label and description encoded in
+		 * properties of type definitions.
+		 */
+		if (!Ldproxy2Target.enableFragments || context.isInFragment()) {
+		    propMemberDefBuilder.label(LdpInfo.label(pi)).description(LdpInfo.description(pi));
+		}
+
+		ImmutableFeatureSchema propMemberDef = propMemberDefBuilder.build();
 
 		propertyDefs.put(LdpInfo.id(pi), propMemberDef);
 	    }
@@ -1107,12 +1118,31 @@ public class LdpPropertyEncoder {
 
 		    schemaBuilder.propertyMap(datatypePropertyDefs);
 
-		    schemaBuilder.objectType(Optional.of(LdpInfo.originalClassName(actualTypeCi)));
-		    if (!target.isMappedToLink(actualTypeCi)) {
-			schemaBuilder.schema(LdpUtil.fragmentRef(actualTypeCi));
-		    }
+		    setObjectTypeOnSchemaBuilderForProperty(schemaBuilder,
+			    Optional.of(LdpInfo.originalClassName(actualTypeCi)));
+
+		    /*
+		     * NOTE We are in a type definition, and fragments are enabled (that is the
+		     * context for calling this method). Never encode schema references in the type
+		     * definition - only on the top-level of the type definition itself, because
+		     * that will reference the fragment definition of the type, which itself
+		     * includes all the references. That is why we do not add 'schema' here.
+		     */
 		}
 	    }
+	}
+    }
+
+    private void setObjectTypeOnSchemaBuilderForProperty(Builder schemaBuilder, Optional<String> objectTypeForBuilder) {
+	/*
+	 * Only encode objectType for a property if fragments are NOT enabled (because
+	 * if fragments ARE enabled the object type is then taken from the referenced
+	 * [via keyword 'schema'] OBJECT [fragment] definition). The exception is
+	 * objectType 'Link'.
+	 */
+	if (!Ldproxy2Target.enableFragments
+		|| (objectTypeForBuilder.isPresent() && objectTypeForBuilder.get().equals("Link"))) {
+	    schemaBuilder.objectType(objectTypeForBuilder);
 	}
     }
 

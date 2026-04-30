@@ -199,12 +199,9 @@ public class LdpConfigBuilder {
 		String fragmentName = LdpInfo.configIdentifierName(ci);
 
 		ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-			.name(fragmentName).objectType(LdpInfo.originalClassName(ci))
-			.description(LdpInfo.description(ci));
-
-		if (ci.category() != Options.DATATYPE && ci.category() != Options.UNION) {
-		    fragmentBuilder.label(LdpInfo.label(ci));
-		}
+			.name(fragmentName).objectType(LdpInfo.originalClassName(ci));
+		
+		// Never encode label and description for an OBJECT fragment definition.
 
 		LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, false);
 
@@ -299,11 +296,10 @@ public class LdpConfigBuilder {
 	     */
 
 	    ImmutableFeatureSchema.Builder typeDefBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci))
-		    .description(LdpInfo.description(ci));
-
+		    .name(typeDefName).sourcePath(ldpSourcePathProvider.sourcePathTypeLevel(ci));
+		    
 	    if (ci.category() != Options.DATATYPE && ci.category() != Options.UNION) {
-		typeDefBuilder.label(LdpInfo.label(ci));
+		typeDefBuilder.description(LdpInfo.description(ci)).label(LdpInfo.label(ci));
 	    }
 
 	    LdpPropertyEncodingContext pec = ldpProvider.createInitialPropertyEncodingContext(ci, true);

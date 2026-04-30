@@ -41,7 +41,6 @@ fragments:
   AbstractFeatureType:
     type: OBJECT
     objectType: AbstractFeatureType
-    label: AbstractFeatureType
     properties:
       oid:
         sourcePath: id
@@ -64,22 +63,18 @@ fragments:
   FeatureType1:
     type: OBJECT
     objectType: FeatureType1
-    label: FeatureType1
     schema: "#/fragments/AbstractFeatureType"
   FeatureType1Sub1:
     type: OBJECT
     objectType: FeatureType1Sub1
-    label: FeatureType1Sub1
     schema: "#/fragments/FeatureType1"
   FeatureType2:
     type: OBJECT
     objectType: FeatureType2
-    label: FeatureType2
     schema: "#/fragments/AbstractFeatureType"
   FeatureType3:
     type: OBJECT
     objectType: FeatureType3
-    label: FeatureType3
     properties:
       oid:
         sourcePath: id

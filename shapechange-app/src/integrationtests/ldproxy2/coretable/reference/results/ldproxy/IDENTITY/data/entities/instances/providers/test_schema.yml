@@ -72,7 +72,6 @@ fragments:
       attDt1B:
         sourcePath: attDt1B
         type: OBJECT_ARRAY
-        objectType: DT2
         label: attDt1B
         constraints:
           required: true
@@ -127,7 +126,6 @@ fragments:
       generAttribute:
         sourcePath: generAttribute
         type: OBJECT
-        objectType: GenerAttribute
         label: generAttribute
         constraints:
           required: true
@@ -135,7 +133,6 @@ fragments:
   FT1:
     type: OBJECT
     objectType: FT1
-    label: FT1
     properties:
       oid:
         sourcePath: id
@@ -164,7 +161,6 @@ fragments:
       attDt:
         sourcePath: "[JSON]properties/attDt"
         type: OBJECT
-        objectType: DT
         label: attDt
         constraints:
           required: true
@@ -239,7 +235,6 @@ fragments:
   FT2:
     type: OBJECT
     objectType: FT2
-    label: FT2
     properties:
       oid:
         sourcePath: id
@@ -276,12 +271,10 @@ fragments:
   FT2Sub1:
     type: OBJECT
     objectType: FT2Sub1
-    label: FT2Sub1
     schema: "#/fragments/FT2"
   FT2Sub1Sub1:
     type: OBJECT
     objectType: FT2Sub1Sub1
-    label: FT2Sub1Sub1
     merge:
     - schema: "#/fragments/FT2Sub1"
     - schema: "#/fragments/Mixin"
@@ -295,7 +288,6 @@ fragments:
   FT3:
     type: OBJECT
     objectType: FT3
-    label: FT3
     properties:
       oid:
         sourcePath: id
@@ -342,7 +334,6 @@ fragments:
   FT4:
     type: OBJECT
     objectType: FT4
-    label: FT4
     properties:
       oid:
         sourcePath: id
@@ -351,13 +342,11 @@ fragments:
       someGenerAttribute:
         sourcePath: "[JSON]properties/someGenerAttribute"
         type: OBJECT
-        objectType: GenerAttribute
         label: someGenerAttribute
         schema: "#/fragments/GenerAttribute"
       otherGenerAttribute:
         sourcePath: "[JSON]properties/otherGenerAttribute"
         type: OBJECT_ARRAY
-        objectType: GenerAttribute
         label: otherGenerAttribute
         constraints:
           minOccurrence: 0
@@ -365,7 +354,6 @@ fragments:
       attDt3:
         sourcePath: "[JSON]properties/attDt3"
         type: OBJECT
-        objectType: DT3
         label: attDt3
         constraints:
           required: true
@@ -373,7 +361,6 @@ fragments:
   FT5:
     type: OBJECT
     objectType: FT5
-    label: FT5
     properties:
       oid:
         sourcePath: id
@@ -388,7 +375,6 @@ fragments:
   FT5Sub1:
     type: OBJECT
     objectType: FT5Sub1
-    label: FT5Sub1
     schema: "#/fragments/FT5"
   GenerAttribute:
     type: OBJECT
@@ -429,7 +415,6 @@ fragments:
   Mixin:
     type: OBJECT
     objectType: Mixin
-    label: Mixin
     properties:
       attMixin:
         sourcePath: "[JSON]properties/attMixin"
@@ -440,7 +425,6 @@ fragments:
   T:
     type: OBJECT
     objectType: T
-    label: T
     properties:
       oid:
         sourcePath: id

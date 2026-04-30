@@ -149,7 +149,6 @@ types:
         valueType: FLOAT
       attExtDt2:
         type: OBJECT_ARRAY
-        objectType: ExtDt
         properties:
           title:
             sourcePath: idx

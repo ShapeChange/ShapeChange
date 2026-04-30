@@ -26,7 +26,6 @@ fragments:
   FeatureType1:
     type: OBJECT
     objectType: FeatureType1
-    label: FeatureType1
     properties:
       oid:
         sourcePath: id
@@ -35,7 +34,6 @@ fragments:
       attMeasDynamicMulti:
         sourcePath: "[JSON]properties/attMeasDynamicMulti"
         type: OBJECT_ARRAY
-        objectType: Measure
         label: attMeasDynamicMulti
         constraints:
           required: true
@@ -44,7 +42,6 @@ fragments:
       attMeasDynamicSingle:
         sourcePath: "[JSON]properties/attMeasDynamicSingle"
         type: OBJECT
-        objectType: Measure
         label: attMeasDynamicSingle
         constraints:
           required: true
