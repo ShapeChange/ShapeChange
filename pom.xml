@@ -109,12 +109,12 @@
 			<dependency>
 				<groupId>net.shapechange</groupId>
 				<artifactId>diff-match-patch-20121119</artifactId>
-				<version>1.0.1</version>
+				<version>1.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>de.interactive_instruments</groupId>
 				<artifactId>ldproxy-cfg</artifactId>
-				<version>4.6.0</version>
+				<version>4.7.0</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
@@ -201,7 +201,7 @@
 			<dependency>
 				<groupId>org.apache.httpcomponents.client5</groupId>
 				<artifactId>httpclient5</artifactId>
-				<version>5.6</version>
+				<version>5.6.1</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
 			<dependency>
@@ -254,21 +254,21 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
-				<version>2.21.1</version>
+				<version>2.21.2</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.21.1</version>
+				<version>2.21.2</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
 				<artifactId>jackson-dataformat-yaml</artifactId>
-				<version>2.21.1</version>
+				<version>2.21.2</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
 			<dependency>
@@ -289,7 +289,7 @@
 			<dependency>
 				<groupId>org.jgrapht</groupId>
 				<artifactId>jgrapht-core</artifactId>
-				<version>1.5.2</version>
+				<version>1.5.3</version>
 			</dependency>
 			<!-- Source:
 			https://mvnrepository.com/artifact/org.jgrapht/jgrapht-ext -->
@@ -327,7 +327,7 @@
 			<dependency>
 				<groupId>org.docx4j</groupId>
 				<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-				<version>11.5.11</version>
+				<version>11.5.12</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<dependency>
@@ -362,7 +362,7 @@
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
 				<artifactId>jaxb-runtime</artifactId>
-				<version>4.0.6</version>
+				<version>4.0.7</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.glassfish/jakarta.json -->
 			<dependency>
@@ -405,26 +405,26 @@
 				<plugin>
 					<groupId>org.openrewrite.maven</groupId>
 					<artifactId>rewrite-maven-plugin</artifactId>
-					<version>6.32.0</version>
+					<version>6.36.0</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.openrewrite.recipe</groupId>
 							<artifactId>rewrite-migrate-java</artifactId>
-							<version>3.29.0</version>
+							<version>3.32.1</version>
 						</dependency>
 						<!--
 						https://mvnrepository.com/artifact/org.openrewrite/rewrite-java-21 -->
 						<dependency>
 							<groupId>org.openrewrite</groupId>
 							<artifactId>rewrite-java-21</artifactId>
-							<version>8.75.2</version>
+							<version>8.79.2</version>
 						</dependency>
 					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>io.github.git-commit-id</groupId>
 					<artifactId>git-commit-id-maven-plugin</artifactId>
-					<version>9.0.2</version>
+					<version>10.0.0</version>
 					<executions>
 						<execution>
 							<id>get-the-git-infos</id>
