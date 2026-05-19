@@ -194,6 +194,7 @@ public class Flattener implements Transformer, MessageSource {
     public static final String PARAM_FLATTEN_OBJECT_TYPES = "flattenObjectTypes";
     public static final String PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX = "flattenObjectTypesIncludeRegex";
     public static final String PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX = "flattenDataTypesExcludeRegex";
+    public static final String PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX = "flattenUnionTypesExcludeRegex";
     public static final String PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR = "flattenTypesPropertyCopyDuplicateBehavior";
     /**
      * Alias: none
@@ -515,6 +516,8 @@ public class Flattener implements Transformer, MessageSource {
     private Pattern includeObjectTypePattern = null;
     private String excludeDataTypeRegex = null;
     private Pattern excludeDataTypePattern = null;
+    private String excludeUnionTypeRegex = null;
+    private Pattern excludeUnionTypePattern = null;
 
     public static final Pattern descriptorModBasicPattern = Pattern.compile("(\\w+)\\{([^}]+)}");
     public static final Pattern descriptorModValKvpPattern = Pattern.compile("(\\w+)=([^,]+)");
@@ -655,6 +658,11 @@ public class Flattener implements Transformer, MessageSource {
 	if (trfConfig.hasParameter(PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX)) {
 	    excludeDataTypeRegex = trfConfig.getParameterValue(PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX);
 	    excludeDataTypePattern = Pattern.compile(excludeDataTypeRegex);
+	}
+	
+	if (trfConfig.hasParameter(PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX)) {
+	    excludeUnionTypeRegex = trfConfig.getParameterValue(PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX);
+	    excludeUnionTypePattern = Pattern.compile(excludeUnionTypeRegex);
 	}
 
 	// ====================================
@@ -4274,16 +4282,33 @@ public class Flattener implements Transformer, MessageSource {
 
 		    /*
 		     * Check category of the type of the property based upon the desired processing
-		     * (unions, datatypes [unless excluded] and types [depending upon the value of
-		     * the flattenObjectTypes parameter]). If the type category does not belong to
-		     * one targeted for processing, directly continue with the next property.
+		     * (unions [unless excluded], datatypes [unless excluded] and types [depending
+		     * upon the value of the flattenObjectTypes parameter]). If the type category
+		     * does not belong to one targeted for processing, directly continue with the
+		     * next property.
 		     */
 		    boolean processType = false;
 
 		    if (typeCi.category() == Options.UNION && !(ignoreUnionsRepresentingFeatureTypeSets
 			    && Boolean.parseBoolean(typeCi.taggedValue("representsFeatureTypeSet")))) {
+			
+			if (excludeUnionTypeRegex != null) {
 
-			processType = true;
+			    Matcher m = excludeUnionTypePattern.matcher(typeCi.name());
+
+			    if (m.matches()) {
+				processType = false;
+				result.addDebug(this, 20344, typeCi.name(), excludeUnionTypeRegex,
+					PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX);
+			    } else {
+				processType = true;
+				result.addDebug(this, 20345, typeCi.name(), excludeUnionTypeRegex,
+					PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX);
+			    }
+
+			} else {
+			    processType = true;
+			}
 
 		    } else if (typeCi.category() == Options.DATATYPE) {
 

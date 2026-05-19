@@ -63,7 +63,8 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	    Flattener.PARAM_DESCRIPTOR_MOD_NON_UNION_SEPARATOR, Flattener.PARAM_DESCRIPTOR_MOD_PROPERTY_INDEX_NUMBER,
 	    Flattener.PARAM_DESCRIPTOR_MOD_UNION_SEPARATOR, Flattener.PARAM_ENFORCE_OPTIONALITY,
 	    Flattener.PARAM_FIXED_UOM_PROPERTY_DEFINITIONS, Flattener.PARAM_FLATTEN_DATATYPES_EXCLUDE_REGEX,
-	    Flattener.PARAM_FLATTEN_OBJECT_TYPES, Flattener.PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX,
+	    Flattener.PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX, Flattener.PARAM_FLATTEN_OBJECT_TYPES,
+	    Flattener.PARAM_FLATTEN_OBJECT_TYPES_INCLUDE_REGEX,
 	    Flattener.PARAM_FLATTEN_TYPES_PROPERTY_COPY_DUPLICATE_BEHAVIOR, Flattener.PARAM_GEOMETRY_TYPE_REGEX,
 	    Flattener.PARAM_NON_DEFAULT_GEOM_TO_FEATURE_TYPE_ASSOCIATION_DIRECTED_TO_NEW_FEATURE_TYPE,
 	    Flattener.PARAM_HOMOGENEOUSGEOMETRIES_APPLY_ON_SUBTYPES,
@@ -95,7 +96,7 @@ public class FlattenerConfigurationValidator extends AbstractConfigurationValida
 	setProcessConfiguration(pc);
 	setOptions(o);
 	setShapeChangeResult(scr);
-	
+
 	boolean isValid = true;
 
 	allowedParametersWithStaticNames.addAll(getCommonTransformerParameters());

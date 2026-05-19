@@ -78,8 +78,8 @@ The following optional rules are supported by the Flattener.
 If this requirement is included then the Flattener will create a graph
 of schema types that would be selected for _rule-trf-prop-flatten-types_
 (which depends on the settings for the
-parameters _flattenDataTypesExcludeRegex_, _flattenObjectTypes_ and
-_flattenObjectTypesIncludeRegex_).
+parameters _flattenDataTypesExcludeRegex_, _flattenUnionTypesExcludeRegex_, 
+_flattenObjectTypes_ and _flattenObjectTypesIncludeRegex_).
 
 Types that are not flattened will be excluded from the graph, i.e.
 especially feature types and - if they are not flattened - object and
@@ -100,6 +100,7 @@ Parameters:
 |===
 |*_Parameter Name_* |*_Required / Optional (for Execution of Rule)_*
 |*flattenDataTypesExcludeRegex* |Optional
+|*flattenUnionTypesExcludeRegex* |Optional
 |*flattenObjectTypes* | Optional
 |*flattenObjectTypesIncludeRegex* | Optional
 |===
@@ -1026,7 +1027,8 @@ _xref:./Flattener.adoc#flattenDataTypesExcludeRegex[flattenDataTypesExcludeRegex
 providing a regular expression that matches the names of the data types
 to exclude from type flattening. Note that the documentation of the
 parameter also has an example where the expression is used to exclude
-all but a certain set of data types from flattening.
+all but a certain set of data types from flattening. Same for union types,
+with parameter _xref:./Flattener.adoc#flattenUnionTypesExcludeRegex[flattenUnionTypesExcludeRegex].
 
 All properties (P1) that have a value type for which a type mapping is
 defined in the ShapeChange configuration (via Map Entries for the
@@ -1171,6 +1173,7 @@ Parameters:
 * descriptorModification_nonUnionSeparator
 * descriptorModification_unionSeparator
 * xref:./Flattener.adoc#flattenDataTypesExcludeRegex[flattenDataTypesExcludeRegex]
+* xref:./Flattener.adoc#flattenUnionTypesExcludeRegex[flattenUnionTypesExcludeRegex]
 * flattenObjectTypes
 * flattenObjectTypesIncludeRegex
 * flattenTypesPropertyCopyDuplicateBehavior
@@ -1771,6 +1774,36 @@ Applies to Rule(s)
 
 * req-flattener-flattenTypes-identify-circular-dependencies
 * rule-trf-prop-flatten-types
+
+
+[[flattenUnionTypesExcludeRegex]]
+==== flattenUnionTypesExcludeRegex
+
+(since v4.1.0)
+
+Alias: _none_
+
+Type: String (with Java compliant regular expression)
+
+Default Value: _none_
+
+Behavior:
+
+This parameter allows to identify the union types that shall NOT
+be flattened. The value of this parameter contains a (Java compliant)
+regular expression which, if it matches the name of a union type, marks
+it to be excluded from type flattening.
+
+NOTE: If you only want to flatten a certain set of union types from the
+schemas selected for processing, then you can use 'negative lookahead'
+in the regular expression to actually ensure that these types are
+flattened, but the other union types are excluded.
+
+Applies to Rule(s)
+
+* req-flattener-flattenTypes-identify-circular-dependencies
+* rule-trf-prop-flatten-types
+
 
 [[flattenInheritanceIncludeRegex]]
 ==== flattenInheritanceIncludeRegex
