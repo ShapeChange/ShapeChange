@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import de.interactive_instruments.shapechange.core.inputtransformation.InputTransformer;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.ModelProvider;
 import de.interactive_instruments.shapechange.core.model.Transformer;
@@ -57,7 +58,7 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
     }
 
     @Override
-    public Model getModel(String modelType, String repoFileNameOrConnectionString, String username, String password,
+    public Model getModel(final String modelTypeIn, String repoFileNameOrConnectionString, String username, String password,
 	    boolean isLoadingInputModel, String inputModelTransformer) throws ShapeChangeAbortException {
 
 	if (StringUtils.isBlank(repoFileNameOrConnectionString)) {
@@ -69,39 +70,93 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 	String pwd = password == null ? "" : password;
 
 	// Support original model type codes
-	if (modelType == null) {
+	String modelType = modelTypeIn;
+	if (modelTypeIn == null) {
 	    result.addFatalError(this, 26);
 	    throw new ShapeChangeAbortException();
-	} else if (modelType.equalsIgnoreCase("ea7")) {
+	} else if (modelTypeIn.equalsIgnoreCase("ea7")) {
 	    modelType = "de.interactive_instruments.shapechange.ea.model.EADocument";
-	} else if (modelType.equalsIgnoreCase("xmi10")) {
+	} else if (modelTypeIn.equalsIgnoreCase("xmi10")) {
 	    modelType = "de.interactive_instruments.shapechange.core.model.xmi10.Xmi10Document";
-	} else if (modelType.equalsIgnoreCase("gcsr")) {
+	} else if (modelTypeIn.equalsIgnoreCase("gcsr")) {
 	    modelType = "gov.nga.ShapeChange.Model.GCSR.GCSRModel";
-	} else if (modelType.equalsIgnoreCase("scxml")) {
+	} else if (modelTypeIn.equalsIgnoreCase("scxml")) {
 	    modelType = "de.interactive_instruments.shapechange.core.model.generic.GenericModel";
 	} else {
-	    result.addInfo(this, 27, modelType);
+	    result.addInfo(this, 27, modelTypeIn);
 	}
 
-	if (isLoadingInputModel && StringUtils.isNotBlank(inputModelTransformer)) {
+	if (isLoadingInputModel) {
 
-	    try {
-		Class<?> theClass = Class.forName(inputModelTransformer);
-		Transformer t = (Transformer) theClass.getConstructor().newInstance();
-		t.initialise(options, result, repoFileNameOrConnectionString);
-		t.transform();
-		t.shutdown();
-	    } catch (Exception e) {
-		e.printStackTrace();
-		throw new ShapeChangeAbortException();
+	    // apply old-style input transformer first
+	    if (StringUtils.isNotBlank(inputModelTransformer)) {
+		try {
+		    Class<?> theClass = Class.forName(inputModelTransformer);
+		    Transformer t = (Transformer) theClass.getConstructor().newInstance();
+		    t.initialise(options, result, repoFileNameOrConnectionString);
+		    t.transform();
+		    t.shutdown();
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    throw new ShapeChangeAbortException();
+		}
+	    }
+
+	    // then apply the sequence of configured input transformers	    
+	    for (InputTransformerConfiguration itrfConfig : options.getInputTransformerConfigs()) {
+
+		options.setCurrentProcessConfig(itrfConfig);
+
+		if (itrfConfig.getProcessMode() == ProcessMode.disabled) {
+		    /*
+		     * because the input transformation is disabled, we won't process it
+		     */
+		    result.addProcessFlowInfo(this, 100, itrfConfig.getId());
+
+		} else {
+
+		    // process the input model
+		    try {
+
+			options.resetFields();
+
+			Class<?> theClass = Class.forName(itrfConfig.getClassName());
+			InputTransformer t = (InputTransformer) theClass.getConstructor().newInstance();
+
+			if (t.isApplicableToInputModelType(modelTypeIn)) {
+
+			    result.addProcessFlowInfo(this, 101, itrfConfig.getId());
+			    t.initialise(options, itrfConfig, result, repoFileNameOrConnectionString);
+			    t.transform();
+			    t.shutdown();
+			    result.addProcessFlowInfo(this, 102, itrfConfig.getId());
+
+			} else {
+
+			    result.addProcessFlowInfo(this, 104, itrfConfig.getId(), modelTypeIn);
+			}
+
+		    } catch (Exception e) {
+
+			result.addProcessFlowError(this, 103, e.getMessage(), itrfConfig.getId());
+
+			StackTraceElement[] stes = e.getStackTrace();
+
+			if (stes != null) {
+
+			    for (StackTraceElement ste : stes) {
+				result.addProcessFlowDebug(ste.toString());
+			    }
+			}
+		    }
+		}
 	    }
 	}
 
 	Model m = null;
 
-	if (isLoadingInputModel && options.isSkipModelLoadingIfProcessingIsOnlyInputTransformations()) {    
-	    result.addProcessFlowInfo(this,28);
+	if (isLoadingInputModel && options.isSkipModelLoadingIfProcessingIsOnlyInputTransformations()) {
+	    result.addProcessFlowInfo(this, 28);
 	} else {
 
 	    // Get model object from reflection API
@@ -167,7 +222,17 @@ public class DefaultModelProvider implements ModelProvider, MessageSource {
 	case 26 -> "Model type not provided.";
 	case 27 -> "Using custom model implementation: '$1$'.";
 	case 28 -> "Loading of input model is skipped. No model transformations or targets are configured.";
-	    
+
+	case 100 ->
+	    "InputTransformation with id '$1$' is disabled (via the configuration). It will not be executed.";
+	case 101 -> "Now processing input transformation with id '$1$'.";
+	case 102 ->
+	    "Performed transformation for input transformer with id '$1$'.\n-------------------------------------------------";
+	case 103 ->
+	    "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of input transformation with id '$2$' did not succeed. It will not be executed.";
+	case 104 ->
+	    "Input transformer with id '$1$' is not applicable to the given input model type '$2$'. The transformer was not executed.\n-------------------------------------------------";
+
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	};
     }

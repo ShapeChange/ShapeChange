@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import de.interactive_instruments.shapechange.core.model.TaggedValues;
+import shadow.org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Johannes Echterhoff
@@ -43,151 +44,147 @@ import de.interactive_instruments.shapechange.core.model.TaggedValues;
  */
 public class EATaggedValue {
 
-	protected String name;
-	protected String fqName = "";
-	protected List<String> values;
+    protected String name;
+    protected String fqName = "";
+    protected List<String> values;
 
-	/**
-	 * If set to <code>true</code>, the values shall be encoded using
-	 * &lt;memo&gt; fields, regardless of the actual length of each value.
-	 */
-	protected boolean createAsMemoField = false;
+    /**
+     * If set to <code>true</code>, the values shall be encoded using &lt;memo&gt;
+     * fields, regardless of the actual length of each value.
+     */
+    protected boolean createAsMemoField = false;
 
-	/**
-	 * @param name tbd
-	 * @param value
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 */
-	public EATaggedValue(String name, String value) {
+    /**
+     * @param name  tbd
+     * @param value can be <code>null</code> (then the list of values would be
+     *              empty)
+     */
+    public EATaggedValue(String name, String value) {
 
-		this(name, value, false);
+	this(name, value, false);
+    }
+
+    /**
+     * @param name   tbd
+     * @param fqName tbd
+     * @param value  can be <code>null</code> (then the list of values would be
+     *               empty)
+     */
+    public EATaggedValue(String name, String fqName, String value) {
+
+	this(name, fqName, value, false);
+    }
+
+    /**
+     * @param name              tbd
+     * @param value             can be <code>null</code> (then the list of values
+     *                          would be empty)
+     * @param createAsMemoField set to <code>true</code> if the value shall be
+     *                          encoded using a &lt;memo&gt; field, regardless of
+     *                          the value length
+     */
+    public EATaggedValue(String name, String value, boolean createAsMemoField) {
+
+	this(name, null, value, createAsMemoField);
+    }
+
+    /**
+     * @param name              tbd
+     * @param fqName            tbd
+     * @param value             can be <code>null</code> (then the list of values
+     *                          would be empty)
+     * @param createAsMemoField set to <code>true</code> if the value shall be
+     *                          encoded using a &lt;memo&gt; field, regardless of
+     *                          the value length
+     */
+    public EATaggedValue(String name, String fqName, String value, boolean createAsMemoField) {
+
+	super();
+
+	this.name = name;
+	this.fqName = fqName == null ? "" : fqName;
+
+	this.values = new ArrayList<String>();
+	if (value != null) {
+	    this.values.add(value);
 	}
 
-	/**
-	 * @param name tbd
-	 * @param fqName tbd
-	 * @param value
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 */
-	public EATaggedValue(String name, String fqName, String value) {
+	this.createAsMemoField = createAsMemoField;
+    }
 
-		this(name, fqName, value, false);
+    /**
+     * @param name   tbd
+     * @param values can be <code>null</code> (then the list of values would be
+     *               empty)
+     */
+    public EATaggedValue(String name, List<String> values) {
+
+	this(name, null, values);
+    }
+
+    /**
+     * @param name   tbd
+     * @param fqName tbd
+     * @param values can be <code>null</code> (then the list of values would be
+     *               empty)
+     */
+    public EATaggedValue(String name, String fqName, List<String> values) {
+
+	super();
+
+	this.name = name;
+	this.fqName = fqName == null ? "" : fqName;
+
+	if (values != null) {
+	    this.values = values;
+	} else {
+	    this.values = new ArrayList<String>();
+	}
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+	return name;
+    }
+
+    /**
+     * @return the FQName, can be empty but not <code>null</code>
+     */
+    public String getFQName() {
+	return fqName;
+    }
+
+    /**
+     * @return the values; can be empty but not <code>null</code>
+     */
+    public List<String> getValues() {
+	return values;
+    }
+
+    public boolean createAsMemoField() {
+	return createAsMemoField;
+    }
+
+    public void addValue(String value) {
+	this.values.add(value);
+    }
+
+    public static List<EATaggedValue> fromTaggedValues(TaggedValues taggedValues) {
+
+	List<EATaggedValue> result = new ArrayList<EATaggedValue>();
+
+	for (Entry<String, List<String>> e : taggedValues.asMap().entrySet()) {
+
+	    result.add(new EATaggedValue(e.getKey(), e.getValue()));
 	}
 
-	/**
-	 * @param name tbd
-	 * @param value
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 * @param createAsMemoField
-	 *            set to <code>true</code> if the value shall be encoded using a
-	 *            &lt;memo&gt; field, regardless of the value length
-	 */
-	public EATaggedValue(String name, String value, boolean createAsMemoField) {
+	return result;
+    }
 
-		this(name, null, value, createAsMemoField);
-	}
-
-	/**
-	 * @param name tbd
-	 * @param fqName tbd
-	 * @param value
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 * @param createAsMemoField
-	 *            set to <code>true</code> if the value shall be encoded using a
-	 *            &lt;memo&gt; field, regardless of the value length
-	 */
-	public EATaggedValue(String name, String fqName, String value,
-			boolean createAsMemoField) {
-
-		super();
-
-		this.name = name;
-		this.fqName = fqName == null ? "" : fqName;
-
-		this.values = new ArrayList<String>();
-		if (value != null) {
-			this.values.add(value);
-		}
-
-		this.createAsMemoField = createAsMemoField;
-	}
-
-	/**
-	 * @param name tbd
-	 * @param values
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 */
-	public EATaggedValue(String name, List<String> values) {
-
-		this(name, null, values);
-	}
-
-	/**
-	 * @param name tbd
-	 * @param fqName tbd
-	 * @param values
-	 *            can be <code>null</code> (then the list of values would be
-	 *            empty)
-	 */
-	public EATaggedValue(String name, String fqName, List<String> values) {
-
-		super();
-
-		this.name = name;
-		this.fqName = fqName == null ? "" : fqName;
-
-		if (values != null) {
-			this.values = values;
-		} else {
-			this.values = new ArrayList<String>();
-		}
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return the FQName, can be empty but not <code>null</code>
-	 */
-	public String getFQName() {
-		return fqName;
-	}
-
-	/**
-	 * @return the values; can be empty but not <code>null</code>
-	 */
-	public List<String> getValues() {
-		return values;
-	}
-
-	public boolean createAsMemoField() {
-		return createAsMemoField;
-	}
-
-	public void addValue(String value) {
-		this.values.add(value);
-	}
-
-	public static List<EATaggedValue> fromTaggedValues(
-			TaggedValues taggedValues) {
-
-		List<EATaggedValue> result = new ArrayList<EATaggedValue>();
-
-		for (Entry<String, List<String>> e : taggedValues.asMap().entrySet()) {
-
-			result.add(new EATaggedValue(e.getKey(), e.getValue()));
-		}
-
-		return result;
-	}
+    public boolean hasFQName() {
+	return StringUtils.isNotBlank(this.fqName);
+    }
 
 }

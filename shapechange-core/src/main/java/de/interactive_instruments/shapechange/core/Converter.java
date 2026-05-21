@@ -186,6 +186,7 @@ public class Converter implements MessageSource {
 	// validate enabled transformer and target configurations
 	List<ProcessConfiguration> processConfigs = new ArrayList<>();
 
+	processConfigs.addAll(options.getInputTransformerConfigs());
 	processConfigs.addAll(options.getTransformerConfigs().values());
 	processConfigs.addAll(options.getTargetConfigurations());
 	processConfigs.addAll(options.getValidatorConfigs().values());
@@ -211,7 +212,10 @@ public class Converter implements MessageSource {
 
 		    ConfigurationValidator validator = (ConfigurationValidator) theClass.getConstructor().newInstance();
 
-		    if (pConfig instanceof TransformerConfiguration tconfig) {
+		    if (pConfig instanceof InputTransformerConfiguration itconfig) {
+			result.addProcessFlowInfo(this, 521, itconfig.getClassName());
+
+		    } else if (pConfig instanceof TransformerConfiguration tconfig) {
 			result.addProcessFlowInfo(this, 514, tconfig.getId());
 
 		    } else if (pConfig instanceof ValidatorConfiguration vconfig) {
@@ -313,11 +317,11 @@ public class Converter implements MessageSource {
 
 		    // first, run any targets that directly reference the input
 		    // model
-		    this.executeTargets(model, options.getInputId(), options.getInputTargetConfigs());
+		    this.executeTargets(model, options.getInputId(), options.getTargetConfigsOnInputModel());
 
 		    // now recursively execute the transformations (and associated
 		    // targets) defined for the input model
-		    this.executeTransformations(model, options.getInputTransformerConfigs());
+		    this.executeTransformations(model, options.getTransformerConfigsOnInputModel());
 
 		    /*
 		     * do this before executing deferrable output writers to free memory (important
@@ -1052,7 +1056,8 @@ public class Converter implements MessageSource {
 	case 518 -> "--- Validating model validator with @id '$1$' ...";
 	case 519 -> "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
 	case 520 -> "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
-
+	case 521 -> "--- Validating input transformer with @class '$1$' ...";
+	
 	case 1012 -> "Application schema found, package name: '$1$', target namespace: '$2$'";
 
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

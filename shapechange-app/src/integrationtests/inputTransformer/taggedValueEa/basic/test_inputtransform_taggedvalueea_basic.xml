@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input>
+		<parameter name="inputModelType" value="EA7"/>
+		<parameter name="inputFile" value="src/integrationtests/inputTransformer/taggedValueEa/basic/test_inputtransform_taggedvalueea_basic.qea"/>
+		<parameter name="appSchemaName" value="Test Schema"/>
+		<parameter name="publicOnly" value="true"/>
+		<parameter name="checkingConstraints" value="disabled"/>
+		<parameter name="sortedSchemaOutput" value="true"/>
+		<parameter name="representTaggedValues" value=""/>
+		<xi:include href="sc-resources/config/StandardAliases.xml"/>
+		<inputTransformers>
+			<InputTransformer class="de.interactive_instruments.shapechange.ea.inputtransformer.taggedvalues.TaggedValueEaInputTransformer" mode="enabled" id="IT_TVS">
+				<advancedProcessConfigurations>
+					<taggedValues>
+						
+						<!-- Transform tags on Test Schema package -->
+						<TaggedValue name="ShapeChange::applicationSchema::version" value="2.2" modelElementName="Test Schema" modelElementType="Package"/>
+						<TaggedValue name="ApplicationSchemaNewTag" value="X" modelElementName="Test Schema" modelElementStereotype="(?i:application schema)"/>
+						
+						<!-- Transform tags on FeatureType1 -->
+						<TaggedValue name="ShapeChange::featureType::byValuePropertyType" value="true" applicationSchemaName="Test Schema" modelElementName="FeatureType1"/>
+						<TaggedValue name="FeatureTypeNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:featuretype)"/>
+						
+						<!-- Transform tags on att -->
+						<TaggedValue name="ShapeChange::property::sequenceNumber" value="10" applicationSchemaName="Test Schema" modelElementName="att"/>
+						<TaggedValue name="AttributeNewTag" value="X" applicationSchemaName="Test Schema" modelElementName="att"/>
+						
+						<!-- Transform tags on ft1ToT1B -->
+						<TaggedValue name="ShapeChange::property::sequenceNumber" value="50" applicationSchemaName="Test Schema" modelElementName="ft1ToT1B"/>
+						<TaggedValue name="AssociationRoleNewTag" value="X" applicationSchemaName="Test Schema" modelElementName="ft1ToT1B"/>
+						
+						<!-- Transform tags on Type1 -->
+						<TaggedValue name="ShapeChange::type::noPropertyType" value="true" applicationSchemaName="Test Schema" modelElementName="Type1"/>
+						<TaggedValue name="TypeNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:type)"/>
+						
+						<!-- Transform tags on DataType1 -->
+						<TaggedValue name="ShapeChange::dataType::isCollection" value="true" applicationSchemaName="Test Schema" modelElementName="DataType1"/>
+						<TaggedValue name="DataTypeNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:datatype)"/>
+						
+						<!-- Transform tags on Enumeration1 -->
+						<TaggedValue name="EnumerationNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:enumeration)"/>
+						
+						<!-- Transform tags on enum1 -->
+						<TaggedValue name="ShapeChange::enum::sequenceNumber" value="10" applicationSchemaName="Test Schema" modelElementName="enum1"/>
+						<TaggedValue name="EnumNewTag" value="X" applicationSchemaName="Test Schema" modelElementName="enum1"/>
+						
+						<!-- Transform tags on CodeList1 -->
+						<TaggedValue name="ShapeChange::codeList::asDictionary" value="false" applicationSchemaName="Test Schema" modelElementName="CodeList1"/>
+						<TaggedValue name="CodelistNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:codelist)"/>
+						
+						<!-- Transform tags on Union1 -->
+						<TaggedValue name="ShapeChange::union::noPropertyType" value="true" applicationSchemaName="Test Schema" modelElementName="Union1"/>
+						<TaggedValue name="UnionNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:union)"/>
+						
+						<!-- Transform tags on associations -->
+						<TaggedValue name="AssociationNewTag" value="X" applicationSchemaName="Test Schema" modelElementType="Association"/>
+					</taggedValues>
+				</advancedProcessConfigurations>
+			</InputTransformer>
+		</inputTransformers>
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO"/>
+		<parameter name="logFile" value="testResults/inputTransformer/taggedValueEa/basic/log.xml"/>
+	</log>
+	<targets>
+		<TargetXmlSchema class="de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema" mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/inputTransformer/taggedValueEa/basic/xsd"/>
+			<targetParameter name="sortedOutput" value="true"/>
+			<targetParameter name="defaultEncodingRule" value="iso19136_2007"/>
+			<xi:include href="sc-resources/config/StandardRules.xml"/>
+			<xi:include href="sc-resources/config/StandardNamespaces.xml"/>
+			<xi:include href="sc-resources/config/StandardMapEntries.xml"/>
+			<xsdMapEntries>
+				<XsdMapEntry type="URI" xsdEncodingRules="iso19136_2007" xmlPropertyType="anyURI" xmlType="anyURI" xmlTypeType="simple" xmlTypeContent="simple"/>
+			</xsdMapEntries>
+		</TargetXmlSchema>
+	</targets>
+</ShapeChangeConfiguration>

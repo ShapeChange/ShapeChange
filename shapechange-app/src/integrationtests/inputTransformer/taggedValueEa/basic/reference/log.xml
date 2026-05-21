@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
+                   xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
+                   config="src\integrationtests\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_runWithModelCopy.xml"
+                   end="Thu May 21 14:00:32 CEST 2026"
+                   resultCode="0"
+                   start="Thu May 21 14:00:11 CEST 2026"
+                   version="4.1.0-SNAPSHOT">
+   <Messages>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
+      <Info message="Validating input parameters."/>
+      <Info message="Validation of input parameters completed."/>
+      <Info message="Validating log parameters."/>
+      <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating input transformer with @class 'de.interactive_instruments.shapechange.ea.inputtransformer.taggedvalues.TaggedValueEaInputTransformer' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <ProcessFlowInfo message="Now processing input transformation with id 'IT_TVS'."/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <ProcessFlowInfo message="Performed transformation for input transformer with id 'IT_TVS'.&#xA;-------------------------------------------------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\testResults\inputTransformer\taggedValueEa\basic\test_inputtransform_taggedvalueea_basic_copiedModel.qea"/>
+      <Warning message="The type 'Integer' of property 'FeatureType1.att' was not found.">
+         <Detail xmlns=""
+                 message="Context: Property 'Model::Schemas::Test Schema::FeatureType1::att'"/>
+      </Warning>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema', target namespace: 'http://example.org/shapechange/schema/test'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'INPUT'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+   </Messages>
+   <Results>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/inputTransformer/taggedValueEa/basic/xsd/INPUT/test.xsd"
+              scope="http://example.org/shapechange/schema/test"
+              target="XML Schema">test.xsd</Result>
+   </Results>
+</ShapeChangeResult>

@@ -51,8 +51,7 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments dot
- *         de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class EARepositoryUtil extends AbstractEAUtil {
@@ -69,7 +68,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * is complete. This can result in 10- to 20-fold improvement in adding new
      * elements in bulk.</i>
      * 
-     * @param rep tbd
+     * @param rep         tbd
      * @param batchAppend tbd
      */
     public static void setEABatchAppend(Repository rep, boolean batchAppend) {
@@ -83,7 +82,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * of elements to a Package. To reveal changes to the user, call
      * 'Repository.RefreshModelView()'.</i>
      * 
-     * @param rep tbd
+     * @param rep             tbd
      * @param enableUIUpdates tbd
      */
     public static void setEAEnableUIUpdates(Repository rep, boolean enableUIUpdates) {
@@ -189,7 +188,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
 		Package eaParentPkg = rep.GetPackageByID(eaPkg.GetParentID());
 		pkgs = eaParentPkg.GetPackages();
 	    }
-	    
+
 	    pkgs.Refresh();
 
 	    for (short i = 0; i < pkgs.GetCount(); i++) {
@@ -209,12 +208,12 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * Create a generalization relationship between class 1 (subtype) and class 2
      * (supertype).
      * 
-     * @param rep tbd
+     * @param rep         tbd
      * @param c1ElementId tbd
-     * @param c1Name tbd
+     * @param c1Name      tbd
      * @param c2ElementId tbd
-     * @param c2Name tbd
-     * @return  tbd
+     * @param c2Name      tbd
+     * @return tbd
      * @throws EAException tbd
      */
     public static Connector createEAGeneralization(Repository rep, int c1ElementId, String c1Name, int c2ElementId,
@@ -243,9 +242,9 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * (supertype).
      * 
      * @param rep tbd
-     * @param c1 tbd
-     * @param c2 tbd
-     * @return  tbd
+     * @param c1  tbd
+     * @param c2  tbd
+     * @return tbd
      * @throws EAException tbd
      */
     public static Connector createEAGeneralization(Repository rep, Element c1, Element c2) throws EAException {
@@ -283,10 +282,10 @@ public class EARepositoryUtil extends AbstractEAUtil {
     }
 
     /**
-     * @param repfileIn tbd
-     * @param createIfNotExisting If <code>true</code>, create the EA repository file if it
-     *                            does not exist yet, including the required
-     *                            directory structure.
+     * @param repfileIn           tbd
+     * @param createIfNotExisting If <code>true</code>, create the EA repository
+     *                            file if it does not exist yet, including the
+     *                            required directory structure.
      * @return tbd
      * @throws EAException tbd
      */
@@ -363,7 +362,7 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * child of the given EA parent package. Properties such as stereotype and
      * tagged values are not set by this method and thus need to be added later on.
      * 
-     * @param rep tbd
+     * @param rep           tbd
      * @param pi            package to create in EA
      * @param eaParentPkgId The PackageID of the EA Package element that is the
      *                      parent of the EA Package to create for pi
@@ -413,8 +412,8 @@ public class EARepositoryUtil extends AbstractEAUtil {
      * @param rep                                  The EA repository that contains
      *                                             the container package.
      * @param numberOfSchemasSelectedForProcessing tbd
-     * @param author  tbd
-     * @param status  tbd
+     * @param author                               tbd
+     * @param status                               tbd
      * @return The PackageID of the EA package that corresponds to the package which
      *         owns the given class (see parameter ci).
      * @throws EAException If an exception occurred while interacting with the EA
@@ -507,12 +506,54 @@ public class EARepositoryUtil extends AbstractEAUtil {
 	}
     }
 
+    /**
+     * Checks if the given connection string is for a server or file based
+     * repository. In case of the latter, the method checks if the file exists and
+     * attempts to get the absolute path to the file.
+     * 
+     * @param repositoryFileNameOrConnectionString tbd
+     * @return tbd
+     * @throws EAException tbd
+     */
+    public static String determineConnectionString(String repositoryFileNameOrConnectionString)
+	    throws EAException {
+
+	if (repositoryFileNameOrConnectionString.contains("DBType=")
+		|| repositoryFileNameOrConnectionString.contains("Connect=Cloud")) {
+
+	    /* We are dealing with a server based repository. */
+
+	    return repositoryFileNameOrConnectionString;
+
+	} else {
+
+	    /* We have an EA repository file. Ensure that it exists */
+
+	    java.io.File repfile = new java.io.File(repositoryFileNameOrConnectionString);
+	    boolean ex = true;
+	    if (!repfile.exists()) {
+		ex = false;
+		if (!repositoryFileNameOrConnectionString.toLowerCase().endsWith(".qea")) {
+		    repositoryFileNameOrConnectionString += ".qea";
+		    repfile = new java.io.File(repositoryFileNameOrConnectionString);
+		    ex = repfile.exists();
+		}
+	    }
+	    if (!ex) {
+		throw new EAException("Enterprise Architect repository file named '"+repositoryFileNameOrConnectionString+"' not found");
+	    }
+
+	    return repfile.getAbsolutePath();
+	}
+    }
+
     public static String message(int mnr) {
 
 	return switch (mnr) {
 
 	case 101 -> "EA error encountered while updating new EA class element '$1$'. Error message is: $2$";
-	case 102 -> "EA error encountered while updating new EA (generalization) connector between classes '$1$' and '$2$'. Error message is: $3$";
+	case 102 ->
+	    "EA error encountered while updating new EA (generalization) connector between classes '$1$' and '$2$'. Error message is: $3$";
 	case 103 -> "EA error encountered while updating new EA package '$1$'. Error message is: $2$";
 	default -> "(" + EARepositoryUtil.class.getName() + ") Unknown message with number: " + mnr;
 	};

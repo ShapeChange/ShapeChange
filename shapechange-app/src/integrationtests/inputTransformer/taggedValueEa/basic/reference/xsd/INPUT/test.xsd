@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:t="http://example.org/shapechange/schema/test"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test"
+        version="2.2">
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <simpleType name="CodeList1Type">
+      <union memberTypes="t:CodeList1EnumerationType t:CodeList1OtherType"/>
+   </simpleType>
+   <simpleType name="CodeList1EnumerationType">
+      <restriction base="string"/>
+   </simpleType>
+   <simpleType name="CodeList1OtherType">
+      <restriction base="string">
+         <pattern value="other: \w{2,}"/>
+      </restriction>
+   </simpleType>
+   <element name="DataType1"
+            substitutionGroup="gml:AbstractObject"
+            type="t:DataType1Type"/>
+   <complexType name="DataType1Type">
+      <sequence/>
+   </complexType>
+   <complexType name="DataType1PropertyType">
+      <sequence>
+         <element ref="t:DataType1"/>
+      </sequence>
+   </complexType>
+   <simpleType name="Enumeration1Type">
+      <restriction base="string">
+         <enumeration value="enum1"/>
+      </restriction>
+   </simpleType>
+   <element name="FeatureType1"
+            substitutionGroup="gml:AbstractFeature"
+            type="t:FeatureType1Type"/>
+   <complexType name="FeatureType1Type">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="att" type="integer"/>
+               <element name="ft1ToT1B">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:t1ToFt1</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+                  <complexType>
+                     <sequence minOccurs="0">
+                        <element ref="t:Type1"/>
+                     </sequence>
+                     <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+                  </complexType>
+               </element>
+               <element name="ft1ToT1A">
+                  <complexType>
+                     <sequence minOccurs="0">
+                        <element ref="t:Type1"/>
+                     </sequence>
+                     <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+                  </complexType>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureType1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t:FeatureType1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <complexType name="FeatureType1PropertyByValueType">
+      <sequence>
+         <element ref="t:FeatureType1"/>
+      </sequence>
+   </complexType>
+   <element name="Type1" substitutionGroup="gml:AbstractGML" type="t:Type1Type"/>
+   <complexType name="Type1Type">
+      <complexContent>
+         <extension base="gml:AbstractGMLType">
+            <sequence>
+               <element name="t1ToFt1" type="t:FeatureType1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t:ft1ToT1B</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <element name="Union1"
+            substitutionGroup="gml:AbstractObject"
+            type="t:Union1Type"/>
+   <complexType name="Union1Type"/>
+</schema>

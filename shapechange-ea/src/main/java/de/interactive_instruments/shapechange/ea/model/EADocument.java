@@ -74,6 +74,8 @@ import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.ui.StatusBoard;
 import de.interactive_instruments.shapechange.ea.util.EAElementUtil;
+import de.interactive_instruments.shapechange.ea.util.EAException;
+import de.interactive_instruments.shapechange.ea.util.EARepositoryUtil;
 
 public class EADocument extends ModelImpl implements Model, MessageSource {
 
@@ -131,7 +133,13 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	/*
 	 * Determine if we are dealing with a file or server based repository
 	 */
-	String connectionString = determineConnectionString(repositoryFileNameOrConnectionString);
+	String connectionString;
+	try {
+	    connectionString = EARepositoryUtil.determineConnectionString(repositoryFileNameOrConnectionString);
+	} catch (EAException e) {
+	    result.addFatalError(e.getMessage());
+	    throw new ShapeChangeAbortException();
+	}
 
 	/* Connect to EA repository */
 	repository = new Repository();
@@ -159,8 +167,14 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	/*
 	 * Determine if we are dealing with a file or server based repository
 	 */
-	String connectionString = determineConnectionString(repositoryFileNameOrConnectionString);
-
+	String connectionString;
+	try {
+	    connectionString = EARepositoryUtil.determineConnectionString(repositoryFileNameOrConnectionString);
+	} catch (EAException e) {
+	    result.addFatalError(e.getMessage());
+	    throw new ShapeChangeAbortException();
+	}
+	
 	/** Connect to EA Repository */
 	repository = new Repository();
 	r.addInfo(this, 43, connectionString);
@@ -173,48 +187,6 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	r.addInfo(this, 44, connectionString);
 
 	executeCommonInitializationProcedure(r);
-    }
-
-    /**
-     * Checks if the given connection string is for a server or file based
-     * repository. In case of the latter, the method checks if the file exists and
-     * attempts to get the absolute path to the file.
-     * 
-     * @param repositoryFileNameOrConnectionString
-     * @return
-     * @throws ShapeChangeAbortException
-     */
-    private String determineConnectionString(String repositoryFileNameOrConnectionString)
-	    throws ShapeChangeAbortException {
-
-	if (repositoryFileNameOrConnectionString.contains("DBType=")
-		|| repositoryFileNameOrConnectionString.contains("Connect=Cloud")) {
-
-	    /* We are dealing with a server based repository. */
-
-	    return repositoryFileNameOrConnectionString;
-
-	} else {
-
-	    /* We have an EA repository file. Ensure that it exists */
-
-	    java.io.File repfile = new java.io.File(repositoryFileNameOrConnectionString);
-	    boolean ex = true;
-	    if (!repfile.exists()) {
-		ex = false;
-		if (!repositoryFileNameOrConnectionString.toLowerCase().endsWith(".qea")) {
-		    repositoryFileNameOrConnectionString += ".qea";
-		    repfile = new java.io.File(repositoryFileNameOrConnectionString);
-		    ex = repfile.exists();
-		}
-	    }
-	    if (!ex) {
-		result.addFatalError(null, 31, repositoryFileNameOrConnectionString);
-		throw new ShapeChangeAbortException();
-	    }
-
-	    return repfile.getAbsolutePath();
-	}
     }
 
     private void executeCommonInitializationProcedure(ShapeChangeResult r) throws ShapeChangeAbortException {
@@ -890,12 +862,15 @@ public class EADocument extends ModelImpl implements Model, MessageSource {
 	case 0 -> "Context: property '$1$'.";
 	case 1 -> "Context: class '$1$'.";
 	case 2 -> "Context: association class '$1$'.";
-	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 3 ->
+	    "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 	case 4 -> "Context: supertype '$1$'";
 	case 5 -> "Context: subtype '$1$'";
-	case 33 -> "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
+	case 33 ->
+	    "Could not read diagram from temporary image directory (diagram name: $1$, in package: $2$); this diagram will be ignored.";
 	case 34 -> "Could not delete directory $1$";
-	case 35 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
+	case 35 ->
+	    "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', username is: '$3$', password is: '$4$', EA message is: '$1$'";
 	case 43 -> "Connecting to $1$";
 	case 44 -> "Connected to $1$";
 	case 45 -> "Starting reading $1$";

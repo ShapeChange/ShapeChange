@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2013 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,12 @@
  */
 package de.interactive_instruments.shapechange.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Configuration information for a tagged value.
@@ -41,76 +46,130 @@ import org.w3c.dom.Element;
  */
 public class TaggedValueConfigurationEntry {
 
-	private String name = null;
-	private String value = null;
-	private ModelElementSelectionInfo modelElementSelectionInfo = null;
+    private String name = null;
+    private String value = null;
+    private ModelElementSelectionInfo modelElementSelectionInfo = null;
 
-	public TaggedValueConfigurationEntry(String name, String value,
-			ModelElementSelectionInfo modelElementSelectionInfo) {
-		super();
-		this.name = name;
-		this.value = value;
-		this.modelElementSelectionInfo = modelElementSelectionInfo;
+    public TaggedValueConfigurationEntry(String name, String value,
+	    ModelElementSelectionInfo modelElementSelectionInfo) {
+	super();
+	this.name = name;
+	this.value = value;
+	this.modelElementSelectionInfo = modelElementSelectionInfo;
+    }
+
+    /**
+     * @return the name of the tagged value
+     */
+    public String getName() {
+	return name;
+    }
+
+    /**
+     * @return the value of the tagged value, <code>null</code> if not set in the
+     *         configuration
+     */
+    public String getValue() {
+	return value;
+    }
+
+    /**
+     * @return <code>true</code> if the value attribute of the tagged value was set
+     *         in the configuration (even to the empty string), else
+     *         <code>false</code>
+     */
+    public boolean hasValue() {
+	return value != null;
+    }
+
+    /**
+     * @return the modelElementSelectionInfo; cannot be <code>null</code>
+     */
+    public ModelElementSelectionInfo getModelElementSelectionInfo() {
+	return modelElementSelectionInfo;
+    }
+
+    /**
+     * @param modelElementSelectionInfo the modelElementSelectionInfo to set; if
+     *                                  <code>null</code>, the default
+     *                                  ModelElementSelectionInfo will be set, i.e.
+     *                                  any model element will be selected
+     */
+    public void setModelElementSelectionInfo(ModelElementSelectionInfo modelElementSelectionInfo) {
+
+	if (modelElementSelectionInfo == null) {
+	    this.modelElementSelectionInfo = new ModelElementSelectionInfo();
+	} else {
+	    this.modelElementSelectionInfo = modelElementSelectionInfo;
+	}
+    }
+
+    public static TaggedValueConfigurationEntry parse(Element taggedValueE) {
+
+	String name = taggedValueE.getAttribute("name");
+	String value = null;
+
+	if (taggedValueE.hasAttribute("value")) {
+	    value = taggedValueE.getAttribute("value");
 	}
 
-	/**
-	 * @return the name of the tagged value
-	 */
-	public String getName() {
-		return name;
-	}
+	ModelElementSelectionInfo meselect = ModelElementSelectionInfo.parse(taggedValueE);
 
-	/**
-	 * @return the value of the tagged value, <code>null</code> if not set in
-	 *         the configuration
-	 */
-	public String getValue() {
-		return value;
-	}
+	return new TaggedValueConfigurationEntry(name, value, meselect);
+    }
 
-	/**
-	 * @return true if the value attribute of the tagged value was set in the
-	 *         configuration, else false
-	 */
-	public boolean hasValue() {
-		return value != null;
-	}
+    /**
+     * @param trfE element that contains the 'taggedValues' element
+     * @return list of configured tagged values; can be empty but not
+     *         <code>null</code>
+     */
+    public static List<TaggedValueConfigurationEntry> parseTaggedValues(Element trfE) {
 
-	/**
-	 * @return the modelElementSelectionInfo; cannot be <code>null</code>
-	 */
-	public ModelElementSelectionInfo getModelElementSelectionInfo() {
-		return modelElementSelectionInfo;
-	}
+	List<TaggedValueConfigurationEntry> result = new ArrayList<TaggedValueConfigurationEntry>();
 
-	/**
-	 * @param modelElementSelectionInfo
-	 *            the modelElementSelectionInfo to set; if <code>null</code>,
-	 *            the default ModelElementSelectionInfo will be set, i.e. any
-	 *            model element will be selected
-	 */
-	public void setModelElementSelectionInfo(
-			ModelElementSelectionInfo modelElementSelectionInfo) {
+	List<Element> directTaggedValuesInTrfList = new ArrayList<>();
 
-		if (modelElementSelectionInfo == null) {
-			this.modelElementSelectionInfo = new ModelElementSelectionInfo();
-		} else {
-			this.modelElementSelectionInfo = modelElementSelectionInfo;
+	/*
+	 * identify taggedValues elements that are direct children of the Transformer
+	 * element
+	 */
+	NodeList children = trfE.getChildNodes();
+	if (children != null && children.getLength() != 0) {
+
+	    for (int k = 0; k < children.getLength(); k++) {
+
+		Node n = children.item(k);
+		if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("taggedValues")) {
+		    directTaggedValuesInTrfList.add((Element) n);
 		}
+	    }
 	}
 
-	public static TaggedValueConfigurationEntry parse(Element taggedValueE) {
+	if (!directTaggedValuesInTrfList.isEmpty()) {
 
-		String name = taggedValueE.getAttribute("name");
-		String value = null;
+	    for (Element directTaggedValuesInTrf : directTaggedValuesInTrfList) {
 
-		if (taggedValueE.hasAttribute("value")) {
-			value = taggedValueE.getAttribute("value");
+		NodeList taggedValuesNl = directTaggedValuesInTrf.getElementsByTagName("TaggedValue");
+		Node taggedValueN;
+		Element taggedValueE;
+
+		if (taggedValuesNl != null && taggedValuesNl.getLength() > 0) {
+
+		    for (int k = 0; k < taggedValuesNl.getLength(); k++) {
+
+			taggedValueN = taggedValuesNl.item(k);
+			if (taggedValueN.getNodeType() == Node.ELEMENT_NODE) {
+
+			    taggedValueE = (Element) taggedValueN;
+
+			    TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry.parse(taggedValueE);
+			    result.add(tvce);
+			}
+		    }
 		}
-		
-		ModelElementSelectionInfo meselect = ModelElementSelectionInfo.parse(taggedValueE);
-
-		return new TaggedValueConfigurationEntry(name, value, meselect);
+	    }
 	}
 
+	return result;
+    }
 }

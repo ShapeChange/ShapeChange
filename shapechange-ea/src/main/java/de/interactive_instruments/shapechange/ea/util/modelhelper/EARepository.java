@@ -167,14 +167,44 @@ public class EARepository {
      */
     public SortedMap<Integer, EAElement> elementsAll(EAPackage pkg) {
 
-	String pkgFullName = pkg.getFullName();
+	SortedMap<Integer, EAElement> res = new TreeMap<>();
+
+	for (EAElement elmt : elements) {
+	    if (elmt.getFullName().startsWith(pkg.getFullName())) {
+		res.put(elmt.getElementId(), elmt);
+	    }
+	}
+
+	return res;
+    }
+
+    /**
+     * Retrieve all elements (not packages) within the model
+     * 
+     * @return key: element ID; value: the element
+     */
+    public SortedMap<Integer, EAElement> elementsAll() {
 
 	SortedMap<Integer, EAElement> res = new TreeMap<>();
 
 	for (EAElement elmt : elements) {
-	    if (elmt.getFullName().startsWith(pkgFullName)) {
-		res.put(elmt.getElementId(), elmt);
-	    }
+	    res.put(elmt.getElementId(), elmt);
+	}
+
+	return res;
+    }
+    
+    /**
+     * Retrieve all packages within the model
+     * 
+     * @return key: package ID; value: the package
+     */
+    public SortedMap<Integer, EAPackage> packagesAll() {
+
+	SortedMap<Integer, EAPackage> res = new TreeMap<>();
+
+	for (EAPackage pkg : packages) {
+	    res.put(pkg.getPkgId(), pkg);
 	}
 
 	return res;

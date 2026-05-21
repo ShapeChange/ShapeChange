@@ -39,6 +39,7 @@
  <element name="input">
   <complexType>
    <choice minOccurs="0" maxOccurs="unbounded">
+    <element ref="sc:inputTransformers"/>
     <element ref="sc:parameter"/>
     <element ref="sc:stereotypeAliases"/>
     <element ref="sc:tagAliases"/>
@@ -47,6 +48,11 @@
     <element ref="xi:include"/>
    </choice>
    <attribute name="id" type="ID"/>
+   <assert test="count(./*:inputTransformers) le 1">
+    <annotation>
+     <documentation>The input element may only contain a single inputTransformers element (with a sequence of InputTransformer elements).</documentation>
+    </annotation>
+   </assert>
   </complexType>
  </element>
  <element name="parameter">
@@ -221,6 +227,45 @@
   <attribute name="extends" type="string"/>
  </complexType>
  <element name="ProcessMapEntry" type="sc:MapEntryType"/>
+ <complexType name="InputTransformerType">
+  <complexContent>
+   <extension base="sc:ProcessBaseType">
+    <choice maxOccurs="unbounded" minOccurs="0">
+     <element name="parameters">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessParameter"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="rules">
+      <complexType>
+       <choice maxOccurs="unbounded" minOccurs="1">
+        <element ref="sc:ProcessRuleSet"/>
+       </choice>
+      </complexType>
+     </element>
+     <element name="mapEntries">
+      <complexType>
+       <choice maxOccurs="unbounded">
+        <element ref="sc:ProcessMapEntry"/>
+       </choice>
+      </complexType>
+     </element>
+     <element ref="xi:include"/>
+    </choice>
+    <attribute name="id" type="ID"/>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="InputTransformer" type="sc:InputTransformerType"/>
+ <element name="inputTransformers">
+  <complexType>
+   <sequence>
+    <element maxOccurs="unbounded" ref="sc:InputTransformer"/>
+   </sequence>
+  </complexType>
+ </element>
  <complexType name="TransformerType">
   <complexContent>
    <extension base="sc:ProcessBaseType">
@@ -246,13 +291,7 @@
        </choice>
       </complexType>
      </element>
-     <element name="taggedValues">
-      <complexType>
-       <choice maxOccurs="unbounded">
-        <element ref="sc:TaggedValue"/>
-       </choice>
-      </complexType>
-     </element>
+     <element ref="sc:taggedValues"/>
      <element ref="xi:include"/>
     </choice>
     <attribute name="id" type="ID" use="required"/>
@@ -1703,5 +1742,15 @@
  <complexType name="PropertyTransformationType">
   <attribute name="rule" type="string" use="required"> </attribute>
   <attributeGroup ref="sc:modelElementSelectionGroup"/>
+ </complexType>
+ <element name="taggedValues" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:taggedValuesType"/>
+ <complexType name="taggedValuesType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <choice maxOccurs="unbounded">
+     <element ref="sc:TaggedValue"/>
+    </choice>
+   </extension>
+  </complexContent>
  </complexType>
 </schema>

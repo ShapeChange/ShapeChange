@@ -57,10 +57,9 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
      * Validates the 'input'-section of the ShapeChange configuration. Any
      * invalidity is directly logged in the ShapeChangeResult.
      * 
-     * @param pc will be ignored by this class, can therefore be
-     *                <code>null</code>
-     * @param o tbd
-     * @param scr  tbd
+     * @param pc  will be ignored by this class, can therefore be <code>null</code>
+     * @param o   tbd
+     * @param scr tbd
      * @return <code>true</code> if the configuration is valid, else
      *         <code>false</code>
      */
@@ -70,7 +69,7 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	setProcessConfiguration(pc);
 	setOptions(o);
 	setShapeChangeResult(scr);
-	
+
 	boolean isValid = true;
 
 	/*
@@ -81,6 +80,7 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 		options.getInputAndLogParameterRegistry().getAllowedInputParametersWithStaticNames(),
 		options.getInputAndLogParameterRegistry().getRegexesForAllowedInputParametersWithDynamicNames(),
 		options.inputConfig.getParameters().keySet(), result) && isValid;
+
 	result.addInfo(this, 4, "input");
 
 	/*
@@ -272,38 +272,45 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 
 	return switch (mnr) {
 	case 0 -> "Context: class BasicConfigurationValidator";
-	case 1 -> "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS. ShapeChange detected that it is run in a different OS.";
-	case 2 -> "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
+	case 1 ->
+	    "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS. ShapeChange detected that it is run in a different OS.";
+	case 2 ->
+	    "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
 	case 3 -> "Validating $1$ parameters.";
 	case 4 -> "Validation of $1$ parameters completed.";
 
 	// 100-199: Validation of output processing parameters
 	case 100 -> "XSL transformation of output files is requested via configuration parameter '"
-		    + TargetOutputProcessor.PARAM_APPLY_XSLT
-		    + "' for target with class name '$1$' and input(s) '$2$'. The URL that results from concatenating the path to the XSL directory and the XSLT file name - '$3$' - could not be converted to a URI. Exception message is: '$4$'.";
+		+ TargetOutputProcessor.PARAM_APPLY_XSLT
+		+ "' for target with class name '$1$' and input(s) '$2$'. The URL that results from concatenating the path to the XSL directory and the XSLT file name - '$3$' - could not be converted to a URI. Exception message is: '$4$'.";
 	case 101 -> "XSL transformation of output files is requested via configuration parameter '"
-		    + TargetOutputProcessor.PARAM_APPLY_XSLT
-		    + "' for target with class name '$1$' and input(s) '$2$'. No XSL file was found at location '$3$'.";
+		+ TargetOutputProcessor.PARAM_APPLY_XSLT
+		+ "' for target with class name '$1$' and input(s) '$2$'. No XSL file was found at location '$3$'.";
 	case 102 -> "XSL transformation of output files is requested via configuration parameter '"
-		    + TargetOutputProcessor.PARAM_APPLY_XSLT
-		    + "' for target with class name '$1$' and input(s) '$2$'. Required parameter '"
-		    + TargetOutputProcessor.PARAM_APPLY_XSLT
-		    + "' was not configured (or does not contain a non-empty value).";
+		+ TargetOutputProcessor.PARAM_APPLY_XSLT
+		+ "' for target with class name '$1$' and input(s) '$2$'. Required parameter '"
+		+ TargetOutputProcessor.PARAM_APPLY_XSLT
+		+ "' was not configured (or does not contain a non-empty value).";
 
 	// 200-299: Validation of descriptor sources
 	case 200 -> "Source for descriptor '$1$' is 'sc:extract', but required token is not provided.";
 	case 201 -> "Source for descriptor '$1$' is 'tag', but required tag is not provided.";
 
 	// 300-399: Validation of XsdMapEntries and XsdPropertyMapEntries
-	case 300 -> "XsdMapEntry with @type '$1$' and @xsdEncodingRule '$2$' is invalid because @xmlElementHasSimpleContent is set but @xmlElement has no value.";
+	case 300 ->
+	    "XsdMapEntry with @type '$1$' and @xsdEncodingRule '$2$' is invalid because @xmlElementHasSimpleContent is set but @xmlElement has no value.";
 	case 301 -> "XsdPropertyMapEntry '$1$' is invalid because the @targetElement is not a QName like string.";
-	case 302 -> "XsdPropertyMapEntry '$1$' is invalid because the configuration does not contain a namespace definition with the namespace prefix '$2$', which is used by the @targetElement.";
+	case 302 ->
+	    "XsdPropertyMapEntry '$1$' is invalid because the configuration does not contain a namespace definition with the namespace prefix '$2$', which is used by the @targetElement.";
 
 	// 400-499: Validation of TaggedValue elements in transformations
-	case 400 -> "Transformer with id '$1$' has invalid model element selection criteria in TaggedValue element. Details: $2$";
+	case 400 ->
+	    "Transformer with id '$1$' has invalid model element selection criteria in TaggedValue element. Details: $2$";
 
 	// 500-599: Validation of (encoding) rules and their registration
 	case 500 -> "Invalid rule setup: $1$";
+
+	// 600-699: Validation of TaggedValue elements in input transformations
 
 	default -> "(" + BasicConfigurationValidator.class.getName() + ") Unknown message with number: " + mnr;
 	};

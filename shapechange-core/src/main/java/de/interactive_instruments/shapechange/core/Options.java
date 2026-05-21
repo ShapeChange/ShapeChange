@@ -523,9 +523,11 @@ public class Options {
     protected Map<String, String> dialogParameters = null;
     protected Map<String, String> logParameters = new HashMap<>();
     protected ProcessConfiguration currentProcessConfig = null;
-    protected List<TargetConfiguration> inputTargetConfigs = new ArrayList<TargetConfiguration>();
-    protected List<TransformerConfiguration> inputTransformerConfigs = new ArrayList<TransformerConfiguration>();
+    protected List<TargetConfiguration> targetConfigsOnInputModel = new ArrayList<TargetConfiguration>();
+    protected List<TransformerConfiguration> transformerConfigsOnInputModel = new ArrayList<TransformerConfiguration>();
     private String inputId = null;
+
+    private List<InputTransformerConfiguration> inputTransformerConfigs = null;
 
     private List<TargetConfiguration> targetConfigs = null;
     /**
@@ -1622,6 +1624,12 @@ public class Options {
 
 	Map<String, PackageInfoConfiguration> packageInfos = parsePackageInfos(inputElement);
 
+	/*
+	 * Load input transformer configurations (if any are provided in the
+	 * configuration file)
+	 */
+	this.inputTransformerConfigs = parseInputTransformerConfigurations(inputElement);
+
 	this.inputConfig = new InputConfiguration(inputId, inputParameters, stereotypeAliases, tagAliases,
 		descriptorSources, packageInfos);
 
@@ -1738,7 +1746,7 @@ public class Options {
 	for (TargetConfiguration tgtConfig : targetConfigs) {
 	    for (String inputIdref : tgtConfig.getInputIds()) {
 		if (inputIdref.equals(getInputId())) {
-		    this.inputTargetConfigs.add(tgtConfig);
+		    this.targetConfigsOnInputModel.add(tgtConfig);
 		} else {
 		    this.transformerConfigs.get(inputIdref).addTarget(tgtConfig);
 		}
@@ -1748,7 +1756,7 @@ public class Options {
 	for (TransformerConfiguration trfConfig : this.transformerConfigs.values()) {
 	    String inputIdref = trfConfig.getInputId();
 	    if (inputIdref.equals(getInputId())) {
-		this.inputTransformerConfigs.add(trfConfig);
+		this.transformerConfigsOnInputModel.add(trfConfig);
 	    } else {
 		this.transformerConfigs.get(inputIdref).addTransformer(trfConfig);
 	    }
@@ -3169,7 +3177,8 @@ public class Options {
 		    List<ProcessMapEntry> processMapEntries = parseProcessMapEntries(trfE, "ProcessMapEntry");
 
 		    // parse tagged values, if any are defined
-		    List<TaggedValueConfigurationEntry> taggedValues = parseTaggedValues(trfE);
+		    List<TaggedValueConfigurationEntry> taggedValues = TaggedValueConfigurationEntry
+			    .parseTaggedValues(trfE);
 
 		    // get the transformer input - can be null, then set it to
 		    // global input element
@@ -3201,6 +3210,70 @@ public class Options {
 	    }
 	}
 	return trfConfigs;
+
+    }
+
+    /**
+     * Parses the input transformer configuration elements available in the given
+     * Input element.
+     *
+     * @param inputElement
+     * @return list of the configured input transformer configurations; can be empty
+     *         but not <code>null</code>
+     * @throws ShapeChangeAbortException
+     *
+     */
+    private List<InputTransformerConfiguration> parseInputTransformerConfigurations(Element inputElement)
+	    throws ShapeChangeAbortException {
+
+	List<InputTransformerConfiguration> itrfConfigs = new ArrayList<>();
+
+	NodeList itrfsNl = inputElement.getElementsByTagName("inputTransformers");
+
+	for (int i = 0; i < itrfsNl.getLength(); i++) {
+	    Node itrfsN = itrfsNl.item(i);
+	    NodeList itrfNl = itrfsN.getChildNodes();
+
+	    // look for all InputTransformer elements in the "inputTransformers" Node
+	    for (int j = 0; j < itrfNl.getLength(); j++) {
+		Node itrfN = itrfNl.item(j);
+
+		if (itrfN.getNodeType() == Node.ELEMENT_NODE) {
+		    Element itrfE = (Element) itrfN;
+
+		    // parse content of InputTransformer element
+
+		    // get input transformer id
+		    String itrfConfigId = itrfE.getAttribute("id");
+
+		    // get input transformer class name
+		    String itrfConfigName = itrfE.getAttribute("class");
+
+		    // get input transformer mode
+		    ProcessMode itrfMode = parseMode(itrfE);
+
+		    Map<String, String> processParameters = parseParameters(itrfE, "ProcessParameter");
+
+		    // now look up all ProcessRuleSet elements, if there are
+		    // any
+		    Map<String, ProcessRuleSet> processRuleSets = parseRuleSets(itrfE, "ProcessRuleSet", false);
+
+		    // now look up all ProcessMapEntry elements, if there
+		    // are any
+		    List<ProcessMapEntry> processMapEntries = parseProcessMapEntries(itrfE, "ProcessMapEntry");
+
+		    Element advancedProcessConfigurations = parseAdvancedProcessConfigurations(itrfE);
+
+		    // create input transformer config and add it to list
+		    InputTransformerConfiguration trfConfig = new InputTransformerConfiguration(itrfConfigId,
+			    itrfConfigName, itrfMode, processParameters, processRuleSets, processMapEntries,
+			    advancedProcessConfigurations);
+
+		    itrfConfigs.add(trfConfig);
+		}
+	    }
+	}
+	return itrfConfigs;
 
     }
 
@@ -3269,61 +3342,6 @@ public class Options {
 	}
 
 	return valConfigs;
-    }
-
-    /**
-     * @param trfE "Transformer" element from the configuration
-     * @return list of tagged values defined for the transformer or
-     *         empty if no tagged values are defined for it.
-     */
-    private List<TaggedValueConfigurationEntry> parseTaggedValues(Element trfE) {
-
-	List<TaggedValueConfigurationEntry> result = new ArrayList<TaggedValueConfigurationEntry>();
-
-	List<Element> directTaggedValuesInTrfList = new ArrayList<>();
-
-	/*
-	 * identify taggedValues elements that are direct children of the Transformer
-	 * element
-	 */
-	NodeList children = trfE.getChildNodes();
-	if (children != null && children.getLength() != 0) {
-
-	    for (int k = 0; k < children.getLength(); k++) {
-
-		Node n = children.item(k);
-		if (n.getNodeType() == Node.ELEMENT_NODE && n.getNodeName().equals("taggedValues")) {
-		    directTaggedValuesInTrfList.add((Element) n);
-		}
-	    }
-	}
-
-	if (!directTaggedValuesInTrfList.isEmpty()) {
-
-	    for (Element directTaggedValuesInTrf : directTaggedValuesInTrfList) {
-
-		NodeList taggedValuesNl = directTaggedValuesInTrf.getElementsByTagName("TaggedValue");
-		Node taggedValueN;
-		Element taggedValueE;
-
-		if (taggedValuesNl != null && taggedValuesNl.getLength() > 0) {
-
-		    for (int k = 0; k < taggedValuesNl.getLength(); k++) {
-
-			taggedValueN = taggedValuesNl.item(k);
-			if (taggedValueN.getNodeType() == Node.ELEMENT_NODE) {
-
-			    taggedValueE = (Element) taggedValueN;
-
-			    TaggedValueConfigurationEntry tvce = TaggedValueConfigurationEntry.parse(taggedValueE);
-			    result.add(tvce);
-			}
-		    }
-		}
-	    }
-	}
-
-	return result;
     }
 
     private ProcessMode parseMode(Element processElement) {
@@ -3546,17 +3564,18 @@ public class Options {
     }
 
     /**
-     * @return the inputTargetConfigs
+     * @return the target configurations that are defined to process the input model
      */
-    public List<TargetConfiguration> getInputTargetConfigs() {
-	return inputTargetConfigs;
+    public List<TargetConfiguration> getTargetConfigsOnInputModel() {
+	return targetConfigsOnInputModel;
     }
 
     /**
-     * @return the inputTransformerConfigs
+     * @return the transformer configurations that are defined to process the input
+     *         model (NOTE: these are NOT InputTransformer configurations)
      */
-    public List<TransformerConfiguration> getInputTransformerConfigs() {
-	return inputTransformerConfigs;
+    public List<TransformerConfiguration> getTransformerConfigsOnInputModel() {
+	return transformerConfigsOnInputModel;
     }
 
     /**
@@ -3582,6 +3601,10 @@ public class Options {
 
     public List<TargetConfiguration> getTargetConfigurations() {
 	return this.targetConfigs;
+    }
+
+    public List<InputTransformerConfiguration> getInputTransformerConfigs() {
+	return this.inputTransformerConfigs;
     }
 
     public Map<String, TransformerConfiguration> getTransformerConfigs() {
@@ -3902,6 +3925,10 @@ public class Options {
 	    value = parameter("constraintLoading");
 	}
 	return value == null || !value.equalsIgnoreCase("disabled");
+    }
+
+    public boolean hasInputTransformerConfigurations() {
+	return this.inputTransformerConfigs != null && !this.inputTransformerConfigs.isEmpty();
     }
 
     public boolean hasTransformerConfigurations() {

@@ -61,8 +61,23 @@ public class EAPackageUtil extends AbstractEAUtil {
 
 	EATaggedValue tv = new EATaggedValue(name, value);
 
-	EAElementUtil.deleteTaggedValue(e, tv.getName());
-	EAElementUtil.addTaggedValue(e, tv);
+	EAElementUtil.setTaggedValue(e, tv);
+    }
+
+    /**
+     * Sets the given tagged value in the tagged values of the given package. If
+     * tagged values with the same tag name already exist, they will be deleted.
+     * Then the tagged value will be added.
+     * 
+     * @param pkg the package in which the tagged value shall be set
+     * @param tv  tagged value to set, must not be <code>null</code>
+     * @throws EAException tbd
+     */
+    public static void setTaggedValue(Package pkg, EATaggedValue tv) throws EAException {
+
+	Element e = pkg.GetElement();
+
+	EAElementUtil.setTaggedValue(e, tv);
     }
 
     public static Package addPackage(Package owner, String newPackageName, String newPackageType) throws EAException {
@@ -77,22 +92,46 @@ public class EAPackageUtil extends AbstractEAUtil {
     }
 
     /**
-     * Updates the tagged values with given name (which can be a fully qualified
-     * name) in the tagged values of the given package. Does NOT delete those tagged
-     * values. NOTE: This method is especially useful when setting tagged values
-     * that are defined by an MDG / UML Profile, since these tagged values cannot be
-     * created programmatically (they are created by EA - for further details, see
+     * Updates the tagged value of the given package. Does NOT delete the tagged
+     * value.
+     * <p>
+     * NOTE: This method is especially useful when setting tagged values that are
+     * defined by an MDG / UML Profile, since these tagged values cannot be created
+     * programmatically (they are created by EA - for further details, see
+     * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * <p>
+     * NOTE: If tv contains multiple values for the tag, then only the last one will
+     * be used for the update.
+     * 
+     * @param pkg the package in which the tagged value shall be updated
+     * @param tv  tagged value to set, must not be <code>null</code>
+     * @throws EAException If updating the package did not succeed, this exception
+     *                     contains the error message.
+     */
+    public static void updateTaggedValue(Package pkg, EATaggedValue tv) throws EAException {
+	Element e = pkg.GetElement();
+	EAElementUtil.updateTaggedValue(e, tv);
+    }
+
+    /**
+     * Updates the tagged value with given name (which can be a fully qualified
+     * name) in the tagged values of the given package. Does NOT delete the tagged
+     * value.
+     * <p>
+     * NOTE: This method is especially useful when setting tagged values that are
+     * defined by an MDG / UML Profile, since these tagged values cannot be created
+     * programmatically (they are created by EA - for further details, see
      * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
      * 
-     * @param pkg               the package in which the tagged values shall be
+     * @param pkg               the package in which the tagged value shall be
      *                          updated
      * @param name              (fully qualified or unqualified) name of the tagged
      *                          value to update, must not be <code>null</code>
      * @param value             value of the tagged value to update, can be
      *                          <code>null</code>
-     * @param createAsMemoField If set to <code>true</code>, the values shall be
-     *                          encoded using &lt;memo&gt; fields, regardless of the
-     *                          actual length of each value.
+     * @param createAsMemoField If set to <code>true</code>, the value shall be
+     *                          encoded using a &lt;memo&gt; field, regardless of
+     *                          the actual length of the value.
      * @throws EAException If updating the package did not succeed, this exception
      *                     contains the error message.
      */
@@ -245,7 +284,8 @@ public class EAPackageUtil extends AbstractEAUtil {
 	return switch (mnr) {
 
 	case 101 -> "EA error encountered while adding child package '$1$' to EA package '$2$'. Error message is: $3$";
-	case 102 -> "EA error encountered while adding a dependency relationship to EA package '$1$'. Error message is: $2$";
+	case 102 ->
+	    "EA error encountered while adding a dependency relationship to EA package '$1$'. Error message is: $2$";
 	case 103 -> "EA error encountered while updating 'Name' of EA package '$1$'. Error message is: $2$";
 	case 104 -> "EA error encountered while updating 'ParentID' of EA package '$1$'. Error message is: $2$";
 

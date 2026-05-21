@@ -604,6 +604,14 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
     public int getEAAttributeId() {
 	return this.eaAttributeId;
     }
+    
+    public Attribute getEAAttribute() {
+	return this.eaAttribute;
+    }
+    
+    public ConnectorEnd getEAConnectorEnd() {
+	return this.eaConnectorEnd;
+    }
 
     @Override
     public boolean isComposition() {

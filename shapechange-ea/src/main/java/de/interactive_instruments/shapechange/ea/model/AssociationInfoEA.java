@@ -314,4 +314,8 @@ public class AssociationInfoEA extends AssociationInfoImpl implements Associatio
 
 	return ls;
     }
+    
+    public Connector getEAConnector() {
+	return this.eaConnector;
+    }
 }

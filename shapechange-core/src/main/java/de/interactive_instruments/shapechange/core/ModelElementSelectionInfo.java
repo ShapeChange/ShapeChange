@@ -334,6 +334,9 @@ public class ModelElementSelectionInfo implements MessageSource {
 	Options options = infoType.options();
 	ShapeChangeResult result = infoType.result();
 
+	/* keep track of and apply an overall match to short-circuit the evaluation */
+	boolean overallMatch = true;
+
 	boolean modelElementStereotypeMatch = true;
 	boolean propertyValueTypeStereotypeMatch = true;
 	boolean propertyValueTypeNameMatch = true;
@@ -344,7 +347,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	boolean modelElementTypeMatch = true;
 	boolean classIsAbstractMatch = true;
 
-	if (hasModelElementType()) {
+	if (overallMatch && hasModelElementType()) {
 
 	    modelElementTypeMatch = false;
 
@@ -358,9 +361,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 			    && !((PropertyInfo) infoType).isAttribute())) {
 		modelElementTypeMatch = true;
 	    }
+
+	    overallMatch = overallMatch && modelElementTypeMatch;
 	}
 
-	if (hasModelElementStereotypePattern()) {
+	if (overallMatch && hasModelElementStereotypePattern()) {
 
 	    modelElementStereotypeMatch = false;
 
@@ -395,9 +400,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 		    result.addDebug(this, 101, stereotype, modelElementStereotypePattern.pattern());
 		}
 	    }
+	    
+	    overallMatch = overallMatch && modelElementStereotypeMatch;
 	}
 
-	if (hasModelElementOwnerStereotypePattern()) {
+	if (overallMatch && hasModelElementOwnerStereotypePattern()) {
 
 	    modelElementOwnerStereotypeMatch = false;
 
@@ -454,9 +461,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 		 */
 		modelElementOwnerStereotypeMatch = true;
 	    }
+	    
+	    overallMatch = overallMatch && modelElementOwnerStereotypeMatch;
 	}
 
-	if (hasPropertyValueTypeStereotypePattern() && infoType instanceof PropertyInfo pi) {
+	if (overallMatch && hasPropertyValueTypeStereotypePattern() && infoType instanceof PropertyInfo pi) {
 
 	    /*
 	     * only perform the check for properties that actually have a value type name
@@ -501,6 +510,9 @@ public class ModelElementSelectionInfo implements MessageSource {
 			    result.addDebug(this, 101, stereotype, propertyValueTypeStereotypePattern.pattern());
 			}
 		    }
+		    
+		    overallMatch = overallMatch && propertyValueTypeStereotypeMatch;
+		    
 		} else {
 		    MessageContext mc = result.addWarning(this, 104,
 			    StringUtils.defaultIfBlank(pi.typeInfo().name, "NOT_FOUND"), pi.name());
@@ -511,7 +523,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
-	if (hasPropertyValueTypeNamePattern() && infoType instanceof PropertyInfo pi) {
+	if (overallMatch && hasPropertyValueTypeNamePattern() && infoType instanceof PropertyInfo pi) {
 
 	    if (StringUtils.isNotBlank(pi.typeInfo().name)) {
 
@@ -525,10 +537,12 @@ public class ModelElementSelectionInfo implements MessageSource {
 		} else {
 		    result.addDebug(this, 101, pi.typeInfo().name, propertyValueTypeNamePattern.pattern());
 		}
+		
+		overallMatch = overallMatch && propertyValueTypeNameMatch;
 	    }
 	}
 
-	if (hasModelElementNamePattern()) {
+	if (overallMatch && hasModelElementNamePattern()) {
 
 	    modelElementNameMatch = false;
 
@@ -539,9 +553,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    } else {
 		result.addDebug(this, 101, infoType.name(), modelElementNamePattern.pattern());
 	    }
+	    
+	    overallMatch = overallMatch && modelElementNameMatch;
 	}
 
-	if (hasModelElementOwnerNamePattern()) {
+	if (overallMatch && hasModelElementOwnerNamePattern()) {
 
 	    modelElementOwnerNameMatch = false;
 
@@ -575,9 +591,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 		 */
 		modelElementOwnerNameMatch = true;
 	    }
+	    
+	    overallMatch = overallMatch && modelElementOwnerNameMatch;
 	}
 
-	if (hasApplicationSchemaNamePattern()) {
+	if (overallMatch && hasApplicationSchemaNamePattern()) {
 
 	    applicationSchemaNameMatch = false;
 
@@ -594,9 +612,11 @@ public class ModelElementSelectionInfo implements MessageSource {
 		    result.addDebug(this, 101, applicationSchemaName, applicationSchemaNamePattern.pattern());
 		}
 	    }
+	    
+	    overallMatch = overallMatch && applicationSchemaNameMatch;
 	}
 
-	if (classIsAbstract != null && infoType instanceof ClassInfo ci) {
+	if (overallMatch && classIsAbstract != null && infoType instanceof ClassInfo ci) {
 
 	    classIsAbstractMatch = false;
 
@@ -606,11 +626,15 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    } else {
 		result.addDebug(this, 106, ci.name());
 	    }
+	    
+	    overallMatch = overallMatch && classIsAbstractMatch;
 	}
 
-	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
-		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && propertyValueTypeNameMatch
-		&& modelElementTypeMatch && applicationSchemaNameMatch && classIsAbstractMatch;
+//	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
+//		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && propertyValueTypeNameMatch
+//		&& modelElementTypeMatch && applicationSchemaNameMatch && classIsAbstractMatch;
+	
+	return overallMatch;
     }
 
     public static ModelElementSelectionInfo parse(Element element) {
@@ -730,9 +754,9 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	}
 
-	if (asNames.isEmpty()) {
-	    result.addWarning(this, 102, infoType.name());
-	}
+//	if (asNames.isEmpty()) {
+//	    result.addWarning(this, 102, infoType.name());
+//	}
 
 	return asNames;
     }
@@ -766,8 +790,10 @@ public class ModelElementSelectionInfo implements MessageSource {
 	case 100 -> "??'$1$' matches regex '$2$'";
 	case 101 -> "??'$1$' does not match regex '$2$'";
 	case 102 -> "Could not find application schema for Info type '$1$'";
-	case 103 -> "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
-	case 104 -> "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
+	case 103 ->
+	    "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
+	case 104 ->
+	    "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
 	case 105 -> "??Class '$1$' matches the classIsAbstract filter criterium.";
 	case 106 -> "??Class '$1$' does not match the classIsAbstract filter criterium.";
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

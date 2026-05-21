@@ -450,22 +450,46 @@ public class EAConnectorUtil extends AbstractEAUtil {
     }
 
     /**
-     * Updates the tagged values with given name (which can be a fully qualified
-     * name) in the tagged values of the given connector. Does NOT delete those
-     * tagged values. NOTE: This method is especially useful when setting tagged
-     * values that are defined by an MDG / UML Profile, since these tagged values
-     * cannot be created programmatically (they are created by EA - for further
-     * details, see http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * Updates the tagged value of the given connector. Does NOT delete the tagged
+     * value.
+     * <p>
+     * NOTE: This method is especially useful when setting tagged values that are
+     * defined by an MDG / UML Profile, since these tagged values cannot be created
+     * programmatically (they are created by EA - for further details, see
+     * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * <p>
+     * NOTE: If tv contains multiple values for the tag, then only the last one will
+     * be used for the update.
      * 
-     * @param con               the connector in which the tagged values shall be
+     * @param con the connector in which the tagged value shall be updated
+     * @param tv  tagged value to set, must not be <code>null</code>
+     * @throws EAException If updating the connector did not succeed, this exception
+     *                     contains the error message.
+     */
+    public static void updateTaggedValue(Connector con, EATaggedValue tv) throws EAException {
+	updateTaggedValue(con, tv.hasFQName() ? tv.getFQName() : tv.getName(), tv.getValues().getLast(),
+		tv.createAsMemoField());
+    }
+
+    /**
+     * Updates the tagged value with given name (which can be a fully qualified
+     * name) in the tagged values of the given connector. Does NOT delete the tagged
+     * value.
+     * <p>
+     * NOTE: This method is especially useful when setting tagged values that are
+     * defined by an MDG / UML Profile, since these tagged values cannot be created
+     * programmatically (they are created by EA - for further details, see
+     * http://sparxsystems.com/forums/smf/index.php?topic=3859.0).
+     * 
+     * @param con               the connector in which the tagged value shall be
      *                          updated
      * @param name              (fully qualified or unqualified) name of the tagged
      *                          value to update, must not be <code>null</code>
      * @param value             value of the tagged value to update, can be
      *                          <code>null</code>
-     * @param createAsMemoField If set to <code>true</code>, the values shall be
-     *                          encoded using &lt;memo&gt; fields, regardless of the
-     *                          actual length of each value.
+     * @param createAsMemoField If set to <code>true</code>, the value shall be
+     *                          encoded using a &lt;memo&gt; field, regardless of
+     *                          the actual length of the value.
      * @throws EAException If updating the connector did not succeed, this exception
      *                     contains the error message.
      */
@@ -550,7 +574,8 @@ public class EAConnectorUtil extends AbstractEAUtil {
 
 	return switch (mnr) {
 
-	case 101 -> "EA error encountered while updating EA tagged value '$1$' on connector '$2$' with value '$3$'. Error message is: $4$";
+	case 101 ->
+	    "EA error encountered while updating EA tagged value '$1$' on connector '$2$' with value '$3$'. Error message is: $4$";
 	case 102 -> "EA error encountered while updating 'Name' on connector '$1$'. Error message is: $2$";
 	case 103 -> "EA error encountered while updating 'Stereotype' on connector '$1$'. Error message is: $2$";
 	case 104 -> "EA error encountered while updating 'Direction' on connector '$1$'. Error message is: $2$";
