@@ -27,7 +27,7 @@ which conforms to a custom XML Schema
 (https://shapechange.net/resources/schema/ShapeChangeConfiguration.xsd[ShapeChangeConfiguration.xsd]).
 
 The root element of the configuration file is the
-<ShapeChangeConfiguration> element.  The file is then divided into
+`<ShapeChangeConfiguration>` element. The file is then divided into
 various "functional elements" which are discussed separately in
 subpages.
 
@@ -69,8 +69,9 @@ catalogues.
 image::../images/default-processing-behavior.png[default processing behavior]
 
 ShapeChange also offers to optionally perform a number of
-transformations on the input model, before creating the target
-representations on the result of these transformations.
+in-memory transformations of the input model that was read, 
+before creating the target representations on the result of 
+these transformations.
 
 image::../images/processing-behavior-overview.png[processing behavior overview]
 
@@ -145,6 +146,46 @@ like this:
             id="v2" mode="enabled" validationMode="strict">
           <!-- Validator v2 ... -->
         </Validator>
+    </validators>
+</ShapeChangeConfiguration>
+----------
+
+
+NOTE: Since v4.1.0, input transformers can be configured, to actually modify
+the input model itself. For further details on input transformers, see 
+xref:../input transformers/InputTransformers.adoc#InputTransformers[here].
+
+image::../images/processing_with_input_transformations.png[processing with input transformations]
+
+Use of input transformers is optional.
+
+A sample configuration with input transformers can look like this:
+
+[source,xml,linenumbers]
+----------
+<ShapeChangeConfiguration>
+    <input>
+        <!-- ... -->
+        <inputTransformers>
+            <InputTransformer class="..." mode="enabled" id="IT_A">
+                <!-- ... -->
+            </InputTransformer>
+            <InputTransformer class="..." mode="enabled" id="IT_B">
+                <!-- ... -->
+            </InputTransformer>
+            <InputTransformer class="..." mode="enabled" id="IT_C">
+                <!-- ... -->
+            </InputTransformer>
+        </inputTransformers>
+    </input>
+    <transformers>
+        <!-- ... -->
+    </transformers>
+    <targets>
+        <!-- ... -->
+    </targets>
+    <validators>
+        <!-- ... -->
     </validators>
 </ShapeChangeConfiguration>
 ----------

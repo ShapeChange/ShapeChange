@@ -946,3 +946,14 @@ document. This attribute corresponds to the tagged value
 corresponds to the tagged value 'version' of an application schema
 package.
 |===
+
+
+[[Input_transformers]]
+== Input transformers
+
+(since v4.1.0)
+
+Input transformers can be configured to modify the input model itself. 
+
+For further details on input transformers, see 
+xref:../input transformers/InputTransformers.adoc#InputTransformers[here].

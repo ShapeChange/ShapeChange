@@ -254,7 +254,7 @@
      </element>
      <element ref="xi:include"/>
     </choice>
-    <attribute name="id" type="ID"/>
+    <attribute name="id" type="ID" use="required"/>
    </extension>
   </complexContent>
  </complexType>

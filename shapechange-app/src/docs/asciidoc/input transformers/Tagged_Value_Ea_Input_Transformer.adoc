@@ -1,0 +1,150 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[Tagged_Value_Ea_Input_Transformer]]
+= Tagged Value Input Transformer (for EA Repositories)
+
+(since v4.1.0)
+
+[[Introduction]]
+== Introduction
+
+This input transformer supports setting tagged values on model
+elements within an Enterprise Architect repository.
+
+[[Setting_Tagged_Values]]
+== Setting Tagged Values
+
+Filter instructions support the identification of model elements for
+which a tagged value is to be set.
+
+NOTE: If multiple `<TaggedValue>` elements for the same tagged value match for 
+a given model element, then the values from these `<TaggedValue>` elements will 
+be set as a list of values for the tag on that model element.
+
+WARNING: However, updating a tagged value defined by a UML profile is only supported
+for single values! If a list of values were to be set for such a tagged value,
+only a single one (arbitrarily chosen) will be used, and an error message will 
+be logged.
+
+It is possible to add a tagged value to a model element without
+providing an actual value in the configuration. In that case ShapeChange
+determines if the tagged value already exists. If so, the existing value
+is kept. Otherwise the tagged value is initialized with the empty
+string. If the configuration contains a value for the tagged value, it
+is set.
+
+
+
+[[Configuration]]
+== Configuration
+
+The following sections specify the configuration options for this
+transformation.
+
+[[Class]]
+=== Class
+
+The class for this transformer implementation is
+_de.interactive_instruments.shapechange.ea.inputtransformer.taggedvalues.TaggedValueEaInputTransformer_
+
+[[Rules]]
+=== Rules
+
+At the moment no specific rules are defined for this transformation.
+
+[[Parameters]]
+=== Parameters
+
+At the moment no specific parameters are defined for this
+transformation.
+
+[[Map_Entries]]
+=== Map Entries
+
+_None at present_
+
+[[Advanced_Process_Configuration]]
+=== Advanced Process Configuration
+
+The `<advancedProcessConfigurations>` element inside of the
+`<InputTransformer>` element is used to define tagged values.
+Add a `<taggedValues>` child element to the `<advancedProcessConfigurations>`
+element, and then add the `<TaggedValue>` elements that are needed
+by the transformation.
+
+[[Setting_Tagged_Values_Configuration]]
+==== TaggedValue element
+
+Each `<TaggedValue>` element can have the information items described in the following 
+sections.
+
+[[Name]]
+===== Name
+
+Type: string
+
+Explanation: Name of the tagged value to set. For tagged values defined
+by a UML profile, use the fully qualified name. Note that these are typically
+qualified by the MDG identifier and stereotype. Example: `GML::FeatureType::noPropertyType`.
+
+Required / optional: required
+
+Default value: _none_
+
+[[Value]]
+===== Value
+
+Type: string
+
+Explanation: Value of the tagged value.
+
+Required / optional: optional
+
+Default value: _none_
+
+[[Model_element_filter_criteria]]
+===== Model element filter criteria
+
+These are the same as the ones defined xref:../transformations/Common_Transformer_Functionality.adoc#Model_element_filter_criteria[here].
+
+The difference is that when transforming tagged values in the input model
+with this input transformer, elements from the whole model are considered - 
+not only from the schemas selected for processing. However, non-navigable 
+properties are ignored by this input transformer, too (if this is an issue,
+the input transformer can be enhanced in the future).
+
+[[Sample_Configuration]]
+== Sample Configuration
+
+[source,xml,linenumbers]
+----------
+<InputTransformer class="de.interactive_instruments.shapechange.ea.inputtransformer.taggedvalues.TaggedValueEaInputTransformer" mode="enabled" id="IT_TVS">
+  <advancedProcessConfigurations>
+    <taggedValues>
+      <!-- Transform tags on Test Schema package -->
+      <TaggedValue name="ShapeChange::applicationSchema::version" value="2.2" modelElementName="Test Schema" modelElementType="Package"/>
+      <TaggedValue name="ApplicationSchemaNewTag" value="X" modelElementName="Test Schema" modelElementStereotype="(?i:application schema)"/>
+      <!-- Transform tags on FeatureType1 -->
+      <TaggedValue name="ShapeChange::featureType::byValuePropertyType" value="true" applicationSchemaName="Test Schema" modelElementName="FeatureType1"/>
+      <TaggedValue name="FeatureTypeNewTag" value="X" applicationSchemaName="Test Schema" modelElementStereotype="(?i:featuretype)"/>
+      <!-- Transform tags on att -->
+      <TaggedValue name="ShapeChange::property::sequenceNumber" value="10" applicationSchemaName="Test Schema" modelElementName="att"/>
+      <TaggedValue name="AttributeNewTag" value="X" applicationSchemaName="Test Schema" modelElementName="att"/>
+    </taggedValues>
+  </advancedProcessConfigurations>
+</InputTransformer>
+----------

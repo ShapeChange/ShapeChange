@@ -161,7 +161,7 @@ The standard case for properties is that no stereotype is applied.
 
 |«version» |  |If in an application schema an association role ends at a spatial object type this stereotype denotes that the value of the property is meant to be a specific version of the spatial object not the spatial object in general. [INSPIRE]
 
-|«voidable» |  |If a characteristic of an object is not present |but may be present or applicable in the real world this can be reflected using this stereotype. This is a shorthand notation for a union type of the normal value range with a void/nil value plus an optional reason for the void/nil value. [INSPIRE]
+|«voidable» |  |If a characteristic of an object is not present but may be present or applicable in the real world this can be reflected using this stereotype. This is a shorthand notation for a union type of the normal value range with a void/nil value plus an optional reason for the void/nil value. [INSPIRE]
 
 |===
 

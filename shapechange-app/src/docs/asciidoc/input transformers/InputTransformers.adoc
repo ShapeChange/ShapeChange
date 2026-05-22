@@ -1,0 +1,146 @@
+:doctype: book
+:encoding: utf-8
+:lang: en
+:toc: macro
+:toc-title: Table of contents
+:toclevels: 5
+
+:toc-position: left
+
+:appendix-caption: Annex
+
+:numbered:
+:sectanchors:
+:sectnumlevels: 5
+:nofooter:
+
+[[InputTransformers]]
+= Input Transformers
+
+(since v4.1.0)
+
+[[General_Information]]
+== General Information
+
+ShapeChange can apply a sequence of input transformations on the input
+model. 
+
+NOTE: Typically, a specific input transformer implementation can only process
+a single or limited set of input model types, for example only a model
+stored within an enterprise architect repository.
+
+The difference between an input transformer and a "normal" transformer is 
+that the former actually (permanently) changes model content within the model store, 
+while the latter changes model content in-memory. 
+
+WARNING: Failed execution of an input transformer may leave the input model
+in an undesirable state. Therefore, take precautions when using input transformers.
+For example, only run the input transformers on a model copy. Or create a backup 
+of the model before the input transformers are executed.
+
+Furthermore, model validators are not available for input transformers.
+The reason is that only the fully transformed input model is relevant to
+subsequent processing by ShapeChange processes (transformers and targets),
+and that these processes can validate the fully transformed model. Validation
+of intermediate model transformation results is considered to be an edge case
+(that may be supported in the future, if the demand for it actually arises).
+
+Use of input transformers is optional. If input transformers are configured,
+then they are processed in the order in which they are listed.
+
+The log is used to communicate information about input transformer
+execution.
+
+[[Java_Implementation_Details]]
+=== Java Implementation Details
+
+Within the ShapeChange Java framework, each input transformer is
+implemented as a Java class. In keeping with the modularity of
+ShapeChange, each such input transformer implements the
+`de.interactive_instruments.shapechange.core.inputtransformation.InputTransformer`
+interface, which contains method "hooks" for transforming the input model. 
+The fully-qualified name of this class must be provided in the
+configuration file.
+
+[[Configuration]]
+=== Configuration
+
+Each individual input transformer is defined in the configuration file 
+as its own `<InputTransformer>` element.  All `<InputTransformer>` definitions 
+are nested under the `<inputTransformers>` element within the `<input>` section.
+
+All `<InputTransformer>` definitions, no matter the actual input transformer type,
+are configured via XML attributes, parameters, and rules.  
+Structured content can be configured using the `<advancedProcessConfigurations>`
+element.
+
+[[InputTransformer_Attributes]]
+==== Input Transformer Attributes
+
+Each `<InputTransformer>` element has three attributes, two required and one
+optional. These attributes are as follows:
+
+[width="100%",cols="1,1,1,3"]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Default Value_*
+|*_Explanation_*
+
+|* class* | Required | - |A string representing the fully-qualified
+input transformer "handler" class (that implements the InputTransformer interface).
+
+|* mode* | Optional | enabled a|
+Whether or not this particular input transformer is "turned on".  This allows
+for input transformers to be turned on/off at will.  The possible values are:
+
+* enabled (the default): The input transformer is processed.
+* disabled: The input transformer is not executed.
+* diagnostics-only: The input transformer is executed, but only diagnostics 
+output is created. Typically, input transformers do not support this mode. It will
+typically be treated identical to "enabled".
+
+| *id* | Required | - |Unique identifier of the input transformer within the
+configuration file.
+
+|===
+
+[[InputTransformer_Parameters]]
+==== Input Transformer Parameters
+
+In addition to the required attributes, each `<InputTransformer>` may have
+additional parameters defined via `<ProcessParameter>` elements which are
+nested under the `<parameters>` element.
+
+Each input transformer type may define its own expected or required
+parameters; the input-transformer-specific subheadings of the subpages will
+describe these for each input transformer type.
+
+[[Rules]]
+==== Rules
+
+An `<InputTransformer>` can have a number of `<ProcessRuleSet>` elements (nested
+under the `<rules>` element). They are used to configure the optional
+processing steps to be executed by the input transformer. Each rule set has a
+required and an optional attribute. These attributes are as follows:
+
+[cols=",,",]
+|===
+|*_Attribute Name_* |*_Required / Optional_* |*_Explanation_*
+
+|*name* |Required |Identifier of the rule set.
+
+|*extends* |Optional |Can be used to add specific rules to a standard
+process rule set.
+|===
+
+A `<ProcessRuleSet>` can contain a number of `<rule>` elements. Each of them
+identifies (via the value of the required "name" attribute) a specific
+type of processing to be applied by the input transformer.
+
+Each input transformer type can define its own rule sets and rules; the
+input-transformer-specific subheadings of the subpages will describe these for
+each input transformer type.
+
+[[Supported_Input_Transformer_Types]]
+== Supported Input Transformer Types
+
+A list of the currently supported input transformers is given xref:../index.adoc#InputTransformers[here].
