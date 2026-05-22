@@ -42,6 +42,10 @@ public class CoretableConstants {
     public static final String PARAM_GENERATE_CASCADE_RULES = "generateCascadeRules";
     public static final String PARAM_DB_SCHEMA_NAME = "dbSchemaName";
     
+    public static final String PARAM_APP_SCHEMA_NAME_BY_TV = "appSchemaNameByTv";
+    public static final String PARAM_APP_SCHEMA_VERSION_MAJOR_MINOR_ONLY = "appSchemaVersionMajorMinorOnly";
+    public static final String PARAM_GENERATE_INSERT_STATEMENTS = "generateInsertStatements";
+    
     public static final String PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE = "createCascadeRuleGraphImage";
     
     public static final String TV_EX_DEP_PART = "existentiallyDependentPart";

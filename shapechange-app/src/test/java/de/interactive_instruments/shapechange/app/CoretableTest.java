@@ -41,8 +41,8 @@ public class CoretableTest extends BasicTestSCXML {
     public void testCoretable_cascadeRules() {
 
 	multiTest("src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.xml", new String[] { "sql" },
-		"testResults/coretable/cascadeRules/INPUT",
-		"src/integrationtests/coretable/cascadeRules/reference/INPUT");
+		"testResults/coretable/cascadeRules",
+		"src/integrationtests/coretable/cascadeRules/reference");
     }
 
     @Test

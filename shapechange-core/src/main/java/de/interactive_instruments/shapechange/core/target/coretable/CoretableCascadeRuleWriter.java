@@ -388,7 +388,7 @@ public class CoretableCascadeRuleWriter implements MessageSource {
     }
 
     public void write(String outputDirectory, String outputFilename, String targetName,
-	    boolean createCascadeRuleGraphImage) {
+	    boolean createCascadeRuleGraphImage, boolean generateInsertStatements) {
 
 	if (this.cascadeRules.isEmpty()) {
 	    result.addInfo(this, 102);
@@ -400,12 +400,12 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 		printGraph(graph, outputDirectory, outputFilename);
 	    }
 
-	    printCascadeRules(cascadeRules, outputDirectory, outputFilename, targetName);
+	    printCascadeRules(cascadeRules, outputDirectory, outputFilename, targetName, generateInsertStatements);
 	}
     }
 
     private void printCascadeRules(SortedSet<CoretableCascadeRule> cascadeRules2, String outputDirectory,
-	    String outputFilename, String targetName) {
+	    String outputFilename, String targetName, boolean generateInsertStatements) {
 
 	String fileName = outputFilename + "-cascade-rules.sql";
 	File file = new File(outputDirectory, fileName);
@@ -414,10 +414,29 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 
 	    for (CoretableCascadeRule rule : this.cascadeRules) {
 
-		writer.println("SELECT " + dbSchemaName + ".add_cascade_rule('" + rule.getWholeFeatureType().name()
-			+ "','" + rule.getWholeOwnedRole().name() + "','" + rule.getPartFeatureType().name() + "','"
-			+ rule.getAppSchema() + "','" + rule.getVersion() + "','" + rule.getRelDirection().name()
-			+ "');");
+		String s;
+
+		if (generateInsertStatements) {
+		    s = "INSERT INTO " + dbSchemaName + ".cascade_delete_config "
+			    + "(whole_featuretype, whole_owned_role, part_featuretype, appschema, version, rel_direction) VALUES ('";
+		} else {
+		    s = "SELECT " + dbSchemaName + ".add_cascade_rule('";
+		}
+
+		s += rule.getWholeFeatureType().name() + "','" + rule.getWholeOwnedRole().name() + "','"
+			+ rule.getPartFeatureType().name() + "','" + rule.getAppSchema() + "','" + rule.getVersion()
+			+ "','" + rule.getRelDirection().name();
+
+		if (generateInsertStatements) {
+
+		    s += "') ON CONFLICT (whole_featuretype, whole_owned_role, part_featuretype, appschema, version, rel_direction) "
+			    + "DO NOTHING;";
+
+		} else {
+		    s += "');";
+		}
+
+		writer.println(s);
 	    }
 
 	    writer.close();

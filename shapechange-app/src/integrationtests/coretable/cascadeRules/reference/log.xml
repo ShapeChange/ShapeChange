@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
-                   config="src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules_runWithSCXML.xml"
-                   end="Fri Mar 27 09:16:21 CET 2026"
+                   config="src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.xml"
+                   end="Thu May 21 17:12:44 CEST 2026"
                    resultCode="0"
-                   start="Fri Mar 27 09:16:21 CET 2026"
+                   start="Thu May 21 17:12:34 CEST 2026"
                    version="4.1.0-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -13,10 +13,23 @@
       <Info message="Validating log parameters."/>
       <Info message="Validation of log parameters completed."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' and @inputs 'INPUT' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules.qea"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'"/>
       <ProcessFlowInfo message="Now processing target 'Coretable' for input 'INPUT'."/>
-      <Info message="(de.interactive_instruments.shapechange.core.target.coretable.Coretable) Unknown message with number: 8"/>
+      <Info message="Class 'FeatureTypeNotEncoded' is not encoded."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in whole-part relationship graph ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]"/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'"/>
+      <ProcessFlowInfo message="Now processing target 'Coretable' for input 'INPUT'."/>
+      <Info message="Class 'FeatureTypeNotEncoded' is not encoded."/>
       <Info message="---------- Checking for reflexive relationships and cyles in whole-part relationship graph ----------"/>
       <Info message="--- No reflexive relationships detected."/>
       <Info message="--- No cycles found."/>
@@ -24,7 +37,9 @@
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
    </Messages>
    <Results>
-      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/cascadeRules/INPUT/coretable-cascade-rules.sql"
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/cascadeRules/1/INPUT/coretable-cascade-rules.sql"
+              target="Coretable">coretable-cascade-rules.sql</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/cascadeRules/2/INPUT/coretable-cascade-rules.sql"
               target="Coretable">coretable-cascade-rules.sql</Result>
    </Results>
 </ShapeChangeResult>

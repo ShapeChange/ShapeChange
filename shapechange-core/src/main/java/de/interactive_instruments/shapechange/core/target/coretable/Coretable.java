@@ -34,6 +34,8 @@ package de.interactive_instruments.shapechange.core.target.coretable;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.RuleRegistry;
@@ -65,6 +67,10 @@ public class Coretable implements SingleTarget, MessageSource {
     private static boolean createCascadeRuleGraphImage = false;
     private static String dbSchemaName = "public";
 
+    private static boolean appSchemaVersionMajorMinorOnly = false;
+    private static String appSchemaNameByTv = null;
+    private static boolean generateInsertStatements = false;
+
     private static SortedSet<ClassInfo> featureObjectAndMixinTypes = new TreeSet<>();
 
     @Override
@@ -95,12 +101,21 @@ public class Coretable implements SingleTarget, MessageSource {
 
 	    generateCascadeRules = options.parameterAsBoolean(this.getClass().getName(),
 		    CoretableConstants.PARAM_GENERATE_CASCADE_RULES, false);
-	    
+
 	    createCascadeRuleGraphImage = options.parameterAsBoolean(this.getClass().getName(),
 		    CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE, false);
 
 	    dbSchemaName = options.parameterAsString(this.getClass().getName(), CoretableConstants.PARAM_DB_SCHEMA_NAME,
 		    "public", false, true);
+
+	    appSchemaVersionMajorMinorOnly = options.parameterAsBoolean(this.getClass().getName(),
+		    CoretableConstants.PARAM_APP_SCHEMA_VERSION_MAJOR_MINOR_ONLY, false);
+
+	    generateInsertStatements = options.parameterAsBoolean(this.getClass().getName(),
+		    CoretableConstants.PARAM_GENERATE_INSERT_STATEMENTS, false);
+
+	    appSchemaNameByTv = options.parameterAsString(this.getClass().getName(),
+		    CoretableConstants.PARAM_APP_SCHEMA_NAME_BY_TV, null, false, true);
 	}
     }
 
@@ -150,11 +165,22 @@ public class Coretable implements SingleTarget, MessageSource {
 	if (generateCascadeRules) {
 
 	    String appSchema = mainAppSchema.name();
+	    if (StringUtils.isNotBlank(appSchemaNameByTv)) {
+		String nameByTv = mainAppSchema.taggedValue(appSchemaNameByTv);
+		if (StringUtils.isNotBlank(nameByTv)) {
+		    appSchema = nameByTv;
+		}
+	    }
 	    String appSchemaVersion = mainAppSchema.version();
+
+	    if (appSchemaVersionMajorMinorOnly && StringUtils.countMatches(appSchemaVersion, '.') >= 2) {
+		appSchemaVersion = appSchemaVersion.substring(0, StringUtils.ordinalIndexOf(appSchemaVersion, ".", 2));
+	    }
 
 	    CoretableCascadeRuleWriter ccrWriter = new CoretableCascadeRuleWriter(result, dbSchemaName);
 	    ccrWriter.computeCascadeRules(featureObjectAndMixinTypes, appSchema, appSchemaVersion);
-	    ccrWriter.write(outputDirectory, outputFilename, getTargetName(), createCascadeRuleGraphImage);
+	    ccrWriter.write(outputDirectory, outputFilename, getTargetName(), createCascadeRuleGraphImage,
+		    generateInsertStatements);
 	}
     }
 
@@ -178,7 +204,7 @@ public class Coretable implements SingleTarget, MessageSource {
     public void reset() {
 
 	mainAppSchema = null;
-	
+
 	initialised = false;
 	outputDirectory = null;
 	outputFilename = null;
@@ -186,7 +212,11 @@ public class Coretable implements SingleTarget, MessageSource {
 	generateCascadeRules = false;
 	createCascadeRuleGraphImage = false;
 	dbSchemaName = "public";
-	
+
+	appSchemaVersionMajorMinorOnly = false;
+	appSchemaNameByTv = null;
+	generateInsertStatements = false;
+
 	featureObjectAndMixinTypes = new TreeSet<>();
     }
 

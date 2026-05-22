@@ -63,6 +63,51 @@ ignored by the target.
 The parameters supported by this target are described in the following
 sections.
 
+[[appSchemaNameByTv]]
+==== appSchemaNameByTv
+
+(since 4.1.0)
+
+Alias: _none_
+
+Type: String
+
+Default Value: _none_
+
+Behavior: If set, the parameter provides the name of the
+tagged value on the (main) application schema package, which
+shall be used to populate column `appschema` in generated
+coretable cascade rules. If the parameter is not set, or
+the tagged value is blank (not set or has no non-empty value)
+then the default behavior applies, i.e. to use the name
+of the (main) application schema package as value for column
+`appschema`.
+
+Applies to Rule(s):
+
+* _none - default behavior for generating cascade rules_
+
+[[appSchemaVersionMajorMinorOnly]]
+==== appSchemaVersionMajorMinorOnly
+
+(since 4.1.0)
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: false
+
+Behavior: Reduces the version value of the (main) application
+schema - to be set as value for column `version` in cascade rules - 
+to the substring before the second occurrence of character '.'.
+This effectively reduces a version to the major and minor part
+(e.g. '1.22.3' is reduced to '1.22').
+
+Applies to Rule(s):
+
+* _none - default behavior for generating cascade rules_
+
 [[dbSchemaName]]
 ==== dbSchemaName
 
@@ -142,6 +187,28 @@ form of the association roles that make up the edges within the path).
 Applies to Rule(s):
 
 * _none - default behavior_
+
+[[generateInsertStatements]]
+==== generateInsertStatements
+
+(since 4.1.0)
+
+Alias: _none_
+
+Type: Boolean
+
+Default Value: _false_
+
+Behavior:
+
+If true, then cascade rules are created as INSERT statements
+for table `cascade_delete_config`. Otherwise, the default behavior
+for generating cascade rules applies, which is to generate 
+SELECT statements for calling function `add_cascade_rule`.
+
+Applies to Rule(s):
+
+* _none - default behavior for generating cascade rules_
 
 [[outputDirectory]]
 ==== outputDirectory

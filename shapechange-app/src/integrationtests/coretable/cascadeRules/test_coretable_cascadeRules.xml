@@ -22,11 +22,33 @@
 		<Target
 			class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules" />
+			<targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/1" />
 			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="generateCascadeRules" value="true" />
 			<targetParameter name="createCascadeRuleGraphImage" value="false"/>
 			<targetParameter name="dbSchemaName" value="test" />
+						
+			<targetParameter name="defaultEncodingRule" value="coretable" />
+			<rules>
+				<EncodingRule name="coretable">
+<!--					<rule name="rule-coretable-..." />-->
+				</EncodingRule>
+			</rules>
+			<xi:include href="sc-resources/config/StandardRules.xml" />
+		</Target>
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
+			mode="enabled">
+			<targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/2" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="generateCascadeRules" value="true" />
+			<targetParameter name="createCascadeRuleGraphImage" value="false"/>
+			<targetParameter name="dbSchemaName" value="test" />
+			
+			<targetParameter name="appSchemaNameByTv" value="xmlns" />
+			<targetParameter name="appSchemaVersionMajorMinorOnly" value="true" />
+			<targetParameter name="generateInsertStatements" value="true" />
+			
 			<targetParameter name="defaultEncodingRule" value="coretable" />
 			<rules>
 				<EncodingRule name="coretable">
