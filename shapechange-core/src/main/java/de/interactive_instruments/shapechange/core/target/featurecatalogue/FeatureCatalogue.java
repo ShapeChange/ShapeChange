@@ -626,21 +626,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    // now set the name of the application schema
 	    writer.dataElement("name", nameForAppSchema);
 
-	    String s = pi.definition();
-	    if (s != null && s.length() > 0) {
-		PrintLineByLine(s, "definition", null);
-	    }
-	    s = pi.description();
-	    if (s != null && s.length() > 0) {
-		PrintLineByLine(s, "description", null);
-	    }
-
-	    s = pi.primaryCode();
-	    if (StringUtils.isNotBlank(s)) {
-		writer.dataElement("code", s);
-	    }
-
-	    s = pi.version();
+	    PrintCommonDescriptors(pi, null, false);
+	    
+	    String s = pi.version();
 	    if (s != null && s.length() > 0) {
 		writer.dataElement("versionNumber", s);
 	    }
@@ -778,7 +766,6 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
     private void PrintDescriptors(Info i, boolean isClass, Operation op) throws SAXException {
 	String s;
-	String[] sa;
 
 	s = i.name();
 	s = checkDiff(s, i, ElementType.NAME);
@@ -806,7 +793,15 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		writer.dataElement("title", s, op);
 	    }
 	}
-
+	
+	PrintCommonDescriptors(i,op, false);
+    }
+    
+    private void PrintCommonDescriptors(Info i, Operation op, boolean primaryCodeAsPrimaryCode) throws SAXException {
+	
+	String s;
+	String[] sa;
+	
 	s = i.definition();
 	s = checkDiff(s, i, ElementType.DEFINITION);
 	if (s != null && s.length() > 0) {
@@ -846,7 +841,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = i.primaryCode();
 	s = checkDiff(s, i, ElementType.PRIMARYCODE);
 	if (s != null && s.length() > 0) {
-	    writer.dataElement("code", PrepareToPrint(s), op);
+	    writer.dataElement(primaryCodeAsPrimaryCode ? "primaryCode" : "code", PrepareToPrint(s), op);
 	}
 
 	s = i.globalIdentifier();
@@ -1230,17 +1225,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = options.internalize(s);
 
 	writer.dataElement("code", PrepareToPrint(s), op);
-
-	s = propi.definition();
-	s = checkDiff(s, propi, ElementType.DEFINITION);
-	if (s != null && s.length() > 0) {
-	    PrintLineByLine(s, "definition", op);
-	}
-	s = propi.description();
-	s = checkDiff(s, propi, ElementType.DESCRIPTION);
-	if (s != null && s.length() > 0) {
-	    PrintLineByLine(s, "description", op);
-	}
+	
+	PrintCommonDescriptors(propi,op,true);
 
 	/*
 	 * 2019-05-14 JE - NOTE: code lists and their codes are only partially

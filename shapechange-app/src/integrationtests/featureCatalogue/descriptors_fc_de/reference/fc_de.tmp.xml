@@ -11,8 +11,42 @@
     <name>Test</name>
     <definition>a definition</definition>
     <description>a note</description>
+    <example>an example</example>
+    <legalBasis>a legal basis</legalBasis>
     <taggedValues></taggedValues>
   </ApplicationSchema>
+  <FeatureType id="_C9">
+    <name>Enumeration</name>
+    <definition>a def</definition>
+    <description>a note</description>
+    <characterizedBy idref="_A9_29"></characterizedBy>
+    <characterizedBy idref="_A9_30"></characterizedBy>
+    <package idref="_P4"></package>
+    <type>Enumeration Type</type>
+    <taggedValues></taggedValues>
+  </FeatureType>
+  <FeatureAttribute id="_A9_29">
+    <name>val1</name>
+    <description>a note</description>
+    <cardinality>1</cardinality>
+    <initialValue>1</initialValue>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
+  <FeatureAttribute id="_A9_30">
+    <name>val2</name>
+    <definition>a def</definition>
+    <cardinality>1</cardinality>
+    <initialValue>2</initialValue>
+    <taggedValues></taggedValues>
+    <voidable>false</voidable>
+    <orderIndicator>0</orderIndicator>
+    <uniquenessIndicator>1</uniquenessIndicator>
+    <ValueDataType></ValueDataType>
+  </FeatureAttribute>
   <FeatureType id="_C4">
     <name>FeatureType1</name>
     <title>an alias</title>
@@ -24,7 +58,7 @@
     <code>FT1</code>
     <characterizedBy idref="_A4_3"></characterizedBy>
     <characterizedBy idref="_A4_19"></characterizedBy>
-    <characterizedBy idref="_AT1"></characterizedBy>
+    <characterizedBy idref="_ATas1"></characterizedBy>
     <package idref="_P4"></package>
     <type>Feature Type</type>
     <taggedValues></taggedValues>
@@ -52,15 +86,15 @@
     <uniquenessIndicator>1</uniquenessIndicator>
     <ValueDataType category="enumeration">Enumeration</ValueDataType>
     <ValueDomainType>1</ValueDomainType>
-    <enumeratedBy idref="_A9_29"></enumeratedBy>
-    <enumeratedBy idref="_A9_30"></enumeratedBy>
+    <enumeratedBy idref="_A9_29_VALUE"></enumeratedBy>
+    <enumeratedBy idref="_A9_30_VALUE"></enumeratedBy>
   </FeatureAttribute>
-  <FeatureRelationship id="__T1">
+  <FeatureRelationship id="__Tas1">
     <name>(unbestimmt)</name>
-    <roles idref="_AT1"></roles>
-    <roles idref="_AS1"></roles>
+    <roles idref="_ATas1"></roles>
+    <roles idref="_ASas1"></roles>
   </FeatureRelationship>
-  <RelationshipRole id="_AT1">
+  <RelationshipRole id="_ATas1">
     <name>role2</name>
     <description>a description</description>
     <cardinality>1</cardinality>
@@ -69,9 +103,9 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C26" category="feature type">FeatureType2</FeatureTypeIncluded>
-    <relation idref="__T1"></relation>
+    <relation idref="__Tas1"></relation>
   </RelationshipRole>
-  <RelationshipRole id="_AS1">
+  <RelationshipRole id="_ASas1">
     <name>role1</name>
     <definition>a definition</definition>
     <cardinality>0..*</cardinality>
@@ -81,8 +115,8 @@
     <orderIndicator>0</orderIndicator>
     <uniquenessIndicator>1</uniquenessIndicator>
     <FeatureTypeIncluded idref="_C4" category="feature type">FeatureType1</FeatureTypeIncluded>
-    <relation idref="__T1"></relation>
-    <InverseRole idref="_AT1"></InverseRole>
+    <relation idref="__Tas1"></relation>
+    <InverseRole idref="_ATas1"></InverseRole>
   </RelationshipRole>
   <FeatureType id="_C26">
     <name>FeatureType2</name>
@@ -98,12 +132,12 @@
     <type>Feature Type</type>
     <taggedValues></taggedValues>
   </FeatureType>
-  <Value id="_A9_29">
+  <Value id="_A9_29_VALUE">
     <label>val1</label>
     <code>1</code>
     <description>a note</description>
   </Value>
-  <Value id="_A9_30">
+  <Value id="_A9_30_VALUE">
     <label>val2</label>
     <code>2</code>
     <definition>a def</definition>

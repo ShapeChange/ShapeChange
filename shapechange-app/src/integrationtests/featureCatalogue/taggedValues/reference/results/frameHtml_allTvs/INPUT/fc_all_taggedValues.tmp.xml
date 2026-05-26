@@ -145,6 +145,7 @@
   <Value id="_A31_31_VALUE">
     <label>code1</label>
     <code>code1</code>
+    <primaryCode>C_C1</primaryCode>
     <taggedValues>
       <taggedValue tag="code">C_C1</taggedValue>
       <taggedValue tag="sequenceNumber">1</taggedValue>
@@ -155,6 +156,7 @@
   <Value id="_A31_32_VALUE">
     <label>code2</label>
     <code>code2</code>
+    <primaryCode>C_C2</primaryCode>
     <taggedValues>
       <taggedValue tag="code">C_C2</taggedValue>
       <taggedValue tag="sequenceNumber">2</taggedValue>
