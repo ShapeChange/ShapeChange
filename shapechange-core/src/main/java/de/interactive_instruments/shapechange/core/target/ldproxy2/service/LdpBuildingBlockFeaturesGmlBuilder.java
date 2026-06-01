@@ -43,23 +43,37 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.ogcapi.features.gml.domain.GmlConfiguration.SrsNameStyle;
+import de.ii.ogcapi.features.gml.domain.GmlConfiguration.UomStyle;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
+import de.ii.ogcapi.features.gml.domain.ImmutableGmlIdentifier;
+import de.ii.ogcapi.features.gml.domain.ImmutableSrsNameMapping;
+import de.ii.ogcapi.features.gml.domain.ImmutableUomMapping;
 import de.ii.ogcapi.features.gml.domain.ImmutableVariableName;
 import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
+import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
-import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.XmlNamespace;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpGidEncoder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSrsNameMapping;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSrsNameMappings;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpUomMapping;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpUomMappings;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target;
+import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -79,6 +93,8 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected SortedMap<String, String> gmlObjectTypeNamespacesMap = new TreeMap<>();
 
     protected Map<ClassInfo, List<String>> xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
+    protected Map<ClassInfo, Map<String, String>> codelistPropertiesByTopLevelClass = new HashMap<>();
+    protected Map<ClassInfo, Map<String, List<String>>> valueWrapsByTopLevelClass = new HashMap<>();
 
     protected Map<String, String> gmlFixmeByOriginalSchemaNameMap = new HashMap<>();
     protected int gmlFixmeCounter = 1;
@@ -88,19 +104,34 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected Integer gmlSfLevel = null;
     protected String gmlFeatureCollectionElementName = null;
     protected String gmlFeatureMemberElementName = null;
+    protected String gmlFeatureRefTemplate = null;
     protected boolean gmlSupportsStandardResponseParameters = false;
+    protected boolean gmlUseAlias = false;
+    protected boolean gmlUseSurfaceAndCurve = false;
+    protected String gmlIdentifierCodeSpace = null;
+    protected String gmlIdentifierValueTemplate = null;
+    protected boolean appendTemporalSuffixToGmlId = false;
+    protected String gmlCodelistUriTemplate = null;
+    protected boolean gmlIdentifyCodelistProperties = false;
 
     protected SortedMap<String, ClassInfo> genericValueTypes = new TreeMap<>();
 
     protected XmlEncodingInfos xmlEncodingInfos = null;
+    protected LdpSrsNameMappings srsNameMappings = null;
+    protected LdpUomMappings uomMappings = null;
 
     protected ImmutableGmlConfiguration.Builder scConfigGmlBuilder = null;
     protected ImmutableResourcesConfiguration.Builder scConfigResourcesBuilder = null;
 
+    protected LdpGidEncoder gidEncoder = null;
+
     public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, Ldproxy2Target target,
 	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, boolean gmlIdOnGeometries, int gmlSfLevel,
 	    String gmlFeatureCollectionElementName, String gmlFeatureMemberElementName,
-	    boolean gmlSupportsStandardResponseParameters, XmlEncodingInfos xmlEncodingInfos) {
+	    boolean gmlSupportsStandardResponseParameters, boolean gmlUseAlias, boolean gmlUseSurfaceAndCurve,
+	    String gmlFeatureRefTemplate, String gmlIdentifierCodeSpace, String gmlIdentifierValueTemplate,
+	    boolean appendTemporalSuffixToGmlId, String gmlCodelistUriTemplate, boolean gmlIdentifyCodelistProperties,
+	    XmlEncodingInfos xmlEncodingInfos, LdpSrsNameMappings srsNameMappings, LdpUomMappings uomMappings) {
 
 	super();
 
@@ -117,7 +148,18 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	this.gmlFeatureCollectionElementName = gmlFeatureCollectionElementName;
 	this.gmlFeatureMemberElementName = gmlFeatureMemberElementName;
 	this.gmlSupportsStandardResponseParameters = gmlSupportsStandardResponseParameters;
+	this.gmlUseAlias = gmlUseAlias;
+	this.gmlUseSurfaceAndCurve = gmlUseSurfaceAndCurve;
+	this.gmlFeatureRefTemplate = gmlFeatureRefTemplate;
+	this.gmlIdentifierCodeSpace = gmlIdentifierCodeSpace;
+	this.gmlIdentifierValueTemplate = gmlIdentifierValueTemplate;
+	this.appendTemporalSuffixToGmlId = appendTemporalSuffixToGmlId;
+	this.gmlCodelistUriTemplate = gmlCodelistUriTemplate;
+	this.gmlIdentifyCodelistProperties = gmlIdentifyCodelistProperties;
+
 	this.xmlEncodingInfos = xmlEncodingInfos;
+	this.srsNameMappings = srsNameMappings;
+	this.uomMappings = uomMappings;
 
 	this.addNsabrByNs(mainAppSchema.targetNamespace(), mainAppSchema.xmlns());
     }
@@ -219,6 +261,10 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     }
 
     public String gmlNsabr(String xmlNamespace) {
+	return gmlNsabr(xmlNamespace, null);
+    }
+
+    public String gmlNsabr(String xmlNamespace, String defaultNamespaceAbbreviation) {
 
 	if (gmlNsabrByNs.containsKey(xmlNamespace)) {
 	    return gmlNsabrByNs.get(xmlNamespace);
@@ -239,9 +285,14 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 		    }
 		}
 		if (!foundSchemaPackage || StringUtils.isBlank(nsabrToUse)) {
-		    String fixme = gmlNewFixme();
-		    result.addWarning(msgSource, 130, xmlNamespace, fixme);
-		    nsabrToUse = fixme;
+
+		    if (StringUtils.isBlank(defaultNamespaceAbbreviation)) {
+			String fixme = gmlNewFixme();
+			result.addWarning(msgSource, 130, xmlNamespace, fixme);
+			nsabrToUse = fixme;
+		    } else {
+			nsabrToUse = defaultNamespaceAbbreviation;
+		    }
 		}
 	    }
 
@@ -304,7 +355,10 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    renameRequired = true;
 	}
 
-	return renameRequired;
+	/*
+	 * If aliases are used, do not create rename transformations.
+	 */
+	return renameRequired && !gmlUseAlias;
     }
 
     public void addNsabrByNs(String ns, String nsabr) {
@@ -323,6 +377,10 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	}
     }
 
+    public void register(String className, String nsabr) {
+	gmlObjectTypeNamespacesMap.put(className, nsabr);
+    }
+
     public ImmutableGmlConfiguration.Builder getServiceConfigGmlConfigurationBuilder() {
 	return this.scConfigGmlBuilder;
     }
@@ -338,6 +396,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	scConfigGmlBuilder.enabled(true);
 
 	SortedMap<String, String> appNamespaces = new TreeMap<>();
+
 	for (Entry<String, String> e : gmlNsabrByNs.entrySet()) {
 	    appNamespaces.put(e.getValue(), e.getKey());
 	}
@@ -362,7 +421,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	schemaLocations.put(Ldproxy2Target.mainAppSchema.xmlns(), schemaLocationForMainAppSchema);
 	for (XmlNamespace xns : xmlEncodingInfos.getXmlNamespaces()) {
 	    if (xns.hasLocation() && gmlNsabrByNs.containsKey(xns.getNs())) {
-		schemaLocations.put(xns.getNs(), xns.getLocation());
+		schemaLocations.put(xns.getNsabr(), xns.getLocation());
 	    }
 	}
 
@@ -385,7 +444,25 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	if (StringUtils.isNotBlank(gmlFeatureMemberElementName)) {
 	    scConfigGmlBuilder.featureMemberElementName(gmlFeatureMemberElementName);
 	}
+	if (StringUtils.isNotBlank(gmlFeatureRefTemplate)) {
+	    scConfigGmlBuilder.featureRefTemplate(gmlFeatureRefTemplate);
+	}
+	if (StringUtils.isNotBlank(gmlCodelistUriTemplate)) {
+	    scConfigGmlBuilder.codelistUriTemplate(gmlCodelistUriTemplate);
+	}
+	if (StringUtils.isNotBlank(gmlIdentifierCodeSpace)) {
+	    ImmutableGmlIdentifier.Builder gi = new ImmutableGmlIdentifier.Builder();
+	    gi.codeSpace(gmlIdentifierCodeSpace);
+	    if (StringUtils.isNotBlank(gmlIdentifierValueTemplate)) {
+		gi.valueTemplate(gmlIdentifierValueTemplate);
+	    }
+	    scConfigGmlBuilder.gmlIdentifier(gi.build());
+	}
+
 	scConfigGmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
+	scConfigGmlBuilder.useAlias(gmlUseAlias);
+	scConfigGmlBuilder.useSurfaceAndCurve(gmlUseSurfaceAndCurve);
+	scConfigGmlBuilder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
 
 	if (!genericValueTypes.isEmpty()) {
 	    for (ClassInfo gvt : genericValueTypes.values()) {
@@ -398,6 +475,28 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 		}
 		ivn.mapping(mapping);
 		scConfigGmlBuilder.putVariableObjectElementNames(gvt.name(), ivn.build());
+	    }
+	}
+
+	if (this.srsNameMappings != null && !this.srsNameMappings.isEmpty()) {
+	    scConfigGmlBuilder.srsNameStyle(SrsNameStyle.TEMPLATE);
+	    for (LdpSrsNameMapping snm : this.srsNameMappings.getSrsNameMappings()) {
+
+		ImmutableEpsgCrs crs = new ImmutableEpsgCrs.Builder().code(snm.getCode())
+			.forceAxisOrder(snm.getForceAxisOrder()).verticalCode(snm.getVerticalCode()).build();
+		ImmutableSrsNameMapping isnm = new ImmutableSrsNameMapping.Builder().crs(crs).value(snm.getValue())
+			.build();
+		scConfigGmlBuilder.addSrsNameMappings(isnm);
+	    }
+	}
+
+	if (this.uomMappings != null && !this.uomMappings.isEmpty()) {
+	    scConfigGmlBuilder.uomStyle(UomStyle.TEMPLATE);
+	    for (LdpUomMapping uom : this.uomMappings.getUomMappings()) {
+
+		ImmutableUomMapping iuom = new ImmutableUomMapping.Builder().uom(uom.getUom()).value(uom.getValue())
+			.build();
+		scConfigGmlBuilder.addUomMappings(iuom);
 	    }
 	}
     }
@@ -413,6 +512,14 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	if (xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
 	    List<String> xmlAttributeCases = xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.get(ci);
 	    gmlBuilder.addAllXmlAttributes(xmlAttributeCases);
+	}
+
+	if (gmlIdentifyCodelistProperties && codelistPropertiesByTopLevelClass.containsKey(ci)) {
+	    gmlBuilder.codelistProperties(codelistPropertiesByTopLevelClass.get(ci));
+	}
+
+	if (valueWrapsByTopLevelClass.containsKey(ci)) {
+	    gmlBuilder.valueWrap(valueWrapsByTopLevelClass.get(ci));
 	}
 
 	return gmlBuilder.build();
@@ -439,6 +546,25 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    }
 	    xmlAttributes.add(propertyPath);
 	}
+
+	if (pi.categoryOfValue() == Options.CODELIST) {
+	    Map<String, String> cpMap;
+	    if (this.codelistPropertiesByTopLevelClass.containsKey(topLevelClass)) {
+		cpMap = this.codelistPropertiesByTopLevelClass.get(topLevelClass);
+	    } else {
+		cpMap = new TreeMap<>();
+		this.codelistPropertiesByTopLevelClass.put(topLevelClass, cpMap);
+	    }
+	    cpMap.put(propertyPath, pi.typeInfo().name);
+	}
+
+	if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)) {
+
+	    if (Strings.CI.equalsAny(pi.typeInfo().name, "LI_Lineage", "DQ_RelativeInternalPositionalAccuracy",
+		    "DQ_AbsoluteExternalPositionalAccuracy")) {
+		this.gidEncoder.addBuildingBlockGmlDetails(pi, topLevelClass, propertyPath, this);
+	    }
+	}
     }
 
     @Override
@@ -448,5 +574,25 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	 * each collection has something to say
 	 */
 	return true;
+    }
+
+    public void setGidEncoder(LdpGidEncoder gidEncoder) {
+	this.gidEncoder = gidEncoder;
+    }
+
+    public void gmlValueWrap(ClassInfo topLevelClass, Map<String, List<String>> valueWrapsIn) {
+
+	Map<String, List<String>> valueWraps;
+
+	if (this.valueWrapsByTopLevelClass.containsKey(topLevelClass)) {
+	    valueWraps = this.valueWrapsByTopLevelClass.get(topLevelClass);
+	} else {
+	    valueWraps = new TreeMap<>();
+	    this.valueWrapsByTopLevelClass.put(topLevelClass, valueWraps);
+	}
+
+	if (!valueWrapsIn.isEmpty()) {
+	    valueWraps.putAll(valueWrapsIn);
+	}
     }
 }

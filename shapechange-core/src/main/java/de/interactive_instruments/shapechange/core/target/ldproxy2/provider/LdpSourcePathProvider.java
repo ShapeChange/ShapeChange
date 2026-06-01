@@ -74,7 +74,7 @@ public interface LdpSourcePathProvider {
 
     public String defaultSortKey();
 
-    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context);
+    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList, LdpPropertyEncodingContext context);
 
     public boolean multipleSourcePathsUnsupportedinFragments();
 

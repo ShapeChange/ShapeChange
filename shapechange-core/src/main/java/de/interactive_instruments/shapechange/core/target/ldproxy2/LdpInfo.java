@@ -370,7 +370,28 @@ public class LdpInfo {
 	if (Ldproxy2Target.propertyIdByTaggedValue && StringUtils.isNotBlank(Ldproxy2Target.taggedValueForPropertyId)) {
 	    tv = pi.taggedValue(Ldproxy2Target.taggedValueForPropertyId);
 	}
+	
+	if(!pi.isAttribute() && Ldproxy2Target.associationRoleIdByTaggedValue) {
+	    String tv2 = null;
+	    if(StringUtils.isNotBlank(Ldproxy2Target.taggedValueForAssociationRoleId)) {
+		tv2 = pi.taggedValue(Ldproxy2Target.taggedValueForAssociationRoleId);
+	    }
+	    if(StringUtils.isBlank(tv2) && StringUtils.isNotBlank(tv)) {
+		// temporary workaround
+		tv2 = "rel_"+tv.replaceAll("[\\.-]", "");
+	    }
+	    tv = tv2;
+	}
 
 	return StringUtils.isBlank(tv) ? pi.name() : tv.toLowerCase(Locale.ENGLISH);
+    }
+
+    public static Optional<String> alias(PropertyInfo pi) {
+
+	if (Ldproxy2Target.propertyAlias) {
+	    return Optional.of(pi.name());
+	} else {
+	    return Optional.empty();
+	}
     }
 }

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,63 +31,53 @@
  */
 package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
-import java.util.Optional;
+import java.util.OptionalInt;
 
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpPropertyEncodingContext {
+public class LdpSrsNameMapping {
+
+    protected final int code;
+    protected final OptionalInt verticalCode;
+    protected final Force forceAxisOrder;
+    protected final String value;
+
+    public LdpSrsNameMapping(int code, Force forceAxisOrder, String value, OptionalInt verticalCode) {
+	this.code = code;
+	this.forceAxisOrder = forceAxisOrder;
+	this.value = value;
+	this.verticalCode = verticalCode;
+    }
+
+    /**
+     * @return the code
+     */
+    public int getCode() {
+	return code;
+    }
     
-    // TODO add the property to the context as well, so that the list of visited properties does not need to be provided as well?
-
-    protected boolean isInFragment = false;
-    protected ClassInfo type = null;
-    protected LdpPropertyEncodingContext parentContext = null;
-
     /**
-     * @return the isInFragment
+     * @return the verticalCode
      */
-    public boolean isInFragment() {
-	return isInFragment;
+    public OptionalInt getVerticalCode() {
+	return verticalCode;
     }
 
     /**
-     * @param isInFragment the isInFragment to set
+     * @return the forceAxisOrder
      */
-    public void setInFragment(boolean isInFragment) {
-	this.isInFragment = isInFragment;
+    public Force getForceAxisOrder() {
+	return forceAxisOrder;
     }
 
     /**
-     * @return the type
+     * @return the value
      */
-    public ClassInfo getType() {
-	return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(ClassInfo type) {
-	this.type = type;
-    }
-
-    public void setParentContext(LdpPropertyEncodingContext context) {
-	this.parentContext = context;
-    }
-
-    public Optional<LdpPropertyEncodingContext> getParentContext() {
-	return this.parentContext == null ? Optional.empty() : Optional.of(this.parentContext);
-    }
-
-    public LdpPropertyEncodingContext getTopParentContext() {
-	if (this.parentContext == null) {
-	    return this;
-	} else {
-	    return this.parentContext.getTopParentContext();
-	}
+    public String getValue() {
+	return value;
     }
 }

@@ -175,7 +175,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String providerConfigLabelTemplate = null;
 
     public static boolean propertyIdByTaggedValue = false;
+    public static boolean associationRoleIdByTaggedValue = false;
+    public static boolean propertyAlias = false;
     public static String taggedValueForPropertyId = null;
+    public static String taggedValueForAssociationRoleId = null;
 
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
@@ -214,6 +217,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static File dataDirectoryFile = null;
     public static String mainId = null;
     public static PackageInfo mainAppSchema = null;
+    public static boolean isWriteApi = false;
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -288,13 +292,19 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		mainAppSchema = pi;
 	    }
 
+	    propertyAlias = mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_PROPALIAS);
+
 	    propertyIdByTaggedValue = mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_PROPIDBYTV);
+	    associationRoleIdByTaggedValue = mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_ASSOCROLEIDBYTV);
 
 	    String mainIdDefault = mainAppSchema.name().replaceAll("\\W", "_").toLowerCase(Locale.ENGLISH);
 	    mainId = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_API_ID, mainIdDefault,
 		    false, true);
 
 	    isUnitTest = options.parameterAsBoolean(this.getClass().getName(), "_unitTestOverride", false);
+
+	    isWriteApi = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_IS_WRITE_API,
+		    false);
 
 	    // change the default documentation template?
 //	    documentationTemplate = options.parameter(this.getClass().getName(),
@@ -354,6 +364,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE, null, false, true);
 	    if (propertyIdByTaggedValue && StringUtils.isBlank(taggedValueForPropertyId)) {
 		result.addError(this, 138, mainAppSchema.name());
+	    }
+
+	    taggedValueForAssociationRoleId = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_ASSOCROLE_ID_TAGGED_VALUE, null, false, true);
+	    if (associationRoleIdByTaggedValue && StringUtils.isBlank(taggedValueForAssociationRoleId)) {
+		result.addError(this, 141, mainAppSchema.name());
 	    }
 
 	    maxNameLength = options.parameterAsInteger(this.getClass().getName(),
@@ -479,11 +495,40 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		boolean gmlSupportsStandardResponseParameters = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, false);
 
+		boolean gmlUseAlias = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_USE_ALIAS, false);
+
+		boolean gmlUseSurfaceAndCurve = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_USE_SURFACE_AND_CURVE, false);
+
+		String gmlFeatureRefTemplate = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_FEATURE_REF_TEMPLATE, null, false, true);
+
+		String gmlIdentifierCodeSpace = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_IDENTIFIER_CODESPACE, null, false, true);
+
+		String gmlIdentifierValueTemplate = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_IDENTIFIER_VALUETEMPLATE, null, false, true);
+
+		boolean appendTemporalSuffixToGmlId = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_APPEND_TEMPORAL_SUFFIX_TO_GMLID, false);
+
+		String gmlCodelistUriTemplate = options.parameterAsString(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_CODELIST_URI_TEMPLATE, null, false, true);
+
+		boolean gmlIdentifyCodelistProperties = options.parameterAsBoolean(this.getClass().getName(),
+			Ldproxy2Constants.PARAM_GML_IDENTIFY_CODELIST_PROPERTIES, false);
+		
 		XmlEncodingInfos xmlEncodingInfos = new XmlEncodingInfos();
+
+		LdpSrsNameMappings snms = new LdpSrsNameMappings();
+		
+		LdpUomMappings uomms = new LdpUomMappings();
 
 		if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
 		    result.addInfo(this, 126);
 		} else {
+
 		    Element advancedProcessConfigElmt = options.getCurrentProcessConfig()
 			    .getAdvancedProcessConfigurations();
 
@@ -496,11 +541,35 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    xmlEncodingInfos.merge(XmlEncodingInfos.fromXml(xeiElmt));
 			}
 		    }
+
+		    List<Element> snmsElmts = XMLUtil.getChildElements(advancedProcessConfigElmt,
+			    "LdproxySrsNameMappings");
+
+		    if (snmsElmts.isEmpty()) {
+			result.addInfo(this, 142);
+		    } else {
+			for (Element snmsElmt : snmsElmts) {
+			    snms.merge(LdpSrsNameMappings.fromXml(snmsElmt));
+			}
+		    }
+		    
+		    List<Element> uommsElmts = XMLUtil.getChildElements(advancedProcessConfigElmt,
+			    "LdproxyUomMappings");
+
+		    if (uommsElmts.isEmpty()) {
+			result.addInfo(this, 143);
+		    } else {
+			for (Element uommsElmt : uommsElmts) {
+			    uomms.merge(LdpUomMappings.fromXml(uommsElmt));
+			}
+		    }
 		}
 
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
 			gmlIdOnGeometries, gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
-			gmlSupportsStandardResponseParameters, xmlEncodingInfos);
+			gmlSupportsStandardResponseParameters, gmlUseAlias, gmlUseSurfaceAndCurve,
+			gmlFeatureRefTemplate, gmlIdentifierCodeSpace, gmlIdentifierValueTemplate,
+			appendTemporalSuffixToGmlId, gmlCodelistUriTemplate, gmlIdentifyCodelistProperties, xmlEncodingInfos, snms, uomms);
 	    }
 
 	    if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
@@ -1196,6 +1265,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	numberOfEncodedSchemas = 0;
 
 	isUnitTest = false;
+	
+	isWriteApi = false;
 
 	dbSchemaNames = new TreeSet<String>();
 
@@ -1238,7 +1309,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	sridConfigured = false;
 	serviceConfigTemplatePathString = null;
 	taggedValueForPropertyId = null;
+	taggedValueForAssociationRoleId = null;
 	propertyIdByTaggedValue = false;
+	associationRoleIdByTaggedValue = false;
+	propertyAlias = false;
 
 	outputDirectory = null;
 	dataDirectoryFile = null;
@@ -1304,6 +1378,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public void registerRulesAndRequirements(RuleRegistry r) {
 
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
+	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCROLEIDBYTV);
 	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_DOCUMENTATION);
 	r.addRule(Ldproxy2Constants.RULE_ALL_GEOINFODOK);
@@ -1321,6 +1396,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_CLS_IDENTIFIER_STEREOTYPE);
 	r.addRule(Ldproxy2Constants.RULE_CLS_UNION_LIKE_DATATYPE);
 	r.addRule(Ldproxy2Constants.RULE_ALL_PROPIDBYTV);
+	r.addRule(Ldproxy2Constants.RULE_ALL_PROPALIAS);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
 	r.addRule(Ldproxy2Constants.RULE_PROP_MEASURE);
     }
@@ -1453,6 +1529,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		+ "' either is not set or has no value. The conversion rule will be ignored.";
 	case 139 -> "The target configuration does not contain ldproxy stored query definitions.";
 	case 140 -> "Exception occurred while generating stored query with id '$1$'. Exception message is: '$2$'.";
+	case 141 -> "Conversion rule '" + Ldproxy2Constants.RULE_ALL_ASSOCROLEIDBYTV
+		+ "' applies to (main) application schema '$1$', but target parameter '"
+		+ Ldproxy2Constants.PARAM_ASSOCROLE_ID_TAGGED_VALUE
+		+ "' either is not set or has no value. The conversion rule will be ignored.";
+	case 142 -> "The target configuration does not contain ldproxy SRS name mappings.";
+	case 143 -> "The target configuration does not contain ldproxy uom mappings.";
 
 	case 10001 -> "Generating ldproxy configuration items for application schema $1$.";
 	case 10002 -> "Diagnostics-only mode. All output to files is suppressed.";

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +48,15 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    .comparing(SqlPropertyEncodingInfo::getSchemaName, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalSchemaName,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
-	    
+
 	    .thenComparing(SqlPropertyEncodingInfo::getInClassName, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalInClassName,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
-	    
+
 	    .thenComparing(SqlPropertyEncodingInfo::getPropertyName, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalPropertyName,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
-	    
+
 	    .thenComparing(SqlPropertyEncodingInfo::getPropertyValueType,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getOriginalPropertyValueType,
@@ -74,6 +74,8 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    .thenComparing(SqlPropertyEncodingInfo::getIdValueType, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTable, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTableSchema,
+		    Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getPropertyContextPath,
 		    Comparator.nullsFirst(Comparator.naturalOrder()));
 
     protected String propertyName;
@@ -91,6 +93,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     protected String idValueType;
     protected String targetTable;
     protected String targetTableSchema;
+    protected String propertyContextPath;
 
     /**
      * @return the propertyName - cannot be <code>null</code>
@@ -104,6 +107,20 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
      */
     public void setPropertyName(String propertyName) {
 	this.propertyName = propertyName;
+    }
+
+    /**
+     * @return the propertyContextPath - can be <code>null</code>
+     */
+    public String getPropertyContextPath() {
+	return propertyContextPath;
+    }
+
+    /**
+     * @param propertyContextPath the propertyContextPath to set
+     */
+    public void setPropertyContextPath(String propertyContextPath) {
+	this.propertyContextPath = propertyContextPath;
     }
 
     /**
@@ -294,6 +311,10 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 
     public boolean hasIdSourcePath() {
 	return StringUtils.isNotBlank(this.idSourcePath);
+    }
+    
+    public boolean hasPropertyContextPath() {
+	return StringUtils.isNotBlank(this.propertyContextPath);
     }
 
     @Override

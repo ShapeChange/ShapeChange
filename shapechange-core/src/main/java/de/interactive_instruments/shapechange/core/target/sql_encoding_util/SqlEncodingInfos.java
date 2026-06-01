@@ -245,6 +245,9 @@ public class SqlEncodingInfos implements MessageSource {
 		if (sei.hasTargetTableSchema()) {
 		    XMLUtil.addAttribute(document, e2, "targetTableSchema", sei.getTargetTableSchema());
 		}
+		if(sei.hasPropertyContextPath() && !sei.getPropertyContextPath().equals(sei.getPropertyName())) {
+		    XMLUtil.addAttribute(document, e2, "propertyContextPath", sei.getPropertyContextPath());
+		}
 	    }
 
 	    XMLUtil.writeXml(document, outputFile);
@@ -309,6 +312,9 @@ public class SqlEncodingInfos implements MessageSource {
 	    spei.setTargetTable(seie.getAttribute("targetTable"));
 	    spei.setTargetTableSchema(StringUtils.stripToNull(seie.getAttribute("targetTableSchema")));
 
+	    spei.setPropertyContextPath(StringUtils.stripToNull(seie.getAttribute("propertyContextPath")));
+
+	    
 	    sei.add(spei);
 	}
 

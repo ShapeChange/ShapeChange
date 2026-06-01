@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2024 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,19 @@
 package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -102,6 +107,31 @@ public class LdpGidEncoder {
 	Optional<String> label_role = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes ? Optional.of("role")
 		: Optional.empty();
 
+	/*
+	 * likewise for alias: set alias only if configured and when objectType is
+	 * encoded (especially relevant for encoding with fragments)
+	 */
+	Optional<String> alias_processStep = Ldproxy2Target.propertyAlias && createObjectTypes
+		? Optional.of("processStep")
+		: Optional.empty();
+	Optional<String> alias_processor = Ldproxy2Target.propertyAlias && createObjectTypes ? Optional.of("processor")
+		: Optional.empty();
+	Optional<String> alias_source = Ldproxy2Target.propertyAlias && createObjectTypes ? Optional.of("source")
+		: Optional.empty();
+	Optional<String> alias_description = Ldproxy2Target.propertyAlias && createObjectTypes
+		? Optional.of("description")
+		: Optional.empty();
+	Optional<String> alias_dateTime = Ldproxy2Target.propertyAlias && createObjectTypes ? Optional.of("dateTime")
+		: Optional.empty();
+	Optional<String> alias_organisationName = Ldproxy2Target.propertyAlias && createObjectTypes
+		? Optional.of("organisationName")
+		: Optional.empty();
+	Optional<String> alias_individualName = Ldproxy2Target.propertyAlias && createObjectTypes
+		? Optional.of("individualName")
+		: Optional.empty();
+	Optional<String> alias_role = Ldproxy2Target.propertyAlias && createObjectTypes ? Optional.of("role")
+		: Optional.empty();
+
 	String valueSourcePathOrColumnPrefix = null;
 	PropertyInfo pi = null;
 
@@ -115,7 +145,7 @@ public class LdpGidEncoder {
 	// --- processStep(s)
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessStepBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processStepBuilder = new ImmutableFeatureSchema.Builder();
-	processStepBuilder.name(processStep).label(label_processStep);
+	processStepBuilder.name(processStep).label(label_processStep).alias(alias_processStep);
 	if (createObjectTypes) {
 	    processStepBuilder.objectType("LI_ProcessStep");
 	}
@@ -134,7 +164,7 @@ public class LdpGidEncoder {
 	    // --- processStep.source
 	    LinkedHashMap<String, FeatureSchema> propertyMapForSourceBuilder = new LinkedHashMap<>();
 	    ImmutableFeatureSchema.Builder sourceBuilder = new ImmutableFeatureSchema.Builder();
-	    sourceBuilder.name(source).label(label_source).type(Type.OBJECT);
+	    sourceBuilder.name(source).label(label_source).alias(alias_source).type(Type.OBJECT);
 	    if (createObjectTypes) {
 		sourceBuilder.objectType("LI_Source");
 	    }
@@ -142,12 +172,13 @@ public class LdpGidEncoder {
 	    {
 		// source.description
 		ImmutableFeatureSchema.Builder sourceDescriptionBuilder = new ImmutableFeatureSchema.Builder();
-		sourceDescriptionBuilder.name(description).label(label_description).type(Type.STRING);
+		sourceDescriptionBuilder.name(description).label(label_description).alias(alias_description)
+			.type(Type.STRING);
 		if (setSourcePaths) {
 		    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 			sourceDescriptionBuilder.sourcePath("src_des");
-		    } else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			    "AX_DQErhebung3D", "AX_DQDachhoehe")) {
+		    } else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQErhebung3D",
+			    "AX_DQDachhoehe")) {
 			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
 		    }
 		}
@@ -161,12 +192,13 @@ public class LdpGidEncoder {
 	{
 	    // processStep.description
 	    ImmutableFeatureSchema.Builder processStepDescriptionBuilder = new ImmutableFeatureSchema.Builder();
-	    processStepDescriptionBuilder.name(description).label(label_description).type(Type.STRING);
+	    processStepDescriptionBuilder.name(description).label(label_description).alias(alias_description)
+		    .type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDescriptionBuilder.sourcePath("des");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_des");
 		}
 	    }
@@ -176,12 +208,12 @@ public class LdpGidEncoder {
 	{
 	    // processStep.dateTime
 	    ImmutableFeatureSchema.Builder processStepDateTimeBuilder = new ImmutableFeatureSchema.Builder();
-	    processStepDateTimeBuilder.name(dateTime).label(label_dateTime).type(Type.DATETIME);
+	    processStepDateTimeBuilder.name(dateTime).label(label_dateTime).alias(alias_dateTime).type(Type.DATETIME);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDateTimeBuilder.sourcePath("dat");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDateTimeBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_dat");
 		}
 	    }
@@ -191,7 +223,7 @@ public class LdpGidEncoder {
 	// --- processor
 	LinkedHashMap<String, FeatureSchema> propertyMapForProcessorBuilder = new LinkedHashMap<>();
 	ImmutableFeatureSchema.Builder processorBuilder = new ImmutableFeatureSchema.Builder();
-	processorBuilder.name(processor).label(label_processor).type(Type.OBJECT);
+	processorBuilder.name(processor).label(label_processor).alias(alias_processor).type(Type.OBJECT);
 	if (createObjectTypes) {
 	    processorBuilder.objectType("CI_ResponsibleParty");
 	}
@@ -199,12 +231,13 @@ public class LdpGidEncoder {
 	{
 	    // processor.organisationName
 	    ImmutableFeatureSchema.Builder processorOrganisationNameBuilder = new ImmutableFeatureSchema.Builder();
-	    processorOrganisationNameBuilder.name(organisationName).label(label_organisationName).type(Type.STRING);
+	    processorOrganisationNameBuilder.name(organisationName).label(label_organisationName)
+		    .alias(alias_organisationName).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorOrganisationNameBuilder.sourcePath("pro_resp_org");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorOrganisationNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_org");
 		}
 	    }
@@ -214,12 +247,13 @@ public class LdpGidEncoder {
 	{
 	    // processor.individualName
 	    ImmutableFeatureSchema.Builder processorIndividualNameBuilder = new ImmutableFeatureSchema.Builder();
-	    processorIndividualNameBuilder.name(individualName).label(label_individualName).type(Type.STRING);
+	    processorIndividualNameBuilder.name(individualName).label(label_individualName).alias(alias_individualName)
+		    .type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorIndividualNameBuilder.sourcePath("pro_resp_ind");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
 		}
 	    }
@@ -229,12 +263,12 @@ public class LdpGidEncoder {
 	{
 	    // processor.role
 	    ImmutableFeatureSchema.Builder processorRoleBuilder = new ImmutableFeatureSchema.Builder();
-	    processorRoleBuilder.name(role).label(label_role).type(Type.STRING);
+	    processorRoleBuilder.name(role).label(label_role).alias(alias_role).type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorRoleBuilder.sourcePath("pro_resp_rol_cdv");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
-			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorRoleBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_rol_cdv");
 		}
 	    }
@@ -261,24 +295,232 @@ public class LdpGidEncoder {
 	this.gidLiLineageSchema(propertyMapForLiLineageBuilder, null);
 
 	ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
-		.name(Ldproxy2Constants.LI_LINEAGE_FRAGMENT_NAME)/* .label(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE) */
-		.objectType(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE).propertyMap(propertyMapForLiLineageBuilder);
+		.name(Ldproxy2Constants.LI_LINEAGE_FRAGMENT_NAME).objectType(Ldproxy2Constants.LI_LINEAGE_OBJECT_TYPE)
+		.propertyMap(propertyMapForLiLineageBuilder);
 
 	return fragmentBuilder.build();
     }
 
-//    public static String valueSourcePathForCodeListValuedProperty(String baseValueSourcePath) {
-//
-//	String pathPrefix = "";
-//	String colName = baseValueSourcePath;
-//
-//	if (baseValueSourcePath.contains("/")) {
-//	    pathPrefix = StringUtils.substringBeforeLast(baseValueSourcePath, "/") + "/";
-//	    colName = StringUtils.substringAfterLast(baseValueSourcePath, "/");
-//	}
-//
-//	String valueSourcePath = pathPrefix + "[EXPRESSION]{sql=regexp_substr($T$." + colName + ", '[^/]+$')}";
-//
-//	return valueSourcePath;
-//    }
+    public void addBuildingBlockGmlDetails(PropertyInfo pi, ClassInfo topLevelClass, String propertyPath,
+	    LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder) {
+
+	if ("LI_Lineage".equals(pi.typeInfo().name)) {
+
+	    String gmdNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GMD, Ldproxy2Constants.NSABR_GMD);
+	    String gcoNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GCO, Ldproxy2Constants.NSABR_GCO);
+
+	    /*
+	     * Add object type namespaces.
+	     */
+	    bbGmlBuilder.register("LI_Lineage", gmdNsabr);
+	    bbGmlBuilder.register("LI_ProcessStep", gmdNsabr);
+	    bbGmlBuilder.register("LI_Source", gmdNsabr);
+	    bbGmlBuilder.register("CI_ResponsibleParty", gmdNsabr);
+
+	    /*
+	     * Define value wraps
+	     */
+	    SortedMap<String, List<String>> valueWraps = new TreeMap<>();
+
+	    if (pi.inClass().name().equals("AX_DQPunktort")) {
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:description/adv:
+		 * AX_LI_ProcessStep_Punktort_Description
+		 */
+		{
+		    String path_prsDes = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.des" : ".processStep.description");
+		    valueWraps.put(path_prsDes, List.of("AX_LI_ProcessStep_Punktort_Description"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:dateTime/gco:DateTime
+		 */
+		{
+		    String path_prsDat = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.dat" : ".processStep.dateTime");
+		    valueWraps.put(path_prsDat, List.of(gcoNsabr + ":DateTime"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:organisationName/gco:CharacterString
+		 */
+		{
+		    String path_prsProOrg = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.org"
+			    : ".processStep.processor.organisationName");
+		    valueWraps.put(path_prsProOrg, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:individualName/gco:CharacterString
+		 */
+		{
+		    String path_prsProInd = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.ind"
+			    : ".processStep.processor.individualName");
+		    valueWraps.put(path_prsProInd, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode
+		 */
+		{
+		    String path_prsProRol = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.rol" : ".processStep.processor.role");
+		    valueWraps.put(path_prsProRol, List.of(gmdNsabr + ":CI_RoleCode"));
+		}
+		// TODO What about @codeListValue and @codeList?
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:source/gmd:LI_Source/
+		 * gmd:description/adv:AX_Datenerhebung_Punktort
+		 */
+		{
+		    String path_prsSrcDes = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.src.des"
+			    : ".processStep.source.description");
+		    valueWraps.put(path_prsSrcDes, List.of("adv:AX_Datenerhebung_Punktort"));
+		}
+
+	    } else if (pi.inClass().name().equals("AX_DQMitDatenerhebung")
+		    || pi.inClass().name().equals("AX_DQOhneDatenerhebung")
+		    || pi.inClass().name().equals("AX_DQErhebung3D") || pi.inClass().name().equals("AX_DQDachhoehe")
+		    || pi.inClass().name().equals("AX_DQBodenhoehe")) {
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:source/gmd:LI_Source/
+		 * gmd:description/ + processStepSourceElementName
+		 */
+		{
+		    String path_prsSrcDes = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.src.des"
+			    : ".processStep.source.description");
+		    if (pi.inClass().name().equals("AX_DQMitDatenerhebung")) {
+			valueWraps.put(path_prsSrcDes, List.of("AX_Datenerhebung"));
+		    } else if (pi.inClass().name().equals("AX_DQErhebung3D")) {
+			valueWraps.put(path_prsSrcDes, List.of("AX_Datenerhebung3D"));
+		    } else if (pi.inClass().name().equals("AX_DQDachhoehe")) {
+			valueWraps.put(path_prsSrcDes, List.of("AX_LI_ProcessStep_Dachhoehe_Source"));
+		    }
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:description/ +
+		 * processStepDescriptionElementName
+		 */
+		{
+		    String path_prsDes = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.des" : ".processStep.description");
+		    if (pi.inClass().name().equals("AX_DQOhneDatenerhebung")) {
+			valueWraps.put(path_prsDes, List.of("AX_LI_ProcessStep_OhneDatenerhebung_Description"));
+		    } else if (pi.inClass().name().equals("AX_DQMitDatenerhebung")) {
+			valueWraps.put(path_prsDes, List.of("AX_LI_ProcessStep_MitDatenerhebung_Description"));
+		    } else if (pi.inClass().name().equals("AX_DQErhebung3D")) {
+			valueWraps.put(path_prsDes, List.of("AX_LI_ProcessStep3D_Description"));
+		    } else if (pi.inClass().name().equals("AX_DQDachhoehe")) {
+			valueWraps.put(path_prsDes, List.of("AX_BezugspunktDach"));
+		    } else if (pi.inClass().name().equals("AX_DQBodenhoehe")) {
+			valueWraps.put(path_prsDes, List.of("AX_LI_ProcessStep_Bodenhoehe_Description"));
+		    }
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:dateTime/gco:DateTime
+		 */
+		{
+		    String path_prsDat = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.dat" : ".processStep.dateTime");
+		    valueWraps.put(path_prsDat, List.of(gcoNsabr + "DateTime"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:organisationName/gco:CharacterString
+		 */
+		{
+		    String path_prsProOrg = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.org"
+			    : ".processStep.processor.organisationName");
+		    valueWraps.put(path_prsProOrg, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:individualName/gco:CharacterString
+		 */
+		{
+		    String path_prsProInd = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.ind"
+			    : ".processStep.processor.individualName");
+		    valueWraps.put(path_prsProInd, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode
+		 */
+		{
+		    String path_prsProRol = propertyPath
+			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.rol" : ".processStep.processor.role");
+		    valueWraps.put(path_prsProRol, List.of(gmdNsabr + ":CI_RoleCode"));
+		}
+		// TODO What about @codeListValue and @codeList?
+	    }
+
+	    bbGmlBuilder.gmlValueWrap(topLevelClass, valueWraps);
+
+	} else if ("DQ_RelativeInternalPositionalAccuracy".equals(pi.typeInfo().name)) {
+
+	    String gmdNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GMD, Ldproxy2Constants.NSABR_GMD);
+	    String gcoNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GCO, Ldproxy2Constants.NSABR_GCO);
+
+	    /*
+	     * Define value wraps
+	     */
+	    SortedMap<String, List<String>> valueWraps = new TreeMap<>();
+
+	    /*
+	     * Define value wrap for
+	     * /gmd:DQ_RelativeInternalPositionalAccuracy/gmd:result/gmd:
+	     * DQ_QuantitativeResult/gmd:value/gco:Record
+	     */
+	    valueWraps.put(propertyPath,
+		    List.of(gmdNsabr + ":DQ_RelativeInternalPositionalAccuracy", gmdNsabr + ":result",
+			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":value", gcoNsabr + ":Record"));
+
+	    bbGmlBuilder.gmlValueWrap(topLevelClass, valueWraps);
+
+	} else if ("DQ_AbsoluteExternalPositionalAccuracy".equals(pi.typeInfo().name)) {
+
+	    String gmdNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GMD, Ldproxy2Constants.NSABR_GMD);
+	    String gcoNsabr = bbGmlBuilder.gmlNsabr(Ldproxy2Constants.NS_GCO, Ldproxy2Constants.NSABR_GCO);
+
+	    /*
+	     * Define value wraps
+	     */
+	    SortedMap<String, List<String>> valueWraps = new TreeMap<>();
+
+	    /*
+	     * Define value wrap for
+	     * /gmd:DQ_AbsoluteExternalPositionalAccuracy/gmd:result/gmd:
+	     * DQ_QuantitativeResult/gmd:value/gco:Record
+	     */
+	    valueWraps.put(propertyPath,
+		    List.of(gmdNsabr + ":DQ_AbsoluteExternalPositionalAccuracy", gmdNsabr + ":result",
+			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":value", gcoNsabr + ":Record"));
+
+	    bbGmlBuilder.gmlValueWrap(topLevelClass, valueWraps);
+	}
+
+    }
 }

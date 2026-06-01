@@ -1576,6 +1576,11 @@
       <documentation>Identifier of the database schema, in which the targetTable is defined. Can be omitted if no particular schema is defined for the targetTable</documentation>
      </annotation>
     </attribute>
+    <attribute name="propertyContextPath" type="string">
+     <annotation>
+      <documentation>Property path (dot-separated) in which the property is encoded within the source table. Omitted if the path is the same as the property name. Useful for situations in which the properties of complex data types have been flattened to a certain table. Then the property path denotes the sequence of property steps taken within that structure towards the property that is represented by this encoding info.</documentation>
+     </annotation>
+    </attribute>
    </extension>
   </complexContent>
  </complexType>
@@ -1750,6 +1755,58 @@
     <choice maxOccurs="unbounded">
      <element ref="sc:TaggedValue"/>
     </choice>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="LdproxySrsNameMappings" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:LdproxySrsNameMappingsType"/>
+ <complexType name="LdproxySrsNameMappingsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" name="srsNameMappings">
+      <complexType>
+       <sequence maxOccurs="unbounded">
+        <element name="LdproxySrsNameMapping">
+         <complexType>
+          <attribute name="code" type="integer" use="required"/>
+          <attribute name="verticalCode" type="integer"/>
+          <attribute name="forceAxisOrder" use="required">
+           <simpleType>
+            <restriction base="string">
+             <enumeration value="none"/>
+             <enumeration value="latlon"/>
+             <enumeration value="lonlat"/>
+            </restriction>
+           </simpleType>
+          </attribute>
+          <attribute name="value" type="string" use="required"/>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
+ <element name="LdproxyUomMappings" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:LdproxyUomMappingsType"/>
+ <complexType name="LdproxyUomMappingsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" name="uomMappings">
+      <complexType>
+       <sequence maxOccurs="unbounded">
+        <element name="LdproxyUomMapping">
+         <complexType>
+          <attribute name="uom" type="string" use="required"/>
+          <attribute name="value" type="string" use="required"/>
+         </complexType>
+        </element>
+       </sequence>
+      </complexType>
+     </element>
+    </sequence>
    </extension>
   </complexContent>
  </complexType>

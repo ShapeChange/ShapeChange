@@ -107,6 +107,7 @@ public class LdpPropertyEncoder {
 	this.msgSource = target;
 
 	this.bbFeaturesGmlBuilder = gml;
+	this.bbFeaturesGmlBuilder.setGidEncoder(this.gidEncoder);
 	this.bbFeaturesHtmlBuilder = featuresHtml;
 	this.bbFeaturesGeoJsonBuilder = featuresGeoJsonBuilder;
 	this.bbFeaturesJsonFgBuilder = featuresJsonFgBuilder;
@@ -115,7 +116,7 @@ public class LdpPropertyEncoder {
 	this.ldpProvider = ldpProvider;
 	this.sourcePathProvider = sourcePathProvider;
 
-	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;
+	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;	
     }
 
     /**
@@ -378,10 +379,10 @@ public class LdpPropertyEncoder {
 		    sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		} else {
 		    // fragment encoding enabled
-		    if (context.isInFragment() && sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, context)) {
+		    if (context.isInFragment() && sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, alreadyVisitedPiList, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		    } else if (!context.isInFragment()
-			    && !sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, context)) {
+			    && !sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, alreadyVisitedPiList, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		    }
 		}
@@ -479,7 +480,7 @@ public class LdpPropertyEncoder {
 
 			valueTypeForBuilder = Optional.empty();
 			typeForBuilder = Type.OBJECT;
-			
+
 			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
 
 		    } else if (sourcePathInfosForBuilder.isMultipleSourcePaths()
@@ -639,7 +640,7 @@ public class LdpPropertyEncoder {
 		    } else {
 			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
 		    }
-
+		    
 		} else if (sourcePathInfosForBuilder != null) {
 
 		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
@@ -726,13 +727,8 @@ public class LdpPropertyEncoder {
 			}
 		    }
 		}
-
-		/*
-		 * NOTE: If the property is encoded as a feature reference, the value type is
-		 * already set before (together with refType or refUriTemplate, in
-		 * addFeatureRefDetails).
-		 */
-		if (!isEncodedAsFeatureRef(pi)) {
+		
+		if (!isEncodedAsFeatureRef(pi) || Ldproxy2Target.isWriteApi) {
 		    propMemberDefBuilder.valueType(valueTypeForBuilder);
 		} else {
 		    handleEmbedding(pi, propMemberDefBuilder);
@@ -755,8 +751,8 @@ public class LdpPropertyEncoder {
 		    }
 		}
 
-		propMemberDefBuilder.name(LdpInfo.id(pi)).type(typeForBuilder).constraints(constraints)
-			.role(propRoleForBuilder).constantValue(constantValueForBuilder)
+		propMemberDefBuilder.name(LdpInfo.id(pi)).alias(LdpInfo.alias(pi)).type(typeForBuilder)
+			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
 			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
 			.transformations(transformations).propertyMap(propertyMapForBuilder);
 
@@ -1010,6 +1006,8 @@ public class LdpPropertyEncoder {
 	if (!isSingleValued && !(ldpType == Type.OBJECT || ldpType == Type.GEOMETRY || pi == identifierPi
 		|| target.isImplementedAsMeasure(pi))) {
 	    return Optional.of(ldpType);
+	} else if (isEncodedAsFeatureRef(pi) && Ldproxy2Target.isWriteApi) {
+	    return Optional.of(Type.STRING);
 	} else {
 	    return Optional.empty();
 	}
@@ -1019,7 +1017,16 @@ public class LdpPropertyEncoder {
 
 	if (!isSingleValued) {
 	    if (ldpType == Type.OBJECT) {
-		return isEncodedAsFeatureRef(pi) ? Type.FEATURE_REF_ARRAY : Type.OBJECT_ARRAY;
+
+		if (isEncodedAsFeatureRef(pi)) {
+		    if (Ldproxy2Target.isWriteApi) {
+			return Type.VALUE_ARRAY;
+		    } else {
+			return Type.FEATURE_REF_ARRAY;
+		    }
+		} else {
+		    return Type.OBJECT_ARRAY;
+		}
 	    } else if (ldpType == Type.GEOMETRY || pi == identifierPi) {
 		// no array for geometry and identifier properties
 		return ldpType;
@@ -1030,7 +1037,11 @@ public class LdpPropertyEncoder {
 	    }
 	} else {
 	    if (isEncodedAsFeatureRef(pi)) {
-		return Type.FEATURE_REF;
+		if (Ldproxy2Target.isWriteApi) {
+		    return Type.VALUE;
+		} else {
+		    return Type.FEATURE_REF;
+		}
 	    } else if (target.isImplementedAsMeasure(pi)) {
 		return Type.OBJECT;
 	    } else {
@@ -1078,6 +1089,10 @@ public class LdpPropertyEncoder {
 		    schemaBuilder.valueType(idValueType);
 		}
 	    }
+	}
+	
+	if(Ldproxy2Target.isWriteApi) {
+	    schemaBuilder.valueType(Type.STRING);
 	}
     }
 

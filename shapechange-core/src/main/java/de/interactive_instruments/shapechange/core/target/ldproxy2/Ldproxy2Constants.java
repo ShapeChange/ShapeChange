@@ -42,6 +42,11 @@ public class Ldproxy2Constants {
 
     public static final long UNITTEST_UNIX_TIME = 1000000000000L;
     
+    public static final String NS_GMD = "http://www.isotc211.org/2005/gmd";
+    public static final String NSABR_GMD = "gmd";
+    public static final String NS_GCO = "http://www.isotc211.org/2005/gco";
+    public static final String NSABR_GCO = "gco";
+    
     public static final String LI_LINEAGE_FRAGMENT_NAME = "li_lineage";
     public static final String LI_LINEAGE_OBJECT_TYPE = "LI_Lineage";
     
@@ -90,6 +95,7 @@ public class Ldproxy2Constants {
 //    public static final String PARAM_DOCUMENTATION_NOVALUE = "documentationNoValue";
 
     public static final String PARAM_API_ID = "apiId";
+    public static final String PARAM_IS_WRITE_API = "isWriteApi";
     
     public static final String PARAM_COLLECTION_ID_FORMAT = "collectionIdFormat";
     
@@ -115,25 +121,37 @@ public class Ldproxy2Constants {
     public static final String PARAM_EMBEDDING_FOR_FEATURE_REFS = "embeddingForFeatureRefs";
         
     public static final String PARAM_FRAGMENTS = "enableFragments";
-    public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
-    public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
     public static final String PARAM_ENABLE_CODELISTS = "enableCodelists";
     public static final String PARAM_ENABLE_CRS = "enableCrs";
     public static final String PARAM_ADDITIONAL_CRS = "additionalCrs";
     public static final String PARAM_ENABLE_FILTER = "enableFilter";
-    public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
-    // enableGmlOutput (old) is alias for enableFeaturesGML (new)
-    public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
+
     public static final String PARAM_FEATURES_GEOJSON = "enableFeaturesGeoJson";
     public static final String PARAM_FEATURES_JSONFG = "enableFeaturesJsonFg";
     public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
+    
+    public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
+    // enableGmlOutput (old) is alias for enableFeaturesGML (new)
+    public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
+    public static final String PARAM_GML_APPEND_TEMPORAL_SUFFIX_TO_GMLID = "appendTemporalSuffixToGmlId";
+    public static final String PARAM_GML_CODELIST_URI_TEMPLATE = "gmlCodelistUriTemplate";
+    public static final String PARAM_GML_FEATURE_REF_TEMPLATE = "gmlFeatureRefTemplate";
+    public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
+    public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
+    public static final String PARAM_GML_IDENTIFIER_CODESPACE = "gmlIdentifierCodeSpace";
+    public static final String PARAM_GML_IDENTIFIER_VALUETEMPLATE = "gmlIdentifierValueTemplate";
     public static final String PARAM_GML_SF_LEVEL = "gmlSfLevel";
     public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
     public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
     public static final String PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS = "supportsStandardResponseParameters";
-//    public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
+    public static final String PARAM_GML_USE_ALIAS = "gmlUseAlias";
+    public static final String PARAM_GML_USE_SURFACE_AND_CURVE = "gmlUseSurfaceAndCurve";
+    public static final String PARAM_GML_IDENTIFY_CODELIST_PROPERTIES = "gmlIdentifyCodelistProperties";
+    
+    //    public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
     public static final String PARAM_JSONFG_FEATURE_TYPE = "jsonFgFeatureType";
 //    public static final String PARAM_JSONFG_INCLUDE_IN_GEOJSON = "jsonFgIncludeInGeoJson";
+
     public static final String PARAM_LABEL_TEMPLATE = "labelTemplate";
     public static final String PARAM_LINEARIZE_CURVES = "linearizeCurves";
     public static final String PARAM_MAX_NAME_LENGTH = "maxNameLength";
@@ -141,6 +159,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_OBJECT_IDENTIFIER_NAME = "objectIdentifierName";
     public static final String PARAM_PK_COLUMN = "primaryKeyColumn";
     public static final String PARAM_PROP_ID_TAGGED_VALUE = "taggedValueForPropertyId";
+    public static final String PARAM_ASSOCROLE_ID_TAGGED_VALUE = "taggedValueForAssociationRole";
     public static final String PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE = "providerConfigLabelTemplate";
     public static final String PARAM_QUERYABLES = "queryables";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
@@ -196,9 +215,12 @@ public class Ldproxy2Constants {
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
+    public static final String RULE_ALL_ASSOCROLEIDBYTV = "rule-ldp2-all-associationRoleIdByTaggedValue";
     public static final String RULE_ALL_GEOINFODOK = "rule-ldp2-all-gid";
     public static final String RULE_ALL_LINK_OBJECT_AS_FEATURE_REF = "rule-ldp2-all-linkObjectAsFeatureRef";
     public static final String RULE_ALL_NOT_ENCODED = "rule-ldp2-all-notEncoded";
+    public static final String RULE_ALL_PROPALIAS = "rule-ldp2-all-propertyAlias";
+    public static final String RULE_ALL_PROPIDBYTV = "rule-ldp2-all-propertyIdByTaggedValue";
     public static final String RULE_ALL_QUERYABLES = "rule-ldp2-all-queryables";
     public static final String RULE_ALL_SCHEMAS = "rule-ldp2-all-schemas";
     public static final String RULE_CLS_CODELIST_APPEND_CODE = "rule-ldp2-cls-codelist-append-code";
@@ -210,7 +232,6 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_GENERIC_VALUE_TYPE = "rule-ldp2-cls-genericValueType";
     public static final String RULE_CLS_IDENTIFIER_STEREOTYPE = "rule-ldp2-cls-identifierStereotype";
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
-    public static final String RULE_ALL_PROPIDBYTV = "rule-ldp2-all-propertyIdByTaggedValue";
     public static final String RULE_PROP_MEASURE = "rule-ldp2-prop-measure";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
     

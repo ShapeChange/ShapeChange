@@ -419,7 +419,7 @@ public class LdpCoretableSourcePathProvider extends AbstractLdpSourcePathProvide
     }
 
     @Override
-    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
+    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList, LdpPropertyEncodingContext context) {
 
 	return true;
 //	String typeName = pi.typeInfo().name;

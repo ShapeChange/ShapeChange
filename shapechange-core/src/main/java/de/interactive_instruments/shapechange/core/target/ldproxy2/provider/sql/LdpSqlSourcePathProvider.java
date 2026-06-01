@@ -37,8 +37,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.shapechange.core.MessageSource;
@@ -109,7 +111,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 	if (!encodingInfos.isEmpty()) {
 
-	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi, context);
+	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi, alreadyVisitedPiList, context);
 
 	    for (SqlPropertyEncodingInfo spei : speis) {
 
@@ -154,7 +156,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		    if (isImplementedAsFeatureReference(pi)) {
 
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && Strings.CI.equalsAny(
 				spei.getPropertyValueType(), "AX_Buchungsblattbezirk_Schluessel",
 				"AX_Bundesland_Schluessel", "AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
 				"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen", "AX_Kreis_Schluessel",
@@ -201,7 +203,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
-			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
+			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && Strings.CI.equalsAny(
 				spei.getPropertyValueType(), "DQ_AbsoluteExternalPositionalAccuracy",
 				"DQ_RelativeInternalPositionalAccuracy")) {
 
@@ -209,6 +211,11 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
+			} else if (Ldproxy2Target.isWriteApi) {
+
+//			    idSourcePath = Optional.of(spei.getIdSourcePath());
+//			    idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
+//			    refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
 			} else {
 
 			    idSourcePath = Optional.of(spei.getIdSourcePath());
@@ -687,7 +694,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 		pi.cardinality().maxOccurs == 1, null);
 	return spi;
     }
-    
+
     private LdpSqlSourcePathInfo gidSimpleValueSourcePathInfo(PropertyInfo pi, SqlPropertyEncodingInfo spei) {
 
 	Optional<String> valueSourcePath = Optional.of(spei.getValueSourcePath());
@@ -958,14 +965,21 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
      * the context, and that have originalPropertyName (if not set, then
      * propertyName) equal to that of pi, and originalInClassName (if not set, then
      * inClassName) equal to that of pi, and originalSchemaName (if not set, then
-     * schemaName) equal to that of pi.
+     * schemaName) equal to that of pi, and property context path (if set) matching
+     * the already visited pi list plus pi
      * 
-     * @param pi      - tbd
-     * @param context - tbd
+     * @param pi                   - tbd
+     * @param alreadyVisitedPiList information about previous steps in the source
+     *                             path; can be analyzed to detect special cases
+     *                             (e.g. lists of data type valued properties)
+     * @param context              - tbd
      * @return - tbd
      */
     protected SortedSet<SqlPropertyEncodingInfo> getPropertyEncodingInfos(PropertyInfo pi,
-	    LdpSqlPropertyEncodingContext context) {
+	    List<PropertyInfo> alreadyVisitedPiList, LdpSqlPropertyEncodingContext context) {
+
+	String propertyContextPathForPi = alreadyVisitedPiList.stream().map(p -> p.name())
+		.collect(Collectors.joining(".")) + "." + pi.name();
 
 	SortedSet<SqlPropertyEncodingInfo> result = new TreeSet<>();
 
@@ -981,7 +995,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		String piSchema = pi.model().schemaPackage(pi.inClass()).name();
 
-		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)) {
+		if (pi.name().equals(name) && piSchema.equals(schema) && pi.inClass().name().equals(inClass)
+			&& (!sei.hasPropertyContextPath()
+				|| propertyContextPathForPi.equals(sei.getPropertyContextPath()))) {
 
 		    result.add(sei);
 		}
@@ -1167,7 +1183,8 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
     }
 
     @Override
-    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, LdpPropertyEncodingContext context) {
+    public boolean isEncodedWithDirectValueSourcePath(PropertyInfo pi, List<PropertyInfo> alreadyVisitedPiList,
+	    LdpPropertyEncodingContext context) {
 
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && pi.model().isInSelectedSchemas(pi.inClass())
 		&& Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(pi.inClass())) {
@@ -1196,7 +1213,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 	     * given in the property encoding info. The databaseColumnName(..) methods take
 	     * into account certain suffixes, which complicates the matter.
 	     */
-	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi,
+	    SortedSet<SqlPropertyEncodingInfo> speis = getPropertyEncodingInfos(pi, alreadyVisitedPiList,
 		    (LdpSqlPropertyEncodingContext) context);
 
 	    for (SqlPropertyEncodingInfo spei : speis) {
