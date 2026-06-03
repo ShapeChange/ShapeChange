@@ -442,7 +442,7 @@ collections:
 Building block 
 https://docs.ldproxy.net/de/services/building-blocks/features_-_geojson.html[Features - GeoJSON]
 is enabled by default for an ldproxy instance. By setting 
-target parameter _enableFeaturesGeoJson_ to 'false', 
+target parameter __enableFeaturesGeoJson__ to 'false', 
 ShapeChange will add the building block to the service configuration as disabled.
 
 Currently, specific configuration items for this building block are added

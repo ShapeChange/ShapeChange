@@ -72,6 +72,8 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getIdSourcePath, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getIdValueType, Comparator.nullsFirst(Comparator.naturalOrder()))
+	    .thenComparing(SqlPropertyEncodingInfo::getIdReferencePath,
+		    Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTable, Comparator.nullsFirst(Comparator.naturalOrder()))
 	    .thenComparing(SqlPropertyEncodingInfo::getTargetTableSchema,
 		    Comparator.nullsFirst(Comparator.naturalOrder()))
@@ -91,6 +93,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
     protected String valueSourcePath;
     protected String idSourcePath;
     protected String idValueType;
+    protected String idReferencePath;
     protected String targetTable;
     protected String targetTableSchema;
     protected String propertyContextPath;
@@ -313,6 +316,10 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	return StringUtils.isNotBlank(this.idSourcePath);
     }
     
+    public boolean hasIdReferencePath() {
+	return StringUtils.isNotBlank(this.idReferencePath);
+    }
+
     public boolean hasPropertyContextPath() {
 	return StringUtils.isNotBlank(this.propertyContextPath);
     }
@@ -361,14 +368,28 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	return idValueType;
     }
 
+    /**
+     * @return the idReferencePath
+     */
+    public String getIdReferencePath() {
+	return idReferencePath;
+    }
+
+    /**
+     * @param idReferencePath the idReferencePath to set
+     */
+    public void setIdReferencePath(String idReferencePath) {
+	this.idReferencePath = idReferencePath;
+    }
+
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
-	result = prime * result + Objects.hash(idSourcePath, idValueType, inClassName, originalInClassName,
-		originalPropertyMultiplicity, originalPropertyName, originalPropertyValueType, propertyMultiplicity,
-		propertyName, propertyValueType, sourceTable, sourceTableSchema, targetTable, targetTableSchema,
-		valueSourcePath);
+	result = prime * result + Objects.hash(idSourcePath, idValueType, idReferencePath, inClassName,
+		originalInClassName, originalPropertyMultiplicity, originalPropertyName, originalPropertyValueType,
+		propertyMultiplicity, propertyName, propertyValueType, sourceTable, sourceTableSchema, targetTable,
+		targetTableSchema, valueSourcePath);
 	return result;
     }
 
@@ -382,6 +403,7 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 	    return false;
 	SqlPropertyEncodingInfo other = (SqlPropertyEncodingInfo) obj;
 	return Objects.equals(idSourcePath, other.idSourcePath) && Objects.equals(idValueType, other.idValueType)
+		&& Objects.equals(idReferencePath, other.idReferencePath)
 		&& Objects.equals(inClassName, other.inClassName)
 		&& Objects.equals(originalInClassName, other.originalInClassName)
 		&& Objects.equals(originalPropertyMultiplicity, other.originalPropertyMultiplicity)
@@ -396,4 +418,5 @@ public class SqlPropertyEncodingInfo extends ModelElementSqlEncodingInfo
 		&& Objects.equals(targetTableSchema, other.targetTableSchema)
 		&& Objects.equals(valueSourcePath, other.valueSourcePath);
     }
+
 }

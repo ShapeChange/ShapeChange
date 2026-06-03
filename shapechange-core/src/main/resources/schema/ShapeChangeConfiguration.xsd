@@ -1565,6 +1565,11 @@
       </restriction>
      </simpleType>
     </attribute>
+    <attribute name="idReferencePath" type="string">
+     <annotation>
+      <documentation>Path expression (in syntax used by the Ldproxy2Target) that is used to directly access the database columns which are used as reference fiels and contain the identifiers of property values. The difference to the idSourcePath is that the idReferencePath is not to the primary key field within the table VT that represents the property values. Instead, the idReferencePath is a foreign key field (with or without actual foreign key constraint) that references an entry in VT. Can be omitted for cases in which the plain id reference path is irrelevant.</documentation>
+     </annotation>
+    </attribute>
     <attribute name="targetTable" type="string" use="optional">
      <annotation>
       <documentation>Name of the database table that the source path evaluates to. Can be omitted, if no such table exists - then the source path typically resolves to a simple value contained in a

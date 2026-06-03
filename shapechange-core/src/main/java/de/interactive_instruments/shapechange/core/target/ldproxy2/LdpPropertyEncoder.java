@@ -107,7 +107,9 @@ public class LdpPropertyEncoder {
 	this.msgSource = target;
 
 	this.bbFeaturesGmlBuilder = gml;
-	this.bbFeaturesGmlBuilder.setGidEncoder(this.gidEncoder);
+	if (this.bbFeaturesGmlBuilder != null && this.gidEncoder != null) {
+	    this.bbFeaturesGmlBuilder.setGidEncoder(this.gidEncoder);
+	}
 	this.bbFeaturesHtmlBuilder = featuresHtml;
 	this.bbFeaturesGeoJsonBuilder = featuresGeoJsonBuilder;
 	this.bbFeaturesJsonFgBuilder = featuresJsonFgBuilder;
@@ -116,7 +118,7 @@ public class LdpPropertyEncoder {
 	this.ldpProvider = ldpProvider;
 	this.sourcePathProvider = sourcePathProvider;
 
-	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;	
+	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;
     }
 
     /**
@@ -379,10 +381,11 @@ public class LdpPropertyEncoder {
 		    sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		} else {
 		    // fragment encoding enabled
-		    if (context.isInFragment() && sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, alreadyVisitedPiList, context)) {
+		    if (context.isInFragment() && sourcePathProvider.isEncodedWithDirectValueSourcePath(pi,
+			    alreadyVisitedPiList, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
-		    } else if (!context.isInFragment()
-			    && !sourcePathProvider.isEncodedWithDirectValueSourcePath(pi, alreadyVisitedPiList, context)) {
+		    } else if (!context.isInFragment() && !sourcePathProvider.isEncodedWithDirectValueSourcePath(pi,
+			    alreadyVisitedPiList, context)) {
 			sourcePathInfosForBuilder = sourcePathInfosForProperty;
 		    }
 		}
@@ -500,7 +503,9 @@ public class LdpPropertyEncoder {
 			 * determined before, when setting the value for sourcePathInfosForBuilder).
 			 */
 
-			if (sourcePathInfosForBuilder.isSingleSourcePath()) {
+			if (!sourcePathInfosForBuilder.isEmpty()
+				&& (sourcePathInfosForBuilder.isSingleSourcePath() || (Ldproxy2Target.allFeaturesTable
+					&& sourcePathInfosForBuilder.allWithSameIdSourcePath()))) {
 
 			    LdpSourcePathInfo spi = sourcePathInfosForBuilder.getSourcePathInfos().getFirst();
 
@@ -640,7 +645,7 @@ public class LdpPropertyEncoder {
 		    } else {
 			gidEncoder.gidLiLineageSchema(propertyMapForBuilder, sourcePathInfosForBuilder);
 		    }
-		    
+
 		} else if (sourcePathInfosForBuilder != null) {
 
 		    if (sourcePathInfosForBuilder.isMultipleSourcePaths() && sourcePathInfosForBuilder.allWithRefType()
@@ -727,7 +732,7 @@ public class LdpPropertyEncoder {
 			}
 		    }
 		}
-		
+
 		if (!isEncodedAsFeatureRef(pi) || Ldproxy2Target.isWriteApi) {
 		    propMemberDefBuilder.valueType(valueTypeForBuilder);
 		} else {
@@ -1019,7 +1024,7 @@ public class LdpPropertyEncoder {
 	    if (ldpType == Type.OBJECT) {
 
 		if (isEncodedAsFeatureRef(pi)) {
-		    if (Ldproxy2Target.isWriteApi) {
+		    if (Ldproxy2Target.isWriteApi && Ldproxy2Target.allFeaturesTable) {
 			return Type.VALUE_ARRAY;
 		    } else {
 			return Type.FEATURE_REF_ARRAY;
@@ -1037,7 +1042,7 @@ public class LdpPropertyEncoder {
 	    }
 	} else {
 	    if (isEncodedAsFeatureRef(pi)) {
-		if (Ldproxy2Target.isWriteApi) {
+		if (Ldproxy2Target.isWriteApi && Ldproxy2Target.allFeaturesTable) {
 		    return Type.VALUE;
 		} else {
 		    return Type.FEATURE_REF;
@@ -1090,9 +1095,36 @@ public class LdpPropertyEncoder {
 		}
 	    }
 	}
-	
-	if(Ldproxy2Target.isWriteApi) {
-	    schemaBuilder.valueType(Type.STRING);
+
+	/*
+	 * Only add id and type properties to feature refs if the id source path gets a
+	 * value from the all features table.
+	 */
+	if (Ldproxy2Target.allFeaturesTable && spi.getIdSourcePath().isPresent()
+		&& spi.getIdSourcePath().get().endsWith(Ldproxy2Target.allFeaturesTableName)) {
+
+	    if (Ldproxy2Target.isWriteApi) {
+
+		schemaBuilder.valueType(Type.STRING);
+
+	    } else {
+
+		ImmutableFeatureSchema idSubProp = createIdPropertyForFeatureRef(pi, spi);
+		propertyMapForBuilder.put("id", idSubProp);
+
+		// now create the type property
+		ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
+		constraintsBuilder.required(true);
+
+		ImmutableFeatureSchema.Builder typePropBuilder = new ImmutableFeatureSchema.Builder();
+
+		typePropBuilder.name("type").type(Type.STRING).sourcePath(Ldproxy2Target.allFeaturesTableTypeColumn)
+			.constraints(constraintsBuilder.build());
+
+		propertyMapForBuilder.put("type", typePropBuilder.build());
+	    }
+
+	    // TODO
 	}
     }
 

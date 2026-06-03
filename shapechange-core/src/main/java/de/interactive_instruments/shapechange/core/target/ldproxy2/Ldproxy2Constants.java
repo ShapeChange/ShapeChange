@@ -96,6 +96,10 @@ public class Ldproxy2Constants {
 
     public static final String PARAM_API_ID = "apiId";
     public static final String PARAM_IS_WRITE_API = "isWriteApi";
+    public static final String PARAM_ALLFEATURESTABLE = "allFeaturesTable";
+    public static final String PARAM_ALLFEATURESTABLE_NAME = "allFeaturesTableName";
+    public static final String PARAM_ALLFEATURESTABLE_ID_COLUMN = "allFeaturesTableIdColumn";
+    public static final String PARAM_ALLFEATURESTABLE_TYPE_COLUMN = "allFeaturesTableTypeColumn";
     
     public static final String PARAM_COLLECTION_ID_FORMAT = "collectionIdFormat";
     
@@ -130,6 +134,9 @@ public class Ldproxy2Constants {
     public static final String PARAM_FEATURES_JSONFG = "enableFeaturesJsonFg";
     public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
     
+    public static final String PARAM_DATASETCHANGES_MODE = "datasetChangesMode";
+    public static final String PARAM_DATASETCHANGES_SYNCHPERIODIC = "datasetChangesSyncPeriodic";
+    
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
@@ -148,6 +155,8 @@ public class Ldproxy2Constants {
     public static final String PARAM_GML_USE_SURFACE_AND_CURVE = "gmlUseSurfaceAndCurve";
     public static final String PARAM_GML_IDENTIFY_CODELIST_PROPERTIES = "gmlIdentifyCodelistProperties";
     
+    public static final String PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF = "gidCatalogObjectKeyAsFeatureRef";
+        
     //    public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
     public static final String PARAM_JSONFG_FEATURE_TYPE = "jsonFgFeatureType";
 //    public static final String PARAM_JSONFG_INCLUDE_IN_GEOJSON = "jsonFgIncludeInGeoJson";
@@ -161,7 +170,9 @@ public class Ldproxy2Constants {
     public static final String PARAM_PROP_ID_TAGGED_VALUE = "taggedValueForPropertyId";
     public static final String PARAM_ASSOCROLE_ID_TAGGED_VALUE = "taggedValueForAssociationRole";
     public static final String PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE = "providerConfigLabelTemplate";
+    public static final String PARAM_PROVIDES_GEOMETRY_TYPES = "providesGeometryTypes";
     public static final String PARAM_QUERYABLES = "queryables";
+    public static final String PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS = "queryProcessingSkipUnusedPipelineSteps";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";

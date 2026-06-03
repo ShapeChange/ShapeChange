@@ -239,13 +239,17 @@ public class SqlEncodingInfos implements MessageSource {
 			XMLUtil.addAttribute(document, e2, "idValueType", sei.getIdValueType());
 		    }
 		}
+		if (sei.hasIdReferencePath()) {
+		    XMLUtil.addAttribute(document, e2, "idReferencePath",
+			    StringUtils.stripToEmpty(sei.getIdReferencePath()));
+		}
 		if (sei.hasTargetTable()) {
 		    XMLUtil.addAttribute(document, e2, "targetTable", StringUtils.stripToEmpty(sei.getTargetTable()));
 		}
 		if (sei.hasTargetTableSchema()) {
 		    XMLUtil.addAttribute(document, e2, "targetTableSchema", sei.getTargetTableSchema());
 		}
-		if(sei.hasPropertyContextPath() && !sei.getPropertyContextPath().equals(sei.getPropertyName())) {
+		if (sei.hasPropertyContextPath() && !sei.getPropertyContextPath().equals(sei.getPropertyName())) {
 		    XMLUtil.addAttribute(document, e2, "propertyContextPath", sei.getPropertyContextPath());
 		}
 	    }
@@ -309,12 +313,13 @@ public class SqlEncodingInfos implements MessageSource {
 	    }
 	    spei.setIdInfos(StringUtils.stripToNull(seie.getAttribute("idSourcePath")), Optional.of(idValueType));
 
+	    spei.setIdReferencePath(StringUtils.stripToNull(seie.getAttribute("idReferencePath")));
+
 	    spei.setTargetTable(seie.getAttribute("targetTable"));
 	    spei.setTargetTableSchema(StringUtils.stripToNull(seie.getAttribute("targetTableSchema")));
 
 	    spei.setPropertyContextPath(StringUtils.stripToNull(seie.getAttribute("propertyContextPath")));
 
-	    
 	    sei.add(spei);
 	}
 

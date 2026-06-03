@@ -156,16 +156,18 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		    if (isImplementedAsFeatureReference(pi)) {
 
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && Strings.CI.equalsAny(
-				spei.getPropertyValueType(), "AX_Buchungsblattbezirk_Schluessel",
-				"AX_Bundesland_Schluessel", "AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
-				"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen", "AX_Kreis_Schluessel",
-				"AX_VerschluesselteLagebezeichnung", "AX_Regierungsbezirk_Schluessel",
-				"AX_Verwaltungsgemeinschaft_Schluessel")) {
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
+				&& Ldproxy2Target.gidCatalogObjectKeyAsFeatureRef
+				&& Strings.CI.equalsAny(spei.getPropertyValueType(),
+					"AX_Buchungsblattbezirk_Schluessel", "AX_Bundesland_Schluessel",
+					"AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
+					"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen",
+					"AX_Kreis_Schluessel", "AX_VerschluesselteLagebezeichnung",
+					"AX_Regierungsbezirk_Schluessel", "AX_Verwaltungsgemeinschaft_Schluessel")) {
 
 			    /*
-			     * Case of a aaa property with with katalog object key as original value type,
-			     * which shall be encoded as feature ref (to the actual katalog object).
+			     * Case of a aaa property with katalog object key as original value type, which
+			     * shall be encoded as feature ref (to the actual katalog object).
 			     */
 
 			    if ("AX_Gemeindekennzeichen".equalsIgnoreCase(spei.getPropertyValueType())) {
@@ -211,11 +213,38 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
-			} else if (Ldproxy2Target.isWriteApi) {
+			} else if (Ldproxy2Target.allFeaturesTable) {
 
-//			    idSourcePath = Optional.of(spei.getIdSourcePath());
-//			    idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
-//			    refType = LdpUtil.formatCollectionId(spei.getPropertyValueType());
+			    String idReferencePath = spei.getIdReferencePath();
+
+			    if (Ldproxy2Target.isWriteApi) {
+
+				idSourcePath = Optional.of(idReferencePath);
+
+			    } else {
+
+				String s;
+				if (idReferencePath.contains("/")) {
+
+				    String associativeTablePath = StringUtils.substringBeforeLast(idReferencePath, "/");
+				    String col = StringUtils.substringAfterLast(idReferencePath, "/");
+
+				    s = associativeTablePath + "[" + col + "=" + Ldproxy2Target.allFeaturesTableIdColumn
+					    + "]" + Ldproxy2Target.allFeaturesTableName;
+
+				} else {
+				    s = "[" + idReferencePath + "=" + Ldproxy2Target.allFeaturesTableIdColumn + "]"
+					    + Ldproxy2Target.allFeaturesTableName;
+				}
+				idSourcePath = Optional.of(s);
+			    }
+			    idValueType = Optional.of(determineIdValueType(spei.getIdValueType()));
+
+//			    LdpSqlSourcePathInfo spi = new LdpSqlSourcePathInfo(idSourcePath, valueSourcePath,
+//				    idValueType, refType, refUriTemplate, targetsSingleValue, targetTable);
+//			    spRes.addSourcePathInfo(spi);
+//			    return spRes;
+
 			} else {
 
 			    idSourcePath = Optional.of(spei.getIdSourcePath());
@@ -774,10 +803,6 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		String colBaseName = pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
 		if (pi.categoryOfValue() == Options.CODELIST) {
-		    /*
-		     * 2024-11-29 JE: reduction via SQL expression not supported for filtering
-		     */
-//		    return LdpGidEncoder.valueSourcePathForCodeListValuedProperty(colBaseName + "_href");
 		    return colBaseName + "_href";
 		} else {
 		    return colBaseName;
@@ -1293,7 +1318,12 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
     @Override
     public String sourcePathFeatureRefId(PropertyInfo pi) {
-	return primaryKeyColumn(pi);
+
+	if (Ldproxy2Target.allFeaturesTable) {
+	    return Ldproxy2Target.allFeaturesTableIdColumn;
+	} else {
+	    return primaryKeyColumn(pi);
+	}
     }
 
     @Override
