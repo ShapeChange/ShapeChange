@@ -54,6 +54,10 @@
     </annotation>
    </assert>
   </complexType>
+  <unique name="InputUniqueParameterName">
+   <selector xpath=".//sc:parameter"/>
+   <field xpath="@name"/>
+  </unique>
  </element>
  <element name="parameter">
   <complexType>
@@ -258,7 +262,12 @@
    </extension>
   </complexContent>
  </complexType>
- <element name="InputTransformer" type="sc:InputTransformerType"/>
+ <element name="InputTransformer" type="sc:InputTransformerType">
+  <unique name="InputTransformerUniqueParameterName">
+   <selector xpath=".//sc:ProcessParameter"/>
+   <field xpath="@name"/>
+  </unique>
+ </element>
  <element name="inputTransformers">
   <complexType>
    <sequence>
@@ -320,7 +329,12 @@
    </sequence>
   </complexType>
  </element>
- <element name="Transformer" type="sc:TransformerType"/>
+ <element name="Transformer" type="sc:TransformerType">
+  <unique name="TransformerUniqueParameterName">
+   <selector xpath=".//sc:ProcessParameter"/>
+   <field xpath="@name"/>
+  </unique>
+ </element>
  <element name="validators">
   <complexType>
    <sequence maxOccurs="unbounded">
@@ -328,7 +342,12 @@
    </sequence>
   </complexType>
  </element>
- <element name="Validator" type="sc:ValidatorType"/>
+ <element name="Validator" type="sc:ValidatorType">
+  <unique name="ValidatorUniqueParameterName">
+   <selector xpath=".//sc:ProcessParameter"/>
+   <field xpath="@name"/>
+  </unique>
+ </element>
  <complexType name="ValidatorType">
   <complexContent>
    <extension base="sc:ProcessBaseType">
@@ -375,6 +394,10 @@
    <selector xpath=".//sc:EncodingRule"/>
    <field xpath="@name"/>
   </unique>
+  <unique name="TargetUniqueParameterName">
+   <selector xpath=".//sc:targetParameter"/>
+   <field xpath="@name"/>
+  </unique>
  </element>
  <complexType name="TargetType">
   <complexContent>
@@ -411,6 +434,10 @@
   <attribute name="param" type="string"/>
  </complexType>
  <element name="TargetXmlSchema" type="sc:TargetXmlSchemaType">
+  <unique name="TargetXmlSchemaUniqueParameterName">
+   <selector xpath=".//sc:targetParameter"/>
+   <field xpath="@name"/>
+  </unique>
   <unique name="TargetXmlSchemaUniqueEncodingRuleName">
    <selector xpath=".//sc:EncodingRule"/>
    <field xpath="@name"/>
@@ -620,6 +647,10 @@
   </unique>
   <unique name="TargetOwlUniqueEncodingRuleName">
    <selector xpath=".//sc:EncodingRule"/>
+   <field xpath="@name"/>
+  </unique>
+  <unique name="TargetOwlUniqueParameterName">
+   <selector xpath=".//sc:targetParameter"/>
    <field xpath="@name"/>
   </unique>
  </element>
