@@ -1846,4 +1846,52 @@
    </extension>
   </complexContent>
  </complexType>
+ <element name="PropertyRestrictions" substitutionGroup="sc:AdvancedProcessConfigurationElement" type="sc:PropertyRestrictionsType"/>
+ <complexType name="PropertyRestrictionsType">
+  <complexContent>
+   <extension base="sc:AdvancedProcessConfigurationType">
+    <sequence>
+     <element maxOccurs="1" name="types">
+      <complexType>
+       <sequence maxOccurs="unbounded">
+        <element name="Type">
+         <complexType>
+          <sequence maxOccurs="unbounded">
+           <element name="property">
+            <complexType>
+             <attribute name="name" type="string" use="required">
+              <annotation>
+               <documentation>Name of the property.</documentation>
+              </annotation>
+             </attribute>
+             <attribute name="valueTypeRestrictions" type="string" use="optional">
+              <annotation>
+               <documentation>Comma-separated list of type names to which the values of the property are restricted to.</documentation>
+              </annotation>
+             </attribute>
+            </complexType>
+           </element>
+          </sequence>
+          <attribute name="name" type="string" use="required">
+           <annotation>
+            <documentation>Name of the type.</documentation>
+           </annotation>
+          </attribute>
+         </complexType>
+         <unique name="uniquePropertiesPerTypeWithinPropertyRestrictions">
+          <selector xpath="./property"/>
+          <field xpath="@name"/>
+         </unique>
+        </element>
+       </sequence>
+      </complexType>
+      <unique name="uniqueTypesInPropertyRestrictions">
+       <selector xpath="./Type"/>
+       <field xpath="@name"/>
+      </unique>
+     </element>
+    </sequence>
+   </extension>
+  </complexContent>
+ </complexType>
 </schema>

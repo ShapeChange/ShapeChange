@@ -59,6 +59,7 @@ import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.PropertyRestriction;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
@@ -161,6 +162,11 @@ public class LdpPropertyEncoder {
 	PropertyInfo defaultIntervalEndPi = null;
 	boolean multipleDefaultIntervalEndsEncountered = false;
 
+	PropertyInfo predecessorIntervalStartPi = null;
+	boolean multiplePredecessorIntervalStartsEncountered = false;
+	PropertyInfo successorIntervalStartPi = null;
+	boolean multipleSuccessorIntervalStartsEncountered = false;
+
 	if (alreadyVisitedPiList.isEmpty()) {
 
 	    LdpSpecialPropertiesInfo spi = target.specialPropertiesInfo(currentCi);
@@ -179,6 +185,12 @@ public class LdpPropertyEncoder {
 
 	    defaultIntervalEndPi = spi.getDefaultIntervalEndPiOfCi();
 	    multipleDefaultIntervalEndsEncountered = spi.isMultipleDefaultIntervalEndsEncountered();
+
+	    predecessorIntervalStartPi = spi.getPredecessorIntervalStartPiOfCi();
+	    multiplePredecessorIntervalStartsEncountered = spi.isMultiplePredecessorIntervalStartsEncountered();
+
+	    successorIntervalStartPi = spi.getSuccessorIntervalStartPiOfCi();
+	    multipleSuccessorIntervalStartsEncountered = spi.isMultipleSuccessorIntervalStartsEncountered();
 
 	    /*
 	     * Conditional encoding of an additional identifier property
@@ -222,13 +234,13 @@ public class LdpPropertyEncoder {
 	    Optional<Type> valueTypeForBuilder = valueTypeForBuilder(pi, identifierPi, pi.cardinality().maxOccurs == 1,
 		    ldpType);
 
-	    Optional<GeometryType> geometryTypeForBuilder = Optional.empty();
+	    List<GeometryType> geometryTypesForBuilder = new ArrayList<>();
 	    Optional<Boolean> linearizeCurvesOpt = Optional.empty();
 	    if (ldpType == Type.GEOMETRY) {
-		geometryTypeForBuilder = geometryType(pi);
-		if (Ldproxy2Target.linearizeCurves && geometryTypeForBuilder.isPresent()) {
-		    GeometryType geomType = geometryTypeForBuilder.get();
-		    if (geomType != GeometryType.POINT && geomType != GeometryType.MULTI_POINT) {
+		geometryTypesForBuilder.addAll(geometryTypes(pi));
+		if (Ldproxy2Target.linearizeCurves && !geometryTypesForBuilder.isEmpty()) {
+		    if (geometryTypesForBuilder.stream().anyMatch(
+			    geomType -> geomType != GeometryType.POINT && geomType != GeometryType.MULTI_POINT)) {
 			linearizeCurvesOpt = Optional.of(true);
 		    }
 		}
@@ -256,6 +268,12 @@ public class LdpPropertyEncoder {
 	    } else if (defaultIntervalEndPi != null && !multipleDefaultIntervalEndsEncountered
 		    && pi == defaultIntervalEndPi) {
 		propRoleForBuilder = Optional.of(Role.PRIMARY_INTERVAL_END);
+	    } else if (predecessorIntervalStartPi != null && !multiplePredecessorIntervalStartsEncountered
+		    && pi == predecessorIntervalStartPi) {
+		propRoleForBuilder = Optional.of(Role.PREDECESSOR_INTERVAL_START);
+	    } else if (successorIntervalStartPi != null && !multipleSuccessorIntervalStartsEncountered
+		    && pi == successorIntervalStartPi) {
+		propRoleForBuilder = Optional.of(Role.SUCCESSOR_INTERVAL_START);
 	    } else {
 		propRoleForBuilder = Optional.empty();
 	    }
@@ -665,7 +683,7 @@ public class LdpPropertyEncoder {
 			    propMemberDefBuilder.sourcePath(applicableSourcePath(pi, spi));
 
 			    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-				addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, pi, spi,
+				addFeatureRefDetailsFromSourcePathInfo(propMemberDefBuilder, currentCi, pi, spi,
 					propertyMapForBuilder);
 			    }
 
@@ -699,7 +717,7 @@ public class LdpPropertyEncoder {
 				    mspBuilder.sourcePath(applicableSourcePath(pi, spi));
 
 				    if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-					addFeatureRefDetailsFromSourcePathInfo(mspBuilder, pi, spi,
+					addFeatureRefDetailsFromSourcePathInfo(mspBuilder, currentCi, pi, spi,
 						propertyMapForBuilder);
 				    }
 
@@ -756,10 +774,16 @@ public class LdpPropertyEncoder {
 		    }
 		}
 
+		if (geometryTypesForBuilder.size() == 1) {
+		    propMemberDefBuilder.geometryType(geometryTypesForBuilder.get(0));
+		} else if (geometryTypesForBuilder.size() > 1) {
+		    propMemberDefBuilder.geometryTypes(geometryTypesForBuilder);
+		}
+
 		propMemberDefBuilder.name(LdpInfo.id(pi)).alias(LdpInfo.alias(pi)).type(typeForBuilder)
 			.constraints(constraints).role(propRoleForBuilder).constantValue(constantValueForBuilder)
-			.geometryType(geometryTypeForBuilder).linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder)
-			.transformations(transformations).propertyMap(propertyMapForBuilder);
+			.linearizeCurves(linearizeCurvesOpt).unit(unitForBuilder).transformations(transformations)
+			.propertyMap(propertyMapForBuilder);
 
 		setObjectTypeOnSchemaBuilderForProperty(propMemberDefBuilder, objectTypeForBuilder);
 
@@ -803,7 +827,7 @@ public class LdpPropertyEncoder {
 
 	    Type ldpType = target.ldproxyType(pi);
 
-	    if (ldpType == Type.GEOMETRY && geometryType(pi).isPresent()) {
+	    if (ldpType == Type.GEOMETRY && !geometryTypes(pi).isEmpty()) {
 		return true;
 	    }
 	}
@@ -1055,8 +1079,9 @@ public class LdpPropertyEncoder {
 	}
     }
 
-    private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder, PropertyInfo pi,
-	    LdpSourcePathInfo spi, LinkedHashMap<String, FeatureSchema> propertyMapForBuilder) {
+    private void addFeatureRefDetailsFromSourcePathInfo(ImmutableFeatureSchema.Builder schemaBuilder,
+	    ClassInfo currentCi, PropertyInfo pi, LdpSourcePathInfo spi,
+	    LinkedHashMap<String, FeatureSchema> propertyMapForBuilder) {
 
 	if (StringUtils.isNotBlank(spi.getRefType()) || StringUtils.isNotBlank(spi.getRefUriTemplate())) {
 
@@ -1116,12 +1141,56 @@ public class LdpPropertyEncoder {
 		ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
 		constraintsBuilder.required(true);
 
+		if (Ldproxy2Target.allFeaturesTableWithTypeRestrictions) {
+
+		    SortedSet<String> valueTypeRestrictions = new TreeSet<>();
+
+		    /*
+		     * First, check if any value type restrictions for the property are configured
+		     * in property restrictions.
+		     */
+		    Optional<PropertyRestriction> prOpt = Ldproxy2Target.propertyRestrictions
+			    .getPropertyRestriction(currentCi.name(), pi.name());
+		    if (prOpt.isPresent() && prOpt.get().hasValueTypeRestrictions()) {
+			valueTypeRestrictions = prOpt.get().getValueTypeRestrictions().stream()
+				.filter(vtr -> Ldproxy2Target.objectFeatureMixinAndDataTypes.stream()
+					.anyMatch(t -> t.name().equalsIgnoreCase(vtr)))
+				.collect(Collectors.toCollection(TreeSet::new));
+		    }
+
+		    /*
+		     * Second, if no value type restrictions have been found in the configuration,
+		     * see if any can be determined from the model.
+		     */
+		    if (valueTypeRestrictions.isEmpty()) {
+
+			/*
+			 * Check if the property value type is the default top level feature type, for
+			 * which no restrictions shall be defined.
+			 */
+			if (pi.typeInfo().name.equalsIgnoreCase(
+				Ldproxy2Target.allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName)) {
+			    // Do not define restrictions
+			} else {
+			    valueTypeRestrictions = LdpInfo.collectionIds(pi);
+			}
+		    }
+
+		    if (!valueTypeRestrictions.isEmpty()) {
+			constraintsBuilder.addAllEnumValues(
+				valueTypeRestrictions.stream().map(s -> LdpUtil.formatCollectionId(s)).toList());
+		    }
+		}
+
 		ImmutableFeatureSchema.Builder typePropBuilder = new ImmutableFeatureSchema.Builder();
 
 		typePropBuilder.name("type").type(Type.STRING).sourcePath(Ldproxy2Target.allFeaturesTableTypeColumn)
 			.constraints(constraintsBuilder.build());
 
 		propertyMapForBuilder.put("type", typePropBuilder.build());
+
+		// also set refKeyTemplate
+		schemaBuilder.refKeyTemplate("{{id}}");
 	    }
 
 	    // TODO
@@ -1136,7 +1205,7 @@ public class LdpPropertyEncoder {
 	schemaBuilder.sourcePath(applicableSourcePath(pi, spi));
 
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_LINK_OBJECT_AS_FEATURE_REF)) {
-	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, pi, spi, propertyMapForBuilder);
+	    addFeatureRefDetailsFromSourcePathInfo(schemaBuilder, currentCi, pi, spi, propertyMapForBuilder);
 	}
 
 	if (!LdpUtil.isLdproxySimpleType(ldpType) && Ldproxy2Target.categoryOfValueIsDatatypeOrSupportedUnion(pi)) {
@@ -1439,37 +1508,58 @@ public class LdpPropertyEncoder {
 		&& (target.isMappedToLink(pi) || !LdpInfo.valueTypeHasValidLdpTitleAttributeTag(pi)));
     }
 
-    private Optional<GeometryType> geometryType(PropertyInfo pi) {
+    private List<GeometryType> geometryTypes(PropertyInfo pi) {
 
-	String typeName = pi.typeInfo().name;
-	String typeId = pi.typeInfo().id;
-	String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+	List<GeometryType> res = new ArrayList<>();
 
-	GeometryType res = GeometryType.ANY;
-
-	ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
-
-	if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
-		&& pme.hasTargetType() && "GEOMETRY".equalsIgnoreCase(pme.getTargetType())
-		&& Ldproxy2Target.mapEntryParamInfos.hasCharacteristic(typeName, encodingRule,
-			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
-			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE)) {
-
-	    String t = Ldproxy2Target.mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
-		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
-		    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE);
-
-	    res = GeometryType.valueOf(t.toUpperCase(Locale.ENGLISH));
-
-	} else {
-	    // is checked via target configuration validator (which can be switched off)
-	    MessageContext mc = result.addError(msgSource, 121, pi.name(), pi.typeInfo().name);
-	    if (mc != null) {
-		mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+	/*
+	 * First, check TV ldpGeometryTypes
+	 */
+	if (StringUtils.isNotBlank(pi.taggedValue("ldpGeometryTypes"))) {
+	    for (String s : StringUtils.split(pi.taggedValue("ldpGeometryTypes"), ", ")) {
+		GeometryType gt = GeometryType.valueOf(s.toUpperCase(Locale.ENGLISH));
+		res.add(gt);
 	    }
 	}
 
-	return Optional.of(res);
+	/*
+	 * If there are no specific geometry types configured via TV ldpGeometryTypes,
+	 * apply default behavior.
+	 */
+	if (res.isEmpty()) {
+
+	    String typeName = pi.typeInfo().name;
+	    String typeId = pi.typeInfo().id;
+	    String encodingRule = pi.encodingRule(Ldproxy2Constants.PLATFORM);
+
+	    GeometryType defaultGeometryType = GeometryType.ANY;
+
+	    ProcessMapEntry pme = Ldproxy2Target.mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	    if (pme != null && !target.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId)
+		    && pme.hasTargetType() && "GEOMETRY".equalsIgnoreCase(pme.getTargetType())
+		    && Ldproxy2Target.mapEntryParamInfos.hasCharacteristic(typeName, encodingRule,
+			    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
+			    Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE)) {
+
+		String t = Ldproxy2Target.mapEntryParamInfos.getCharacteristic(typeName, encodingRule,
+			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS,
+			Ldproxy2Constants.ME_PARAM_GEOMETRY_INFOS_CHARACT_GEOMETRY_TYPE);
+
+		defaultGeometryType = GeometryType.valueOf(t.toUpperCase(Locale.ENGLISH));
+
+	    } else {
+		// is checked via target configuration validator (which can be switched off)
+		MessageContext mc = result.addError(msgSource, 121, pi.name(), pi.typeInfo().name);
+		if (mc != null) {
+		    mc.addDetail(msgSource, 1, pi.fullNameInSchema());
+		}
+	    }
+
+	    res.add(defaultGeometryType);
+	}
+
+	return res;
     }
 
 }

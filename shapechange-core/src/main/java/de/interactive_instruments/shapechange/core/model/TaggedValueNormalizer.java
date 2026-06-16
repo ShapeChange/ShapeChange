@@ -101,10 +101,12 @@ public class TaggedValueNormalizer {
     /*
      * the list of tagged values specified by the Ldproxy2 target
      */
-    protected static final Set<String> ldp2Tags = Stream.of("ldpCodelistValuePath", "ldp2EncodingRule",
-	    "ldpCodeTargetValue", "ldpFallbackValue", "ldpFeatureTitleTemplate", "ldpTitleAttribute", "defaultInstant",
-	    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldpGenericValueTypeSuffix", "ldpTypeAttribute",
-	    "ldpSourcePaths", "ldpExcludedScopes", "ldpQueryable").collect(Collectors.toSet());
+    protected static final Set<String> ldp2Tags = Stream
+	    .of("ldpCodelistValuePath", "ldp2EncodingRule", "ldpCodeTargetValue", "ldpFallbackValue",
+		    "ldpFeatureTitleTemplate", "ldpGeometryTypes", "ldpTitleAttribute", "defaultInstant",
+		    "defaultIntervalStart", "defaultIntervalEnd", "ldpRemove", "ldpGenericValueTypeSuffix",
+		    "ldpTypeAttribute", "ldpSourcePaths", "ldpExcludedScopes", "ldpQueryable")
+	    .collect(Collectors.toSet());
 
     /*
      * the list of tagged values specified by the Coretable target
@@ -135,7 +137,8 @@ public class TaggedValueNormalizer {
 	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
 	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
 	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet",
-	    "isPropertyChoiceUnion", "collectionGeometryType", "existentiallyDependentPart").collect(Collectors.toSet());
+	    "isPropertyChoiceUnion", "collectionGeometryType", "existentiallyDependentPart", "predecessorIntervalStart",
+	    "successorIntervalStart").collect(Collectors.toSet());
 
     /*
      * List of allowed tags of tagged values

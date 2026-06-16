@@ -49,6 +49,7 @@ import org.w3c.dom.Element;
 
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.ShapeChangeConstants;
 import de.interactive_instruments.shapechange.core.ShapeChangeException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
@@ -61,8 +62,6 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
  *
  */
 public class SqlEncodingInfos implements MessageSource {
-
-    public static final String SC_CONFIG_NS = "http://www.interactive-instruments.de/ShapeChange/Configuration/1.1";
 
     protected SortedSet<SqlClassEncodingInfo> classInfos = new TreeSet<>();
     protected SortedSet<SqlPropertyEncodingInfo> propertyInfos = new TreeSet<>();
@@ -169,17 +168,17 @@ public class SqlEncodingInfos implements MessageSource {
 
 	    Document document = db.newDocument();
 
-	    Element root = document.createElementNS(SC_CONFIG_NS, "SqlEncodingInfos");
+	    Element root = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "SqlEncodingInfos");
 	    document.appendChild(root);
 
-	    XMLUtil.addAttribute(document, root, "xmlns", SC_CONFIG_NS);
+	    XMLUtil.addAttribute(document, root, "xmlns", ShapeChangeConstants.SC_CONFIG_NS);
 
-	    Element e1 = document.createElementNS(SC_CONFIG_NS, "modelElementEncodings");
+	    Element e1 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "modelElementEncodings");
 	    root.appendChild(e1);
 
 	    for (SqlClassEncodingInfo sei : classInfos) {
 
-		Element e2 = document.createElementNS(SC_CONFIG_NS, "SqlClassEncodingInfo");
+		Element e2 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "SqlClassEncodingInfo");
 		e1.appendChild(e2);
 
 		XMLUtil.addAttribute(document, e2, "schemaName", StringUtils.stripToEmpty(sei.getSchemaName()));
@@ -198,7 +197,7 @@ public class SqlEncodingInfos implements MessageSource {
 
 	    for (SqlPropertyEncodingInfo sei : propertyInfos) {
 
-		Element e2 = document.createElementNS(SC_CONFIG_NS, "SqlPropertyEncodingInfo");
+		Element e2 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "SqlPropertyEncodingInfo");
 		e1.appendChild(e2);
 
 		XMLUtil.addAttribute(document, e2, "schemaName", StringUtils.stripToEmpty(sei.getSchemaName()));

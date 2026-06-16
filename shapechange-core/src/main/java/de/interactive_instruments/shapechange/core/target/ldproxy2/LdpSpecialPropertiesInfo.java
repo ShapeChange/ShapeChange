@@ -70,6 +70,11 @@ public class LdpSpecialPropertiesInfo {
     private PropertyInfo defaultIntervalEndPiOfCi = null;
     private boolean multipleDefaultIntervalEndsEncountered = false;
 
+    private PropertyInfo predecessorIntervalStartPiOfCi = null;
+    private boolean multiplePredecessorIntervalStartsEncountered = false;
+    private PropertyInfo successorIntervalStartPiOfCi = null;
+    private boolean multipleSuccessorIntervalStartsEncountered = false;
+
     private MessageSource msgSource;
     private ShapeChangeResult result;
     private Ldproxy2Target target;
@@ -88,6 +93,112 @@ public class LdpSpecialPropertiesInfo {
 	determineDefaultInstantInfos();
 	determineDefaultIntervalStartInfos();
 	determineDefaultIntervalEndInfos();
+	determinePredecessorIntervalStartInfos();
+	determineSuccessorIntervalStartInfos();
+    }
+
+    private void determineSuccessorIntervalStartInfos() {
+	PropertyInfo successorIntervalStartPi = null;
+	List<PropertyInfo> allSuccessorIntervalStartProperties = successorIntervalStartProperties(ci,
+		new ArrayList<>());
+	multipleSuccessorIntervalStartsEncountered = allSuccessorIntervalStartProperties.size() > 1;
+	if (allSuccessorIntervalStartProperties.size() == 1) {
+	    successorIntervalStartPi = allSuccessorIntervalStartProperties.getFirst();
+	}
+
+	if (!multipleSuccessorIntervalStartsEncountered) {
+	    this.successorIntervalStartPiOfCi = successorIntervalStartPi;
+	} else {
+	    MessageContext mc = result.addError(msgSource, 145, ci.name());
+	    if (mc != null) {
+		mc.addDetail(msgSource, 0, ci.fullNameInSchema());
+	    }
+	}
+    }
+
+    private void determinePredecessorIntervalStartInfos() {
+	PropertyInfo predecessorIntervalStartPi = null;
+	List<PropertyInfo> allPredecessorIntervalStartProperties = predecessorIntervalStartProperties(ci,
+		new ArrayList<>());
+	multiplePredecessorIntervalStartsEncountered = allPredecessorIntervalStartProperties.size() > 1;
+	if (allPredecessorIntervalStartProperties.size() == 1) {
+	    predecessorIntervalStartPi = allPredecessorIntervalStartProperties.getFirst();
+	}
+
+	if (!multiplePredecessorIntervalStartsEncountered) {
+	    this.predecessorIntervalStartPiOfCi = predecessorIntervalStartPi;
+	} else {
+	    MessageContext mc = result.addError(msgSource, 144, ci.name());
+	    if (mc != null) {
+		mc.addDetail(msgSource, 0, ci.fullNameInSchema());
+	    }
+	}
+    }
+
+    private List<PropertyInfo> predecessorIntervalStartProperties(ClassInfo ci,
+	    List<PropertyInfo> predecessorIntervalStartPropsFromSubtypes) {
+
+	List<PropertyInfo> res = new ArrayList<>();
+
+	List<PropertyInfo> predecessorIntervalStartPropsFromCi = new ArrayList<>();
+
+	for (PropertyInfo pi : ci.properties().values()) {
+
+	    if (isPredecessorIntervalStart(pi) && !(predecessorIntervalStartPropsFromSubtypes.stream()
+		    .anyMatch(piSub -> piSub.name().equals(pi.name())))) {
+		predecessorIntervalStartPropsFromCi.add(pi);
+	    }
+	}
+
+	res.addAll(predecessorIntervalStartPropsFromCi);
+
+	if (Ldproxy2Target.enableFragments) {
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+		if (LdpInfo.isEncoded(supertype)) {
+		    List<PropertyInfo> newPredecessorIntervalStartPropsFromSubtypes = new ArrayList<>();
+		    newPredecessorIntervalStartPropsFromSubtypes.addAll(predecessorIntervalStartPropsFromSubtypes);
+		    newPredecessorIntervalStartPropsFromSubtypes.addAll(predecessorIntervalStartPropsFromCi);
+		    List<PropertyInfo> predecessorIntervalStartPropsFromSupertype = predecessorIntervalStartProperties(
+			    supertype, newPredecessorIntervalStartPropsFromSubtypes);
+		    res.addAll(predecessorIntervalStartPropsFromSupertype);
+		}
+	    }
+	}
+
+	return res;
+    }
+    
+    private List<PropertyInfo> successorIntervalStartProperties(ClassInfo ci,
+	    List<PropertyInfo> successorIntervalStartPropsFromSubtypes) {
+
+	List<PropertyInfo> res = new ArrayList<>();
+
+	List<PropertyInfo> successorIntervalStartPropsFromCi = new ArrayList<>();
+
+	for (PropertyInfo pi : ci.properties().values()) {
+
+	    if (isSuccessorIntervalStart(pi) && !(successorIntervalStartPropsFromSubtypes.stream()
+		    .anyMatch(piSub -> piSub.name().equals(pi.name())))) {
+		successorIntervalStartPropsFromCi.add(pi);
+	    }
+	}
+
+	res.addAll(successorIntervalStartPropsFromCi);
+
+	if (Ldproxy2Target.enableFragments) {
+	    for (ClassInfo supertype : ci.supertypeClasses()) {
+		if (LdpInfo.isEncoded(supertype)) {
+		    List<PropertyInfo> newSuccessorIntervalStartPropsFromSubtypes = new ArrayList<>();
+		    newSuccessorIntervalStartPropsFromSubtypes.addAll(successorIntervalStartPropsFromSubtypes);
+		    newSuccessorIntervalStartPropsFromSubtypes.addAll(successorIntervalStartPropsFromCi);
+		    List<PropertyInfo> successorIntervalStartPropsFromSupertype = successorIntervalStartProperties(
+			    supertype, newSuccessorIntervalStartPropsFromSubtypes);
+		    res.addAll(successorIntervalStartPropsFromSupertype);
+		}
+	    }
+	}
+
+	return res;
     }
 
     private void determineDefaultIntervalEndInfos() {
@@ -317,6 +428,16 @@ public class LdpSpecialPropertiesInfo {
     private boolean isDefaultIntervalEnd(PropertyInfo pi) {
 	return LdpInfo.isEncoded(pi) && !target.isIgnored(pi)
 		&& LdpUtil.isTrueIgnoringCase(pi.taggedValue("defaultIntervalEnd"));
+    }
+
+    private boolean isPredecessorIntervalStart(PropertyInfo pi) {
+	return LdpInfo.isEncoded(pi) && !target.isIgnored(pi)
+		&& LdpUtil.isTrueIgnoringCase(pi.taggedValue("predecessorIntervalStart"));
+    }
+
+    private boolean isSuccessorIntervalStart(PropertyInfo pi) {
+	return LdpInfo.isEncoded(pi) && !target.isIgnored(pi)
+		&& LdpUtil.isTrueIgnoringCase(pi.taggedValue("successorIntervalStart"));
     }
 
     private boolean isIdentifierProperty(PropertyInfo pi) {
@@ -588,6 +709,22 @@ public class LdpSpecialPropertiesInfo {
      */
     public boolean isMultipleDefaultIntervalEndsEncountered() {
 	return multipleDefaultIntervalEndsEncountered;
+    }
+
+    public PropertyInfo getSuccessorIntervalStartPiOfCi() {
+	return successorIntervalStartPiOfCi;
+    }
+
+    public boolean isMultipleSuccessorIntervalStartsEncountered() {
+	return multipleSuccessorIntervalStartsEncountered;
+    }
+
+    public PropertyInfo getPredecessorIntervalStartPiOfCi() {
+	return predecessorIntervalStartPiOfCi;
+    }
+    
+    public boolean isMultiplePredecessorIntervalStartsEncountered() {
+	return multiplePredecessorIntervalStartsEncountered;
     }
 
 }

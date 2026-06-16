@@ -47,6 +47,7 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +70,7 @@ import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.PropertyRestrictions;
 import de.interactive_instruments.shapechange.core.RuleRegistry;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
@@ -177,14 +179,17 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
     public static LdproxyStoredQueryDefinitions storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
     public static String providerConfigLabelTemplate = null;
-    public static boolean queryProcessingSkipUnusedPipelineSteps = false;
+    public static Optional<Boolean> queryProcessingSkipUnusedPipelineSteps = Optional.empty();
     public static SortedSet<GeometryType> providesGeometryTypes = new TreeSet<>();
+    public static PropertyRestrictions propertyRestrictions = new PropertyRestrictions();
 
     public static boolean propertyIdByTaggedValue = false;
     public static boolean associationRoleIdByTaggedValue = false;
     public static boolean propertyAlias = false;
     public static String taggedValueForPropertyId = null;
     public static String taggedValueForAssociationRoleId = null;
+    public static boolean isApplyRelTemplate = true;
+    public static Pattern tvPatternForRelTemplateApplication = Pattern.compile("^[\\d\\.-]+$");
 
     public static SortedSet<String> dbSchemaNames = new TreeSet<String>();
 
@@ -232,8 +237,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String allFeaturesTableName = null;
     public static String allFeaturesTableIdColumn = null;
     public static String allFeaturesTableTypeColumn = null;
+    public static boolean allFeaturesTableWithTypeRestrictions = false;
+    public static String allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName = null;
 
     public static boolean gidCatalogObjectKeyAsFeatureRef = false;
+    public static String gidColPrefixForCodelistValuedProperty = "";
+    public static String gidColSuffixForCodelistValuedProperty = "_href";
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -322,14 +331,20 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    isWriteApi = options.parameterAsBoolean(this.getClass().getName(), Ldproxy2Constants.PARAM_IS_WRITE_API,
 		    false);
 
-	    allFeaturesTable = options.parameterAsBoolean(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_ALLFEATURESTABLE, false);
+	    allFeaturesTable = mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_ALLFEATURESTABLE);
 	    allFeaturesTableName = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ALLFEATURESTABLE_NAME, "allfeatures", false, true);
 	    allFeaturesTableIdColumn = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ALLFEATURESTABLE_ID_COLUMN, "id", false, true);
 	    allFeaturesTableTypeColumn = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ALLFEATURESTABLE_TYPE_COLUMN, "type", false, true);
+
+	    allFeaturesTableWithTypeRestrictions = mainAppSchema
+		    .matches(Ldproxy2Constants.RULE_ALL_ALLFEATURESTABLE_TYPERESTRICTIONS);
+	    allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName = options.parameterAsString(
+		    this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_ALLFEATURESTABLE_TYPERESTRICTIONS_DEFAULT_TOP_FEATURETYPE, null, false,
+		    true);
 
 	    // change the default documentation template?
 //	    documentationTemplate = options.parameter(this.getClass().getName(),
@@ -391,8 +406,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		result.addError(this, 138, mainAppSchema.name());
 	    }
 
-	    queryProcessingSkipUnusedPipelineSteps = options.parameterAsBoolean(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS, false);
+	    if (options.hasParameter(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS)) {
+		queryProcessingSkipUnusedPipelineSteps = Optional
+			.of(options.parameterAsBoolean(this.getClass().getName(),
+				Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS, false));
+	    }
 
 	    taggedValueForAssociationRoleId = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ASSOCROLE_ID_TAGGED_VALUE, null, false, true);
@@ -515,6 +534,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	    gidCatalogObjectKeyAsFeatureRef = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF, false);
 
+	    gidColPrefixForCodelistValuedProperty = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP, "", false, true);
+	    gidColSuffixForCodelistValuedProperty = options.parameterAsString(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_GID_COL_SUFFIX_CODELISTVALUEDPROP, "_href", true, true);
+
 	    uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME, null,
 		    false, true);
 	    measureValueLabel = options.parameterAsString(this.getClass().getName(),
@@ -634,6 +658,16 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    }
 		    if (!dropSqlEncodingInfosForTypes.isEmpty()) {
 			sqlEncodingInfos.dropInfosForTypes(dropSqlEncodingInfosForTypes);
+		    }
+		}
+
+		List<Element> prsElmts = XMLUtil.getChildElements(advancedProcessConfigElmt, "PropertyRestrictions");
+
+		if (prsElmts.isEmpty()) {
+		    result.addInfo(this, 146);
+		} else {
+		    for (Element prsElmt : prsElmts) {
+			propertyRestrictions.merge(PropertyRestrictions.fromXml(prsElmt));
 		    }
 		}
 
@@ -1334,8 +1368,12 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	allFeaturesTableName = null;
 	allFeaturesTableIdColumn = null;
 	allFeaturesTableTypeColumn = null;
+	allFeaturesTableWithTypeRestrictions = false;
+	allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName = null;
 
 	gidCatalogObjectKeyAsFeatureRef = false;
+	gidColPrefixForCodelistValuedProperty = "";
+	gidColSuffixForCodelistValuedProperty = "_href";
 
 	dbSchemaNames = new TreeSet<String>();
 
@@ -1383,7 +1421,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	taggedValueForPropertyId = null;
 	taggedValueForAssociationRoleId = null;
 	propertyIdByTaggedValue = false;
-	queryProcessingSkipUnusedPipelineSteps = false;
+	queryProcessingSkipUnusedPipelineSteps = Optional.empty();
 	associationRoleIdByTaggedValue = false;
 	propertyAlias = false;
 
@@ -1414,6 +1452,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	bbJsonFgBuilder = null;
 	sqlEncodingInfos = new SqlEncodingInfos();
 	storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
+	propertyRestrictions = new PropertyRestrictions();
 
 	mapEntryParamInfos = null;
 
@@ -1450,6 +1489,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     @Override
     public void registerRulesAndRequirements(RuleRegistry r) {
 
+	r.addRule(Ldproxy2Constants.RULE_ALL_ALLFEATURESTABLE);
+	r.addRule(Ldproxy2Constants.RULE_ALL_ALLFEATURESTABLE_TYPERESTRICTIONS);
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD);
 	r.addRule(Ldproxy2Constants.RULE_ALL_ASSOCROLEIDBYTV);
 	r.addRule(Ldproxy2Constants.RULE_ALL_CORETABLE);
@@ -1608,6 +1649,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		+ "' either is not set or has no value. The conversion rule will be ignored.";
 	case 142 -> "The target configuration does not contain ldproxy SRS name mappings.";
 	case 143 -> "The target configuration does not contain ldproxy uom mappings.";
+	case 144 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'predecessorIntervalStart') as predecessor (temporal) interval start property. Multiple predecessor interval start properties per type are not allowed. None will be marked as predecessor interval start.";
+	case 145 ->
+	    "??Type '$1$' has multiple properties (direct and maybe inherited) marked (via tagged value 'successorIntervalStart') as successor (temporal) interval start property. Multiple successor interval start properties per type are not allowed. None will be marked as successor interval start.";
+	case 146 -> "The target configuration does not contain property restrictions.";
 
 	case 10001 -> "Generating ldproxy configuration items for application schema $1$.";
 	case 10002 -> "Diagnostics-only mode. All output to files is suppressed.";

@@ -80,6 +80,8 @@ public class LdpSqlProvider extends AbstractLdpProvider {
 	    if (ci.category() == Options.MIXIN || (Ldproxy2Target.isDatatypeOrUnionEncodedLikeDatatype(ci)
 		    && ci.matches(Ldproxy2Constants.RULE_CLS_DATATYPES_ONETOMANY_SEVERAL_TABLES))) {
 		pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
+	    } else {
+		pec.setSourceTable(sqlProviderHelper.databaseTableName(ci, false));
 	    }
 
 	    // 2024-11-13 JE: unclear ...

@@ -47,6 +47,7 @@ import org.w3c.dom.Element;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.ShapeChangeConstants;
 import de.interactive_instruments.shapechange.core.ShapeChangeException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 
@@ -57,8 +58,6 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
  *
  */
 public class MapEntries implements MessageSource {
-
-    public static final String SC_CONFIG_NS = "http://www.interactive-instruments.de/ShapeChange/Configuration/1.1";
 
     protected List<ProcessMapEntry> mapEntries = new ArrayList<>();
 
@@ -86,10 +85,10 @@ public class MapEntries implements MessageSource {
 
 	    Document document = db.newDocument();
 
-	    Element root = document.createElementNS(SC_CONFIG_NS, "mapEntries");
+	    Element root = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "mapEntries");
 	    document.appendChild(root);
 
-	    XMLUtil.addAttribute(document, root, "xmlns", SC_CONFIG_NS);
+	    XMLUtil.addAttribute(document, root, "xmlns", ShapeChangeConstants.SC_CONFIG_NS);
 
 	    // sort list of map entries
 	    List<ProcessMapEntry> sortedMapEntries = mapEntries.stream()
@@ -97,7 +96,7 @@ public class MapEntries implements MessageSource {
 
 	    for (ProcessMapEntry pme : sortedMapEntries) {
 
-		Element e1 = document.createElementNS(SC_CONFIG_NS, "MapEntry");
+		Element e1 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "MapEntry");
 		root.appendChild(e1);
 
 		XMLUtil.addAttribute(document, e1, "type", pme.getType());
@@ -109,7 +108,7 @@ public class MapEntries implements MessageSource {
 		    XMLUtil.addAttribute(document, e1, "param", pme.getParam());
 		}
 	    }
-	    
+
 	    XMLUtil.writeXml(document, outputFile);
 
 	} catch (ShapeChangeException | ParserConfigurationException e) {

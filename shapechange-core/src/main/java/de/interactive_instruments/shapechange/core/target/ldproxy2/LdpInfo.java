@@ -330,7 +330,8 @@ public class LdpInfo {
      * Identify the collection IDs for the value type of the property. The value
      * type must be a type with identity. A collection ID is returned for each case
      * in the inheritance hierarchy of the value type (starting with the value type,
-     * and going down) that is encoded and not abstract.
+     * and going down) that is encoded, not abstract, and within the schemas
+     * selected for processing.
      * 
      * @param pi Property to determine the collection IDs for
      * @return collection IDs for the value type of the property; can be empty
@@ -349,8 +350,9 @@ public class LdpInfo {
 
 		SortedSet<ClassInfo> typeSet = typeCi.subtypesInCompleteHierarchy();
 		typeSet.add(typeCi);
-		List<ClassInfo> relevantTypes = typeSet.stream()
-			.filter(ci -> !ci.isAbstract() && LdpInfo.isEncoded(typeCi)).collect(Collectors.toList());
+		List<ClassInfo> relevantTypes = typeSet.stream().filter(
+			ci -> !ci.isAbstract() && LdpInfo.isEncoded(typeCi) && ci.model().isInSelectedSchemas(ci))
+			.collect(Collectors.toList());
 		for (ClassInfo ci : relevantTypes) {
 		    collectionIds.add(LdpUtil.formatCollectionId(ci.name()));
 		}
@@ -365,25 +367,37 @@ public class LdpInfo {
 
     public static String id(PropertyInfo pi) {
 
-	String tv = null;
+	String tvRes = null;
+	String tv1 = null;
 
 	if (Ldproxy2Target.propertyIdByTaggedValue && StringUtils.isNotBlank(Ldproxy2Target.taggedValueForPropertyId)) {
-	    tv = pi.taggedValue(Ldproxy2Target.taggedValueForPropertyId);
-	}
-	
-	if(!pi.isAttribute() && Ldproxy2Target.associationRoleIdByTaggedValue) {
-	    String tv2 = null;
-	    if(StringUtils.isNotBlank(Ldproxy2Target.taggedValueForAssociationRoleId)) {
-		tv2 = pi.taggedValue(Ldproxy2Target.taggedValueForAssociationRoleId);
+	    tv1 = pi.taggedValue(Ldproxy2Target.taggedValueForPropertyId);
+	    tvRes = tv1;
+
+	    if (StringUtils.isNotBlank(tv1) && Ldproxy2Target.isApplyRelTemplate
+		    && Ldproxy2Target.tvPatternForRelTemplateApplication.matcher(tv1).matches()) {
+		tvRes = applyRelTemplate(tv1);
 	    }
-	    if(StringUtils.isBlank(tv2) && StringUtils.isNotBlank(tv)) {
-		// temporary workaround
-		tv2 = "rel_"+tv.replaceAll("[\\.-]", "");
-	    }
-	    tv = tv2;
 	}
 
-	return StringUtils.isBlank(tv) ? pi.name() : tv.toLowerCase(Locale.ENGLISH);
+	if (!pi.isAttribute() && Ldproxy2Target.associationRoleIdByTaggedValue) {
+	    String tv2 = null;
+	    if (StringUtils.isNotBlank(Ldproxy2Target.taggedValueForAssociationRoleId)) {
+		tv2 = pi.taggedValue(Ldproxy2Target.taggedValueForAssociationRoleId);
+	    }
+	    if (StringUtils.isBlank(tv2) && StringUtils.isNotBlank(tv1) && Ldproxy2Target.isApplyRelTemplate
+		    && Ldproxy2Target.tvPatternForRelTemplateApplication.matcher(tv1).matches()) {
+		// temporary workaround until rule for creating GVD relations has been defined
+		tv2 = applyRelTemplate(tv1);
+	    }
+	    tvRes = tv2;
+	}
+
+	return StringUtils.isBlank(tvRes) ? pi.name() : tvRes.toLowerCase(Locale.ENGLISH);
+    }
+
+    private static String applyRelTemplate(String tv) {
+	return "rel_" + tv.replaceAll("[\\.-]", "");
     }
 
     public static Optional<String> alias(PropertyInfo pi) {

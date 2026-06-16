@@ -50,6 +50,7 @@ import org.w3c.dom.Element;
 
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.ShapeChangeConstants;
 import de.interactive_instruments.shapechange.core.ShapeChangeException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.XmlNamespace;
@@ -65,8 +66,6 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
  *
  */
 public class XmlEncodingInfos implements MessageSource {
-
-    public static final String SC_CONFIG_NS = "http://www.interactive-instruments.de/ShapeChange/Configuration/1.1";
 
     protected SortedSet<ModelElementXmlEncoding> modelElementEncodings = new TreeSet<>();
     protected SortedSet<XmlNamespace> xmlNamespaces = new TreeSet<>(XmlNamespace.comparator);
@@ -159,10 +158,10 @@ public class XmlEncodingInfos implements MessageSource {
 
 	    Document document = db.newDocument();
 
-	    Element root = document.createElementNS(SC_CONFIG_NS, "XmlEncodingInfos");
+	    Element root = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "XmlEncodingInfos");
 	    document.appendChild(root);
 
-	    XMLUtil.addAttribute(document, root, "xmlns", SC_CONFIG_NS);
+	    XMLUtil.addAttribute(document, root, "xmlns", ShapeChangeConstants.SC_CONFIG_NS);
 
 	    // sort list of model element encodings
 	    List<ModelElementXmlEncoding> sortedModelElementEncodings = modelElementEncodings.stream()
@@ -170,12 +169,12 @@ public class XmlEncodingInfos implements MessageSource {
 
 	    if (!sortedModelElementEncodings.isEmpty()) {
 
-		Element e1 = document.createElementNS(SC_CONFIG_NS, "modelElementEncodings");
+		Element e1 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "modelElementEncodings");
 		root.appendChild(e1);
 
 		for (ModelElementXmlEncoding mexe : sortedModelElementEncodings) {
 
-		    Element e2 = document.createElementNS(SC_CONFIG_NS, "ModelElementXmlEncoding");
+		    Element e2 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "ModelElementXmlEncoding");
 		    e1.appendChild(e2);
 
 		    if (mexe.getApplicationSchemaName() != null) {
@@ -192,12 +191,12 @@ public class XmlEncodingInfos implements MessageSource {
 
 	    if (!xmlNamespaces.isEmpty()) {
 
-		Element e1 = document.createElementNS(SC_CONFIG_NS, "namespaces");
+		Element e1 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "namespaces");
 		root.appendChild(e1);
 
 		for (XmlNamespace xn : xmlNamespaces) {
 
-		    Element e2 = document.createElementNS(SC_CONFIG_NS, "XmlNamespace");
+		    Element e2 = document.createElementNS(ShapeChangeConstants.SC_CONFIG_NS, "XmlNamespace");
 		    e1.appendChild(e2);
 
 		    XMLUtil.addAttribute(document, e2, "nsabr", xn.getNsabr());
@@ -210,7 +209,7 @@ public class XmlEncodingInfos implements MessageSource {
 		    }
 		}
 	    }
-	    
+
 	    XMLUtil.writeXml(document, outputFile);
 
 	} catch (ShapeChangeException | ParserConfigurationException e) {

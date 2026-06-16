@@ -460,9 +460,13 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	}
 
 	scConfigGmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
-	scConfigGmlBuilder.useAlias(gmlUseAlias);
+	if (gmlUseAlias) {
+	    scConfigGmlBuilder.useAlias(gmlUseAlias);
+	}
 	scConfigGmlBuilder.useSurfaceAndCurve(gmlUseSurfaceAndCurve);
-	scConfigGmlBuilder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
+	if (appendTemporalSuffixToGmlId) {
+	    scConfigGmlBuilder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
+	}
 
 	if (!genericValueTypes.isEmpty()) {
 	    for (ClassInfo gvt : genericValueTypes.values()) {

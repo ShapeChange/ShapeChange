@@ -414,7 +414,7 @@ fragments:
           required: true
           minOccurrence: 1
       attExtDt1:
-        sourcePath: attextdt1_fk
+        sourcePath: attextdt1_fkdt
         type: FEATURE_REF
         valueType: INTEGER
         constraints:

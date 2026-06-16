@@ -41,15 +41,15 @@ public class Ldproxy2Constants {
     public static final String PLATFORM = "ldp2";
 
     public static final long UNITTEST_UNIX_TIME = 1000000000000L;
-    
+
     public static final String NS_GMD = "http://www.isotc211.org/2005/gmd";
     public static final String NSABR_GMD = "gmd";
     public static final String NS_GCO = "http://www.isotc211.org/2005/gco";
     public static final String NSABR_GCO = "gco";
-    
+
     public static final String LI_LINEAGE_FRAGMENT_NAME = "li_lineage";
     public static final String LI_LINEAGE_OBJECT_TYPE = "LI_Lineage";
-    
+
     public static final String MEASURE_FRAGMENT_NAME = "measure";
     public static final String MEASURE_OBJECT_TYPE = "Measure";
 
@@ -63,9 +63,9 @@ public class Ldproxy2Constants {
     public static final String ME_PARAM_LINK_INFOS = "linkInfos";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_URL_TEMPLATE = "urlTemplate";
     public static final String ME_PARAM_LINK_INFOS_CHARACT_TABLE_NAME = "tableName";
-    
+
     public static final String ME_PARAM_MEASURE = "measure";
-    
+
     /**
      * A characteristic for the parameter {@value #ME_PARAM_LINK_INFOS} that gives
      * information about the category of the conceptual type that is identified by
@@ -83,7 +83,6 @@ public class Ldproxy2Constants {
      * values (NOTE: check is case-insensitive).
      */
     public static final String ME_PARAM_LINK_INFOS_CHARACT_REP_CAT_VALIDATION_REGEX = "(?i:(datatype|codelist))";
-    
 
     public static final String ME_PARAM_IGNORE_FOR_TYPE_FROM_SEL_SCHEMA = "ignoreForTypeFromSchemaSelectedForProcessing";
 
@@ -96,13 +95,13 @@ public class Ldproxy2Constants {
 
     public static final String PARAM_API_ID = "apiId";
     public static final String PARAM_IS_WRITE_API = "isWriteApi";
-    public static final String PARAM_ALLFEATURESTABLE = "allFeaturesTable";
     public static final String PARAM_ALLFEATURESTABLE_NAME = "allFeaturesTableName";
     public static final String PARAM_ALLFEATURESTABLE_ID_COLUMN = "allFeaturesTableIdColumn";
     public static final String PARAM_ALLFEATURESTABLE_TYPE_COLUMN = "allFeaturesTableTypeColumn";
-    
+    public static final String PARAM_ALLFEATURESTABLE_TYPERESTRICTIONS_DEFAULT_TOP_FEATURETYPE = "allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName";
+
     public static final String PARAM_COLLECTION_ID_FORMAT = "collectionIdFormat";
-    
+
     public static final String PARAM_ASSOC_TABLE_COLUMN_SUFFIX = "associativeTableColumnSuffix";
     public static final String PARAM_CFG_TEMPLATE_PATH = "cfgTemplatePath";
     public static final String PARAM_CODE_TARGET_TAG_NAME = "codeTargetTagName";
@@ -117,13 +116,13 @@ public class Ldproxy2Constants {
     public static final String PARAM_FK_COLUMN_SUFFIX_DATATYPE = "foreignKeyColumnSuffixDatatype";
     public static final String PARAM_FK_COLUMN_SUFFIX_CODELIST = "foreignKeyColumnSuffixCodelist";
     /**
-     * Replaces the value of parameter {@value #PARAM_FK_COLUMN_SUFFIX} if
-     * the property represented is a reflexive property. This parameter is optional.
+     * Replaces the value of parameter {@value #PARAM_FK_COLUMN_SUFFIX} if the
+     * property represented is a reflexive property. This parameter is optional.
      */
     public static final String PARAM_REFLEXIVE_REL_FIELD_SUFFIX = "reflexiveRelationshipFieldSuffix";
 
     public static final String PARAM_EMBEDDING_FOR_FEATURE_REFS = "embeddingForFeatureRefs";
-        
+
     public static final String PARAM_FRAGMENTS = "enableFragments";
     public static final String PARAM_ENABLE_CODELISTS = "enableCodelists";
     public static final String PARAM_ENABLE_CRS = "enableCrs";
@@ -133,10 +132,10 @@ public class Ldproxy2Constants {
     public static final String PARAM_FEATURES_GEOJSON = "enableFeaturesGeoJson";
     public static final String PARAM_FEATURES_JSONFG = "enableFeaturesJsonFg";
     public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
-    
+
     public static final String PARAM_DATASETCHANGES_MODE = "datasetChangesMode";
     public static final String PARAM_DATASETCHANGES_SYNCHPERIODIC = "datasetChangesSyncPeriodic";
-    
+
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
@@ -154,10 +153,12 @@ public class Ldproxy2Constants {
     public static final String PARAM_GML_USE_ALIAS = "gmlUseAlias";
     public static final String PARAM_GML_USE_SURFACE_AND_CURVE = "gmlUseSurfaceAndCurve";
     public static final String PARAM_GML_IDENTIFY_CODELIST_PROPERTIES = "gmlIdentifyCodelistProperties";
-    
+
     public static final String PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF = "gidCatalogObjectKeyAsFeatureRef";
-        
-    //    public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
+    public static final String PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP = "gidColPrefixForCodelistValuedProperty";
+    public static final String PARAM_GID_COL_SUFFIX_CODELISTVALUEDPROP = "gidColSuffixForCodelistValuedProperty";
+
+    // public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
     public static final String PARAM_JSONFG_FEATURE_TYPE = "jsonFgFeatureType";
 //    public static final String PARAM_JSONFG_INCLUDE_IN_GEOJSON = "jsonFgIncludeInGeoJson";
 
@@ -180,7 +181,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_UOM_TV_NAME = "uomTaggedValueName";
     public static final String PARAM_MEASURE_VALUE_LABEL = "measureValueLabel";
     public static final String PARAM_MEASURE_UOM_LABEL = "measureUomLabel";
-    
+
     public static final String PARAM_CORETABLE = "coretable";
     public static final String PARAM_CORETABLE_PK_COLUMN = "coretablePkColumn";
     public static final String PARAM_CORETABLE_ID_COLUMN = "coretableIdColumn";
@@ -192,7 +193,7 @@ public class Ldproxy2Constants {
      * JSON-encoded references within the coretable approach is affirmed.
      */
 //    public static final String PARAM_CORETABLE_JSON_FEATURE_REF_WITH_ANY_COLLECTION_ID = "coretableJsonFeatureRefWithAnyCollectionId";
-    
+
     // PARAMETERS TO GENERATE A TILE PROVIDER CONFIGURATION
     public static final String PARAM_ENABLE_TILES = "enableTiles";
     public static final String PARAM_TILESET_DEFAULT_SPARSE = "tilesetDefaultSparse";
@@ -202,7 +203,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_TILESET_DEFAULT_MAX_LEVEL_WMQ = "tilesetDefaultMaxLevelWebMercatorQuad";
     public static final String PARAM_TILESET_DEFAULT_DEFAULT_LEVEL_WMQ = "tilesetDefaultDefaultLevelWebMercatorQuad";
     public static final String PARAM_DYNAMIC_TILES_CACHE_SEEDED_MAX_LEVEL_WMQ = "dynamicTilesCacheSeededMaxLevelWebMercatorQuad";
-    
+
     public static final String PARAM_CORETABLE_SOURCE_COLUMN = "coretableSourceColumn";
     public static final String PARAM_CORETABLE_REF_COLUMN = "coretableRefColumn";
     public static final String PARAM_CORETABLE_RELATIONS_TABLE = "coretableRelationsTable";
@@ -210,19 +211,21 @@ public class Ldproxy2Constants {
     public static final String PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN = "coretableInverseRelationNameColumn";
     public static final String PARAM_CORETABLE_VERSION = "coretableVersion";
     public static final String PARAM_CORETABLE_VERSION_COLUMN = "coretableVersionColumn";
-    
+
     // Building block: Projections
     public static final String PARAM_PROJECTIONS_ENABLE = "enableProjections";
-    
+
     // Building block: Sorting
     public static final String PARAM_SORTING_ENABLE = "enableSorting";
     public static final String PARAM_SORTING_INCLUDED = "sortingIncluded";
     public static final String PARAM_SORTING_EXCLUDED = "sortingExcluded";
     public static final String PARAM_SORTING_PATH_SEPARATOR = "sortingPathSeparator";
-    
+
     // Building block: Features - Result Type
     public static final String PARAM_FEATURES_RESULT_TYPE_ENABLE = "enableFeaturesResultType";
-        
+
+    public static final String RULE_ALL_ALLFEATURESTABLE = "rule-ldp2-all-allFeaturesTable";
+    public static final String RULE_ALL_ALLFEATURESTABLE_TYPERESTRICTIONS = "rule-ldp2-all-allFeaturesTable-typeRestrictions";
     public static final String RULE_ALL_ASSOCIATIVETABLES_WITH_SEPARATE_PK_FIELD = "rule-ldp2-all-associativeTablesWithSeparatePkField";
     public static final String RULE_ALL_CORETABLE = "rule-ldp2-all-coretable";
     public static final String RULE_ALL_DOCUMENTATION = "rule-ldp2-all-documentation";
@@ -245,7 +248,7 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
     public static final String RULE_PROP_MEASURE = "rule-ldp2-prop-measure";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
-    
+
     public static final String SQL_PREFIX_FLATTENED_TO_PARENT_TABLE = "flattenedTo:";
 
 }

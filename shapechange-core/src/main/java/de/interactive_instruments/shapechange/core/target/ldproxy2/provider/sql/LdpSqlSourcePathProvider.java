@@ -229,8 +229,9 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 				    String associativeTablePath = StringUtils.substringBeforeLast(idReferencePath, "/");
 				    String col = StringUtils.substringAfterLast(idReferencePath, "/");
 
-				    s = associativeTablePath + "[" + col + "=" + Ldproxy2Target.allFeaturesTableIdColumn
-					    + "]" + Ldproxy2Target.allFeaturesTableName;
+				    s = associativeTablePath + "/[" + col + "="
+					    + Ldproxy2Target.allFeaturesTableIdColumn + "]"
+					    + Ldproxy2Target.allFeaturesTableName;
 
 				} else {
 				    s = "[" + idReferencePath + "=" + Ldproxy2Target.allFeaturesTableIdColumn + "]"
@@ -803,7 +804,8 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		String colBaseName = pi.taggedValue("AAA:Kennung").toLowerCase(Locale.ENGLISH);
 		if (pi.categoryOfValue() == Options.CODELIST) {
-		    return colBaseName + "_href";
+		    return Ldproxy2Target.gidColPrefixForCodelistValuedProperty + colBaseName
+			    + Ldproxy2Target.gidColSuffixForCodelistValuedProperty;
 		} else {
 		    return colBaseName;
 		}

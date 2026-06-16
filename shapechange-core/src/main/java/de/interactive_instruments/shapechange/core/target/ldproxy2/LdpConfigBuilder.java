@@ -505,9 +505,6 @@ public class LdpConfigBuilder {
 	ImmutableQueryGeneratorSettings queryGeneration = cfg.builder().entity().provider().queryGenerationBuilder()
 		.computeNumberMatched(true).build();
 
-	ImmutableQueryProcessorSettings queryProcessor = cfg.builder().entity().provider().queryProcessingBuilder()
-		.skipUnusedPipelineSteps(Ldproxy2Target.queryProcessingSkipUnusedPipelineSteps).build();
-
 	Optional<EpsgCrs> nativeCrsOpt;
 	if (Ldproxy2Target.sridConfigured) {
 	    ImmutableEpsgCrs nativeCrs = cfg.builder().entity().provider().nativeCrsBuilder().code(Ldproxy2Target.srid)
@@ -519,8 +516,14 @@ public class LdpConfigBuilder {
 
 	ImmutableFeatureProviderSqlData.Builder featureProviderConfigBuilder = cfg.builder().entity().provider()
 		.id(Ldproxy2Target.mainId).connectionInfo(connectionInfo).sourcePathDefaults(sourcePathDefaults)
-		.queryGeneration(queryGeneration).queryProcessing(queryProcessor).nativeCrs(nativeCrsOpt)
-		.types(providerTypeDefinitions).fragments(featureProviderFragmentDefinitions);
+		.queryGeneration(queryGeneration).nativeCrs(nativeCrsOpt).types(providerTypeDefinitions)
+		.fragments(featureProviderFragmentDefinitions);
+
+	if (Ldproxy2Target.queryProcessingSkipUnusedPipelineSteps.isPresent()) {
+	    ImmutableQueryProcessorSettings queryProcessor = cfg.builder().entity().provider().queryProcessingBuilder()
+		    .skipUnusedPipelineSteps(Ldproxy2Target.queryProcessingSkipUnusedPipelineSteps.get()).build();
+	    featureProviderConfigBuilder.queryProcessing(queryProcessor);
+	}
 
 	if (Ldproxy2Target.nativeTimeZone != null) {
 	    featureProviderConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
