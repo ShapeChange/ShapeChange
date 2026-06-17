@@ -71,39 +71,36 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageCont
 import de.interactive_instruments.shapechange.core.model.AssociationInfo;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
-import de.interactive_instruments.shapechange.core.target.coretable.CoretableCascadeRule.RelDirection;
+import de.interactive_instruments.shapechange.core.target.coretable.CoretableNavigableRole.RelDirection;
 import de.interactive_instruments.shapechange.core.transformation.flattening.PropertySetEdge;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class CoretableCascadeRuleWriter implements MessageSource {
+public class CoretableNavigableRolesConfigWriter implements MessageSource {
 
     private ShapeChangeResult result;
 
     private String dbSchemaName;
 
-    private SortedSet<CoretableCascadeRule> cascadeRules = new TreeSet<>();
-    private DirectedMultigraph<String, PropertySetEdge> graph = new DirectedMultigraph<String, PropertySetEdge>(
+    private SortedSet<CoretableNavigableRole> navigableRoles = new TreeSet<>();
+
+    private DirectedMultigraph<String, PropertySetEdge> ownershipRolesGraph = new DirectedMultigraph<String, PropertySetEdge>(
 	    PropertySetEdge.class);
 
-    public CoretableCascadeRuleWriter(ShapeChangeResult result, String dbSchemaName) {
+    public CoretableNavigableRolesConfigWriter(ShapeChangeResult result, String dbSchemaName) {
 	this.result = result;
 	this.dbSchemaName = dbSchemaName;
     }
 
-    public void computeCascadeRules(SortedSet<ClassInfo> featureObjectAndMixinTypes, String appSchema,
+    public void computeNavigableRolesConfig(SortedSet<ClassInfo> featureObjectAndMixinTypes, String appSchema,
 	    String appSchemaVersion) {
 
-	cascadeRules = new TreeSet<>();
+	navigableRoles = new TreeSet<>();
 
 	/*
-	 * Identify associations between the given classes, in which a navigable
-	 * association role has tag 'existentiallyDependentPart' with boolean value
-	 * 'true'. That association role references the existentially dependent part in
-	 * a whole-part relationship (where a part may also be shared by multiple
-	 * wholes).
+	 * Identify associations between classes in the schemas selected for processing.
 	 */
 
 	SortedSet<AssociationInfo> ais = new TreeSet<>();
@@ -113,83 +110,54 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 		if (!pi.isAttribute()) {
 		    AssociationInfo ai = pi.association();
 		    if (featureObjectAndMixinTypes.contains(ai.end1().inClass())
-			    && featureObjectAndMixinTypes.contains(ai.end2().inClass())
-			    && (isExistentiallyDependentPart(ai.end1()) || isExistentiallyDependentPart(ai.end2()))) {
+			    && featureObjectAndMixinTypes.contains(ai.end2().inClass())) {
 			ais.add(ai);
 		    }
 		}
 	    }
 	}
 
-	/*
-	 * For each such association, determine the non-abstract (sub-)classes on both
-	 * end(s) (thereby excluding mixins). Add a cascade rule for each combination.
-	 */
-
-	SortedSet<ClassInfo> wholeFeatureTypes = new TreeSet<>();
-	SortedSet<ClassInfo> partFeatureTypes = new TreeSet<>();
+	SortedSet<ClassInfo> sourceFeatureTypesForOwnershipRole = new TreeSet<>();
+	SortedSet<ClassInfo> targetFeatureTypesForOwnershipRole = new TreeSet<>();
 
 	for (AssociationInfo ai : ais) {
 
-	    PropertyInfo wholeOwnedRole = isExistentiallyDependentPart(ai.end1()) ? ai.end1() : ai.end2();
+	    checkNavigabilityOfExistentiallyDependentPartRole(ai.end1());
+	    checkNavigabilityOfExistentiallyDependentPartRole(ai.end2());
 
-	    if (!wholeOwnedRole.isNavigable()) {
-
-		MessageContext mc = result.addError(this, 100, wholeOwnedRole.name(), wholeOwnedRole.inClass().name());
-		if (mc != null) {
-		    mc.addDetail(this, 0, wholeOwnedRole.fullName());
-		}
-
-	    } else {
-
-		RelDirection relDirection;
-		if (!wholeOwnedRole.reverseProperty().isNavigable() || wholeOwnedRole == ai.end2()) {
-		    relDirection = RelDirection.forward;
-		} else {
-		    relDirection = RelDirection.inverse;
-		}
-
-		for (ClassInfo wholeCi : relevantClassesInHierarchy(wholeOwnedRole.inClass(),
-			featureObjectAndMixinTypes)) {
-
-		    wholeFeatureTypes.add(wholeCi);
-
-		    for (ClassInfo partCi : relevantClassesInHierarchy(wholeOwnedRole.typeClass(),
-			    featureObjectAndMixinTypes)) {
-
-			partFeatureTypes.add(partCi);
-
-			CoretableCascadeRule rule = new CoretableCascadeRule();
-			rule.setAppSchema(appSchema);
-			rule.setPartFeatureType(partCi);
-			rule.setRelDirection(relDirection);
-			rule.setVersion(appSchemaVersion);
-			rule.setWholeFeatureType(wholeCi);
-			rule.setWholeOwnedRole(wholeOwnedRole);
-			cascadeRules.add(rule);
-		    }
-		}
-	    }
+	    identifyNavigableRole(ai.end1(), appSchema, appSchemaVersion, featureObjectAndMixinTypes,
+		    sourceFeatureTypesForOwnershipRole, targetFeatureTypesForOwnershipRole);
+	    identifyNavigableRole(ai.end2(), appSchema, appSchemaVersion, featureObjectAndMixinTypes,
+		    sourceFeatureTypesForOwnershipRole, targetFeatureTypesForOwnershipRole);
 	}
+
+	computeReflexiveRelationshipsAndCyclesInOwnershipRelationGraph(sourceFeatureTypesForOwnershipRole,
+		targetFeatureTypesForOwnershipRole);
+    }
+
+    private void computeReflexiveRelationshipsAndCyclesInOwnershipRelationGraph(
+	    SortedSet<ClassInfo> sourceFeatureTypesForOwnershipRole,
+	    SortedSet<ClassInfo> targetFeatureTypesForOwnershipRole) {
 
 	boolean hasCircularDependencies = false;
 
 	result.addInfo(this, 1001);
 
 	SortedSet<ClassInfo> wholeAndPartFeatureTypes = new TreeSet<>();
-	wholeAndPartFeatureTypes.addAll(wholeFeatureTypes);
-	wholeAndPartFeatureTypes.addAll(partFeatureTypes);
+	wholeAndPartFeatureTypes.addAll(sourceFeatureTypesForOwnershipRole);
+	wholeAndPartFeatureTypes.addAll(targetFeatureTypesForOwnershipRole);
 
 	/*
-	 * Create a directed graph from the cascade rules. Check for any loops or cycles
-	 * in it. If one is detected, log an error and prevent writing cascade rules.
+	 * Create a directed graph from navigable roles with
+	 * isExistentiallyDependentPart = true. Check for any loops or cycles in it. If
+	 * one is detected, log an error and prevent writing the navigable roles config.
 	 * Otherwise, determine and log the maximum depth of the trees that each node in
 	 * the graph spans.
 	 */
 
 	// establish graph vertices
 	for (ClassInfo wholeAndPartFeatureType : wholeAndPartFeatureTypes) {
-	    graph.addVertex(wholeAndPartFeatureType.pkg().name() + "::" + wholeAndPartFeatureType.name());
+	    ownershipRolesGraph.addVertex(wholeAndPartFeatureType.pkg().name() + "::" + wholeAndPartFeatureType.name());
 	}
 
 	// establish edges
@@ -200,50 +168,51 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 	 */
 	Map<String, Set<String>> refTypeInfo = new TreeMap<String, Set<String>>();
 
-	for (ClassInfo wholeFeatureType : wholeFeatureTypes) {
+	for (ClassInfo sourceFeatureType : sourceFeatureTypesForOwnershipRole) {
 
-	    String wholeFeatureTypeKey = wholeFeatureType.pkg().name() + "::" + wholeFeatureType.name();
+	    String sourceFeatureTypeKey = sourceFeatureType.pkg().name() + "::" + sourceFeatureType.name();
 
 	    /*
-	     * key: {part feature type package name}::{part feature type name}, value: names
-	     * of properties of wholeFeatureType that have that part feature type
+	     * key: {target feature type package name}::{target feature type name}, value:
+	     * names of properties of sourceFeatureType that have that target feature type
 	     */
-	    Map<String, Set<String>> propertiesByPartFeatureTypeName = new HashMap<String, Set<String>>();
+	    Map<String, Set<String>> propertiesByTargetFeatureTypeName = new HashMap<String, Set<String>>();
 
-	    for (CoretableCascadeRule rule : this.cascadeRules.stream()
-		    .filter(cr -> cr.getWholeFeatureType() == wholeFeatureType).toList()) {
+	    for (CoretableNavigableRole nvConfigEntry : this.navigableRoles.stream()
+		    .filter(cr -> cr.isExistentiallyDependentPart() && cr.getSourceFeatureType() == sourceFeatureType)
+		    .toList()) {
 
-		ClassInfo partFeatureType = rule.getPartFeatureType();
+		ClassInfo targetFeatureType = nvConfigEntry.getTargetFeatureType();
 
-		String key = partFeatureType.pkg().name() + "::" + partFeatureType.name();
+		String key = targetFeatureType.pkg().name() + "::" + targetFeatureType.name();
 		Set<String> props;
-		if (propertiesByPartFeatureTypeName.containsKey(key)) {
-		    props = propertiesByPartFeatureTypeName.get(key);
+		if (propertiesByTargetFeatureTypeName.containsKey(key)) {
+		    props = propertiesByTargetFeatureTypeName.get(key);
 		} else {
 		    props = new TreeSet<String>();
-		    propertiesByPartFeatureTypeName.put(key, props);
+		    propertiesByTargetFeatureTypeName.put(key, props);
 		}
-		props.add(rule.getWholeOwnedRole().name());
+		props.add(nvConfigEntry.getNavigableRole().name());
 	    }
 
 	    /*
 	     * create directed edges and thereby identify reflexive relationships
 	     */
-	    for (String targetKey : propertiesByPartFeatureTypeName.keySet()) {
+	    for (String targetKey : propertiesByTargetFeatureTypeName.keySet()) {
 
-		Set<String> props = propertiesByPartFeatureTypeName.get(targetKey);
+		Set<String> props = propertiesByTargetFeatureTypeName.get(targetKey);
 
-		if (wholeFeatureTypeKey.equals(targetKey)) {
+		if (sourceFeatureTypeKey.equals(targetKey)) {
 		    /*
 		     * loops are not supported in cycle detection of JGraphT, thus log infos to
 		     * create an error later on
 		     */
-		    refTypeInfo.put(wholeFeatureTypeKey, props);
+		    refTypeInfo.put(sourceFeatureTypeKey, props);
 
 		} else {
 
-		    graph.addEdge(wholeFeatureTypeKey, targetKey,
-			    new PropertySetEdge(wholeFeatureTypeKey, targetKey, props));
+		    ownershipRolesGraph.addEdge(sourceFeatureTypeKey, targetKey,
+			    new PropertySetEdge(sourceFeatureTypeKey, targetKey, props));
 		}
 	    }
 	}
@@ -260,7 +229,8 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 	    }
 	}
 
-	DirectedSimpleCycles<String, PropertySetEdge> alg = new TiernanSimpleCycles<String, PropertySetEdge>(graph);
+	DirectedSimpleCycles<String, PropertySetEdge> alg = new TiernanSimpleCycles<String, PropertySetEdge>(
+		ownershipRolesGraph);
 
 	List<List<String>> cycles = alg.findSimpleCycles();
 
@@ -276,7 +246,7 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 		    String source = cycle.get(i);
 		    String target = i == cycle.size() - 1 ? cycle.getFirst() : cycle.get(i + 1);
 
-		    PropertySetEdge edge = graph.getEdge(source, target);
+		    PropertySetEdge edge = ownershipRolesGraph.getEdge(source, target);
 
 		    result.addError(this, 1005, source, target, edge.toString());
 		}
@@ -286,19 +256,20 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 	}
 
 	if (hasCircularDependencies) {
-	    this.cascadeRules = new TreeSet<>();
-	    this.graph = new DirectedMultigraph<String, PropertySetEdge>(PropertySetEdge.class);
+	    this.navigableRoles = new TreeSet<>();
+	    this.ownershipRolesGraph = new DirectedMultigraph<String, PropertySetEdge>(PropertySetEdge.class);
 	} else {
 
-	    AllDirectedPaths<String, PropertySetEdge> paths = new AllDirectedPaths<>(graph);
-	    SortedSet<String> vertices = new TreeSet<>(graph.vertexSet());
+	    AllDirectedPaths<String, PropertySetEdge> paths = new AllDirectedPaths<>(ownershipRolesGraph);
+	    SortedSet<String> vertices = new TreeSet<>(ownershipRolesGraph.vertexSet());
 
 	    int maxDepthAll = -1;
 	    String maxDepthPath = "";
 
 	    for (String startVertex : vertices) {
 
-		BreadthFirstIterator<String, PropertySetEdge> bfi = new BreadthFirstIterator<>(graph, startVertex);
+		BreadthFirstIterator<String, PropertySetEdge> bfi = new BreadthFirstIterator<>(ownershipRolesGraph,
+			startVertex);
 
 		String v;
 		int maxDepthCurrent = 0;
@@ -330,10 +301,81 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 	}
     }
 
+    /**
+     * Checks if the given association role is navigable. If so, a navigable roles
+     * config entry is created.
+     * 
+     * @param pi                                 the association role to process
+     * @param appSchema                          application schema identifier
+     * @param appSchemaVersion                   application schema version
+     *                                           identifier
+     * @param featureObjectAndMixinTypes         feature, object, and mixin types
+     *                                           from the schemas selected for
+     *                                           processing that are encoded
+     * @param sourceFeatureTypesForOwnershipRole Set to add all source feature types
+     *                                           for ownership relations (navigable
+     *                                           association roles with tag
+     *                                           'existentiallyDependentPart=true')
+     * @param targetFeatureTypesForOwnershipRole Set to add all target feature types
+     *                                           for ownership relations (navigable
+     *                                           association roles with tag
+     *                                           'existentiallyDependentPart=true')
+     */
+    private void identifyNavigableRole(PropertyInfo pi, String appSchema, String appSchemaVersion,
+	    SortedSet<ClassInfo> featureObjectAndMixinTypes, SortedSet<ClassInfo> sourceFeatureTypesForOwnershipRole,
+	    SortedSet<ClassInfo> targetFeatureTypesForOwnershipRole) {
+
+	if (!pi.isAttribute() && pi.isNavigable()) {
+
+	    boolean isExistentiallyDependentPart = isExistentiallyDependentPart(pi);
+
+	    RelDirection relDirection;
+	    if (!pi.reverseProperty().isNavigable() || pi == pi.association().end2()) {
+		relDirection = RelDirection.forward;
+	    } else {
+		relDirection = RelDirection.inverse;
+	    }
+
+	    for (ClassInfo sourceCi : relevantClassesInHierarchy(pi.inClass(), featureObjectAndMixinTypes)) {
+
+		if (isExistentiallyDependentPart) {
+		    sourceFeatureTypesForOwnershipRole.add(sourceCi);
+		}
+
+		for (ClassInfo targetCi : relevantClassesInHierarchy(pi.typeClass(), featureObjectAndMixinTypes)) {
+
+		    if (isExistentiallyDependentPart) {
+			targetFeatureTypesForOwnershipRole.add(targetCi);
+		    }
+
+		    CoretableNavigableRole rule = new CoretableNavigableRole();
+		    rule.setSourceFeatureType(sourceCi);
+		    rule.setNavigableRole(pi);
+		    rule.setTargetFeatureType(targetCi);
+		    rule.setAppSchema(appSchema);
+		    rule.setVersion(appSchemaVersion);
+		    rule.setRelDirection(relDirection);
+		    rule.setExistentiallyDependentPart(isExistentiallyDependentPart(pi));
+		    navigableRoles.add(rule);
+		}
+	    }
+	}
+    }
+
+    private void checkNavigabilityOfExistentiallyDependentPartRole(PropertyInfo pi) {
+
+	if (isExistentiallyDependentPart(pi) && !pi.isNavigable()) {
+	    MessageContext mc = result.addError(this, 100, pi.name(), pi.inClass().name());
+	    if (mc != null) {
+		mc.addDetail(this, 0, pi.fullName());
+	    }
+	}
+    }
+
     private void printGraph(DirectedMultigraph<String, PropertySetEdge> graph, String outputDirectory,
 	    String outputFilename) {
 
-	String imgFileName = outputFilename + "-cascade-rule-graph.png";
+	String imgFileName = outputFilename + "-ownership-relations-graph.png";
 	File imgFile = new File(outputDirectory, imgFileName);
 
 	JGraphXAdapter<String, PropertySetEdge> graphAdapter = new JGraphXAdapter<String, PropertySetEdge>(graph);
@@ -388,52 +430,54 @@ public class CoretableCascadeRuleWriter implements MessageSource {
     }
 
     public void write(String outputDirectory, String outputFilename, String targetName,
-	    boolean createCascadeRuleGraphImage, boolean generateInsertStatements) {
+	    boolean createOwnershipRolesGraphImage, boolean generateInsertStatements) {
 
-	if (this.cascadeRules.isEmpty()) {
+	if (this.navigableRoles.isEmpty()) {
 	    result.addInfo(this, 102);
 	} else {
 
 	    checkOutputDirectory(outputDirectory);
 
-	    if (createCascadeRuleGraphImage) {
-		printGraph(graph, outputDirectory, outputFilename);
+	    if (createOwnershipRolesGraphImage) {
+		printGraph(ownershipRolesGraph, outputDirectory, outputFilename);
 	    }
 
-	    printCascadeRules(cascadeRules, outputDirectory, outputFilename, targetName, generateInsertStatements);
+	    printNavigableRolesConfiguration(navigableRoles, outputDirectory, outputFilename, targetName,
+		    generateInsertStatements);
 	}
     }
 
-    private void printCascadeRules(SortedSet<CoretableCascadeRule> cascadeRules2, String outputDirectory,
-	    String outputFilename, String targetName, boolean generateInsertStatements) {
+    private void printNavigableRolesConfiguration(SortedSet<CoretableNavigableRole> navigableRoles2,
+	    String outputDirectory, String outputFilename, String targetName, boolean generateInsertStatements) {
 
-	String fileName = outputFilename + "-cascade-rules.sql";
+	String fileName = outputFilename + "-navigable-roles.sql";
 	File file = new File(outputDirectory, fileName);
 
 	try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8))) {
 
-	    for (CoretableCascadeRule rule : this.cascadeRules) {
+	    for (CoretableNavigableRole cnr : this.navigableRoles) {
 
 		String s;
 
 		if (generateInsertStatements) {
-		    s = "INSERT INTO " + dbSchemaName + ".cascade_delete_config "
-			    + "(whole_featuretype, whole_owned_role, part_featuretype, appschema, version, rel_direction) VALUES ('";
+		    s = "INSERT INTO " + dbSchemaName + ".navigable_roles_config "
+			    + "(source_featuretype, navigable_role, target_featuretype, appschema, version, rel_direction, is_existentially_dependent_part) VALUES ('";
 		} else {
-		    s = "SELECT " + dbSchemaName + ".add_cascade_rule('";
+		    s = "SELECT " + dbSchemaName + ".add_navigable_role('";
 		}
 
-		s += rule.getWholeFeatureType().name() + "','" + rule.getWholeOwnedRole().name() + "','"
-			+ rule.getPartFeatureType().name() + "','" + rule.getAppSchema() + "','" + rule.getVersion()
-			+ "','" + rule.getRelDirection().name();
+		s += cnr.getSourceFeatureType().name() + "','" + cnr.getNavigableRole().name() + "','"
+			+ cnr.getTargetFeatureType().name() + "','" + cnr.getAppSchema() + "','" + cnr.getVersion()
+			+ "','" + cnr.getRelDirection().name() + "',"
+			+ (cnr.isExistentiallyDependentPart() ? "TRUE" : "FALSE");
 
 		if (generateInsertStatements) {
 
-		    s += "') ON CONFLICT (whole_featuretype, whole_owned_role, part_featuretype, appschema, version, rel_direction) "
+		    s += ") ON CONFLICT (source_featuretype, navigable_role, target_featuretype, appschema, version, rel_direction) "
 			    + "DO NOTHING;";
 
 		} else {
-		    s += "');";
+		    s += ");";
 		}
 
 		writer.println(s);
@@ -474,15 +518,16 @@ public class CoretableCascadeRuleWriter implements MessageSource {
 	case 100 -> "Association role '$1$' of class $2$ has tagged value " + CoretableConstants.TV_EX_DEP_PART
 		+ "=true, but is not navigable.";
 	case 101 -> "Maximum depth: $1$ - (e.g.) via path: $2$";
-	case 102 -> "??No cascade rules have been identified.";
+	case 102 -> "??No navigable roles have been identified.";
 
 	case 1001 ->
-	    "---------- Checking for reflexive relationships and cyles in whole-part relationship graph ----------";
-	case 1002 ->
-	    "--- Reflexive relationship detected for whole feature type '$1$' (via whole owned role(s)): $2$).";
+	    "---------- Checking for reflexive relationships and cyles in ownership relationship graph ----------";
+	case 1002 -> "--- Reflexive relationship detected for source feature type '$1$' (via role(s) with tag '"
+		+ CoretableConstants.TV_EX_DEP_PART + "' = true): $2$).";
 	case 1003 -> "--- No reflexive relationships detected.";
 	case 1004 -> "--- Found cycle:";
-	case 1005 -> "   Class '$1$' -> class '$2$' (via whole owned roles): $3$)";
+	case 1005 -> "   Class '$1$' -> class '$2$' (via roles with tag '" + CoretableConstants.TV_EX_DEP_PART
+		+ "' = true): $3$)";
 	case 1006 -> "--- No cycles found.";
 
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

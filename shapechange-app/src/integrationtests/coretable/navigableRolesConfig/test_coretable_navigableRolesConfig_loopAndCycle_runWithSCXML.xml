@@ -7,8 +7,8 @@
    <input>
       <parameter name="inputModelType" value="SCXML"/>
       <parameter name="inputFile"
-                 value="src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.zip"/>
-      <parameter name="appSchemaName" value="Test Schema 1"/>
+                 value="src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.zip"/>
+      <parameter name="appSchemaName" value="Test Schema 2"/>
       <parameter name="publicOnly" value="true"/>
       <parameter name="checkingConstraints" value="enabled"/>
       <parameter name="sortedSchemaOutput" value="true"/>
@@ -31,128 +31,17 @@
    </input>
    <log>
       <parameter name="reportLevel" value="INFO"/>
-      <parameter name="logFile" value="testResults/coretable/cascadeRules/log.xml"/>
+      <parameter name="logFile"
+                 value="testResults/coretable/navigableRolesConfig/log2.xml"/>
    </log>
    <targets>
       <Target class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
               mode="enabled">
-         <targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/1"/>
+         <targetParameter name="outputDirectory"
+                          value="testResults/coretable/navigableRolesConfig"/>
+         <targetParameter name="outputFilename" value="loopAndCycleResult"/>
          <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="generateCascadeRules" value="true"/>
-         <targetParameter name="createCascadeRuleGraphImage" value="false"/>
-         <targetParameter name="dbSchemaName" value="test"/>
-         <targetParameter name="defaultEncodingRule" value="coretable"/>
-         <rules>
-            <EncodingRule name="coretable">
-
-				</EncodingRule>
-         </rules>
-         <rules>
-            <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
-               <rule name="req-all-all-documentation"/>
-               <rule name="req-xsd-pkg-targetNamespace"/>
-               <rule name="req-xsd-pkg-xmlns"/>
-               <rule name="req-xsd-pkg-namespace-schema-only"/>
-               <rule name="rec-xsd-pkg-version"/>
-               <rule name="req-xsd-pkg-xsdDocument"/>
-               <rule name="req-xsd-pkg-dependencies"/>
-               <rule name="req-xsd-cls-codelist-asDictionary-true"/>
-               <rule name="req-xsd-cls-codelist-extensibility-values"/>
-               <rule name="req-xsd-cls-codelist-extensibility-vocabulary"/>
-               <rule name="req-xsd-cls-datatype-noPropertyType"/>
-               <rule name="req-xsd-cls-objecttype-noPropertyType"/>
-               <rule name="req-xsd-cls-objecttype-byValuePropertyType"/>
-               <rule name="req-xsd-cls-enum-no-supertypes"/>
-               <rule name="rule-xsd-cls-mixin-classes"/>
-               <rule name="rule-xsd-prop-nillable"/>
-            </EncodingRule>
-            <EncodingRule extends="iso19136_2007" name="okstra">
-               <rule name="rule-xsd-cls-no-base-class"/>
-               <rule name="rule-xsd-cls-no-abstract-classes"/>
-               <rule name="rule-xsd-cls-okstra-schluesseltabelle"/>
-               <rule name="rule-xsd-cls-okstra-lifecycle"/>
-               <rule name="rule-xsd-cls-okstra-fid"/>
-            </EncodingRule>
-            <EncodingRule extends="iso19136_2007" name="gml21">
-               <rule name="rule-xsd-cls-codelist-anonymous-xlink"/>
-               <rule name="rule-xsd-all-gml21"/>
-            </EncodingRule>
-            <EncodingRule extends="*" name="notEncoded">
-               <rule name="rule-xsd-all-notEncoded"/>
-               <rule name="rule-json-all-notEncoded"/>
-               <rule name="rule-sql-all-notEncoded"/>
-               <rule name="rule-cdb-all-notEncoded"/>
-               <rule name="rule-gpkg-all-notEncoded"/>
-               <rule name="rule-ldp2-all-notEncoded"/>
-               <rule name="rule-gfs-all-notEncoded"/>
-               <rule name="rule-coretable-all-notEncoded"/>
-            </EncodingRule>
-            <EncodingRule extends="iso19136_2007" name="citygml-ade">
-               <rule name="req-xsd-cls-suppress-supertype"/>
-               <rule name="req-xsd-cls-suppress-subtype"/>
-               <rule name="req-xsd-cls-suppress-no-properties"/>
-               <rule name="rule-xsd-cls-suppress"/>
-               <rule name="rule-xsd-cls-adeelement"/>
-               <rule name="rule-xsd-cls-mixin-classes"/>
-               <rule name="rule-xsd-prop-initialValue"/>
-            </EncodingRule>
-            <EncodingRule extends="iso19139_2007" name="metadata-profile">
-               <rule name="rule-xsd-cls-standard-19139-isoType"/>
-               <rule name="req-xsd-cls-suppress-supertype"/>
-               <rule name="req-xsd-cls-suppress-subtype"/>
-               <rule name="req-xsd-cls-suppress-no-properties"/>
-               <rule name="rule-xsd-cls-suppress"/>
-               <rule name="rule-xsd-pkg-schematron"/>
-            </EncodingRule>
-            <EncodingRule extends="iso19136_2007" name="iso19136_2007_ShapeChange_1.0_Extensions">
-               <rule name="req-xsd-cls-mixin-supertypes"/>
-               <rule name="req-xsd-cls-codelist-no-supertypes"/>
-               <rule name="rule-xsd-cls-union-asCharacterString"/>
-               <rule name="rule-xsd-cls-union-asGroup"/>
-               <rule name="rule-xsd-cls-enum-supertypes"/>
-               <rule name="rule-xsd-cls-enum-subtypes"/>
-               <rule name="rule-xsd-cls-basictype"/>
-               <rule name="rule-xsd-cls-union-direct"/>
-               <rule name="rule-xsd-cls-codelist-constraints"/>
-               <rule name="rule-xsd-cls-mixin-classes-as-group"/>
-               <rule name="rule-xsd-cls-mixin-classes"/>
-               <rule name="rule-xsd-prop-exclude-derived"/>
-               <rule name="rule-xsd-prop-length-size-pattern"/>
-               <rule name="rule-xsd-prop-xsdAsAttribute"/>
-               <rule name="rule-xsd-prop-nillable"/>
-               <rule name="rule-xsd-prop-nilReasonAllowed"/>
-               <rule name="rule-xsd-prop-initialValue"/>
-               <rule name="rule-xsd-prop-att-map-entry"/>
-               <rule name="rule-xsd-pkg-schematron"/>
-               <rule name="rule-xsd-all-tagged-values"/>
-            </EncodingRule>
-            <EncodingRule extends="*" name="external">
-               <rule name="rule-xsd-all-notEncoded"/>
-            </EncodingRule>
-            <EncodingRule extends="*" name="iso19136_2007_NoGmlBaseTypes">
-               <rule name="rule-xsd-cls-no-gml-types"/>
-               <rule name="rule-xsd-all-naming-gml"/>
-               <rule name="rule-xsd-cls-global-enumeration"/>
-               <rule name="rule-xsd-cls-standard-gml-property-types"/>
-            </EncodingRule>
-         </rules>
-      </Target>
-      <Target class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
-              mode="enabled">
-         <targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/2"/>
-         <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="generateCascadeRules" value="true"/>
-         <targetParameter name="createCascadeRuleGraphImage" value="false"/>
-         <targetParameter name="dbSchemaName" value="test"/>
-         <targetParameter name="appSchemaNameByTv" value="xmlns"/>
-         <targetParameter name="appSchemaVersionMajorMinorOnly" value="true"/>
-         <targetParameter name="generateInsertStatements" value="true"/>
-         <targetParameter name="defaultEncodingRule" value="coretable"/>
-         <rules>
-            <EncodingRule name="coretable">
-
-				</EncodingRule>
-         </rules>
+         <targetParameter name="generateNavigableRolesConfig" value="true"/>
          <rules>
             <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
                <rule name="req-all-all-documentation"/>

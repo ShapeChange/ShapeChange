@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
-                   config="src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules_loopAndCycle_runWithSCXML.xml"
-                   end="Fri Mar 27 09:35:20 CET 2026"
+                   config="src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_loopAndCycle_runWithSCXML.xml"
+                   end="Wed Jun 17 14:27:20 CEST 2026"
                    resultCode="0"
-                   start="Fri Mar 27 09:35:19 CET 2026"
+                   start="Wed Jun 17 14:27:20 CEST 2026"
                    version="4.1.0-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -17,12 +17,12 @@
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 2', target namespace: 'http://example.org/shapechange/schema/test2'"/>
       <ProcessFlowInfo message="Now processing target 'Coretable' for input 'INPUT'."/>
       <Info message="Class 'FeatureTypeNotEncoded' is not encoded."/>
-      <Info message="---------- Checking for reflexive relationships and cyles in whole-part relationship graph ----------"/>
-      <Error message="--- Reflexive relationship detected for whole feature type 'Test Schema 2::Object1' (via whole owned role(s)): roleToCreateLoop)."/>
+      <Info message="---------- Checking for reflexive relationships and cyles in ownership relationship graph ----------"/>
+      <Error message="--- Reflexive relationship detected for source feature type 'Test Schema 2::Object1' (via role(s) with tag 'existentiallyDependentPart' = true): roleToCreateLoop)."/>
       <Error message="--- Found cycle:"/>
-      <Error message="   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via whole owned roles): roleToCreateCycle)"/>
-      <Error message="   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via whole owned roles): region)"/>
-      <Info message="No cascade rules have been identified."/>
+      <Error message="   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via roles with tag 'existentiallyDependentPart' = true): roleToCreateCycle)"/>
+      <Error message="   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via roles with tag 'existentiallyDependentPart' = true): region)"/>
+      <Info message="No navigable roles have been identified."/>
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
    </Messages>
    <Results/>

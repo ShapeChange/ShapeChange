@@ -40,112 +40,86 @@ import de.interactive_instruments.shapechange.core.model.PropertyInfo;
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class CoretableCascadeRule implements Comparable<CoretableCascadeRule> {
+public class CoretableNavigableRole implements Comparable<CoretableNavigableRole> {
 
     public enum RelDirection {
 	forward, inverse
     }
 
-    private ClassInfo wholeFeatureType;
-    private PropertyInfo wholeOwnedRole;
-    private ClassInfo partFeatureType;
+    private ClassInfo sourceFeatureType;
+    private PropertyInfo navigableRole;
+    private ClassInfo targetFeatureType;
     private String appSchema;
     private String version;
     private RelDirection relDirection;
+    private boolean isExistentiallyDependentPart;
 
-    /**
-     * @return the wholeFeatureType
-     */
-    public ClassInfo getWholeFeatureType() {
-	return wholeFeatureType;
+    public ClassInfo getSourceFeatureType() {
+	return sourceFeatureType;
     }
 
-    /**
-     * @param wholeFeatureType the wholeFeatureType to set
-     */
-    public void setWholeFeatureType(ClassInfo wholeFeatureType) {
-	this.wholeFeatureType = wholeFeatureType;
+    public void setSourceFeatureType(ClassInfo sourceFeatureType) {
+	this.sourceFeatureType = sourceFeatureType;
     }
 
-    /**
-     * @return the wholeOwnedRole
-     */
-    public PropertyInfo getWholeOwnedRole() {
-	return wholeOwnedRole;
+    public PropertyInfo getNavigableRole() {
+	return navigableRole;
     }
 
-    /**
-     * @param wholeOwnedRole the wholeOwnedRole to set
-     */
-    public void setWholeOwnedRole(PropertyInfo wholeOwnedRole) {
-	this.wholeOwnedRole = wholeOwnedRole;
+    public void setNavigableRole(PropertyInfo navigableRole) {
+	this.navigableRole = navigableRole;
     }
 
-    /**
-     * @return the partFeatureType
-     */
-    public ClassInfo getPartFeatureType() {
-	return partFeatureType;
+    public ClassInfo getTargetFeatureType() {
+	return targetFeatureType;
     }
 
-    /**
-     * @param partFeatureType the partFeatureType to set
-     */
-    public void setPartFeatureType(ClassInfo partFeatureType) {
-	this.partFeatureType = partFeatureType;
+    public void setTargetFeatureType(ClassInfo targetFeatureType) {
+	this.targetFeatureType = targetFeatureType;
     }
 
-    /**
-     * @return the appSchema
-     */
     public String getAppSchema() {
 	return appSchema;
     }
 
-    /**
-     * @param appSchema the appSchema to set
-     */
     public void setAppSchema(String appSchema) {
 	this.appSchema = appSchema;
     }
 
-    /**
-     * @return the version
-     */
     public String getVersion() {
 	return version;
     }
 
-    /**
-     * @param version the version to set
-     */
     public void setVersion(String version) {
 	this.version = version;
     }
 
-    /**
-     * @return the relDirection
-     */
     public RelDirection getRelDirection() {
 	return relDirection;
     }
 
-    /**
-     * @param relDirection the relDirection to set
-     */
     public void setRelDirection(RelDirection relDirection) {
 	this.relDirection = relDirection;
     }
 
-    @Override
-    public String toString() {
-	return "CoretableCascadeRule [wholeFeatureType=" + wholeFeatureType + ", wholeOwnedRole=" + wholeOwnedRole
-		+ ", partFeatureType=" + partFeatureType + ", appSchema=" + appSchema + ", version=" + version
-		+ ", relDirection=" + relDirection + "]";
+    public boolean isExistentiallyDependentPart() {
+	return isExistentiallyDependentPart;
+    }
+
+    public void setExistentiallyDependentPart(boolean isExistentiallyDependentPart) {
+	this.isExistentiallyDependentPart = isExistentiallyDependentPart;
     }
 
     @Override
-    public int compareTo(CoretableCascadeRule o) {
+    public String toString() {
+	return "CoretableNavigableRole [sourceFeatureType=" + sourceFeatureType + ", navigableRole=" + navigableRole
+		+ ", targetFeatureType=" + targetFeatureType + ", appSchema=" + appSchema + ", version=" + version
+		+ ", relDirection=" + relDirection + ", isExistentiallyDependentPart=" + isExistentiallyDependentPart
+		+ "]";
+    }
+
+    @Override
+    public int compareTo(CoretableNavigableRole o) {
 
 	if (this.getAppSchema().compareTo(o.getAppSchema()) != 0) {
 	    return this.getAppSchema().compareTo(o.getAppSchema());
@@ -153,14 +127,17 @@ public class CoretableCascadeRule implements Comparable<CoretableCascadeRule> {
 	} else if (this.getVersion().compareTo(o.getVersion()) != 0) {
 	    return this.getVersion().compareTo(o.getVersion());
 
-	} else if (this.getWholeFeatureType().fullName().compareTo(o.getWholeFeatureType().fullName()) != 0) {
-	    return this.getWholeFeatureType().fullName().compareTo(o.getWholeFeatureType().fullName());
+	} else if (this.getSourceFeatureType().fullName().compareTo(o.getSourceFeatureType().fullName()) != 0) {
+	    return this.getSourceFeatureType().fullName().compareTo(o.getSourceFeatureType().fullName());
 
-	} else if (this.getWholeOwnedRole().fullName().compareTo(o.getWholeOwnedRole().fullName()) != 0) {
-	    return this.getWholeOwnedRole().fullName().compareTo(o.getWholeOwnedRole().fullName());
+	} else if (this.getNavigableRole().fullName().compareTo(o.getNavigableRole().fullName()) != 0) {
+	    return this.getNavigableRole().fullName().compareTo(o.getNavigableRole().fullName());
 
-	} else if (this.getPartFeatureType().fullName().compareTo(o.getPartFeatureType().fullName()) != 0) {
-	    return this.getPartFeatureType().fullName().compareTo(o.getPartFeatureType().fullName());
+	} else if (this.getTargetFeatureType().fullName().compareTo(o.getTargetFeatureType().fullName()) != 0) {
+	    return this.getTargetFeatureType().fullName().compareTo(o.getTargetFeatureType().fullName());
+
+	} else if (Boolean.compare(this.isExistentiallyDependentPart(), o.isExistentiallyDependentPart()) != 0) {
+	    return Boolean.compare(this.isExistentiallyDependentPart(), o.isExistentiallyDependentPart());
 
 	} else {
 
@@ -176,7 +153,8 @@ public class CoretableCascadeRule implements Comparable<CoretableCascadeRule> {
 
     @Override
     public int hashCode() {
-	return Objects.hash(appSchema, partFeatureType, relDirection, version, wholeFeatureType, wholeOwnedRole);
+	return Objects.hash(appSchema, isExistentiallyDependentPart, navigableRole, relDirection, sourceFeatureType,
+		targetFeatureType, version);
     }
 
     @Override
@@ -187,11 +165,12 @@ public class CoretableCascadeRule implements Comparable<CoretableCascadeRule> {
 	    return false;
 	if (getClass() != obj.getClass())
 	    return false;
-	CoretableCascadeRule other = (CoretableCascadeRule) obj;
-	return Objects.equals(appSchema, other.appSchema) && Objects.equals(partFeatureType, other.partFeatureType)
-		&& relDirection == other.relDirection && Objects.equals(version, other.version)
-		&& Objects.equals(wholeFeatureType, other.wholeFeatureType)
-		&& Objects.equals(wholeOwnedRole, other.wholeOwnedRole);
+	CoretableNavigableRole other = (CoretableNavigableRole) obj;
+	return Objects.equals(appSchema, other.appSchema)
+		&& isExistentiallyDependentPart == other.isExistentiallyDependentPart
+		&& Objects.equals(navigableRole, other.navigableRole) && relDirection == other.relDirection
+		&& Objects.equals(sourceFeatureType, other.sourceFeatureType)
+		&& Objects.equals(targetFeatureType, other.targetFeatureType) && Objects.equals(version, other.version);
     }
 
 }

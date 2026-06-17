@@ -7,7 +7,7 @@
 	<input>
 		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.qea" />
+			value="src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.qea" />
 		<parameter name="appSchemaName" value="Test Schema 1" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="enabled" />
@@ -16,16 +16,16 @@
 	</input>
 	<log>
 		<parameter name="reportLevel" value="INFO" />
-		<parameter name="logFile" value="testResults/coretable/cascadeRules/log.xml" />
+		<parameter name="logFile" value="testResults/coretable/navigableRolesConfig/log.xml" />
 	</log>
 	<targets>
 		<Target
 			class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/1" />
+			<targetParameter name="outputDirectory" value="testResults/coretable/navigableRolesConfig/1" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="generateCascadeRules" value="true" />
-			<targetParameter name="createCascadeRuleGraphImage" value="false"/>
+			<targetParameter name="generateNavigableRolesConfig" value="true" />
+<!--			<targetParameter name="createCascadeRuleGraphImage" value="false"/>-->
 			<targetParameter name="dbSchemaName" value="test" />
 						
 			<targetParameter name="defaultEncodingRule" value="coretable" />
@@ -39,10 +39,10 @@
 		<Target
 			class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
 			mode="enabled">
-			<targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules/2" />
+			<targetParameter name="outputDirectory" value="testResults/coretable/navigableRolesConfig/2" />
 			<targetParameter name="sortedOutput" value="true" />
-			<targetParameter name="generateCascadeRules" value="true" />
-			<targetParameter name="createCascadeRuleGraphImage" value="false"/>
+			<targetParameter name="generateNavigableRolesConfig" value="true" />
+<!--			<targetParameter name="createCascadeRuleGraphImage" value="false"/>-->
 			<targetParameter name="dbSchemaName" value="test" />
 			
 			<targetParameter name="appSchemaNameByTv" value="xmlns" />

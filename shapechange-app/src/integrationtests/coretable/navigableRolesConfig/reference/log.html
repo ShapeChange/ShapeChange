@@ -100,7 +100,7 @@ return true;
                <p>Start time:</p>
             </td>
             <td>
-               <p>Fri Mar 27 09:35:19 CET 2026</p>
+               <p>Wed Jun 17 14:26:38 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -108,7 +108,7 @@ return true;
                <p>End time:</p>
             </td>
             <td>
-               <p>Fri Mar 27 09:35:20 CET 2026</p>
+               <p>Wed Jun 17 14:26:39 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -116,7 +116,7 @@ return true;
                <p>Configuration file:</p>
             </td>
             <td>
-               <p>src\integrationtests\coretable\cascadeRules\test_coretable_cascadeRules_loopAndCycle_runWithSCXML.xml</p>
+               <p>src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_runWithSCXML.xml</p>
             </td>
          </tr>
          <tr>
@@ -221,6 +221,15 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
+               <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable'
+                  and @inputs 'INPUT' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
                <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
             </td>
          </tr>
@@ -229,7 +238,7 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
-               <p>Application schema found, package name: 'Test Schema 2', target namespace: 'http://example.org/shapechange/schema/test2'</p>
+               <p>Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -253,43 +262,8 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>---------- Checking for reflexive relationships and cyles in whole-part relationship
+               <p>---------- Checking for reflexive relationships and cyles in ownership relationship
                   graph ----------</p>
-            </td>
-         </tr>
-         <tr class="Error" style="display:table-row">
-            <td>
-               <p>Error</p>
-            </td>
-            <td>
-               <p>--- Reflexive relationship detected for whole feature type 'Test Schema 2::Object1'
-                  (via whole owned role(s)): roleToCreateLoop).</p>
-            </td>
-         </tr>
-         <tr class="Error" style="display:table-row">
-            <td>
-               <p>Error</p>
-            </td>
-            <td>
-               <p>--- Found cycle:</p>
-            </td>
-         </tr>
-         <tr class="Error" style="display:table-row">
-            <td>
-               <p>Error</p>
-            </td>
-            <td>
-               <p>   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via whole owned
-                  roles): roleToCreateCycle)</p>
-            </td>
-         </tr>
-         <tr class="Error" style="display:table-row">
-            <td>
-               <p>Error</p>
-            </td>
-            <td>
-               <p>   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via whole owned
-                  roles): region)</p>
             </td>
          </tr>
          <tr class="Info" style="display:table-row">
@@ -297,7 +271,90 @@ return true;
                <p>Info</p>
             </td>
             <td>
-               <p>No cascade rules have been identified.</p>
+               <p>--- No reflexive relationships detected.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>--- No cycles found.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable'
+                  for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'Coretable' for input 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Class 'FeatureTypeNotEncoded' is not encoded.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>---------- Checking for reflexive relationships and cyles in ownership relationship
+                  graph ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>--- No reflexive relationships detected.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>--- No cycles found.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -311,7 +368,41 @@ return true;
             </td>
          </tr>
       </table><a name="results">
-         <h2>Results</h2></a><p align="center">No results</p>
+         <h2>Results</h2></a><table border="0">
+         <tr>
+            <th>
+               <p>Target</p>
+            </th>
+            <th>
+               <p>Scope</p>
+            </th>
+            <th>
+               <p>File</p>
+            </th>
+         </tr>
+         <tr>
+            <td>
+               <p>Coretable</p>
+            </td>
+            <td>
+               <p></p>
+            </td>
+            <td>
+               <p><a href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/1/INPUT/coretable-navigable-roles.sql">coretable-navigable-roles.sql</a></p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>Coretable</p>
+            </td>
+            <td>
+               <p></p>
+            </td>
+            <td>
+               <p><a href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/2/INPUT/coretable-navigable-roles.sql">coretable-navigable-roles.sql</a></p>
+            </td>
+         </tr>
+      </table>
       <hr>
       <p align="center"><small>This report was generated by <a href="http://shapechange.net">ShapeChange</a></small></p>
    </body>
