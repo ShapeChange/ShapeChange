@@ -34,6 +34,8 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2.service;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.ogcapi.features.jsonfg.domain.ImmutableJsonFgConfiguration;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
@@ -45,17 +47,25 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
  */
 public class LdpBuildingBlockFeaturesJsonFgBuilder extends LdpBuildingBlockBuilder {
 
-    public ImmutableJsonFgConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+    protected String jsonFgFeatureType = null;
 
-	ImmutableJsonFgConfiguration.Builder bbBuilder = cfg.builder().ogcApiExtension().jsonFg();
+    public LdpBuildingBlockFeaturesJsonFgBuilder(String jsonFgFeatureType) {
+	super();
+	this.jsonFgFeatureType = jsonFgFeatureType;
+    }
+
+    @Override
+    public ImmutableJsonFgConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+
+	ImmutableJsonFgConfiguration.Builder builder = cfg.builder().ogcApiExtension().jsonFg();
 
 	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
-	    SortedMap<String, List<PropertyTransformation>> featuresHtmlPropertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
+	    SortedMap<String, List<PropertyTransformation>> propertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
 		    .get(ci);
-	    bbBuilder.transformations(featuresHtmlPropertyTransformations);
+	    builder.transformations(propertyTransformations);
 	}
 
-	return bbBuilder.build();
+	return builder.build();
     }
 
     @Override
@@ -63,4 +73,16 @@ public class LdpBuildingBlockFeaturesJsonFgBuilder extends LdpBuildingBlockBuild
 	return hasTransformations(ci);
     }
 
+    @Override
+    public ImmutableJsonFgConfiguration getServiceConfiguration(LdproxyCfgWriter cfg) {
+
+	ImmutableJsonFgConfiguration.Builder builder = cfg.builder().ogcApiExtension().jsonFg();
+	builder.enabled(true);
+
+	if (StringUtils.isNotBlank(this.jsonFgFeatureType)) {
+	    builder.featureTypeV1(this.jsonFgFeatureType);
+	}
+
+	return builder.build();
+    }
 }

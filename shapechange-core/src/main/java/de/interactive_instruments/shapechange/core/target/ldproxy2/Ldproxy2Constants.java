@@ -248,7 +248,11 @@ public class Ldproxy2Constants {
     public static final String RULE_CLS_UNION_LIKE_DATATYPE = "rule-ldp2-cls-unionLikeDataType";
     public static final String RULE_PROP_MEASURE = "rule-ldp2-prop-measure";
     public static final String RULE_PROP_READONLY = "rule-ldp2-prop-readOnly";
+    public static final String RULE_PROP_OBJECT_TYPE_SUFFIXED_PROPERTIES = "rule-ldp2-prop-objectTypeSuffixedProperties";
 
     public static final String SQL_PREFIX_FLATTENED_TO_PARENT_TABLE = "flattenedTo:";
+        
+    public static final String TV_GLOBAL_PROPERTY_DEFINITIONS = "ldpGlobalPropertyDefinitions";
+    public static final String TV_OBJECT_TYPE_SUFFIXED_PROPERTY = "objectTypeSuffixedProperty";
 
 }

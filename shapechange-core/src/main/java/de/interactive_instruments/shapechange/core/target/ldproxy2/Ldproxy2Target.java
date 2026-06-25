@@ -87,7 +87,7 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.core
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.LdproxyStoredQueryDefinitions;
@@ -234,9 +234,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static boolean isWriteApi = false;
 
     public static boolean allFeaturesTable = false;
-    public static String allFeaturesTableName = null;
-    public static String allFeaturesTableIdColumn = null;
-    public static String allFeaturesTableTypeColumn = null;
+    public static String allFeaturesTableName = "allfeatures";
+    public static String allFeaturesTableIdColumn = "id";
+    public static String allFeaturesTableTypeColumn = "type";
     public static boolean allFeaturesTableWithTypeRestrictions = false;
     public static String allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName = null;
 
@@ -256,7 +256,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static LdproxyCfgWriter cfg = null;
 
     public static LdpBuildingBlockFeaturesGmlBuilder bbGmlBuilder = null;
-    public static LdpBuildingBlockFeaturesGeoJsonBuilder bbGeoJsonBuilder = null;
+    public static LdpBuildingBlockGeoJsonBuilder bbGeoJsonBuilder = null;
     public static LdpBuildingBlockFeaturesJsonFgBuilder bbJsonFgBuilder = null;
 
     /* ------ */
@@ -687,15 +687,14 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_FEATURES_GEOJSON, true);
 
 	    if (enableFeaturesGeoJson) {
-		bbGeoJsonBuilder = new LdpBuildingBlockFeaturesGeoJsonBuilder();
+		bbGeoJsonBuilder = new LdpBuildingBlockGeoJsonBuilder();
 	    }
 
 	    enableFeaturesJsonFg = options.parameterAsBoolean(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_FEATURES_JSONFG, false);
 
 	    if (enableFeaturesJsonFg) {
-		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder();
-
+		
 //		if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS)) {
 //		    jsonFgCoordRefSys = options.parameterAsBoolean(this.getClass().getName(),
 //			    Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, true);
@@ -712,6 +711,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 //			// ignore - should be reported by configuration validator
 //		    }
 //		}
+		
+		bbJsonFgBuilder = new LdpBuildingBlockFeaturesJsonFgBuilder(jsonFgFeatureType);
 	    }
 
 	    enableFeaturesResultType = options.parameterAsBoolean(this.getClass().getName(),
@@ -1365,9 +1366,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	isWriteApi = false;
 
 	allFeaturesTable = false;
-	allFeaturesTableName = null;
-	allFeaturesTableIdColumn = null;
-	allFeaturesTableTypeColumn = null;
+	allFeaturesTableName = "allfeatures";
+	allFeaturesTableIdColumn = "id";
+	allFeaturesTableTypeColumn = "type";
 	allFeaturesTableWithTypeRestrictions = false;
 	allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName = null;
 
@@ -1513,6 +1514,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	r.addRule(Ldproxy2Constants.RULE_ALL_PROPALIAS);
 	r.addRule(Ldproxy2Constants.RULE_PROP_READONLY);
 	r.addRule(Ldproxy2Constants.RULE_PROP_MEASURE);
+	r.addRule(Ldproxy2Constants.RULE_PROP_OBJECT_TYPE_SUFFIXED_PROPERTIES);
     }
 
     @Override

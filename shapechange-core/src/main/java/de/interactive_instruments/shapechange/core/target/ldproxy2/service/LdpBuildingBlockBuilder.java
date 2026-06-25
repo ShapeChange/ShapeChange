@@ -38,9 +38,13 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Constants;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -57,27 +61,58 @@ public abstract class LdpBuildingBlockBuilder {
      */
     protected Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
 
+    /**
+     * Property transformations, to be added to the global building blocks in the
+     * service configuration.
+     * 
+     * map with key: property path, value: list of property transformations
+     */
+    protected SortedMap<String, List<PropertyTransformation>> propertyTransformationsForGlobalBuildingBlockOfServiceConfig = new TreeMap<>();
+
     public void addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(ClassInfo topLevelClass,
-	    String propertyPath, ImmutablePropertyTransformation trf) {
+	    PropertyInfo pi, String propertyPath, ImmutablePropertyTransformation trf) {
 
 	SortedMap<String, List<PropertyTransformation>> serviceConfigTrfsByPropPath;
-	if (propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
-		.containsKey(topLevelClass)) {
-	    serviceConfigTrfsByPropPath = propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
-		    .get(topLevelClass);
+
+	/*
+	 * Determine where to add the property transformation in the service
+	 * configuration: If tagged value ldpGlobalPropertyTransformations=true, then
+	 * add the transformations globally. Otherwise add them within the collection
+	 * definition.
+	 */
+	if (isGlobalPropertyDefinitions(pi)) {
+
+	    serviceConfigTrfsByPropPath = propertyTransformationsForGlobalBuildingBlockOfServiceConfig;
+
 	} else {
-	    serviceConfigTrfsByPropPath = new TreeMap<>();
-	    propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.put(topLevelClass,
-		    serviceConfigTrfsByPropPath);
+
+	    if (propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
+		    .containsKey(topLevelClass)) {
+		serviceConfigTrfsByPropPath = propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
+			.get(topLevelClass);
+	    } else {
+		serviceConfigTrfsByPropPath = new TreeMap<>();
+		propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.put(topLevelClass,
+			serviceConfigTrfsByPropPath);
+	    }
 	}
 
+	List<PropertyTransformation> propertyTransformations;
 	if (serviceConfigTrfsByPropPath.containsKey(propertyPath)) {
-	    serviceConfigTrfsByPropPath.get(propertyPath).add(trf);
+	    propertyTransformations = serviceConfigTrfsByPropPath.get(propertyPath);
 	} else {
-	    List<PropertyTransformation> propTransforms = new ArrayList<>();
-	    propTransforms.add(trf);
-	    serviceConfigTrfsByPropPath.put(propertyPath, propTransforms);
+	    propertyTransformations = new ArrayList<>();
+	    serviceConfigTrfsByPropPath.put(propertyPath, propertyTransformations);
 	}
+
+	// only add the transformation if it is not already contained in the list
+	if (!propertyTransformations.stream().anyMatch(pt -> pt.equals(trf))) {
+	    propertyTransformations.add(trf);
+	}
+    }
+
+    protected boolean isGlobalPropertyDefinitions(PropertyInfo pi) {
+	return "true".equalsIgnoreCase(pi.taggedValue(Ldproxy2Constants.TV_GLOBAL_PROPERTY_DEFINITIONS));
     }
 
     public Map<ClassInfo, SortedMap<String, List<PropertyTransformation>>> getPropertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass() {
@@ -89,6 +124,10 @@ public abstract class LdpBuildingBlockBuilder {
 		&& !this.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.get(ci)
 			.isEmpty();
     }
-    
+
     public abstract boolean hasInputForServiceCollection(ClassInfo ci);
+
+    public abstract ExtensionConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci);
+
+    public abstract ExtensionConfiguration getServiceConfiguration(LdproxyCfgWriter cfg);
 }

@@ -8,7 +8,7 @@
  * Additional information about the software can be found at
  * http://shapechange.net/
  *
- * (c) 2002-2023 interactive instruments GmbH, Bonn, Germany
+ * (c) 2002-2026 interactive instruments GmbH, Bonn, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,36 +31,34 @@
  */
 package de.interactive_instruments.shapechange.core.target.ldproxy2.service;
 
-import java.util.List;
-import java.util.SortedMap;
-
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
-import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
-import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
+import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
+import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpBuildingBlockFeaturesGeoJsonBuilder extends LdpBuildingBlockBuilder {
+public class LdpBuildingBlockResourcesBuilder extends LdpBuildingBlockBuilder {
 
-    public ImmutableGeoJsonConfiguration createConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
-
-	ImmutableGeoJsonConfiguration.Builder bbBuilder = cfg.builder().ogcApiExtension().geoJson();
-
-	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
-	    SortedMap<String, List<PropertyTransformation>> featuresHtmlPropertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
-		    .get(ci);
-	    bbBuilder.transformations(featuresHtmlPropertyTransformations);
-	}
-
-	return bbBuilder.build();
+    @Override
+    public ImmutableResourcesConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+	return null;
     }
 
     @Override
     public boolean hasInputForServiceCollection(ClassInfo ci) {
-	return hasTransformations(ci);
+	return false;
+    }
+
+    @Override
+    public ExtensionConfiguration getServiceConfiguration(LdproxyCfgWriter cfg) {
+
+	ImmutableResourcesConfiguration.Builder scConfigBuilder = cfg.builder().ogcApiExtension().resources();
+	scConfigBuilder.enabled(true);
+
+	return scConfigBuilder.build();
     }
 
 }

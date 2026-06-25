@@ -87,6 +87,10 @@ public class LdpInfo {
 
 	    String label = i.derivedDocumentation(Ldproxy2Target.labelTemplate, Ldproxy2Target.descriptorNoValue);
 
+	    if (i instanceof PropertyInfo propi && isObjectTypeSuffixedProperty(propi) && label.equals(propi.name())) {
+		label = nameWithoutObjectTypeSuffix(propi);
+	    }
+
 	    return StringUtils.isBlank(label) ? Optional.empty() : Optional.of(label);
 
 	} else {
@@ -403,9 +407,28 @@ public class LdpInfo {
     public static Optional<String> alias(PropertyInfo pi) {
 
 	if (Ldproxy2Target.propertyAlias) {
-	    return Optional.of(pi.name());
+
+	    String res = pi.name();
+	    if (isObjectTypeSuffixedProperty(pi)) {
+		res = nameWithoutObjectTypeSuffix(pi);
+	    }
+
+	    return Optional.of(res);
 	} else {
 	    return Optional.empty();
 	}
+    }
+
+    public static String nameWithoutObjectTypeSuffix(PropertyInfo pi) {
+	return StringUtils.substringBeforeLast(pi.name(), "_" + pi.typeInfo().name);
+    }
+
+    public static boolean isObjectTypeSuffixedProperty(PropertyInfo propi) {
+	return propi.matches(Ldproxy2Constants.RULE_PROP_OBJECT_TYPE_SUFFIXED_PROPERTIES)
+		&& "true".equalsIgnoreCase(propi.taggedValue(Ldproxy2Constants.TV_OBJECT_TYPE_SUFFIXED_PROPERTY));
+    }
+
+    public static boolean isRelatedObjectTypeSuffixedProperty(PropertyInfo pi, PropertyInfo otherPi) {
+	return LdpInfo.nameWithoutObjectTypeSuffix(pi).equals(LdpInfo.nameWithoutObjectTypeSuffix(otherPi));
     }
 }

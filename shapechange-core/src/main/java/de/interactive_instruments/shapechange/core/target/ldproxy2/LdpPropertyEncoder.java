@@ -33,9 +33,11 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -66,10 +68,10 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.LdpSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesHtmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
 
 /**
@@ -84,7 +86,7 @@ public class LdpPropertyEncoder {
 
     protected LdpBuildingBlockFeaturesGmlBuilder bbFeaturesGmlBuilder;
     protected LdpBuildingBlockFeaturesHtmlBuilder bbFeaturesHtmlBuilder;
-    protected LdpBuildingBlockFeaturesGeoJsonBuilder bbFeaturesGeoJsonBuilder;
+    protected LdpBuildingBlockGeoJsonBuilder bbFeaturesGeoJsonBuilder;
     protected LdpBuildingBlockFeaturesJsonFgBuilder bbFeaturesJsonFgBuilder;
 
     protected SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi;
@@ -96,9 +98,18 @@ public class LdpPropertyEncoder {
     protected LdpProvider ldpProvider;
     protected LdpSourcePathProvider sourcePathProvider;
 
+    /**
+     * outer map key: the property encoding context
+     * 
+     * value map key: current ci
+     * 
+     * value map value: the object type suffixed property that was encoded first
+     */
+    protected Map<LdpPropertyEncodingContext, Map<ClassInfo, List<PropertyInfo>>> objectTypeSuffixedPropertyInfosByEncodingContext = new HashMap<>();
+
     public LdpPropertyEncoder(LdpConfigBuilder ldpConfigBuilder, Ldproxy2Target target,
 	    LdpBuildingBlockFeaturesGmlBuilder gml, LdpBuildingBlockFeaturesHtmlBuilder featuresHtml,
-	    LdpBuildingBlockFeaturesGeoJsonBuilder featuresGeoJsonBuilder,
+	    LdpBuildingBlockGeoJsonBuilder featuresGeoJsonBuilder,
 	    LdpBuildingBlockFeaturesJsonFgBuilder featuresJsonFgBuilder, LdpProvider ldpProvider,
 	    LdpSourcePathProvider sourcePathProvider,
 	    SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi) {
@@ -120,6 +131,48 @@ public class LdpPropertyEncoder {
 	this.sourcePathProvider = sourcePathProvider;
 
 	this.queryablePropertiesByCollectionCi = queryablePropertiesByCollectionCi;
+    }
+
+    private boolean isRepeatingObjectTypeSuffixedProperty(PropertyInfo propi, LdpPropertyEncodingContext pec) {
+
+	if (!LdpInfo.isObjectTypeSuffixedProperty(propi)
+		|| !this.objectTypeSuffixedPropertyInfosByEncodingContext.containsKey(pec)) {
+	    return false;
+	}
+
+	Map<ClassInfo, List<PropertyInfo>> map = this.objectTypeSuffixedPropertyInfosByEncodingContext.get(pec);
+
+	if (!map.containsKey(propi.inClass())) {
+	    return false;
+	} else {
+	    List<PropertyInfo> mpis = map.get(propi.inClass());
+
+	    return mpis.stream().anyMatch(mpi -> LdpInfo.isRelatedObjectTypeSuffixedProperty(propi, mpi));
+	}
+    }
+
+    private void trackObjectTypeSuffixedProperty(PropertyInfo pi, LdpPropertyEncodingContext pec) {
+
+	Map<ClassInfo, List<PropertyInfo>> map;
+
+	if (this.objectTypeSuffixedPropertyInfosByEncodingContext.containsKey(pec)) {
+	    map = this.objectTypeSuffixedPropertyInfosByEncodingContext.get(pec);
+	} else {
+	    map = new HashMap<>();
+	    this.objectTypeSuffixedPropertyInfosByEncodingContext.put(pec, map);
+	}
+
+	List<PropertyInfo> mpis;
+	if (map.containsKey(pi.inClass())) {
+	    mpis = map.get(pi.inClass());
+	} else {
+	    mpis = new ArrayList<>();
+	    map.put(pi.inClass(), mpis);
+	}
+
+	if (!mpis.stream().anyMatch(mpi -> LdpInfo.isRelatedObjectTypeSuffixedProperty(pi, mpi))) {
+	    mpis.add(pi);
+	}
     }
 
     /**
@@ -217,8 +270,12 @@ public class LdpPropertyEncoder {
 
 	for (PropertyInfo pi : propsToProcess) {
 
-	    if (!LdpInfo.isEncoded(pi) || target.isIgnored(pi)) {
+	    if (!LdpInfo.isEncoded(pi) || target.isIgnored(pi) || isRepeatingObjectTypeSuffixedProperty(pi, context)) {
 		continue;
+	    }
+
+	    if (LdpInfo.isObjectTypeSuffixedProperty(pi)) {
+		trackObjectTypeSuffixedProperty(pi, context);
 	    }
 
 	    ClassInfo typeCi = pi.typeClass();
@@ -1172,7 +1229,19 @@ public class LdpPropertyEncoder {
 				Ldproxy2Target.allFeaturesTableTypeRestrictionsDefaultTopFeatureTypeName)) {
 			    // Do not define restrictions
 			} else {
-			    valueTypeRestrictions = LdpInfo.collectionIds(pi);
+
+			    if (LdpInfo.isObjectTypeSuffixedProperty(pi)) {
+				/*
+				 * Gather all target types from the related properties
+				 */
+				for (PropertyInfo pix : pi.inClass().properties().values()) {
+				    if (LdpInfo.isRelatedObjectTypeSuffixedProperty(pi, pix)) {
+					valueTypeRestrictions.addAll(LdpInfo.collectionIds(pix));
+				    }
+				}
+			    } else {
+				valueTypeRestrictions = LdpInfo.collectionIds(pi);
+			    }
 			}
 		    }
 
@@ -1374,13 +1443,13 @@ public class LdpPropertyEncoder {
 		}
 	    }
 
-	    if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)
-		    && "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)) {
+	    if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && "LI_Lineage".equalsIgnoreCase(pi.typeInfo().name)
+		    && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
 
 		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
 			.dateFormat(Ldproxy2Target.dateTimeFormat).build();
 		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			typeDefinitionCi, propertyPath(nowVisitedList)
+			typeDefinitionCi, pi, propertyPath(nowVisitedList)
 				+ (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.dat" : ".processStep.dateTime"),
 			trf);
 	    }
@@ -1406,7 +1475,7 @@ public class LdpPropertyEncoder {
 		    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().remove(tv)
 			    .build();
 		    bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			    typeDefinitionCi, propertyPath(nowVisitedList), trf);
+			    typeDefinitionCi, pi, propertyPath(nowVisitedList), trf);
 		} else {
 		    MessageContext mc = result.addError(msgSource, 122, pi.name(), pi.taggedValue("ldpRemove"));
 		    if (mc != null) {
@@ -1418,13 +1487,13 @@ public class LdpPropertyEncoder {
 		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
 			.dateFormat(Ldproxy2Target.dateFormat).build();
 		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+			typeDefinitionCi, pi, propertyPath(nowVisitedList), trf);
 	    }
 	    if (ldpType == Type.DATETIME && StringUtils.isNotBlank(Ldproxy2Target.dateTimeFormat)) {
 		ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder()
 			.dateFormat(Ldproxy2Target.dateTimeFormat).build();
 		bbFeaturesHtmlBuilder.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-			typeDefinitionCi, propertyPath(nowVisitedList), trf);
+			typeDefinitionCi, pi, propertyPath(nowVisitedList), trf);
 	    }
 
 	    if (bbFeaturesGmlBuilder != null) {
@@ -1441,7 +1510,7 @@ public class LdpPropertyEncoder {
 				.remove("ALWAYS").build();
 			bbFeaturesGeoJsonBuilder
 				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-					typeDefinitionCi, propertyPath(nowVisitedList) + ".dataType", trf);
+					typeDefinitionCi, pi, propertyPath(nowVisitedList) + ".dataType", trf);
 		    }
 		}
 	    }
@@ -1456,7 +1525,7 @@ public class LdpPropertyEncoder {
 				.remove("ALWAYS").build();
 			bbFeaturesJsonFgBuilder
 				.addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(
-					typeDefinitionCi, propertyPath(nowVisitedList) + ".dataType", trf);
+					typeDefinitionCi, pi, propertyPath(nowVisitedList) + ".dataType", trf);
 		    }
 		}
 	    }

@@ -41,6 +41,7 @@ import org.apache.commons.lang3.Strings;
 
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
+import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
@@ -161,35 +162,6 @@ public class LdpGidEncoder {
 	}
 
 	{
-	    // --- processStep.source
-	    LinkedHashMap<String, FeatureSchema> propertyMapForSourceBuilder = new LinkedHashMap<>();
-	    ImmutableFeatureSchema.Builder sourceBuilder = new ImmutableFeatureSchema.Builder();
-	    sourceBuilder.name(source).label(label_source).alias(alias_source).type(Type.OBJECT);
-	    if (createObjectTypes) {
-		sourceBuilder.objectType("LI_Source");
-	    }
-
-	    {
-		// source.description
-		ImmutableFeatureSchema.Builder sourceDescriptionBuilder = new ImmutableFeatureSchema.Builder();
-		sourceDescriptionBuilder.name(description).label(label_description).alias(alias_description)
-			.type(Type.STRING);
-		if (setSourcePaths) {
-		    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
-			sourceDescriptionBuilder.sourcePath("src_des");
-		    } else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQErhebung3D",
-			    "AX_DQDachhoehe")) {
-			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
-		    }
-		}
-		propertyMapForSourceBuilder.put(description, sourceDescriptionBuilder.build());
-	    }
-
-	    propertyMapForProcessStepBuilder.put(source,
-		    sourceBuilder.propertyMap(propertyMapForSourceBuilder).build());
-	}
-
-	{
 	    // processStep.description
 	    ImmutableFeatureSchema.Builder processStepDescriptionBuilder = new ImmutableFeatureSchema.Builder();
 	    processStepDescriptionBuilder.name(description).label(label_description).alias(alias_description)
@@ -272,11 +244,50 @@ public class LdpGidEncoder {
 		    processorRoleBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_rol_cdv");
 		}
 	    }
+
+	    if (Ldproxy2Target.enableFragments
+		    && (sourcePathInfosForBuilder == null || sourcePathInfosForBuilder.getContext().isInFragment())) {
+		ImmutableSchemaConstraints.Builder processorRoleConstraintsBuilder = new ImmutableSchemaConstraints.Builder();
+		processorRoleConstraintsBuilder.enumValues(
+			List.of("resourceProvider", "custodian", "owner", "user", "distributor", "originator",
+				"pointOfContact", "principalInvestigator", "processor", "publisher", "author"));
+		processorRoleBuilder.constraints(processorRoleConstraintsBuilder.build());
+	    }
+
 	    propertyMapForProcessorBuilder.put(role, processorRoleBuilder.build());
 	}
 
 	propertyMapForProcessStepBuilder.put(processor,
 		processorBuilder.propertyMap(propertyMapForProcessorBuilder).build());
+
+	{
+	    // --- processStep.source
+	    LinkedHashMap<String, FeatureSchema> propertyMapForSourceBuilder = new LinkedHashMap<>();
+	    ImmutableFeatureSchema.Builder sourceBuilder = new ImmutableFeatureSchema.Builder();
+	    sourceBuilder.name(source).label(label_source).alias(alias_source).type(Type.OBJECT);
+	    if (createObjectTypes) {
+		sourceBuilder.objectType("LI_Source");
+	    }
+
+	    {
+		// source.description
+		ImmutableFeatureSchema.Builder sourceDescriptionBuilder = new ImmutableFeatureSchema.Builder();
+		sourceDescriptionBuilder.name(description).label(label_description).alias(alias_description)
+			.type(Type.STRING);
+		if (setSourcePaths) {
+		    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
+			sourceDescriptionBuilder.sourcePath("src_des");
+		    } else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQErhebung3D",
+			    "AX_DQDachhoehe")) {
+			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
+		    }
+		}
+		propertyMapForSourceBuilder.put(description, sourceDescriptionBuilder.build());
+	    }
+
+	    propertyMapForProcessStepBuilder.put(source,
+		    sourceBuilder.propertyMap(propertyMapForSourceBuilder).build());
+	}
 
 	propertyMapForBuilder.put(processStep,
 		processStepBuilder.propertyMap(propertyMapForProcessStepBuilder).build());

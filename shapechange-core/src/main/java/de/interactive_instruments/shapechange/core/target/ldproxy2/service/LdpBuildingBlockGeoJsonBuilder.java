@@ -35,24 +35,20 @@ import java.util.List;
 import java.util.SortedMap;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
-import de.ii.ogcapi.features.html.domain.ImmutableFeaturesHtmlConfiguration;
-import de.ii.ogcapi.foundation.domain.ExtensionConfiguration;
+import de.ii.ogcapi.features.geojson.domain.ImmutableGeoJsonConfiguration;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
-public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder {
+public class LdpBuildingBlockGeoJsonBuilder extends LdpBuildingBlockBuilder {
 
     @Override
-    public ImmutableFeaturesHtmlConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+    public ImmutableGeoJsonConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
 
-	ImmutableFeaturesHtmlConfiguration.Builder builder = cfg.builder().ogcApiExtension().featuresHtml();
-
-	builder.featureTitleTemplate(LdpInfo.featureTitleTemplate(ci));
+	ImmutableGeoJsonConfiguration.Builder builder = cfg.builder().ogcApiExtension().geoJson();
 
 	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
 	    SortedMap<String, List<PropertyTransformation>> propertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
@@ -65,13 +61,13 @@ public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder
 
     @Override
     public boolean hasInputForServiceCollection(ClassInfo ci) {
-	return hasTransformations(ci) || LdpInfo.featureTitleTemplate(ci).isPresent();
+	return hasTransformations(ci);
     }
 
     @Override
-    public ExtensionConfiguration getServiceConfiguration(LdproxyCfgWriter cfg) {
+    public ImmutableGeoJsonConfiguration getServiceConfiguration(LdproxyCfgWriter cfg) {
 
-	ImmutableFeaturesHtmlConfiguration.Builder builder = cfg.builder().ogcApiExtension().featuresHtml();
+	ImmutableGeoJsonConfiguration.Builder builder = cfg.builder().ogcApiExtension().geoJson();
 	builder.enabled(true);
 
 	if (!super.propertyTransformationsForGlobalBuildingBlockOfServiceConfig.isEmpty()) {
@@ -79,10 +75,6 @@ public class LdpBuildingBlockFeaturesHtmlBuilder extends LdpBuildingBlockBuilder
 	}
 
 	return builder.build();
-    }
-
-    public boolean hasInputForServiceConfiguration() {
-	return !super.propertyTransformationsForGlobalBuildingBlockOfServiceConfig.isEmpty();
     }
 
 }

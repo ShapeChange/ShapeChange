@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -53,7 +54,6 @@ import de.ii.ogcapi.features.gml.domain.ImmutableGmlIdentifier;
 import de.ii.ogcapi.features.gml.domain.ImmutableSrsNameMapping;
 import de.ii.ogcapi.features.gml.domain.ImmutableUomMapping;
 import de.ii.ogcapi.features.gml.domain.ImmutableVariableName;
-import de.ii.ogcapi.resources.domain.ImmutableResourcesConfiguration;
 import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
@@ -94,8 +94,10 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 
     protected Map<ClassInfo, List<String>> xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass = new HashMap<>();
     protected Map<ClassInfo, Map<String, String>> codelistPropertiesByTopLevelClass = new HashMap<>();
+    protected Map<String, String> globalCodelistProperties = new HashMap<>();
     protected Map<ClassInfo, Map<String, List<String>>> valueWrapsByTopLevelClass = new HashMap<>();
-
+    protected Map<ClassInfo, SortedSet<String>> objectTypeSuffixedPropertiesByTopLevelClass = new HashMap<>();
+    
     protected Map<String, String> gmlFixmeByOriginalSchemaNameMap = new HashMap<>();
     protected int gmlFixmeCounter = 1;
 
@@ -120,10 +122,12 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected LdpSrsNameMappings srsNameMappings = null;
     protected LdpUomMappings uomMappings = null;
 
-    protected ImmutableGmlConfiguration.Builder scConfigGmlBuilder = null;
-    protected ImmutableResourcesConfiguration.Builder scConfigResourcesBuilder = null;
-
     protected LdpGidEncoder gidEncoder = null;
+    protected boolean isResourcesConfigRequired = false;
+
+    public boolean isResourcesConfigRequired() {
+	return this.isResourcesConfigRequired;
+    }
 
     public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, Ldproxy2Target target,
 	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, boolean gmlIdOnGeometries, int gmlSfLevel,
@@ -381,36 +385,35 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	gmlObjectTypeNamespacesMap.put(className, nsabr);
     }
 
-    public ImmutableGmlConfiguration.Builder getServiceConfigGmlConfigurationBuilder() {
-	return this.scConfigGmlBuilder;
-    }
+    @Override
+    public ImmutableGmlConfiguration getServiceConfiguration(LdproxyCfgWriter cfg) {
 
-    public ImmutableResourcesConfiguration.Builder getServiceConfigResourcesConfigurationBuilder() {
-	return this.scConfigResourcesBuilder;
-    }
+	ImmutableGmlConfiguration.Builder builder = cfg.builder().ogcApiExtension().gml();
+	builder.enabled(true);
 
-    public void createServiceConfigurationBuilders(LdproxyCfgWriter cfg) {
+	if (!super.propertyTransformationsForGlobalBuildingBlockOfServiceConfig.isEmpty()) {
+	    builder.transformations(propertyTransformationsForGlobalBuildingBlockOfServiceConfig);
+	}
 
-	scConfigGmlBuilder = cfg.builder().ogcApiExtension().gml();
-
-	scConfigGmlBuilder.enabled(true);
+	if (!globalCodelistProperties.isEmpty()) {
+	    builder.codelistProperties(globalCodelistProperties);
+	}
 
 	SortedMap<String, String> appNamespaces = new TreeMap<>();
 
 	for (Entry<String, String> e : gmlNsabrByNs.entrySet()) {
 	    appNamespaces.put(e.getValue(), e.getKey());
 	}
-	scConfigGmlBuilder.putAllApplicationNamespaces(appNamespaces);
+	builder.putAllApplicationNamespaces(appNamespaces);
 
-	scConfigGmlBuilder.defaultNamespace(Ldproxy2Target.mainAppSchema.xmlns());
+	builder.defaultNamespace(Ldproxy2Target.mainAppSchema.xmlns());
 
 	String schemaLocationForMainAppSchema = xmlEncodingInfos.getXmlNamespaces().stream()
 		.filter(xn -> xn.getNs().equals(mainAppSchema.targetNamespace()) && xn.hasLocation())
 		.map(xn -> xn.getLocation()).findFirst().orElse(null);
 	if (StringUtils.isBlank(schemaLocationForMainAppSchema)) {
 	    // Assume that the XSD for the main schema is hosted as local resource
-	    scConfigResourcesBuilder = cfg.builder().ogcApiExtension().resources();
-	    scConfigResourcesBuilder.enabled(true);
+	    this.isResourcesConfigRequired = true;
 	    schemaLocationForMainAppSchema = "{{serviceUrl}}/resources/" + Ldproxy2Target.mainAppSchema.xsdDocument();
 	    if (!schemaLocationForMainAppSchema.toLowerCase(Locale.ENGLISH).endsWith(".xsd")) {
 		schemaLocationForMainAppSchema += ".xsd";
@@ -425,30 +428,30 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    }
 	}
 
-	scConfigGmlBuilder.putAllSchemaLocations(schemaLocations);
+	builder.putAllSchemaLocations(schemaLocations);
 
-	scConfigGmlBuilder.objectTypeNamespaces(gmlObjectTypeNamespacesMap);
+	builder.objectTypeNamespaces(gmlObjectTypeNamespacesMap);
 
 	if (StringUtils.isNotBlank(gmlIdPrefix)) {
-	    scConfigGmlBuilder.gmlIdPrefix(gmlIdPrefix);
+	    builder.gmlIdPrefix(gmlIdPrefix);
 	}
 	if (gmlIdOnGeometries) {
-	    scConfigGmlBuilder.gmlIdOnGeometries(true);
+	    builder.gmlIdOnGeometries(true);
 	}
 	if (gmlSfLevel != null && gmlSfLevel != -1) {
-	    scConfigGmlBuilder.gmlSfLevel(gmlSfLevel);
+	    builder.gmlSfLevel(gmlSfLevel);
 	}
 	if (StringUtils.isNotBlank(gmlFeatureCollectionElementName)) {
-	    scConfigGmlBuilder.featureCollectionElementName(gmlFeatureCollectionElementName);
+	    builder.featureCollectionElementName(gmlFeatureCollectionElementName);
 	}
 	if (StringUtils.isNotBlank(gmlFeatureMemberElementName)) {
-	    scConfigGmlBuilder.featureMemberElementName(gmlFeatureMemberElementName);
+	    builder.featureMemberElementName(gmlFeatureMemberElementName);
 	}
 	if (StringUtils.isNotBlank(gmlFeatureRefTemplate)) {
-	    scConfigGmlBuilder.featureRefTemplate(gmlFeatureRefTemplate);
+	    builder.featureRefTemplate(gmlFeatureRefTemplate);
 	}
 	if (StringUtils.isNotBlank(gmlCodelistUriTemplate)) {
-	    scConfigGmlBuilder.codelistUriTemplate(gmlCodelistUriTemplate);
+	    builder.codelistUriTemplate(gmlCodelistUriTemplate);
 	}
 	if (StringUtils.isNotBlank(gmlIdentifierCodeSpace)) {
 	    ImmutableGmlIdentifier.Builder gi = new ImmutableGmlIdentifier.Builder();
@@ -456,16 +459,16 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	    if (StringUtils.isNotBlank(gmlIdentifierValueTemplate)) {
 		gi.valueTemplate(gmlIdentifierValueTemplate);
 	    }
-	    scConfigGmlBuilder.gmlIdentifier(gi.build());
+	    builder.gmlIdentifier(gi.build());
 	}
 
-	scConfigGmlBuilder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
+	builder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
 	if (gmlUseAlias) {
-	    scConfigGmlBuilder.useAlias(gmlUseAlias);
+	    builder.useAlias(gmlUseAlias);
 	}
-	scConfigGmlBuilder.useSurfaceAndCurve(gmlUseSurfaceAndCurve);
+	builder.useSurfaceAndCurve(gmlUseSurfaceAndCurve);
 	if (appendTemporalSuffixToGmlId) {
-	    scConfigGmlBuilder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
+	    builder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
 	}
 
 	if (!genericValueTypes.isEmpty()) {
@@ -478,55 +481,63 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 		    mapping.put(subtype.name(), nsabr + ":" + subtype.name());
 		}
 		ivn.mapping(mapping);
-		scConfigGmlBuilder.putVariableObjectElementNames(gvt.name(), ivn.build());
+		builder.putVariableObjectElementNames(gvt.name(), ivn.build());
 	    }
 	}
 
 	if (this.srsNameMappings != null && !this.srsNameMappings.isEmpty()) {
-	    scConfigGmlBuilder.srsNameStyle(SrsNameStyle.TEMPLATE);
+	    builder.srsNameStyle(SrsNameStyle.TEMPLATE);
 	    for (LdpSrsNameMapping snm : this.srsNameMappings.getSrsNameMappings()) {
 
 		ImmutableEpsgCrs crs = new ImmutableEpsgCrs.Builder().code(snm.getCode())
 			.forceAxisOrder(snm.getForceAxisOrder()).verticalCode(snm.getVerticalCode()).build();
 		ImmutableSrsNameMapping isnm = new ImmutableSrsNameMapping.Builder().crs(crs).value(snm.getValue())
 			.build();
-		scConfigGmlBuilder.addSrsNameMappings(isnm);
+		builder.addSrsNameMappings(isnm);
 	    }
 	}
 
 	if (this.uomMappings != null && !this.uomMappings.isEmpty()) {
-	    scConfigGmlBuilder.uomStyle(UomStyle.TEMPLATE);
+	    builder.uomStyle(UomStyle.TEMPLATE);
 	    for (LdpUomMapping uom : this.uomMappings.getUomMappings()) {
 
 		ImmutableUomMapping iuom = new ImmutableUomMapping.Builder().uom(uom.getUom()).value(uom.getValue())
 			.build();
-		scConfigGmlBuilder.addUomMappings(iuom);
+		builder.addUomMappings(iuom);
 	    }
 	}
+
+	return builder.build();
     }
 
-    public ImmutableGmlConfiguration createGmlConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
+    @Override
+    public ImmutableGmlConfiguration getConfigurationForServiceCollection(LdproxyCfgWriter cfg, ClassInfo ci) {
 
-	ImmutableGmlConfiguration.Builder gmlBuilder = cfg.builder().ogcApiExtension().gml();
+	ImmutableGmlConfiguration.Builder builder = cfg.builder().ogcApiExtension().gml();
+
 	if (super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
 	    SortedMap<String, List<PropertyTransformation>> gmlPropertyTransformations = super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass
 		    .get(ci);
-	    gmlBuilder.transformations(gmlPropertyTransformations);
+	    builder.transformations(gmlPropertyTransformations);
 	}
 	if (xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.containsKey(ci)) {
 	    List<String> xmlAttributeCases = xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.get(ci);
-	    gmlBuilder.addAllXmlAttributes(xmlAttributeCases);
+	    builder.addAllXmlAttributes(xmlAttributeCases);
 	}
 
 	if (gmlIdentifyCodelistProperties && codelistPropertiesByTopLevelClass.containsKey(ci)) {
-	    gmlBuilder.codelistProperties(codelistPropertiesByTopLevelClass.get(ci));
+	    builder.codelistProperties(codelistPropertiesByTopLevelClass.get(ci));
 	}
 
 	if (valueWrapsByTopLevelClass.containsKey(ci)) {
-	    gmlBuilder.valueWrap(valueWrapsByTopLevelClass.get(ci));
+	    builder.valueWrap(valueWrapsByTopLevelClass.get(ci));
+	}
+	
+	if(objectTypeSuffixedPropertiesByTopLevelClass.containsKey(ci)) {
+	    builder.objectTypeSuffixedProperties(objectTypeSuffixedPropertiesByTopLevelClass.get(ci));
 	}
 
-	return gmlBuilder.build();
+	return builder.build();
     }
 
     public void register(PropertyInfo pi, ClassInfo topLevelClass, String propertyPath) {
@@ -537,7 +548,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 
 	    ImmutablePropertyTransformation trf = new ImmutablePropertyTransformation.Builder().rename(xmlQNameToUse)
 		    .build();
-	    addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(topLevelClass, propertyPath,
+	    addPropertyTransformationToBuildingBlockOfCollectionInServiceConfiguration(topLevelClass, pi, propertyPath,
 		    trf);
 	}
 
@@ -552,14 +563,31 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	}
 
 	if (pi.categoryOfValue() == Options.CODELIST) {
+
 	    Map<String, String> cpMap;
-	    if (this.codelistPropertiesByTopLevelClass.containsKey(topLevelClass)) {
-		cpMap = this.codelistPropertiesByTopLevelClass.get(topLevelClass);
+
+	    if (isGlobalPropertyDefinitions(pi)) {
+		cpMap = this.globalCodelistProperties;
 	    } else {
-		cpMap = new TreeMap<>();
-		this.codelistPropertiesByTopLevelClass.put(topLevelClass, cpMap);
+		if (this.codelistPropertiesByTopLevelClass.containsKey(topLevelClass)) {
+		    cpMap = this.codelistPropertiesByTopLevelClass.get(topLevelClass);
+		} else {
+		    cpMap = new TreeMap<>();
+		    this.codelistPropertiesByTopLevelClass.put(topLevelClass, cpMap);
+		}
 	    }
+
 	    cpMap.put(propertyPath, pi.typeInfo().name);
+	}
+	
+	if(LdpInfo.isObjectTypeSuffixedProperty(pi)) {
+	    
+	    SortedSet<String> objectTypeSuffixedProperties = objectTypeSuffixedPropertiesByTopLevelClass.get(topLevelClass);
+	    if (objectTypeSuffixedProperties == null) {
+		objectTypeSuffixedProperties = new TreeSet<>();
+		objectTypeSuffixedPropertiesByTopLevelClass.put(topLevelClass, objectTypeSuffixedProperties);
+	    }
+	    objectTypeSuffixedProperties.add(propertyPath);
 	}
 
 	if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK)) {
@@ -573,11 +601,11 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 
     @Override
     public boolean hasInputForServiceCollection(ClassInfo ci) {
-	/*
-	 * TODO be more specific; for now, we assume that if gml output is enabled, then
-	 * each collection has something to say
-	 */
-	return true;
+
+	return super.propertyTransformationsForBuildingBlockOfServiceConfigCollectionsByTopLevelClass.containsKey(ci)
+		|| xmlAttributes_Gml_OfServiceConfigCollectionsByTopLevelClass.containsKey(ci)
+		|| (gmlIdentifyCodelistProperties && codelistPropertiesByTopLevelClass.containsKey(ci))
+		|| valueWrapsByTopLevelClass.containsKey(ci);
     }
 
     public void setGidEncoder(LdpGidEncoder gidEncoder) {
