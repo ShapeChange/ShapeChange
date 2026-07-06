@@ -142,4 +142,6 @@ public class TaggedValueTransformerConstants {
     
     public static final String RULE_TV_CREATE_ROLE_SOURE_OR_TARGET_TAG = "rule-trf-taggedValue-createAssociationRoleSourceOrTargetTag";
     
+    public static final String RULE_TV_CREATE_ROLE_DEPENDENT_PART_TAG = "rule-trf-taggedValue-createAssociationRoleDependentPartTag";
+    
 }

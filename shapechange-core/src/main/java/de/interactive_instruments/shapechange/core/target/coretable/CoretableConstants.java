@@ -48,6 +48,6 @@ public class CoretableConstants {
     
 //    public static final String PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE = "createCascadeRuleGraphImage";
     
-    public static final String TV_EX_DEP_PART = "existentiallyDependentPart";
+    public static final String TV_EX_DEP_TYPE = "existentialDependencyType";
 
 }

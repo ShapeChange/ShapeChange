@@ -100,7 +100,7 @@ return true;
                <p>Start time:</p>
             </td>
             <td>
-               <p>Wed Jun 17 14:27:20 CEST 2026</p>
+               <p>Thu Jun 25 16:47:22 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -108,7 +108,7 @@ return true;
                <p>End time:</p>
             </td>
             <td>
-               <p>Wed Jun 17 14:27:20 CEST 2026</p>
+               <p>Thu Jun 25 16:47:33 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -116,7 +116,7 @@ return true;
                <p>Configuration file:</p>
             </td>
             <td>
-               <p>src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_loopAndCycle_runWithSCXML.xml</p>
+               <p>src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig_loopAndCycle.xml</p>
             </td>
          </tr>
          <tr>
@@ -224,6 +224,38 @@ return true;
                <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
             </td>
          </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connected to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
             <td>
                <p>ProcessFlowInfo</p>
@@ -263,7 +295,7 @@ return true;
             </td>
             <td>
                <p>--- Reflexive relationship detected for source feature type 'Test Schema 2::Object1'
-                  (via role(s) with tag 'existentiallyDependentPart' = true): roleToCreateLoop).</p>
+                  (via role(s): roleToCreateLoop).</p>
             </td>
          </tr>
          <tr class="Error" style="display:table-row">
@@ -279,8 +311,7 @@ return true;
                <p>Error</p>
             </td>
             <td>
-               <p>   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via roles with
-                  tag 'existentiallyDependentPart' = true): roleToCreateCycle)</p>
+               <p>   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via roles: roleToCreateCycle)</p>
             </td>
          </tr>
          <tr class="Error" style="display:table-row">
@@ -288,8 +319,41 @@ return true;
                <p>Error</p>
             </td>
             <td>
-               <p>   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via roles with
-                  tag 'existentiallyDependentPart' = true): region)</p>
+               <p>   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via roles: region)</p>
+            </td>
+         </tr>
+         <tr class="Error" style="display:table-row">
+            <td>
+               <p>Error</p>
+            </td>
+            <td>
+               <p>--- Found cycle:</p>
+            </td>
+         </tr>
+         <tr class="Error" style="display:table-row">
+            <td>
+               <p>Error</p>
+            </td>
+            <td>
+               <p>   Class 'Test Schema 2::Region2' -&gt; class 'Test Schema 2::ObjectRegion2' (via roles:
+                  objectRegion2 (reverse property))</p>
+            </td>
+         </tr>
+         <tr class="Error" style="display:table-row">
+            <td>
+               <p>Error</p>
+            </td>
+            <td>
+               <p>   Class 'Test Schema 2::ObjectRegion2' -&gt; class 'Test Schema 2::PlanB' (via roles:
+                  roleToCreateCycle)</p>
+            </td>
+         </tr>
+         <tr class="Error" style="display:table-row">
+            <td>
+               <p>Error</p>
+            </td>
+            <td>
+               <p>   Class 'Test Schema 2::PlanB' -&gt; class 'Test Schema 2::Region2' (via roles: region)</p>
             </td>
          </tr>
          <tr class="Info" style="display:table-row">

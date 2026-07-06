@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:gml="http://www.opengis.net/gml/3.2"
+        xmlns:sc="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+        xmlns:t1="http://example.org/shapechange/schema/test1"
+        elementFormDefault="qualified"
+        targetNamespace="http://example.org/shapechange/schema/test1"
+        version="1.0">
+   <import namespace="http://www.interactive-instruments.de/ShapeChange/AppInfo"
+           schemaLocation="https://shapechange.net/resources/schema/ShapeChangeAppinfo.xsd"/>
+   <import namespace="http://www.opengis.net/gml/3.2"
+           schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+   <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+   <element abstract="true"
+            name="AbstractObject"
+            substitutionGroup="gml:AbstractFeature"
+            type="t1:AbstractObjectType"/>
+   <complexType abstract="true" name="AbstractObjectType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="refText" type="t1:ParagraphPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="belongsToRegion" type="t1:AbstractRegionPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:planContent</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractObjectPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:AbstractObject"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="AbstractPlan"
+            substitutionGroup="gml:AbstractFeature"
+            type="t1:AbstractPlanType"/>
+   <complexType abstract="true" name="AbstractPlanType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="text" type="t1:ParagraphPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractPlanPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:AbstractPlan"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element abstract="true"
+            name="AbstractRegion"
+            substitutionGroup="gml:AbstractFeature"
+            type="t1:AbstractRegionType"/>
+   <complexType abstract="true" name="AbstractRegionType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence>
+               <element name="text" type="t1:ParagraphPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="planContent" type="t1:AbstractObjectPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToRegion</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="AbstractRegionPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:AbstractRegion"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="FeatureTypeNotEncoded"
+            substitutionGroup="t1:AbstractObject"
+            type="t1:FeatureTypeNotEncodedType"/>
+   <complexType name="FeatureTypeNotEncodedType">
+      <complexContent>
+         <extension base="t1:AbstractObjectType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="FeatureTypeNotEncodedPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:FeatureTypeNotEncoded"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Object1"
+            substitutionGroup="t1:AbstractObject"
+            type="t1:Object1Type"/>
+   <complexType name="Object1Type">
+      <complexContent>
+         <extension base="t1:AbstractObjectType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="Object1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Object1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Object2"
+            substitutionGroup="t1:AbstractObject"
+            type="t1:Object2Type"/>
+   <complexType name="Object2Type">
+      <complexContent>
+         <extension base="t1:AbstractObjectType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="Object2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Object2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Paragraph"
+            substitutionGroup="gml:AbstractFeature"
+            type="t1:ParagraphType"/>
+   <complexType name="ParagraphType">
+      <complexContent>
+         <extension base="gml:AbstractFeatureType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="ParagraphPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Paragraph"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="PlanA"
+            substitutionGroup="t1:AbstractPlan"
+            type="t1:PlanAType"/>
+   <complexType name="PlanAType">
+      <complexContent>
+         <extension base="t1:AbstractPlanType">
+            <sequence>
+               <element name="region" type="t1:Region1PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToPlan</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="PlanAPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:PlanA"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="PlanB"
+            substitutionGroup="t1:AbstractPlan"
+            type="t1:PlanBType"/>
+   <complexType name="PlanBType">
+      <complexContent>
+         <extension base="t1:AbstractPlanType">
+            <sequence>
+               <element name="region" type="t1:Region2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToPlan</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="PlanBPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:PlanB"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="PlanC"
+            substitutionGroup="t1:AbstractPlan"
+            type="t1:PlanCType"/>
+   <complexType name="PlanCType">
+      <complexContent>
+         <extension base="t1:AbstractPlanType">
+            <sequence/>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="PlanCPropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:PlanC"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Region1"
+            substitutionGroup="t1:AbstractRegion"
+            type="t1:Region1Type"/>
+   <complexType name="Region1Type">
+      <complexContent>
+         <extension base="t1:AbstractRegionType">
+            <sequence>
+               <element name="belongsToPlan" type="t1:PlanAPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:region</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="Region1PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Region1"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Region2"
+            substitutionGroup="t1:AbstractRegion"
+            type="t1:Region2Type"/>
+   <complexType name="Region2Type">
+      <complexContent>
+         <extension base="t1:AbstractRegionType">
+            <sequence>
+               <element name="belongsToPlan" type="t1:PlanBPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:region</reversePropertyName>
+                        <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="roleRegion2to3" type="t1:Region3PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleRegion3To2</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="Region2PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Region2"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+   <element name="Region3"
+            substitutionGroup="t1:AbstractRegion"
+            type="t1:Region3Type"/>
+   <complexType name="Region3Type">
+      <complexContent>
+         <extension base="t1:AbstractRegionType">
+            <sequence>
+               <element name="belongsToPlanC" type="t1:PlanCPropertyType">
+                  <annotation>
+                     <appinfo>
+                        <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
+                     </appinfo>
+                  </annotation>
+               </element>
+               <element name="roleRegion3To2" type="t1:Region2PropertyType">
+                  <annotation>
+                     <appinfo>
+                        <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:roleRegion2to3</reversePropertyName>
+                     </appinfo>
+                  </annotation>
+               </element>
+            </sequence>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="Region3PropertyType">
+      <sequence minOccurs="0">
+         <element ref="t1:Region3"/>
+      </sequence>
+      <attributeGroup ref="gml:AssociationAttributeGroup"/>
+      <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+   </complexType>
+</schema>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
-                   config="src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_runWithSCXML.xml"
-                   end="Wed Jun 17 14:26:39 CEST 2026"
+                   config="src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.xml"
+                   end="Mon Jun 29 11:39:05 CEST 2026"
                    resultCode="0"
-                   start="Wed Jun 17 14:26:38 CEST 2026"
+                   start="Mon Jun 29 11:38:47 CEST 2026"
                    version="4.1.0-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -12,9 +12,19 @@
       <Info message="Validation of input parameters completed."/>
       <Info message="Validating log parameters."/>
       <Info message="Validation of log parameters completed."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'TRF_TV' ..."/>
+      <ProcessFlowInfo message="--- Validating transformer with @id 'INPUT' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' and @inputs 'INPUT' ..."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' and @inputs 'INPUT' ..."/>
+      <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' and @inputs 'TRF_TV' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <ProcessFlowInfo message="Now processing transformation 'INPUT' for input ID: 'input'."/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'INPUT' for input ID: 'input'.&#xA;-------------------------------------------------"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'"/>
       <ProcessFlowInfo message="Now processing target 'Coretable' for input 'INPUT'."/>
       <Info message="Class 'FeatureTypeNotEncoded' is not encoded."/>
@@ -31,11 +41,25 @@
       <Info message="--- No cycles found."/>
       <Info message="Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]"/>
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Now processing transformation 'TRF_TV' for input ID: 'INPUT'."/>
+      <ProcessFlowInfo message="---------- now processing: rule-trf-taggedValue-createAssociationRoleDependentPartTag ----------"/>
+      <Info message="---------- Checking for reflexive relationships and cyles in ownership relationship graph ----------"/>
+      <Info message="--- No reflexive relationships detected."/>
+      <Info message="--- No cycles found."/>
+      <Info message="Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]"/>
+      <ProcessFlowInfo message="---------- TransformationManager postprocessing: validating constraints ----------"/>
+      <ProcessFlowInfo message="Performed transformation for transformer ID 'TRF_TV' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
+      <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'"/>
+      <ProcessFlowInfo message="Now processing target 'XML Schema' for input 'TRF_TV'."/>
+      <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema' for input ID: 'TRF_TV'.&#xA;-------------------------------------------------"/>
    </Messages>
    <Results>
       <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/1/INPUT/coretable-navigable-roles.sql"
               target="Coretable">coretable-navigable-roles.sql</Result>
       <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/2/INPUT/coretable-navigable-roles.sql"
               target="Coretable">coretable-navigable-roles.sql</Result>
+      <Result href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/1/xsd/TRF_TV/test1.xsd"
+              scope="http://example.org/shapechange/schema/test1"
+              target="XML Schema">test1.xsd</Result>
    </Results>
 </ShapeChangeResult>

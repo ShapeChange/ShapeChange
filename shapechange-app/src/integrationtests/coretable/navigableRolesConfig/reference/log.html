@@ -100,7 +100,7 @@ return true;
                <p>Start time:</p>
             </td>
             <td>
-               <p>Wed Jun 17 14:26:38 CEST 2026</p>
+               <p>Mon Jun 29 11:38:47 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -108,7 +108,7 @@ return true;
                <p>End time:</p>
             </td>
             <td>
-               <p>Wed Jun 17 14:26:39 CEST 2026</p>
+               <p>Mon Jun 29 11:39:05 CEST 2026</p>
             </td>
          </tr>
          <tr>
@@ -116,7 +116,7 @@ return true;
                <p>Configuration file:</p>
             </td>
             <td>
-               <p>src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_runWithSCXML.xml</p>
+               <p>src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.xml</p>
             </td>
          </tr>
          <tr>
@@ -212,6 +212,22 @@ return true;
                <p>ProcessFlowInfo</p>
             </td>
             <td>
+               <p>--- Validating transformer with @id 'TRF_TV' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating transformer with @id 'INPUT' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
                <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable'
                   and @inputs 'INPUT' ...</p>
             </td>
@@ -223,6 +239,15 @@ return true;
             <td>
                <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable'
                   and @inputs 'INPUT' ...</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  and @inputs 'TRF_TV' ...</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -231,6 +256,63 @@ return true;
             </td>
             <td>
                <p>---------- Semantic validation of ShapeChange configuration: COMPLETE ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Connected to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'INPUT' for input ID: 'input'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'INPUT' for input ID: 'input'.
+                  -------------------------------------------------</p>
             </td>
          </tr>
          <tr class="ProcessFlowInfo" style="display:table-row">
@@ -364,6 +446,99 @@ return true;
             <td>
                <p>Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable'
                   for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing transformation 'TRF_TV' for input ID: 'INPUT'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- now processing: rule-trf-taggedValue-createAssociationRoleDependentPartTag
+                  ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>---------- Checking for reflexive relationships and cyles in ownership relationship
+                  graph ----------</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>--- No reflexive relationships detected.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>--- No cycles found.</p>
+            </td>
+         </tr>
+         <tr class="Info" style="display:table-row">
+            <td>
+               <p>Info</p>
+            </td>
+            <td>
+               <p>Maximum depth: 3 - (e.g.) via path: [region, planContent, refText]</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>---------- TransformationManager postprocessing: validating constraints ----------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Performed transformation for transformer ID 'TRF_TV' for input ID: 'INPUT'.
+                  -------------------------------------------------</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Application schema found, package name: 'Test Schema 1', target namespace: 'http://example.org/shapechange/schema/test1'</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Now processing target 'XML Schema' for input 'TRF_TV'.</p>
+            </td>
+         </tr>
+         <tr class="ProcessFlowInfo" style="display:table-row">
+            <td>
+               <p>ProcessFlowInfo</p>
+            </td>
+            <td>
+               <p>Executed target class 'de.interactive_instruments.shapechange.core.target.xmlschema.XmlSchema'
+                  for input ID: 'TRF_TV'.
                   -------------------------------------------------</p>
             </td>
          </tr>
@@ -400,6 +575,17 @@ return true;
             </td>
             <td>
                <p><a href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/2/INPUT/coretable-navigable-roles.sql">coretable-navigable-roles.sql</a></p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <p>XML Schema</p>
+            </td>
+            <td>
+               <p>http://example.org/shapechange/schema/test1</p>
+            </td>
+            <td>
+               <p><a href="file:/C:/ShapeChange/shapechange-app/testResults/coretable/navigableRolesConfig/1/xsd/TRF_TV/test1.xsd">test1.xsd</a></p>
             </td>
          </tr>
       </table>

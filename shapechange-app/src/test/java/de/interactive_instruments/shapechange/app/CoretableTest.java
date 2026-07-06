@@ -40,7 +40,7 @@ public class CoretableTest extends BasicTestSCXML {
     @Test
     public void testCoretable_navigableRolesConfig() {
 
-	multiTest("src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.xml", new String[] { "sql" },
+	multiTest("src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.xml", new String[] { "sql", "xsd" },
 		"testResults/coretable/navigableRolesConfig",
 		"src/integrationtests/coretable/navigableRolesConfig/reference");
     }

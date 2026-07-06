@@ -64,7 +64,6 @@ public class Coretable implements SingleTarget, MessageSource {
     private static boolean initialised = false;
 
     private static boolean generateNavigableRolesConfig = false;
-    private static boolean createOwnershipRolesGraphImage = false;
     private static String dbSchemaName = "public";
 
     private static boolean appSchemaVersionMajorMinorOnly = false;
@@ -101,9 +100,6 @@ public class Coretable implements SingleTarget, MessageSource {
 
 	    generateNavigableRolesConfig = options.parameterAsBoolean(this.getClass().getName(),
 		    CoretableConstants.PARAM_GENERATE_NAVIGABLE_ROLES_CONFIG, false);
-
-//	    createCascadeRuleGraphImage = options.parameterAsBoolean(this.getClass().getName(),
-//		    CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE, false);
 
 	    dbSchemaName = options.parameterAsString(this.getClass().getName(), CoretableConstants.PARAM_DB_SCHEMA_NAME,
 		    "public", false, true);
@@ -177,10 +173,12 @@ public class Coretable implements SingleTarget, MessageSource {
 		appSchemaVersion = appSchemaVersion.substring(0, StringUtils.ordinalIndexOf(appSchemaVersion, ".", 2));
 	    }
 
-	    CoretableNavigableRolesConfigWriter cnrcWriter = new CoretableNavigableRolesConfigWriter(result,
-		    dbSchemaName);
-	    cnrcWriter.computeNavigableRolesConfig(featureObjectAndMixinTypes, appSchema, appSchemaVersion);
-	    cnrcWriter.write(outputDirectory, outputFilename, getTargetName(), createOwnershipRolesGraphImage,
+	    CoretableNavigableRolesConfigBuilder cnrcBuilder = new CoretableNavigableRolesConfigBuilder(result);
+	    SortedSet<CoretableNavigableRole> navigableRolesConfig = cnrcBuilder
+		    .getNavigableRolesConfig(featureObjectAndMixinTypes, appSchema, appSchemaVersion);
+
+	    CoretableNavigableRolesConfigWriter cnrcWriter = new CoretableNavigableRolesConfigWriter(result);
+	    cnrcWriter.write(navigableRolesConfig, outputDirectory, outputFilename, getTargetName(), dbSchemaName,
 		    generateInsertStatements);
 	}
     }
@@ -211,7 +209,6 @@ public class Coretable implements SingleTarget, MessageSource {
 	outputFilename = null;
 
 	generateNavigableRolesConfig = false;
-	createOwnershipRolesGraphImage = false;
 	dbSchemaName = "public";
 
 	appSchemaVersionMajorMinorOnly = false;

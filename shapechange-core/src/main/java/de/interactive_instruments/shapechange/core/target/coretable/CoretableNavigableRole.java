@@ -46,13 +46,34 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	forward, inverse
     }
 
+    /**
+     * dependent_part marks ownership
+     */
+    public enum DependentPart {
+
+	/**
+	 * target existentially owns source (target is owner, source is part)
+	 */
+	source,
+
+	/**
+	 * source existentially owns target (source is owner, target is part)
+	 */
+	target,
+
+	/**
+	 * non-ownership role
+	 */
+	none
+    }
+
     private ClassInfo sourceFeatureType;
     private PropertyInfo navigableRole;
     private ClassInfo targetFeatureType;
     private String appSchema;
     private String version;
     private RelDirection relDirection;
-    private boolean isExistentiallyDependentPart;
+    private DependentPart dependentPart;
 
     public ClassInfo getSourceFeatureType() {
 	return sourceFeatureType;
@@ -102,20 +123,19 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	this.relDirection = relDirection;
     }
 
-    public boolean isExistentiallyDependentPart() {
-	return isExistentiallyDependentPart;
+    public DependentPart getDependentPart() {
+	return this.dependentPart;
     }
 
-    public void setExistentiallyDependentPart(boolean isExistentiallyDependentPart) {
-	this.isExistentiallyDependentPart = isExistentiallyDependentPart;
+    public void setDependentPart(DependentPart dependentPart) {
+	this.dependentPart = dependentPart;
     }
 
     @Override
     public String toString() {
 	return "CoretableNavigableRole [sourceFeatureType=" + sourceFeatureType + ", navigableRole=" + navigableRole
 		+ ", targetFeatureType=" + targetFeatureType + ", appSchema=" + appSchema + ", version=" + version
-		+ ", relDirection=" + relDirection + ", isExistentiallyDependentPart=" + isExistentiallyDependentPart
-		+ "]";
+		+ ", relDirection=" + relDirection + ", dependentPart=" + dependentPart + "]";
     }
 
     @Override
@@ -136,25 +156,19 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	} else if (this.getTargetFeatureType().fullName().compareTo(o.getTargetFeatureType().fullName()) != 0) {
 	    return this.getTargetFeatureType().fullName().compareTo(o.getTargetFeatureType().fullName());
 
-	} else if (Boolean.compare(this.isExistentiallyDependentPart(), o.isExistentiallyDependentPart()) != 0) {
-	    return Boolean.compare(this.isExistentiallyDependentPart(), o.isExistentiallyDependentPart());
+	} else if (this.getDependentPart().compareTo(o.getDependentPart()) != 0) {
+	    return this.getDependentPart().compareTo(o.getDependentPart());
 
 	} else {
 
-	    if (this.getRelDirection() == o.getRelDirection()) {
-		return 0;
-	    } else if (this.getRelDirection() == RelDirection.forward) {
-		return -1;
-	    } else {
-		return 1;
-	    }
+	    return this.getRelDirection().compareTo(o.getRelDirection());
 	}
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(appSchema, isExistentiallyDependentPart, navigableRole, relDirection, sourceFeatureType,
-		targetFeatureType, version);
+	return Objects.hash(appSchema, dependentPart, navigableRole, relDirection, sourceFeatureType, targetFeatureType,
+		version);
     }
 
     @Override
@@ -166,8 +180,7 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	if (getClass() != obj.getClass())
 	    return false;
 	CoretableNavigableRole other = (CoretableNavigableRole) obj;
-	return Objects.equals(appSchema, other.appSchema)
-		&& isExistentiallyDependentPart == other.isExistentiallyDependentPart
+	return Objects.equals(appSchema, other.appSchema) && dependentPart == other.dependentPart
 		&& Objects.equals(navigableRole, other.navigableRole) && relDirection == other.relDirection
 		&& Objects.equals(sourceFeatureType, other.sourceFeatureType)
 		&& Objects.equals(targetFeatureType, other.targetFeatureType) && Objects.equals(version, other.version);

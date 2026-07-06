@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ShapeChangeResult xmlns="http://www.interactive-instruments.de/ShapeChange/Result"
                    xmlns:r="http://www.interactive-instruments.de/ShapeChange/Result"
-                   config="src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig_loopAndCycle_runWithSCXML.xml"
-                   end="Wed Jun 17 14:27:20 CEST 2026"
+                   config="src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig_loopAndCycle.xml"
+                   end="Thu Jun 25 16:47:33 CEST 2026"
                    resultCode="0"
-                   start="Wed Jun 17 14:27:20 CEST 2026"
+                   start="Thu Jun 25 16:47:22 CEST 2026"
                    version="4.1.0-SNAPSHOT">
    <Messages>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: START ----------"/>
@@ -14,14 +14,22 @@
       <Info message="Validation of log parameters completed."/>
       <ProcessFlowInfo message="--- Validating target with @class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' and @inputs 'INPUT' ..."/>
       <ProcessFlowInfo message="---------- Semantic validation of ShapeChange configuration: COMPLETE ----------"/>
+      <Info message="Connecting to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Connected to C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Starting reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
+      <Info message="Finished reading C:\ShapeChange\shapechange-app\src\integrationtests\coretable\navigableRolesConfig\test_coretable_navigableRolesConfig.qea"/>
       <ProcessFlowInfo message="Application schema found, package name: 'Test Schema 2', target namespace: 'http://example.org/shapechange/schema/test2'"/>
       <ProcessFlowInfo message="Now processing target 'Coretable' for input 'INPUT'."/>
       <Info message="Class 'FeatureTypeNotEncoded' is not encoded."/>
       <Info message="---------- Checking for reflexive relationships and cyles in ownership relationship graph ----------"/>
-      <Error message="--- Reflexive relationship detected for source feature type 'Test Schema 2::Object1' (via role(s) with tag 'existentiallyDependentPart' = true): roleToCreateLoop)."/>
+      <Error message="--- Reflexive relationship detected for source feature type 'Test Schema 2::Object1' (via role(s): roleToCreateLoop)."/>
       <Error message="--- Found cycle:"/>
-      <Error message="   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via roles with tag 'existentiallyDependentPart' = true): roleToCreateCycle)"/>
-      <Error message="   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via roles with tag 'existentiallyDependentPart' = true): region)"/>
+      <Error message="   Class 'Test Schema 2::Region1' -&gt; class 'Test Schema 2::PlanA' (via roles: roleToCreateCycle)"/>
+      <Error message="   Class 'Test Schema 2::PlanA' -&gt; class 'Test Schema 2::Region1' (via roles: region)"/>
+      <Error message="--- Found cycle:"/>
+      <Error message="   Class 'Test Schema 2::Region2' -&gt; class 'Test Schema 2::ObjectRegion2' (via roles: objectRegion2 (reverse property))"/>
+      <Error message="   Class 'Test Schema 2::ObjectRegion2' -&gt; class 'Test Schema 2::PlanB' (via roles: roleToCreateCycle)"/>
+      <Error message="   Class 'Test Schema 2::PlanB' -&gt; class 'Test Schema 2::Region2' (via roles: region)"/>
       <Info message="No navigable roles have been identified."/>
       <ProcessFlowInfo message="Executed target class 'de.interactive_instruments.shapechange.core.target.coretable.Coretable' for input ID: 'INPUT'.&#xA;-------------------------------------------------"/>
    </Messages>
