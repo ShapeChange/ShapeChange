@@ -63,8 +63,7 @@ public class Coretable implements SingleTarget, MessageSource {
 
     private static boolean initialised = false;
 
-    private static boolean generateCascadeRules = false;
-    private static boolean createCascadeRuleGraphImage = false;
+    private static boolean generateNavigableRolesConfig = false;
     private static String dbSchemaName = "public";
 
     private static boolean appSchemaVersionMajorMinorOnly = false;
@@ -99,11 +98,8 @@ public class Coretable implements SingleTarget, MessageSource {
 		mainAppSchema = pi;
 	    }
 
-	    generateCascadeRules = options.parameterAsBoolean(this.getClass().getName(),
-		    CoretableConstants.PARAM_GENERATE_CASCADE_RULES, false);
-
-	    createCascadeRuleGraphImage = options.parameterAsBoolean(this.getClass().getName(),
-		    CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE, false);
+	    generateNavigableRolesConfig = options.parameterAsBoolean(this.getClass().getName(),
+		    CoretableConstants.PARAM_GENERATE_NAVIGABLE_ROLES_CONFIG, false);
 
 	    dbSchemaName = options.parameterAsString(this.getClass().getName(), CoretableConstants.PARAM_DB_SCHEMA_NAME,
 		    "public", false, true);
@@ -162,7 +158,7 @@ public class Coretable implements SingleTarget, MessageSource {
 
 	result = r;
 
-	if (generateCascadeRules) {
+	if (generateNavigableRolesConfig) {
 
 	    String appSchema = mainAppSchema.name();
 	    if (StringUtils.isNotBlank(appSchemaNameByTv)) {
@@ -177,9 +173,12 @@ public class Coretable implements SingleTarget, MessageSource {
 		appSchemaVersion = appSchemaVersion.substring(0, StringUtils.ordinalIndexOf(appSchemaVersion, ".", 2));
 	    }
 
-	    CoretableCascadeRuleWriter ccrWriter = new CoretableCascadeRuleWriter(result, dbSchemaName);
-	    ccrWriter.computeCascadeRules(featureObjectAndMixinTypes, appSchema, appSchemaVersion);
-	    ccrWriter.write(outputDirectory, outputFilename, getTargetName(), createCascadeRuleGraphImage,
+	    CoretableNavigableRolesConfigBuilder cnrcBuilder = new CoretableNavigableRolesConfigBuilder(result);
+	    SortedSet<CoretableNavigableRole> navigableRolesConfig = cnrcBuilder
+		    .getNavigableRolesConfig(featureObjectAndMixinTypes, appSchema, appSchemaVersion);
+
+	    CoretableNavigableRolesConfigWriter cnrcWriter = new CoretableNavigableRolesConfigWriter(result);
+	    cnrcWriter.write(navigableRolesConfig, outputDirectory, outputFilename, getTargetName(), dbSchemaName,
 		    generateInsertStatements);
 	}
     }
@@ -209,8 +208,7 @@ public class Coretable implements SingleTarget, MessageSource {
 	outputDirectory = null;
 	outputFilename = null;
 
-	generateCascadeRules = false;
-	createCascadeRuleGraphImage = false;
+	generateNavigableRolesConfig = false;
 	dbSchemaName = "public";
 
 	appSchemaVersionMajorMinorOnly = false;

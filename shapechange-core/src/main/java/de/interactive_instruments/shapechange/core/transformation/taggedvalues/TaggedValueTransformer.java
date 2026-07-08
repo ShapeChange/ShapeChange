@@ -59,6 +59,9 @@ import de.interactive_instruments.shapechange.core.model.TaggedValues;
 import de.interactive_instruments.shapechange.core.model.generic.GenericClassInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
 import de.interactive_instruments.shapechange.core.model.generic.GenericPropertyInfo;
+import de.interactive_instruments.shapechange.core.target.coretable.CoretableNavigableRole;
+import de.interactive_instruments.shapechange.core.target.coretable.CoretableNavigableRolesConfigBuilder;
+import de.interactive_instruments.shapechange.core.target.coretable.CoretableNavigableRole.DependentPart;
 import de.interactive_instruments.shapechange.core.transformation.Transformer;
 import shadow.org.apache.commons.lang3.StringUtils;
 
@@ -144,7 +147,36 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	    applyRuleCreateClassifierNamespaceTags(trfConfig);
 	}
 
+	if (rules.contains(TaggedValueTransformerConstants.RULE_TV_CREATE_ROLE_DEPENDENT_PART_TAG)) {
+	    result.addProcessFlowInfo(null, 20103,
+		    TaggedValueTransformerConstants.RULE_TV_CREATE_ROLE_DEPENDENT_PART_TAG);
+	    applyRuleCreateAssociationRoleDependentPartTag(trfConfig);
+	}
+
 	// apply post-processing (nothing to do right now)
+    }
+
+    private void applyRuleCreateAssociationRoleDependentPartTag(TransformerConfiguration trfConfig) {
+
+	SortedSet<ClassInfo> featureObjectAndMixinTypes = new TreeSet<>();
+
+	for (ClassInfo ci : genModel.selectedSchemaClasses()) {
+	    if (ci.category() == Options.FEATURE || ci.category() == Options.OBJECT || ci.category() == Options.MIXIN) {
+		featureObjectAndMixinTypes.add(ci);
+	    }
+	}
+
+	CoretableNavigableRolesConfigBuilder cnrcBuilder = new CoretableNavigableRolesConfigBuilder(result);
+	SortedSet<CoretableNavigableRole> navigableRolesConfig = cnrcBuilder
+		.getNavigableRolesConfig(featureObjectAndMixinTypes, "", "");
+
+	for (CoretableNavigableRole cnr : navigableRolesConfig) {
+
+	    if (cnr.getDependentPart() != DependentPart.none) {
+		GenericPropertyInfo genPi = (GenericPropertyInfo) cnr.getNavigableRole();
+		genPi.setTaggedValue("dependentPart", cnr.getDependentPart().name(), false);
+	    }
+	}
     }
 
     private void applyRuleCreateReversePropertyNameTag(TransformerConfiguration trfConfig) {
@@ -442,11 +474,13 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	case 0 -> "Context: property '$1$'.";
 	case 1 -> "Context: class '$1$'.";
 	case 2 -> "Context: association class '$1$'.";
-	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
+	case 3 ->
+	    "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 	case 4 -> "Context: supertype '$1$'";
 	case 5 -> "Context: subtype '$1$'";
 
-	case 10 -> "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
+	case 10 ->
+	    "Syntax exception for regular expression '$1$' of parameter '$2$'. Message is: $3$. $4$ will not have any effect.";
 
 	// Messages for RULE_TV_INHERITANCE
 	case 100 -> "Adding tagged value $1$=$2$ to $3$.";
@@ -455,8 +489,8 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	case 103 -> "Retaining tagged value $1$=$2$ in $3$.";
 
 	case 200 -> "Required parameter '" + TaggedValueTransformerConstants.PARAM_TV_COPYFROMVALUETYPE_TVSTOCOPY
-		    + "' was not set or does not contain any value. '"
-		    + TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE + "' will not have any effect.";
+		+ "' was not set or does not contain any value. '"
+		+ TaggedValueTransformerConstants.RULE_TV_COPY_FROM_VALUE_TYPE + "' will not have any effect.";
 
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;
 	};

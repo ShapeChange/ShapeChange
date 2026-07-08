@@ -128,6 +128,21 @@ two classes within a database - it can be useful to differentiate properties of 
 bi-directional association, categorizing them as source and target role, respectively.
 Enterprise Architect also differentiates association roles - in fact, all connector ends - this way.
 
+[[rule-trf-taggedValue-createAssociationRoleDependentPartTag]]
+==== rule-trf-taggedValue-createAssociationRoleDependentPartTag
+
+(since v4.1.0)
+
+Collects navigable role configuration information for the associations
+in the schemas selected for processing, as defined by the 
+xref:../targets/Coretable.adoc#generateNavigableRolesConfig[Coretable target parameter _generateNavigableRolesConfig_].
+For each navigable association role that is part of an ownership relation,
+the transformation sets tag `dependentPart` with the information on `dependent_part` from the
+navigable role configuration item (either `source` or `target`).
+
+This rule can be useful in combination with additional tools that derive
+artifacts for applications that use a coretable database.
+
 
 [[rule-trf-taggedValue-inheritance]]
 ==== rule-trf-taggedValue-inheritance
