@@ -38,17 +38,17 @@ import org.junit.jupiter.api.Test;
 public class CoretableTest extends BasicTestSCXML {
 
     @Test
-    public void testCoretable_cascadeRules() {
+    public void testCoretable_navigableRolesConfig() {
 
-	multiTest("src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.xml", new String[] { "sql" },
-		"testResults/coretable/cascadeRules",
-		"src/integrationtests/coretable/cascadeRules/reference");
+	multiTest("src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.xml", new String[] { "sql", "xsd" },
+		"testResults/coretable/navigableRolesConfig",
+		"src/integrationtests/coretable/navigableRolesConfig/reference");
     }
 
     @Test
-    public void testCoretable_cascadeRules_loopAndCycle() {
+    public void testCoretable_navigableRolesConfig_loopAndCycle() {
 
-	executeAndError("src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules_loopAndCycle.xml",
-		"It is expected that the log contains an error, informing the user about a loop and a cycle detected in the cascade rule graph.");
+	executeAndError("src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig_loopAndCycle.xml",
+		"It is expected that the log contains an error, informing the user about a loop and a cycle detected in the ownership relations graph.");
     }
 }

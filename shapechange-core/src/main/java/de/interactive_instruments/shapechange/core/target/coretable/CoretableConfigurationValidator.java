@@ -48,11 +48,14 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
  */
 public class CoretableConfigurationValidator extends AbstractConfigurationValidator {
 
-    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(Stream.of(
-	    CoretableConstants.PARAM_APP_SCHEMA_VERSION_MAJOR_MINOR_ONLY,
-	    CoretableConstants.PARAM_APP_SCHEMA_NAME_BY_TV, CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE,
-	    CoretableConstants.PARAM_DB_SCHEMA_NAME, CoretableConstants.PARAM_GENERATE_CASCADE_RULES,
-	    CoretableConstants.PARAM_GENERATE_INSERT_STATEMENTS).toList());
+    protected SortedSet<String> allowedParametersWithStaticNames = new TreeSet<>(
+	    Stream.of(CoretableConstants.PARAM_APP_SCHEMA_VERSION_MAJOR_MINOR_ONLY,
+		    CoretableConstants.PARAM_APP_SCHEMA_NAME_BY_TV,
+		    /*
+		     * CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE,
+		     */
+		    CoretableConstants.PARAM_DB_SCHEMA_NAME, CoretableConstants.PARAM_GENERATE_NAVIGABLE_ROLES_CONFIG,
+		    CoretableConstants.PARAM_GENERATE_INSERT_STATEMENTS).toList());
     protected List<Pattern> regexForAllowedParametersWithDynamicNames = null;
 
     @Override
@@ -70,8 +73,8 @@ public class CoretableConfigurationValidator extends AbstractConfigurationValida
 
 	// check parameter types
 	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_APP_SCHEMA_VERSION_MAJOR_MINOR_ONLY);
-	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE);
-	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_GENERATE_CASCADE_RULES);
+//	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_CREATE_CASCADE_RULE_GRAPH_IMAGE);
+	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_GENERATE_NAVIGABLE_ROLES_CONFIG);
 	isValid &= checkIsBooleanValueIfSet(CoretableConstants.PARAM_GENERATE_INSERT_STATEMENTS);
 	isValid &= checkStringParameterNotBlankIfSet(CoretableConstants.PARAM_DB_SCHEMA_NAME);
 

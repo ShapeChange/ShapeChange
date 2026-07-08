@@ -7,7 +7,7 @@
    <input>
       <parameter name="inputModelType" value="SCXML"/>
       <parameter name="inputFile"
-                 value="src/integrationtests/coretable/cascadeRules/test_coretable_cascadeRules.zip"/>
+                 value="src/integrationtests/coretable/navigableRolesConfig/test_coretable_navigableRolesConfig.zip"/>
       <parameter name="appSchemaName" value="Test Schema 2"/>
       <parameter name="publicOnly" value="true"/>
       <parameter name="checkingConstraints" value="enabled"/>
@@ -31,16 +31,17 @@
    </input>
    <log>
       <parameter name="reportLevel" value="INFO"/>
-      <parameter name="logFile" value="testResults/coretable/cascadeRules/log2.xml"/>
+      <parameter name="logFile"
+                 value="testResults/coretable/navigableRolesConfig/log2.xml"/>
    </log>
    <targets>
       <Target class="de.interactive_instruments.shapechange.core.target.coretable.Coretable"
               mode="enabled">
-         <targetParameter name="outputDirectory" value="testResults/coretable/cascadeRules"/>
+         <targetParameter name="outputDirectory"
+                          value="testResults/coretable/navigableRolesConfig"/>
          <targetParameter name="outputFilename" value="loopAndCycleResult"/>
          <targetParameter name="sortedOutput" value="true"/>
-         <targetParameter name="generateCascadeRules" value="true"/>
-         <targetParameter name="createCascadeRuleGraphImage" value="false"/>
+         <targetParameter name="generateNavigableRolesConfig" value="true"/>
          <rules>
             <EncodingRule extends="gml33" name="iso19136_2007_INSPIRE_Extensions">
                <rule name="req-all-all-documentation"/>
