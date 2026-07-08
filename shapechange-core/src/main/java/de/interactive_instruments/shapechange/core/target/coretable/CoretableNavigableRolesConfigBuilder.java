@@ -127,49 +127,26 @@ public class CoretableNavigableRolesConfigBuilder implements MessageSource {
 
 	    /*
 	     * Now check that bi-directional associations do not have the same existential
-	     * dependency type info on both ends
-	     * 
-	     * REMOVED:, and if one role has existential dependency type info, then the
-	     * other must have it, too.
+	     * dependency type info on both ends.
 	     */
-	    if (ai.end1().isNavigable() && ai.end2().isNavigable()) {
+	    if (ai.end1().isNavigable() && ai.end2().isNavigable() && sourceHasExistentialDependencyInfo
+		    && targetHasExistentialDependencyInfo) {
 
-		if (sourceHasExistentialDependencyInfo && targetHasExistentialDependencyInfo) {
+		/*
+		 * If both roles have existential dependency type information, they must not be
+		 * equal.
+		 */
 
-		    /*
-		     * If both roles have existential dependency type information, they must not be
-		     * equal.
-		     */
+		if (ai.end1().taggedValue(CoretableConstants.TV_EX_DEP_TYPE).trim()
+			.equals(ai.end2().taggedValue(CoretableConstants.TV_EX_DEP_TYPE).trim())) {
 
-		    if (ai.end1().taggedValue(CoretableConstants.TV_EX_DEP_TYPE).trim()
-			    .equals(ai.end2().taggedValue(CoretableConstants.TV_EX_DEP_TYPE).trim())) {
-
-			MessageContext mc = result.addError(this, 104, ai.name());
-			if (mc != null) {
-			    mc.addDetail(this, 1, ai.end1().inClass().name(), ai.end1().name(),
-				    ai.end2().inClass().name(), ai.end2().name());
-			}
-
-			isValidSetup = false;
+		    MessageContext mc = result.addError(this, 104, ai.name());
+		    if (mc != null) {
+			mc.addDetail(this, 1, ai.end1().inClass().name(), ai.end1().name(), ai.end2().inClass().name(),
+				ai.end2().name());
 		    }
 
-		} else if (sourceHasExistentialDependencyInfo || targetHasExistentialDependencyInfo) {
-
-//		    /*
-//		     * If the association is bi-directional, existential dependency type
-//		     * information, if present on one role, must also be present on the other role.
-//		     */
-//
-//		    if (!(sourceHasExistentialDependencyInfo && targetHasExistentialDependencyInfo)) {
-//
-//			MessageContext mc = result.addError(this, 105, ai.name());
-//			if (mc != null) {
-//			    mc.addDetail(this, 1, ai.end1().inClass().name(), ai.end1().name(),
-//				    ai.end2().inClass().name(), ai.end2().name());
-//			}
-//
-//			isValidSetup = false;
-//		    }
+		    isValidSetup = false;
 		}
 	    }
 
