@@ -35,37 +35,23 @@ collections:
     id: FT1
     label: FT1
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   FT2:
     id: FT2
     label: FT2
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   FT2Sub1Sub1:
     id: FT2Sub1Sub1
     label: FT2Sub1Sub1
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   FT3:
     id: FT3
     label: FT3
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   FT4:
     id: FT4
     label: FT4
     enabled: true
     api:
-    - buildingBlock: GML
-      conformance: NONE
     - buildingBlock: GEO_JSON
       transformations:
         attDt3.generAttribute.dataType:
@@ -86,20 +72,11 @@ collections:
     id: FT5
     label: FT5
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   FT5Sub1:
     id: FT5Sub1
     label: FT5Sub1
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
   T:
     id: T
     label: T
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE

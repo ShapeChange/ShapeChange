@@ -24,6 +24,3 @@ collections:
     id: FeatureType1
     label: FeatureType1
     enabled: true
-    api:
-    - buildingBlock: GML
-      conformance: NONE
