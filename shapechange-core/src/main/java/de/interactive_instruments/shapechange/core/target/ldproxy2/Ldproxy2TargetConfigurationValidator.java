@@ -51,7 +51,6 @@ import org.w3c.dom.Element;
 import de.ii.ogcapi.collections.queryables.domain.QueryablesConfiguration.PathSeparator;
 //import de.ii.ogcapi.features.jsonfg.domain.JsonFgConfiguration.OPTION;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
-import de.ii.xtraplatform.features.sql.domain.FeatureProviderSqlData.DatasetChangeMode;
 import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.interactive_instruments.shapechange.core.AbstractConfigurationValidator;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
@@ -85,8 +84,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_CORETABLE_SOURCE_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_REF_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_RELATIONS_TABLE, Ldproxy2Constants.PARAM_CORETABLE_RELATION_NAME_COLUMN,
 	    Ldproxy2Constants.PARAM_CORETABLE_INVERSE_RELATION_NAME_COLUMN, Ldproxy2Constants.PARAM_CORETABLE_VERSION,
-	    Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, Ldproxy2Constants.PARAM_DATASETCHANGES_MODE,
-	    Ldproxy2Constants.PARAM_DATASETCHANGES_SYNCHPERIODIC, Ldproxy2Constants.PARAM_IS_WRITE_API,
+	    Ldproxy2Constants.PARAM_CORETABLE_VERSION_COLUMN, Ldproxy2Constants.PARAM_IS_WRITE_API,
 	    Ldproxy2Constants.PARAM_ENABLE_TILES, Ldproxy2Constants.PARAM_DATE_FORMAT,
 	    Ldproxy2Constants.PARAM_DATE_TIME_FORMAT, Ldproxy2Constants.PARAM_DESCRIPTION_TEMPLATE,
 	    Ldproxy2Constants.PARAM_DESCRIPTOR_NO_VALUE, Ldproxy2Constants.PARAM_DROP_SQL_ENCODING_INFOS_FOR_TYPES,
@@ -109,7 +107,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_PK_COLUMN, Ldproxy2Constants.PARAM_PROP_ID_TAGGED_VALUE,
 	    Ldproxy2Constants.PARAM_PROJECTIONS_ENABLE, Ldproxy2Constants.PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE,
 	    Ldproxy2Constants.PARAM_PROVIDES_GEOMETRY_TYPES, Ldproxy2Constants.PARAM_QUERYABLES,
-	    Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS,
 	    Ldproxy2Constants.PARAM_REFLEXIVE_REL_FIELD_SUFFIX, Ldproxy2Constants.PARAM_SERVICE_DESCRIPTION,
 	    Ldproxy2Constants.PARAM_SERVICE_LABEL, Ldproxy2Constants.PARAM_SERVICE_CONFIG_TEMPLATE_PATH,
 	    Ldproxy2Constants.PARAM_SORTING_ENABLE, Ldproxy2Constants.PARAM_SORTING_INCLUDED,
@@ -119,14 +116,10 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_DEFAULT_LEVEL_WMQ,
 	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MAX_LEVEL_WMQ,
 	    Ldproxy2Constants.PARAM_TILESET_DEFAULT_MIN_LEVEL_WMQ, Ldproxy2Constants.PARAM_TILESET_DEFAULT_SPARSE,
-	    Ldproxy2Constants.PARAM_GML_APPEND_TEMPORAL_SUFFIX_TO_GMLID,
-	    Ldproxy2Constants.PARAM_GML_CODELIST_URI_TEMPLATE, Ldproxy2Constants.PARAM_GML_FEATURE_REF_TEMPLATE,
 	    Ldproxy2Constants.PARAM_GML_ID_PREFIX, Ldproxy2Constants.PARAM_GML_ID_ON_GEOMETRIES,
-	    Ldproxy2Constants.PARAM_GML_IDENTIFIER_CODESPACE, Ldproxy2Constants.PARAM_GML_IDENTIFIER_VALUETEMPLATE,
 	    Ldproxy2Constants.PARAM_GML_IDENTIFY_CODELIST_PROPERTIES, Ldproxy2Constants.PARAM_GML_OUTPUT,
 	    Ldproxy2Constants.PARAM_GML_SF_LEVEL, Ldproxy2Constants.PARAM_GML_USE_ALIAS,
-	    Ldproxy2Constants.PARAM_GML_USE_SURFACE_AND_CURVE, Ldproxy2Constants.PARAM_UOM_TV_NAME,
-	    Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
+	    Ldproxy2Constants.PARAM_UOM_TV_NAME, Ldproxy2Constants.PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME,
 	    Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS, "_unitTestOverride")
 	    .collect(Collectors.toSet()));
@@ -202,7 +195,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid
 		& checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS);
 
-	isValid = isValid & checkIsBooleanValueIfSet(Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS);
 	isValid = isValid & checkIsBooleanValueIfSet(Ldproxy2Constants.PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF);
 	isValid = isValid
 		& checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP);
@@ -215,8 +207,9 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_ALLFEATURESTABLE_NAME);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_ALLFEATURESTABLE_ID_COLUMN);
 	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_ALLFEATURESTABLE_TYPE_COLUMN);
-	isValid = isValid & checkStringParameterNotBlankIfSet(Ldproxy2Constants.PARAM_ALLFEATURESTABLE_TYPERESTRICTIONS_DEFAULT_TOP_FEATURETYPE);
-	
+	isValid = isValid & checkStringParameterNotBlankIfSet(
+		Ldproxy2Constants.PARAM_ALLFEATURESTABLE_TYPERESTRICTIONS_DEFAULT_TOP_FEATURETYPE);
+
 	if (StringUtils.isNotBlank(targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER))) {
 	    String paramValue = targetConfig.getParameterValue(Ldproxy2Constants.PARAM_FORCE_AXIS_ORDER);
 	    try {
@@ -302,20 +295,6 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 		    mc.addDetail(this, 0, targetConfigInputs);
 		    isValid = false;
 		}
-	    }
-	}
-
-	if (targetConfig.hasParameter(Ldproxy2Constants.PARAM_DATASETCHANGES_MODE)) {
-
-	    String datasetChangesModeIn = targetConfig.parameterAsString(Ldproxy2Constants.PARAM_DATASETCHANGES_MODE,
-		    null, false, true);
-	    try {
-		DatasetChangeMode.valueOf(datasetChangesModeIn);
-	    } catch (IllegalArgumentException e) {
-		MessageContext mc = result.addError(this, 107, Ldproxy2Constants.PARAM_DATASETCHANGES_MODE,
-			datasetChangesModeIn);
-		mc.addDetail(this, 0, targetConfigInputs);
-		isValid = false;
 	    }
 	}
 

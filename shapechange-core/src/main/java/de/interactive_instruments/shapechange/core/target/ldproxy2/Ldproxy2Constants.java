@@ -133,25 +133,16 @@ public class Ldproxy2Constants {
     public static final String PARAM_FEATURES_JSONFG = "enableFeaturesJsonFg";
     public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
 
-    public static final String PARAM_DATASETCHANGES_MODE = "datasetChangesMode";
-    public static final String PARAM_DATASETCHANGES_SYNCHPERIODIC = "datasetChangesSyncPeriodic";
-
     public static final String PARAM_FEATURES_GML = "enableFeaturesGml";
     // enableGmlOutput (old) is alias for enableFeaturesGML (new)
     public static final String PARAM_GML_OUTPUT = "enableGmlOutput";
-    public static final String PARAM_GML_APPEND_TEMPORAL_SUFFIX_TO_GMLID = "appendTemporalSuffixToGmlId";
-    public static final String PARAM_GML_CODELIST_URI_TEMPLATE = "gmlCodelistUriTemplate";
-    public static final String PARAM_GML_FEATURE_REF_TEMPLATE = "gmlFeatureRefTemplate";
     public static final String PARAM_GML_ID_PREFIX = "gmlIdPrefix";
     public static final String PARAM_GML_ID_ON_GEOMETRIES = "gmlIdOnGeometries";
-    public static final String PARAM_GML_IDENTIFIER_CODESPACE = "gmlIdentifierCodeSpace";
-    public static final String PARAM_GML_IDENTIFIER_VALUETEMPLATE = "gmlIdentifierValueTemplate";
     public static final String PARAM_GML_SF_LEVEL = "gmlSfLevel";
     public static final String PARAM_GML_FEATURE_COLLECTION_ELEMENT_NAME = "featureCollectionElementName";
     public static final String PARAM_GML_FEATURE_MEMBER_ELEMENT_NAME = "featureMemberElementName";
     public static final String PARAM_GML_SUPPORTS_STANDARD_RESPONSE_PARAMETERS = "supportsStandardResponseParameters";
     public static final String PARAM_GML_USE_ALIAS = "gmlUseAlias";
-    public static final String PARAM_GML_USE_SURFACE_AND_CURVE = "gmlUseSurfaceAndCurve";
     public static final String PARAM_GML_IDENTIFY_CODELIST_PROPERTIES = "gmlIdentifyCodelistProperties";
 
     public static final String PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF = "gidCatalogObjectKeyAsFeatureRef";
@@ -173,7 +164,6 @@ public class Ldproxy2Constants {
     public static final String PARAM_PROVIDER_CONFIG_LABEL_TEMPLATE = "providerConfigLabelTemplate";
     public static final String PARAM_PROVIDES_GEOMETRY_TYPES = "providesGeometryTypes";
     public static final String PARAM_QUERYABLES = "queryables";
-    public static final String PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS = "queryProcessingSkipUnusedPipelineSteps";
     public static final String PARAM_SERVICE_DESCRIPTION = "serviceDescription";
     public static final String PARAM_SERVICE_LABEL = "serviceLabel";
     public static final String PARAM_SERVICE_CONFIG_TEMPLATE_PATH = "serviceConfigTemplatePath";

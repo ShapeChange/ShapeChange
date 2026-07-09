@@ -516,12 +516,6 @@ public class LdpConfigBuilder {
 		.queryGeneration(queryGeneration).nativeCrs(nativeCrsOpt).types(providerTypeDefinitions)
 		.fragments(featureProviderFragmentDefinitions);
 
-	if (Ldproxy2Target.queryProcessingSkipUnusedPipelineSteps.isPresent()) {
-	    ImmutableQueryProcessorSettings queryProcessor = cfg.builder().entity().provider().queryProcessingBuilder()
-		    .skipUnusedPipelineSteps(Ldproxy2Target.queryProcessingSkipUnusedPipelineSteps.get()).build();
-	    featureProviderConfigBuilder.queryProcessing(queryProcessor);
-	}
-
 	if (Ldproxy2Target.nativeTimeZone != null) {
 	    featureProviderConfigBuilder.nativeTimeZone(Ldproxy2Target.nativeTimeZone);
 	}
@@ -533,19 +527,7 @@ public class LdpConfigBuilder {
 	if (StringUtils.isNotBlank(Ldproxy2Target.providerConfigLabelTemplate)) {
 	    featureProviderConfigBuilder.labelTemplate(Ldproxy2Target.providerConfigLabelTemplate);
 	}
-
-	if (Ldproxy2Target.datasetChangesMode != null || Ldproxy2Target.datasetChangesSyncPeriodic != null) {
-	    ImmutableDatasetChangeSettings.Builder datasetChangesBuilder = cfg.builder().entity().provider()
-		    .datasetChangesBuilder();
-	    if (Ldproxy2Target.datasetChangesMode != null) {
-		datasetChangesBuilder.mode(Ldproxy2Target.datasetChangesMode);
-	    }
-	    if (Ldproxy2Target.datasetChangesSyncPeriodic != null) {
-		datasetChangesBuilder.syncPeriodic(Ldproxy2Target.datasetChangesSyncPeriodic);
-	    }
-	    featureProviderConfigBuilder.datasetChanges(datasetChangesBuilder.build());
-	}
-
+	
 	return featureProviderConfigBuilder.build();
     }
 

@@ -47,14 +47,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
-import de.ii.ogcapi.features.gml.domain.GmlConfiguration.SrsNameStyle;
-import de.ii.ogcapi.features.gml.domain.GmlConfiguration.UomStyle;
 import de.ii.ogcapi.features.gml.domain.ImmutableGmlConfiguration;
-import de.ii.ogcapi.features.gml.domain.ImmutableGmlIdentifier;
-import de.ii.ogcapi.features.gml.domain.ImmutableSrsNameMapping;
-import de.ii.ogcapi.features.gml.domain.ImmutableUomMapping;
 import de.ii.ogcapi.features.gml.domain.ImmutableVariableName;
-import de.ii.xtraplatform.crs.domain.ImmutableEpsgCrs;
 import de.ii.xtraplatform.features.domain.transform.ImmutablePropertyTransformation;
 import de.ii.xtraplatform.features.domain.transform.PropertyTransformation;
 import de.interactive_instruments.shapechange.core.MessageSource;
@@ -67,10 +61,6 @@ import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpGidEncoder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpInfo;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSrsNameMapping;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpSrsNameMappings;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpUomMapping;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.LdpUomMappings;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Constants;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.Ldproxy2Target;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
@@ -106,21 +96,13 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     protected Integer gmlSfLevel = null;
     protected String gmlFeatureCollectionElementName = null;
     protected String gmlFeatureMemberElementName = null;
-    protected String gmlFeatureRefTemplate = null;
     protected boolean gmlSupportsStandardResponseParameters = false;
     protected boolean gmlUseAlias = false;
-    protected boolean gmlUseSurfaceAndCurve = false;
-    protected String gmlIdentifierCodeSpace = null;
-    protected String gmlIdentifierValueTemplate = null;
-    protected boolean appendTemporalSuffixToGmlId = false;
-    protected String gmlCodelistUriTemplate = null;
     protected boolean gmlIdentifyCodelistProperties = false;
 
     protected SortedMap<String, ClassInfo> genericValueTypes = new TreeMap<>();
 
     protected XmlEncodingInfos xmlEncodingInfos = null;
-    protected LdpSrsNameMappings srsNameMappings = null;
-    protected LdpUomMappings uomMappings = null;
 
     protected LdpGidEncoder gidEncoder = null;
     protected boolean isResourcesConfigRequired = false;
@@ -132,10 +114,9 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
     public LdpBuildingBlockFeaturesGmlBuilder(ShapeChangeResult result, Ldproxy2Target target,
 	    PackageInfo mainAppSchema, Model model, String gmlIdPrefix, boolean gmlIdOnGeometries, int gmlSfLevel,
 	    String gmlFeatureCollectionElementName, String gmlFeatureMemberElementName,
-	    boolean gmlSupportsStandardResponseParameters, boolean gmlUseAlias, boolean gmlUseSurfaceAndCurve,
-	    String gmlFeatureRefTemplate, String gmlIdentifierCodeSpace, String gmlIdentifierValueTemplate,
-	    boolean appendTemporalSuffixToGmlId, String gmlCodelistUriTemplate, boolean gmlIdentifyCodelistProperties,
-	    XmlEncodingInfos xmlEncodingInfos, LdpSrsNameMappings srsNameMappings, LdpUomMappings uomMappings) {
+	    boolean gmlSupportsStandardResponseParameters, boolean gmlUseAlias, 
+	    boolean gmlIdentifyCodelistProperties,
+	    XmlEncodingInfos xmlEncodingInfos) {
 
 	super();
 
@@ -153,17 +134,9 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	this.gmlFeatureMemberElementName = gmlFeatureMemberElementName;
 	this.gmlSupportsStandardResponseParameters = gmlSupportsStandardResponseParameters;
 	this.gmlUseAlias = gmlUseAlias;
-	this.gmlUseSurfaceAndCurve = gmlUseSurfaceAndCurve;
-	this.gmlFeatureRefTemplate = gmlFeatureRefTemplate;
-	this.gmlIdentifierCodeSpace = gmlIdentifierCodeSpace;
-	this.gmlIdentifierValueTemplate = gmlIdentifierValueTemplate;
-	this.appendTemporalSuffixToGmlId = appendTemporalSuffixToGmlId;
-	this.gmlCodelistUriTemplate = gmlCodelistUriTemplate;
 	this.gmlIdentifyCodelistProperties = gmlIdentifyCodelistProperties;
 
 	this.xmlEncodingInfos = xmlEncodingInfos;
-	this.srsNameMappings = srsNameMappings;
-	this.uomMappings = uomMappings;
 
 	this.addNsabrByNs(mainAppSchema.targetNamespace(), mainAppSchema.xmlns());
     }
@@ -447,28 +420,10 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	if (StringUtils.isNotBlank(gmlFeatureMemberElementName)) {
 	    builder.featureMemberElementName(gmlFeatureMemberElementName);
 	}
-	if (StringUtils.isNotBlank(gmlFeatureRefTemplate)) {
-	    builder.featureRefTemplate(gmlFeatureRefTemplate);
-	}
-	if (StringUtils.isNotBlank(gmlCodelistUriTemplate)) {
-	    builder.codelistUriTemplate(gmlCodelistUriTemplate);
-	}
-	if (StringUtils.isNotBlank(gmlIdentifierCodeSpace)) {
-	    ImmutableGmlIdentifier.Builder gi = new ImmutableGmlIdentifier.Builder();
-	    gi.codeSpace(gmlIdentifierCodeSpace);
-	    if (StringUtils.isNotBlank(gmlIdentifierValueTemplate)) {
-		gi.valueTemplate(gmlIdentifierValueTemplate);
-	    }
-	    builder.gmlIdentifier(gi.build());
-	}
 
 	builder.supportsStandardResponseParameters(gmlSupportsStandardResponseParameters);
 	if (gmlUseAlias) {
 	    builder.useAlias(gmlUseAlias);
-	}
-	builder.useSurfaceAndCurve(gmlUseSurfaceAndCurve);
-	if (appendTemporalSuffixToGmlId) {
-	    builder.appendTemporalSuffixToGmlId(appendTemporalSuffixToGmlId);
 	}
 
 	if (!genericValueTypes.isEmpty()) {
@@ -482,28 +437,6 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 		}
 		ivn.mapping(mapping);
 		builder.putVariableObjectElementNames(gvt.name(), ivn.build());
-	    }
-	}
-
-	if (this.srsNameMappings != null && !this.srsNameMappings.isEmpty()) {
-	    builder.srsNameStyle(SrsNameStyle.TEMPLATE);
-	    for (LdpSrsNameMapping snm : this.srsNameMappings.getSrsNameMappings()) {
-
-		ImmutableEpsgCrs crs = new ImmutableEpsgCrs.Builder().code(snm.getCode())
-			.forceAxisOrder(snm.getForceAxisOrder()).verticalCode(snm.getVerticalCode()).build();
-		ImmutableSrsNameMapping isnm = new ImmutableSrsNameMapping.Builder().crs(crs).value(snm.getValue())
-			.build();
-		builder.addSrsNameMappings(isnm);
-	    }
-	}
-
-	if (this.uomMappings != null && !this.uomMappings.isEmpty()) {
-	    builder.uomStyle(UomStyle.TEMPLATE);
-	    for (LdpUomMapping uom : this.uomMappings.getUomMappings()) {
-
-		ImmutableUomMapping iuom = new ImmutableUomMapping.Builder().uom(uom.getUom()).value(uom.getValue())
-			.build();
-		builder.addUomMappings(iuom);
 	    }
 	}
 

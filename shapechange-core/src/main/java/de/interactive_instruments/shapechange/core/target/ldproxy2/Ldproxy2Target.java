@@ -62,9 +62,8 @@ import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.xtraplatform.crs.domain.EpsgCrs;
 import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
-import de.ii.xtraplatform.features.sql.domain.FeatureProviderSqlData.DatasetChangeMode;
-import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
+import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.ii.xtraplatform.tiles.domain.ImmutableTileProviderFeaturesData;
 import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
 import de.interactive_instruments.shapechange.core.MessageSource;
@@ -87,9 +86,9 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.core
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.coretable.LdpCoretableSourcePathProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlProvider;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.provider.sql.LdpSqlSourcePathProvider;
-import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesJsonFgBuilder;
+import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockGeoJsonBuilder;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.LdproxyStoredQueryDefinitions;
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
@@ -126,8 +125,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static String associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
     public static String cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
     public static String codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
-    public static DatasetChangeMode datasetChangesMode = null;
-    public static String datasetChangesSyncPeriodic = null;
     public static String dateFormat = null; // no default value
     public static String dateTimeFormat = null; // no default value
     public static String descriptionTemplate = "[[definition]]";
@@ -179,7 +176,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static SqlEncodingInfos sqlEncodingInfos = new SqlEncodingInfos();
     public static LdproxyStoredQueryDefinitions storedQueryDefinitions = new LdproxyStoredQueryDefinitions();
     public static String providerConfigLabelTemplate = null;
-    public static Optional<Boolean> queryProcessingSkipUnusedPipelineSteps = Optional.empty();
     public static SortedSet<GeometryType> providesGeometryTypes = new TreeSet<>();
     public static PropertyRestrictions propertyRestrictions = new PropertyRestrictions();
 
@@ -406,13 +402,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		result.addError(this, 138, mainAppSchema.name());
 	    }
 
-	    if (options.hasParameter(this.getClass().getName(),
-		    Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS)) {
-		queryProcessingSkipUnusedPipelineSteps = Optional
-			.of(options.parameterAsBoolean(this.getClass().getName(),
-				Ldproxy2Constants.PARAM_QUERYPROCESSING_SKIPUNUSEDPIPELINESTEPS, false));
-	    }
-
 	    taggedValueForAssociationRoleId = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_ASSOCROLE_ID_TAGGED_VALUE, null, false, true);
 	    if (associationRoleIdByTaggedValue && StringUtils.isBlank(taggedValueForAssociationRoleId)) {
@@ -567,32 +556,10 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		boolean gmlUseAlias = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_USE_ALIAS, false);
 
-		boolean gmlUseSurfaceAndCurve = options.parameterAsBoolean(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_USE_SURFACE_AND_CURVE, false);
-
-		String gmlFeatureRefTemplate = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_FEATURE_REF_TEMPLATE, null, false, true);
-
-		String gmlIdentifierCodeSpace = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_IDENTIFIER_CODESPACE, null, false, true);
-
-		String gmlIdentifierValueTemplate = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_IDENTIFIER_VALUETEMPLATE, null, false, true);
-
-		boolean appendTemporalSuffixToGmlId = options.parameterAsBoolean(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_APPEND_TEMPORAL_SUFFIX_TO_GMLID, false);
-
-		String gmlCodelistUriTemplate = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_GML_CODELIST_URI_TEMPLATE, null, false, true);
-
 		boolean gmlIdentifyCodelistProperties = options.parameterAsBoolean(this.getClass().getName(),
 			Ldproxy2Constants.PARAM_GML_IDENTIFY_CODELIST_PROPERTIES, false);
 
 		XmlEncodingInfos xmlEncodingInfos = new XmlEncodingInfos();
-
-		LdpSrsNameMappings snms = new LdpSrsNameMappings();
-
-		LdpUomMappings uomms = new LdpUomMappings();
 
 		if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
 		    result.addInfo(this, 126);
@@ -610,36 +577,13 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			    xmlEncodingInfos.merge(XmlEncodingInfos.fromXml(xeiElmt));
 			}
 		    }
-
-		    List<Element> snmsElmts = XMLUtil.getChildElements(advancedProcessConfigElmt,
-			    "LdproxySrsNameMappings");
-
-		    if (snmsElmts.isEmpty()) {
-			result.addInfo(this, 142);
-		    } else {
-			for (Element snmsElmt : snmsElmts) {
-			    snms.merge(LdpSrsNameMappings.fromXml(snmsElmt));
-			}
-		    }
-
-		    List<Element> uommsElmts = XMLUtil.getChildElements(advancedProcessConfigElmt,
-			    "LdproxyUomMappings");
-
-		    if (uommsElmts.isEmpty()) {
-			result.addInfo(this, 143);
-		    } else {
-			for (Element uommsElmt : uommsElmts) {
-			    uomms.merge(LdpUomMappings.fromXml(uommsElmt));
-			}
-		    }
 		}
 
 		bbGmlBuilder = new LdpBuildingBlockFeaturesGmlBuilder(result, this, mainAppSchema, model, gmlIdPrefix,
 			gmlIdOnGeometries, gmlSfLevel, gmlFeatureCollectionElementName, gmlFeatureMemberElementName,
-			gmlSupportsStandardResponseParameters, gmlUseAlias, gmlUseSurfaceAndCurve,
-			gmlFeatureRefTemplate, gmlIdentifierCodeSpace, gmlIdentifierValueTemplate,
-			appendTemporalSuffixToGmlId, gmlCodelistUriTemplate, gmlIdentifyCodelistProperties,
-			xmlEncodingInfos, snms, uomms);
+			gmlSupportsStandardResponseParameters, gmlUseAlias,
+			gmlIdentifyCodelistProperties,
+			xmlEncodingInfos);
 	    }
 
 	    if (!options.getCurrentProcessConfig().hasAdvancedProcessConfigurations()) {
@@ -741,22 +685,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 			// ignore - should be reported by configuration validator
 		    }
 		}
-	    }
-
-	    if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_DATASETCHANGES_MODE)) {
-
-		String datasetChangesModeIn = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_DATASETCHANGES_MODE, null, false, true);
-		try {
-		    datasetChangesMode = DatasetChangeMode.valueOf(datasetChangesModeIn);
-		} catch (IllegalArgumentException e) {
-		    // ignore - should be reported by configuration validator
-		}
-	    }
-
-	    if (options.hasParameter(this.getClass().getName(), Ldproxy2Constants.PARAM_DATASETCHANGES_SYNCHPERIODIC)) {
-		datasetChangesSyncPeriodic = options.parameterAsString(this.getClass().getName(),
-			Ldproxy2Constants.PARAM_DATASETCHANGES_SYNCHPERIODIC, null, false, true);
 	    }
 
 	    if (mainAppSchema.matches(Ldproxy2Constants.RULE_ALL_CORETABLE)) {
@@ -1387,8 +1315,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	associativeTableColumnSuffix = null; // default: value of primaryKeyColumn parameter
 	cfgTemplatePath = "https://shapechange.net/resources/templates/ldproxy2/cfgTemplate.yml";
 	codeTargetTagName = Ldproxy2Constants.DEFAULT_CODE_TARGET_TAG_NAME_VALUE;
-	datasetChangesMode = null;
-	datasetChangesSyncPeriodic = null;
 	dateFormat = null; // no default value
 	dateTimeFormat = null; // no default value
 	descriptionTemplate = "[[definition]]";
@@ -1422,7 +1348,6 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	taggedValueForPropertyId = null;
 	taggedValueForAssociationRoleId = null;
 	propertyIdByTaggedValue = false;
-	queryProcessingSkipUnusedPipelineSteps = Optional.empty();
 	associationRoleIdByTaggedValue = false;
 	propertyAlias = false;
 
