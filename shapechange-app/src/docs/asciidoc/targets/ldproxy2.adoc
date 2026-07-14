@@ -2116,3 +2116,14 @@ NOTE: A `profiles` section needs to be copied manually to the resulting stored q
 
 [[applying_specific_encoding_rule_to_model_element]]
 For some application schemas, it is useful to know that different encoding rules can be applied to the subpackages, classes, and properties defined by the schema. Typically, a single encoding rule applies to all application schema elements. In ShapeChange, that rule is identified by setting the target parameter _defaultEncodingRule_, with the unique name defined for the encoding rule in the target configuration. The target configuration, however, can contain multiple encoding rules (with different names). By setting tagged value _ldp2EncodingRule_ on an application schema element, using the name of another encoding rule, the model element will be encoded as defined by that rule.
+
+
+[[ldproxy2_uncovered_configuration_items]]
+== Uncovered ldproxy configuration items
+
+Ldproxy provides numerous configuration items, 
+many of which do not depend on the model itself. 
+It is expected that such configuration items are
+defined in default and override ldproxy configuration files.
+The ShapeChange ldproxy target does not need to
+cover the generation of these configuration items.
