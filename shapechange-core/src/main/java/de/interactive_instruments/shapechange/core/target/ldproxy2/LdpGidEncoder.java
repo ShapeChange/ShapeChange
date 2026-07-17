@@ -39,10 +39,15 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.Strings;
 
+import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
+import de.ii.ldproxy.cfg.LdproxyCfgWriter;
+import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
+import de.ii.xtraplatform.features.domain.SchemaBase.Role;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
+import de.ii.xtraplatform.geometries.domain.GeometryType;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBuildingBlockFeaturesGmlBuilder;
@@ -54,6 +59,7 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.service.LdpBu
 public class LdpGidEncoder {
 
     private boolean liLineageFragmentCreated = false;
+    private boolean ciRoleCodeCodelistConstraintCreated = false;
 
     /**
      * @param propertyMapForBuilder     property map for the ldproxy encoding of the
@@ -73,6 +79,7 @@ public class LdpGidEncoder {
 	String dateTime = Ldproxy2Target.propertyIdByTaggedValue ? "dat" : "dateTime";
 	String organisationName = Ldproxy2Target.propertyIdByTaggedValue ? "org" : "organisationName";
 	String individualName = Ldproxy2Target.propertyIdByTaggedValue ? "ind" : "individualName";
+	String positionName = Ldproxy2Target.propertyIdByTaggedValue ? "pos" : "positionName";
 	String role = Ldproxy2Target.propertyIdByTaggedValue ? "rol" : "role";
 
 	boolean setSourcePaths = sourcePathInfosForBuilder != null
@@ -105,6 +112,9 @@ public class LdpGidEncoder {
 	Optional<String> label_individualName = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
 		? Optional.of("individualName")
 		: Optional.empty();
+	Optional<String> label_positionName = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes
+		? Optional.of("positionName")
+		: Optional.empty();
 	Optional<String> label_role = Ldproxy2Target.propertyIdByTaggedValue && createObjectTypes ? Optional.of("role")
 		: Optional.empty();
 
@@ -129,6 +139,9 @@ public class LdpGidEncoder {
 		: Optional.empty();
 	Optional<String> alias_individualName = Ldproxy2Target.propertyAlias && createObjectTypes
 		? Optional.of("individualName")
+		: Optional.empty();
+	Optional<String> alias_positionName = Ldproxy2Target.propertyAlias && createObjectTypes
+		? Optional.of("positionName")
 		: Optional.empty();
 	Optional<String> alias_role = Ldproxy2Target.propertyAlias && createObjectTypes ? Optional.of("role")
 		: Optional.empty();
@@ -201,6 +214,22 @@ public class LdpGidEncoder {
 	}
 
 	{
+	    // processor.individualName
+	    ImmutableFeatureSchema.Builder processorIndividualNameBuilder = new ImmutableFeatureSchema.Builder();
+	    processorIndividualNameBuilder.name(individualName).label(label_individualName).alias(alias_individualName)
+		    .type(Type.STRING);
+	    if (setSourcePaths) {
+		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
+		    processorIndividualNameBuilder.sourcePath("pro_resp_ind");
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
+			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
+		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
+		}
+	    }
+	    propertyMapForProcessorBuilder.put(individualName, processorIndividualNameBuilder.build());
+	}
+
+	{
 	    // processor.organisationName
 	    ImmutableFeatureSchema.Builder processorOrganisationNameBuilder = new ImmutableFeatureSchema.Builder();
 	    processorOrganisationNameBuilder.name(organisationName).label(label_organisationName)
@@ -217,19 +246,19 @@ public class LdpGidEncoder {
 	}
 
 	{
-	    // processor.individualName
-	    ImmutableFeatureSchema.Builder processorIndividualNameBuilder = new ImmutableFeatureSchema.Builder();
-	    processorIndividualNameBuilder.name(individualName).label(label_individualName).alias(alias_individualName)
+	    // processor.positionName
+	    ImmutableFeatureSchema.Builder processorPositionNameBuilder = new ImmutableFeatureSchema.Builder();
+	    processorPositionNameBuilder.name(positionName).label(label_positionName).alias(alias_positionName)
 		    .type(Type.STRING);
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
-		    processorIndividualNameBuilder.sourcePath("pro_resp_ind");
+		    processorPositionNameBuilder.sourcePath("pro_resp_pos");
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
-		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
+		    processorPositionNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_pos");
 		}
 	    }
-	    propertyMapForProcessorBuilder.put(individualName, processorIndividualNameBuilder.build());
+	    propertyMapForProcessorBuilder.put(positionName, processorPositionNameBuilder.build());
 	}
 
 	{
@@ -248,6 +277,8 @@ public class LdpGidEncoder {
 	    if (Ldproxy2Target.enableFragments
 		    && (sourcePathInfosForBuilder == null || sourcePathInfosForBuilder.getContext().isInFragment())) {
 		ImmutableSchemaConstraints.Builder processorRoleConstraintsBuilder = new ImmutableSchemaConstraints.Builder();
+		processorRoleConstraintsBuilder.codelist("CI_RoleCode");
+		ciRoleCodeCodelistConstraintCreated = true;
 		processorRoleConstraintsBuilder.enumValues(
 			List.of("resourceProvider", "custodian", "owner", "user", "distributor", "originator",
 				"pointOfContact", "principalInvestigator", "processor", "publisher", "author"));
@@ -295,6 +326,10 @@ public class LdpGidEncoder {
 
     public boolean LiLineageFragmentCreated() {
 	return this.liLineageFragmentCreated;
+    }
+
+    public boolean ciRoleCodeCodelistConstraintCreated() {
+	return this.ciRoleCodeCodelistConstraintCreated;
     }
 
     public ImmutableFeatureSchema createLiLineageFragment() {
@@ -376,6 +411,17 @@ public class LdpGidEncoder {
 		    String path_prsProInd = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.ind"
 			    : ".processStep.processor.individualName");
 		    valueWraps.put(path_prsProInd, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:positionName/gco:CharacterString
+		 */
+		{
+		    String path_prsProPos = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.pos"
+			    : ".processStep.processor.positionName");
+		    valueWraps.put(path_prsProPos, List.of(gcoNsabr + ":CharacterString"));
 		}
 
 		/*
@@ -478,6 +524,17 @@ public class LdpGidEncoder {
 		/*
 		 * Define value wrap for
 		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
+		 * CI_ResponsibleParty/gmd:positionName/gco:CharacterString
+		 */
+		{
+		    String path_prsProPos = propertyPath + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.pro.pos"
+			    : ".processStep.processor.positionName");
+		    valueWraps.put(path_prsProPos, List.of(gcoNsabr + ":CharacterString"));
+		}
+
+		/*
+		 * Define value wrap for
+		 * /gmd:LI_Lineage/gmd:processStep/gmd:LI_ProcessStep/gmd:processor/gmd:
 		 * CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode
 		 */
 		{
@@ -507,7 +564,8 @@ public class LdpGidEncoder {
 	     */
 	    valueWraps.put(propertyPath,
 		    List.of(gmdNsabr + ":DQ_RelativeInternalPositionalAccuracy", gmdNsabr + ":result",
-			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":value", gcoNsabr + ":Record"));
+			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":valueUnit[xlink:href=urn:adv:uom:m]/",
+			    gmdNsabr + ":value", gcoNsabr + ":Record[xsi:type=gml:doubleList]"));
 
 	    bbGmlBuilder.gmlValueWrap(topLevelClass, valueWraps);
 
@@ -528,10 +586,130 @@ public class LdpGidEncoder {
 	     */
 	    valueWraps.put(propertyPath,
 		    List.of(gmdNsabr + ":DQ_AbsoluteExternalPositionalAccuracy", gmdNsabr + ":result",
-			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":value", gcoNsabr + ":Record"));
+			    gmdNsabr + ":DQ_QuantitativeResult", gmdNsabr + ":valueUnit[xlink:href=urn:adv:uom:m]/",
+			    gmdNsabr + ":value", gcoNsabr + ":Record[xsi:type=gml:doubleList]"));
 
 	    bbGmlBuilder.gmlValueWrap(topLevelClass, valueWraps);
 	}
 
+    }
+
+    public ImmutableCodelist createCiRoleCodelist(LdproxyCfgWriter cfg) {
+
+	ImmutableCodelist ic = cfg.builder().value().codelist().label("CI_RoleCode").sourceType(ImportType.TEMPLATES)
+		.description("function performed by the responsible party").build();
+
+	SortedMap<String, String> entries = new TreeMap<>();
+	List<String> roleCodes = List.of("resourceProvider", "custodian", "owner", "user", "distributor", "originator",
+		"pointOfContact", "principalInvestigator", "processor", "publisher", "author");
+	for (String code : roleCodes) {
+	    entries.put(code, code);
+	}
+
+	ic = ic.withEntries(entries);
+
+	return ic;
+    }
+
+    public ImmutableFeatureSchema createPunktobjektForPunktortAUFragment() {
+
+	ImmutableFeatureSchema.Builder fragmentBuilder = new ImmutableFeatureSchema.Builder().type(Type.OBJECT)
+		.name("au_punktobjekt_punktortau").objectType("AU_Punktobjekt");
+
+	LinkedHashMap<String, FeatureSchema> propertyDefs = new LinkedHashMap<>();
+
+	// property pos_srs
+	{
+	    String propName = "pos_srs";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position_srs").type(Type.STRING);
+// TODO	    propBuilder.role(Role.ORIGINAL_CRS_IDENTIFIER);
+
+	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
+	    constraintsBuilder.addAllEnumValues(List.of("urn:adv:crs:DE_DHDN_3GK3_HE100",
+		    "urn:adv:crs:DE_DHDN_3GK3_HE120", "urn:adv:crs:ETRS89_Lat-Lon-h", "urn:adv:crs:ETRS89_X-Y-Z",
+		    "urn:adv:crs:DE_DHHN2016_NH", "urn:adv:crs:DE_DHHN92_NH", "urn:adv:crs:DE_DHHN12_NOH",
+		    "urn:adv:crs:DE_DHHN85_NOH", "urn:adv:crs:ETRS89_h"));
+
+	    propBuilder.constraints(constraintsBuilder.build());
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	// property pos_gk3
+	{
+	    String propName = "pos_gk3";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position_gk3").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
+	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
+
+	    // TODO propBuilder.nativeCrs
+
+	    // TODO propBuilder.originalCrsIdentifiers
+
+	    // TODO propBuilder.falseEastingDifference
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	// property pos_llh
+	{
+	    String propName = "pos_llh";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position_llh").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
+	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
+
+	    // TODO propBuilder.nativeCrs
+
+	    // TODO propBuilder.originalCrs
+
+	    // TODO propBuilder.originalCrsIdentifiers
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	// property pos_geoc
+	{
+	    String propName = "pos_geoc";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position_geoc").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
+	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
+
+	    // TODO propBuilder.nativeCrs
+
+	    // TODO propBuilder.originalCrsIdentifiers
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	// property pos_h
+	{
+	    String propName = "pos_h";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position_h").type(Type.FLOAT).unit("m");
+	    // TODO propBuilder.role(Role.ORIGINAL_HEIGHT);
+
+	    // TODO propBuilder.originalCrsIdentifiers
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	// property position
+	{
+	    String propName = "position";
+	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
+		    .sourcePath("position").type(Type.GEOMETRY).role(Role.PRIMARY_GEOMETRY).label("position")
+		    .alias("position").description("Raumbezug der Punktgeometrie.");
+
+	    // TODO propBuilder.variants
+
+	    propertyDefs.put(propName, propBuilder.build());
+	}
+
+	fragmentBuilder.propertyMap(propertyDefs);
+
+	fragmentBuilder.schema("#/fragments/au_objektmitunabhaengigergeometrie");
+
+	return fragmentBuilder.build();
     }
 }

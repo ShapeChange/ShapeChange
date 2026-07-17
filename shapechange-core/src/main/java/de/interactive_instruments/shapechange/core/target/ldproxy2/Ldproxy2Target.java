@@ -239,6 +239,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
     public static boolean gidCatalogObjectKeyAsFeatureRef = false;
     public static String gidColPrefixForCodelistValuedProperty = "";
     public static String gidColSuffixForCodelistValuedProperty = "_href";
+    public static boolean gidPunktobjektForPunktortAU = false;
 
     /**
      * Contains information parsed from the 'param' attributes of each map entry
@@ -527,6 +528,9 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Ldproxy2Constants.PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP, "", false, true);
 	    gidColSuffixForCodelistValuedProperty = options.parameterAsString(this.getClass().getName(),
 		    Ldproxy2Constants.PARAM_GID_COL_SUFFIX_CODELISTVALUEDPROP, "_href", true, true);
+	    
+	    gidPunktobjektForPunktortAU = options.parameterAsBoolean(this.getClass().getName(),
+		    Ldproxy2Constants.PARAM_GID_CREATE_PUNKTOBJECT_FOR_PUNKTORTAU, false);
 
 	    uomTvName = options.parameterAsString(this.getClass().getName(), Ldproxy2Constants.PARAM_UOM_TV_NAME, null,
 		    false, true);
@@ -1303,6 +1307,7 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 	gidCatalogObjectKeyAsFeatureRef = false;
 	gidColPrefixForCodelistValuedProperty = "";
 	gidColSuffixForCodelistValuedProperty = "_href";
+	gidPunktobjektForPunktortAU = false;
 
 	dbSchemaNames = new TreeSet<String>();
 

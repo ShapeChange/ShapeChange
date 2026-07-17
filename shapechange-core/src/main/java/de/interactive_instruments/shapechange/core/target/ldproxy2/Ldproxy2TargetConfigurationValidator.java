@@ -99,6 +99,7 @@ public class Ldproxy2TargetConfigurationValidator extends AbstractConfigurationV
 	    Ldproxy2Constants.PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF,
 	    Ldproxy2Constants.PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP,
 	    Ldproxy2Constants.PARAM_GID_COL_SUFFIX_CODELISTVALUEDPROP,
+	    Ldproxy2Constants.PARAM_GID_CREATE_PUNKTOBJECT_FOR_PUNKTORTAU,
 	    /* Ldproxy2Constants.PARAM_JSONFG_COORD_REF_SYS, */ Ldproxy2Constants.PARAM_JSONFG_FEATURE_TYPE,
 	    /* Ldproxy2Constants.PARAM_JSONFG_INCLUDE_IN_GEOJSON, */ Ldproxy2Constants.PARAM_LABEL_TEMPLATE,
 	    Ldproxy2Constants.PARAM_LINEARIZE_CURVES, Ldproxy2Constants.PARAM_MAX_NAME_LENGTH,

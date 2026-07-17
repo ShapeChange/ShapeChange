@@ -148,6 +148,7 @@ public class Ldproxy2Constants {
     public static final String PARAM_GID_CATALOGOBJECTKEY_AS_FEATUREREF = "gidCatalogObjectKeyAsFeatureRef";
     public static final String PARAM_GID_COL_PREFIX_CODELISTVALUEDPROP = "gidColPrefixForCodelistValuedProperty";
     public static final String PARAM_GID_COL_SUFFIX_CODELISTVALUEDPROP = "gidColSuffixForCodelistValuedProperty";
+    public static final String PARAM_GID_CREATE_PUNKTOBJECT_FOR_PUNKTORTAU = "gidPunktobjektForPunktortAU";
 
     // public static final String PARAM_JSONFG_COORD_REF_SYS = "jsonFgCoordRefSys";
     public static final String PARAM_JSONFG_FEATURE_TYPE = "jsonFgFeatureType";

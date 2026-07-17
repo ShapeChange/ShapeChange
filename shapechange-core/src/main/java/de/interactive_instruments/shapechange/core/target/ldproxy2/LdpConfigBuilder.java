@@ -76,10 +76,8 @@ import de.ii.xtraplatform.features.domain.ImmutablePartialObjectSchema;
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.ii.xtraplatform.features.sql.domain.ConnectionInfoSql.Dialect;
 import de.ii.xtraplatform.features.sql.domain.ImmutableConnectionInfoSql;
-import de.ii.xtraplatform.features.sql.domain.ImmutableDatasetChangeSettings;
 import de.ii.xtraplatform.features.sql.domain.ImmutableFeatureProviderSqlData;
 import de.ii.xtraplatform.features.sql.domain.ImmutableQueryGeneratorSettings;
-import de.ii.xtraplatform.features.sql.domain.ImmutableQueryProcessorSettings;
 import de.ii.xtraplatform.features.sql.domain.ImmutableSqlPathDefaults;
 import de.ii.xtraplatform.jsonschema.domain.ImmutableJsonSchemaRef;
 import de.ii.xtraplatform.jsonschema.domain.ImmutableJsonSchemaString;
@@ -134,6 +132,8 @@ public class LdpConfigBuilder {
     protected LdpBuildingBlockFeaturesJsonFgBuilder bbFeaturesJsonFgBuilder;
     protected LdpBuildingBlockResourcesBuilder bbResourcesBuilder;
 
+    protected LdpGidEncoder gidEncoder = new LdpGidEncoder();
+
     protected LdpPropertyEncoder propertyEncoder;
 
     protected LdpProvider ldpProvider;
@@ -164,7 +164,7 @@ public class LdpConfigBuilder {
 
 	this.propertyEncoder = new LdpPropertyEncoder(this, this.target, this.bbFeaturesGmlBuilder,
 		this.bbFeaturesHtmlBuilder, this.bbGeoJsonBuilder, this.bbFeaturesJsonFgBuilder, this.ldpProvider,
-		this.ldpSourcePathProvider, this.queryablePropertiesByCollectionCi);
+		this.ldpSourcePathProvider, this.queryablePropertiesByCollectionCi, this.gidEncoder);
 
 	this.objectFeatureMixinAndDataTypes = objectFeatureMixinAndDataTypes;
 	this.codelistsAndEnumerations = codelistsAndEnumerations;
@@ -188,6 +188,10 @@ public class LdpConfigBuilder {
 
 	if (Ldproxy2Target.enableTiles) {
 	    tileProviderConfig = buildTileProviderConfiguration();
+	}
+
+	if (gidEncoder.ciRoleCodeCodelistConstraintCreated()) {
+	    this.codelistById.put("CI_RoleCode", gidEncoder.createCiRoleCodelist(cfg));
 	}
 
 	generateStoredQueries();
@@ -356,6 +360,12 @@ public class LdpConfigBuilder {
 		     * since we only have a single supertype schema, just reference that
 		     */
 		    fragmentBuilder.schema(LdpUtil.fragmentRef(supertypes.getFirst()));
+
+		    if (Ldproxy2Target.gidPunktobjektForPunktortAU && ci.name().equals("AX_PunktortAU")) {
+			createAdditionalFragment("au_punktobjekt_punktortau",
+				gidEncoder.createPunktobjektForPunktortAUFragment());
+			fragmentBuilder.schema("#/fragments/au_punktobjekt_punktortau");
+		    }
 
 		    if (!ciPropertyDefs.isEmpty()) {
 			fragmentBuilder.propertyMap(ciPropertyDefs);
@@ -527,7 +537,7 @@ public class LdpConfigBuilder {
 	if (StringUtils.isNotBlank(Ldproxy2Target.providerConfigLabelTemplate)) {
 	    featureProviderConfigBuilder.labelTemplate(Ldproxy2Target.providerConfigLabelTemplate);
 	}
-	
+
 	return featureProviderConfigBuilder.build();
     }
 

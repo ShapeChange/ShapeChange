@@ -91,7 +91,7 @@ public class LdpPropertyEncoder {
 
     protected SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi;
 
-    protected LdpGidEncoder gidEncoder = new LdpGidEncoder();
+    protected LdpGidEncoder gidEncoder;
     protected LdpCommonEncoder commonEncoder = new LdpCommonEncoder();
 
     protected LdpConfigBuilder ldpConfigBuilder;
@@ -112,11 +112,13 @@ public class LdpPropertyEncoder {
 	    LdpBuildingBlockGeoJsonBuilder featuresGeoJsonBuilder,
 	    LdpBuildingBlockFeaturesJsonFgBuilder featuresJsonFgBuilder, LdpProvider ldpProvider,
 	    LdpSourcePathProvider sourcePathProvider,
-	    SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi) {
+	    SortedMap<ClassInfo, SortedSet<String>> queryablePropertiesByCollectionCi, LdpGidEncoder gidEncoder) {
 
 	this.target = target;
 	this.result = target.result;
 	this.msgSource = target;
+
+	this.gidEncoder = gidEncoder;
 
 	this.bbFeaturesGmlBuilder = gml;
 	if (this.bbFeaturesGmlBuilder != null && this.gidEncoder != null) {
@@ -1630,5 +1632,4 @@ public class LdpPropertyEncoder {
 
 	return res;
     }
-
 }
