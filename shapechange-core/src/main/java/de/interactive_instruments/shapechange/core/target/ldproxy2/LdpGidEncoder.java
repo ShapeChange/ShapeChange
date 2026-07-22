@@ -39,10 +39,13 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang3.Strings;
 
-import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
 import de.ii.ldproxy.cfg.LdproxyCfgWriter;
 import de.ii.xtraplatform.codelists.domain.Codelist.ImportType;
+import de.ii.xtraplatform.codelists.domain.ImmutableCodelist;
+import de.ii.xtraplatform.crs.domain.EpsgCrs;
+import de.ii.xtraplatform.crs.domain.EpsgCrs.Force;
 import de.ii.xtraplatform.features.domain.FeatureSchema;
+import de.ii.xtraplatform.features.domain.ImmutableCrsVariants;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableSchemaConstraints;
 import de.ii.xtraplatform.features.domain.SchemaBase.Role;
@@ -496,7 +499,7 @@ public class LdpGidEncoder {
 		{
 		    String path_prsDat = propertyPath
 			    + (Ldproxy2Target.propertyIdByTaggedValue ? ".prs.dat" : ".processStep.dateTime");
-		    valueWraps.put(path_prsDat, List.of(gcoNsabr + "DateTime"));
+		    valueWraps.put(path_prsDat, List.of(gcoNsabr + ":DateTime"));
 		}
 
 		/*
@@ -623,7 +626,7 @@ public class LdpGidEncoder {
 	    String propName = "pos_srs";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
 		    .sourcePath("position_srs").type(Type.STRING);
-// TODO	    propBuilder.role(Role.ORIGINAL_CRS_IDENTIFIER);
+	    propBuilder.role(Role.ORIGINAL_CRS_IDENTIFIER);
 
 	    ImmutableSchemaConstraints.Builder constraintsBuilder = new ImmutableSchemaConstraints.Builder();
 	    constraintsBuilder.addAllEnumValues(List.of("urn:adv:crs:DE_DHDN_3GK3_HE100",
@@ -641,13 +644,14 @@ public class LdpGidEncoder {
 	    String propName = "pos_gk3";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
 		    .sourcePath("position_gk3").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
-	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.nativeCrs
+	    propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.originalCrsIdentifiers
+	    propBuilder.nativeCrs(5677);
 
-	    // TODO propBuilder.falseEastingDifference
+	    propBuilder.addOriginalCrsIdentifiers("urn:adv:crs:DE_DHDN_3GK3_HE100", "urn:adv:crs:DE_DHDN_3GK3_HE120");
+
+	    propBuilder.falseEastingDifference(3000000);
 
 	    propertyDefs.put(propName, propBuilder.build());
 	}
@@ -657,13 +661,14 @@ public class LdpGidEncoder {
 	    String propName = "pos_llh";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
 		    .sourcePath("position_llh").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
-	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.nativeCrs
+	    propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.originalCrs
+	    propBuilder.nativeCrs(EpsgCrs.of(4937, Force.LON_LAT));
 
-	    // TODO propBuilder.originalCrsIdentifiers
+	    propBuilder.originalCrs(4937);
+
+	    propBuilder.addOriginalCrsIdentifiers("urn:adv:crs:ETRS89_Lat-Lon-h");
 
 	    propertyDefs.put(propName, propBuilder.build());
 	}
@@ -673,11 +678,12 @@ public class LdpGidEncoder {
 	    String propName = "pos_geoc";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
 		    .sourcePath("position_geoc").type(Type.GEOMETRY).geometryType(GeometryType.POINT);
-	    // TODO propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.nativeCrs
+	    propBuilder.role(Role.ORIGINAL_GEOMETRY);
 
-	    // TODO propBuilder.originalCrsIdentifiers
+	    propBuilder.nativeCrs(4936);
+
+	    propBuilder.addOriginalCrsIdentifiers("urn:adv:crs:ETRS89_X-Y-Z");
 
 	    propertyDefs.put(propName, propBuilder.build());
 	}
@@ -687,9 +693,11 @@ public class LdpGidEncoder {
 	    String propName = "pos_h";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
 		    .sourcePath("position_h").type(Type.FLOAT).unit("m");
-	    // TODO propBuilder.role(Role.ORIGINAL_HEIGHT);
 
-	    // TODO propBuilder.originalCrsIdentifiers
+	    propBuilder.role(Role.ORIGINAL_HEIGHT);
+
+	    propBuilder.addOriginalCrsIdentifiers("urn:adv:crs:DE_DHHN2016_NH", "urn:adv:crs:DE_DHHN92_NH",
+		    "urn:adv:crs:DE_DHHN12_NOH", "urn:adv:crs:DE_DHHN85_NOH", "urn:adv:crs:ETRS89_h");
 
 	    propertyDefs.put(propName, propBuilder.build());
 	}
@@ -698,10 +706,15 @@ public class LdpGidEncoder {
 	{
 	    String propName = "position";
 	    ImmutableFeatureSchema.Builder propBuilder = new ImmutableFeatureSchema.Builder().name(propName)
-		    .sourcePath("position").type(Type.GEOMETRY).role(Role.PRIMARY_GEOMETRY).label("position")
-		    .alias("position").description("Raumbezug der Punktgeometrie.");
+		    .sourcePath("position").type(Type.GEOMETRY).role(Role.PRIMARY_GEOMETRY)
+		    .geometryType(GeometryType.POINT).label("position").alias("position")
+		    .description("Raumbezug der Punktgeometrie.");
 
-	    // TODO propBuilder.variants
+	    ImmutableCrsVariants.Builder crsVariantsBuilder = new ImmutableCrsVariants.Builder();
+	    crsVariantsBuilder.crsProperty("pos_srs").verticalProperty("pos_h");
+	    crsVariantsBuilder.addGeometryProperties("pos_gk3", "pos_llh", "pos_geoc");
+
+	    propBuilder.crsVariants(crsVariantsBuilder.build());
 
 	    propertyDefs.put(propName, propBuilder.build());
 	}
