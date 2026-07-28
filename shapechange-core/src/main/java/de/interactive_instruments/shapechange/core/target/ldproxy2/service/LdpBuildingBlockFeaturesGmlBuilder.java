@@ -463,7 +463,7 @@ public class LdpBuildingBlockFeaturesGmlBuilder extends LdpBuildingBlockBuilder 
 	}
 
 	if (valueWrapsByTopLevelClass.containsKey(ci)) {
-	    builder.valueWrap(valueWrapsByTopLevelClass.get(ci));
+	    builder.xmlPaths(valueWrapsByTopLevelClass.get(ci));
 	}
 	
 	if(objectTypeSuffixedPropertiesByTopLevelClass.containsKey(ci)) {
