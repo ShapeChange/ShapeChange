@@ -5,13 +5,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
 	<input id="INPUT">
-		<parameter name="inputModelType" value="SCXML" />
+		<parameter name="inputModelType" value="EA7" />
 		<parameter name="inputFile"
-			value="src/integrationtests/owl/qualifiedCardinalityRestrictions/scxml.xml" />
+			value="src/integrationtests/owl/qualifiedCardinalityRestrictions/test_qualifiedCardinalityRestrictions.qea" />
 		<parameter name="appSchemaName" value="Test Schema" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
-		<parameter name="sortedOutput" value="true" />
+		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="sc-resources/config/StandardAliases.xml" />
 	</input>
 	<log>
