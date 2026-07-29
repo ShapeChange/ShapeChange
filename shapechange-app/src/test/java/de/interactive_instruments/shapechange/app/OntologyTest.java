@@ -94,4 +94,20 @@ public class OntologyTest extends BasicTestSCXML {
 		new String[] { "ttl" }, "testResults/owl/propertyGeneralizationAndEnrichment/owl",
 		"src/integrationtests/owl/propertyGeneralizationAndEnrichment/reference/owl");
     }
+
+    @Test
+    public void testQualifiedCardinalityRestrictions() {
+	/*
+	 * rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction: qualified
+	 * cardinality restrictions on datatype properties must use owl:onDataRange
+	 * (W3C OWL 2 Structural Specification, Sec. 8.5; Mapping to RDF Graphs,
+	 * Sec. 3.2), while restrictions on object properties use owl:onClass
+	 * (Sec. 8.3). This is a pure SCXML test (no Enterprise Architect model
+	 * required).
+	 */
+	multiTest(
+		"src/integrationtests/owl/qualifiedCardinalityRestrictions/testSCXML_owl_qualifiedCardinalityRestrictions.xml",
+		new String[] { "ttl" }, "testResults/owl/qualifiedCardinalityRestrictions",
+		"src/integrationtests/owl/qualifiedCardinalityRestrictions/reference");
+    }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="INPUT">
+		<parameter name="inputModelType" value="SCXML" />
+		<parameter name="inputFile"
+			value="src/integrationtests/owl/qualifiedCardinalityRestrictions/scxml.xml" />
+		<parameter name="appSchemaName" value="Test Schema" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="disabled" />
+		<parameter name="sortedOutput" value="true" />
+		<xi:include href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/owl/qualifiedCardinalityRestrictions/log.xml" />
+	</log>
+	<targets>
+		<TargetOwl inputs="INPUT"
+			class="de.interactive_instruments.shapechange.core.target.ontology.OWLISO19150"
+			mode="enabled">
+			<targetParameter name="outputDirectory"
+				value="testResults/owl/qualifiedCardinalityRestrictions/owl" />
+			<targetParameter name="outputFormat" value="turtle" />
+			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="defaultEncodingRule" value="MyRule" />
+			<targetParameter name="language" value="en" />
+			<targetParameter name="defaultTypeImplementation" value="owl:Class" />
+			<targetParameter name="ontologyNameCode" value="test" />
+			<targetParameter name="source" value="Test ontology" />
+			<targetParameter name="URIbase" value="http://example.org/ontology" />
+
+			<xi:include href="sc-resources/config/StandardMapEntries-owl.xml" />
+			<xi:include href="sc-resources/config/StandardNamespaces-owl.xml" />
+
+			<rules>
+				<EncodingRule name="MyRule" extends="*">
+					<rule name="rule-owl-pkg-singleOntologyPerSchema" />
+					<rule name="rule-owl-pkg-ontologyName-code" />
+					<rule name="rule-owl-cls-encode-featuretypes" />
+					<rule name="rule-owl-prop-general" />
+					<rule name="rule-owl-prop-range-global" />
+					<rule name="rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction" />
+				</EncodingRule>
+			</rules>
+		</TargetOwl>
+	</targets>
+</ShapeChangeConfiguration>
