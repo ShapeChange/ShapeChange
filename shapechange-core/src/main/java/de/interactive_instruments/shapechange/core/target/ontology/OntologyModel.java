@@ -1112,6 +1112,25 @@ public class OntologyModel implements MessageSource {
 	}
     }
 
+    /**
+     * Determines the predicate that links a qualified cardinality restriction to
+     * its restricting range.
+     *
+     * Per the W3C OWL 2 specification, qualified cardinality restrictions on a
+     * data property MUST use owl:onDataRange with a data range (Structural
+     * Specification and Functional-Style Syntax, Sec. 8.5 "Data Property
+     * Cardinality Restrictions"; Mapping to RDF Graphs, Sec. 3.2), whereas
+     * owl:onClass applies only to object property cardinality restrictions
+     * (Sec. 8.3). Emitting owl:onClass with an XSD datatype (e.g. xsd:double)
+     * yields an invalid OWL 2 DL construct.
+     *
+     * @param p the property the restriction applies to
+     * @return OWL2.onDataRange for datatype properties, otherwise OWL2.onClass
+     */
+    protected Property qualifiedRestrictionOnPredicate(OntProperty p) {
+	return (p != null && p.isDatatypeProperty()) ? OWL2.onDataRange : OWL2.onClass;
+    }
+
     public OntClass createQCardinalityRestriction(OntProperty p, int cardinality, Resource range) {
 	/*
 	 * NOTE: We cannot use the create(Min|Max)CardinalityQRestriction(...) methods
@@ -1131,7 +1150,7 @@ public class OntologyModel implements MessageSource {
 	Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(cardinality,
 		"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
 	restriction.addLiteral(OWL2.qualifiedCardinality, cardAsNonNegativeInteger);
-	restriction.addProperty(OWL2.onClass, range);
+	restriction.addProperty(qualifiedRestrictionOnPredicate(p), range);
 
 	return restriction;
     }
@@ -1155,7 +1174,7 @@ public class OntologyModel implements MessageSource {
 	Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(cardinality,
 		"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
 	restriction.addLiteral(OWL2.minQualifiedCardinality, cardAsNonNegativeInteger);
-	restriction.addProperty(OWL2.onClass, range);
+	restriction.addProperty(qualifiedRestrictionOnPredicate(p), range);
 
 	return restriction;
     }
@@ -1179,7 +1198,7 @@ public class OntologyModel implements MessageSource {
 	Literal cardAsNonNegativeInteger = ontmodel.createTypedLiteral(cardinality,
 		"http://www.w3.org/2001/XMLSchema#nonNegativeInteger");
 	restriction.addLiteral(OWL2.maxQualifiedCardinality, cardAsNonNegativeInteger);
-	restriction.addProperty(OWL2.onClass, range);
+	restriction.addProperty(qualifiedRestrictionOnPredicate(p), range);
 
 	return restriction;
     }
