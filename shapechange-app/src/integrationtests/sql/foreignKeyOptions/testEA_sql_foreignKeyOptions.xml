@@ -49,7 +49,6 @@
 			<targetParameter name="deletePreExistingDataModelPackage"
 				value="true" />
 			<targetParameter name="eaAuthor" value="Test Author"/>
-			<targetParameter name="eaAuthor" value="Test Author"/>
 			<targetParameter name="foreignKeyOnUpdate" value="Cascade"/>
 			<targetParameter name="foreignKeyOnDelete" value="Cascade"/>
 			<rules>
