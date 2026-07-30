@@ -43,9 +43,35 @@
 
 	<modules>
 		<module>shapechange-core</module>
-		<module>shapechange-ea</module>
 		<module>shapechange-app</module>
 	</modules>
+
+	<profiles>
+		<!--
+			Enterprise Architect support. Active by default, so the standard build is
+			unchanged. The shapechange-ea module compiles against org.sparx:eaapi, which
+			ships with an Enterprise Architect installation and is not available from any
+			public repository, so a machine or CI runner without EA cannot build it.
+
+			Building with -DskipEa leaves out that module and the dependency on it,
+			producing a distribution that supports every non-EA input type (SCXML, XMI,
+			GCSR). EA model readers and the EA database-model writer are resolved by class
+			name at runtime (see DefaultModelProvider and SqlDdl), so nothing in
+			shapechange-core or shapechange-app references them at compile time.
+		-->
+		<profile>
+			<id>ea</id>
+			<activation>
+				<property>
+					<name>!skipEa</name>
+				</property>
+			</activation>
+			<modules>
+				<module>shapechange-ea</module>
+			</modules>
+		</profile>
+	</profiles>
+
 
 	<scm>
 		<url>https://github.com/ShapeChange/ShapeChange</url>
