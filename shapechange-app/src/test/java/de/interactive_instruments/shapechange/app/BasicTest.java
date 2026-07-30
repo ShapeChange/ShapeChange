@@ -90,7 +90,6 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.util.ExternalCallException;
 import de.interactive_instruments.shapechange.core.util.ExternalCallUtil;
 import de.interactive_instruments.shapechange.core.util.ZipHandler;
-import de.interactive_instruments.shapechange.ea.util.EAModelDiff;
 
 /**
  * Basic unit test for ShapeChange
@@ -642,6 +641,9 @@ public abstract class BasicTest {
 	}
     }
 
+    /** EA repository comparison helper, resolved reflectively; see similarEaRepo. */
+    private static final String EA_MODEL_DIFF_CLASSNAME = "de.interactive_instruments.shapechange.ea.util.EAModelDiff";
+
     private void similarEaRepo(String fileName, String referenceFileName) {
 
 	try {
@@ -656,12 +658,28 @@ public abstract class BasicTest {
 		fail("Reference file " + referenceFile.getAbsolutePath() + " does not exist.");
 	    }
 
-	    EAModelDiff differ = new EAModelDiff();
+	    /*
+	     * Loaded by name, exactly as DefaultModelProvider loads EA model readers, so that
+	     * these test sources compile and run without the shapechange-ea module on the
+	     * classpath. Only .qea comparisons need it; every other assertion in this class is
+	     * EA-independent.
+	     */
+	    Object differ;
+	    try {
+		differ = Class.forName(EA_MODEL_DIFF_CLASSNAME).getConstructor().newInstance();
+	    } catch (ClassNotFoundException e) {
+		fail("Comparing EA repositories requires the shapechange-ea module, which is not on"
+			+ " the classpath. Build with EA support (omit -DskipEa) to run this test."
+			+ " Result file: " + fileName);
+		return;
+	    }
 
-	    boolean similar = differ.similar(file, referenceFile);
+	    boolean similar = (Boolean) differ.getClass().getMethod("similar", File.class, File.class)
+		    .invoke(differ, file, referenceFile);
+	    String diffDetails = (String) differ.getClass().getMethod("getDiffDetails").invoke(differ);
 
 	    assertTrue(similar, "EA repository output differs from reference result. Result file: " + fileName
-		    + " - Reference file: " + referenceFileName + ". Details:\n" + differ.getDiffDetails());
+		    + " - Reference file: " + referenceFileName + ". Details:\n" + diffDetails);
 
 	} catch (Exception e) {
 	    fail("Exception while comparing EA repository '" + fileName + "' to reference file '" + referenceFileName

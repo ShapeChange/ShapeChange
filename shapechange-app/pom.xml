@@ -15,11 +15,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>shapechange-ea</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>fop</artifactId>
 		</dependency>
@@ -58,17 +53,6 @@
 			</resource>
 			<resource>
 				<directory>../shapechange-core/src/main/resources</directory>
-				<filtering>true</filtering>
-				<targetPath>${project.basedir}/sc-resources</targetPath>
-				<includes>
-					<include>**/*</include>
-				</includes>
-				<excludes>
-					<exclude>*.properties</exclude>
-				</excludes>
-			</resource>
-			<resource>
-				<directory>../shapechange-ea/src/main/resources</directory>
 				<filtering>true</filtering>
 				<targetPath>${project.basedir}/sc-resources</targetPath>
 				<includes>
@@ -413,4 +397,46 @@
 			</extension>
 		</extensions>
 	</build>
+	<profiles>
+		<!--
+			Enterprise Architect support; see the 'ea' profile in the parent POM. Active by
+			default, so the standard build is unchanged. Disabled with -DskipEa, which drops the
+			dependency on shapechange-ea and its EA-only resources, letting this module build
+			without the proprietary org.sparx:eaapi artifact that ships with an Enterprise
+			Architect installation. Main.java references no EA type, and EA model readers are
+			resolved by class name at runtime (see DefaultModelProvider), so nothing here needs
+			EA at compile time.
+		-->
+		<profile>
+			<id>ea</id>
+			<activation>
+				<property>
+					<name>!skipEa</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>shapechange-ea</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>../shapechange-ea/src/main/resources</directory>
+						<filtering>true</filtering>
+						<targetPath>${project.basedir}/sc-resources</targetPath>
+						<includes>
+							<include>**/*</include>
+						</includes>
+						<excludes>
+							<exclude>*.properties</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
