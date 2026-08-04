@@ -116,4 +116,34 @@ public class OntologyTest extends BasicTestSCXML {
 		new String[] { "ttl" }, "testResults/owl/qualifiedCardinalityRestrictions",
 		"src/integrationtests/owl/qualifiedCardinalityRestrictions/reference");
     }
+    @Test
+    public void testOwl_enumerationDatatypeProperty() {
+
+	/*
+	 * A UML enumeration encoded under rule-owl-cls-iso191502Enumeration becomes an
+	 * rdfs:Datatype whose members are literals, so a property whose value type is
+	 * such an enumeration is a data property, and a qualified cardinality
+	 * restriction on it must use owl:onDataRange.
+	 *
+	 * Per the W3C OWL 2 specification, owl:ObjectProperty ranges over individuals
+	 * and owl:DatatypeProperty over literals (Structural Specification and
+	 * Functional-Style Syntax, Sec. 6 "Property Expressions"); owl:onClass applies
+	 * only to object property cardinality restrictions (Sec. 8.3) while data
+	 * property cardinality restrictions use owl:onDataRange (Sec. 8.5). Declaring an
+	 * object property whose range is a datatype, or an owl:onClass pointing at a
+	 * datatype, is invalid OWL 2 DL.
+	 *
+	 * The fixture pins both directions: Road.surface is typed by an enumeration and
+	 * must become a data property, while Road.category is typed by a code list -
+	 * whose members are individuals - and must remain an object property. Road.name
+	 * is the pre-existing xsd:string case from ShapeChange PR #756 and must be
+	 * unchanged.
+	 *
+	 * The model is provided directly as SCXML rather than derived from an Enterprise
+	 * Architect repository, so the test runs without EA on any platform.
+	 */
+	multiTest("src/integrationtests/owl/enumerationDatatypeProperty/testEA_owl_enumerationDatatypeProperty_runWithSCXML.xml",
+		new String[] { "ttl" }, "testResults/owl/enumerationDatatypeProperty",
+		"src/integrationtests/owl/enumerationDatatypeProperty/reference");
+    }
 }
