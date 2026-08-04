@@ -40,6 +40,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -92,6 +93,15 @@ public class ModelWriter extends AbstractModelWriter {
 
     protected boolean allPackagesAreEditable = false;
     private SortedSet<PackageInfo> allSelectedSchemaPackages = null;
+    /**
+     * Order in which model elements are written, or <code>null</code> to keep the
+     * order the model provides. Supplied by the caller rather than read from the
+     * configuration here: resolving a target parameter needs the target's class
+     * name, and reporting an unusable value needs a
+     * {@link de.interactive_instruments.shapechange.core.MessageSource}, and a
+     * writer has neither.
+     */
+    protected Comparator<Info> elementOrdering = null;
 
     protected Set<String> profilesToExport = null;
     protected boolean omitExistingProfiles = false;
@@ -108,9 +118,11 @@ public class ModelWriter extends AbstractModelWriter {
 	    boolean exportProfilesFromWholeModel, boolean includeConstraintDescriptions,
 	    boolean suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning, boolean zipOutput, String schemaLocation,
 	    boolean profilesInModelSetExplicitly, SortedSet<String> defaultProfilesForClassesWithoutExplicitProfiles,
-	    boolean allPackagesAreEditable) {
+	    boolean allPackagesAreEditable, Comparator<Info> elementOrdering) {
 
 	super(o, r, encoding, outputXmlFile, zipOutput, schemaLocation);
+
+	this.elementOrdering = elementOrdering;
 
 	this.profilesToExport = profilesToExport;
 	this.omitExistingProfiles = omitExistingProfiles;
@@ -147,9 +159,11 @@ public class ModelWriter extends AbstractModelWriter {
 	    boolean omitExistingProfiles, Pattern ignoreTaggedValuesPattern, boolean exportProfilesFromWholeModel,
 	    boolean includeConstraintDescriptions, boolean suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning,
 	    boolean profilesInModelSetExplicitly, SortedSet<String> defaultProfilesForClassesWithoutExplicitProfiles,
-	    boolean allPackagesAreEditable) {
+	    boolean allPackagesAreEditable, Comparator<Info> elementOrdering) {
 
 	super(o, r);
+
+	this.elementOrdering = elementOrdering;
 
 	this.writer = writer;
 	
@@ -200,6 +214,34 @@ public class ModelWriter extends AbstractModelWriter {
 	}
     }
 
+    /**
+     * Orders model elements as {@link #elementOrdering} requests.
+     * <p>
+     * Without an ordering, elements are written in the natural order of
+     * {@link Info}, which is a lexicographic comparison of element ids. That order
+     * is stable for a given model, but it is an artefact of the source repository -
+     * for a model read from Enterprise Architect it yields sequences such as
+     * <code>10, 100, 101</code> - and it shifts when ids change. The
+     * <code>sortedOutput</code> parameter is how a consumer asks for an order
+     * derived from the model's content instead; see
+     * {@link de.interactive_instruments.shapechange.core.model.InfoOrdering}.
+     *
+     * @param <T>      kind of model element
+     * @param elements elements to order; not modified
+     * @return the elements, ordered as configured
+     */
+    protected <T extends Info> List<T> inConfiguredOrder(Iterable<T> elements) {
+
+	List<T> ordered = new ArrayList<>();
+	for (T element : elements) {
+	    ordered.add(element);
+	}
+	if (elementOrdering != null) {
+	    ordered.sort(elementOrdering);
+	}
+	return ordered;
+    }
+
     protected void printPackage(PackageInfo pi) throws Exception {
 
 	if (allPackagesAreEditable || allSelectedSchemaPackages.contains(pi)) {
@@ -223,7 +265,7 @@ public class ModelWriter extends AbstractModelWriter {
 
 	if (pi.containedClasses() != null && !pi.containedClasses().isEmpty()) {
 	    writer.startElement(NS, "classes");
-	    for (ClassInfo ci : pi.containedClasses()) {
+	    for (ClassInfo ci : inConfiguredOrder(pi.containedClasses())) {
 		printClass(ci);
 	    }
 	    writer.endElement(NS, "classes");
@@ -233,7 +275,7 @@ public class ModelWriter extends AbstractModelWriter {
 
 	    writer.startElement(NS, "packages");
 
-	    for (PackageInfo pi2 : pi.containedPackages()) {
+	    for (PackageInfo pi2 : inConfiguredOrder(pi.containedPackages())) {
 		printPackage(pi2);
 	    }
 
@@ -724,7 +766,7 @@ public class ModelWriter extends AbstractModelWriter {
 	}
 
 	writer.startElement(NS, "packages");
-	for (PackageInfo pi : packagesToPrint) {
+	for (PackageInfo pi : inConfiguredOrder(packagesToPrint)) {
 	    printPackage(pi);
 	}
 	writer.endElement(NS, "packages");

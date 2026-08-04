@@ -593,6 +593,11 @@ random order. If "true", the types will be processed alphabetically. If
 "taggedValue=<tag>", the types will be processed in the order of the
 values of the tagged value with name "<tag>".
 
+NOTE: This also determines the order in which packages and classes are written by
+targets that serialise a model rather than process it type by type, such as
+xref:../targets/Model_Export.adoc[_Model Export_]. A target parameter of the same
+name takes precedence over this input parameter.
+
 [[taggedValueImplementation]]
 === taggedValueImplementation
 
