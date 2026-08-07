@@ -1,0 +1,123 @@
+@prefix ex:   <http://example.org/ontology/test#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+ex:PlainType.alternativeA
+        rdf:type     owl:ObjectProperty;
+        rdfs:domain  ex:PlainType;
+        rdfs:range   ex:AlternativeA .
+
+ex:ChoiceOfAssociations.alternativeA
+        rdf:type     owl:ObjectProperty;
+        rdfs:domain  ex:ChoiceOfAssociations;
+        rdfs:range   ex:AlternativeA .
+
+ex:AlternativeA  rdf:type  owl:Class .
+
+ex:ChoiceWithAttribute.alternativeA
+        rdf:type     owl:ObjectProperty;
+        rdfs:domain  ex:ChoiceWithAttribute;
+        rdfs:range   ex:AlternativeA .
+
+<http://example.org/ontology/test>
+        rdf:type  owl:Ontology .
+
+ex:ChoiceOfAssociations.alternativeB
+        rdf:type     owl:ObjectProperty;
+        rdfs:domain  ex:ChoiceOfAssociations;
+        rdfs:range   ex:AlternativeB .
+
+ex:AlternativeB  rdf:type  owl:Class .
+
+ex:ChoiceWithAttribute.alternativeB
+        rdf:type     owl:ObjectProperty;
+        rdfs:domain  ex:ChoiceWithAttribute;
+        rdfs:range   ex:AlternativeB .
+
+ex:PlainType.label  rdf:type  owl:DatatypeProperty;
+        rdfs:domain  ex:PlainType;
+        rdfs:range   xsd:string .
+
+ex:ChoiceWithAttribute
+        rdf:type         owl:Class;
+        rdfs:subClassOf  [ rdf:type     owl:Class;
+                           owl:unionOf  ( [ rdf:type            owl:Class;
+                                            owl:intersectionOf  ( [ rdf:type                  owl:Restriction;
+                                                                    owl:onClass               ex:AlternativeA;
+                                                                    owl:onProperty            ex:ChoiceWithAttribute.alternativeA;
+                                                                    owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                                                                  ]
+                                                                  [ rdf:type         owl:Restriction;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger;
+                                                                    owl:onProperty   ex:ChoiceWithAttribute.alternativeB
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ rdf:type            owl:Class;
+                                            owl:intersectionOf  ( [ rdf:type         owl:Restriction;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger;
+                                                                    owl:onProperty   ex:ChoiceWithAttribute.alternativeA
+                                                                  ]
+                                                                  [ rdf:type                  owl:Restriction;
+                                                                    owl:onClass               ex:AlternativeB;
+                                                                    owl:onProperty            ex:ChoiceWithAttribute.alternativeB;
+                                                                    owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                                                                  ]
+                                                                )
+                                          ]
+                                        )
+                         ];
+        rdfs:subClassOf  [ rdf:type                  owl:Restriction;
+                           owl:onDataRange           xsd:string;
+                           owl:onProperty            ex:ChoiceWithAttribute.name;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] .
+
+ex:ChoiceOfAssociations
+        rdf:type         owl:Class;
+        rdfs:subClassOf  [ rdf:type     owl:Class;
+                           owl:unionOf  ( [ rdf:type            owl:Class;
+                                            owl:intersectionOf  ( [ rdf:type                  owl:Restriction;
+                                                                    owl:onClass               ex:AlternativeA;
+                                                                    owl:onProperty            ex:ChoiceOfAssociations.alternativeA;
+                                                                    owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                                                                  ]
+                                                                  [ rdf:type         owl:Restriction;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger;
+                                                                    owl:onProperty   ex:ChoiceOfAssociations.alternativeB
+                                                                  ]
+                                                                )
+                                          ]
+                                          [ rdf:type            owl:Class;
+                                            owl:intersectionOf  ( [ rdf:type         owl:Restriction;
+                                                                    owl:cardinality  "0"^^xsd:nonNegativeInteger;
+                                                                    owl:onProperty   ex:ChoiceOfAssociations.alternativeA
+                                                                  ]
+                                                                  [ rdf:type                  owl:Restriction;
+                                                                    owl:onClass               ex:AlternativeB;
+                                                                    owl:onProperty            ex:ChoiceOfAssociations.alternativeB;
+                                                                    owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                                                                  ]
+                                                                )
+                                          ]
+                                        )
+                         ] .
+
+ex:ChoiceWithAttribute.name
+        rdf:type     owl:DatatypeProperty;
+        rdfs:domain  ex:ChoiceWithAttribute;
+        rdfs:range   xsd:string .
+
+ex:PlainType  rdf:type   owl:Class;
+        rdfs:subClassOf  [ rdf:type                  owl:Restriction;
+                           owl:onClass               ex:AlternativeA;
+                           owl:onProperty            ex:PlainType.alternativeA;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ];
+        rdfs:subClassOf  [ rdf:type                  owl:Restriction;
+                           owl:onDataRange           xsd:string;
+                           owl:onProperty            ex:PlainType.label;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] .
