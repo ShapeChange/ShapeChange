@@ -96,6 +96,45 @@ public class OntologyTest extends BasicTestSCXML {
     }
 
     @Test
+    public void testOwl_unionAlternativesFromAssociations() {
+
+	/*
+	 * rule-owl-cls-union puts every navigable property of a «union» class into one
+	 * union set, which is the ISO 19150-2 reading: a union type has alternatives and
+	 * nothing else. A model that uses the stereotype for a class carrying both
+	 * alternatives and a property every alternative has produces a class expression
+	 * that is not merely imprecise but unsatisfiable - the expression asserts
+	 * owl:cardinality 0 on that property in every member except its own, while the
+	 * property's own minimum multiplicity requires it always, so no instance can
+	 * satisfy both.
+	 *
+	 * rule-owl-cls-unionAlternativesFromAssociations restricts the union set to the
+	 * class's association ends, where the model separates the two structurally.
+	 *
+	 * The fixture pins the case and two controls in one model. ChoiceWithAttribute is
+	 * a «union» with the attribute name and associations to AlternativeA and
+	 * AlternativeB: its union must cover the two association ends only, and name must
+	 * get a qualified cardinality restriction of its own instead - which
+	 * addMultiplicity would otherwise omit, because it skips every property of a
+	 * «union» class on the assumption that the union expression states the
+	 * multiplicity. ChoiceOfAssociations is a «union» with no attribute and must be
+	 * unaffected; PlainType is not a union at all and must not move.
+	 *
+	 * Reverting only the behaviour in OntologyModel.isUnionAlternative, leaving the
+	 * rule declared, makes this test fail on ChoiceWithAttribute alone: its union
+	 * gains a third member and name loses its restriction, while all four other
+	 * classes stay identical.
+	 *
+	 * The model is provided directly as SCXML rather than derived from an Enterprise
+	 * Architect repository, so the test runs without EA on any platform.
+	 */
+	multiTest(
+		"src/integrationtests/owl/unionAlternativesFromAssociations/testEA_owl_unionAlternativesFromAssociations_runWithSCXML.xml",
+		new String[] { "ttl" }, "testResults/owl/unionAlternativesFromAssociations",
+		"src/integrationtests/owl/unionAlternativesFromAssociations/reference");
+    }
+
+    @Test
     public void testQualifiedCardinalityRestrictions() {
 	/*
 	 * rule-owl-prop-multiplicityAsQualifiedCardinalityRestriction: qualified

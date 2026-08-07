@@ -934,8 +934,10 @@ public class OntologyModel implements MessageSource {
      * Adds one or more class expressions to define union semantics for sets of
      * properties of the class.
      * <p>
-     * If the class is a 'union' then all properties belong to one set. Otherwise,
-     * all properties with the same value for the tag
+     * If the class is a 'union' then all properties belong to one set - unless
+     * {@value OWLISO19150#RULE_OWL_CLS_UNION_ALTERNATIVES_FROM_ASSOCIATIONS} is in
+     * effect, in which case its attributes are left out and only its association ends
+     * are alternatives. Otherwise, all properties with the same value for the tag
      * {@value OWLISO19150#TV_UNION_SET} are members of a set. This can lead to
      * multiple sets.
      * 
@@ -961,6 +963,18 @@ public class OntologyModel implements MessageSource {
 		break;
 
 	    } else if (ci.category() == Options.UNION && ci.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
+
+		if (!isUnionAlternative(pi)) {
+		    /*
+		     * Only reachable under rule-owl-cls-unionAlternativesFromAssociations: an
+		     * attribute of this union is a property every alternative carries, not one of
+		     * the alternatives. Adding it to the set would make the class expression
+		     * unsatisfiable together with the attribute's own minimum multiplicity, since
+		     * the union requires the attribute to be absent whenever another alternative
+		     * is chosen. addMultiplicity encodes that multiplicity instead.
+		     */
+		    continue;
+		}
 
 		SortedSet<PropertyInfo> set;
 
@@ -1928,11 +1942,37 @@ public class OntologyModel implements MessageSource {
 	}
     }
 
+    /**
+     * Whether a class expression defining union semantics will be created for this
+     * property, i.e. whether the property is one of the alternatives of a union.
+     * <p>
+     * The multiplicity of such a property is specified by that class expression, so it
+     * must not also be encoded as a cardinality restriction of its own - and conversely, a
+     * property that is <em>not</em> an alternative must get that restriction, or its
+     * multiplicity is lost. {@link #addUnionSemantics(ClassInfo, OntClass)} and
+     * {@link #addMultiplicity(OntClass, PropertyInfo, OntProperty)} therefore ask the same
+     * question here rather than each deciding it, so the two cannot disagree and leave a
+     * property either doubly constrained or not constrained at all.
+     *
+     * @param pi the property to test
+     * @return true if the property is an alternative of a union set
+     */
+    protected boolean isUnionAlternative(PropertyInfo pi) {
+
+	ClassInfo inClass = pi.inClass();
+
+	if (inClass.category() == Options.UNION && inClass.matches(OWLISO19150.RULE_OWL_CLS_UNION)) {
+	    return !(pi.isAttribute()
+		    && inClass.matches(OWLISO19150.RULE_OWL_CLS_UNION_ALTERNATIVES_FROM_ASSOCIATIONS));
+	}
+
+	return StringUtils.isNotBlank(pi.taggedValue(OWLISO19150.TV_UNION_SET))
+		&& inClass.matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS);
+    }
+
     protected void addMultiplicity(OntClass cls, PropertyInfo pi, OntProperty p) {
 
-	if ((pi.inClass().category() == Options.UNION && pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION))
-		|| (StringUtils.isNotBlank(pi.taggedValue(OWLISO19150.TV_UNION_SET))
-			&& pi.inClass().matches(OWLISO19150.RULE_OWL_CLS_UNION_SETS))) {
+	if (isUnionAlternative(pi)) {
 	    /*
 	     * A class expression to specify union semantics for this property will be
 	     * created. The expression specifies the multiplicity, so do not encode it here.
