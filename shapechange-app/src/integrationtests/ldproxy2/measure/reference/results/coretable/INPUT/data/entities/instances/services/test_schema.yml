@@ -26,4 +26,3 @@ collections:
     enabled: true
     api:
     - buildingBlock: GML
-      conformance: NONE

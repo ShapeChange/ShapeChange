@@ -45,7 +45,6 @@ collections:
       xmlAttributes:
       - att1
       - att2.att2
-      conformance: NONE
   featuretypec1:
     id: featuretypec1
     label: featuretypec1
@@ -61,7 +60,6 @@ collections:
         - rename: a:ftAtoTA
         geom:
         - rename: a:geom
-      conformance: NONE
   featuretypec2:
     id: featuretypec2
     label: featuretypec2
@@ -95,18 +93,15 @@ collections:
         - rename: a:geom
       xmlAttributes:
       - att1.attDataTypeA.att2
-      conformance: NONE
   ta:
     id: ta
     label: ta
     enabled: true
     api:
     - buildingBlock: GML
-      conformance: NONE
   tasub:
     id: tasub
     label: tasub
     enabled: true
     api:
     - buildingBlock: GML
-      conformance: NONE
