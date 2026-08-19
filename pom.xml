@@ -140,7 +140,7 @@
 			<dependency>
 				<groupId>de.interactive_instruments</groupId>
 				<artifactId>ldproxy-cfg</artifactId>
-				<version>4.8.0-SNAPSHOT</version>
+				<version>4.9.0-SNAPSHOT</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.flipkart.zjsonpatch/zjsonpatch -->
@@ -220,14 +220,14 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-collections4</artifactId>
-				<version>4.5.0</version>
+				<version>4.6.0</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
 			<dependency>
 				<groupId>org.apache.httpcomponents.client5</groupId>
 				<artifactId>httpclient5</artifactId>
-				<version>5.6.2</version>
+				<version>5.6.4</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
 			<dependency>
@@ -250,7 +250,7 @@
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
-				<version>6.1.2</version>
+				<version>6.1.3</version>
 				<scope>test</scope>
 			</dependency>
 			<!--
@@ -258,7 +258,7 @@
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-engine</artifactId>
-				<version>6.1.2</version>
+				<version>6.1.3</version>
 				<scope>test</scope>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
@@ -394,7 +394,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.185</version>
+				<version>4.8.192</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/mil.nga.geopackage/geopackage -->
@@ -424,19 +424,19 @@
 				<plugin>
 					<groupId>org.openrewrite.maven</groupId>
 					<artifactId>rewrite-maven-plugin</artifactId>
-					<version>6.44.0</version>
+					<version>6.46.1</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.openrewrite.recipe</groupId>
 							<artifactId>rewrite-migrate-java</artifactId>
-							<version>3.40.0</version>
+							<version>3.42.0</version>
 						</dependency>
 						<!--
 						https://mvnrepository.com/artifact/org.openrewrite/rewrite-java-21 -->
 						<dependency>
 							<groupId>org.openrewrite</groupId>
 							<artifactId>rewrite-java-21</artifactId>
-							<version>8.87.7</version>
+							<version>8.90.0</version>
 						</dependency>
 					</dependencies>
 				</plugin>
