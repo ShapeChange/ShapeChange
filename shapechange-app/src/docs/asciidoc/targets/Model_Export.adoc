@@ -231,6 +231,37 @@ created for constraints.
 
 Applies to Rule(s): none – default behavior
 
+[[sortedOutput]]
+==== sortedOutput
+
+Required / Optional: optional
+
+Type: String
+
+Default Value: the value of the input parameter
+xref:../get%20started/The_element_input.adoc#sortedOutput[_sortedOutput_], which is
+`true`
+
+Explanation: Order in which packages and classes are written.
+
+Without an ordering, model elements are exported in the order the model provides, which
+is a lexicographic comparison of element ids. That order is stable for a given model, but
+it is an artefact of the source repository - for a model read from Enterprise Architect it
+produces sequences such as `10, 100, 101` - and it shifts when ids change. Set this
+parameter to obtain an order derived from the model's content instead, which is usually
+what is wanted when the exported model is kept under version control and reviewed as a
+diff.
+
+Recognised values are those of the input parameter of the same name: `false` (keep the
+order the model provides), `true` (equivalent to `name`), `name`, `id`, or
+`taggedValue=<tag>` (ordering by that tagged value, falling back to the name for elements
+that do not carry it). Elements that compare equal are ordered by id, so the export of a
+given model is reproducible regardless of the order the model reader happened to use.
+
+A target parameter set here takes precedence over the input parameter.
+
+Applies to Rule(s): none - default behaviour
+
 [[outputDirectory]]
 ==== outputDirectory
 

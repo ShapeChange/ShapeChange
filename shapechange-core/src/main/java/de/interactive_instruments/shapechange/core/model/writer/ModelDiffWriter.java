@@ -82,8 +82,9 @@ public class ModelDiffWriter extends AbstractModelWriter {
 
 	    this.writer = new XMLWriter(outputXML, this.encoding);
 
+	    // null ordering: the diff writer keeps the order the model provides
 	    this.modelWriter = new ModelWriter(writer, o, r, null, true, null, true, true, true,
-		    profilesInModelSetExplicitly, defaultProfilesForClassesWithoutExplicitProfiles, true);
+		    profilesInModelSetExplicitly, defaultProfilesForClassesWithoutExplicitProfiles, true, null);
 
 	} catch (Exception e) {
 
