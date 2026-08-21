@@ -11,7 +11,6 @@
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
-		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes" />
@@ -75,7 +74,7 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/profileTransfer/test1/results/export" />
 			<targetParameter name="outputFilename" value="profileTransfer_export" />
-			<targetParameter name="sortedOutput" value="true" />
+			<targetParameter name="sortedOutput" value="false" />
 			<targetParameter name="defaultEncodingRule" value="export" />
 			<targetParameter name="exportProfilesFromWholeModel"
 				value="true" />

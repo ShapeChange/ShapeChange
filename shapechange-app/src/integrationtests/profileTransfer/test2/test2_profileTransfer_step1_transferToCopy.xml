@@ -12,7 +12,6 @@
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
-		<parameter name="sortedSchemaOutput" value="true" />
 		<xi:include href="sc-resources/config/StandardAliases.xml" />
 	</input>
 	<log>
@@ -30,6 +29,7 @@
 			<targetParameter name="transferToCopyOfEARepository" value="true" />
 			<targetParameter name="deleteExistingProfiles" value="true" />
 			<targetParameter name="profilesToTransfer" value="C" />
+			<targetParameter name="sortedOutput" value="false" />
 		</Target>		
 	</targets>
 </ShapeChangeConfiguration>
