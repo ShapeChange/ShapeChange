@@ -10,6 +10,120 @@
           <sc:id>P2</sc:id>
           <sc:packages>
             <sc:Package>
+              <sc:name>External Schema</sc:name>
+              <sc:id>P28</sc:id>
+              <sc:classes>
+                <sc:Class>
+                  <sc:name>Boolean</sc:name>
+                  <sc:id>124</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>type</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>byValuePropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>gmlMixin</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>isCollection</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>noPropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>xmlSchemaType</sc:name>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                </sc:Class>
+                <sc:Class>
+                  <sc:name>CharacterString</sc:name>
+                  <sc:id>125</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>type</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>byValuePropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>gmlMixin</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>isCollection</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>noPropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>xmlSchemaType</sc:name>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                </sc:Class>
+                <sc:Class>
+                  <sc:name>Integer</sc:name>
+                  <sc:id>123</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>type</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>byValuePropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>gmlMixin</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>isCollection</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>noPropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>xmlSchemaType</sc:name>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                </sc:Class>
+              </sc:classes>
+            </sc:Package>
+            <sc:Package>
               <sc:name>Test Schema</sc:name>
               <sc:id>P10</sc:id>
               <sc:stereotypes>
@@ -92,180 +206,6 @@
                       <sc:sequenceNumber>1</sc:sequenceNumber>
                       <sc:typeId>125</sc:typeId>
                       <sc:typeName>CharacterString</sc:typeName>
-                      <sc:isComposition>true</sc:isComposition>
-                    </sc:Property>
-                  </sc:properties>
-                </sc:Class>
-                <sc:Class>
-                  <sc:name>SubFT1</sc:name>
-                  <sc:id>118</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>byValuePropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>gmlMixin</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>isCollection</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>noPropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:supertypes>
-                    <sc:SupertypeId>75</sc:SupertypeId>
-                  </sc:supertypes>
-                  <sc:subtypes>
-                    <sc:SubtypeId>119</sc:SubtypeId>
-                  </sc:subtypes>
-                </sc:Class>
-                <sc:Class>
-                  <sc:name>SubSubFT2</sc:name>
-                  <sc:id>119</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>byValuePropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>gmlMixin</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>isCollection</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>noPropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:supertypes>
-                    <sc:SupertypeId>118</sc:SupertypeId>
-                  </sc:supertypes>
-                </sc:Class>
-                <sc:Class>
-                  <sc:name>SubFT2</sc:name>
-                  <sc:id>120</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>byValuePropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>gmlMixin</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>isCollection</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>noPropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:supertypes>
-                    <sc:SupertypeId>75</sc:SupertypeId>
-                  </sc:supertypes>
-                </sc:Class>
-                <sc:Class>
-                  <sc:name>OtherFeatureType</sc:name>
-                  <sc:id>121</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>byValuePropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>gmlMixin</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>isCollection</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>noPropertyType</sc:name>
-                      <sc:values>
-                        <sc:Value>false</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:properties>
-                    <sc:Property>
-                      <sc:name>prop</sc:name>
-                      <sc:id>121_162</sc:id>
-                      <sc:taggedValues>
-                        <sc:TaggedValue>
-                          <sc:name>inlineOrByReference</sc:name>
-                          <sc:values>
-                            <sc:Value>inlineOrByReference</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>isMetadata</sc:name>
-                          <sc:values>
-                            <sc:Value>false</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                        <sc:TaggedValue>
-                          <sc:name>sequenceNumber</sc:name>
-                          <sc:values>
-                            <sc:Value>1</sc:Value>
-                          </sc:values>
-                        </sc:TaggedValue>
-                      </sc:taggedValues>
-                      <sc:sequenceNumber>1</sc:sequenceNumber>
-                      <sc:typeId>124</sc:typeId>
-                      <sc:typeName>Boolean</sc:typeName>
                       <sc:isComposition>true</sc:isComposition>
                     </sc:Property>
                   </sc:properties>
@@ -377,17 +317,11 @@
                     </sc:Property>
                   </sc:properties>
                 </sc:Class>
-              </sc:classes>
-            </sc:Package>
-            <sc:Package>
-              <sc:name>External Schema</sc:name>
-              <sc:id>P28</sc:id>
-              <sc:classes>
                 <sc:Class>
-                  <sc:name>Integer</sc:name>
-                  <sc:id>123</sc:id>
+                  <sc:name>OtherFeatureType</sc:name>
+                  <sc:id>121</sc:id>
                   <sc:stereotypes>
-                    <sc:Stereotype>type</sc:Stereotype>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -414,16 +348,43 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>xmlSchemaType</sc:name>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
+                  <sc:properties>
+                    <sc:Property>
+                      <sc:name>prop</sc:name>
+                      <sc:id>121_162</sc:id>
+                      <sc:taggedValues>
+                        <sc:TaggedValue>
+                          <sc:name>inlineOrByReference</sc:name>
+                          <sc:values>
+                            <sc:Value>inlineOrByReference</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>isMetadata</sc:name>
+                          <sc:values>
+                            <sc:Value>false</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                        <sc:TaggedValue>
+                          <sc:name>sequenceNumber</sc:name>
+                          <sc:values>
+                            <sc:Value>1</sc:Value>
+                          </sc:values>
+                        </sc:TaggedValue>
+                      </sc:taggedValues>
+                      <sc:sequenceNumber>1</sc:sequenceNumber>
+                      <sc:typeId>124</sc:typeId>
+                      <sc:typeName>Boolean</sc:typeName>
+                      <sc:isComposition>true</sc:isComposition>
+                    </sc:Property>
+                  </sc:properties>
                 </sc:Class>
                 <sc:Class>
-                  <sc:name>Boolean</sc:name>
-                  <sc:id>124</sc:id>
+                  <sc:name>SubFT1</sc:name>
+                  <sc:id>118</sc:id>
                   <sc:stereotypes>
-                    <sc:Stereotype>type</sc:Stereotype>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -450,16 +411,19 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>xmlSchemaType</sc:name>
-                    </sc:TaggedValue>
                   </sc:taggedValues>
+                  <sc:supertypes>
+                    <sc:SupertypeId>75</sc:SupertypeId>
+                  </sc:supertypes>
+                  <sc:subtypes>
+                    <sc:SubtypeId>119</sc:SubtypeId>
+                  </sc:subtypes>
                 </sc:Class>
                 <sc:Class>
-                  <sc:name>CharacterString</sc:name>
-                  <sc:id>125</sc:id>
+                  <sc:name>SubFT2</sc:name>
+                  <sc:id>120</sc:id>
                   <sc:stereotypes>
-                    <sc:Stereotype>type</sc:Stereotype>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
                   </sc:stereotypes>
                   <sc:taggedValues>
                     <sc:TaggedValue>
@@ -486,10 +450,46 @@
                         <sc:Value>false</sc:Value>
                       </sc:values>
                     </sc:TaggedValue>
+                  </sc:taggedValues>
+                  <sc:supertypes>
+                    <sc:SupertypeId>75</sc:SupertypeId>
+                  </sc:supertypes>
+                </sc:Class>
+                <sc:Class>
+                  <sc:name>SubSubFT2</sc:name>
+                  <sc:id>119</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
                     <sc:TaggedValue>
-                      <sc:name>xmlSchemaType</sc:name>
+                      <sc:name>byValuePropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>gmlMixin</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>isCollection</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>noPropertyType</sc:name>
+                      <sc:values>
+                        <sc:Value>false</sc:Value>
+                      </sc:values>
                     </sc:TaggedValue>
                   </sc:taggedValues>
+                  <sc:supertypes>
+                    <sc:SupertypeId>118</sc:SupertypeId>
+                  </sc:supertypes>
                 </sc:Class>
               </sc:classes>
             </sc:Package>

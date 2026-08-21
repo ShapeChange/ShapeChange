@@ -34,6 +34,7 @@ package de.interactive_instruments.shapechange.core.target.modelexport;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -45,6 +46,8 @@ import de.interactive_instruments.shapechange.core.RuleRegistry;
 import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.Info;
+import de.interactive_instruments.shapechange.core.model.InfoOrdering;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.writer.ModelWriter;
@@ -78,6 +81,7 @@ public class ModelExport implements SingleTarget, MessageSource {
     private static boolean zipOutput = false;
     private static String schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
     private static SortedSet<String> defaultProfilesForClassesWithoutExplicitProfiles = null;
+    private static Comparator<Info> elementOrdering = null;
 
     private Options options = null;
     private ShapeChangeResult result = null;
@@ -209,6 +213,36 @@ public class ModelExport implements SingleTarget, MessageSource {
 	zipOutput = false;
 	schemaLocation = ModelExportConstants.DEFAULT_SCHEMA_LOCATION;
 	defaultProfilesForClassesWithoutExplicitProfiles = null;
+	elementOrdering = null;
+    }
+
+    /**
+     * Resolves the <code>sortedOutput</code> parameter into the order in which model
+     * elements are written.
+     * <p>
+     * A target parameter takes precedence over an input parameter, matching how
+     * {@link de.interactive_instruments.shapechange.core.Converter} resolves the
+     * same parameter for targets it drives through
+     * {@link #process(ClassInfo)}. Resolving it here rather than in the writer keeps
+     * the two paths consistent: this target walks the model itself, so nothing else
+     * would apply the parameter on its behalf.
+     *
+     * @return the configured order, or <code>null</code> to keep the order the model
+     *         provides
+     */
+    private Comparator<Info> resolveElementOrdering() {
+
+	String configured = options.parameter(this.getClass().getName(), InfoOrdering.PARAM_SORTED_OUTPUT);
+	if (configured == null) {
+	    configured = options.parameter(InfoOrdering.PARAM_SORTED_OUTPUT);
+	}
+
+	try {
+	    return InfoOrdering.forConfiguredValue(configured).orElse(null);
+	} catch (IllegalArgumentException e) {
+	    result.addWarning(this, 14, InfoOrdering.PARAM_SORTED_OUTPUT, configured);
+	    return null;
+	}
     }
 
     @Override
@@ -231,12 +265,13 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 	result = r;
 	options = r.options();
+	elementOrdering = resolveElementOrdering();
 
 	ModelWriter modelWriter = new ModelWriter(options, result, encoding, outputXmlFile, profilesToExport,
 		omitExistingProfiles, ignoreTaggedValuesPattern, exportProfilesFromWholeModel,
 		includeConstraintDescriptions, suppressCodeAndEnumCharacteristicsWithoutSemanticMeaning, zipOutput,
 		schemaLocation, profilesInModelSetExplicitly, defaultProfilesForClassesWithoutExplicitProfiles,
-		allPackagesAreEditable);
+		allPackagesAreEditable, elementOrdering);
 
 	modelWriter.write(model);
 
@@ -275,6 +310,8 @@ public class ModelExport implements SingleTarget, MessageSource {
 
 	case 11 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'. The default will be used.";
 	case 12 -> "Directory named '$1$' does not exist or is not accessible.";
+	case 14 -> "Value '$2$' is not allowed for parameter '$1$'. Try 'true' (=name), 'name', 'id', 'taggedValue=<tag>' or 'false' (no sorting). The order provided by the model is used.";
+
 	case 13 -> "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
 
 	case 100 -> "Sequence number is undefined for property '$1$'. Using '0'.";

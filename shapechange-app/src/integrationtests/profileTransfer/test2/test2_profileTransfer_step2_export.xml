@@ -11,7 +11,6 @@
 		<parameter name="appSchemaNameRegex" value="Test Schema A" />
 		<parameter name="publicOnly" value="true" />
 		<parameter name="checkingConstraints" value="disabled" />
-		<parameter name="sortedSchemaOutput" value="true" />
 		<parameter name="extractSeparator" value="--" />
 		<descriptorSources>
 			<DescriptorSource descriptor="documentation" source="ea:notes" />
@@ -63,6 +62,7 @@
 			<targetParameter name="defaultEncodingRule" value="export" />
 			<targetParameter name="exportProfilesFromWholeModel"
 				value="true" />
+			<targetParameter name="sortedOutput" value="false" />
 			<rules>
 				<EncodingRule name="export">
 					<rule name="rule-exp-pkg-allPackagesAreEditable" />

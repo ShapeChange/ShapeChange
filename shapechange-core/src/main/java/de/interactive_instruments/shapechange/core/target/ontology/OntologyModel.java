@@ -2070,11 +2070,21 @@ public class OntologyModel implements MessageSource {
 
 	    if (cat == Options.ENUMERATION) {
 		ClassInfo enumeration = model.classById(pi.typeInfo().id);
-		if (enumeration == null || this.map(enumeration) != null) {
+		if (enumeration == null) {
 		    return false;
-		} else {
+		}
+		/*
+		 * An enumeration encoded under rule-owl-cls-iso191502Enumeration becomes an
+		 * rdfs:Datatype whose members are literals - see addEnumeration(ClassInfo) - so a
+		 * property whose value type is such an enumeration is a data property. Encoded as
+		 * a code list instead, the members are individuals and the property is an object
+		 * property. The check mirrors the precedence in addClass(...), where
+		 * rule-owl-cls-iso191502Enumeration wins if both rules are in effect.
+		 */
+		if (enumeration.matches(OWLISO19150.RULE_OWL_CLS_ISO191502_ENUMERATION)) {
 		    return true;
 		}
+		return this.map(enumeration) == null;
 	    } else {
 		return false;
 	    }

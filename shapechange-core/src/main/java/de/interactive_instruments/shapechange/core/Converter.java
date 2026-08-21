@@ -35,10 +35,8 @@ package de.interactive_instruments.shapechange.core;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +58,7 @@ import de.interactive_instruments.shapechange.core.transformation.Transformation
 import de.interactive_instruments.shapechange.core.ui.StatusBoard;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.InfoOrdering;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
@@ -901,71 +900,29 @@ public class Converter implements MessageSource {
      * @throws NoSuchMethodException
      * @throws SecurityException
      */
-    @SuppressWarnings("rawtypes")
     private ClassInfo[] getClasses(Model model, PackageInfo pi) throws NoSuchMethodException, SecurityException {
 	Set<ClassInfo> classes = model.classes(pi);
-	// Change the order of processing if requested by sortedOutput parameter
-	String sortedOpt = options.parameter(target.getClass().getName(), "sortedOutput");
+
+	/*
+	 * Change the order of processing if requested by the sortedOutput parameter. The
+	 * parameter is interpreted by InfoOrdering, which is shared with the model
+	 * writers so that a target walking the model itself applies the same configured
+	 * order as a target driven through process(ClassInfo).
+	 */
+	String sortedOpt = options.parameter(target.getClass().getName(), InfoOrdering.PARAM_SORTED_OUTPUT);
 	if (sortedOpt == null)
-	    sortedOpt = options.parameter("sortedOutput");
+	    sortedOpt = options.parameter(InfoOrdering.PARAM_SORTED_OUTPUT);
 
 	ClassInfo[] classArr = new ClassInfo[classes.size()];
 	classes.toArray(classArr);
 
-	if (sortedOpt != null && !"false".equalsIgnoreCase(sortedOpt)) {
-	    // TreeSet is not applicable here (ClassInfo is not comparable) =>
-	    // use an array.
-
-	    String compField;
-	    Class[] paramTypes = null;
-	    Object[] pargs = null;
-
-	    // Make it simple and allow all methods. "true" means "name".
-	    if ("true".equalsIgnoreCase(sortedOpt)) {
-		compField = "name";
-	    } else if (sortedOpt.startsWith("taggedValue=")) {
-		compField = "taggedValue";
-		String parg = sortedOpt.split("=")[1];
-		paramTypes = new Class[] { String.class };
-		pargs = new Object[] { parg };
-	    } else
-		compField = sortedOpt;
-
-	    // test
-	    try {
-		ClassInfo.class.getMethod(compField, paramTypes);
-	    } catch (NoSuchMethodException e) {
-		result.addProcessFlowError(this, 165, sortedOpt, target.getClass().getName());
-		return classArr;
-	    }
-
-	    final Method compMeth = ClassInfo.class.getMethod(compField, paramTypes);
-	    final Object[] compMethArgs = pargs;
-
-	    Arrays.sort(classArr, new Comparator<>() {
-		public int compare(ClassInfo ci1, ClassInfo ci2) {
-		    try {
-			// TBD: if two classes had the same name, a
-			// comparison via the id should be performed as well
-			if (compMeth.getName().equals("taggedValue")) {
-			    String s1 = ci1.taggedValue((String) compMethArgs[0]);
-			    String s2 = ci2.taggedValue((String) compMethArgs[0]);
-			    if (StringUtils.isBlank(s1))
-				s1 = ci1.name();
-			    if (StringUtils.isBlank(s2))
-				s2 = ci2.name();
-			    return s1.compareTo(s2);
-			} else
-			    return ((String) compMeth.invoke(ci1)).compareTo((String) compMeth.invoke(ci2));
-		    } catch (Exception e) {
-			String m = e.getMessage();
-			if (m != null)
-			    result.addProcessFlowError(m);
-		    }
-		    return 0;
-		}
-	    });
+	try {
+	    InfoOrdering.forConfiguredValue(sortedOpt)
+		    .ifPresent(comparator -> Arrays.sort(classArr, comparator));
+	} catch (IllegalArgumentException e) {
+	    result.addProcessFlowError(this, 165, sortedOpt, target.getClass().getName());
 	}
+
 	return classArr;
     }
 

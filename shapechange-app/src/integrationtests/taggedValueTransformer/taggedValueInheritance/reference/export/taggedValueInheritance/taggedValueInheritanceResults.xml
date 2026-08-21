@@ -9,6 +9,81 @@
           <sc:name>Test Model</sc:name>
           <sc:id>P2</sc:id>
           <sc:packages>
+            <sc:Package>
+              <sc:name>Extension Schema</sc:name>
+              <sc:id>P21</sc:id>
+              <sc:stereotypes>
+                <sc:Stereotype>application schema</sc:Stereotype>
+              </sc:stereotypes>
+              <sc:descriptors>
+                <sc:alias>
+                  <sc:descriptorValues>
+                    <sc:DescriptorValue>applicationSchema</sc:DescriptorValue>
+                  </sc:descriptorValues>
+                </sc:alias>
+              </sc:descriptors>
+              <sc:taggedValues>
+                <sc:TaggedValue>
+                  <sc:name>gmlProfileSchema</sc:name>
+                </sc:TaggedValue>
+                <sc:TaggedValue>
+                  <sc:name>targetNamespace</sc:name>
+                  <sc:values>
+                    <sc:Value>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:Value>
+                  </sc:values>
+                </sc:TaggedValue>
+                <sc:TaggedValue>
+                  <sc:name>version</sc:name>
+                  <sc:values>
+                    <sc:Value>1</sc:Value>
+                  </sc:values>
+                </sc:TaggedValue>
+                <sc:TaggedValue>
+                  <sc:name>xmlns</sc:name>
+                  <sc:values>
+                    <sc:Value>tviext</sc:Value>
+                  </sc:values>
+                </sc:TaggedValue>
+                <sc:TaggedValue>
+                  <sc:name>xsdDocument</sc:name>
+                  <sc:values>
+                    <sc:Value>tviext.xsd</sc:Value>
+                  </sc:values>
+                </sc:TaggedValue>
+              </sc:taggedValues>
+              <sc:classes>
+                <sc:Class>
+                  <sc:name>ExtFeatureType1</sc:name>
+                  <sc:id>93</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>tv1</sc:name>
+                      <sc:values>
+                        <sc:Value>CFT3_TV1</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>tv3</sc:name>
+                      <sc:values>
+                        <sc:Value>EFT1_TV3|CFT3_TV3</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>tvIgnoredInAppendList</sc:name>
+                      <sc:values>
+                        <sc:Value>CFT3_TVIGNOREDINAPPENDLIST</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                  <sc:supertypes>
+                    <sc:SupertypeId>95</sc:SupertypeId>
+                  </sc:supertypes>
+                </sc:Class>
+              </sc:classes>
+            </sc:Package>
             <sc:Package editable="false">
               <sc:name>Test Schema</sc:name>
               <sc:id>P10</sc:id>
@@ -45,6 +120,30 @@
                 </sc:TaggedValue>
               </sc:taggedValues>
               <sc:classes>
+                <sc:Class>
+                  <sc:name>CoreFeatureTyp4</sc:name>
+                  <sc:id>98</sc:id>
+                  <sc:stereotypes>
+                    <sc:Stereotype>featuretype</sc:Stereotype>
+                  </sc:stereotypes>
+                  <sc:taggedValues>
+                    <sc:TaggedValue>
+                      <sc:name>tv1</sc:name>
+                      <sc:values>
+                        <sc:Value>CFT1_TV1</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                    <sc:TaggedValue>
+                      <sc:name>tv2</sc:name>
+                      <sc:values>
+                        <sc:Value>CFT2_TV2</sc:Value>
+                      </sc:values>
+                    </sc:TaggedValue>
+                  </sc:taggedValues>
+                  <sc:supertypes>
+                    <sc:SupertypeId>94</sc:SupertypeId>
+                  </sc:supertypes>
+                </sc:Class>
                 <sc:Class>
                   <sc:name>CoreFeatureType1</sc:name>
                   <sc:id>91</sc:id>
@@ -132,30 +231,6 @@
                   </sc:subtypes>
                 </sc:Class>
                 <sc:Class>
-                  <sc:name>CoreFeatureTyp4</sc:name>
-                  <sc:id>98</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>tv1</sc:name>
-                      <sc:values>
-                        <sc:Value>CFT1_TV1</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>tv2</sc:name>
-                      <sc:values>
-                        <sc:Value>CFT2_TV2</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:supertypes>
-                    <sc:SupertypeId>94</sc:SupertypeId>
-                  </sc:supertypes>
-                </sc:Class>
-                <sc:Class>
                   <sc:name>CoreFeatureType5</sc:name>
                   <sc:id>99</sc:id>
                   <sc:stereotypes>
@@ -177,81 +252,6 @@
                   </sc:taggedValues>
                   <sc:supertypes>
                     <sc:SupertypeId>94</sc:SupertypeId>
-                  </sc:supertypes>
-                </sc:Class>
-              </sc:classes>
-            </sc:Package>
-            <sc:Package>
-              <sc:name>Extension Schema</sc:name>
-              <sc:id>P21</sc:id>
-              <sc:stereotypes>
-                <sc:Stereotype>application schema</sc:Stereotype>
-              </sc:stereotypes>
-              <sc:descriptors>
-                <sc:alias>
-                  <sc:descriptorValues>
-                    <sc:DescriptorValue>applicationSchema</sc:DescriptorValue>
-                  </sc:descriptorValues>
-                </sc:alias>
-              </sc:descriptors>
-              <sc:taggedValues>
-                <sc:TaggedValue>
-                  <sc:name>gmlProfileSchema</sc:name>
-                </sc:TaggedValue>
-                <sc:TaggedValue>
-                  <sc:name>targetNamespace</sc:name>
-                  <sc:values>
-                    <sc:Value>http://example.org/shapechange/taggedValues/taggedValueInheritance/ext</sc:Value>
-                  </sc:values>
-                </sc:TaggedValue>
-                <sc:TaggedValue>
-                  <sc:name>version</sc:name>
-                  <sc:values>
-                    <sc:Value>1</sc:Value>
-                  </sc:values>
-                </sc:TaggedValue>
-                <sc:TaggedValue>
-                  <sc:name>xmlns</sc:name>
-                  <sc:values>
-                    <sc:Value>tviext</sc:Value>
-                  </sc:values>
-                </sc:TaggedValue>
-                <sc:TaggedValue>
-                  <sc:name>xsdDocument</sc:name>
-                  <sc:values>
-                    <sc:Value>tviext.xsd</sc:Value>
-                  </sc:values>
-                </sc:TaggedValue>
-              </sc:taggedValues>
-              <sc:classes>
-                <sc:Class>
-                  <sc:name>ExtFeatureType1</sc:name>
-                  <sc:id>93</sc:id>
-                  <sc:stereotypes>
-                    <sc:Stereotype>featuretype</sc:Stereotype>
-                  </sc:stereotypes>
-                  <sc:taggedValues>
-                    <sc:TaggedValue>
-                      <sc:name>tv1</sc:name>
-                      <sc:values>
-                        <sc:Value>CFT3_TV1</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>tv3</sc:name>
-                      <sc:values>
-                        <sc:Value>EFT1_TV3|CFT3_TV3</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                    <sc:TaggedValue>
-                      <sc:name>tvIgnoredInAppendList</sc:name>
-                      <sc:values>
-                        <sc:Value>CFT3_TVIGNOREDINAPPENDLIST</sc:Value>
-                      </sc:values>
-                    </sc:TaggedValue>
-                  </sc:taggedValues>
-                  <sc:supertypes>
-                    <sc:SupertypeId>95</sc:SupertypeId>
                   </sc:supertypes>
                 </sc:Class>
               </sc:classes>
