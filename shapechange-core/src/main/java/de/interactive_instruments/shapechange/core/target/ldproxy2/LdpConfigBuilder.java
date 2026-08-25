@@ -385,6 +385,10 @@ public class LdpConfigBuilder {
 			queryableProperties.add(queryableId);
 		    }
 		}
+		
+		if(queryables.contains(Ldproxy2Target.objectIdentifierName)) {
+		    queryableProperties.add(Ldproxy2Target.objectIdentifierName);
+		}
 
 		if (!queryableProperties.isEmpty()) {
 
