@@ -314,9 +314,10 @@ public class GfsTemplateTarget implements Target, MessageSource {
 	// write both the .gfs and the gml_registry.xml files
 	GfsWriter writer = new GfsWriter();
 	try {
-	    writer.write(gfsFile, gmlFeatureClasses, srsName);
+	    writer.write(gfsFile, gmlFeatureClasses, srsName, options.lineSeparator());
 	    result.addResult(getTargetName(), outputDirectory, gfsFileName, null);
-	    writer.writeGmlRegistry(registryFile, gfsFile, schema.xmlns(), schema.targetNamespace(), gmlFeatureClasses);
+	    writer.writeGmlRegistry(registryFile, gfsFile, schema.xmlns(), schema.targetNamespace(), gmlFeatureClasses,
+		    options.lineSeparator());
 	    result.addResult(getTargetName(), outputDirectory, registryFileName, null);
 	} catch (ShapeChangeException e) {
 	    result.addError(this, 101, e.getMessage());

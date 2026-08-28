@@ -80,7 +80,7 @@ public class ModelDiffWriter extends AbstractModelWriter {
 	    OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, this.encoding);
 
-	    this.writer = new XMLWriter(outputXML, this.encoding);
+	    this.writer = new XMLWriter(outputXML, this.encoding, o.lineSeparator());
 
 	    // null ordering: the diff writer keeps the order the model provides
 	    this.modelWriter = new ModelWriter(writer, o, r, null, true, null, true, true, true,

@@ -388,12 +388,12 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
     @Override
     public void writeAll(ShapeChangeResult r) {
 
-	this.result = r;
-	this.options = r.options();
-
 	if (diagnosticsOnly || numberOfEncodedSchemas == 0) {
 	    return;
 	}
+
+	this.result = r;
+	this.options = r.options();
 
 	// create output file
 	File geopackageFile = new File(outputDirectory, outputFilename);
@@ -909,34 +909,51 @@ public class GeoPackageTemplate implements SingleTarget, MessageSource {
 	case 2 -> "Class '$1$'";
 	case 3 -> "Processing class '$1$'.";
 	case 4 -> "Directory named '$1$' does not exist or is not accessible.";
-	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 5 ->
+	    "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
 	case 6 -> "";
 	case 7 -> "Schema '$1$' is not encoded.";
 	case 8 -> "Class '$1$' is not encoded.";
 
-	case 16 -> "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that it will not be represented in the GeoPackage template.";
-	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 16 ->
+	    "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
+	case 17 ->
+	    "Type '$1$' is of a category not enabled for conversion, meaning that it will not be represented in the GeoPackage template.";
+	case 18 ->
+	    "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 	case 19 -> "Property '$1$' is not encoded.";
 
-	case 25 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+	case 25 ->
+	    "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 
-	case 100 -> "Class '$1$' has more than one geometry properties. All geometric properties except '$2$' will be ignored.";
-	case 101 -> "Property '$1$' has geometry value type '$2$', for which no map entry is configured that maps that type to one of the geometry types recognized by GeoPackage. The property will be encoded with type GEOMETRY.";
-	case 102 -> "Property '$1$' has value type '$2$', for which no map entry is configured that maps that type to one of the data types recognized by GeoPackage. The property will be encoded with type TEXT.";
-	case 103 -> "Property '$1$' has max multiplicity greater than 1. This is currently not supported by the target. The property will be encoded as if it had max multiplicity = 1.";
+	case 100 ->
+	    "Class '$1$' has more than one geometry properties. All geometric properties except '$2$' will be ignored.";
+	case 101 ->
+	    "Property '$1$' has geometry value type '$2$', for which no map entry is configured that maps that type to one of the geometry types recognized by GeoPackage. The property will be encoded with type GEOMETRY.";
+	case 102 ->
+	    "Property '$1$' has value type '$2$', for which no map entry is configured that maps that type to one of the data types recognized by GeoPackage. The property will be encoded with type TEXT.";
+	case 103 ->
+	    "Property '$1$' has max multiplicity greater than 1. This is currently not supported by the target. The property will be encoded as if it had max multiplicity = 1.";
 	case 104 -> "Class '$1$' has no relevant properties. It will be ignored.";
-	case 105 -> "SQL Exception occurred while creating data column constraints for enumeration '$1$'. Exception message is: $2$";
+	case 105 ->
+	    "SQL Exception occurred while creating data column constraints for enumeration '$1$'. Exception message is: $2$";
 	case 106 -> "";
-	case 107 -> "SQL Exception occurred while creating a data columns table entry for property '$1$'. Exception message is: $2$";
+	case 107 ->
+	    "SQL Exception occurred while creating a data columns table entry for property '$1$'. Exception message is: $2$";
 	case 108 -> "SQL Exception occurred while creating the GeoPackage template. Exception message is: $1$";
-	case 109 -> "Class '$1$' has multiple geometric properties. Only property '$2$' will be encoded. Property '$3$' is ignored.";
-	case 110 -> "Property '$1$' of class '$2$' is an identifier property with type '$3$'. It will be encoded with GeoPackage data type INTEGER.";
-	case 111 -> "Property '$1$' of class '$2$' has tagged value gpkgZ with unrecognized value '$3$'. Using value defined by target parameter gpkgZ (which is '$4$').";
-	case 112 -> "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
-	case 113 -> "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
+	case 109 ->
+	    "Class '$1$' has multiple geometric properties. Only property '$2$' will be encoded. Property '$3$' is ignored.";
+	case 110 ->
+	    "Property '$1$' of class '$2$' is an identifier property with type '$3$'. It will be encoded with GeoPackage data type INTEGER.";
+	case 111 ->
+	    "Property '$1$' of class '$2$' has tagged value gpkgZ with unrecognized value '$3$'. Using value defined by target parameter gpkgZ (which is '$4$').";
+	case 112 ->
+	    "Property '$1$' of class '$2$' has tagged value gpkgM with unrecognized value '$3$'. Using value defined by target parameter gpkgM (which is '$4$').";
+	case 113 ->
+	    "Ignoring values in code list '$1$'. Encoding of code list values is currently not supported by the target.";
 
-	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 503 ->
+	    "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504 -> "File has been deleted.";
 
 	default -> "(" + GeoPackageTemplate.class.getName() + ") Unknown message with number: " + mnr;

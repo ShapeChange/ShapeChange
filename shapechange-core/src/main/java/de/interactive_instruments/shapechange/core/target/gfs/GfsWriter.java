@@ -51,7 +51,7 @@ import de.interactive_instruments.shapechange.core.ShapeChangeException;
  */
 public class GfsWriter {
 
-    public void write(File gfsTemplateFile, List<GmlFeatureClass> featureClasses, String srsName)
+    public void write(File gfsTemplateFile, List<GmlFeatureClass> featureClasses, String srsName, String lineSeparator)
 	    throws ShapeChangeException {
 
 	try {
@@ -123,7 +123,7 @@ public class GfsWriter {
 	     * IMPORTANT: The GDAL driver does not recognize the gfs file if it has an xml
 	     * declaration. That is why we have to omit it in the output file.
 	     */
-	    XMLUtil.writeXml(document, gfsTemplateFile, true);
+	    XMLUtil.writeXml(document, gfsTemplateFile, true, lineSeparator);
 
 	} catch (ParserConfigurationException e) {
 	    throw new ShapeChangeException(
@@ -139,7 +139,7 @@ public class GfsWriter {
     }
 
     public void writeGmlRegistry(File gmlRegistryFile, File gfsTemplateFile, String nsPrefix, String nsUri,
-	    List<GmlFeatureClass> featureClasses) throws ShapeChangeException {
+	    List<GmlFeatureClass> featureClasses, String lineSeparator) throws ShapeChangeException {
 
 	try {
 
@@ -163,7 +163,7 @@ public class GfsWriter {
 		featureType.setAttribute("gfsSchemaLocation", gfsTemplateFile.getName());
 	    }
 
-	    XMLUtil.writeXml(document, gmlRegistryFile);
+	    XMLUtil.writeXml(document, gmlRegistryFile, lineSeparator);
 
 	} catch (ParserConfigurationException e) {
 	    throw new ShapeChangeException(

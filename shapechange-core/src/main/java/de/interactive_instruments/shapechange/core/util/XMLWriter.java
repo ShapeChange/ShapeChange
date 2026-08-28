@@ -227,7 +227,7 @@ public class XMLWriter extends XMLFilterImpl {
     private int prefixCounter = 0;
 
     private String encoding;
-    private String LINESEPARATOR = System.getProperty("line.separator");
+    private String lineSeparator = "\n";
 
     private StringBuilder sb;
 
@@ -245,8 +245,22 @@ public class XMLWriter extends XMLFilterImpl {
      *                 the document. Defaults to "UTF-8".
      */
     public XMLWriter(Writer writer, String encoding) {
+	this(writer, encoding, "\n");
+    }
+
+    /**
+     * Create a new XML writer.
+     *
+     * @param writer        The output destination, or null to use standard output.
+     * @param encoding      Content to be placed in the "encoding" attribute of the
+     *                      xml processing instruction that will be written at the
+     *                      start of the document. Defaults to "UTF-8".
+     * @param lineSeparator The line separator to use when creating new lines (e.g.
+     *                      "\n" or "\r\n"). Defaults to "\n".
+     */
+    public XMLWriter(Writer writer, String encoding, String lineSeparator) {
 	super();
-	init(writer, encoding);
+	init(writer, encoding, lineSeparator);
     }
 
     /**
@@ -265,8 +279,23 @@ public class XMLWriter extends XMLFilterImpl {
      *                  the document. Defaults to "UTF-8".
      */
     public XMLWriter(XMLReader xmlreader, Writer writer, String encoding) {
+	this(xmlreader, writer, encoding, "\n");
+    }
+
+    /**
+     * Create a new XML writer.
+     *
+     * @param xmlreader     The parent in the filter chain, or null for no parent.
+     * @param writer        The output destination, or null to use standard output.
+     * @param encoding      Content to be placed in the "encoding" attribute of the
+     *                      xml processing instruction that will be written at the
+     *                      start of the document. Defaults to "UTF-8".
+     * @param lineSeparator The line separator to use when creating new lines (e.g.
+     *                      "\n" or "\r\n"). Defaults to "\n".
+     */
+    public XMLWriter(XMLReader xmlreader, Writer writer, String encoding, String lineSeparator) {
 	super(xmlreader);
-	init(writer, encoding);
+	init(writer, encoding, lineSeparator);
     }
 
     /**
@@ -301,14 +330,17 @@ public class XMLWriter extends XMLFilterImpl {
      * <p>
      * All of the public constructors invoke this method.
      * 
-     * @param writer   The output destination, or null to use standard output.
-     * @param encoding Content to be placed in the "encoding" attribute of the xml
-     *                 processing instruction that will be written at the start of
-     *                 the document. Defaults to "UTF-8".
+     * @param writer        The output destination, or null to use standard output.
+     * @param encoding      Content to be placed in the "encoding" attribute of the
+     *                      xml processing instruction that will be written at the
+     *                      start of the document. Defaults to "UTF-8".
+     * @param lineSeparator The line separator to use when creating new lines.
+     *                      Defaults to "\n".
      */
-    private void init(Writer writer, String encoding) {
+    private void init(Writer writer, String encoding, String lineSeparator) {
 	setOutput(writer);
 	this.encoding = (encoding != null) ? encoding : "UTF-8";
+	this.lineSeparator = (lineSeparator != null) ? lineSeparator : "\n";
 
 	nsSupport = new NamespaceSupport();
 	prefixTable = new Hashtable<String, String>();
@@ -604,10 +636,10 @@ public class XMLWriter extends XMLFilterImpl {
 
     private void newLine() throws SAXException {
 
-	char[] tmp = LINESEPARATOR.toCharArray();
+	char[] tmp = lineSeparator.toCharArray();
 
 	// writeEsc(tmp, 0, tmp.length, false);
-	write(LINESEPARATOR);
+	write(lineSeparator);
 
 	super.characters(tmp, 0, tmp.length);
     }

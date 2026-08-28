@@ -121,8 +121,54 @@ public class Options {
     public static final Set<String> depStereotypes = Stream.of("import", "include", "retired")
 	    .collect(Collectors.toSet());
 
-    /** Carriage Return and Line Feed characters. */
+    /**
+     * Carriage Return and Line Feed characters.
+     *
+     * @deprecated Retained only for backwards compatibility with extensions. To
+     *             control the line ending of files written by ShapeChange, use
+     *             {@link #lineSeparator()} / {@link #getLineEnding()} instead.
+     */
+    @Deprecated
     public static final String CRLF = "\r\n";
+
+    /**
+     * Line ending style for textual files written by ShapeChange.
+     */
+    public enum LineEnding {
+
+	UNIX("\n"), WINDOWS("\r\n");
+
+	private final String separator;
+
+	LineEnding(String separator) {
+	    this.separator = separator;
+	}
+
+	/**
+	 * @return the actual line separator character sequence ("\n" for {@link #UNIX},
+	 *         "\r\n" for {@link #WINDOWS})
+	 */
+	public String getSeparator() {
+	    return separator;
+	}
+
+	/**
+	 * @param s line ending token; recognized case-insensitively: "lf" / "unix" for
+	 *          {@link #UNIX}, "crlf" / "windows" for {@link #WINDOWS}
+	 * @return the matching LineEnding, or <code>null</code> if the token is not
+	 *         recognized
+	 */
+	public static LineEnding fromString(String s) {
+	    if (s == null) {
+		return null;
+	    }
+	    return switch (s.trim().toLowerCase(Locale.ENGLISH)) {
+	    case "lf", "unix" -> UNIX;
+	    case "crlf", "windows" -> WINDOWS;
+	    default -> null;
+	    };
+	}
+    }
 
     /** Class categories. */
     public static final int UNKNOWN = -1;
@@ -172,6 +218,14 @@ public class Options {
     public static final String PARAM_ONLY_DEFERRABLE_OUTPUT_WRITE = "onlyDeferrableOutputWrite";
     public static final String PARAM_USE_STRING_INTERNING = "useStringInterning";
     public static final String PARAM_LANGUAGE = "language"; // TODO document
+
+    /**
+     * Name of the global configuration parameter (set on the input element) that
+     * controls the line ending of textual files written by ShapeChange. Recognized
+     * values are "lf" (default) and "crlf". A command line flag takes precedence
+     * over this parameter.
+     */
+    public static final String PARAM_LINE_ENDING = "lineEnding";
 
     /**
      * Alias: none
@@ -371,6 +425,15 @@ public class Options {
     public static final String DERIVED_DOCUMENTATION_DEFAULT_TEMPLATE = "[[definition]]";
     public static final String DERIVED_DOCUMENTATION_DEFAULT_NOVALUE = "";
 
+    /**
+     * The platform-dependent line separator.
+     *
+     * @deprecated Misnamed (this is the platform separator, i.e. CRLF on Windows)
+     *             and retained only for backwards compatibility with extensions. To
+     *             control the line ending of files written by ShapeChange, use
+     *             {@link #lineSeparator()} / {@link #getLineEnding()} instead.
+     */
+    @Deprecated
     public static final String LF = System.getProperty("line.separator");
     public static final String DERIVED_DOCUMENTATION_INSPIRE_TEMPLATE = "-- Name --" + LF + "[[alias]]" + LF + LF
 	    + "-- Definition --" + LF + "[[definition]]" + LF + LF + "-- Description --" + LF + "[[description]]";
@@ -512,6 +575,19 @@ public class Options {
     protected boolean allowAllStereotypes = false;
     protected Set<String> addedStereotypes = new HashSet<>();
     protected String language = "en";
+
+    /**
+     * Line ending used for textual files written by ShapeChange. Default is
+     * {@link LineEnding#UNIX} (LF).
+     */
+    protected LineEnding lineEnding = LineEnding.UNIX;
+
+    /**
+     * <code>true</code> if {@link #lineEnding} was set via the command line, which
+     * takes precedence over the {@value #PARAM_LINE_ENDING} configuration
+     * parameter.
+     */
+    protected boolean lineEndingSetByCommandLine = false;
 
     /**
      * Set of class stereotypes for which constraints shall be created; null if
@@ -1862,6 +1938,22 @@ public class Options {
 
 	if (language_value != null && !language_value.trim().isEmpty()) {
 	    this.language = language_value.trim().toLowerCase();
+	}
+
+	/*
+	 * The line ending set via the command line takes precedence over the
+	 * configuration parameter.
+	 */
+	if (!this.lineEndingSetByCommandLine) {
+	    String lineEnding_value = inputConfig.getParameters().get(PARAM_LINE_ENDING);
+	    if (StringUtils.isNotBlank(lineEnding_value)) {
+		LineEnding le = LineEnding.fromString(lineEnding_value);
+		if (le != null) {
+		    this.lineEnding = le;
+		} else {
+		    // This case is covered by the configuration validation. Use the default value.
+		}
+	    }
 	}
 
 	MapEntry nsme = namespace("gml");
@@ -3749,6 +3841,42 @@ public class Options {
     public String language() {
 
 	return this.language;
+    }
+
+    /**
+     * @return the line ending used for textual files written by ShapeChange
+     *         (default {@link LineEnding#UNIX})
+     */
+    public LineEnding getLineEnding() {
+	return this.lineEnding;
+    }
+
+    /**
+     * @param lineEnding the line ending to use for textual files written by
+     *                   ShapeChange
+     */
+    public void setLineEnding(LineEnding lineEnding) {
+	this.lineEnding = lineEnding;
+    }
+
+    /**
+     * Set the line ending from the command line. This takes precedence over the
+     * {@value #PARAM_LINE_ENDING} configuration parameter.
+     *
+     * @param lineEnding the line ending to use
+     */
+    public void setLineEndingFromCommandLine(LineEnding lineEnding) {
+	this.lineEnding = lineEnding;
+	this.lineEndingSetByCommandLine = true;
+    }
+
+    /**
+     * @return the line separator character sequence to use for textual files
+     *         written by ShapeChange ("\n" for {@link LineEnding#UNIX}, "\r\n" for
+     *         {@link LineEnding#WINDOWS})
+     */
+    public String lineSeparator() {
+	return this.lineEnding.getSeparator();
     }
 
     public boolean useStringInterning() {

@@ -988,7 +988,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 		File repXsd = new File(outputDirectory, fileName);
 
-		XMLUtil.writeXml(visitor.getDocument(), repXsd);
+		XMLUtil.writeXml(visitor.getDocument(), repXsd, options.lineSeparator());
 
 		result.addResult(getTargetName(), outputDirectory, fileName, repSchemaTargetNamespace);
 
@@ -1015,9 +1015,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 			dbmWriter = (DatabaseModelWriter) theClass.getConstructor().newInstance();
 			dbmWriter.write(this, stmts, result);
 		    } catch (Exception e) {
-			throw new ShapeChangeAbortException("Could not load database model writer class '"
-				+ databaseModelWriterClassName + "'. Exception message is: "
-				+ Objects.toString(e.getMessage(), "<null>"));
+			throw new ShapeChangeAbortException(
+				"Could not load database model writer class '" + databaseModelWriterClassName
+					+ "'. Exception message is: " + Objects.toString(e.getMessage(), "<null>"));
 		    }
 		}
 
@@ -1030,7 +1030,7 @@ public class SqlDdl implements SingleTarget, MessageSource {
 		    sqlEncInfoVisitor.postprocess();
 
 		    SqlEncodingInfos sei = sqlEncInfoVisitor.getSqlEncodingInfos();
-		    sei.toXml(outputFile, result);
+		    sei.toXml(outputFile, result, options.lineSeparator());
 		}
 
 		/*
@@ -1197,9 +1197,9 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	DdlVisitor visitor;
 
 	if (databaseStrategy instanceof PostgreSQLStrategy) {
-	    visitor = new PostgreSQLDdlVisitor(SqlConstants.CRLF, SqlConstants.INDENT, this);
+	    visitor = new PostgreSQLDdlVisitor(options.lineSeparator(), SqlConstants.INDENT, this);
 	} else {
-	    visitor = new DdlVisitor(SqlConstants.CRLF, SqlConstants.INDENT, this);
+	    visitor = new DdlVisitor(options.lineSeparator(), SqlConstants.INDENT, this);
 	}
 
 	visitor.visit(stmts);
@@ -1228,14 +1228,16 @@ public class SqlDdl implements SingleTarget, MessageSource {
 
 	    File outputWithoutEmptyLines = new File(outputDirectory, fileName + ".tmp");
 
-	    try (BufferedReader originalDdlReader = Files.newBufferedReader(outputFile.toPath(), StandardCharsets.UTF_8);
-		    BufferedWriter ddlWithoutEmptyLinesWriter = Files.newBufferedWriter(outputWithoutEmptyLines.toPath(), StandardCharsets.UTF_8)) {
+	    try (BufferedReader originalDdlReader = Files.newBufferedReader(outputFile.toPath(),
+		    StandardCharsets.UTF_8);
+		    BufferedWriter ddlWithoutEmptyLinesWriter = Files
+			    .newBufferedWriter(outputWithoutEmptyLines.toPath(), StandardCharsets.UTF_8)) {
 
 		String aLine = null;
 		while ((aLine = originalDdlReader.readLine()) != null) {
 		    if (!aLine.trim().isEmpty()) {
 			ddlWithoutEmptyLinesWriter.write(aLine);
-			ddlWithoutEmptyLinesWriter.newLine();
+			ddlWithoutEmptyLinesWriter.write(options.lineSeparator());
 		    }
 		}
 
@@ -1420,39 +1422,49 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	// return "Number format exception while converting the value of
 	// configuration parameter '$1$' to an integer. Exception message: $2$.
 	// Using $3$ as default value for '$1$'.";
-	case 5 -> "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
+	case 5 ->
+	    "Number format exception while converting the tagged value '$1$' to an integer. Exception message: $2$. Using $3$ as default value.";
 	case 6 -> "Unknown database system '$1$'";
 	case 7 -> "Schema '$1$' is not encoded.";
 	case 8 -> "Class '$1$' is not encoded.";
 	case 9 -> "Determined database system is '$1$'.";
 	case 15 -> "No map entries provided via the configuration.";
-	case 16 -> "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
-	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 16 ->
+	    "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
+	case 17 ->
+	    "Type '$1$' is of a category not enabled for conversion, meaning that no table will be created to represent it.";
+	case 18 ->
+	    "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 
 	case 22 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23 -> "At least one of the descriptor identifiers in configuration parameter '"
-		    + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
-		    + "' (parameter value is '$1$') does not match the regular expression '$2$'. Identifiers that do not match this expression will be ignored.";
+		+ SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
+		+ "' (parameter value is '$1$') does not match the regular expression '$2$'. Identifiers that do not match this expression will be ignored.";
 	case 24 -> "Configuration parameter '" + SqlConstants.PARAM_DESCRIPTORS_FOR_CODELIST
-		    + "' did not contain a well-known identifier. Using default value 'documentation'.";
-	case 25 -> "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
+		+ "' did not contain a well-known identifier. Using default value 'documentation'.";
+	case 25 ->
+	    "Value of configuration parameter '$1$' is '$2$'. The file does not exist, is a directory, or cannot be read.";
 	case 26 -> "Exception occurred while transferring contents of file '$1$': $2$";
 	case 27 -> "Exception occurred while creating database model. Exception message is: $1$";
 	case 28 -> "URL '$1$' provided for configuration parameter "
-		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
-		    + " is malformed. The data model will be created in a new EA repository within the output directory.";
-	case 29 -> "Exception encountered while copying the data model EA repository file defined by configuration parameter "
+		+ DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
+		+ " is malformed. The data model will be created in a new EA repository within the output directory.";
+	case 29 ->
+	    "Exception encountered while copying the data model EA repository file defined by configuration parameter "
 		    + DatabaseModelConstants.PARAM_DATAMODEL_EA_REPOSITORY_PATH
 		    + " to the output directory. The data model will be created in a new EA repository within the output directory.";
 	case 30 -> "Copied EA repository file for creation of the data model from URL '$1$' to '$2$'.";
 	case 31 -> "Using local EA repository file '$1$' for creation of the data model.";
-	case 32 -> "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
+	case 32 ->
+	    "Error encountered while processing classes. Consult the log file for further information. No output will be created.";
 
-	case 108 -> "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
-	case 109 -> "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
+	case 108 ->
+	    "Foreign key constraint referential action '$1$' defined by target parameter '$2$' is unknown. Allowed values are: 'Cascade', 'No Action', 'Restrict', 'Set Default', and 'Set Null'.";
+	case 109 ->
+	    "Foreign key constraint referential action '$1$' is defined by target parameter '$2$'. The chosen database system does not support this action for clause '$3$'.";
 
-	case 400 -> "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
+	case 400 ->
+	    "DEV-ISSUE: Number of recognized category-specific CREATE TABLE statements ('$1$') is different to the total count of CREATE TABLE statements ('$2$'). Ensure that all cases are covered while identifying category-specific CREATE TABLE statements. Please inform the ShapeChange developers about this situation.";
 	case 401 -> "Number of CREATE TABLE statements for associative tables representing associations: $1$";
 	case 402 -> "Number of CREATE TABLE statements for associative tables representing attributes: $1$";
 	case 403 -> "Number of CREATE TABLE statements for datatype usage specific tables: $1$";
@@ -1463,7 +1475,8 @@ public class SqlDdl implements SingleTarget, MessageSource {
 	case 408 -> "Number of CREATE TABLE statements for tables representing enumerations: $1$";
 	case 409 -> "Number of CREATE TABLE statements for tables representing unions: $1$";
 
-	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 503 ->
+	    "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504 -> "File has been deleted.";
 
 	default -> "(" + SqlDdl.class.getName() + ") Unknown message with number: " + mnr;

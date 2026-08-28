@@ -31,13 +31,9 @@
  */
 package de.interactive_instruments.shapechange.core.target.openapi;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -74,6 +70,7 @@ import de.interactive_instruments.shapechange.core.target.SingleTarget;
 import de.interactive_instruments.shapechange.core.target.json.JsonSchemaConstants;
 import de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget;
 import de.interactive_instruments.shapechange.core.target.json.jsonschema.JsonSchemaVersion;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
@@ -344,10 +341,10 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	String fileName = identifyJsonDocumentName(ci.pkg());
 
 	String definitionsReference;
-	if(jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
+	if (jsonSchemaVersion == JsonSchemaVersion.DRAFT_07 || jsonSchemaVersion == JsonSchemaVersion.OPENAPI_30) {
 	    definitionsReference = "#/definitions/";
 	} else {
-	    definitionsReference = "#/$defs/";	    
+	    definitionsReference = "#/$defs/";
 	}
 
 	String jsonSchemaDefinitionPath = jsonSchemasBaseLocation + jsonDirectory + jsonSchemasPathSeparator + fileName
@@ -535,7 +532,8 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 
 	    File outputFile = new File(outputDirectory, outputFilename);
 
-	    try (JsonWriter writer = factory.createWriter(Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.UTF_8))) {
+	    try (JsonWriter writer = factory.createWriter(new LineEndingNormalizingWriter(
+		    Files.newBufferedWriter(outputFile.toPath(), StandardCharsets.UTF_8), options.lineSeparator()))) {
 		writer.write(res5);
 		result.addResult(this.getTargetName(), outputFile.getParent(), outputFile.getName(), null);
 	    } catch (Exception e) {
@@ -892,8 +890,8 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	r.addRule("rule-openapi-all-notEncoded");
 	r.addRule("rule-openapi-cls-instantiable-feature-types");
 	r.addRule("rule-openapi-cls-top-level-feature-types");
-	
-	ProcessRuleSet openapiPrs = new ProcessRuleSet("openapi","*");
+
+	ProcessRuleSet openapiPrs = new ProcessRuleSet("openapi", "*");
 	r.addRuleSet(openapiPrs);
     }
 
@@ -929,17 +927,23 @@ public class OpenApiDefinition implements SingleTarget, MessageSource {
 	case 9 -> "";
 
 	case 10 -> "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-	case 11 -> "The OpenApiConfigItems element, a required item within the advancedProcessConfigurations element of the OpenApiDefinition "
+	case 11 ->
+	    "The OpenApiConfigItems element, a required item within the advancedProcessConfigurations element of the OpenApiDefinition "
 		    + "target configuration, could not be loaded. Consult the log file for further details.";
-	case 12 -> "Target parameter 'baseTemplate' has value: $1$. Could not load JSON from that location. Exception message is: $2$";
-	case 13 -> "Feature type '$1$' is not encoded, because it matches none of the feature type conversion rules defined for the OpenAPI definition target.";
+	case 12 ->
+	    "Target parameter 'baseTemplate' has value: $1$. Could not load JSON from that location. Exception message is: $2$";
+	case 13 ->
+	    "Feature type '$1$' is not encoded, because it matches none of the feature type conversion rules defined for the OpenAPI definition target.";
 	case 15 -> "";
-	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that the OpenAPI definition will not represent it.";
-	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 17 ->
+	    "Type '$1$' is of a category not enabled for conversion, meaning that the OpenAPI definition will not represent it.";
+	case 18 ->
+	    "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
 
 	case 100 -> "Exception occurred while writing OpenAPI definition to file: $1$. Exception message is: $2$.";
 
-	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 503 ->
+	    "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504 -> "File has been deleted.";
 
 	case 10001 -> "Generating OpenAPI definition for application schema $1$.";

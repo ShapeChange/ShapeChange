@@ -1065,7 +1065,7 @@ public class Excel implements Target {
 		try {
 			File file = new File(
 					outputDirectory + "/" + pi.name() + " Mapping Table.xml");
-			XMLUtil.writeXml(document, file);
+			XMLUtil.writeXml(document, file, options.lineSeparator());
 			result.addResult(getTargetName(), outputDirectory,
 					pi.name() + " Mapping Table.xml", pi.targetNamespace());
 		} catch (ShapeChangeException e) {

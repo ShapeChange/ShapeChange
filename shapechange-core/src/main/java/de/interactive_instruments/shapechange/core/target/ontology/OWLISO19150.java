@@ -34,7 +34,6 @@ package de.interactive_instruments.shapechange.core.target.ontology;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -75,6 +74,7 @@ import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.SingleTarget;
 import de.interactive_instruments.shapechange.core.target.TargetUtil;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingOutputStream;
 
 /**
  * UML to RDF/OWL/SKOS (based on ISO 19150-2)
@@ -983,6 +983,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	if (error || printed)
 	    return;
 
+	this.options = r.options();
+
 	/*
 	 * identify properties to encode as global ones (only for feature types,
 	 * interfaces, datatypes and basictypes)
@@ -1187,7 +1189,10 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	File outFile = new File(outputDirectoryFile, filename);
 
-	try (OutputStream fout = Files.newOutputStream(outFile.toPath()); OutputStream bout = new BufferedOutputStream(fout)) {
+	try (OutputStream fout = Files.newOutputStream(outFile.toPath());
+		OutputStream bout = new BufferedOutputStream(fout);
+		OutputStream out = RDFFormat.RDF_THRIFT.equals(rdfFormat) ? bout
+			: new LineEndingNormalizingOutputStream(bout, options.lineSeparator())) {
 
 	    String canpath = new File(fname).getCanonicalPath();
 	    r.addDebug(this, 20000, ontName, canpath);
@@ -1207,11 +1212,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		properties.put("relativeURIs", "");
 
 		RDFWriter.create().format(rdfFormat).set(SysRIOT.sysRdfWriterProperties, rea).source(ontmodel)
-			.output(bout);
+			.output(out);
 
 	    } else {
 
-		RDFDataMgr.write(bout, ontmodel, rdfFormat);
+		RDFDataMgr.write(out, ontmodel, rdfFormat);
 	    }
 
 	    r.addResult(getTargetName(), outDirForOntology, filename, ontName);

@@ -156,7 +156,8 @@ public class Coretable implements SingleTarget, MessageSource {
     @Override
     public void writeAll(ShapeChangeResult r) {
 
-	result = r;
+	this.result = r;
+	this.options = result.options();
 
 	if (generateNavigableRolesConfig) {
 
@@ -179,7 +180,7 @@ public class Coretable implements SingleTarget, MessageSource {
 
 	    CoretableNavigableRolesConfigWriter cnrcWriter = new CoretableNavigableRolesConfigWriter(result);
 	    cnrcWriter.write(navigableRolesConfig, outputDirectory, outputFilename, getTargetName(), dbSchemaName,
-		    generateInsertStatements);
+		    generateInsertStatements, options.lineSeparator());
 	}
     }
 

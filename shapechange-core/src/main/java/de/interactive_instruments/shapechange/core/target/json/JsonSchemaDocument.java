@@ -31,10 +31,8 @@
  */
 package de.interactive_instruments.shapechange.core.target.json;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -97,6 +95,7 @@ import de.interactive_instruments.shapechange.core.target.json.jsonschema.XOgcCo
 import de.interactive_instruments.shapechange.core.target.json.jsonschema.XOgcRoleKeyword;
 import de.interactive_instruments.shapechange.core.target.json.jsonschema.XOgcUriTemplateKeyword;
 import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 import de.interactive_instruments.shapechange.core.util.ValueTypeOptions;
 
 /**
@@ -3672,7 +3671,9 @@ public class JsonSchemaDocument implements MessageSource {
 
 	String jsonstring = gson.toJson(gValue);
 
-	try (BufferedWriter writer = Files.newBufferedWriter(jsonSchemaOutputFile.toPath(), StandardCharsets.UTF_8)) {
+	try (Writer writer = new LineEndingNormalizingWriter(
+		Files.newBufferedWriter(jsonSchemaOutputFile.toPath(), StandardCharsets.UTF_8),
+		options.lineSeparator())) {
 
 	    writer.write(jsonstring);
 
@@ -3812,8 +3813,8 @@ public class JsonSchemaDocument implements MessageSource {
 
 	    // no need for entity type checks
 	    JsonSchema featuresSchema = getOrCreatePropertyPath(contentSchema, featuresMemberPath, true);
-	    featuresSchema.type(JsonSchemaType.ARRAY).items(
-		    new JsonSchema().ref(identifyJsonSchemaType(collectionMembers.getFirst()).get().getRef()));
+	    featuresSchema.type(JsonSchemaType.ARRAY)
+		    .items(new JsonSchema().ref(identifyJsonSchemaType(collectionMembers.getFirst()).get().getRef()));
 	} else {
 
 	    boolean collectionsWithTopLevelEntityType = collectionMembers.stream()
@@ -4008,51 +4009,88 @@ public class JsonSchemaDocument implements MessageSource {
 	case 9 -> "??Property '$1$' of class '$2$' is not encoded.";
 
 	case 100 -> "Exception occurred while writing JSON Schema to file: $1$. Exception message is: $2$.";
-	case 101 -> "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
-	case 102 -> "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
-	case 103 -> "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as a double. Found value: $2$. The facet will be ignored.";
-	case 104 -> "??JSON Schema type for supertype '$1$' could not be identified for encoding rule '$2$'. No map entry is defined for the type, and the type is not contained in the schemas selected for processing. Generalization relationships to this type will be ignored.";
-	case 105 -> "??JSON Schema type for supertype '$1$' could not be identified for encoding rule '$2$'. No map entry is defined for the type, and the type is not encoded. Generalization relationships to this type will be ignored.";
-	case 106 -> "Initial value '$1$' of property '$2$' is not an integer, but the JSON Schema type identified for the value type of the property is 'integer'. The initial value will not be encoded as \"default\".";
-	case 107 -> "Initial value '$1$' of property '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for the value type of the property is 'number'. The initial value will not be encoded as \"default\".";
-	case 108 -> "Supertype '$1$' of type '$2$' has JSON Schema type '$3$', which is a simple type. That is not allowed. The generalization relationship from '$2$' to '$1$' will be ignored.";
-	case 109 -> "(Initial) value '$1$' of enum '$2$' is not an integer, but the JSON Schema type identified for enumeration '$3$' is 'integer'. The enum will not be encoded.";
-	case 110 -> "(Initial) value '$1$' of enum '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for enumeration '$3$' is 'number'. The enum will not be encoded.";
-	case 111 -> "Could not create collection schema '$1$' because no member schemas are available for it. Check if relevant feature types exist (are encoded in JSON Schema, have an entity type member, are not abstract [in case of the general 'FeatureCollection'], and match "
+	case 101 ->
+	    "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as an integer. Found value: $2$. The facet will be ignored.";
+	case 102 ->
+	    "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' has a negative integer value ($2$), which is not allowed for the facet. The facet will be ignored.";
+	case 103 ->
+	    "Restricting facet '$4$' of basic type '$1$' defined by tagged value '$3$' could not be parsed as a double. Found value: $2$. The facet will be ignored.";
+	case 104 ->
+	    "??JSON Schema type for supertype '$1$' could not be identified for encoding rule '$2$'. No map entry is defined for the type, and the type is not contained in the schemas selected for processing. Generalization relationships to this type will be ignored.";
+	case 105 ->
+	    "??JSON Schema type for supertype '$1$' could not be identified for encoding rule '$2$'. No map entry is defined for the type, and the type is not encoded. Generalization relationships to this type will be ignored.";
+	case 106 ->
+	    "Initial value '$1$' of property '$2$' is not an integer, but the JSON Schema type identified for the value type of the property is 'integer'. The initial value will not be encoded as \"default\".";
+	case 107 ->
+	    "Initial value '$1$' of property '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for the value type of the property is 'number'. The initial value will not be encoded as \"default\".";
+	case 108 ->
+	    "Supertype '$1$' of type '$2$' has JSON Schema type '$3$', which is a simple type. That is not allowed. The generalization relationship from '$2$' to '$1$' will be ignored.";
+	case 109 ->
+	    "(Initial) value '$1$' of enum '$2$' is not an integer, but the JSON Schema type identified for enumeration '$3$' is 'integer'. The enum will not be encoded.";
+	case 110 ->
+	    "(Initial) value '$1$' of enum '$2$' is not a number (to be exact: not a double), but the JSON Schema type identified for enumeration '$3$' is 'number'. The enum will not be encoded.";
+	case 111 ->
+	    "Could not create collection schema '$1$' because no member schemas are available for it. Check if relevant feature types exist (are encoded in JSON Schema, have an entity type member, are not abstract [in case of the general 'FeatureCollection'], and match "
 		    + JsonSchemaConstants.RULE_CLS_COLLECTIONS_BASED_ON_ENTITY_TYPE + ")";
-	case 112 -> "Class '$1$' has multiple default geometry properties ($2$). None of them will be encoded as 'geometry' member. They will be encoded as usual properties.";
-	case 113 -> "Property '$1$' of class '$2$' is an <<identifier>> property with max multiplicity greater than 1. Such a property should have a max multiplicity of exactly 1.";
-	case 114 -> "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. No type restriction is created for properties with this type as value type.";
-	case 115 -> "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not contained in the schemas selected for processing. No type restriction is created for properties with this type as value type.";
-	case 116 -> "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not encoded. No type restriction is created for properties with this type as value type.";
+	case 112 ->
+	    "Class '$1$' has multiple default geometry properties ($2$). None of them will be encoded as 'geometry' member. They will be encoded as usual properties.";
+	case 113 ->
+	    "Property '$1$' of class '$2$' is an <<identifier>> property with max multiplicity greater than 1. Such a property should have a max multiplicity of exactly 1.";
+	case 114 ->
+	    "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type was not found in the model. No type restriction is created for properties with this type as value type.";
+	case 115 ->
+	    "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not contained in the schemas selected for processing. No type restriction is created for properties with this type as value type.";
+	case 116 ->
+	    "??JSON Schema definition for type '$1$' could not be identified. No map entry is defined for the type, and the type is not encoded. No type restriction is created for properties with this type as value type.";
 	case 117 -> "";
-	case 118 -> "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
-	case 119 -> "Literal encoding type for class '$1$' determined to be '$2$'. No JSON Schema type could be identified for that encoding type. Using JSON Schema type 'string'.";
-	case 120 -> "Literal encoding type for enumeration '$1$' must be a simple JSON Schema type. A schema reference was found: '$2$'. Assuming that the referenced JSON Schema contains a type definition for JSON Schema simple type 'string'. This will affect how the enums are encoded.";
-	case 121 -> "??No target type is defined in map entry for type '$1$'. This is valid if, in the JSON encoding, the type does not require a specific type restriction.";
+	case 118 ->
+	    "??The schema contains or restricts voidable properties whose value type is defined using the '$ref' keyword. At the same time, the json schema version is set to OpenAPI30, which does not support nullable in combination with $ref. Voidable will therefore be ignored for these cases.";
+	case 119 ->
+	    "Literal encoding type for class '$1$' determined to be '$2$'. No JSON Schema type could be identified for that encoding type. Using JSON Schema type 'string'.";
+	case 120 ->
+	    "Literal encoding type for enumeration '$1$' must be a simple JSON Schema type. A schema reference was found: '$2$'. Assuming that the referenced JSON Schema contains a type definition for JSON Schema simple type 'string'. This will affect how the enums are encoded.";
+	case 121 ->
+	    "??No target type is defined in map entry for type '$1$'. This is valid if, in the JSON encoding, the type does not require a specific type restriction.";
 	case 122 -> "??No entity type member path found for specific type option '$1$'. Using '$2$' instead.";
-	case 123 -> "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
-	case 124 -> "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
-	case 125 -> "??Class '$1$' gets constraints from two external schemas, one from a base schema or supertype mapping, one from the mapping of supertype '$2$'. The encodings of these two schemas both define an $3$ member, but in different ways, which leads to ambiguity. The encoding infos from supertype '$2$' are ignored in the computation of encoding infos for class '$1$'.";
+	case 123 ->
+	    "??Could not parse value '$1$' as double / number while creating annotation '$2$' for model element $3$. The value will be ignored.";
+	case 124 ->
+	    "??Could not parse value '$1$' as integer while creating annotation '$2$' for model element $3$. The value will be ignored.";
+	case 125 ->
+	    "??Class '$1$' gets constraints from two external schemas, one from a base schema or supertype mapping, one from the mapping of supertype '$2$'. The encodings of these two schemas both define an $3$ member, but in different ways, which leads to ambiguity. The encoding infos from supertype '$2$' are ignored in the computation of encoding infos for class '$1$'.";
 	case 126 -> "??Cannot add class '$1$' to collection '$2$', because the class has no entity type member.";
-	case 127 -> "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member (and maybe the JSON-FG \"place\" member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.";
-	case 128 -> "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member (and maybe the JSON-FG \"place\" member as well). Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
-	case 129 -> "Property '$1$' of type '$2$' has been identified as primary place of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"place\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
-	case 130 -> "Property '$1$' of type '$2$' has been identified as primary place of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"place\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
-	case 131 -> "The primary instant property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary instant property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
-	case 132 -> "The primary interval start property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval start property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
-	case 133 -> "The primary interval end property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval end property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
-	case 134 -> "The primary interval property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
-	case 135 -> "The primary interval of feature type '$1$' is defined both through an interval property ('$2$') as well as by start and/or end property (start: '$3$', end: '$4$'). This represents an inconsistency. All of these properties will not be encoded, and ignored when encoding the time restriction.";
-	case 136 -> "??JSON Schema document for type '$1$' could not be identified. Property definitions that would reference this type will get a reference to definition '$2$'";
-	case 137 -> "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type, but the mapping does not contain collection infos. The by reference case with 'rel-as-key' encoding is ignored for the property. Consider adding collection infos to the map entry, or a pure inline encoding of the property.";
-	case 138 -> "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type. The map entry contains collection infos, but not the required value for characteristic "
+	case 127 ->
+	    "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"geometry\" member (and maybe the JSON-FG \"place\" member as well), which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	case 128 ->
+	    "Property '$1$' of type '$2$' has been identified as primary geometry of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"geometry\" member (and maybe the JSON-FG \"place\" member as well). Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	case 129 ->
+	    "Property '$1$' of type '$2$' has been identified as primary place of the type. However, the maximum multiplicity of that property is greater than 1. The property is mapped to the \"place\" member, which can only have a single value. The multiplicity of the property will therefore be ignored.";
+	case 130 ->
+	    "Property '$1$' of type '$2$' has been identified as primary place of the type. However, no JSON Schema type could be identified for the property. Therefore, no restriction is encoded for the \"place\" member. Ensure that a map entry is defined for the value type '$3$' of property '$1$'.";
+	case 131 ->
+	    "The primary instant property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary instant property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 132 ->
+	    "The primary interval start property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval start property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 133 ->
+	    "The primary interval end property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval end property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 134 ->
+	    "The primary interval property of feature type '$1$' was determined to be '$2$'. The feature type owns another property '$3$', which is marked to be the primary interval property. Property '$3$' will not be encoded, and ignored when encoding the time restriction.";
+	case 135 ->
+	    "The primary interval of feature type '$1$' is defined both through an interval property ('$2$') as well as by start and/or end property (start: '$3$', end: '$4$'). This represents an inconsistency. All of these properties will not be encoded, and ignored when encoding the time restriction.";
+	case 136 ->
+	    "??JSON Schema document for type '$1$' could not be identified. Property definitions that would reference this type will get a reference to definition '$2$'";
+	case 137 ->
+	    "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type, but the mapping does not contain collection infos. The by reference case with 'rel-as-key' encoding is ignored for the property. Consider adding collection infos to the map entry, or a pure inline encoding of the property.";
+	case 138 ->
+	    "??A property with value type '$1$' shall be encoded by reference (and maybe inline). The reference shall be encoded using feature ref profile 'rel-as-key'. A map entry is defined for the type. The map entry contains collection infos, but not the required value for characteristic "
 		    + JsonSchemaConstants.ME_PARAM_COLLECTION_INFOS_CHAR_URI_TEMPLATE
 		    + ". The by reference case with 'rel-as-key' encoding cannot be created for the property. Add the uri template to the collection infos of the map entry.";
-	case 139 -> "Value type '$1$' of primary geometry property '$2$' is not one of the GeoJSON compatible geometry types defined via target parameter "
+	case 139 ->
+	    "Value type '$1$' of primary geometry property '$2$' is not one of the GeoJSON compatible geometry types defined via target parameter "
 		    + JsonSchemaConstants.PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES
 		    + ". No restriction will be encoded for the \"geometry\" member.";
-	case 140 -> "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
+	case 140 ->
+	    "No singular common value property could be identified for generic value type '$1$'. Make sure that all subtypes of the generic value type have exactly one property in common (i.e., all direct and indirect subtypes all have a property with same name, and that there is only one such property).";
 	case 141 -> "??Cannot add class '$1$' to value type restriction, because the class has no entity type member.";
 
 	default -> "(" + JsonSchemaDocument.class.getName() + ") Unknown message with number: " + mnr;

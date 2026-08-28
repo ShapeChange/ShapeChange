@@ -902,7 +902,7 @@ public class ReplicationXmlSchema implements Target, MessageSource {
 	try {
 	    File repXsd = new File(outputDirectoryFile, outputFilename);
 	    
-	    XMLUtil.writeXml(document, repXsd);
+	    XMLUtil.writeXml(document, repXsd, options.lineSeparator());
 
 	    result.addResult(getTargetName(), outputDirectory, outputFilename, schemaPi.targetNamespace());
 

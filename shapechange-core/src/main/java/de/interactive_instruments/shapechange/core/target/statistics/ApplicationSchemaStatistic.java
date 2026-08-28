@@ -52,274 +52,267 @@ import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 
 /**
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  */
 public class ApplicationSchemaStatistic implements SingleTarget, MessageSource {
 
-	private ShapeChangeResult result = null;
-	@SuppressWarnings("unused")
-	private PackageInfo schema = null;
-	@SuppressWarnings("unused")
-	private Model model = null;
-	private Options options = null;
+    private ShapeChangeResult result = null;
+    @SuppressWarnings("unused")
+    private PackageInfo schema = null;
+    @SuppressWarnings("unused")
+    private Model model = null;
+    private Options options = null;
 
-	private static String outputDirectory = null;
-	private static String outputFilename = null;
-	private static final String indent1 = "  ";
-	private static final String indent2 = indent1 + indent1;
+    private static String outputDirectory = null;
+    private static String outputFilename = null;
+    private static final String indent1 = "  ";
+    private static final String indent2 = indent1 + indent1;
 
-	private static boolean initialised = false;
-	private static boolean printed = false;
+    private static boolean initialised = false;
+    private static boolean printed = false;
 
-	/**
-	 * Holds statistics for all selected schemas. Is filled while schemas are
-	 * being processed, and read during writeAll.
+    /**
+     * Holds statistics for all selected schemas. Is filled while schemas are being
+     * processed, and read during writeAll.
+     */
+    private static List<SchemaStatistic> schemaStats = null;
+
+    /**
+     * Holds statistic information for the schema that is currently being processed.
+     */
+    private static SchemaStatistic schemaStat = null;
+
+    /**
+     * This map is used to keep track of the names of the application schema that
+     * are encountered during processing. Whenever this Target is initialized with a
+     * new application schema package, the name of that schema is added to the map
+     * as a key - with a 1 integer as value in case that key was not present before,
+     * otherwise increasing the existing value by one (and in that case altering the
+     * name of the application schema during print accordingly [adding
+     * "(integer_value)"]). This is used to ensure that application schema with the
+     * same name are disambiguated during print.
+     */
+    private static Map<String, Integer> encounteredAppSchemasByName = null;
+
+    @Override
+    public void initialise(PackageInfo pi, Model m, Options o, ShapeChangeResult r, boolean diagOnly)
+	    throws ShapeChangeAbortException {
+
+	schema = pi;
+	model = m;
+	options = o;
+	result = r;
+
+	if (!initialised) {
+	    initialised = true;
+
+	    encounteredAppSchemasByName = new HashMap<String, Integer>();
+	    schemaStats = new ArrayList<SchemaStatistic>();
+
+	    outputDirectory = options.parameter(this.getClass().getName(), "outputDirectory");
+	    if (outputDirectory == null)
+		outputDirectory = options.parameter("outputDirectory");
+	    if (outputDirectory == null)
+		outputDirectory = ".";
+
+	    outputFilename = options.parameter(this.getClass().getName(), "outputFilename");
+	    if (outputFilename == null)
+		outputFilename = "ModelStatistic";
+	}
+
+	// Determine if app schema with same name has been encountered before,
+	// and choose name accordingly
+	String nameForAppSchema = null;
+
+	if (encounteredAppSchemasByName.containsKey(pi.name())) {
+	    int count = encounteredAppSchemasByName.get(pi.name()).intValue();
+	    count++;
+	    nameForAppSchema = pi.name() + " (" + count + ")";
+	    encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(count));
+	} else {
+	    nameForAppSchema = pi.name();
+	    encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(1));
+	}
+
+	schemaStat = new SchemaStatistic(nameForAppSchema, pi);
+	schemaStats.add(schemaStat);
+    }
+
+    @Override
+    public void process(ClassInfo ci) {
+
+	ClassStatistic cs = new ClassStatistic(ci);
+	schemaStat.add(cs);
+    }
+
+    @Override
+    public void write() {
+	// irrelevant for this SingleTarget
+    }
+
+    @Override
+    public String getTargetName() {
+	return "Application Schema Statistics";
+    }
+
+    @Override
+    public void writeAll(ShapeChangeResult r) {
+
+	if (printed) {
+	    return;
+	}
+
+	this.result = r;
+	this.options = result.options();
+
+	/*
+	 * once all classes from selected schemas have been processed we can also
+	 * compute statistics for the selected schemas in general
 	 */
-	private static List<SchemaStatistic> schemaStats = null;
+	for (SchemaStatistic sc : schemaStats) {
+	    sc.computeStatistics();
+	}
 
-	/**
-	 * Holds statistic information for the schema that is currently being
-	 * processed.
-	 */
-	private static SchemaStatistic schemaStat = null;
+	printTextFile();
+    }
 
-	/**
-	 * This map is used to keep track of the names of the application schema
-	 * that are encountered during processing. Whenever this Target is
-	 * initialized with a new application schema package, the name of that
-	 * schema is added to the map as a key - with a 1 integer as value in case
-	 * that key was not present before, otherwise increasing the existing value
-	 * by one (and in that case altering the name of the application schema
-	 * during print accordingly [adding "(integer_value)"]). This is used to
-	 * ensure that application schema with the same name are disambiguated
-	 * during print.
-	 */
-	private static Map<String, Integer> encounteredAppSchemasByName = null;
+    public void printTextFile() {
 
-	@Override
-	public void initialise(PackageInfo pi, Model m, Options o,
-			ShapeChangeResult r, boolean diagOnly)
-					throws ShapeChangeAbortException {
+	String fileName = outputFilename + ".txt";
 
-		schema = pi;
-		model = m;
-		options = o;
-		result = r;
+	File outputDirectoryFile = new File(outputDirectory);
+	if (!outputDirectoryFile.exists()) {
+	    try {
+		FileUtils.forceMkdir(outputDirectoryFile);
+	    } catch (Exception e) {
+		result.addError(this, 100, e.getMessage());
+		e.printStackTrace();
+	    }
+	}
 
-		if (!initialised) {
-			initialised = true;
+	File file = new File(outputDirectory, fileName);
 
-			encounteredAppSchemasByName = new HashMap<String, Integer>();
-			schemaStats = new ArrayList<SchemaStatistic>();
+	try (PrintWriter writer = new PrintWriter(new LineEndingNormalizingWriter(
+		Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), options.lineSeparator()))) {
 
-			outputDirectory = options.parameter(this.getClass().getName(),
-					"outputDirectory");
-			if (outputDirectory == null)
-				outputDirectory = options.parameter("outputDirectory");
-			if (outputDirectory == null)
-				outputDirectory = ".";
+	    for (SchemaStatistic ss : schemaStats) {
 
-			outputFilename = options.parameter(this.getClass().getName(),
-					"outputFilename");
-			if (outputFilename == null)
-				outputFilename = "ModelStatistic";
+		writer.println("----------");
+
+		writer.println(ss.getSchemaName());
+
+		writer.println(indent1 + "Number of properties in schema: " + ss.numberOfProperties());
+
+		writer.println(indent1 + "Number of relationships to features in schema: "
+			+ ss.numberOfFeatureRelationships());
+
+		writer.println(indent1 + "Percent of relationships to features: "
+			+ "%.2f".formatted(ss.percentOfFeatureRelationships()));
+
+		writer.println(
+			indent1 + "Number of attributes with complex data type from schema, and max mult 1, in schema: "
+				+ ss.getNumAttsWithSchemaDatatypeAndMaxMultOne());
+
+		writer.println(indent1
+			+ "Number of attributes with complex data type from schema, and max mult > 1, in schema: "
+			+ ss.getNumAttsWithSchemaDatatypeAndMaxMultMany());
+
+		writer.println("----------");
+
+		for (ClassStatistic cs : ss.getClassStatistics()) {
+
+		    writer.println(indent1 + categoryAsString(cs.getClassInfo()) + " " + cs.getClassInfo().name());
+
+		    writer.println(indent2 + "Number of properties: " + cs.numberOfProperties());
+
+		    writer.println(
+			    indent2 + "Number of relationships to features: " + cs.numberOfFeatureRelationships());
+
+		    writer.println(indent2 + "Percent of relationships to features: "
+			    + "%.2f".formatted(cs.percentOfFeatureRelationships()));
+
+		    writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult 1: "
+			    + cs.getNumAttsWithSchemaDatatypeAndMaxMultOne());
+
+		    writer.println(
+			    indent2 + "Number of attributes with complex data type from schema, and max mult > 1: "
+				    + cs.getNumAttsWithSchemaDatatypeAndMaxMultMany());
 		}
+	    }
 
-		// Determine if app schema with same name has been encountered before,
-		// and choose name accordingly
-		String nameForAppSchema = null;
+	    writer.close();
 
-		if (encounteredAppSchemasByName.containsKey(pi.name())) {
-			int count = encounteredAppSchemasByName.get(pi.name()).intValue();
-			count++;
-			nameForAppSchema = pi.name() + " (" + count + ")";
-			encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(count));
-		} else {
-			nameForAppSchema = pi.name();
-			encounteredAppSchemasByName.put(pi.name(), Integer.valueOf(1));
-		}
+	    result.addResult(getTargetName(), outputDirectory, fileName, null);
 
-		schemaStat = new SchemaStatistic(nameForAppSchema, pi);
-		schemaStats.add(schemaStat);
+	    printed = true;
+
+	} catch (IOException e) {
+
+	    String m = e.getMessage();
+	    if (m != null) {
+		result.addError(m);
+	    }
+
+	    e.printStackTrace(System.err);
+
 	}
+    }
 
-	@Override
-	public void process(ClassInfo ci) {
+    private String categoryAsString(ClassInfo classInfo) {
 
-		ClassStatistic cs = new ClassStatistic(ci);
-		schemaStat.add(cs);
-	}
+	return switch (classInfo.category()) {
 
-	@Override
-	public void write() {
-		// irrelevant for this SingleTarget
-	}
+	case Options.FEATURE -> "<<featureType>>";
+	case Options.OBJECT -> "<<type>>";
+	case Options.DATATYPE -> "<<dataType>>";
+	case Options.ENUMERATION -> "<<enumeration>>";
+	case Options.CODELIST -> "<<codeList>>";
+	case Options.ATTRIBUTECONCEPT -> "<<attributeConcept>>";
+	case Options.ROLECONCEPT -> "<<roleConcept>>";
+	case Options.FEATURECONCEPT -> "<<featureConcept";
+	case Options.BASICTYPE -> "<<basicType>>";
+	case Options.MIXIN -> "<<type>> (mixin)";
+	case Options.UNION -> "<<union>>";
+	case Options.OKSTRAFID -> "<<fachId>>";
+	case Options.OKSTRAKEY -> "<<schluesseltabelle>>";
+	case Options.VALUECONCEPT -> "<<valueConcept>>";
+	default -> "<unknown stereotyped> class";
+	};
+    }
 
-	@Override
-	public String getTargetName(){
-		return "Application Schema Statistics";
-	}
+    @Override
+    public void registerRulesAndRequirements(RuleRegistry r) {
+	// no rules or requirements defined for this target, thus nothing to do
+    }
 
-	@Override
-	public void writeAll(ShapeChangeResult r) {
+    @Override
+    public String getDefaultEncodingRule() {
+	return "*";
+    }
 
-		if (printed) {
-			return;
-		}
+    @Override
+    public String getTargetIdentifier() {
+	return "asstat";
+    }
 
-		result = r;
+    @Override
+    public void reset() {
+	initialised = false;
+	outputDirectory = null;
+	outputFilename = null;
+	printed = false;
+    }
 
-		/*
-		 * once all classes from selected schemas have been processed we can
-		 * also compute statistics for the selected schemas in general
-		 */
-		for (SchemaStatistic sc : schemaStats) {
-			sc.computeStatistics();
-		}
+    @Override
+    public String message(int mnr) {
 
-		printTextFile();
-	}
-
-	public void printTextFile() {
-
-		String fileName = outputFilename + ".txt";
-		
-		File outputDirectoryFile = new File(outputDirectory);
-		if (!outputDirectoryFile.exists()) {
-			try {
-			    FileUtils.forceMkdir(outputDirectoryFile);
-			} catch (Exception e) {
-			    result.addError(this,100,e.getMessage());
-			    e.printStackTrace();
-			}
-		}
-		
-		File file = new File(outputDirectory, fileName);
-				
-		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8))){
-			
-			for (SchemaStatistic ss : schemaStats) {
-
-				writer.println("----------");
-
-				writer.println(ss.getSchemaName());
-
-				writer.println(indent1 + "Number of properties in schema: "
-						+ ss.numberOfProperties());
-				
-				writer.println(indent1 + "Number of relationships to features in schema: "
-						+ ss.numberOfFeatureRelationships());
-
-				writer.println(indent1 + "Percent of relationships to features: "
-						+ "%.2f".formatted(
-						ss.percentOfFeatureRelationships()));
-
-				writer.println(indent1 + "Number of attributes with complex data type from schema, and max mult 1, in schema: "
-					+ ss.getNumAttsWithSchemaDatatypeAndMaxMultOne());
-				
-				writer.println(indent1 + "Number of attributes with complex data type from schema, and max mult > 1, in schema: "
-					+ ss.getNumAttsWithSchemaDatatypeAndMaxMultMany());
-
-				writer.println("----------");
-
-				for (ClassStatistic cs : ss.getClassStatistics()) {
-
-					writer.println(indent1 + categoryAsString(cs.getClassInfo())
-							+ " " + cs.getClassInfo().name());
-
-					writer.println(indent2 + "Number of properties: "
-							+ cs.numberOfProperties());
-					
-					writer.println(indent2 + "Number of relationships to features: "
-							+ cs.numberOfFeatureRelationships());
-
-					writer.println(indent2
-							+ "Percent of relationships to features: "
-							+ "%.2f".formatted(
-							cs.percentOfFeatureRelationships()));
-					
-					writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult 1: "
-						+ cs.getNumAttsWithSchemaDatatypeAndMaxMultOne());
-					
-					writer.println(indent2 + "Number of attributes with complex data type from schema, and max mult > 1: "
-						+ cs.getNumAttsWithSchemaDatatypeAndMaxMultMany());
-				}
-			}
-			
-			writer.close();
-
-			result.addResult(getTargetName(), outputDirectory, fileName, null);
-
-			printed = true;
-
-		} catch (IOException e) {
-
-			String m = e.getMessage();
-			if (m != null) {
-				result.addError(m);
-			}
-
-			e.printStackTrace(System.err);
-			
-		}
-	}
-
-	private String categoryAsString(ClassInfo classInfo) {
-
-		return switch (classInfo.category()) {
-
-		case Options.FEATURE -> "<<featureType>>";
-		case Options.OBJECT -> "<<type>>";
-		case Options.DATATYPE -> "<<dataType>>";
-		case Options.ENUMERATION -> "<<enumeration>>";
-		case Options.CODELIST -> "<<codeList>>";
-		case Options.ATTRIBUTECONCEPT -> "<<attributeConcept>>";
-		case Options.ROLECONCEPT -> "<<roleConcept>>";
-		case Options.FEATURECONCEPT -> "<<featureConcept";
-		case Options.BASICTYPE -> "<<basicType>>";
-		case Options.MIXIN -> "<<type>> (mixin)";
-		case Options.UNION -> "<<union>>";
-		case Options.OKSTRAFID -> "<<fachId>>";
-		case Options.OKSTRAKEY -> "<<schluesseltabelle>>";
-		case Options.VALUECONCEPT -> "<<valueConcept>>";
-		default -> "<unknown stereotyped> class";
-		};
-	}
-
-	@Override
-	public void registerRulesAndRequirements(RuleRegistry r) {
-	 // no rules or requirements defined for this target, thus nothing to do	    
-	}
-	
-	@Override
-	public String getDefaultEncodingRule() {
-		return "*";
-	}
-	
-	@Override
-	public String getTargetIdentifier() {
-	    return "asstat";
-	}
-	
-	@Override
-	public void reset() {
-		initialised = false;
-		outputDirectory = null;
-		outputFilename = null;
-		printed = false;
-	}
-
-	@Override
-	public String message(int mnr) {
-
-		return switch (mnr) {
-		case 0 -> "Context: class ApplicationSchemaStatistic";
-		case 100 -> "Could not create output directory. Exception message is: $1$";
-		default -> "(" + ApplicationSchemaStatistic.class.getName()
-					+ ") Unknown message with number: " + mnr;
-		};
-	}
+	return switch (mnr) {
+	case 0 -> "Context: class ApplicationSchemaStatistic";
+	case 100 -> "Could not create output directory. Exception message is: $1$";
+	default -> "(" + ApplicationSchemaStatistic.class.getName() + ") Unknown message with number: " + mnr;
+	};
+    }
 }

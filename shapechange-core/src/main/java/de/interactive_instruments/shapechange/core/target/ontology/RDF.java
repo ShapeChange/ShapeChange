@@ -798,7 +798,7 @@ public class RDF implements Target, MessageSource {
 
 	String fileName = pi.name().replace("/", "_").replace(" ", "_") + ".rdf";
 	try {
-	    XMLUtil.writeXml(document, new File(outputDirectory,fileName));
+	    XMLUtil.writeXml(document, new File(outputDirectory,fileName), options.lineSeparator());
 	    result.addResult(getTargetName(), outputDirectory, fileName, pi.targetNamespace() + "#");
 	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();

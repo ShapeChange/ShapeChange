@@ -43,6 +43,7 @@ import org.apache.commons.io.FileUtils;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.target.coretable.CoretableNavigableRole.DependentPart;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -57,7 +58,7 @@ public class CoretableNavigableRolesConfigWriter implements MessageSource {
     }
 
     public void write(SortedSet<CoretableNavigableRole> navigableRoles, String outputDirectory, String outputFilename,
-	    String targetName, String dbSchemaName, boolean generateInsertStatements) {
+	    String targetName, String dbSchemaName, boolean generateInsertStatements, String lineSeparator) {
 
 	if (navigableRoles.isEmpty()) {
 	    result.addInfo(this, 101);
@@ -66,18 +67,19 @@ public class CoretableNavigableRolesConfigWriter implements MessageSource {
 	    checkOutputDirectory(outputDirectory);
 
 	    printNavigableRolesConfiguration(navigableRoles, outputDirectory, outputFilename, targetName, dbSchemaName,
-		    generateInsertStatements);
+		    generateInsertStatements, lineSeparator);
 	}
     }
 
     private void printNavigableRolesConfiguration(SortedSet<CoretableNavigableRole> navigableRoles,
 	    String outputDirectory, String outputFilename, String targetName, String dbSchemaName,
-	    boolean generateInsertStatements) {
+	    boolean generateInsertStatements, String lineSeparator) {
 
 	String fileName = outputFilename + "-navigable-roles.sql";
 	File file = new File(outputDirectory, fileName);
 
-	try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8))) {
+	try (PrintWriter writer = new PrintWriter(new LineEndingNormalizingWriter(
+		Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), lineSeparator))) {
 
 	    for (CoretableNavigableRole cnr : navigableRoles) {
 

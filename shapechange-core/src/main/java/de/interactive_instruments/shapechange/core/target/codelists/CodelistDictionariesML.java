@@ -707,7 +707,7 @@ public class CodelistDictionariesML implements Target, MessageSource {
 		    if (!outDir.exists())
 			outDir.mkdirs();
 
-		    XMLUtil.writeXml(cDocument, new File(dir, ci.name() + ".xml"));
+		    XMLUtil.writeXml(cDocument, new File(dir, ci.name() + ".xml"), options.lineSeparator());
 		    result.addResult(getTargetName(), dir, ci.name() + ".xml", ci.qname());
 
 		}
