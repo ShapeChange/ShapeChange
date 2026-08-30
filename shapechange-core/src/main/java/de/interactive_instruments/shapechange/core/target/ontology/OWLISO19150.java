@@ -230,6 +230,28 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * class that have the same value for the tag {@value #TV_UNION_SET}.
      */
     public static final String RULE_OWL_CLS_UNION_SETS = "rule-owl-cls-unionSets";
+    /**
+     * Restricts the union set that {@value #RULE_OWL_CLS_UNION} builds for a
+     * &laquo;union&raquo; class to its association ends, leaving its attributes out.
+     * <p>
+     * {@value #RULE_OWL_CLS_UNION} puts every navigable property of a
+     * &laquo;union&raquo; class into one set, which is the ISO 19150-2 reading: a union
+     * type has alternatives and nothing else. Some models use the stereotype for a class
+     * that has both - alternatives, plus a property every alternative carries. Encoding
+     * such a property as an alternative makes the resulting class expression
+     * unsatisfiable together with the property's own minimum multiplicity, because the
+     * union requires it to be absent whenever another alternative is chosen.
+     * <p>
+     * Where the model separates the two structurally - alternatives as association ends,
+     * carried properties as attributes - this rule uses that separation. It is opt-in
+     * precisely because the opposite convention is at least as common: an ISO 19109
+     * union's alternatives are usually attributes, and applying this rule to such a model
+     * would leave its unions with no alternatives at all.
+     * <p>
+     * A model that instead marks its alternatives with {@value #TV_UNION_SET} should use
+     * {@value #RULE_OWL_CLS_UNION_SETS}, which says the same thing explicitly.
+     */
+    public static final String RULE_OWL_CLS_UNION_ALTERNATIVES_FROM_ASSOCIATIONS = "rule-owl-cls-unionAlternativesFromAssociations";
 
     /**
      * 
@@ -1598,6 +1620,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	r.addRule("rule-owl-cls-generalization");
 	r.addRule("rule-owl-cls-iso191502IsAbstract");
 	r.addRule("rule-owl-cls-union");
+	r.addRule("rule-owl-cls-unionAlternativesFromAssociations");
 	r.addRule("rule-owl-cls-unionSets");
 
 	r.addRule("rule-owl-prop-code-broader-byBroaderListedValue");
