@@ -735,7 +735,7 @@ public class LdpConfigBuilder {
 
 		    ImmutableEq.Builder exp = new ImmutableEq.Builder();
 		    exp.addArgs(ImmutableProperty.builder().name(petDef.getProperty()).build(),
-			    ImmutableParameter.builder().name("$parameter").schema(new ImmutableJsonSchemaRef.Builder()
+			    ImmutableParameter.builder().name(petDef.getParameter()).schema(new ImmutableJsonSchemaRef.Builder()
 				    .ref("#/parameters/" + petDef.getParameter()).build()).build());
 
 		    queryBuilder = queryBuilder.filter(exp.build());
