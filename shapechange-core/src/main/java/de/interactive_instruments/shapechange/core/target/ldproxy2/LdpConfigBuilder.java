@@ -578,7 +578,8 @@ public class LdpConfigBuilder {
 		     * This would also be the place to check if the property itself has a tagged
 		     * value that marks the property as queryable
 		     */
-		    if (queryables.contains(pi.name()) || queryables.contains(LdpInfo.originalPropertyName(pi))) {
+		    if (queryables.contains("*") || queryables.contains(pi.name())
+			    || queryables.contains(LdpInfo.originalPropertyName(pi))) {
 			String queryableId = LdpUtil.queryableId(pi);
 			queryableProperties.add(queryableId);
 		    }

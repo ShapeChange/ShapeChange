@@ -1049,13 +1049,13 @@ public class PropertyInfoEA extends PropertyInfoImpl implements PropertyInfo {
 		// obtain from EA model directly
 		if (model().descriptorSource(Descriptor.GLOBALIDENTIFIER).equals("ea:guidtoxml")) {
 
-		    String gi;
+		    String gi = null;
 
 		    if (eaAttribute != null) {
 
 			gi = document.repository.GetProjectInterface().GUIDtoXML(eaAttribute.GetAttributeGUID());
 
-		    } else {
+		    } else if(associationInfo != null && associationInfo.eaConnector != null) {
 
 			String connectorGUID = associationInfo.eaConnector.GetConnectorGUID();
 			String xmlGuid = document.repository.GetProjectInterface().GUIDtoXML(connectorGUID);
