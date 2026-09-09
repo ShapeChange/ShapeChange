@@ -1195,7 +1195,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 		    File mapEntriesFile = new File(outputDirectoryFile, mapEntriesFileName);
 		    MapEntries mapEntries = new MapEntries();
 		    mapEntries.add(mapEntriesList);
-		    mapEntries.toXml(mapEntriesFile, result);
+		    mapEntries.toXml(mapEntriesFile, result, options.lineSeparator());
 		}
 
 	    }

@@ -39,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -125,7 +126,8 @@ public class XMLUtil {
     }
 
     /**
-     * @param parentElement Element in which to look up the (direct and indirect) children with given name
+     * @param parentElement Element in which to look up the (direct and indirect)
+     *                      children with given name
      * @param elementName   name of child elements to look up
      * @return List of child elements of the given parent element that have the
      *         given element name. Can be empty but not <code>null</code>.
@@ -326,14 +328,41 @@ public class XMLUtil {
     }
 
     /**
-     * Writes the document to the destination, with XML declaration
+     * Writes the document to the destination, with XML declaration and LF line
+     * endings.
      * 
      * @param doc         tbd
      * @param destination tbd
      * @throws ShapeChangeException tbd
      */
     public static void writeXml(Document doc, File destination) throws ShapeChangeException {
-	writeXml(doc, destination, false);
+	writeXml(doc, destination, false, "\n");
+    }
+
+    /**
+     * Writes the document to the destination, with LF line endings.
+     * 
+     * @param doc                tbd
+     * @param destination        tbd
+     * @param omitXmlDeclaration <code>true</code>, if the XML declaration shall be
+     *                           omitted, <code>false</code> if it shall be created
+     * @throws ShapeChangeException tbd
+     */
+    public static void writeXml(Document doc, File destination, boolean omitXmlDeclaration)
+	    throws ShapeChangeException {
+	writeXml(doc, destination, omitXmlDeclaration, "\n");
+    }
+
+    /**
+     * Writes the document to the destination, with XML declaration.
+     * 
+     * @param doc           tbd
+     * @param destination   tbd
+     * @param lineSeparator the line separator to use (e.g. "\n" or "\r\n")
+     * @throws ShapeChangeException tbd
+     */
+    public static void writeXml(Document doc, File destination, String lineSeparator) throws ShapeChangeException {
+	writeXml(doc, destination, false, lineSeparator);
     }
 
     /**
@@ -343,9 +372,10 @@ public class XMLUtil {
      * @param destination        tbd
      * @param omitXmlDeclaration <code>true</code>, if the XML declaration shall be
      *                           omitted, <code>false</code> if it shall be created
+     * @param lineSeparator      the line separator to use (e.g. "\n" or "\r\n")
      * @throws ShapeChangeException tbd
      */
-    public static void writeXml(Document doc, File destination, boolean omitXmlDeclaration)
+    public static void writeXml(Document doc, File destination, boolean omitXmlDeclaration, String lineSeparator)
 	    throws ShapeChangeException {
 
 	File parentFile = destination.getParentFile();
@@ -358,7 +388,10 @@ public class XMLUtil {
 	    }
 	}
 
-	try (BufferedWriter writer = Files.newBufferedWriter(destination.toPath(), StandardCharsets.UTF_8)) {
+	// normalize line endings emitted by the transformer to the configured separator
+	try (Writer writer = new LineEndingNormalizingWriter(
+		Files.newBufferedWriter(destination.toPath(), StandardCharsets.UTF_8),
+		lineSeparator != null ? lineSeparator : "\n")) {
 
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 

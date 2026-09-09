@@ -465,7 +465,7 @@ public class AppConfiguration implements Target, MessageSource {
 		Document doc = documentMap.get(className);
 
 		if (doc != null) {
-		    XMLUtil.writeXml(doc, new File(outputDirectory, className+".xml"));
+		    XMLUtil.writeXml(doc, new File(outputDirectory, className+".xml"), options.lineSeparator());
 		    result.addResult(getTargetName(), outputDirectory, className + ".xml", null);
 		}
 	    }

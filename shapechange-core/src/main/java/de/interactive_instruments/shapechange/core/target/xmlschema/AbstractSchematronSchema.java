@@ -598,7 +598,7 @@ public abstract class AbstractSchematronSchema implements SchematronSchema {
 	try {
 	    
 	    File fout = new File(outputDirectory,this.schematronFilename);
-	    XMLUtil.writeXml(document, fout);
+	    XMLUtil.writeXml(document, fout, options.lineSeparator());
 	    
 	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();

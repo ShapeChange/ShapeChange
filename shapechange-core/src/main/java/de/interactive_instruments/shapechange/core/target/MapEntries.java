@@ -70,7 +70,7 @@ public class MapEntries implements MessageSource {
 	mapEntries.addAll(mes);
     }
 
-    public void toXml(File outputFile, ShapeChangeResult result) {
+    public void toXml(File outputFile, ShapeChangeResult result, String lineSeparator) {
 
 	if (mapEntries.isEmpty()) {
 	    result.addWarning(this, 1, outputFile.getAbsolutePath());
@@ -110,7 +110,7 @@ public class MapEntries implements MessageSource {
 		}
 	    }
 	    
-	    XMLUtil.writeXml(document, outputFile);
+	    XMLUtil.writeXml(document, outputFile, lineSeparator);
 
 	} catch (ShapeChangeException | ParserConfigurationException e) {
 

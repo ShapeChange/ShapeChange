@@ -141,7 +141,7 @@ public class ModelWriter extends AbstractModelWriter {
 	    OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 	    OutputStreamWriter outputXML = new OutputStreamWriter(bout, this.encoding);
 
-	    writer = new XMLWriter(outputXML, this.encoding);
+	    writer = new XMLWriter(outputXML, this.encoding, o.lineSeparator());
 
 	} catch (Exception e) {
 
@@ -166,7 +166,7 @@ public class ModelWriter extends AbstractModelWriter {
 	this.elementOrdering = elementOrdering;
 
 	this.writer = writer;
-	
+
 	this.profilesToExport = profilesToExport;
 	this.omitExistingProfiles = omitExistingProfiles;
 	this.ignoreTaggedValuesPattern = ignoreTaggedValuesPattern;
@@ -721,9 +721,9 @@ public class ModelWriter extends AbstractModelWriter {
 		writer.dataElement(NS, "name", im.getName());
 		writer.dataElement(NS, "relPathToFile", im.getRelPathToFile());
 		writer.dataElement(NS, "width", "" + im.getWidth());
-		writer.dataElement(NS, "height", "" + im.getHeight());		
-		if(im.getDocumentation() != null) {
-		    writer.dataElement(NS,"documentation",im.getDocumentation());
+		writer.dataElement(NS, "height", "" + im.getHeight());
+		if (im.getDocumentation() != null) {
+		    writer.dataElement(NS, "documentation", im.getDocumentation());
 		}
 		writer.endElement(NS, "ImageMetadata");
 	    }
@@ -797,7 +797,8 @@ public class ModelWriter extends AbstractModelWriter {
 	    // We need to convert the profile definitions in the model
 	    SortedSet<String> profilesForClassesWithoutExplicitProfiles = null;
 
-	    if (defaultProfilesForClassesWithoutExplicitProfiles != null && !defaultProfilesForClassesWithoutExplicitProfiles.isEmpty()) {
+	    if (defaultProfilesForClassesWithoutExplicitProfiles != null
+		    && !defaultProfilesForClassesWithoutExplicitProfiles.isEmpty()) {
 
 		profilesForClassesWithoutExplicitProfiles = defaultProfilesForClassesWithoutExplicitProfiles;
 
@@ -861,7 +862,8 @@ public class ModelWriter extends AbstractModelWriter {
 
 	    if (zipOutput) {
 
-		File outputZipFile = new File(outputXmlFile.getParentFile(), FilenameUtils.getBaseName(outputXmlFile.getName()) + ".zip");
+		File outputZipFile = new File(outputXmlFile.getParentFile(),
+			FilenameUtils.getBaseName(outputXmlFile.getName()) + ".zip");
 		ZipHandler.zipFile(outputXmlFile, outputZipFile);
 	    }
 

@@ -539,7 +539,7 @@ public class Definitions implements Target {
 
 	try {
 	    File file = new File(outputDirectory + "/index." + pi.xmlns() + ".definitions.xml");
-	    XMLUtil.writeXml(document, file);
+	    XMLUtil.writeXml(document, file, options.lineSeparator());
 	    result.addResult(getTargetName(), outputDirectory, "index." + pi.xmlns() + ".definitions.xml",
 		    pi.targetNamespace());
 
@@ -550,7 +550,7 @@ public class Definitions implements Target {
 		    if (cDocument != null) {
 			String fileName = ci.name() + ".definitions.xml";
 //			String fileName = ci.pkg().xmlns() + "_" + ci.name() + ".xml";
-			XMLUtil.writeXml(cDocument, new File(outputDirectory, fileName));
+			XMLUtil.writeXml(cDocument, new File(outputDirectory, fileName), options.lineSeparator());
 			result.addResult(getTargetName(), outputDirectory, fileName, ci.qname());
 		    }
 		}

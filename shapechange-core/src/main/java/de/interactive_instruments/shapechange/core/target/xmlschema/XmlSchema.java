@@ -870,7 +870,7 @@ public class XmlSchema implements Target, MessageSource {
 		}
 	    }
 
-	    xeiAll.toXml(outputFile, result);
+	    xeiAll.toXml(outputFile, result, options.lineSeparator());
 	}
 
 	printed = true;

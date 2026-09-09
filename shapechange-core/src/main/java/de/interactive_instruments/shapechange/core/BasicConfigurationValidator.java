@@ -81,6 +81,15 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 		options.getInputAndLogParameterRegistry().getRegexesForAllowedInputParametersWithDynamicNames(),
 		options.inputConfig.getParameters().keySet(), result) && isValid;
 
+	/*
+	 * ====== Check line ending parameter ======
+	 */
+	String lineEndingValue = options.inputConfig.getParameters().get(Options.PARAM_LINE_ENDING);
+	if (StringUtils.isNotBlank(lineEndingValue) && Options.LineEnding.fromString(lineEndingValue) == null) {
+	    result.addError(this, 5, Options.PARAM_LINE_ENDING, lineEndingValue.trim());
+	    isValid = false;
+	}
+
 	result.addInfo(this, 4, "input");
 
 	/*
@@ -278,6 +287,7 @@ public class BasicConfigurationValidator extends AbstractConfigurationValidator 
 	    "The input parameter 'inputModelType' is set to 'EA7'. When loading an Enterprise Architect model, ShapeChange must be executed in Windows OS with a 32bit JRE. ShapeChange detected that it is not executed with a 32bit JRE. The value of system property 'os.arch' is: '$1$'.";
 	case 3 -> "Validating $1$ parameters.";
 	case 4 -> "Validation of $1$ parameters completed.";
+	case 5 -> "Configuration parameter '$1$' has invalid value '$2$'. Recognized values are 'lf' and 'crlf'.";
 
 	// 100-199: Validation of output processing parameters
 	case 100 -> "XSL transformation of output files is requested via configuration parameter '"

@@ -489,7 +489,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		OutputStream bout = new BufferedOutputStream(fout, streamBufferSize);
 		OutputStreamWriter outputXML = new OutputStreamWriter(bout, encoding_);
 
-		writer = new XMLWriter(outputXML, encoding_);
+		writer = new XMLWriter(outputXML, encoding_, options.lineSeparator());
 
 		writer.forceNSDecl("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
@@ -627,7 +627,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	    writer.dataElement("name", nameForAppSchema);
 
 	    PrintCommonDescriptors(pi, null, false);
-	    
+
 	    String s = pi.version();
 	    if (s != null && s.length() > 0) {
 		writer.dataElement("versionNumber", s);
@@ -793,15 +793,15 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		writer.dataElement("title", s, op);
 	    }
 	}
-	
-	PrintCommonDescriptors(i,op, false);
+
+	PrintCommonDescriptors(i, op, false);
     }
-    
+
     private void PrintCommonDescriptors(Info i, Operation op, boolean primaryCodeAsPrimaryCode) throws SAXException {
-	
+
 	String s;
 	String[] sa;
-	
+
 	s = i.definition();
 	s = checkDiff(s, i, ElementType.DEFINITION);
 	if (s != null && s.length() > 0) {
@@ -1225,8 +1225,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 	s = options.internalize(s);
 
 	writer.dataElement("code", PrepareToPrint(s), op);
-	
-	PrintCommonDescriptors(propi,op,true);
+
+	PrintCommonDescriptors(propi, op, true);
 
 	/*
 	 * 2019-05-14 JE - NOTE: code lists and their codes are only partially
@@ -1538,8 +1538,8 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
      *                                 method)
      * @throws SAXException
      */
-    private void PrintTaggedValues(Info i, String taglist, List<String> additionalTaggedValuesInTemporaryXml, Operation op,
-	    boolean printTaggedValuesElement) throws SAXException {
+    private void PrintTaggedValues(Info i, String taglist, List<String> additionalTaggedValuesInTemporaryXml,
+	    Operation op, boolean printTaggedValuesElement) throws SAXException {
 
 	String combinedTaglist = StringUtils.stripToEmpty(taglist);
 	if (!additionalTaggedValuesInTemporaryXml.isEmpty()) {
@@ -2077,17 +2077,18 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
     }
 
     public void writeAll(ShapeChangeResult r) {
-	result = r;
 
+	if (error || printed) {
+	    return;
+	}
+
+	this.result = r;
 	/*
 	 * FIXME: workaround until we've decided about the best way to provide options
 	 * when writing (currently required for string internalizing). We can make it a
 	 * static field or add a parameter to method writeAll.
 	 */
-	options = r.options();
-
-	if (error || printed)
-	    return;
+	this.options = result.options();
 
 	try {
 
@@ -2460,7 +2461,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		File relsFile = new File(tmpDir, "docx_relationships.tmp.xml");
 
 		try {
-		    XMLUtil.writeXml(imgInfoDoc, relsFile);
+		    XMLUtil.writeXml(imgInfoDoc, relsFile, options.lineSeparator());
 		} catch (ShapeChangeException e) {
 		    String m = e.getMessage();
 		    if (m != null) {
@@ -2757,7 +2758,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		// continue using current runtime environment
 		XsltWriter writer = new XsltWriter(xslTransformerFactory, hrefMappings, transformationParameters,
-			result);
+			result, options.lineSeparator());
 
 		writer.xsltWrite(transformationSource, xsltMainFileUri, transformationTarget);
 
@@ -2843,6 +2844,9 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 		cmds.add(XsltWriter.PARAM_xsltMainFileUri);
 		cmds.add("\"" + xsltMainFileUriString + "\"");
+
+		cmds.add(XsltWriter.PARAM_lineEnding);
+		cmds.add(options.getLineEnding().name());
 
 		result.addInfo(this, 26, StringUtils.join(cmds, " "));
 

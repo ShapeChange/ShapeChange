@@ -720,7 +720,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 	    dataDirectoryFile = new File(outputDirectory, "data");
 	    Path dataDirectoryPath = dataDirectoryFile.toPath();
-	    cfg = LdproxyCfgWriter.create(dataDirectoryPath);
+	    boolean enforceWindowsLineEndings = options.getLineEnding() == Options.LineEnding.WINDOWS;
+	    cfg = LdproxyCfgWriter.create(dataDirectoryPath, enforceWindowsLineEndings);
 	}
 
 	/*

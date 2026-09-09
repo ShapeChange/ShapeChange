@@ -34,10 +34,8 @@ package de.interactive_instruments.shapechange.core.target;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -58,7 +56,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -79,11 +76,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.ToNumberPolicy;
 
-import de.interactive_instruments.shapechange.core.util.XsltWriter;
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.TargetConfiguration;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
+import de.interactive_instruments.shapechange.core.util.XsltWriter;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -362,7 +360,8 @@ public class TargetOutputProcessor implements MessageSource {
 			}
 		    }
 
-		    XsltWriter writer = new XsltWriter(xslTransformerFactory, null, null, result);
+		    XsltWriter writer = new XsltWriter(xslTransformerFactory, null, null, result,
+			    result.options().lineSeparator());
 
 		    writer.xsltWrite(file, xsltMainFileUri, transformationTargetFile);
 
@@ -405,12 +404,12 @@ public class TargetOutputProcessor implements MessageSource {
 		BufferedReader in = Files.newBufferedReader(txtFile.toPath())) {
 
 	    out.write(comment);
-	    out.newLine();
+	    out.write(result.options().lineSeparator());
 
 	    String line = null;
 	    while ((line = in.readLine()) != null) {
 		out.write(line);
-		out.newLine();
+		out.write(result.options().lineSeparator());
 	    }
 
 	} catch (IOException e) {
@@ -448,11 +447,15 @@ public class TargetOutputProcessor implements MessageSource {
 	    Transformer transformer = TransformerFactory.newInstance().newTransformer();
 	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
-	    Result output = new StreamResult(tmpFile);
 	    Source input = new DOMSource(doc);
 
-	    transformer.transform(input, output);
+	    try (Writer output = new LineEndingNormalizingWriter(
+		    Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8),
+		    result.options().lineSeparator())) {
+		transformer.transform(input, new StreamResult(output));
+	    }
 
 	} catch (ParserConfigurationException | SAXException | IOException | TransformerFactoryConfigurationError
 		| TransformerException e) {
@@ -478,7 +481,9 @@ public class TargetOutputProcessor implements MessageSource {
 	File tmpFile = new File(directory, jsonFile.getName() + ".tmp");
 
 	try (BufferedReader bufferedReader = Files.newBufferedReader(jsonFile.toPath());
-		BufferedWriter writer = Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8)) {
+		Writer writer = new LineEndingNormalizingWriter(
+			Files.newBufferedWriter(tmpFile.toPath(), StandardCharsets.UTF_8),
+			result.options().lineSeparator())) {
 
 	    GsonBuilder gsonBuilder = new GsonBuilder().serializeNulls();
 	    gsonBuilder.setPrettyPrinting();
@@ -535,10 +540,13 @@ public class TargetOutputProcessor implements MessageSource {
 	return switch (mnr) {
 
 	case 10 -> "Exception occurred while moving file from '$1$' to '$2$'. Exception message is: '$3$'.";
-	case 15 -> "Exception occurred while writing comment to text file located at '$1$'. Exception message is: '$2$'.";
+	case 15 ->
+	    "Exception occurred while writing comment to text file located at '$1$'. Exception message is: '$2$'.";
 	case 18 -> "XSLT stylesheet $1$ not found.";
-	case 20 -> "Exception occurred while writing comment to XML file located at '$1$'. Exception message is: '$2$'.";
-	case 21 -> "Exception occurred while writing comment to JSON file located at '$1$'. Exception message is: '$2$'.";
+	case 20 ->
+	    "Exception occurred while writing comment to XML file located at '$1$'. Exception message is: '$2$'.";
+	case 21 ->
+	    "Exception occurred while writing comment to JSON file located at '$1$'. Exception message is: '$2$'.";
 
 	case 100 -> "---------- Processing output: START ----------";
 	case 101 -> "---------- Processing output: COMPLETE ----------";
