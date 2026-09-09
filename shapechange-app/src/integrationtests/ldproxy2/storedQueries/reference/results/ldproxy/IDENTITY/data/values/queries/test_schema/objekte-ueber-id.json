@@ -5,51 +5,63 @@
   "queries" : [ {
     "collections" : [ "FeatureType1" ],
     "filter" : {
-      "op" : "=",
       "args" : [ {
         "property" : "id_property"
       }, {
         "$parameter" : {
-          "$ref" : "#/parameters/id_parameter"
+          "id_parameter" : {
+            "$ref" : "#/parameters/id_parameter"
+          }
         }
-      } ]
-    }
+      } ],
+      "op" : "="
+    },
+    "resultSetOnly" : false
   }, {
     "collections" : [ "FeatureType1Sub1" ],
     "filter" : {
-      "op" : "=",
       "args" : [ {
         "property" : "id_property"
       }, {
         "$parameter" : {
-          "$ref" : "#/parameters/id_parameter"
+          "id_parameter" : {
+            "$ref" : "#/parameters/id_parameter"
+          }
         }
-      } ]
-    }
+      } ],
+      "op" : "="
+    },
+    "resultSetOnly" : false
   }, {
     "collections" : [ "FeatureType2" ],
     "filter" : {
-      "op" : "=",
       "args" : [ {
         "property" : "id_property"
       }, {
         "$parameter" : {
-          "$ref" : "#/parameters/id_parameter"
+          "id_parameter" : {
+            "$ref" : "#/parameters/id_parameter"
+          }
         }
-      } ]
-    }
+      } ],
+      "op" : "="
+    },
+    "resultSetOnly" : false
   }, {
     "collections" : [ "FeatureType3" ],
     "filter" : {
-      "op" : "=",
       "args" : [ {
         "property" : "id_property"
       }, {
         "$parameter" : {
-          "$ref" : "#/parameters/id_parameter"
+          "id_parameter" : {
+            "$ref" : "#/parameters/id_parameter"
+          }
         }
-      } ]
-    }
+      } ],
+      "op" : "="
+    },
+    "resultSetOnly" : false
   } ],
   "crs" : "http://www.opengis.net/def/crs/EPSG/0/25832",
   "limit" : 12345,
