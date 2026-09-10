@@ -236,7 +236,7 @@ public class LdpConfigBuilder {
 
 		    ImmutableEq.Builder exp = new ImmutableEq.Builder();
 		    exp.addArgs(ImmutableProperty.builder().name(petDef.getProperty()).build(),
-			    ImmutableParameter.builder().name("$parameter").schema(new ImmutableJsonSchemaRef.Builder()
+			    ImmutableParameter.builder().name(petDef.getParameter()).schema(new ImmutableJsonSchemaRef.Builder()
 				    .ref("#/parameters/" + petDef.getParameter()).build()).build());
 
 		    queryBuilder = queryBuilder.filter(exp.build());
@@ -583,6 +583,10 @@ public class LdpConfigBuilder {
 			String queryableId = LdpUtil.queryableId(pi);
 			queryableProperties.add(queryableId);
 		    }
+		}
+		
+		if(queryables.contains(Ldproxy2Target.objectIdentifierName)) {
+		    queryableProperties.add(Ldproxy2Target.objectIdentifierName);
 		}
 
 		if (!queryableProperties.isEmpty()) {

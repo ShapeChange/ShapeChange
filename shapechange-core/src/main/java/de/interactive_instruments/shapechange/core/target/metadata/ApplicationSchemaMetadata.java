@@ -284,9 +284,9 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	}
 
 	// create elements documenting the application schema
-	Element e_name = document.createElementNS(NS,"name");
+	Element e_name = document.createElementNS(NS, "name");
 	e_name.setTextContent(schemaPi.name());
-	Element e_tns = document.createElementNS(NS,"targetNamespace");
+	Element e_tns = document.createElementNS(NS, "targetNamespace");
 	e_tns.setTextContent(schemaPi.targetNamespace());
 
 	Element e_as = document.createElementNS(NS, "ApplicationSchema");
@@ -648,10 +648,13 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	    return;
 	}
 
+	this.result = r;
+	this.options = result.options();
+
 	try {
 	    File repXsd = new File(outputDirectoryFile, outputFilename);
-	    
-	    XMLUtil.writeXml(document, repXsd);
+
+	    XMLUtil.writeXml(document, repXsd, options.lineSeparator());
 
 	    r.addResult(getTargetName(), outputDirectory, outputFilename, schemaTargetNamespace);
 
@@ -711,7 +714,8 @@ public class ApplicationSchemaMetadata implements SingleTarget, MessageSource {
 	case 5 -> ""; // unused (moved to ShapeChangeResult)
 	case 6 -> "Processing class '$1$'.";
 	case 7 -> "Class '$1$' is a $2$ which is not supported by this target. The class will be ignored.";
-	case 8 -> "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
+	case 8 ->
+	    "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. The parameter will be ignored.";
 	case 9 -> "Syntax exception while compiling the regular expression defined by target parameter '$1$': '$2$'.";
 	case 10 -> "Parameter '$1$' required by rule '$2$' was not set. The rule will be ignored.";
 

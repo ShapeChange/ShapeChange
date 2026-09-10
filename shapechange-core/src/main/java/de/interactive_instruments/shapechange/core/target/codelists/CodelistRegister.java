@@ -33,15 +33,15 @@
 package de.interactive_instruments.shapechange.core.target.codelists;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -57,7 +57,7 @@ import java.util.TreeMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -69,7 +69,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import de.interactive_instruments.shapechange.core.DefaultModelProvider;
 import de.interactive_instruments.shapechange.core.Options;
 import de.interactive_instruments.shapechange.core.RuleRegistry;
@@ -82,11 +81,13 @@ import de.interactive_instruments.shapechange.core.model.Info;
 import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.PropertyInfo;
-import de.interactive_instruments.shapechange.core.target.SingleTarget;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement;
-import de.interactive_instruments.shapechange.core.modeldiff.Differ;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.ElementType;
 import de.interactive_instruments.shapechange.core.modeldiff.DiffElement.Operation;
+import de.interactive_instruments.shapechange.core.modeldiff.Differ;
+import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
+import de.interactive_instruments.shapechange.core.util.XMLUtil;
 
 public class CodelistRegister implements SingleTarget {
 
@@ -1047,14 +1048,13 @@ public class CodelistRegister implements SingleTarget {
     }
 
     public void writeAll(ShapeChangeResult r) {
-	result = r;
 
-	if (printed) {
+	if (printed || diagnosticsOnly) {
 	    return;
 	}
-	if (diagnosticsOnly) {
-	    return;
-	}
+
+	this.result = r;
+	this.options = result.options();
 
 	try {
 
@@ -1085,7 +1085,7 @@ public class CodelistRegister implements SingleTarget {
 			i++;
 		    }
 
-		    XMLUtil.writeXml(cDocument, new File(dir, fname + ".atom"));
+		    XMLUtil.writeXml(cDocument, new File(dir, fname + ".atom"), options.lineSeparator());
 		    result.addResult(getTargetName(), dir, fname + ".atom", path);
 
 		    if (html && xslhtmlfileName != null)
@@ -1096,7 +1096,8 @@ public class CodelistRegister implements SingleTarget {
 			xsltWrite(dir, fname + ".atom", "/" + xslgmlfileName, fname + ".gml", i);
 
 		    OutputStream fout = Files.newOutputStream(Path.of(dir + "/" + fname + ".var"));
-		    OutputStreamWriter outputVAR = new OutputStreamWriter(fout);
+		    Writer outputVAR = new LineEndingNormalizingWriter(
+			    new OutputStreamWriter(fout, StandardCharsets.UTF_8), options.lineSeparator());
 		    outputVAR.write("URI: " + fname + "\n\n");
 		    outputVAR.write("URI: " + fname + ".atom\n");
 		    outputVAR.write("Content-type: application/atom+xml\n\n");
@@ -1192,7 +1193,6 @@ public class CodelistRegister implements SingleTarget {
 
 	    Source xsltSource = new StreamSource(stream);
 	    Source xmlSource = new StreamSource(xmlFile);
-	    Result res = new StreamResult(outFile);
 
 	    // create an instance of TransformerFactory
 	    if (xslTransformerFactory != null) {
@@ -1203,10 +1203,17 @@ public class CodelistRegister implements SingleTarget {
 	    }
 	    TransformerFactory transFact = TransformerFactory.newInstance();
 	    Transformer trans = transFact.newTransformer(xsltSource);
+	    trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 	    trans.setParameter("baseuri", baseURI);
 	    trans.setParameter("level", "" + level);
 	    trans.setParameter("language", language);
-	    trans.transform(xmlSource, res);
+	    try (Writer outWriter = new LineEndingNormalizingWriter(
+		    Files.newBufferedWriter(outFile.toPath(), StandardCharsets.UTF_8), options.lineSeparator())) {
+		StreamResult res = new StreamResult(outWriter);
+		// set the system id so the stylesheet can resolve output-relative URIs
+		res.setSystemId(outFile.toURI().toString());
+		trans.transform(xmlSource, res);
+	    }
 
 	    result.addResult(getTargetName(), outputDirectory, outfileName, null);
 

@@ -4439,7 +4439,7 @@ public class XsdDocument implements MessageSource {
 	    String fname = outputDirectory + "/" + name;
 	    new File(fname).getCanonicalPath();
 
-	    XMLUtil.writeXml(document, new File(fname));
+	    XMLUtil.writeXml(document, new File(fname), options.lineSeparator());
 	} catch (ShapeChangeException ioe) {
 	    result.addError(null, 171, name);
 	}

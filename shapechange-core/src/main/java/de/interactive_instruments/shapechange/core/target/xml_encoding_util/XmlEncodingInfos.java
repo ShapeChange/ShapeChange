@@ -142,7 +142,7 @@ public class XmlEncodingInfos implements MessageSource {
 		schemaPkg == null ? null : schemaPkg.name(), xmlName, xmlNamespace, isXmlAttribute));
     }
 
-    public void toXml(File outputFile, ShapeChangeResult result) {
+    public void toXml(File outputFile, ShapeChangeResult result, String lineSeparator) {
 
 	if (modelElementEncodings.isEmpty() && xmlNamespaces.isEmpty()) {
 	    result.addWarning(this, 1, outputFile.getAbsolutePath());
@@ -210,7 +210,7 @@ public class XmlEncodingInfos implements MessageSource {
 		}
 	    }
 
-	    XMLUtil.writeXml(document, outputFile);
+	    XMLUtil.writeXml(document, outputFile, lineSeparator);
 
 	} catch (ShapeChangeException | ParserConfigurationException e) {
 

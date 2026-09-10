@@ -1060,7 +1060,7 @@ public class FOL2Schematron implements Target, MessageSource {
 
 	    String fileName = schema.name().replace("/", "_").replace(" ", "_") + "_SchematronSchema.xml";
 	    
-	    XMLUtil.writeXml(document, new File(outputDirectory,fileName));
+	    XMLUtil.writeXml(document, new File(outputDirectory,fileName), options.lineSeparator());
 
 	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();

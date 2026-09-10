@@ -32,10 +32,10 @@
 
 package de.interactive_instruments.shapechange.core;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -66,6 +66,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 
 /** The result is xxx as an XML file. */
@@ -108,8 +109,9 @@ public class ShapeChangeResult {
 	public MessageContext(ShapeChangeResult result, String level, String mtext) {
 	    this.result = result;
 	    this.level = level;
-	    
-	    String systemErrMsgPrefix = level.startsWith("ProcessFlow") ? "PF-"+level.substring(11,12) : level.substring(0, 1);
+
+	    String systemErrMsgPrefix = level.startsWith("ProcessFlow") ? "PF-" + level.substring(11, 12)
+		    : level.substring(0, 1);
 
 	    System.err.println(systemErrMsgPrefix + " " + (printDateTime ? dateTime() + " " : "") + mtext);
 	    message = result.document.createElementNS(SCRS_NS, level);
@@ -211,7 +213,7 @@ public class ShapeChangeResult {
     public boolean isFatalErrorReceived() {
 	return fatalErrorReceived;
     }
-    
+
     public boolean isErrorReceived() {
 	return errorReceived;
     }
@@ -260,7 +262,7 @@ public class ShapeChangeResult {
 	}
 	return new MessageContext(this, "Debug", m);
     }
-    
+
     public MessageContext addProcessFlowDebug(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 	String m = ms == null ? message(mnr) : ms.message(mnr);
 	return addProcessFlowDebug(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
@@ -287,7 +289,8 @@ public class ShapeChangeResult {
     }
 
     public MessageContext addProcessFlowDebug(String m) {
-	if (document == null || !options.parameterAsString(null, "processFlowReportLevel", "INFO", false, true).equals("DEBUG")) {
+	if (document == null
+		|| !options.parameterAsString(null, "processFlowReportLevel", "INFO", false, true).equals("DEBUG")) {
 	    return null;
 	}
 	if (m.startsWith("??")) {
@@ -411,7 +414,7 @@ public class ShapeChangeResult {
 	}
 	return new MessageContext(this, "Warning", m);
     }
-    
+
     public MessageContext addProcessFlowWarning(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
 	String m = ms == null ? message(mnr) : ms.message(mnr);
 	return addProcessFlowWarning(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
@@ -483,9 +486,9 @@ public class ShapeChangeResult {
     }
 
     public MessageContext addError(String m) {
-	
+
 	errorReceived = true;
-	
+
 	if (document == null) {
 	    return null;
 	}
@@ -496,12 +499,12 @@ public class ShapeChangeResult {
 	}
 	return new MessageContext(this, "Error", m);
     }
-    
-    public MessageContext addProcessFlowError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4, String p5,
-	    String p6, String p7) {
+
+    public MessageContext addProcessFlowError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4,
+	    String p5, String p6, String p7) {
 	String m = ms == null ? message(mnr) : ms.message(mnr);
-	return addProcessFlowError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4).replace("$5$", p5)
-		.replace("$6$", p6).replace("$7$", p7));
+	return addProcessFlowError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4)
+		.replace("$5$", p5).replace("$6$", p6).replace("$7$", p7));
     }
 
     public MessageContext addProcessFlowError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
@@ -530,9 +533,9 @@ public class ShapeChangeResult {
     }
 
     public MessageContext addProcessFlowError(String m) {
-	
+
 	errorReceived = true;
-	
+
 	if (document == null) {
 	    return null;
 	}
@@ -585,8 +588,9 @@ public class ShapeChangeResult {
 	}
 	return new MessageContext(this, "FatalError", m);
     }
-    
-    public MessageContext addProcessFlowFatalError(MessageSource ms, int mnr, String p1, String p2, String p3, String p4) {
+
+    public MessageContext addProcessFlowFatalError(MessageSource ms, int mnr, String p1, String p2, String p3,
+	    String p4) {
 	String m = ms == null ? message(mnr) : ms.message(mnr);
 	return addProcessFlowFatalError(m.replace("$1$", p1).replace("$2$", p2).replace("$3$", p3).replace("$4$", p4));
     }
@@ -726,7 +730,7 @@ public class ShapeChangeResult {
 	    root.setAttribute("end", (new Date()).toString());
 
 	    File logFile = new File(filename);
-	    XMLUtil.writeXml(document, logFile);
+	    XMLUtil.writeXml(document, logFile, options.lineSeparator());
 
 	    String xsltfileName = options.parameter("xsltFile");
 	    if (xsltfileName != null && !xsltfileName.isEmpty()) {
@@ -755,8 +759,9 @@ public class ShapeChangeResult {
 		File outHTML = new File(filename.replace(".xml", ".html"));
 		if (outHTML.exists())
 		    outHTML.delete();
-		BufferedWriter outputHTML = Files.newBufferedWriter(outHTML.toPath(), StandardCharsets.UTF_8);
-		
+		Writer outputHTML = new LineEndingNormalizingWriter(
+			Files.newBufferedWriter(outHTML.toPath(), StandardCharsets.UTF_8), options.lineSeparator());
+
 		if (xsltSource != null) {
 		    Source xmlSource = new DOMSource(document);
 		    Result res = new StreamResult(outputHTML);
@@ -800,19 +805,19 @@ public class ShapeChangeResult {
 	 * message in the output.
 	 */
 	return switch (mnr) {
-	
+
 	case 0 -> "Context: property '$1$'.";
 	case 1 -> "Context: class '$1$'.";
 	case 2 -> "Context: association class '$1$'.";
-	case 3 -> "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
-
+	case 3 ->
+	    "Context: association between class '$1$' (with property '$2$') and class '$3$' (with property '$4$')";
 
 	case 6 -> "$1$ encountered. Processing was interrupted unexpectedly.";
 //	case 8:
 //	    return "Exactly one element <XMI.metamodel> expected.";
 	case 9 -> "Class '$1$' is not associated with a package.";
-	case 11 -> "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
-	
+	case 11 ->
+	    "Could not establish a category for element '$1$', having well-known stereotype <<$2$>> and encoding rule '$3$'; setting category to 'unknown'.";
 
 //	case 12:
 //	    return "No application schema found.";
@@ -828,12 +833,14 @@ public class ShapeChangeResult {
 //	case 23:
 //	    return "Could not create temporary directory for ShapeChange run with read/write access at: $1$.";
 
-	case 30 -> "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";
+	case 30 ->
+	    "Enterprise Architect repository cannot be opened. File name or connection string is: '$2$', EA message is: '$1$'";
 	case 31 -> "Enterprise Architect repository file named '$1$' not found";
 	case 32 -> "Could not create directory $1$";
 //	case 37:
 //	    return "??Loaded SBVR rules from excel spreadsheet for schema '$1$'.";
-	case 38 -> "Encountered First Order Logic constraint with source type '$1$', parsing of which is not supported yet. A First Order Logic expression cannot be created.";
+	case 38 ->
+	    "Encountered First Order Logic constraint with source type '$1$', parsing of which is not supported yet. A First Order Logic expression cannot be created.";
 	case 39 -> "Context: constraint '$1$' in class '$2$'.";
 
 //	case 40:
@@ -842,40 +849,56 @@ public class ShapeChangeResult {
 //	    return "Microsoft Access Database file named '$1$' not found";
 //	case 42:
 //	    return "Error reading from Microsoft Access Database '$2$'.  Error message is: '$1$'";
-	
+
 	case 50 -> "Element '$1$' has the following stereotype(s) in the input model: '$2$'.";
 	case 51 -> "Stereotype '$2$' of element '$1$' normalized to '$3$'.";
 	case 52 -> "Well-known stereotype '$2$' added to element '$1$'.";
 	case 53 -> "No well-known stereotype found for stereotype '$2$' of element '$1$'.";
 	case 54 -> "Element '$1$' has $2$ (well-known or additional) stereotype(s): '$3$'";
-	case 56 -> "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '$2$' is added to element '$1$'.";
-	case 57 -> "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' that stereotype is allowed. Thus stereotype '$2$' is added to element '$1$'.";
-	
+	case 56 ->
+	    "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' all stereotypes are allowed. Thus stereotype '$2$' is added to element '$1$'.";
+	case 57 ->
+	    "No well-known stereotype found for stereotype '$2$' of element '$1$', but due to input parameter 'addStereotypes' that stereotype is allowed. Thus stereotype '$2$' is added to element '$1$'.";
+
 	case 100 -> "??The '$1$' with ID '$2$' has no name. The ID is used instead.";
-	case 101 -> "??Application schema '$1$' with ID '$2$' is not associated with an XML Schema document. A default name is used: '$3$'.";
-	case 104 -> "??The supertypes of class '$1$' are of different categories or the stereotype of the class cannot be determined. This is not supported, the class is ignored.";
-	case 105 -> "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The lower multiplicity limit is smaller than in the supertype '$3$'.";
-	case 106 -> "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The upper multiplicity limit is higher than in the supertype '$3$'.";
-	case 107 -> "??The property '$1$' in class '$2$' has a sequence number that is already in use for another property ($3$) which will be overwritten.";
-	case 108 -> "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has a supertype of a different category ('$2$'). The supertype may be ignored by some targets (e.g. the XmlSchema target).";
-	case 109 -> "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has more than one supertype of the same kind. Some targets (e.g. the XmlSchema target) ignore all but one (arbitrary) supertype.";
-	case 110 -> "??A target could not be created for schema '$1$'. This target is supported only for GML versions 3.2 and later.";
+	case 101 ->
+	    "??Application schema '$1$' with ID '$2$' is not associated with an XML Schema document. A default name is used: '$3$'.";
+	case 104 ->
+	    "??The supertypes of class '$1$' are of different categories or the stereotype of the class cannot be determined. This is not supported, the class is ignored.";
+	case 105 ->
+	    "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The lower multiplicity limit is smaller than in the supertype '$3$'.";
+	case 106 ->
+	    "??The restriction of UML attribute '$1$' in class '$2$' is not legal. The upper multiplicity limit is higher than in the supertype '$3$'.";
+	case 107 ->
+	    "??The property '$1$' in class '$2$' has a sequence number that is already in use for another property ($3$) which will be overwritten.";
+	case 108 ->
+	    "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has a supertype of a different category ('$2$'). The supertype may be ignored by some targets (e.g. the XmlSchema target).";
+	case 109 ->
+	    "??The class '$1$' is modelled as a feature type, object type, data type, mixin, or union, but has more than one supertype of the same kind. Some targets (e.g. the XmlSchema target) ignore all but one (arbitrary) supertype.";
+	case 110 ->
+	    "??A target could not be created for schema '$1$'. This target is supported only for GML versions 3.2 and later.";
 	case 111 -> "??Missing argument to '$1$' option.";
-	case 115 -> "??The class '$1$' is modelled as an interface, but has supertypes that are instantiable. The supertype relationships are ignored.";
+	case 115 ->
+	    "??The class '$1$' is modelled as an interface, but has supertypes that are instantiable. The supertype relationships are ignored.";
 	case 117 -> "??No XML Schema type for type '$1$' is defined. Only object and data types are supported.";
 	case 121 -> "Base type '$1$' could not be mapped. Missing base type in complex type '$2$'.";
-	case 125 -> "The class '$1$' is an enumeration. Generalization relationships are not supported for these classes. All such relationships are ignored.";
+	case 125 ->
+	    "The class '$1$' is an enumeration. Generalization relationships are not supported for these classes. All such relationships are ignored.";
 	case 126 -> "Failed to create enumeration type '$1$'.";
-	case 127 -> "The class '$1$' is a codelist. Generalization relationships are not supported for these classes. All such relationships are ignored.";
+	case 127 ->
+	    "The class '$1$' is a codelist. Generalization relationships are not supported for these classes. All such relationships are ignored.";
 	case 131 -> "??The type '$2$' of property '$1$' was not found.";
-	case 132 -> "The class '$1$' is referenced, but is not part of any schema in the model nor is it mapped to a well-known XML Schema type. The class is ignored.";
+	case 132 ->
+	    "The class '$1$' is referenced, but is not part of any schema in the model nor is it mapped to a well-known XML Schema type. The class is ignored.";
 	case 133 -> "One or more errors encountered in OCL constraint in $3$ '$1$' : '$2$' ...";
 	case 134 -> "Line/column(s) $1$: $2$";
 	case 135 -> "??The type of property '$1$' was not found by id, only by name (fixed broken type definition).";
 	case 136 -> "The enumeration element with ID '$1$' in class '$2$' contains an empty string as value.";
-	case 139 -> "Cannot add properties of type '$1' in schema definitions since the type definition is not part of the model.";
+	case 139 ->
+	    "Cannot add properties of type '$1' in schema definitions since the type definition is not part of the model.";
 	case 140 -> "Unknown value for $1: $2";
-    	case 142 -> "Class '$1$' cannot be suppressed, as no direct or indirect, non-abstract supertype exists that is not suppressed.";
+	case 142 ->
+	    "Class '$1$' cannot be suppressed, as no direct or indirect, non-abstract supertype exists that is not suppressed.";
 	case 143 -> "Class '$1$' cannot be suppressed, as it has a non-suppressed subtype '$2$'.";
 	case 144 -> "Class '$1$' cannot be suppressed, as it add at least one property.";
 	case 146 -> "??Schema '$1$' is missing tagged value '$2$'.";
@@ -887,7 +910,8 @@ public class ShapeChangeResult {
 	case 152 -> "??Documentation of class '$1$' is missing the separator '$2$'.";
 	case 153 -> "??Documentation of property '$1$' is missing the separator '$2$'.";
 	case 159 -> "??Package '$1$' has a dependency, but is not an application schema.";
-	case 160 -> "??Package '$1$' is the supplier of a dependency to package '$2$', but is not an application schema.";
+	case 160 ->
+	    "??Package '$1$' is the supplier of a dependency to package '$2$', but is not an application schema.";
 	case 161 -> "??$1$ with id '$2$' is referenced, but cannot be found.";
 	case 162 -> "??XML Schema document name '$1$' is used for more than one schema package.";
 	case 163 -> "??Class name '$1$' is used more than once in application schema '$2$'.";
@@ -905,7 +929,7 @@ public class ShapeChangeResult {
 	case 301 -> "File '$1$' is not readable, processing of $2$ is skipped.";
 	case 304 -> "Error while transforming '$1$'. Message: $2$";
 	case 307 -> "File '$1$' is not writable, processing of $2$ is skipped.";
-	
+
 	case 400 -> "Context: $1$ '$2$'";
 
 	// 600 - 699 Messages known to be used by multiple targets
@@ -919,26 +943,30 @@ public class ShapeChangeResult {
 	 * subtypes use message numbers not defined by InfoImpl and call
 	 * InfoImpl.message() to see if a code is covered there.
 	 */
-	case 701 -> "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
-	case 702 -> "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
-	case 704 -> "??Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
+	case 701 ->
+	    "A single value was requested for tag '$1$', but in addition to returned value '$2$', an additional value '$3$' exists and is ignored.";
+	case 702 ->
+	    "A single value was requested for tag '$1$' in language '$2$', but in addition to returned value '$3$', an additional value '$4$' exists and is ignored.";
+	case 704 ->
+	    "??Descriptor '$1$' is a single-valued descriptor, but in addition to returned value '$2$' a value '$3$' exists and is ignored.";
 	case 790 -> "Context: class InfoImpl. Model element: $1$";
 	case 791 -> "Context: class InfoImpl (subtype: PropertyInfo). Model element: $1$";
 
 	case 1002 -> "Restriction of property '$1$' in class '$2$' from supertype '$3$'.";
 	case 1003 -> "??The multiplicity value of '$1$' is neither a number nor a known string. '*' is used instead.";
 	case 1004 -> "Class '$1$' has an unknown category, an object is assumed.";
-	case 1005 -> "??The minimum multiplicity value of '$1$' is neither a number nor a known string. '0' is used instead.";
-	
-	case 10003 -> "Checked class '$1$', category '$2$', result '$3$'"; //x
+	case 1005 ->
+	    "??The minimum multiplicity value of '$1$' is neither a number nor a known string. '0' is used instead.";
+
+	case 10003 -> "Checked class '$1$', category '$2$', result '$3$'"; // x
 	case 10004 -> "Checking overloading. Class = '$1$'; current class = '$2$'.";
 	case 10005 -> "Generating GML dictionaries with definitions for application schema '$1$'.";
 	case 10006 -> "Processing OCL constraint in class '$1$': '$2$'.";
-	case 10013 -> "The '$1$' with ID '$2$' and name '$3$' was created."; //x
+	case 10013 -> "The '$1$' with ID '$2$' and name '$3$' was created."; // x
 	case 10023 -> "Processing local properties of class '$1$'.";
 	case 10024 -> "OCL syntax tree: '$1$'";
 	case 10025 -> "OCL comment: '$1$'";
-	    
+
 	case 20103 -> "---------- now processing: $1$ ----------";
 
 	// common profiling related messages
@@ -950,11 +978,13 @@ public class ShapeChangeResult {
 	case 30800 -> "(Generic model element reader) Unexpected start element found by $1$: '$2$'.";
 	case 30801 -> "(Generic model element reader) Unexpected end element found by $1$: '$2$'.";
 	case 30804 -> "(Generic model element reader) SCXML producer: $1$, version: $2$";
-	    
-	case 30900 -> "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
+
+	case 30900 ->
+	    "Suppressing semantically meaningless characteristic '$1$' (with value '$2$') of code/enum '$3$'.";
 	case 30901 -> "Sequence number is undefined for property '$1$'. Using '0'.";
 
-	case 1_000_000 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";
+	case 1_000_000 ->
+	    "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing. Did you mean '$2$'?";
 	case 1_000_001 -> "Unrecognized parameter found: '$1$'. The parameter may have no effect on processing.";
 	case 1_000_002 ->
 	    "Value of parameter '$1$' is not a recognized boolean value. The value must either be equal to (ignoring case) 'true' or to 'false'. Given value is: $2$.";
@@ -962,7 +992,8 @@ public class ShapeChangeResult {
 	case 1_000_004 ->
 	    "Parameter '$1$' is set in the configuration, but has a blank value, which is not allowed for that parameter.";
 	case 1_000_005 -> "Parameter '$1$' is set to '$2$', which is not a valid value for the parameter.";
-	case 1_000_006 -> "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
+	case 1_000_006 ->
+	    "Parameter '$1$' is required for rule '$2$' but no actual value was found in the configuration.";
 	case 1_000_007 -> "Parameter '$1$' is set to '$2$'. This is not a valid non-negative integer value.";
 	case 1_000_008 ->
 	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but no value is defined for the characteristic.";
@@ -970,19 +1001,17 @@ public class ShapeChangeResult {
 	    "Invalid map entry: parameter '$1$' is set, but its characteristic '$2$' (which is required for the parameter) is not set or has no value.";
 	case 1_000_010 ->
 	    "Invalid map entry: parameter '$1$' is set, with characteristic '$2$', but the value '$3$' of the characteristic is not equal to (ignoring case) any of the allowed values, which are: '$4$'.";
-	
+
 	case 1_000_901 ->
 	    "Number format exception while converting the value of configuration parameter '$1$' to an integer. Exception message: $2$. Ensure that the parameter value is an integer.";
-	
+
 	case 1_000_996 ->
 	    "Context: transformer configuration element with @id '$1$', map entry with type#rule '$2$' and target type '$3$'.";
 	case 1_000_997 ->
-	    "Context: target configuration element with @class '$1$' and @inputs '$2$', map entry with type#rule '$3$' and target type '$4$'."; 
-	case 1_000_998 ->
-	    "Context: transformer configuration element with @id '$1$'.";
-	case 1_000_999 ->
-	    "Context: target configuration element with @class '$1$' and @inputs '$2$'.";
-	
+	    "Context: target configuration element with @class '$1$' and @inputs '$2$', map entry with type#rule '$3$' and target type '$4$'.";
+	case 1_000_998 -> "Context: transformer configuration element with @id '$1$'.";
+	case 1_000_999 -> "Context: target configuration element with @class '$1$' and @inputs '$2$'.";
+
 	default -> "(" + ShapeChangeResult.class.getName() + ") Unknown message with number: " + mnr;
 	};
     }

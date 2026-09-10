@@ -1614,11 +1614,11 @@ public class XSLT implements Target {
 
 	try {
 	    File file = new File(outputDirectory + "/" + pi.name() + "_gml2kml.xsl");
-	    XMLUtil.writeXml(document, file);
+	    XMLUtil.writeXml(document, file, options.lineSeparator());
 	    result.addResult(getTargetName(), outputDirectory, pi.name() + "_gml2kml.xsl", pi.targetNamespace());
 
 	    file = new File(outputDirectory + "/" + pi.name() + "_root.kml");
-	    XMLUtil.writeXml(document, file);	    
+	    XMLUtil.writeXml(document, file, options.lineSeparator());	    
 	    result.addResult(getTargetName(), outputDirectory, pi.name() + "_root.kml", pi.targetNamespace());
 	} catch (ShapeChangeException e) {
 	    String m = e.getMessage();

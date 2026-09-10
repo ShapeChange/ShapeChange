@@ -44,9 +44,9 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
 import de.interactive_instruments.shapechange.core.ui.DefaultDialog;
 
 /**
- * The Main class serves as the entry point for the ShapeChange application.
- * It processes command line arguments, initializes the application options,
- * and either runs the application in command line mode or invokes the GUI.
+ * The Main class serves as the entry point for the ShapeChange application. It
+ * processes command line arguments, initializes the application options, and
+ * either runs the application in command line mode or invokes the GUI.
  */
 public class Main {
 
@@ -106,6 +106,10 @@ public class Main {
 		    }
 		    if (option.equals("d")) {
 			dialog = true;
+			continue;
+		    }
+		    if (option.equals("crlf")) {
+			options.setLineEndingFromCommandLine(Options.LineEnding.WINDOWS);
 			continue;
 		    }
 		}
@@ -198,6 +202,10 @@ public class Main {
 	System.err.println("            Example: -x '$dir$' './result/xsd' would replace.");
 	System.err.println("            any parameter values '$dir$' in the configuration.");
 	System.err.println("            file with './result/xsd'.");
+	System.err.println(" -crlf      Write textual output files with CRLF line");
+	System.err.println("            endings. By default, LF line endings are used.");
+//	System.err.println("            Takes precedence over the 'lineEnding'");
+//	System.err.println("            configuration parameter.");
 	System.err.println(" -d         Invokes the user interface.");
 	System.err.println(" -h         This help screen.");
 	System.err.println();

@@ -32,18 +32,19 @@
 package de.interactive_instruments.shapechange.core.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Result;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -71,330 +72,327 @@ import de.interactive_instruments.shapechange.core.ShapeChangeResult;
  * <li>error messages are printed to System.err</li>
  * </ul>
  * 
- * @author Johannes Echterhoff (echterhoff at interactive-instruments
- *         dot de)
+ * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
  *
  */
 public class XsltWriter {
 
-	/**
-	 * Character set used for encoding and decoding values within key-value
-	 * pairs.
-	 */
-	public static Charset ENCODING_CHARSET = Charset.forName("UTF-8");
+    /**
+     * Character set used for encoding and decoding values within key-value pairs.
+     */
+    public static Charset ENCODING_CHARSET = Charset.forName("UTF-8");
 
-	public static final String PARAM_xslTransformerFactory = "-xslTransformerFactory";
-	public static final String PARAM_hrefMappings = "-hrefMappings";
-	public static final String PARAM_transformationParameters = "-transformationParameters";
-	public static final String PARAM_transformationSourcePath = "-transformationSourcePath";
-	public static final String PARAM_xsltMainFileUri = "-xsltMainFileUri";
-	public static final String PARAM_transformationTargetPath = "-transformationTargetPath";
+    public static final String PARAM_xslTransformerFactory = "-xslTransformerFactory";
+    public static final String PARAM_hrefMappings = "-hrefMappings";
+    public static final String PARAM_transformationParameters = "-transformationParameters";
+    public static final String PARAM_transformationSourcePath = "-transformationSourcePath";
+    public static final String PARAM_xsltMainFileUri = "-xsltMainFileUri";
+    public static final String PARAM_transformationTargetPath = "-transformationTargetPath";
+    public static final String PARAM_lineEnding = "-lineEnding";
 
-	private String xslTransformerFactory;
-	private Map<String, URI> hrefMappings;
-	private Map<String, String> transformationParameters = new HashMap<String, String>();
+    private String xslTransformerFactory;
+    private Map<String, URI> hrefMappings;
+    private Map<String, String> transformationParameters = new HashMap<String, String>();
 
-	private ShapeChangeResult result;
+    private ShapeChangeResult result;
 
-	/**
-	 * 
-	 * 
-	 * @param xslTransformerFactory
-	 *            - can be <code>null</code>
-	 * @param hrefMappings
-	 *            - can be <code>null</code>
-	 * @param transformationParameters
-	 *            - can be <code>null</code>
-	 * @param result
-	 *            used to log exception messages; can be <code>null</code> if
-	 *            the XSL transformation was invoked via the main(...) method
-	 */
-	public XsltWriter(String xslTransformerFactory,
-			Map<String, URI> hrefMappings,
-			Map<String, String> transformationParameters,
-			ShapeChangeResult result) {
+    private String lineSeparator = "\n";
 
-		this.xslTransformerFactory = xslTransformerFactory;
-		this.hrefMappings = hrefMappings;
-		if (transformationParameters != null) {
-			this.transformationParameters = transformationParameters;
+    /**
+     * 
+     * 
+     * @param xslTransformerFactory    - can be <code>null</code>
+     * @param hrefMappings             - can be <code>null</code>
+     * @param transformationParameters - can be <code>null</code>
+     * @param result                   used to log exception messages; can be
+     *                                 <code>null</code> if the XSL transformation
+     *                                 was invoked via the main(...) method
+     */
+    public XsltWriter(String xslTransformerFactory, Map<String, URI> hrefMappings,
+	    Map<String, String> transformationParameters, ShapeChangeResult result, String lineSeparator) {
+
+	this.xslTransformerFactory = xslTransformerFactory;
+	this.hrefMappings = hrefMappings;
+	if (transformationParameters != null) {
+	    this.transformationParameters = transformationParameters;
+	}
+	this.result = result;
+	if (lineSeparator != null) {
+	    this.lineSeparator = lineSeparator;
+	}
+    }
+
+    /**
+     * Parameter identifiers have a leading "-". Parameter values are separated from
+     * the parameter identifier via a single space.
+     * <ul>
+     * <li>Parameter {@value #PARAM_xslTransformerFactory}: fully qualified name of
+     * the XSLT processor implementation; NOTE: this parameter may not be provided
+     * if the default implementation shall be used.</li>
+     * <li>Parameter {@value #PARAM_hrefMappings}: list of key-value pairs defining
+     * href mappings, structured using URL query syntax (i.e. using '=' to separate
+     * the key from the value, using '&amp;' to separate pairs, and with URL-encoded
+     * value (with UTF-8 character encoding); NOTE: this parameter may not be
+     * provided if href mappings are not needed.</li>
+     * <li>Parameter {@value #PARAM_transformationParameters}: list of key-value
+     * pairs defining the transformation parameters, structured using URL query
+     * syntax (i.e. using '=' to separate the key from the value, using '&amp;' to
+     * separate pairs, and with URL-encoded value (with UTF-8 character encoding);
+     * NOTE: this parameter may not be provided if transformation parameters are not
+     * needed.</li>
+     * <li>Parameter {@value #PARAM_transformationSourcePath}: path to the
+     * transformation source file (may be a relative path); NOTE: this is a required
+     * parameter.</li>
+     * <li>Parameter {@value #PARAM_xsltMainFileUri}: String representation of the
+     * URI to the main XSLT file; NOTE: this is a required parameter.</li>
+     * <li>Parameter {@value #PARAM_transformationTargetPath}: path to the
+     * transformation target file (may be a relative path); NOTE: this is a required
+     * parameter.</li>
+     * </ul>
+     * 
+     * @param args tbd
+     */
+    public static void main(String[] args) {
+
+	String xslTransformerFactory = null;
+	String hrefMappingsString = null;
+	String transformationParametersString = null;
+	String transformationSourcePath = null;
+	String xsltMainFileUriString = null;
+	String transformationTargetPath = null;
+	String lineEndingString = null;
+
+	// identify parameters
+	String arg = null;
+
+	for (int i = 0; i < args.length; i++) {
+
+	    arg = args[i];
+
+	    if (arg.equals(PARAM_xslTransformerFactory)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_xslTransformerFactory);
+		    return;
+		} else {
+		    xslTransformerFactory = args[i + 1];
+		    i++;
 		}
-		this.result = result;
+
+	    } else if (arg.equals(PARAM_hrefMappings)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_hrefMappings);
+		    return;
+		} else {
+		    hrefMappingsString = args[i + 1];
+		    i++;
+		}
+
+	    } else if (arg.equals(PARAM_transformationParameters)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_transformationParameters);
+		    return;
+		} else {
+		    transformationParametersString = args[i + 1];
+		    i++;
+		}
+
+	    } else if (arg.equals(PARAM_transformationSourcePath)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_transformationSourcePath);
+		    return;
+		} else {
+		    transformationSourcePath = args[i + 1];
+		    i++;
+		}
+
+	    } else if (arg.equals(PARAM_transformationTargetPath)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_transformationTargetPath);
+		    return;
+		} else {
+		    transformationTargetPath = args[i + 1];
+		    i++;
+		}
+
+	    } else if (arg.equals(PARAM_xsltMainFileUri)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_xsltMainFileUri);
+		    return;
+		} else {
+		    xsltMainFileUriString = args[i + 1];
+		    i++;
+		}
+	    } else if (arg.equals(PARAM_lineEnding)) {
+
+		if (i + 1 == args.length || args[i + 1].startsWith("-")) {
+		    System.err.println("No value provided for invocation parameter " + PARAM_lineEnding);
+		    return;
+		} else {
+		    lineEndingString = args[i + 1];
+		    i++;
+		}
+	    }
 	}
 
-	/**
-	 * Parameter identifiers have a leading "-". Parameter values are separated
-	 * from the parameter identifier via a single space.
-	 * <ul>
-	 * <li>Parameter {@value #PARAM_xslTransformerFactory}: fully qualified name
-	 * of the XSLT processor implementation; NOTE: this parameter may not be
-	 * provided if the default implementation shall be used.</li>
-	 * <li>Parameter {@value #PARAM_hrefMappings}: list of key-value pairs
-	 * defining href mappings, structured using URL query syntax (i.e. using '='
-	 * to separate the key from the value, using '&amp;' to separate pairs, and with
-	 * URL-encoded value (with UTF-8 character encoding); NOTE: this parameter
-	 * may not be provided if href mappings are not needed.</li>
-	 * <li>Parameter {@value #PARAM_transformationParameters}: list of key-value
-	 * pairs defining the transformation parameters, structured using URL query
-	 * syntax (i.e. using '=' to separate the key from the value, using '&amp;' to
-	 * separate pairs, and with URL-encoded value (with UTF-8 character
-	 * encoding); NOTE: this parameter may not be provided if transformation
-	 * parameters are not needed.</li>
-	 * <li>Parameter {@value #PARAM_transformationSourcePath}: path to the
-	 * transformation source file (may be a relative path); NOTE: this is a
-	 * required parameter.</li>
-	 * <li>Parameter {@value #PARAM_xsltMainFileUri}: String representation of
-	 * the URI to the main XSLT file; NOTE: this is a required parameter.</li>
-	 * <li>Parameter {@value #PARAM_transformationTargetPath}: path to the
-	 * transformation target file (may be a relative path); NOTE: this is a
-	 * required parameter.</li>
-	 * </ul>
-	 * @param args  tbd
-	 */
-	public static void main(String[] args) {
+	try {
 
-		String xslTransformerFactory = null;
-		String hrefMappingsString = null;
-		String transformationParametersString = null;
-		String transformationSourcePath = null;
-		String xsltMainFileUriString = null;
-		String transformationTargetPath = null;
+	    // parse parameter values
+	    Map<String, URI> hrefMappings = new HashMap<String, URI>();
 
-		// identify parameters
-		String arg = null;
+	    if (hrefMappingsString != null) {
+		List<NameValuePair> hrefMappingsList = WWWFormCodec.parse(hrefMappingsString, ENCODING_CHARSET);
+		for (NameValuePair nvp : hrefMappingsList) {
 
-		for (int i = 0; i < args.length; i++) {
+		    hrefMappings.put(nvp.getName(), new URI(nvp.getValue()));
+		}
+	    }
 
-			arg = args[i];
+	    Map<String, String> transformationParameters = new HashMap<String, String>();
 
-			if (arg.equals(PARAM_xslTransformerFactory)) {
+	    if (transformationParametersString != null) {
+		List<NameValuePair> transParamList = WWWFormCodec.parse(transformationParametersString,
+			ENCODING_CHARSET);
+		for (NameValuePair nvp : transParamList) {
+		    transformationParameters.put(nvp.getName(), nvp.getValue());
+		}
+	    }
 
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_xslTransformerFactory);
-					return;
-				} else {
-					xslTransformerFactory = args[i + 1];
-					i++;
-				}
+	    boolean invalidParameters = false;
 
-			} else if (arg.equals(PARAM_hrefMappings)) {
+	    if (transformationSourcePath == null) {
+		invalidParameters = true;
+		System.err.println("Path to transformation source file was not provided.");
+	    }
+	    if (xsltMainFileUriString == null) {
+		invalidParameters = true;
+		System.err.println("Path to main XSLT file was not provided.");
+	    }
+	    if (transformationTargetPath == null) {
+		invalidParameters = true;
+		System.err.println("Path to transformation target file was not provided.");
+	    }
 
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_hrefMappings);
-					return;
-				} else {
-					hrefMappingsString = args[i + 1];
-					i++;
-				}
+	    if (!invalidParameters) {
 
-			} else if (arg.equals(PARAM_transformationParameters)) {
-
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_transformationParameters);
-					return;
-				} else {
-					transformationParametersString = args[i + 1];
-					i++;
-				}
-
-			} else if (arg.equals(PARAM_transformationSourcePath)) {
-
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_transformationSourcePath);
-					return;
-				} else {
-					transformationSourcePath = args[i + 1];
-					i++;
-				}
-
-			} else if (arg.equals(PARAM_transformationTargetPath)) {
-
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_transformationTargetPath);
-					return;
-				} else {
-					transformationTargetPath = args[i + 1];
-					i++;
-				}
-
-			} else if (arg.equals(PARAM_xsltMainFileUri)) {
-
-				if (i + 1 == args.length || args[i + 1].startsWith("-")) {
-					System.err.println(
-							"No value provided for invocation parameter "
-									+ PARAM_xsltMainFileUri);
-					return;
-				} else {
-					xsltMainFileUriString = args[i + 1];
-					i++;
-				}
-			}
+		String lineSeparator = "\n";
+		if (lineEndingString != null && (lineEndingString.equalsIgnoreCase("crlf")
+			|| lineEndingString.equalsIgnoreCase("windows"))) {
+		    lineSeparator = "\r\n";
 		}
 
-		try {
+		// set up and execute XSL transformation
+		XsltWriter writer = new XsltWriter(xslTransformerFactory, hrefMappings, transformationParameters, null,
+			lineSeparator);
 
-			// parse parameter values
-			Map<String, URI> hrefMappings = new HashMap<String, URI>();
+		File transformationSource = new File(transformationSourcePath);
+		URI xsltMainFileUri = new URI(xsltMainFileUriString);
+		File transformationTarget = new File(transformationTargetPath);
 
-			if (hrefMappingsString != null) {
-				List<NameValuePair> hrefMappingsList = WWWFormCodec
-						.parse(hrefMappingsString, ENCODING_CHARSET);
-				for (NameValuePair nvp : hrefMappingsList) {
+		writer.xsltWrite(transformationSource, xsltMainFileUri, transformationTarget);
+	    }
 
-					hrefMappings.put(nvp.getName(), new URI(nvp.getValue()));
-				}
-			}
+	} catch (Exception e) {
 
-			Map<String, String> transformationParameters = new HashMap<String, String>();
+	    String m = e.getMessage();
 
-			if (transformationParametersString != null) {
-				List<NameValuePair> transParamList = WWWFormCodec.parse(
-						transformationParametersString, ENCODING_CHARSET);
-				for (NameValuePair nvp : transParamList) {
-					transformationParameters.put(nvp.getName(), nvp.getValue());
-				}
-			}
+	    if (m != null) {
+		System.err.println(m);
+	    } else {
+		System.err.println("Exception occurred while processing the XSL transformation.");
+	    }
 
-			boolean invalidParameters = false;
+	    e.printStackTrace(System.err);
+	}
+    }
 
-			if (transformationSourcePath == null) {
-				invalidParameters = true;
-				System.err.println(
-						"Path to transformation source file was not provided.");
-			}
-			if (xsltMainFileUriString == null) {
-				invalidParameters = true;
-				System.err.println("Path to main XSLT file was not provided.");
-			}
-			if (transformationTargetPath == null) {
-				invalidParameters = true;
-				System.err.println(
-						"Path to transformation target file was not provided.");
-			}
+    public void xsltWrite(File transformationSource, URI xsltMainFileUri, File transformationTarget) {
 
-			if (!invalidParameters) {
+	try {
 
-				// set up and execute XSL transformation
-				XsltWriter writer = new XsltWriter(xslTransformerFactory,
-						hrefMappings, transformationParameters, null);
+	    // Set up input and output files
 
-				File transformationSource = new File(transformationSourcePath);
-				URI xsltMainFileUri = new URI(xsltMainFileUriString);
-				File transformationTarget = new File(transformationTargetPath);
+	    InputStream stream = null;
 
-				writer.xsltWrite(transformationSource, xsltMainFileUri,
-						transformationTarget);
-			}
+	    if (xsltMainFileUri.getScheme().startsWith("http")) {
+		URL url = xsltMainFileUri.toURL();
+		URLConnection urlConnection = url.openConnection();
+		stream = urlConnection.getInputStream();
+	    } else {
+		File xsl = new File(xsltMainFileUri);
+		// FeatureCatalogue.java already checked that file exists
+		stream = Files.newInputStream(xsl.toPath());
+	    }
 
-		} catch (Exception e) {
+	    // create an instance of TransformerFactory
+	    if (xslTransformerFactory != null) {
+		// use TransformerFactory specified in configuration
+		System.setProperty("javax.xml.transform.TransformerFactory", xslTransformerFactory);
+	    } else {
+		// use TransformerFactory determined by system
+	    }
+	    TransformerFactory transFact = TransformerFactory.newInstance();
 
-			String m = e.getMessage();
+	    Source xsltSource = new StreamSource(stream);
+	    xsltSource.setSystemId(xsltMainFileUri.toString());
+	    Source xmlSource = new StreamSource(transformationSource);
 
-			if (m != null) {
-				System.err.println(m);
-			} else {
-				System.err.println(
-						"Exception occurred while processing the XSL transformation.");
-			}
+	    /*
+	     * Set URI resolver for transformation, configured with standard mappings (e.g.
+	     * for the localization files) and possibly other mappings.
+	     */
+	    transFact.setURIResolver(new XsltUriResolver(hrefMappings));
 
-			e.printStackTrace(System.err);
+	    Transformer trans = transFact.newTransformer(xsltSource);
+
+	    /*
+	     * Pin the declaration encoding to UTF-8 so it matches the UTF-8 bytes written
+	     * via the normalizing writer, even for custom stylesheets.
+	     */
+	    trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+	    /*
+	     * Specify any standard transformation parameters (e.g. for localization).
+	     */
+	    for (String key : transformationParameters.keySet()) {
+		trans.setParameter(key, transformationParameters.get(key));
+	    }
+
+	    /*
+	     * Execute the transformation, normalizing line endings to the configured
+	     * separator.
+	     */
+	    try (Writer transformationTargetWriter = new LineEndingNormalizingWriter(
+		    Files.newBufferedWriter(transformationTarget.toPath(), StandardCharsets.UTF_8), lineSeparator)) {
+		StreamResult res = new StreamResult(transformationTargetWriter);
+		// set the system id so xsl:result-document can resolve secondary output files
+		res.setSystemId(transformationTarget.toURI().toString());
+		trans.transform(xmlSource, res);
+	    }
+
+	} catch (Exception e) {
+
+	    String m = e.getMessage();
+	    if (m != null) {
+		if (result != null) {
+		    result.addError(m);
+		} else {
+		    System.err.println(m);
 		}
+	    } else {
+		String msg = "Exception occurred while processing the XSL transformation.";
+		if (result != null) {
+		    result.addError(msg);
+		} else {
+		    System.err.println(msg);
+		}
+	    }
 	}
 
-	public void xsltWrite(File transformationSource, URI xsltMainFileUri,
-			File transformationTarget) {
-
-		try {
-
-			// Set up input and output files
-
-			InputStream stream = null;
-
-			if (xsltMainFileUri.getScheme().startsWith("http")) {
-				URL url = xsltMainFileUri.toURL();
-				URLConnection urlConnection = url.openConnection();
-				stream = urlConnection.getInputStream();
-			} else {
-				File xsl = new File(xsltMainFileUri);
-				// FeatureCatalogue.java already checked that file exists
-				stream = Files.newInputStream(xsl.toPath());
-			}
-
-			// create an instance of TransformerFactory
-			if (xslTransformerFactory != null) {
-				// use TransformerFactory specified in configuration
-				System.setProperty("javax.xml.transform.TransformerFactory",
-						xslTransformerFactory);
-			} else {
-				// use TransformerFactory determined by system
-			}
-			TransformerFactory transFact = TransformerFactory.newInstance();
-
-			Source xsltSource = new StreamSource(stream);
-			xsltSource.setSystemId(xsltMainFileUri.toString());
-			Source xmlSource = new StreamSource(transformationSource);
-
-			/*
-			 * Create StreamResult differently to avoid issues with whitespace
-			 * in file path, depending upon the actual TransformerFactory
-			 * implementation.
-			 */
-			Result res;
-			if (transFact.getClass().getName().equalsIgnoreCase(
-					"org.apache.xalan.processor.TransformerFactoryImpl")) {
-				res = new StreamResult(transformationTarget.getPath());
-			} else {
-				res = new StreamResult(transformationTarget);
-			}
-
-			/*
-			 * Set URI resolver for transformation, configured with standard
-			 * mappings (e.g. for the localization files) and possibly other
-			 * mappings.
-			 */
-			transFact.setURIResolver(new XsltUriResolver(hrefMappings));
-
-			Transformer trans = transFact.newTransformer(xsltSource);
-
-			/*
-			 * Specify any standard transformation parameters (e.g. for
-			 * localization).
-			 */
-			for (String key : transformationParameters.keySet()) {
-				trans.setParameter(key, transformationParameters.get(key));
-			}
-
-			/* Execute the transformation. */
-			trans.transform(xmlSource, res);
-
-		} catch (Exception e) {
-
-			String m = e.getMessage();
-			if (m != null) {
-				if (result != null) {
-					result.addError(m);
-				} else {
-					System.err.println(m);
-				}
-			} else {
-				String msg = "Exception occurred while processing the XSL transformation.";
-				if (result != null) {
-					result.addError(msg);
-				} else {
-					System.err.println(msg);
-				}
-			}
-		}
-
-	}
+    }
 }

@@ -152,7 +152,7 @@ public class SqlEncodingInfos implements MessageSource {
 	return result;
     }
 
-    public void toXml(File outputFile, ShapeChangeResult result) {
+    public void toXml(File outputFile, ShapeChangeResult result, String lineSeparator) {
 
 	if (classInfos.isEmpty() && propertyInfos.isEmpty()) {
 	    result.addWarning(this, 1, outputFile.getAbsolutePath());
@@ -253,7 +253,7 @@ public class SqlEncodingInfos implements MessageSource {
 		}
 	    }
 
-	    XMLUtil.writeXml(document, outputFile);
+	    XMLUtil.writeXml(document, outputFile, lineSeparator);
 
 	} catch (ShapeChangeException | ParserConfigurationException e) {
 
