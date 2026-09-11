@@ -34,7 +34,9 @@ package de.interactive_instruments.shapechange.core.target.ldproxy2;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneId;
@@ -93,6 +95,7 @@ import de.interactive_instruments.shapechange.core.target.ldproxy2.storedquery.L
 import de.interactive_instruments.shapechange.core.target.sql_encoding_util.SqlEncodingInfos;
 import de.interactive_instruments.shapechange.core.target.xml_encoding_util.XmlEncodingInfos;
 import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
+import de.interactive_instruments.shapechange.core.util.LineEndingNormalizingWriter;
 import de.interactive_instruments.shapechange.core.util.XMLUtil;
 import shadow.com.fasterxml.jackson.annotation.JsonInclude.Include;
 import shadow.com.fasterxml.jackson.databind.ObjectMapper;
@@ -1119,7 +1122,11 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 		    Files.createDirectories(sqDir.toPath());
 
 		    File sqFile = new File(sqDir, sqId + ".json");
-		    outMapper.writerWithDefaultPrettyPrinter().writeValue(sqFile, sq);
+		    try (Writer sqWriter = new LineEndingNormalizingWriter(
+			    Files.newBufferedWriter(sqFile.toPath(), StandardCharsets.UTF_8),
+			    options.lineSeparator())) {
+			outMapper.writerWithDefaultPrettyPrinter().writeValue(sqWriter, sq);
+		    }
 		}
 
 		if (tileProviderConfig != null) {
