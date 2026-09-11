@@ -1211,7 +1211,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		properties.put("blockRules", rdfXmlWriterBlockRules);
 		properties.put("relativeURIs", "");
 
-		RDFWriter.create().format(rdfFormat).set(SysRIOT.sysRdfWriterProperties, rea).source(ontmodel)
+		RDFWriter.create().format(rdfFormat).set(SysRIOT.sysRdfWriterProperties, properties).source(ontmodel)
 			.output(out);
 
 	    } else {
