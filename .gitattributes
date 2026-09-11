@@ -1,0 +1,106 @@
+# Line-ending and file-type policy for the ShapeChange git repository.
+#
+# Goal: all textual files are stored with LF in the repository and checked out
+# with LF on every platform, so that ShapeChange's (now LF-by-default) output and
+# the committed reference files stay consistent and diffs are clean. Binary files
+# are marked explicitly so line-ending normalization can never corrupt them.
+#
+# After introducing or changing this file, run once:
+#   git add --renormalize .
+# then review (git status / git ls-files --eol) and commit.
+
+# ----------------------------------------------------------------------------
+# Baseline: let git detect text vs binary, and force LF for anything textual.
+# Explicit rules below override this where detection should not be trusted.
+# ----------------------------------------------------------------------------
+* text=auto eol=lf
+
+# ----------------------------------------------------------------------------
+# Text files (stored and checked out with LF), alphabetically ordered
+# ----------------------------------------------------------------------------
+*.adoc      text eol=lf
+*.atom      text eol=lf
+*.css       text eol=lf
+*.csv       text eol=lf
+*.ddl       text eol=lf
+*.dtd       text eol=lf
+*.gfs       text eol=lf
+.gitattributes text eol=lf
+.gitignore  text eol=lf
+*.gml       text eol=lf
+*.htm       text eol=lf
+*.html      text eol=lf
+*.java      text eol=lf
+*.js        text eol=lf
+*.json      text eol=lf
+*.jsonld    text eol=lf
+*.kml       text eol=lf
+LICENSE     text eol=lf
+*.md        text eol=lf
+# Enterprise Architect MDG technology (XML)
+*.mts       text eol=lf
+*.nq        text eol=lf
+*.nt        text eol=lf
+*.owl       text eol=lf
+*.properties text eol=lf
+*.rdf       text eol=lf
+*.rj        text eol=lf
+*.rtf       text eol=lf
+*.sch       text eol=lf
+*.sql       text eol=lf
+*.svg       text eol=lf
+*.trig      text eol=lf
+*.trix      text eol=lf
+*.ttl       text eol=lf
+*.txt       text eol=lf
+*.var       text eol=lf
+*.xmi       text eol=lf
+*.xml       text eol=lf
+*.xsd       text eol=lf
+*.xsl       text eol=lf
+*.xslt      text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
+
+# ----------------------------------------------------------------------------
+# Platform-specific scripts
+# ----------------------------------------------------------------------------
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.sh        text eol=lf
+
+# ----------------------------------------------------------------------------
+# Binary files (never normalize / diff as text), alphabetically ordered
+# ----------------------------------------------------------------------------
+*.7z        binary
+*.bmp       binary
+*.class     binary
+*.doc       binary
+*.docx      binary
+*.eap       binary
+*.eapx      binary
+*.eot       binary
+*.feap      binary
+*.gif       binary
+*.gpkg      binary
+*.gz        binary
+*.ico       binary
+*.jar       binary
+*.jpeg      binary
+*.jpg       binary
+*.otf       binary
+*.pdf       binary
+*.png       binary
+*.ppt       binary
+*.pptx      binary
+*.qea       binary
+*.qeax      binary
+*.tar       binary
+# Binary RDF (RDF/Thrift output)
+*.trdf      binary
+*.ttf       binary
+*.woff      binary
+*.woff2     binary
+*.xls       binary
+*.xlsx      binary
+*.zip       binary

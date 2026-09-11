@@ -58,7 +58,6 @@
 			<targetParameter name="outputDirectory"
 				value="testResults/profileTransfer/test2/results/export" />
 			<targetParameter name="outputFilename" value="profileTransfer_export" />
-			<targetParameter name="sortedOutput" value="true" />
 			<targetParameter name="defaultEncodingRule" value="export" />
 			<targetParameter name="exportProfilesFromWholeModel"
 				value="true" />

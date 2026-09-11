@@ -1,0 +1,7 @@
+# Revisions listed here are ignored by `git blame`.
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub and GitLab honor this file automatically on the default branch.
+
+# Normalize line endings per .gitattributes (repository-wide, no content changes)
+30332ea3802746e40ad295420363d7e42b84f8ba
