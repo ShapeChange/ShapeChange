@@ -35,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.ii.xtraplatform.features.domain.FeatureSchema;
 import de.ii.xtraplatform.features.domain.ImmutableFeatureSchema;
@@ -146,7 +147,7 @@ public class LdpGidEncoder {
 		if (setSourcePaths) {
 		    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 			sourceDescriptionBuilder.sourcePath("src_des");
-		    } else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		    } else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			    "AX_DQErhebung3D", "AX_DQDachhoehe")) {
 			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
 		    }
@@ -165,7 +166,7 @@ public class LdpGidEncoder {
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDescriptionBuilder.sourcePath("des");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_des");
 		}
@@ -180,7 +181,7 @@ public class LdpGidEncoder {
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processStepDateTimeBuilder.sourcePath("dat");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDateTimeBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_dat");
 		}
@@ -203,7 +204,7 @@ public class LdpGidEncoder {
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorOrganisationNameBuilder.sourcePath("pro_resp_org");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorOrganisationNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_org");
 		}
@@ -218,7 +219,7 @@ public class LdpGidEncoder {
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorIndividualNameBuilder.sourcePath("pro_resp_ind");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
 		}
@@ -233,7 +234,7 @@ public class LdpGidEncoder {
 	    if (setSourcePaths) {
 		if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		    processorRoleBuilder.sourcePath("pro_resp_rol_cdv");
-		} else if (StringUtils.equalsAnyIgnoreCase(pi.inClass().name(), "AX_DQMitDatenerhebung",
+		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung",
 			"AX_DQOhneDatenerhebung", "AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorRoleBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_rol_cdv");
 		}

@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.interactive_instruments.shapechange.core.MessageSource;
 import de.interactive_instruments.shapechange.core.Options;
@@ -670,7 +670,7 @@ public class SqlEncodingInfoVisitor implements StatementVisitor, MessageSource {
     }
 
     public Optional<String> ldproxyTypeFromDataType(String dataTypeName) {
-	if (StringUtils.equalsAnyIgnoreCase(dataTypeName, "int", "integer", "bigserial", "smallint", "bigint",
+	if (Strings.CI.equalsAny(dataTypeName, "int", "integer", "bigserial", "smallint", "bigint",
 		"shortinteger", "longinteger")) {
 	    return Optional.of("integer");
 	} else {

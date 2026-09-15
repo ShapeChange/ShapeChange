@@ -38,24 +38,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.apache.commons.io.monitor.FileEntry;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.xml.sax.SAXException;
 
-import de.interactive_instruments.shapechange.core.target.DeferrableOutputWriter;
-import de.interactive_instruments.shapechange.core.target.SingleTarget;
-import de.interactive_instruments.shapechange.core.target.Target;
-import de.interactive_instruments.shapechange.core.target.TargetOutputProcessor;
-import de.interactive_instruments.shapechange.core.target.TargetUtil;
-import de.interactive_instruments.shapechange.core.transformation.TransformationManager;
-import de.interactive_instruments.shapechange.core.ui.StatusBoard;
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
 import de.interactive_instruments.shapechange.core.model.ClassInfo;
 import de.interactive_instruments.shapechange.core.model.InfoOrdering;
@@ -63,6 +56,13 @@ import de.interactive_instruments.shapechange.core.model.Model;
 import de.interactive_instruments.shapechange.core.model.PackageInfo;
 import de.interactive_instruments.shapechange.core.model.generic.GenericModel;
 import de.interactive_instruments.shapechange.core.modelvalidation.ModelValidationManager;
+import de.interactive_instruments.shapechange.core.target.DeferrableOutputWriter;
+import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.target.Target;
+import de.interactive_instruments.shapechange.core.target.TargetOutputProcessor;
+import de.interactive_instruments.shapechange.core.target.TargetUtil;
+import de.interactive_instruments.shapechange.core.transformation.TransformationManager;
+import de.interactive_instruments.shapechange.core.ui.StatusBoard;
 
 public class Converter implements MessageSource {
 
@@ -97,7 +97,7 @@ public class Converter implements MessageSource {
 	 * is an essential pre-processing step before executing the conversion
 	 */
 	boolean skipSemanticValidation = false;
-	if (StringUtils.equalsIgnoreCase(options.parameter(Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG), "true")) {
+	if (Strings.CI.equals(options.parameter(Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG), "true")) {
 	    skipSemanticValidation = true;
 	}
 
@@ -482,8 +482,8 @@ public class Converter implements MessageSource {
 	}
 
 	try {
-	    // 20170818 JE: File filters could be added here as well
-	    FileAlterationObserver observer = new FileAlterationObserver(outputDirectoryFile);
+	    FileAlterationObserver observer = FileAlterationObserver.builder()
+		    .setRootEntry(new FileEntry(outputDirectoryFile)).get();
 
 	    observer.initialize();
 	    observer.addListener(listener);
@@ -904,8 +904,8 @@ public class Converter implements MessageSource {
 	Set<ClassInfo> classes = model.classes(pi);
 
 	/*
-	 * Change the order of processing if requested by the sortedOutput parameter. The
-	 * parameter is interpreted by InfoOrdering, which is shared with the model
+	 * Change the order of processing if requested by the sortedOutput parameter.
+	 * The parameter is interpreted by InfoOrdering, which is shared with the model
 	 * writers so that a target walking the model itself applies the same configured
 	 * order as a target driven through process(ClassInfo).
 	 */
@@ -917,8 +917,7 @@ public class Converter implements MessageSource {
 	classes.toArray(classArr);
 
 	try {
-	    InfoOrdering.forConfiguredValue(sortedOpt)
-		    .ifPresent(comparator -> Arrays.sort(classArr, comparator));
+	    InfoOrdering.forConfiguredValue(sortedOpt).ifPresent(comparator -> Arrays.sort(classArr, comparator));
 	} catch (IllegalArgumentException e) {
 	    result.addProcessFlowError(this, 165, sortedOpt, target.getClass().getName());
 	}
@@ -989,32 +988,43 @@ public class Converter implements MessageSource {
 	return switch (mnr) {
 
 	case 14 -> "No model has been loaded to convert.";
-	case 165 -> "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
+	case 165 ->
+	    "Value '$1$' is not allowed for targetParameter 'sortedOutput' in Target '$2$'. Try 'true' (=name), 'name', 'id', 'taggedValue=value' or 'false' (no sorting). 'false' is used.";
 
 	case 500 -> "Executed deferred output write for target class '$1$' for input ID: '$2$'.";
 	case 501 -> "Now processing transformation '$1$' for input ID: '$2$'.";
-	case 502 -> "Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+	case 502 ->
+	    "Performed transformation for transformer ID '$1$' for input ID: '$2$'.\n-------------------------------------------------";
 	case 503 -> "Now processing target '$1$' for input '$2$'.";
-	case 504 -> "Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
-	case 505 -> "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
-	case 506 -> "Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
-	case 507 -> "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
-	case 508 -> "??The ConfigurationValidator for transformer, target, or validator class '$1$' was found but could not be loaded. Exception message is: $2$";
-	case 509 -> "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
+	case 504 ->
+	    "Executed target class '$1$' for input ID: '$2$'.\n-------------------------------------------------";
+	case 505 ->
+	    "Internal class cast exception encountered - message: $1$ (full exception information is only logged for log level debug). Processing of transformation with ID '$2$' did not succeed. All transformations and targets that depend on this transformation will not be executed.";
+	case 506 ->
+	    "Transformation with ID '$1$' is disabled (via the configuration). All transformations and targets that depend on this transformation will not be executed.";
+	case 507 ->
+	    "None of the packages contained in the model is a schema selected for processing. Make sure that the schema you want to process are configured to be a schema (via the 'targetNamespace' tagged value or via a PackageInfo element in the configuration) and also selected for processing (if you use one of the input parameters appSchemaName, appSchemaNameRegex, appSchemaNamespaceRegex, ensure that they include the schema). Execution will stop now.";
+	case 508 ->
+	    "??The ConfigurationValidator for transformer, target, or validator class '$1$' was found but could not be loaded. Exception message is: $2$";
+	case 509 ->
+	    "The semantic validation of the ShapeChange configuration detected one or more errors. Examine the log for further details. Execution will stop now.";
 	case 510 -> "---------- Semantic validation of ShapeChange configuration: START ----------";
 	case 511 -> "---------- Semantic validation of ShapeChange configuration: COMPLETE ----------";
 	case 512 -> "---------- Semantic validation of ShapeChange configuration: SKIPPED ----------";
 	case 513 -> "NOTE: The semantic validation can be skipped by setting the input configuration parameter '"
-		    + Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG + "' to 'true'.";
+		+ Options.PARAM_SKIP_SEMANTIC_VALIDATION_OF_CONFIG + "' to 'true'.";
 	case 514 -> "--- Validating transformer with @id '$1$' ...";
 	case 515 -> "--- Validating target with @class '$1$' and @inputs '$2$' ...";
-	case 516 -> "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
-	case 517 -> "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+	case 516 ->
+	    "Could not create output directory '$1$' and thus could not set up file observer to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
+	case 517 ->
+	    "Could not initialize file observer for output directory '$1$'. The file observer would be used to identify output files that are created in this directory by targets. Processing of output files in this directory will not be performed.";
 	case 518 -> "--- Validating model validator with @id '$1$' ...";
 	case 519 -> "Now validating input model '$1$' of transformation/target with id/class '$2$'.";
-	case 520 -> "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
+	case 520 ->
+	    "Validated input model '$1$' of transformation/target with id/class '$2$'.\n-------------------------------------------------";
 	case 521 -> "--- Validating input transformer with @class '$1$' ...";
-	
+
 	case 1012 -> "Application schema found, package name: '$1$', target namespace: '$2$'";
 
 	default -> "(" + this.getClass().getName() + ") Unknown message with number: " + mnr;

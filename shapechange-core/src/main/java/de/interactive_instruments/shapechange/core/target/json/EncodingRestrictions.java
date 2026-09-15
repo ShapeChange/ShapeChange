@@ -36,6 +36,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -141,7 +142,7 @@ public class EncodingRestrictions {
 
 		for (String typeTmp : rParts[1].split("\\s*,\\s*")) {
 		    String type = typeTmp.toLowerCase(Locale.ENGLISH).trim();
-		    if (StringUtils.equalsAny(type, "integer", "number", "string", "boolean")) {
+		    if (Strings.CS.equalsAny(type, "integer", "number", "string", "boolean")) {
 			encRestriction.addMemberTypeRestriction(type);
 		    } else {
 			throw new IllegalArgumentException(

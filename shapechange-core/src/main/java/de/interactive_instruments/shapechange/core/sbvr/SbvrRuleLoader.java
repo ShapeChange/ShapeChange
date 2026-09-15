@@ -41,7 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -400,7 +401,7 @@ public class SbvrRuleLoader implements MessageSource {
 
     private String parseClassNameFromRuleText(String text) {
 
-	ANTLRInputStream input = new ANTLRInputStream(text);
+	CharStream input = CharStreams.fromString(text);
 
 	// create a lexer that feeds off of input CharStream
 	SBVRLexer lexer = new SBVRLexer(input);

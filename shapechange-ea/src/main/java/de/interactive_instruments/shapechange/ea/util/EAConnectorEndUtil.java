@@ -37,6 +37,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.sparx.Collection;
 import org.sparx.Connector;
 import org.sparx.ConnectorEnd;
@@ -622,7 +623,7 @@ public class EAConnectorEndUtil extends AbstractEAUtil {
 
 	// navigable only with a name, but not with a default name
 	String ceName = getRoleName(ce, "" + con.GetConnectorID());
-	if (ceName == null || StringUtils.startsWith(ceName, "role_")) {
+	if (ceName == null || Strings.CS.startsWith(ceName, "role_")) {
 	    nav = false;
 	}
 

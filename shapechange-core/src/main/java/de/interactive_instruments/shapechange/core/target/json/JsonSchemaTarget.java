@@ -52,8 +52,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.w3c.dom.Element;
 
+import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
+import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.Options;
+import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.ProcessRuleSet;
+import de.interactive_instruments.shapechange.core.RuleRegistry;
+import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
+import de.interactive_instruments.shapechange.core.ShapeChangeParseException;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.Info;
+import de.interactive_instruments.shapechange.core.model.Model;
+import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.target.MapEntries;
+import de.interactive_instruments.shapechange.core.target.SingleTarget;
+import de.interactive_instruments.shapechange.core.target.TargetUtil;
 import de.interactive_instruments.shapechange.core.target.json.config.AbstractJsonSchemaAnnotationElement;
 import de.interactive_instruments.shapechange.core.target.json.json.JsonNumber;
 import de.interactive_instruments.shapechange.core.target.json.json.JsonString;
@@ -72,22 +89,6 @@ import de.interactive_instruments.shapechange.core.target.json.jsonschema.Minimu
 import de.interactive_instruments.shapechange.core.target.json.jsonschema.MultipleOfKeyword;
 import de.interactive_instruments.shapechange.core.target.json.jsonschema.PatternKeyword;
 import de.interactive_instruments.shapechange.core.util.GenericValueTypeUtil;
-import de.interactive_instruments.shapechange.core.MapEntryParamInfos;
-import de.interactive_instruments.shapechange.core.MessageSource;
-import de.interactive_instruments.shapechange.core.Options;
-import de.interactive_instruments.shapechange.core.ProcessMapEntry;
-import de.interactive_instruments.shapechange.core.ProcessRuleSet;
-import de.interactive_instruments.shapechange.core.RuleRegistry;
-import de.interactive_instruments.shapechange.core.ShapeChangeAbortException;
-import de.interactive_instruments.shapechange.core.ShapeChangeParseException;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.model.Info;
-import de.interactive_instruments.shapechange.core.model.Model;
-import de.interactive_instruments.shapechange.core.model.PackageInfo;
-import de.interactive_instruments.shapechange.core.target.MapEntries;
-import de.interactive_instruments.shapechange.core.target.SingleTarget;
-import de.interactive_instruments.shapechange.core.target.TargetUtil;
 
 /**
  * @author Johannes Echterhoff (echterhoff at interactive-instruments dot de)
@@ -618,8 +619,8 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	if (someAppSchemaPackage != null && StringUtils.isNotBlank(someAppSchemaPackage.taggedValue("jsonId"))) {
 	    result = someAppSchemaPackage.taggedValue("jsonId").trim();
 	} else {
-	    result = StringUtils.join(new String[] { StringUtils.removeEnd(jsonBaseUri, "/"),
-		    StringUtils.removeEnd(jsonSubdirectory, "/"), docName }, "/");
+	    result = StringUtils.join(new String[] { Strings.CS.removeEnd(jsonBaseUri, "/"),
+		    Strings.CS.removeEnd(jsonSubdirectory, "/"), docName }, "/");
 	}
 
 	return result;
@@ -1150,7 +1151,7 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	    if (baseSchemaId.endsWith(".json")) {
 		collSchemaId = baseSchemaId.substring(0, baseSchemaId.lastIndexOf("/") + 1) + collectionSchemaFileName;
 	    } else {
-		collSchemaId = StringUtils.removeEnd(baseSchemaId, "/") + "/" + collectionSchemaFileName;
+		collSchemaId = Strings.CS.removeEnd(baseSchemaId, "/") + "/" + collectionSchemaFileName;
 	    }
 
 	    JsonSchemaDocument collJsd = new JsonSchemaDocument(null, model, options, result, this, collSchemaId,

@@ -43,6 +43,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.docx4j.org.apache.xpath.XPathAPI;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -1047,7 +1048,7 @@ public class XSLT implements Target {
 	for (Iterator<PropertyInfo> j = ci.properties().values().iterator(); j.hasNext();) {
 	    PropertyInfo propi = j.next();
 	    s = propi.taggedValue(tag);
-	    if (StringUtils.equalsIgnoreCase(s,"true"))
+	    if (Strings.CI.equals(s,"true"))
 		return propi.qname();
 
 	    // TODO temporary settings

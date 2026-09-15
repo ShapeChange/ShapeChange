@@ -57,6 +57,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -335,7 +336,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 			JsonObject statusObj = valueObj.getAsJsonObject("status");
 
 			if (!statusObj.has("id")
-				|| StringUtils.endsWithAny(statusObj.get("id").getAsString(), "/valid", "/retired")) {
+				|| Strings.CS.endsWithAny(statusObj.get("id").getAsString(), "/valid", "/retired")) {
 
 			    Optional<String> codelistLocalIdOpt = parseRe3gistryJsonLangTextValue(valueObj,
 				    "CodeListValue_Local_Id");
@@ -478,7 +479,7 @@ public class CodeListLoader implements Transformer, MessageSource {
 		Reader reader = new InputStreamReader(bomis, clSourceCharset)) {
 
 	    Iterable<CSVRecord> records = CSVFormat.newFormat('|').builder()
-		    .setHeader("alpha3bibliographic", "alpha3terminologic", "alpha2", "name_en", "name_fr").build()
+		    .setHeader("alpha3bibliographic", "alpha3terminologic", "alpha2", "name_en", "name_fr").get()
 		    .parse(reader);
 
 	    for (CSVRecord record : records) {

@@ -37,7 +37,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -121,7 +122,7 @@ public class Sbvr2FolParser implements MessageSource {
 		SbvrParsingResult parsingResult = new SbvrParsingResult();
 		parsingResult.setConstraint(con);
 
-		ANTLRInputStream input = new ANTLRInputStream(con.text());
+		CharStream input = CharStreams.fromString(con.text());
 
 		// create a lexer that feeds off of input CharStream
 		SBVRLexer lexer = new SBVRLexer(input);

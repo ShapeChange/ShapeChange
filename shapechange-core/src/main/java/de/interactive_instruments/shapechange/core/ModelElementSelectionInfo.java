@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
@@ -706,7 +707,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	if (element.hasAttribute("classIsAbstract")) {
 	    String tmp = element.getAttribute("classIsAbstract").trim();
-	    classIsAbstract = StringUtils.equalsAny(tmp, "1", "true");
+	    classIsAbstract = Strings.CS.equalsAny(tmp, "1", "true");
 	}
 
 	return new ModelElementSelectionInfo(modelElementType, modelElementStereotype, modelElementName,

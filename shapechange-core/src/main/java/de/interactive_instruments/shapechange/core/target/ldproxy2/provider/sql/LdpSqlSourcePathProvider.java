@@ -39,6 +39,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.ii.xtraplatform.features.domain.SchemaBase.Type;
 import de.interactive_instruments.shapechange.core.MessageSource;
@@ -154,7 +155,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 
 		    if (isImplementedAsFeatureReference(pi)) {
 
-			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
+			if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && Strings.CI.equalsAny(
 				spei.getPropertyValueType(), "AX_Buchungsblattbezirk_Schluessel",
 				"AX_Bundesland_Schluessel", "AX_Dienststelle_Schluessel", "AX_Gemarkung_Schluessel",
 				"AX_GemarkungsteilFlur_Schluessel", "AX_Gemeindekennzeichen", "AX_Kreis_Schluessel",
@@ -201,7 +202,7 @@ public class LdpSqlSourcePathProvider extends AbstractLdpSourcePathProvider {
 			    spRes.addSourcePathInfo(spi);
 			    return spRes;
 
-			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && StringUtils.equalsAnyIgnoreCase(
+			} else if (pi.matches(Ldproxy2Constants.RULE_ALL_GEOINFODOK) && Strings.CI.equalsAny(
 				spei.getPropertyValueType(), "DQ_AbsoluteExternalPositionalAccuracy",
 				"DQ_RelativeInternalPositionalAccuracy")) {
 
