@@ -1116,7 +1116,8 @@ public class Ldproxy2Target implements SingleTarget, MessageSource {
 
 		    ObjectMapper outMapper = new ObjectMapper();
 		    outMapper.registerModule(new Jdk8Module().configureReadAbsentAsNull(true));
-		    outMapper.setSerializationInclusion(Include.NON_EMPTY);
+		    outMapper.setDefaultPropertyInclusion(Include.NON_EMPTY);
+//		    outMapper.setSerializationInclusion(Include.NON_EMPTY);
 
 		    File sqDir = new File(outputDirectory, "data/values/queries/" + Ldproxy2Target.mainId);
 		    Files.createDirectories(sqDir.toPath());

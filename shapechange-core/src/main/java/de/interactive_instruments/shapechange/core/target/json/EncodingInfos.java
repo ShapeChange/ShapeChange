@@ -39,6 +39,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import de.interactive_instruments.shapechange.core.ShapeChangeException;
 
@@ -243,16 +244,16 @@ public class EncodingInfos {
 	    encInfo.setEntityTypeMemberPath(value);
 	} else if (characteristic
 		.equalsIgnoreCase(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ENTITY_TYPE_MEMBER_REQUIRED)) {
-	    encInfo.setEntityTypeMemberRequired(StringUtils.equalsAnyIgnoreCase(value, "true", "1"));
+	    encInfo.setEntityTypeMemberRequired(Strings.CI.equalsAny(value, "true", "1"));
 	} else if (characteristic.equalsIgnoreCase(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_PATH)) {
 	    encInfo.setIdMemberPath(value);
 	} else if (characteristic
 		.equalsIgnoreCase(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_REQUIRED)) {
-	    encInfo.setIdMemberRequired(StringUtils.equalsAnyIgnoreCase(value, "true", "1"));
+	    encInfo.setIdMemberRequired(Strings.CI.equalsAny(value, "true", "1"));
 	} else if (characteristic.equalsIgnoreCase(JsonSchemaConstants.ME_PARAM_ENCODING_INFOS_CHAR_ID_MEMBER_TYPES)) {
 	    for (String typeTmp : value.split("\\s*,\\s*")) {
 		String type = typeTmp.toLowerCase(Locale.ENGLISH).trim();
-		if (StringUtils.equalsAny(type, "integer", "number", "string", "boolean")) {
+		if (Strings.CS.equalsAny(type, "integer", "number", "string", "boolean")) {
 		    encInfo.addIdMemberType(type);
 		} else {
 		    throw new IllegalArgumentException("Invalid value for characteristic "

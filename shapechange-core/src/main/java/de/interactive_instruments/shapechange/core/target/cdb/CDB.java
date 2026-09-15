@@ -50,6 +50,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -524,7 +525,7 @@ public class CDB implements SingleTarget, MessageSource {
 
 		    if (!attribute.getDescription().equalsIgnoreCase(exAtt.getDescription())
 			    || attribute.getType() != exAtt.getType() || attribute.getFormat() != exAtt.getFormat()
-			    || !StringUtils.equals(attribute.getLength(), exAtt.getLength()) || !exAttMin.equals(attMin)
+			    || !Strings.CS.equals(attribute.getLength(), exAtt.getLength()) || !exAttMin.equals(attMin)
 			    || !exAttMax.equals(attMax)) {
 
 			MessageContext mc = result.addWarning(this, 157);
@@ -552,7 +553,7 @@ public class CDB implements SingleTarget, MessageSource {
 				mc.addDetail(this, 154, exAttFormat, attFormat);
 			    }
 
-			    if (!StringUtils.equals(attribute.getLength(), exAtt.getLength())) {
+			    if (!Strings.CS.equals(attribute.getLength(), exAtt.getLength())) {
 
 				String exAttLength = StringUtils.defaultIfBlank(exAtt.getLength(), "<none>");
 				String attLength = StringUtils.defaultIfBlank(attribute.getLength(), "<none>");

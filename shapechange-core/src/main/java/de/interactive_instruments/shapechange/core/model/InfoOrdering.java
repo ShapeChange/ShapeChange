@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Builds the {@link Comparator} described by the <code>sortedOutput</code>
@@ -145,7 +146,7 @@ public final class InfoOrdering {
     private static Comparator<Info> comparingAccessor(Method accessor) {
 	return (i1, i2) -> {
 	    try {
-		return StringUtils.compare((String) accessor.invoke(i1), (String) accessor.invoke(i2));
+		return Strings.CS.compare((String) accessor.invoke(i1), (String) accessor.invoke(i2));
 	    } catch (ReflectiveOperationException e) {
 		/*
 		 * The accessor was resolved on Info and verified to return String, so an
@@ -159,7 +160,7 @@ public final class InfoOrdering {
     }
 
     private static Comparator<Info> comparingTaggedValue(String tag) {
-	return (i1, i2) -> StringUtils.compare(taggedValueOrName(i1, tag), taggedValueOrName(i2, tag));
+	return (i1, i2) -> Strings.CS.compare(taggedValueOrName(i1, tag), taggedValueOrName(i2, tag));
     }
 
     private static String taggedValueOrName(Info info, String tag) {
@@ -168,6 +169,6 @@ public final class InfoOrdering {
     }
 
     private static Comparator<Info> withIdTieBreak(Comparator<Info> primary) {
-	return primary.thenComparing(Info::id, StringUtils::compare);
+	return primary.thenComparing(Info::id, Strings.CS::compare);
     }
 }

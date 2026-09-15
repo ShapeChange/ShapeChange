@@ -49,6 +49,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntProperty;
 import org.apache.jena.reasoner.ValidityReport;
@@ -1117,7 +1118,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 		    // create a new ontology model
 
-		    String ontologyName = StringUtils.endsWithAny(namespace, new String[] { "#", "/" })
+		    String ontologyName = Strings.CS.endsWithAny(namespace, new String[] { "#", "/" })
 			    ? namespace.substring(0, namespace.length() - 1)
 			    : namespace;
 		    String path = "";

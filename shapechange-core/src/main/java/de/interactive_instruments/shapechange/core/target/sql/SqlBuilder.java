@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jgrapht.alg.cycle.DirectedSimpleCycles;
 import org.jgrapht.alg.cycle.JohnsonSimpleCycles;
 import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
@@ -54,6 +55,17 @@ import org.jgrapht.alg.cycle.TarjanSimpleCycles;
 import org.jgrapht.alg.cycle.TiernanSimpleCycles;
 import org.jgrapht.graph.DirectedMultigraph;
 
+import de.interactive_instruments.shapechange.core.MessageSource;
+import de.interactive_instruments.shapechange.core.Options;
+import de.interactive_instruments.shapechange.core.ProcessMapEntry;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult;
+import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
+import de.interactive_instruments.shapechange.core.model.AssociationInfo;
+import de.interactive_instruments.shapechange.core.model.ClassInfo;
+import de.interactive_instruments.shapechange.core.model.Info;
+import de.interactive_instruments.shapechange.core.model.Model;
+import de.interactive_instruments.shapechange.core.model.PackageInfo;
+import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 import de.interactive_instruments.shapechange.core.target.sql.expressions.BetweenExpression;
 import de.interactive_instruments.shapechange.core.target.sql.expressions.ColumnExpression;
 import de.interactive_instruments.shapechange.core.target.sql.expressions.DoubleValueExpression;
@@ -84,17 +96,6 @@ import de.interactive_instruments.shapechange.core.target.sql.structure.Statemen
 import de.interactive_instruments.shapechange.core.target.sql.structure.Table;
 import de.interactive_instruments.shapechange.core.target.sql.structure.UniqueConstraint;
 import de.interactive_instruments.shapechange.core.transformation.flattening.PropertySetEdge;
-import de.interactive_instruments.shapechange.core.MessageSource;
-import de.interactive_instruments.shapechange.core.Options;
-import de.interactive_instruments.shapechange.core.ProcessMapEntry;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult;
-import de.interactive_instruments.shapechange.core.ShapeChangeResult.MessageContext;
-import de.interactive_instruments.shapechange.core.model.AssociationInfo;
-import de.interactive_instruments.shapechange.core.model.ClassInfo;
-import de.interactive_instruments.shapechange.core.model.Info;
-import de.interactive_instruments.shapechange.core.model.Model;
-import de.interactive_instruments.shapechange.core.model.PackageInfo;
-import de.interactive_instruments.shapechange.core.model.PropertyInfo;
 
 /**
  * Builds SQL statements for model elements.
@@ -925,7 +926,7 @@ public class SqlBuilder implements MessageSource {
 
     private boolean existsTable(String schemaName, String tableName) {
 	return this.tables.stream()
-		.anyMatch(t -> StringUtils.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName()));
+		.anyMatch(t -> Strings.CS.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName()));
     }
 
     /**
@@ -1247,7 +1248,7 @@ public class SqlBuilder implements MessageSource {
 		} else {
 
 		    // escape single quotes in the enumeration value
-		    value = StringUtils.replace(value, "'", "''");
+		    value = Strings.CS.replace(value, "'", "''");
 		    StringValueExpression sv = new StringValueExpression(value);
 		    el_tmp.add(sv);
 		}
@@ -3366,7 +3367,7 @@ public class SqlBuilder implements MessageSource {
     private Table map(String schemaName, String tableName) {
 
 	for (Table t : this.tables) {
-	    if (StringUtils.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName())) {
+	    if (Strings.CS.equals(schemaName, t.getSchemaName()) && tableName.equals(t.getName())) {
 		return t;
 	    }
 	}

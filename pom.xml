@@ -346,7 +346,7 @@
 			<dependency>
 				<groupId>org.docx4j</groupId>
 				<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-				<version>17.0.4</version>
+				<version>17.1.0</version>
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
 			<dependency>
@@ -394,7 +394,7 @@
 			<dependency>
 				<groupId>io.github.classgraph</groupId>
 				<artifactId>classgraph</artifactId>
-				<version>4.8.194</version>
+				<version>4.8.195</version>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/mil.nga.geopackage/geopackage -->

@@ -37,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.w3c.dom.Element;
 
 import de.interactive_instruments.shapechange.core.target.json.config.AbstractJsonSchemaAnnotationElement;
@@ -212,7 +213,7 @@ public class AnnotationGenerator implements MessageSource {
 		for (String v : values) {
 
 		    if (jsonValueType == JsonSchemaType.BOOLEAN) {
-			jsonValues.add(new JsonBoolean(StringUtils.equalsAnyIgnoreCase(v, "true", "1") ? true : false));
+			jsonValues.add(new JsonBoolean(Strings.CI.equalsAny(v, "true", "1") ? true : false));
 		    } else if (jsonValueType == JsonSchemaType.NUMBER) {
 			try {
 			    double val = Double.parseDouble(v);
@@ -354,7 +355,7 @@ public class AnnotationGenerator implements MessageSource {
 		// set common optional fields
 
 		if (elmt.hasAttribute("arrayValue")) {
-		    ann.setArrayValue((StringUtils.equalsAnyIgnoreCase(elmt.getAttribute("arrayValue"), "true", "1")));
+		    ann.setArrayValue((Strings.CI.equalsAny(elmt.getAttribute("arrayValue"), "true", "1")));
 		}
 
 		if (elmt.hasAttribute("noValueBehavior")) {
