@@ -1246,14 +1246,21 @@ to an association class. The conversion rule ensures that instead of the
 actual value type of the property, only one of the allowed types is
 encoded as type definition in the JSON Schema. The conversion also takes
 into account that the property may have been a role of an association
-class. The restriction to a set of allowed types uses an if-then-else
-construct, which depends on the presence of a type identifying member in
-property values, and thus _rule-json-cls-valueTypeOptions_ should always
-be used in combination
-with _rule-xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[json-cls-name-as-entityType]_.
+class. The restriction to a set of allowed types is encoded as follows:
+If target parameter __anyOfForSchemaRefsInValueTypeOptions__ is set to 
+`false` (the default value), an if-then-else construct is created. 
+It depends on the presence of a type identifying member in
+property values. Therefore, if the if-then-else encoding is desired, then
+__rule-json-cls-valueTypeOptions__ should be used in combination
+with _rule-xref:./JSON_Schema.adoc#rule-json-cls-name-as-entityType[json-cls-name-as-entityType]_
+(and, depending upon the use case, also the other entityType member creating conversion rules).
 Note that value type restrictions (defined on a subtype) of inherited
 UML properties will result in these properties being explicitly defined
 in the JSON Schema definition of the subtype.
+Otherwise (i.e., target parameter __anyOfForSchemaRefsInValueTypeOptions__ has 
+value `true`), the restrictions are encoded using `anyOf` with a set of schema `ref`s.
+This case is primarily of interest for code generation from the resulting
+JSON Schema.
 
 NOTE: Value type options can be parsed from OCL constraints using
 transformation
@@ -1374,35 +1381,6 @@ value true.
 
 ////
 
-[[rule-json-prop-specificChecksForSupertypeValuedProperties]]
-==== rule-json-prop-specificChecksForSupertypeValuedProperties
-
-(since v4.0.0)
-
-For properties that satisfy all of the following conditions:
-
-* the value type may be encoded inline,
-* no specific list of value type options are defined for the property
-via <<rule-json-cls-valueTypeOptions>>,
-* the value type is not mapped to a simple type,
-* a JSON Schema definition exists (defined via map entries, or generated
-by the target) for the value type, 
-* the value type has a non-abstract subtype
-
-a set of restrictions is created, using an if-then-else construct.
-The restrictions ensure that based upon the set of non-abstract subtypes
-of the value type (including that type, if it is non-abstract, too), 
-type specific JSON Schema references are used in the validation. That
-enables a form of value type specific checks, which otherwise is
-not possible with JSON Schema.
-
-The mechanism depends on the presence of a type identifying member in
-property values, and thus _rule-json-prop-specificChecksForSupertypeValuedProperties_ should always
-be used in combination
-with rule <<rule-json-cls-name-as-entityType>>.
-
-////
-
 [[rule-json-prop-voidable]]
 ==== rule-json-prop-voidable
 
@@ -1421,6 +1399,44 @@ of actual values will be created.
 Since v3.1.0: If target parameter _schemaDefinitionForVoidable_ is set,
 a JSON Schema reference is encoded instead of the null value type, with
 the parameter value as reference value.
+
+////
+
+[[rule-json-prop-specificChecksForSupertypeValuedProperties]]
+==== rule-json-prop-specificChecksForSupertypeValuedProperties
+
+(since v4.1.0)
+
+For properties that satisfy all of the following conditions:
+
+* the value type is a type with identity (feature or object type) or
+complex data type
+* the value type may be encoded inline,
+* the value type is not listed (by name) by target parameter 
+<<supertypeValuedPropertiesTypeExclusions>>
+* no specific list of value type options are defined for the property
+via <<rule-json-cls-valueTypeOptions>>,
+* the value type is not mapped to a simple type,
+* a JSON Schema definition exists (defined via map entries, or generated
+by the target) for the value type, 
+* the value type has a non-abstract subtype (direct or indirect)
+
+this conversion rule results in a restriction of the types that are 
+allowed as value type for the property in the resulting JSON Schema,
+much like <<rule-json-cls-valueTypeOptions>>.
+
+Here, all non-abstract subtypes, as well as the value type itself (if 
+it is not abstract), are defined as value type restrictions.
+
+The encoding of the restrictions follows the same approach as in 
+<<rule-json-cls-valueTypeOptions>>, which includes usage of 
+target parameter <<anyOfForSchemaRefsInValueTypeOptions>>, and - depending
+upon the chosen value for that parameter, support for entityType members
+in the resulting encoding.
+
+NOTE: __rule-json-cls-valueTypeOptions__ is not required to be part of
+the encoding rule in order for 
+__rule-json-prop-specificChecksForSupertypeValuedProperties__ to work.
 
 
 [[Rule_execution_priority_and_dependencies]]
@@ -1485,6 +1501,28 @@ _xref:./JSON_Schema.adoc#rule-json-cls-defaultGeometry-singleGeometryProperty[ru
 
 This target supports the parameters defined in the following
 subsections.
+
+[[anyOfForSchemaRefsInValueTypeOptions]]
+==== anyOfForSchemaRefsInValueTypeOptions
+
+(since v4.1.0)
+
+Required / Optional: optional
+
+Type: URI
+
+Default Value: _false_
+
+Explanation: Controls the encoding of value type restrictions.
+Either `anyOf` with schema `ref`s is used (parameter value is `true`),
+or a complex if-then-else construct is created (parameter value
+is `false`).
+
+Applies to Rule(s):
+
+* _xref:./JSON_Schema.adoc#rule-json-cls-valueTypeOptions[rule-json-cls-valueTypeOptions]_.
+* _xref:./JSON_Schema.adoc#rule-json-prop-specificChecksForSupertypeValuedProperties[rule-json-prop-specificChecksForSupertypeValuedProperties]_.
+
 
 [[baseJsonSchemaDefinitionForCollections]]
 ==== baseJsonSchemaDefinitionForCollections
@@ -2149,22 +2187,6 @@ Applies to Rule(s):
 _xref:./JSON_Schema.adoc#rule-json-cls-collectionsBasedOnEntityType[rule-json-cls-collectionsBasedOnEntityType]_
 
 
-[[sortedOutput]]
-==== sortedOutput
-
-Type: String
-
-Default Value: "false"
-
-Explanation:
-
-* If "false", the types in a schema will be processed in random order.
-* If "true", the types will be processed alphabetically.
-* If "taggedValue=<tag>", the types will be processed in the order of
-the values of the tagged value with name "<tag>".
-
-Applies to Rule(s): _none_ - this is a common target parameter
-
 [[schemaDefinitionForVoidable]]
 ==== schemaDefinitionForVoidable
 
@@ -2181,6 +2203,44 @@ be used in
 xref:./JSON_Schema.adoc#rule-json-prop-voidable[rule-json-prop-voidable]
 for encoding the voidable case via a schema reference instead of a 
 null value type.
+
+
+[[sortedOutput]]
+==== sortedOutput
+
+Type: String
+
+Default Value: "false"
+
+Explanation:
+
+* If "false", the types in a schema will be processed in random order.
+* If "true", the types will be processed alphabetically.
+* If "taggedValue=<tag>", the types will be processed in the order of
+the values of the tagged value with name "<tag>".
+
+Applies to Rule(s): _none_ - this is a common target parameter
+
+
+[[supertypeValuedPropertiesTypeExclusions]]
+==== supertypeValuedPropertiesTypeExclusions
+
+(since v4.1.0)
+
+Required / Optional: optional
+
+Type: (comma-separated) list of strings
+
+Default Value: _none_ (meaning no exclusions)
+
+Explanation: Defines for which property value types
+<<rule-json-prop-specificChecksForSupertypeValuedProperties>>
+shall not be applied. The value types are given by their
+name.
+
+Applies to Rule(s):
+
+* _xref:./JSON_Schema.adoc#rule-json-prop-specificChecksForSupertypeValuedProperties[rule-json-prop-specificChecksForSupertypeValuedProperties]_.
 
 
 [[useAnchorsInLinksToGeneratedSchemaDefinitions]]

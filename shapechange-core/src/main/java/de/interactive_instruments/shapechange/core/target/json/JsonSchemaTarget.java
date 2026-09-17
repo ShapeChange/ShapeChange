@@ -179,6 +179,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
     protected static boolean enumDescriptionOnEnumerationValuedProperties = false;
 
+    protected static boolean anyOfForSchemaRefsInValueTypeOptions = false;
+
+    protected static SortedSet<String> supertypeValuedPropertiesTypeExclusions = null;
+
     /* ------ */
     /*
      * Non-static fields
@@ -396,6 +400,13 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 
 	    enumDescriptionOnEnumerationValuedProperties = options.parameterAsBoolean(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_ENUM_DESCRIPTION_ON_ENUMERATION_VALUED_PROP, false);
+
+	    anyOfForSchemaRefsInValueTypeOptions = options.parameterAsBoolean(this.getClass().getName(),
+		    JsonSchemaConstants.PARAM_ANYOF_FOR_SCHEMA_REFS_IN_VALUE_TYPE_OPTIONS, false);
+
+	    supertypeValuedPropertiesTypeExclusions = new TreeSet<>(
+		    options.parameterAsStringList(this.getClass().getName(),
+			    JsonSchemaConstants.PARAM_SUPERTYPE_VALUED_PROPERTIES_TYPE_EXCLUSIONS, null, false, true));
 
 	    schemaDefinitionForVoidable = options.parameterAsString(this.getClass().getName(),
 		    JsonSchemaConstants.PARAM_SCHEMA_DEF_VOIDABLE, null, false, true);
@@ -1317,6 +1328,10 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	featureRefWithAnyCollectionId = false;
 
 	enumDescriptionOnEnumerationValuedProperties = false;
+
+	anyOfForSchemaRefsInValueTypeOptions = false;
+
+	supertypeValuedPropertiesTypeExclusions = null;
     }
 
     @Override
@@ -1398,26 +1413,35 @@ public class JsonSchemaTarget implements SingleTarget, MessageSource {
 	case 8 -> "Class '$1$' is not encoded.";
 
 	case 10 -> "Configuration parameter '$1$' has invalid value '$2$'. Using value '$3$' instead.";
-	case 12 -> "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
+	case 12 ->
+	    "The target configuration does not contain an advanced process configuration element with definitions of JSON Schema annotations.";
 
 	case 15 -> "No map entries provided via the configuration.";
 //		case 16:
 //			return "Value '$1$' of configuration parameter $2$ does not match the regular expression: $3$. The parameter will be ignored.";
-	case 17 -> "Type '$1$' is of a category not enabled for conversion, meaning that no JSON Schema definition will be created to represent it.";
-	case 18 -> "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
-	case 19 -> "Type '$1$' is a union. By default, unions are not converted. The encoding rule that applies to '$1$' does not contain a conversion rule that would enable the encoding of the union. No JSON Schema definition will be created to represent '$1$'.";
-	case 20 -> "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type '$2$'. However, "
+	case 17 ->
+	    "Type '$1$' is of a category not enabled for conversion, meaning that no JSON Schema definition will be created to represent it.";
+	case 18 ->
+	    "Schema '$1$' is not encoded. Thus class '$2$' (which belongs to that schema) is not encoded either.";
+	case 19 ->
+	    "Type '$1$' is a union. By default, unions are not converted. The encoding rule that applies to '$1$' does not contain a conversion rule that would enable the encoding of the union. No JSON Schema definition will be created to represent '$1$'.";
+	case 20 ->
+	    "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type '$2$'. However, "
 		    + JsonSchemaConstants.RULE_CLS_BASIC_TYPE + " does not apply to '$1$'. The type will be ignored.";
-	case 21 -> "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type. However, that JSON Schema type is not one of 'string', 'number', or 'boolean'. The JSON Schema type is '$2$' - which does not make sense for a basic type. Type '$1$' will be ignored.";
+	case 21 ->
+	    "Type '$1$' directly or indirectly has a supertype that is implemented as simple JSON Schema type. However, that JSON Schema type is not one of 'string', 'number', or 'boolean'. The JSON Schema type is '$2$' - which does not make sense for a basic type. Type '$1$' will be ignored.";
 	case 22 -> "Type '$1$' has been mapped to '$2$', as defined by the configuration.";
 	case 23 -> "Type '$1$' has been mapped to '$2$' with keywords, as defined by the configuration.";
 	case 24 -> "Type '$1$' is subtype of a generic value type, and will be encoded as such.";
-	case 101 -> "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
+	case 101 ->
+	    "??Application schema '$1$' is not associated with a JSON Schema document. A default name is used for the JSON Schema document: '$2$'.";
 	case 102 -> "Creating JSON Schema document '$1$' for package '$2$'.";
-	case 103 -> "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
+	case 103 ->
+	    "Package '$1$' not associated with any JSON Schema document. Set tagged value 'jsonDocument' on the according schema package. Package '$1$' will be associated with JSON Schema document '$2$'.";
 	case 104 -> "Invalid JSON Schema annotation(s) encountered (they will be ignored): $1$";
 
-	case 503 -> "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
+	case 503 ->
+	    "Output file '$1$' already exists in output directory ('$2$'). It will be deleted prior to processing.";
 	case 504 -> "File has been deleted.";
 
 	case 10001 -> "Generating JSON schemas for application schema $1$.";

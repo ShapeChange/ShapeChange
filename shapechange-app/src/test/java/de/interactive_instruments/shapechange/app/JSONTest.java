@@ -138,4 +138,12 @@ public class JSONTest extends BasicTestSCXML {
 		new String[] { "json" }, "testResults/json/genericValueTypes",
 		"src/integrationtests/json/genericValueTypes/reference");
     }
+    
+    @Test
+    public void testJson_specificChecksForSupertypeValuedProperties() {
+
+	multiTest("src/integrationtests/json/specificChecksForSupertypeValuedProperties/test_json_schema_specificChecksForSupertypeValuedProperties.xml",
+		new String[] { "json" }, "testResults/json/specificChecksForSupertypeValuedProperties",
+		"src/integrationtests/json/specificChecksForSupertypeValuedProperties/reference");
+    }
 }

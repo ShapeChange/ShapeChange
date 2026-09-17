@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ShapeChangeConfiguration
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:sc="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
+	<input id="input">
+		<parameter name="inputModelType" value="EA7" />
+		<parameter name="repositoryFileNameOrConnectionString"
+			value="src/integrationtests/json/specificChecksForSupertypeValuedProperties/test_json_schema_specificChecksForSupertypeValuedProperties.qea" />
+		<parameter name="appSchemaNameRegex" value="Test Schema.*" />
+		<parameter name="publicOnly" value="true" />
+		<parameter name="checkingConstraints" value="enabled" />
+		<parameter name="dontConstructAssociationNames" value="true" />
+		<parameter name="extractSeparator" value="--" />
+		<descriptorSources>
+			<DescriptorSource descriptor="documentation"
+				source="ea:notes" />
+			<DescriptorSource descriptor="alias"
+				source="ea:alias" />
+			<DescriptorSource descriptor="definition"
+				source="sc:extract" token="Definition" />
+			<DescriptorSource descriptor="description"
+				source="sc:extract" token="Description" />
+			<DescriptorSource descriptor="example" source="none" />
+			<DescriptorSource descriptor="legalBasis"
+				source="none" />
+			<DescriptorSource descriptor="dataCaptureStatement"
+				source="none" />
+			<DescriptorSource descriptor="language"
+				source="none" />
+		</descriptorSources>
+		<xi:include
+			href="sc-resources/config/StandardAliases.xml" />
+	</input>
+	<log>
+		<parameter name="reportLevel" value="INFO" />
+		<parameter name="logFile"
+			value="testResults/json/specificChecksForSupertypeValuedProperties/log.xml" />
+	</log>
+	<transformers>
+		<Transformer
+			class="de.interactive_instruments.shapechange.core.transformation.identity.IdentityTransform"
+			id="model" input="input" mode="enabled" />
+
+		<Transformer input="model" id="trf_last"
+			class="de.interactive_instruments.shapechange.core.transformation.flattening.AssociationClassMapper" />
+	</transformers>
+	<targets>
+		<!-- =============================== -->
+		<!-- ====== Plain JSON ======== -->
+		<!-- =============================== -->
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget"
+			mode="enabled" inputs="trf_last">
+			<targetParameter name="outputDirectory"
+				value="testResults/json/specificChecksForSupertypeValuedProperties/json_schemas/plain_json" />
+			<targetParameter name="sortedOutput" value="true" />
+			<!-- NOTE: Restriction of application schemas that are converted! -->
+			<targetParameter name="appSchemaNameRegex"
+				value="Test Schema.*" />
+			<targetParameter name="inlineOrByReferenceDefault"
+				value="inlineOrByReference" />
+			<targetParameter name="anyOfForSchemaRefsInValueTypeOptions" value="true" />
+			<targetParameter name="supertypeValuedPropertiesTypeExclusions" value="Measure,DT2"/>
+			<targetParameter name="defaultEncodingRule"
+				value="myplainjson" />
+			<rules>
+				<EncodingRule name="myplainjson">
+					<rule name="rule-json-cls-name-as-anchor" />
+					<rule name="rule-json-cls-name-as-entityType" />
+					<rule name="rule-json-prop-specificChecksForSupertypeValuedProperties"/>
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardMapEntries_JSON.xml" />
+			<mapEntries>
+		    	<MapEntry type="FTSub3" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="FTSub3_1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3_1" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		    	<MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param="encodingInfos{entityTypeMemberPath=@type}"/>
+		   	</mapEntries>
+		</Target>
+		<!-- =============================== -->
+		<!-- ====== Nested JSON ======== -->
+		<!-- =============================== -->
+		<Target
+			class="de.interactive_instruments.shapechange.core.target.json.JsonSchemaTarget"
+			mode="enabled" inputs="trf_last">
+			<targetParameter name="outputDirectory"
+				value="testResults/json/specificChecksForSupertypeValuedProperties/json_schemas/nested_json" />
+			<targetParameter name="sortedOutput" value="true" />
+			<!-- NOTE: Restriction of application schemas that are converted! -->
+			<targetParameter name="appSchemaNameRegex"
+				value="Test Schema.*" />
+			<targetParameter name="inlineOrByReferenceDefault"
+				value="inlineOrByReference" />
+			<targetParameter name="anyOfForSchemaRefsInValueTypeOptions" value="true" />
+			<targetParameter name="supertypeValuedPropertiesTypeExclusions" value="Measure,DT2"/>
+			<targetParameter name="defaultEncodingRule"
+				value="mynestedjson" />
+			<rules>
+				<EncodingRule name="mynestedjson">
+					<rule name="rule-json-cls-nestedProperties" />
+					<rule name="rule-json-cls-name-as-anchor" />
+					<rule name="rule-json-cls-name-as-entityType" />
+					<rule name="rule-json-prop-specificChecksForSupertypeValuedProperties"/>
+				</EncodingRule>
+			</rules>
+			<xi:include
+				href="sc-resources/config/StandardMapEntries_JSON.xml" />
+			<mapEntries>
+		    	<MapEntry type="FTSub3" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="FTSub3_1" rule="*" targetType="https://example.org/external/schema/definitions.json#FTSub3_1" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="External_Supertype" rule="*" targetType="https://example.org/external/schema/definitions.json#External_Supertype" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		    	<MapEntry type="External_FT" rule="*" targetType="https://example.org/external/schema/definitions.json#External_FT" param="encodingInfos{entityTypeMemberPath=properties/@type}"/>
+		   	</mapEntries>
+		</Target>
+	</targets>
+</ShapeChangeConfiguration>

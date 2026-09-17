@@ -1,0 +1,363 @@
+{
+  "$comment": "JSON Schema document created by ShapeChange - https://shapechange.net/",
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://example.org/baseuri/ts/subdir/test.json",
+  "$defs": {
+    "AssociationClass": {
+      "$anchor": "AssociationClass",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "type": "string"
+            },
+            "acProp": {
+              "type": "integer"
+            },
+            "rFT1toFT2": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "$ref": "#FT2"
+                    },
+                    {
+                      "$ref": "#FTSub1_1"
+                    },
+                    {
+                      "$ref": "#FTSub2"
+                    },
+                    {
+                      "$ref": "https://example.org/external/schema/definitions.json#FTSub3"
+                    },
+                    {
+                      "$ref": "https://example.org/external/schema/definitions.json#FTSub3_1"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "acProp",
+            "entityType",
+            "rFT1toFT2"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "DT1": {
+      "$anchor": "DT1",
+      "type": "object"
+    },
+    "DT1Sub1": {
+      "$anchor": "DT1Sub1",
+      "allOf": [
+        {
+          "$ref": "#DT1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "DT1Sub2": {
+      "$anchor": "DT1Sub2",
+      "allOf": [
+        {
+          "$ref": "#DT1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "DT2": {
+      "$anchor": "DT2",
+      "type": "object"
+    },
+    "DT2Sub1": {
+      "$anchor": "DT2Sub1",
+      "allOf": [
+        {
+          "$ref": "#DT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "DT2Sub2": {
+      "$anchor": "DT2Sub2",
+      "allOf": [
+        {
+          "$ref": "#DT2"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FT1": {
+      "$anchor": "FT1",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "type": "string"
+            },
+            "attMeasure": {
+              "type": "number"
+            },
+            "rFT1toFT2": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "$ref": "#AssociationClass"
+                }
+              ]
+            }
+          },
+          "required": [
+            "attMeasure",
+            "entityType",
+            "rFT1toFT2"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "FT2": {
+      "$anchor": "FT2",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "entityType"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "FT3": {
+      "$anchor": "FT3",
+      "allOf": [
+        {
+          "$ref": "#FT1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attDatatype": {
+                  "anyOf": [
+                    {
+                      "$ref": "#DT1Sub1"
+                    },
+                    {
+                      "$ref": "#DT1Sub2"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "attDatatype"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FT4": {
+      "$anchor": "FT4",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "type": "object",
+          "properties": {
+            "entityType": {
+              "type": "string"
+            },
+            "rFT4toFT2": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "$ref": "#FT2"
+                      },
+                      {
+                        "$ref": "#FTSub1_1"
+                      },
+                      {
+                        "$ref": "#FTSub2"
+                      },
+                      {
+                        "$ref": "https://example.org/external/schema/definitions.json#FTSub3"
+                      },
+                      {
+                        "$ref": "https://example.org/external/schema/definitions.json#FTSub3_1"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "uniqueItems": true
+            },
+            "rFT4toExtSupertype": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "format": "uri"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "$ref": "https://example.org/external/schema/definitions.json#External_FT"
+                    },
+                    {
+                      "$ref": "https://example.org/external/schema/definitions.json#External_Supertype"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "entityType",
+            "rFT4toExtSupertype"
+          ]
+        }
+      },
+      "required": [
+        "properties"
+      ]
+    },
+    "FT5": {
+      "$anchor": "FT5",
+      "allOf": [
+        {
+          "$ref": "#FT4"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attDatatype": {
+                  "$ref": "#DT2"
+                }
+              },
+              "required": [
+                "attDatatype"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FTSub1": {
+      "$anchor": "FTSub1",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attSub1": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "attSub1"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    },
+    "FTSub1_1": {
+      "$anchor": "FTSub1_1",
+      "allOf": [
+        {
+          "$ref": "#FTSub1"
+        },
+        {
+          "type": "object"
+        }
+      ]
+    },
+    "FTSub2": {
+      "$anchor": "FTSub2",
+      "allOf": [
+        {
+          "$ref": "#FT2"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "attSub2": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "attSub2"
+              ]
+            }
+          },
+          "required": [
+            "properties"
+          ]
+        }
+      ]
+    }
+  }
+}

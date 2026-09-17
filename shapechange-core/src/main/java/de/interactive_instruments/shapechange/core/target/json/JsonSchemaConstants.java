@@ -37,9 +37,9 @@ package de.interactive_instruments.shapechange.core.target.json;
  *
  */
 public class JsonSchemaConstants {
-    
+
     public static final String SC_LINK_OBJECT_DEF_NAME = "SCLinkObject";
-    
+
     public static final String TV_COLLECTION_URI_TEMPLATE = "collectionUriTemplate";
     public static final String TV_SUPERTYPES_ENCODING_ORDER = "jsonSupertypesEncodingOrder";
 
@@ -89,7 +89,7 @@ public class JsonSchemaConstants {
     public static final String PARAM_JSON_BASE_URI = "jsonBaseUri";
 
     public static final String PARAM_ENTITY_TYPE_NAME = "entityTypeName";
-    
+
     public static final String PARAM_GENERIC_VALUE_TYPES = "genericValueTypes";
 
     public static final String PARAM_BY_REFERENCE_JSON_SCHEMA_DEFINITION = "byReferenceJsonSchemaDefinition";
@@ -113,7 +113,7 @@ public class JsonSchemaConstants {
     public static final String PARAM_PREVENT_UNKNOWN_TYPES_IN_FEATURE_COLLECTIONS = "preventUnknownTypesInFeatureCollection";
 
     public static final String PARAM_SCHEMA_DEF_VOIDABLE = "schemaDefinitionForVoidable";
-    
+
     public static final String PARAM_ID_MEMBER_ENCODING_RESTRICTIONS = "idMemberEncodingRestrictions";
 
     public static final String PARAM_INLINEORBYREF_DEFAULT = "inlineOrByReferenceDefault";
@@ -121,7 +121,7 @@ public class JsonSchemaConstants {
     public static final String PARAM_LINK_OBJECT_URI = "linkObjectUri";
     public static final String PARAM_LOWER_CASE_COLLID_REL_AS_KEY = "lowerCaseCollectionIdsInRelAsKeyProfile";
     public static final String PARAM_MEASURE_OBJECT_URI = "measureObjectUri";
-    
+
     public static final String PARAM_ENUM_DESCRIPTION_ON_ENUMERATION_VALUED_PROP = "enumDescriptionOnEnumerationValuedProperties";
 
     /**
@@ -132,11 +132,15 @@ public class JsonSchemaConstants {
      */
     public static final String PARAM_CREATE_SEPARATE_PROPERTY_DEFINITIONS = "createSeparatePropertyDefinitions";
     public static final String PARAM_GEOJSON_COMPATIBLE_GEOMETRY_TYPES = "geoJsonCompatibleGeometryTypes";
-    
+
     public static final String PARAM_FEATURE_REF_ID_TYPES = "featureRefIdTypes";
     public static final String PARAM_FEATURE_REF_ID_FORMAT = "featureRefIdFormat";
     public static final String PARAM_FEATURE_REF_PROFILES = "featureRefProfiles";
     public static final String PARAM_FEATURE_REF_ANY_COLLECTION_ID = "featureRefWithAnyCollectionId";
+
+    public static final String PARAM_ANYOF_FOR_SCHEMA_REFS_IN_VALUE_TYPE_OPTIONS = "anyOfForSchemaRefsInValueTypeOptions";
+
+    public static final String PARAM_SUPERTYPE_VALUED_PROPERTIES_TYPE_EXCLUSIONS = "supertypeValuedPropertiesTypeExclusions";
 
     public static final String RULE_ALL_DOCUMENTATION = "rule-json-all-documentation";
     public static final String RULE_CLS_DOCUMENTATION_ENUM_DESCRIPTION = "rule-json-cls-documentation-enumDescription";
@@ -182,7 +186,7 @@ public class JsonSchemaConstants {
     public static final String RULE_CLS_COLLECTIONS_WITH_TOP_LEVEL_ENTITY_TYPE = "rule-json-cls-collectionsWithTopLevelEntityType";
 
     public static final String RULE_CLS_JSON_FG_GEOMETRY = "rule-json-cls-jsonFgGeometry";
-        
+
     public static final String RULE_PROP_SPECIFIC_CHECKS_FOR_SUPERTYPE_VALUED_PROPERTIES = "rule-json-prop-specificChecksForSupertypeValuedProperties";
 
 }

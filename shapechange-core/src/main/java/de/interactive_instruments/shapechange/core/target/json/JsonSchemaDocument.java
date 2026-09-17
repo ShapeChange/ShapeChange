@@ -2789,8 +2789,8 @@ public class JsonSchemaDocument implements MessageSource {
 
     /**
      * @param pi               the property for which to generate a JSON Schema
-     * @param valueTypeOptions can be <code>null</code>, and not contain any options
-     *                         for the property
+     * @param valueTypeOptions may not contain any options for the property, must
+     *                         not be <code>null</code>
      * @return JSON Schema that defines the property
      */
     private JsonSchema jsonSchema(PropertyInfo pi, ValueTypeOptions valueTypeOptions) {
@@ -2849,15 +2849,12 @@ public class JsonSchemaDocument implements MessageSource {
 		    }
 
 		} else if (pi.matches(JsonSchemaConstants.RULE_PROP_SPECIFIC_CHECKS_FOR_SUPERTYPE_VALUED_PROPERTIES)
+			&& !JsonSchemaTarget.supertypeValuedPropertiesTypeExclusions.contains(pi.typeInfo().name)
+			&& (pi.categoryOfValue() == Options.FEATURE || pi.categoryOfValue() == Options.OBJECT
+				|| pi.categoryOfValue() == Options.DATATYPE)
 			&& typeInfoOpt.isPresent() && typeInfoOpt.get().isReference() && pi.typeClass() != null
 			&& pi.typeClass().subtypesInCompleteHierarchy().stream().anyMatch(st -> !st.isAbstract())) {
 
-		    /*
-		     * 2024-10-15 JE: does not work this way (also in general for value type options
-		     * with entity type member path) ... needs to require the entity type member
-		     * with specific value in if-condition ... see the creation for collection
-		     * definitions for a solution
-		     */
 		    ClassInfo typeCi = pi.typeClass();
 
 		    SortedSet<ClassInfo> relTypes = new TreeSet<>();
@@ -3357,12 +3354,27 @@ public class JsonSchemaDocument implements MessageSource {
 	JsonSchema typeSpecificSchema = new JsonSchema();
 	if (!remainingSpecificTypeOptions.isEmpty()) {
 
-	    /*
-	     * 2024-10-15 JE: A test to use a structure like we have in collection
-	     * definitions. However, for cases of inlineOrByReference-encoded association
-	     * roles, where a role is restricted in a subtype, this did not seem to work on
-	     * jsonschemavalidator.net. Further analysis would be required.
-	     */
+	    if (JsonSchemaTarget.anyOfForSchemaRefsInValueTypeOptions) {
+
+		List<JsonSchema> partSchemas = new ArrayList<>();
+
+		List<String> refs = remainingSpecificTypeOptions.values().stream().sorted().toList();
+
+		for (String ref : refs) {
+		    JsonSchema partSchema = new JsonSchema();
+		    partSchema.ref(ref);
+		    partSchemas.add(partSchema);
+		}
+		typeSpecificSchema.anyOf(partSchemas.toArray(new JsonSchema[partSchemas.size()]));
+
+	    } else {
+
+		/*
+		 * 2024-10-15 JE: A test to use a structure like we have in collection
+		 * definitions. However, for cases of inlineOrByReference-encoded association
+		 * roles, where a role is restricted in a subtype, this did not seem to work on
+		 * jsonschemavalidator.net. Further analysis would be required.
+		 */
 //	    List<ClassInfo> collectionMembersWithEncodingInfos = new ArrayList<>();
 //
 //	    for (String typeName : remainingSpecificTypeOptions.keySet()) {
@@ -3391,51 +3403,52 @@ public class JsonSchemaDocument implements MessageSource {
 //		createEntityTypeSpecificChecks(typeSpecificSchema, collectionMembers, true, JsonSchema.FALSE);
 //	    }
 
-	    JsonSchema parentSchema = typeSpecificSchema;
-	    JsonSchema ifSchema, thenSchema, elseSchema;
+		JsonSchema parentSchema = typeSpecificSchema;
+		JsonSchema ifSchema, thenSchema, elseSchema;
 
-	    for (String typeName : remainingSpecificTypeOptions.keySet()) {
+		for (String typeName : remainingSpecificTypeOptions.keySet()) {
 
-		String ref = remainingSpecificTypeOptions.get(typeName);
+		    String ref = remainingSpecificTypeOptions.get(typeName);
 
-		ifSchema = new JsonSchema();
-		// get type specific entity type member name
-		String entityTypeMemberPath = null;
-		ClassInfo typeCi = model.classByName(typeName);
-		if (typeCi != null) {
-		    entityTypeMemberPath = identifyEntityTypeMemberPath(typeCi);
-		}
-		if (StringUtils.isBlank(entityTypeMemberPath)) {
-		    entityTypeMemberPath = jsonSchemaTarget.getEntityTypeName();
-		    result.addError(this, 122, typeName, entityTypeMemberPath);
-		}
+		    ifSchema = new JsonSchema();
+		    // get type specific entity type member name
+		    String entityTypeMemberPath = null;
+		    ClassInfo typeCi = model.classByName(typeName);
+		    if (typeCi != null) {
+			entityTypeMemberPath = identifyEntityTypeMemberPath(typeCi);
+		    }
+		    if (StringUtils.isBlank(entityTypeMemberPath)) {
+			entityTypeMemberPath = jsonSchemaTarget.getEntityTypeName();
+			result.addError(this, 122, typeName, entityTypeMemberPath);
+		    }
 
-		String[] entityTypeMemberPathComponents = entityTypeMemberPath.split("/");
-		JsonSchema entityTypeMemberPropertySchema = ifSchema;
-		for (int i = 0; i < entityTypeMemberPathComponents.length - 1; i++) {
-		    JsonSchema newEntityTypeMemberPropertySchema = new JsonSchema();
-		    entityTypeMemberPropertySchema.property(entityTypeMemberPathComponents[i],
-			    newEntityTypeMemberPropertySchema);
-		    entityTypeMemberPropertySchema = newEntityTypeMemberPropertySchema;
-		}
-		entityTypeMemberPropertySchema.property(
-			entityTypeMemberPathComponents[entityTypeMemberPathComponents.length - 1],
-			(new JsonSchema()).const_(new JsonString(typeName)));
+		    String[] entityTypeMemberPathComponents = entityTypeMemberPath.split("/");
+		    JsonSchema entityTypeMemberPropertySchema = ifSchema;
+		    for (int i = 0; i < entityTypeMemberPathComponents.length - 1; i++) {
+			JsonSchema newEntityTypeMemberPropertySchema = new JsonSchema();
+			entityTypeMemberPropertySchema.property(entityTypeMemberPathComponents[i],
+				newEntityTypeMemberPropertySchema);
+			entityTypeMemberPropertySchema = newEntityTypeMemberPropertySchema;
+		    }
+		    entityTypeMemberPropertySchema.property(
+			    entityTypeMemberPathComponents[entityTypeMemberPathComponents.length - 1],
+			    (new JsonSchema()).const_(new JsonString(typeName)));
 
-		parentSchema.if_(ifSchema);
+		    parentSchema.if_(ifSchema);
 
-		thenSchema = new JsonSchema();
-		thenSchema.ref(ref);
-		parentSchema.then(thenSchema);
+		    thenSchema = new JsonSchema();
+		    thenSchema.ref(ref);
+		    parentSchema.then(thenSchema);
 
-		if (remainingSpecificTypeOptions.lastKey().equals(typeName)) {
-		    // this is the last type specific option
-		    elseSchema = JsonSchema.FALSE;
-		    parentSchema.else_(elseSchema);
-		} else {
-		    elseSchema = new JsonSchema();
-		    parentSchema.else_(elseSchema);
-		    parentSchema = elseSchema;
+		    if (remainingSpecificTypeOptions.lastKey().equals(typeName)) {
+			// this is the last type specific option
+			elseSchema = JsonSchema.FALSE;
+			parentSchema.else_(elseSchema);
+		    } else {
+			elseSchema = new JsonSchema();
+			parentSchema.else_(elseSchema);
+			parentSchema = elseSchema;
+		    }
 		}
 	    }
 	}
@@ -3578,6 +3591,13 @@ public class JsonSchemaDocument implements MessageSource {
 
     private Optional<JsonSchemaTypeInfo> identifyJsonSchemaType(ClassInfo ci) {
 	return identifyJsonSchemaType(ci.name(), ci.id(), ci.encodingRule(JsonSchemaConstants.PLATFORM));
+    }
+
+    private boolean isMapped(String typeName, String typeId, String encodingRule) {
+
+	ProcessMapEntry pme = mapEntryParamInfos.getMapEntry(typeName, encodingRule);
+
+	return pme != null && !jsonSchemaTarget.ignoreMapEntryForTypeFromSchemaSelectedForProcessing(pme, typeId);
     }
 
     private Optional<JsonSchemaTypeInfo> identifyJsonSchemaType(String typeName, String typeId, String encodingRule) {
