@@ -274,6 +274,17 @@
 				<artifactId>xmlunit-legacy</artifactId>
 				<version>2.13.0</version>
 				<scope>test</scope>
+				<exclusions>
+					<!-- xmlunit-legacy declares junit:junit 3.8.1 for its JUnit 3 based classes
+						(XMLTestCase, XMLAssert, Validator.assertIsValid), which the tests do not use.
+						On the test classpath it makes surefire add the JUnit Vintage engine, which
+						refuses any junit:junit older than 4.12, so no test of a module that uses
+						xmlunit-legacy is executed. -->
+					<exclusion>
+						<groupId>junit</groupId>
+						<artifactId>junit</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<!--
 			https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
