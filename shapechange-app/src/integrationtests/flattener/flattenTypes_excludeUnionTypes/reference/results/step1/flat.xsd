@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="UTF-8"?><schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:flat="http://test/flattening" xmlns:gml="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" targetNamespace="http://test/flattening" version="1.0">
+  <import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>
+  <!--XML Schema document created by ShapeChange - http://shapechange.net/-->
+  <element name="Class1" substitutionGroup="gml:AbstractFeature" type="flat:Class1Type"/>
+  <complexType name="Class1Type">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="prop1" type="boolean"/>
+          <element name="prop2" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="Class1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:Class1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="CurveGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:CurveGeometryInfoType">
+    <annotation>
+      <documentation>CurveGeomAlias: CurveGeometryInfo FC definition.
+NOTE CurveGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="CurveGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:CurvePropertyType"/>
+          <element minOccurs="0" name="prop15.valueOrReason-value-singleValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-S: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-value-intervalValue.lowerValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-I.L: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-value-intervalValue.upperValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-I.U: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-reason: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="CurveGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:CurveGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="EnumerationA_FeatureEntityType">
+    <restriction base="string">
+      <enumeration value="enum1">
+        <annotation>
+          <documentation>1: enum1 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum2">
+        <annotation>
+          <documentation>2: enum2 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum3">
+        <annotation>
+          <documentation>3: enum3 of EnumerationA VC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationB_GeometryMetadataType">
+    <restriction base="string">
+      <enumeration value="enumA">
+        <annotation>
+          <documentation>A: EnumA of EnumerationB VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enumB">
+        <annotation>
+          <documentation>B: EnumB of EnumerationB VC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationX_FeatureType1Type">
+    <restriction base="string">
+      <enumeration value="enum1">
+        <annotation>
+          <documentation>1: enum1 of EnumerationX VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum2">
+        <annotation>
+          <documentation>2: enum2 of EnumerationX VC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <simpleType name="EnumerationY_FeatureType2Type">
+    <restriction base="string">
+      <enumeration value="enum1">
+        <annotation>
+          <documentation>1: enum1 of EnumerationY VC definition.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="enum2">
+        <annotation>
+          <documentation>2: enum2 of EnumerationY VC definition.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <element name="FeatureAttMetadata" substitutionGroup="gml:AbstractGML" type="flat:FeatureAttMetadataType">
+    <annotation>
+      <documentation>FeatureAttMetadataALIAS: FeatureAttMetadata FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureAttMetadataType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element minOccurs="0" name="propSourceInfo">
+            <annotation>
+              <documentation>propSourceInfoAlias: PropSourceInfo AC definition.
+NOTE PropSourceInfo AC description!</documentation>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="flat:SourceInfo"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureAttMetadataPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureAttMetadata"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="FeatureEntity" substitutionGroup="gml:AbstractFeature" type="flat:FeatureEntityType">
+    <annotation>
+      <documentation>FT: FeatureEntity FC definition.
+NOTE FeatureEntity FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType abstract="true" name="FeatureEntityType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="propInformation">
+            <annotation>
+              <documentation>propInformationAlias: PropInformation AC  definition.
+NOTE PropInformation AC description!</documentation>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="flat:Information"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propEnumerationA.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>propEnumerationAAlias.valueOrReason-reason: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propEnumerationA.valueOrReason-value" type="flat:EnumerationA_FeatureEntityType">
+            <annotation>
+              <documentation>propEnumerationAAlias.valueOrReason-value: PropEnumerationA AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3.valueOrReason-value" type="string">
+            <annotation>
+              <documentation>prop3Alias.valueOrReason-value: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop3.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop3Alias.valueOrReason-reason: Prop3 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>propGeometryAlias.valueOrReason-reason: PropGeometry AC definition.</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propGeometry.valueOrReason-value">
+            <annotation>
+              <documentation>propGeometryAlias.valueOrReason-value: PropGeometry AC definition.</documentation>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="flat:GeometryInfo"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propMaxOccTest.valueOrReason-value" type="string">
+            <annotation>
+              <documentation>propMaxOccTestAlias.valueOrReason-value: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="unbounded" minOccurs="0" name="propMaxOccTest.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>propMaxOccTestAlias.valueOrReason-reason: PropMaxOccursTest AC definition.
+NOTE PropMaxOccursTest AC description!</documentation>
+            </annotation>
+          </element>
+          <element name="propSourceInfo">
+            <annotation>
+              <documentation>propSourceInfoAlias: PropSourceInfo AC definition.
+NOTE PropSourceInfo AC description!</documentation>
+            </annotation>
+            <complexType>
+              <complexContent>
+                <extension base="gml:AbstractMemberType">
+                  <sequence minOccurs="0">
+                    <element ref="flat:SourceInfo"/>
+                  </sequence>
+                  <attributeGroup ref="gml:AssociationAttributeGroup"/>
+                </extension>
+              </complexContent>
+            </complexType>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureEntityPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureEntity"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType1" substitutionGroup="flat:FeatureEntity" type="flat:FeatureType1Type">
+    <annotation>
+      <documentation>FT1: FEatureType1 FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureType1Type">
+    <complexContent>
+      <extension base="flat:FeatureEntityType">
+        <sequence>
+          <element minOccurs="0" name="prop20.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop20Alias.valueOrReason-reason: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop20.valueOrReason-value" type="flat:EnumerationX_FeatureType1Type">
+            <annotation>
+              <documentation>prop20Alias.valueOrReason-value: Prop20 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21.valueOrReason-value" type="double">
+            <annotation>
+              <documentation>prop21Alias.valueOrReason-value: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop21.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop21Alias.valueOrReason-reason: Prop21 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType1PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType1"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="FeatureType2" substitutionGroup="flat:FeatureType1" type="flat:FeatureType2Type">
+    <annotation>
+      <documentation>FT2: FeatureType2 FC definition.
+NOTE FeatureType2 FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType name="FeatureType2Type">
+    <complexContent>
+      <extension base="flat:FeatureType1Type">
+        <sequence>
+          <element minOccurs="0" name="prop30.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop30Alias.valueOrReason-reason: Prop30 AC definition
+NOTE Prop30 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop30.valueOrReason-value" type="flat:EnumerationY_FeatureType2Type">
+            <annotation>
+              <documentation>prop30Alias.valueOrReason-value: Prop30 AC definition
+NOTE Prop30 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop31.valueOrReason-value" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop31Alias.valueOrReason-value: Prop31 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop31.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop31Alias.valueOrReason-reason: Prop31 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32.valueOrReason-value-singleValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop32Alias.valueOrReason-value-S: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32.valueOrReason-value-intervalValue.lowerValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop32Alias.valueOrReason-value-I.L: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32.valueOrReason-value-intervalValue.upperValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop32Alias.valueOrReason-value-I.U: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop32.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop32Alias.valueOrReason-reason: Prop32 AC definition.
+NOTE Prop32 AC description!</documentation>
+            </annotation>
+          </element>
+          <element name="prop33" type="gml:CodeType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="FeatureType2PropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:FeatureType2"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element abstract="true" name="GeometryInfo" substitutionGroup="gml:AbstractGML" type="flat:GeometryInfoType">
+    <annotation>
+      <documentation>GeometryInfoAlias: GeometryInfo FC definition.
+NOTE GeometryInfo FC description!</documentation>
+    </annotation>
+  </element>
+  <complexType abstract="true" name="GeometryInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element minOccurs="0" name="prop12.valueOrReason-value" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop12Alias.valueOrReason-value: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop12.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop12Alias.valueOrReason-reason: Prop12 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propEnumerationB.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>propEnumerationBAlias.valueOrReason-reason: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="propEnumerationB.valueOrReason-value" type="flat:EnumerationB_GeometryMetadataType">
+            <annotation>
+              <documentation>propEnumerationBAlias.valueOrReason-value: EnumerationB AC definition.</documentation>
+            </annotation>
+          </element>
+          <element name="prop11.valueOrReason" type="flat:IntegerReasonPropertyType">
+            <annotation>
+              <documentation>prop11Alias.valueOrReason: Prop11 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="GeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:GeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="Information" substitutionGroup="gml:AbstractGML" type="flat:InformationType">
+    <annotation>
+      <documentation>ZI005: Information FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="InformationType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element minOccurs="0" name="prop7.valueOrReason" type="string">
+            <annotation>
+              <documentation>prop7Alias.valueOrReason: Prop7 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop8.valueOrReason-value" type="boolean">
+            <annotation>
+              <documentation>prop8Alias.valueOrReason-value: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop8.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop8Alias.valueOrReason-reason: Prop8 AC Definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="InformationPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:Information"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="IntegerReason" substitutionGroup="gml:AbstractObject" type="flat:IntegerReasonType"/>
+  <complexType name="IntegerReasonType">
+    <choice>
+      <element name="value" type="integer"/>
+      <element name="reason" type="flat:ValueNilReasonType"/>
+    </choice>
+  </complexType>
+  <complexType name="IntegerReasonPropertyType">
+    <sequence>
+      <element ref="flat:IntegerReason"/>
+    </sequence>
+  </complexType>
+  <element name="MultiCurveGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:MultiCurveGeometryInfoType">
+    <annotation>
+      <documentation>MultiCurveGeomAlias: MultiCurveGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="MultiCurveGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:MultiCurvePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MultiCurveGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:MultiCurveGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MultiPointGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:MultiPointGeometryInfoType">
+    <annotation>
+      <documentation>MultiPointGeomAlias: MultiPointGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="MultiPointGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:MultiPointPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MultiPointGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:MultiPointGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MultiSolidGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:MultiSolidGeometryInfoType">
+    <annotation>
+      <documentation>MultiSolidGeomAlias: MultiSolidGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="MultiSolidGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:MultiSolidPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MultiSolidGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:MultiSolidGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="MultiSurfaceGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:MultiSurfaceGeometryInfoType">
+    <annotation>
+      <documentation>MultiSurfaceGeomAlias: MultiSurfaceGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="MultiSurfaceGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:MultiSurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="MultiSurfaceGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:MultiSurfaceGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="PointGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:PointGeometryInfoType">
+    <annotation>
+      <documentation>PointGeomAlias: PointGeometryInfo FC definition.
+NOTE PointGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="PointGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:PointPropertyType"/>
+          <element minOccurs="0" name="prop15.valueOrReason-value-singleValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-S: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-value-intervalValue.lowerValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-I.L: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-value-intervalValue.upperValue" type="gml:MeasureType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-value-I.U: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop15.valueOrReason-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop15Alias.valueOrReason-reason: Prop15 AC definition.</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="PointGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:PointGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SolidGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:SolidGeometryInfoType">
+    <annotation>
+      <documentation>SolidGeomAlias: SolidGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="SolidGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:SolidPropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SolidGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:SolidGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <element name="SourceInfo" substitutionGroup="gml:AbstractGML" type="flat:SourceInfoType">
+    <annotation>
+      <documentation>SourceInfoALIAS: SourceInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="SourceInfoType">
+    <complexContent>
+      <extension base="gml:AbstractGMLType">
+        <sequence>
+          <element minOccurs="0" name="prop9" type="flat:IntegerReasonPropertyType">
+            <annotation>
+              <documentation>prop9Alias: Prop9 AC definition.</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop10-value" type="gml:CodeType">
+            <annotation>
+              <documentation>prop10Alias-value: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" name="prop10-reason" type="flat:ValueNilReasonType">
+            <annotation>
+              <documentation>prop10Alias-reason: Prop10 AC definition
+NOTE Prop10 AC description!</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SourceInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:SourceInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="StandaloneEnumerationType">
+    <restriction base="string">
+      <enumeration value="enum1"/>
+      <enumeration value="enum2"/>
+      <enumeration value="enum3"/>
+    </restriction>
+  </simpleType>
+  <element name="SurfaceGeometryInfo" substitutionGroup="flat:GeometryInfo" type="flat:SurfaceGeometryInfoType">
+    <annotation>
+      <documentation>SurfaceGeomAlias: SurfaceGeometryInfo FC definition.
+NOTE SurfaceGeometryInfo FC definition.</documentation>
+    </annotation>
+  </element>
+  <complexType name="SurfaceGeometryInfoType">
+    <complexContent>
+      <extension base="flat:GeometryInfoType">
+        <sequence>
+          <element name="geometry" type="gml:SurfacePropertyType"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="SurfaceGeometryInfoPropertyType">
+    <sequence minOccurs="0">
+      <element ref="flat:SurfaceGeometryInfo"/>
+    </sequence>
+    <attributeGroup ref="gml:AssociationAttributeGroup"/>
+    <attributeGroup ref="gml:OwnershipAttributeGroup"/>
+  </complexType>
+  <simpleType name="ValueNilReasonType">
+    <restriction base="string">
+      <enumeration value="noInformation">
+        <annotation>
+          <documentation>-999999: No Information</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="unknown">
+        <annotation>
+          <documentation>0: Unknown</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="valueSpecified">
+        <annotation>
+          <documentation>995: The use of this enumerant depends on the choice of modeling implementation for 'Union' datatypes. Where the 'Union' may not be directly expressed and instead two 'storage locations' are specified, then it becomes necessary that the 'reason storage location' should be able to unambiguously express that the 'value storage location' does, indeed, have a value specified. Where the 'Union' may be directly expressed as a single 'storage location' then it is unnecessary (and not physically possible) to express that the 'value is specified' at the same time that a value is, indeed, specified.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="unpopulated">
+        <annotation>
+          <documentation>997: Unpopulated</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="notApplicable">
+        <annotation>
+          <documentation>998: Not Applicable</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="other">
+        <annotation>
+          <documentation>999: Other</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+</schema>
