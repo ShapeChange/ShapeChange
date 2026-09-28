@@ -146,4 +146,25 @@ public class OntologyTest extends BasicTestSCXML {
 		new String[] { "ttl" }, "testResults/owl/enumerationDatatypeProperty",
 		"src/integrationtests/owl/enumerationDatatypeProperty/reference");
     }
+
+    @Test
+    public void testOwl_iso191502EnumerationAsDatatypeDefinition() {
+
+	/*
+	 * With target parameter iso191502EnumerationAsDatatypeDefinition,
+	 * rule-owl-cls-iso191502Enumeration encodes an enumeration as the OWL 2 datatype
+	 * definition DatatypeDefinition( DT DataOneOf( lt1 ... ltn ) ), which maps to
+	 * the named DT being owl:equivalentClass to an anonymous rdfs:Datatype with the
+	 * owl:oneOf list (W3C OWL 2 Mapping to RDF Graphs, Sec. 2.1, Table 1).
+	 *
+	 * The model is the one of testOwl_enumerationDatatypeProperty, which pins the
+	 * default encoding, with owl:oneOf on the named datatype. The rest of the output
+	 * is unchanged: Road.surface stays a data property whose qualified cardinality
+	 * restriction uses owl:onDataRange with the named datatype.
+	 */
+	multiTest(
+		"src/integrationtests/owl/iso191502EnumerationAsDatatypeDefinition/testEA_owl_iso191502EnumerationAsDatatypeDefinition.xml",
+		new String[] { "ttl" }, "testResults/owl/iso191502EnumerationAsDatatypeDefinition",
+		"src/integrationtests/owl/iso191502EnumerationAsDatatypeDefinition/reference");
+    }
 }
