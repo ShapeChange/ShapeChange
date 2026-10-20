@@ -87,7 +87,7 @@ public class CoretableNavigableRolesConfigWriter implements MessageSource {
 
 		if (generateInsertStatements) {
 		    s = "INSERT INTO " + dbSchemaName + ".navigable_roles_config "
-			    + "(source_featuretype, navigable_role, target_featuretype, appschema, appschema_version, rel_direction, dependent_part) VALUES ('";
+			    + "(source_featuretype, navigable_role, target_featuretype, appschema, appschema_version, rel_direction, dependent_part, containment) VALUES ('";
 		} else {
 		    s = "SELECT " + dbSchemaName + ".add_navigable_role('";
 		}
@@ -96,7 +96,8 @@ public class CoretableNavigableRolesConfigWriter implements MessageSource {
 			+ cnr.getTargetFeatureType().name() + "','" + cnr.getAppSchema() + "','" + cnr.getVersion()
 			+ "','" + cnr.getRelDirection().name() + "',"
 			+ (cnr.getDependentPart() == DependentPart.none ? "NULL"
-				: "'" + cnr.getDependentPart().name() + "'");
+				: "'" + cnr.getDependentPart().name() + "'")
+			+ "," + (cnr.isContainment() ? "TRUE" : "FALSE");
 
 		if (generateInsertStatements) {
 

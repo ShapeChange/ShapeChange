@@ -437,12 +437,29 @@ public class CoretableNavigableRolesConfigBuilder implements MessageSource {
 		    rule.setVersion(appSchemaVersion);
 		    rule.setRelDirection(relDirection);
 		    rule.setDependentPart(dependentPart);
+		    rule.setContainment(determineContainment(pi));
 		    res.add(rule);
 		}
 	    }
 	}
 
 	return res;
+    }
+
+    private boolean determineContainment(PropertyInfo pi) {
+
+	String piContainment_ = pi.taggedValue(CoretableConstants.TV_CONTAINMENT);
+	boolean piContainment = StringUtils.isBlank(piContainment_) ? false
+		: piContainment_.trim().equalsIgnoreCase("true");
+	if (piContainment) {
+	    return true;
+	} else {
+	    String revPiContainment_ = pi.reverseProperty() == null ? null
+		    : pi.reverseProperty().taggedValue(CoretableConstants.TV_CONTAINMENT);
+	    boolean revPiContainment = StringUtils.isBlank(revPiContainment_) ? false
+		    : revPiContainment_.trim().equalsIgnoreCase("true");
+	    return revPiContainment;
+	}
     }
 
     private DependentPart determineDependentPart(PropertyInfo pi) {

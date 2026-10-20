@@ -175,6 +175,7 @@ public class TaggedValueTransformer implements Transformer, MessageSource {
 	    if (cnr.getDependentPart() != DependentPart.none) {
 		GenericPropertyInfo genPi = (GenericPropertyInfo) cnr.getNavigableRole();
 		genPi.setTaggedValue("dependentPart", cnr.getDependentPart().name(), false);
+		genPi.setTaggedValue("containment", ""+cnr.isContainment(), false);
 	    }
 	}
     }

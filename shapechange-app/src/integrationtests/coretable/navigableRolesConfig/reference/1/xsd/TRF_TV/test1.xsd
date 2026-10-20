@@ -22,6 +22,7 @@
                <element name="refText" type="t1:ParagraphPropertyType">
                   <annotation>
                      <appinfo>
+                        <sc:taggedValue tag="containment">false</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -30,6 +31,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:planContent</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -56,6 +58,7 @@
                <element name="text" type="t1:ParagraphPropertyType">
                   <annotation>
                      <appinfo>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -82,6 +85,7 @@
                <element name="text" type="t1:ParagraphPropertyType">
                   <annotation>
                      <appinfo>
+                        <sc:taggedValue tag="containment">false</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -90,6 +94,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToRegion</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -184,6 +189,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToPlan</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -210,6 +216,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:belongsToPlan</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">target</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -253,6 +260,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:region</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -279,6 +287,7 @@
                   <annotation>
                      <appinfo>
                         <reversePropertyName xmlns="http://www.opengis.net/gml/3.2">t1:region</reversePropertyName>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
                      </appinfo>
                   </annotation>
@@ -311,6 +320,7 @@
                <element name="belongsToPlanC" type="t1:PlanCPropertyType">
                   <annotation>
                      <appinfo>
+                        <sc:taggedValue tag="containment">true</sc:taggedValue>
                         <sc:taggedValue tag="dependentPart">source</sc:taggedValue>
                      </appinfo>
                   </annotation>
