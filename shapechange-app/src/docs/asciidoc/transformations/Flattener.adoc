@@ -1792,7 +1792,10 @@ Behavior:
 This parameter allows to identify the union types that shall NOT
 be flattened. The value of this parameter contains a (Java compliant)
 regular expression which, if it matches the name of a union type, marks
-it to be excluded from type flattening.
+it to be excluded from type flattening. Excluded union types are not
+flattened and also not removed at the end of processing
+_rule-trf-prop-flatten-types_, so properties that have such a union as
+value type keep it - whether or not any property uses the union.
 
 NOTE: If you only want to flatten a certain set of union types from the
 schemas selected for processing, then you can use 'negative lookahead'

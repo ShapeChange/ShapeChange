@@ -4099,8 +4099,9 @@ public class Flattener implements Transformer, MessageSource {
 	 * Now that all data types, object types and unions should have either been
 	 * flattened or replaced (via type mappings) in the app schema, remove them from
 	 * the model. Remove object types if flattenObjectTypes is true or if they match
-	 * the inclusion regex. Remove data types unless they have been excluded (via
-	 * configuration parameter).
+	 * the inclusion regex. Remove data types and unions unless they have been
+	 * excluded (via configuration parameter), and keep unions that represent feature
+	 * type sets if so configured.
 	 */
 	if (this.excludeDataTypePattern != null) {
 
@@ -4150,8 +4151,13 @@ public class Flattener implements Transformer, MessageSource {
 
 	    if (genCi.category() == Options.UNION) {
 
-		if (!ignoreUnionsRepresentingFeatureTypeSets
-			|| !Boolean.parseBoolean(genCi.taggedValue("representsFeatureTypeSet"))) {
+		/*
+		 * A union excluded from flattening via PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX
+		 * is still the value type of the properties that reference it, so it stays in
+		 * the model, like a union that represents a feature type set.
+		 */
+		if (!isExcludedUnionType(genCi) && (!ignoreUnionsRepresentingFeatureTypeSets
+			|| !Boolean.parseBoolean(genCi.taggedValue("representsFeatureTypeSet")))) {
 		    genModel.remove(genCi);
 		}
 	    }
@@ -4206,6 +4212,18 @@ public class Flattener implements Transformer, MessageSource {
      * @return a map with types to be processed in flatten types rule; can be empty
      *         but not <code>null</code>
      */
+    /**
+     * @param ci the class to test
+     * @return <code>true</code> if the name of the class matches the regular
+     *         expression given by parameter
+     *         {@value #PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX}, i.e. if
+     *         rule-trf-prop-flatten-types shall neither flatten nor remove the
+     *         union; else <code>false</code>
+     */
+    private boolean isExcludedUnionType(ClassInfo ci) {
+	return excludeUnionTypePattern != null && excludeUnionTypePattern.matcher(ci.name()).matches();
+    }
+
     private TreeMap<String, GenericClassInfo> computeTypesToProcessForFlattenTypes(GenericModel genModel,
 	    TransformerConfiguration trfConfig) {
 
@@ -4294,9 +4312,7 @@ public class Flattener implements Transformer, MessageSource {
 			
 			if (excludeUnionTypeRegex != null) {
 
-			    Matcher m = excludeUnionTypePattern.matcher(typeCi.name());
-
-			    if (m.matches()) {
+			    if (isExcludedUnionType(typeCi)) {
 				processType = false;
 				result.addDebug(this, 20344, typeCi.name(), excludeUnionTypeRegex,
 					PARAM_FLATTEN_UNIONTYPES_EXCLUDE_REGEX);

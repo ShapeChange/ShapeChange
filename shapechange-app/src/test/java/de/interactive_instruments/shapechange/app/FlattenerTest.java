@@ -211,4 +211,17 @@ public class FlattenerTest extends BasicTestSCXML {
 	multiTest("src/integrationtests/flattener/removePackages/test_flattener_removePackages.xml", new String[] { "xsd" },
 		"testResults/flattening/removePackages/results", "src/integrationtests/flattener/removePackages/reference/results");
     }
+
+    @Test
+    public void test_flattenTypes_excludeUnionTypes() {
+	/*
+	 * A union excluded from flattening via flattenUnionTypesExcludeRegex must stay in
+	 * the model, since properties still have it as value type; a union that is not
+	 * excluded, and that no property uses, is still removed.
+	 */
+	multiTest(
+		"src/integrationtests/flattener/flattenTypes_excludeUnionTypes/testEA_Flattening_excludeUnionTypes.xml",
+		new String[] { "xsd" }, "testResults/flattening/flattenTypes_excludeUnionTypes/results",
+		"src/integrationtests/flattener/flattenTypes_excludeUnionTypes/reference/results");
+    }
 }

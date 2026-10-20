@@ -3223,7 +3223,20 @@ public class OntologyModel implements MessageSource {
 		Literal en = ontmodel.createLiteral(pi.name());
 		enums.add(en);
 	    }
-	    e.addProperty(OWL2.oneOf, ontmodel.createList(enums.iterator()));
+
+	    if (owliso19150.isIso191502EnumerationAsDatatypeDefinition()) {
+		/*
+		 * DatatypeDefinition( DT DataOneOf( lt1 ... ltn ) ): the enumeration of
+		 * literals is an anonymous data range, to which the named datatype is
+		 * equivalent (W3C OWL 2 Mapping to RDF Graphs, Sec. 2.1, Table 1).
+		 */
+		Resource dataRange = ontmodel
+			.createResource(ontmodel.createResource(OWLISO19150.RDF_NS_W3C_RDFS + "Datatype"));
+		dataRange.addProperty(OWL2.oneOf, ontmodel.createList(enums.iterator()));
+		e.addProperty(OWL2.equivalentClass, dataRange);
+	    } else {
+		e.addProperty(OWL2.oneOf, ontmodel.createList(enums.iterator()));
+	    }
 	}
 	return e;
     }

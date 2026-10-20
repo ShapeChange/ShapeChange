@@ -318,6 +318,17 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     public static final String PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY = "suppressMessagesForUnsupportedCategoryOfClasses";
 
     /**
+     * If set to <code>true</code>, {@value #RULE_OWL_CLS_ISO191502_ENUMERATION}
+     * encodes an enumeration as an OWL 2 datatype definition: the named
+     * rdfs:Datatype is owl:equivalentClass to an anonymous rdfs:Datatype that
+     * carries the owl:oneOf list of literals (W3C OWL 2 Structural Specification,
+     * Sec. 9.4; OWL 2 Mapping to RDF Graphs, Sec. 2.1, Table 1). By
+     * default, the owl:oneOf list is added directly to the named datatype, which
+     * the OWL 2 mapping to RDF does not read as an enumeration of literals.
+     */
+    public static final String PARAM_ISO191502_ENUMERATION_AS_DATATYPE_DEFINITION = "iso191502EnumerationAsDatatypeDefinition";
+
+    /**
      * key: a package, value: the according ontology object
      */
     protected static SortedMap<PackageInfo, OntologyModel> ontologyByPiMap = new TreeMap<PackageInfo, OntologyModel>();
@@ -379,6 +390,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     private static String ontologyNameCode = null;
     private static String defaultTypeImplementation = null;
     private static boolean suppressMessagesForUnsupportedCategoryOfClasses = false;
+    private static boolean iso191502EnumerationAsDatatypeDefinition = false;
     private static String generalPropertyNamespaceAbbreviation = null;
 
     /**
@@ -551,6 +563,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
 	suppressMessagesForUnsupportedCategoryOfClasses = options.parameterAsBoolean(this.getClass().getName(),
 		PARAM_SUPPRESS_MESSAGES_FOR_UNSUPPORTED_CLASS_CATEGORY, false);
+
+	iso191502EnumerationAsDatatypeDefinition = options.parameterAsBoolean(this.getClass().getName(),
+		PARAM_ISO191502_ENUMERATION_AS_DATATYPE_DEFINITION, false);
 
 	/*
 	 * Initialize an ontology for the package and - unless stated otherwise via a
@@ -1273,6 +1288,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	OWLISO19150.ontologyNameCode = null;
 	OWLISO19150.defaultTypeImplementation = null;
 	OWLISO19150.suppressMessagesForUnsupportedCategoryOfClasses = false;
+	OWLISO19150.iso191502EnumerationAsDatatypeDefinition = false;
 
 	OWLISO19150.ontologyByPropertyConversionTargetReference = null;
 
@@ -1370,6 +1386,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
     public boolean isSuppressMessagesForUnsupportedCategoryOfClasses() {
 	return suppressMessagesForUnsupportedCategoryOfClasses;
+    }
+
+    /**
+     * @return <code>true</code> if enumerations shall be encoded as datatype
+     *         definitions, see
+     *         {@value #PARAM_ISO191502_ENUMERATION_AS_DATATYPE_DEFINITION}
+     */
+    public boolean isIso191502EnumerationAsDatatypeDefinition() {
+	return iso191502EnumerationAsDatatypeDefinition;
     }
 
     /**

@@ -377,6 +377,22 @@ This rule implements the conversion of enumerations as defined by ISO
 The enumeration corresponds to an RDFS datatype that specifies the
 restricted list of literals using an owl:oneOf declaration.
 
+By default, the owl:oneOf declaration is added to the named RDFS
+datatype itself. The OWL 2 mapping to RDF does not read this as an
+enumeration of literals: an OWL 2 datatype is given a value space by a
+datatype definition, which in RDF is an owl:equivalentClass from the
+named datatype to an anonymous data range (see the
+https://www.w3.org/TR/owl2-mapping-to-rdf/#Translation_of_Axioms_without_Annotations[OWL 2 Mapping to RDF Graphs, Section 2.1, Table 1]).
+With target parameter
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#iso191502EnumerationAsDatatypeDefinition[_iso191502EnumerationAsDatatypeDefinition_]
+set to _true_, the enumeration is encoded in this form:
+
+[source,turtle,linenumbers]
+----------
+ex:Colour a rdfs:Datatype ;
+    owl:equivalentClass [ a rdfs:Datatype ; owl:oneOf ( "red" "green" ) ] .
+----------
+
 [[rule-owl-cls-iso191502IsAbstract]]
 ==== rule-owl-cls-iso191502IsAbstract
 
@@ -1118,6 +1134,44 @@ xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-externa
 Applies to Rule(s):
 
 _none_ - this is a common target parameter
+
+[[iso191502EnumerationAsDatatypeDefinition]]
+==== iso191502EnumerationAsDatatypeDefinition
+
+(since v4.1.0)
+
+Type: Boolean
+
+Default Value: _false_
+
+Explanation:
+
+If _true_, an enumeration is encoded as an OWL 2 datatype definition
+(https://www.w3.org/TR/owl2-syntax/#Datatype_Definitions[OWL 2
+Structural Specification, Section 9.4]): the named RDFS datatype is
+owl:equivalentClass to an anonymous RDFS datatype, which carries the
+owl:oneOf list of the enumeration's literals. OWL 2 tools then see the
+enumeration as `DatatypeDefinition( DT DataOneOf( ... ) )`, as OWL 2 DL
+requires of a datatype that is not built in
+(https://www.w3.org/TR/owl2-syntax/#The_Restrictions_on_the_Axiom_Closure[OWL
+2 Structural Specification, Section 11.2]). By default, the owl:oneOf
+list is added to the named datatype itself, which the OWL API, for
+example, reads as an empty enumeration of individuals.
+
+This does not hold if a stereotype or type conversion parameter adds
+rdfs:subClassOf to the enumeration. OWL 2 has no subclass relation
+between datatypes, so the datatype is then also used as a class, and
+the OWL API, for example, again reads an empty enumeration of
+individuals.
+
+An enumeration without any literals is encoded as a named RDFS datatype
+without a definition, whether or not this parameter is set, because
+DataOneOf needs at least one literal. Such a datatype is not valid in
+OWL 2 DL.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-iso191502Enumeration[rule-owl-cls-iso191502Enumeration]
 
 [[language]]
 ==== language

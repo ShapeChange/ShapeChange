@@ -1,0 +1,23 @@
+@prefix dct:    <http://purl.org/dc/terms/> .
+@prefix ex:     <http://example.org/ontology/test#> .
+@prefix excode: <http://example.org/ontology/test/code#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/ontology/test/code>
+        rdf:type  owl:Ontology .
+
+excode:ExampleCodeList
+        rdf:type        skos:ConceptScheme;
+        dct:isFormatOf  ex:ExampleCodeList .
+
+<http://example.org/ontology/test/code#ExampleCodeList/codeOne>
+        rdf:type       ex:ExampleCodeList;
+        skos:inScheme  excode:ExampleCodeList .
+
+<http://example.org/ontology/test/code#ExampleCodeList/codeTwo>
+        rdf:type       ex:ExampleCodeList;
+        skos:inScheme  excode:ExampleCodeList .
