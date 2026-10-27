@@ -645,6 +645,13 @@ public class LdpPropertyEncoder {
 			    } else {
 				propMemberDefBuilder.coalesce(itemSchemas);
 			    }
+			    
+			} else {
+			    
+			    // no source path information available; ignore this property
+			    // TODO WIP - confirm with AZ if this is actually not written by ldproxy-cfg
+			    propMemberDefBuilder.ignore(true);
+			    
 			}
 		    }
 

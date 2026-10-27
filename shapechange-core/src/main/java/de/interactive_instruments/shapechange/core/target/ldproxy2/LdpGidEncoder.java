@@ -174,6 +174,8 @@ public class LdpGidEncoder {
 	if (setSourcePaths) {
 	    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		processStepBuilder.sourcePath(valueSourcePathOrColumnPrefix);
+	    } else {
+		processStepBuilder.ignore(true);
 	    }
 	}
 
@@ -188,6 +190,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_des");
+		} else {
+		    processStepDescriptionBuilder.ignore(true);
 		}
 	    }
 	    propertyMapForProcessStepBuilder.put(description, processStepDescriptionBuilder.build());
@@ -203,6 +207,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processStepDateTimeBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_dat");
+		} else {
+		    processStepDateTimeBuilder.ignore(true);
 		}
 	    }
 	    propertyMapForProcessStepBuilder.put(dateTime, processStepDateTimeBuilder.build());
@@ -227,6 +233,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorIndividualNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_ind");
+		} else {
+		    processorIndividualNameBuilder.ignore(true);
 		}
 	    }
 	    propertyMapForProcessorBuilder.put(individualName, processorIndividualNameBuilder.build());
@@ -243,6 +251,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorOrganisationNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_org");
+		} else {
+		    processorOrganisationNameBuilder.ignore(true);
 		}
 	    }
 	    propertyMapForProcessorBuilder.put(organisationName, processorOrganisationNameBuilder.build());
@@ -259,6 +269,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorPositionNameBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_pos");
+		} else {
+		    processorPositionNameBuilder.ignore(true);
 		}
 	    }
 	    propertyMapForProcessorBuilder.put(positionName, processorPositionNameBuilder.build());
@@ -274,6 +286,8 @@ public class LdpGidEncoder {
 		} else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQOhneDatenerhebung",
 			"AX_DQErhebung3D", "AX_DQDachhoehe", "AX_DQBodenhoehe")) {
 		    processorRoleBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_pro_resp_rol_cdv");
+		} else {
+		    processorRoleBuilder.ignore(true);
 		}
 	    }
 
@@ -314,6 +328,8 @@ public class LdpGidEncoder {
 		    } else if (Strings.CI.equalsAny(pi.inClass().name(), "AX_DQMitDatenerhebung", "AX_DQErhebung3D",
 			    "AX_DQDachhoehe")) {
 			sourceDescriptionBuilder.sourcePath(valueSourcePathOrColumnPrefix + "_prs_src");
+		    } else {
+			sourceDescriptionBuilder.ignore(true);
 		    }
 		}
 		propertyMapForSourceBuilder.put(description, sourceDescriptionBuilder.build());
