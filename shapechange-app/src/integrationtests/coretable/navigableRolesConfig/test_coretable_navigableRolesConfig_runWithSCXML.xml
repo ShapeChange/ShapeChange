@@ -12,7 +12,7 @@
       <parameter name="publicOnly" value="true"/>
       <parameter name="checkingConstraints" value="enabled"/>
       <parameter name="sortedSchemaOutput" value="true"/>
-      <parameter name="representTaggedValues" value="dependentPart"/>
+      <parameter name="representTaggedValues" value="dependentPart,containment"/>
       <stereotypeAliases>
          <StereotypeAlias alias="applicationSchema" wellknown="Application Schema"/>
          <StereotypeAlias alias="requirementsClass" wellknown="Application Schema"/>

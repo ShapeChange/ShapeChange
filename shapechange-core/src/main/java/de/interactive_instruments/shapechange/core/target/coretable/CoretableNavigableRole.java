@@ -74,6 +74,7 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
     private String version;
     private RelDirection relDirection;
     private DependentPart dependentPart;
+    private boolean containment = false;
 
     public ClassInfo getSourceFeatureType() {
 	return sourceFeatureType;
@@ -131,11 +132,26 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	this.dependentPart = dependentPart;
     }
 
+    /**
+     * @return the containment
+     */
+    public boolean isContainment() {
+	return containment;
+    }
+
+    /**
+     * @param containment the containment to set
+     */
+    public void setContainment(boolean containment) {
+	this.containment = containment;
+    }
+
     @Override
     public String toString() {
 	return "CoretableNavigableRole [sourceFeatureType=" + sourceFeatureType + ", navigableRole=" + navigableRole
 		+ ", targetFeatureType=" + targetFeatureType + ", appSchema=" + appSchema + ", version=" + version
-		+ ", relDirection=" + relDirection + ", dependentPart=" + dependentPart + "]";
+		+ ", relDirection=" + relDirection + ", dependentPart=" + dependentPart + ", containment=" + containment
+		+ "]";
     }
 
     @Override
@@ -159,6 +175,9 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	} else if (this.getDependentPart().compareTo(o.getDependentPart()) != 0) {
 	    return this.getDependentPart().compareTo(o.getDependentPart());
 
+	} else if (Boolean.compare(this.isContainment(), o.isContainment()) != 0) {
+	    return Boolean.compare(this.isContainment(), o.isContainment());
+
 	} else {
 
 	    return this.getRelDirection().compareTo(o.getRelDirection());
@@ -167,8 +186,8 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 
     @Override
     public int hashCode() {
-	return Objects.hash(appSchema, dependentPart, navigableRole, relDirection, sourceFeatureType, targetFeatureType,
-		version);
+	return Objects.hash(appSchema, Boolean.valueOf(containment), dependentPart, navigableRole, relDirection,
+		sourceFeatureType, targetFeatureType, version);
     }
 
     @Override
@@ -180,10 +199,9 @@ public class CoretableNavigableRole implements Comparable<CoretableNavigableRole
 	if (getClass() != obj.getClass())
 	    return false;
 	CoretableNavigableRole other = (CoretableNavigableRole) obj;
-	return Objects.equals(appSchema, other.appSchema) && dependentPart == other.dependentPart
-		&& Objects.equals(navigableRole, other.navigableRole) && relDirection == other.relDirection
-		&& Objects.equals(sourceFeatureType, other.sourceFeatureType)
+	return Objects.equals(appSchema, other.appSchema) && containment == other.containment
+		&& dependentPart == other.dependentPart && Objects.equals(navigableRole, other.navigableRole)
+		&& relDirection == other.relDirection && Objects.equals(sourceFeatureType, other.sourceFeatureType)
 		&& Objects.equals(targetFeatureType, other.targetFeatureType) && Objects.equals(version, other.version);
     }
-
 }

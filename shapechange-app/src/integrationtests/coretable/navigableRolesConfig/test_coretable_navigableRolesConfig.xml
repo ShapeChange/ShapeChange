@@ -9,7 +9,7 @@
 		<parameter name="publicOnly" value="true"/>
 		<parameter name="checkingConstraints" value="enabled"/>
 		<parameter name="sortedSchemaOutput" value="true"/>
-		<parameter name="representTaggedValues" value="dependentPart"/>
+		<parameter name="representTaggedValues" value="dependentPart,containment"/>
 		<xi:include href="sc-resources/config/StandardAliases.xml"/>
 	</input>
 	<log>

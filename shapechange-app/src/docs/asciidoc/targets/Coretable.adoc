@@ -203,13 +203,20 @@ dependent_part are:
 ** `target` = source feature owns target feature (source is whole, target is part)
 ** `source` = target feature owns source feature (target is whole, source is part)
 ** NULL = the navigable role is not part of an ownership relation
-
-NOTE: In this context, the terms `source` and `target` mean the features
+** NOTE: In this context, the terms `source` and `target` mean the features
 involved in the relationship defined by the navigable role: `source` is
 the the feature that has the association role, `target` is the feature
 that is the value type of the association role, i.e. the object 
 referenced by the role. These terms are NOT the same as and therefore NOT
 to be confused with source and target roles within Enterprise Architect model terminology.
+* containment: If `true`, then the association role is part of a
+container relationship, where the `owner` identified by tag
+`existentialDependencyType` references the container type, and the `part`
+references one of potentially many member types. Default value is 
+`false`, meaning that no special container relationship is present.
+Note that it is sufficient to tag only one assocation role 
+with `containment=true`, in order to identify the whole association as
+a container relationship.
 
 In order to check the ownership relations for invalid loops
 (i.e., a reflexive association) or cycles, a directed graph is created. 

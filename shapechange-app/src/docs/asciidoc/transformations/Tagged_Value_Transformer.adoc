@@ -138,7 +138,10 @@ in the schemas selected for processing, as defined by the
 xref:../targets/Coretable.adoc#generateNavigableRolesConfig[Coretable target parameter _generateNavigableRolesConfig_].
 For each navigable association role that is part of an ownership relation,
 the transformation sets tag `dependentPart` with the information on `dependent_part` from the
-navigable role configuration item (either `source` or `target`).
+navigable role configuration item (either `source` or `target`). In addition,
+for ownership relations, the transformation also sets tag `containment` on the navigable
+association role(s), in order to inform if the relationship is one between 
+container and member (`true`) or not (`false`).
 
 This rule can be useful in combination with additional tools that derive
 artifacts for applications that use a coretable database.

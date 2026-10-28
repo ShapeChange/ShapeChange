@@ -137,8 +137,9 @@ public class TaggedValueNormalizer {
 	    "originalInClassName", "originalPropertyName", "originalPropertyMultiplicity", "originalPropertyValueType",
 	    "originalSchemaName", "metadataType", "voidReasonType", "valueTypeOptions", "xsdForcedImports", "pattern",
 	    "literalEncodingType", "timeIntervalBoundaryType", "representsFeatureTypeSet", "representsTypeSet",
-	    "isPropertyChoiceUnion", "collectionGeometryType", "existentialDependencyType", "dependentPart",
-	    "predecessorIntervalStart", "successorIntervalStart").collect(Collectors.toSet());
+	    "isPropertyChoiceUnion", "collectionGeometryType", "containment", "existentialDependencyType",
+	    "dependentPart", "predecessorIntervalStart", "successorIntervalStart").collect(Collectors.toSet());
+
 
     /*
      * List of allowed tags of tagged values
