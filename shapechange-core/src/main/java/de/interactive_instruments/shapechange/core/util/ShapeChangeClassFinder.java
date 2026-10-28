@@ -33,10 +33,12 @@ package de.interactive_instruments.shapechange.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
@@ -85,7 +87,8 @@ public class ShapeChangeClassFinder {
 
 	try {
 
-	    scanResult = new ClassGraph().enableAllInfo().rejectPackages(packageBlacklist).scan();
+	    scanResult = new ClassGraph().enableClasspath().enableNonSystemModules().enableClassInfo()
+		    .ignoreClassVisibility().rejectPackages(packageBlacklist).scan();
 
 	    /*
 	     * IMPORTANT: Keep the scanTime and following commented code for debugging
@@ -101,10 +104,20 @@ public class ShapeChangeClassFinder {
 //	    packageNames.sort(Comparator.naturalOrder());
 //	    System.out.println("Found " + packageNames.size() + " packages: " + String.join("\n", packageNames));
 
-	    ClassInfoList targetClassInfos = scanResult.getClassesImplementing(interfaceName)
+	    ClassInfoList targetClassInfos = scanResult.getAllClassesImplementing(interfaceName)
 		    .filter(classInfo -> (!(classInfo.isInterface() || classInfo.isAbstract())));
 
-	    return targetClassInfos.loadClasses();
+	    List<Class<?>> targetClasses = new ArrayList<>();
+	    ClassLoader classLoader = ShapeChangeClassFinder.class.getClassLoader();
+	    for (ClassInfo targetClassInfo : targetClassInfos) {
+		try {
+		    targetClasses.add(Class.forName(targetClassInfo.getName(), false, classLoader));
+		} catch (ClassNotFoundException e) {
+		    throw new RuntimeException(
+			    "Could not load class " + targetClassInfo.getName() + " found during classpath scan.", e);
+		}
+	    }
+	    return targetClasses;
 
 	} finally {
 	    if (scanResult != null) {

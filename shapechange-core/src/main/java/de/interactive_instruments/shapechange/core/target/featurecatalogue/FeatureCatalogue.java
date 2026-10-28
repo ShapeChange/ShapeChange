@@ -2797,7 +2797,7 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 		cmds.add("-cp");
 		List<String> cpEntries = new ArrayList<String>();
 
-		ClassGraph cg = new ClassGraph();
+		ClassGraph cg = new ClassGraph().enableClasspath().enableNonSystemModules();
 		List<URL> cpUrls = cg.getClasspathURLs();
 		for (URL u : cpUrls) {
 		    String path = FileUtils.toFile(u).getAbsolutePath();
