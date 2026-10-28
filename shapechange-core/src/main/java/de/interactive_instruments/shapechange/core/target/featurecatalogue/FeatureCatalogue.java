@@ -41,6 +41,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZoneOffset;
@@ -2721,9 +2722,28 @@ public class FeatureCatalogue implements SingleTarget, MessageSource, Deferrable
 
 	xsltWrite(transformationSourceFile, xsltfileName, transformationTargetFile);
 
-	if (transformationTargetFile.exists() && transformationTargetFile.length() == 0) {
+	// The principal output of the FRAMEHTML transformation is empty, since the
+	// actual content is written via xsl:result-document. Saxon HE 13.1 emits an
+	// XML declaration for such empty output (unlike 13.0, which produced a 0-byte
+	// file), so treat an XML-declaration-only file as empty as well.
+	if (transformationTargetFile.exists() && isEmptyOrXmlDeclarationOnly(transformationTargetFile)) {
 	    FileUtils.deleteQuietly(transformationTargetFile);
 	    result.addDebug(this, 32, transformationTargetFile.getAbsolutePath());
+	}
+    }
+
+    private boolean isEmptyOrXmlDeclarationOnly(File file) {
+	if (file.length() == 0) {
+	    return true;
+	}
+	try {
+	    String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim();
+	    // Remove a leading XML declaration (if present); the file is considered empty
+	    // only if nothing else remains.
+	    String remainder = content.replaceFirst("^<\\?xml[^>]*\\?>", "").trim();
+	    return remainder.isEmpty();
+	} catch (IOException e) {
+	    return false;
 	}
     }
 
