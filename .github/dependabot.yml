@@ -16,6 +16,10 @@ updates:
       - dependency-name: "de.interactive_instruments:ldproxy-cfg"
         # ignore patch versions
         update-types: ["version-update:semver-patch"]
+      - dependency-name: "io.github.classgraph:classgraph"
+        # Ignore major version for ClassGraph until we have switched to JDK 25 or newer. Then we can switch to ClassGraph 6.x.
+        # for details, see https://github.com/classgraph/classgraph/wiki/Porting-ClassGraph-4.x-code-to-ClassGraph-6.x
+        versions: [">=6.0.0"]
     # Create a group of dependencies to be updated together in one pull request
     groups:
        # Specify a name for the group, which will be used in pull request titles
