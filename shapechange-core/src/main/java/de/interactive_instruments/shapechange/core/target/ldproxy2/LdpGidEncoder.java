@@ -174,8 +174,6 @@ public class LdpGidEncoder {
 	if (setSourcePaths) {
 	    if ("AX_DQPunktort".equalsIgnoreCase(pi.inClass().name())) {
 		processStepBuilder.sourcePath(valueSourcePathOrColumnPrefix);
-	    } else {
-		processStepBuilder.ignore(true);
 	    }
 	}
 
