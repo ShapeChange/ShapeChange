@@ -286,6 +286,47 @@ Required / optional: optional
 Default value: _none - the model element is assumed to match this
 filter_
 
+[[Application_schema_version]]
+====== Application schema version
+
+(since v4.1.0)
+
+Type: string with regular expression (using the
+https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[syntax
+supported by Java])
+
+Explanation: If the version of the application schema that a given model
+element belongs to matches the regular expression, this filter criterium
+evaluates to true. This criterium is useful in case that processing
+shall only be applied to model elements within application schemas with
+a specific (range of) version(s).
+
+The version of an application schema is determined as for the XML Schema
+version attribute, i.e., it is taken from the configuration (a
+PackageInfo element with matching package name) or - if not defined
+there - from the tagged value 'version' of the application schema
+package (or one of its ancestors).
+
+NOTE: If the application schema has no version information, the filter
+criterium evaluates to false for model elements of that schema.
+
+NOTE: If the model element type is association, then the application
+schema version filter will be matched if the version of the application
+schema of (at least) one of the classes at the association ends or - if
+it exists - the association class matches the regular expression.
+
+TIP: The criterium can be combined with the
+<<Application_schema_name,application schema name>> criterium, in
+order to select model elements from a specific version of a specific
+application schema. Note, however, that in case of an association whose
+ends belong to different application schemas, the two criteria are
+evaluated independently of each other.
+
+Required / optional: optional
+
+Default value: _none - the model element is assumed to match this
+filter_
+
 [[class_isabstract]]
 ====== Class is abstract
 

@@ -29,3 +29,7 @@ shapechange-app/log.xml
 
 # VS Code
 *.code-workspace
+
+# AI
+.claude
+openspec

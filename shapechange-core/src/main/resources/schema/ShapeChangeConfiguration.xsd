@@ -569,6 +569,7 @@
   <attribute name="propertyValueTypeStereotype" type="string"/>
   <attribute name="propertyValueTypeName" type="string"/>
   <attribute name="applicationSchemaName" type="string"/>
+  <attribute name="applicationSchemaVersion" type="string"/>
   <attribute name="classIsAbstract" type="boolean"/>
  </attributeGroup>
  <element name="TaggedValue" type="sc:TaggedValueType"/>

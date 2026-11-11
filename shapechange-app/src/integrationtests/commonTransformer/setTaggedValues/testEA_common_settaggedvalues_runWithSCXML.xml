@@ -5,7 +5,7 @@
                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                           xsi:schemaLocation="http://www.interactive-instruments.de/ShapeChange/Configuration/1.1 ../../../../sc-resources/schema/ShapeChangeConfiguration.xsd">
    <input id="original">
-      <parameter name="representTaggedValues" value="tvA,tvB,tvC"/>
+      <parameter name="representTaggedValues" value="tvA,tvB,tvC,tvD"/>
       <parameter name="inputModelType" value="SCXML"/>
       <parameter name="inputFile"
                  value="src/integrationtests/commonTransformer/setTaggedValues/common_settaggedvalues.zip"/>
@@ -68,6 +68,15 @@
                          modelElementType="Class"
                          name="tvC"
                          value="C"/>
+            <TaggedValue applicationSchemaName="Test Schema"
+                         applicationSchemaVersion="1\.\d+"
+                         modelElementName="FT_B"
+                         name="tvD"
+                         value="D"/>
+            <TaggedValue applicationSchemaVersion="2\..*"
+                         modelElementName="FT_A"
+                         name="tvD"
+                         value="D"/>
          </taggedValues>
       </Transformer>
    </transformers>

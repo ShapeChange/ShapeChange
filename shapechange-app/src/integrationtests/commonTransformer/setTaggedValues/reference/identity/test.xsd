@@ -38,7 +38,13 @@
     <attributeGroup ref="gml:AssociationAttributeGroup"/>
     <attributeGroup ref="gml:OwnershipAttributeGroup"/>
   </complexType>
-  <element name="FT_B" substitutionGroup="gml:AbstractFeature" type="t:FT_BType"/>
+  <element name="FT_B" substitutionGroup="gml:AbstractFeature" type="t:FT_BType">
+    <annotation>
+      <appinfo>
+        <sc:taggedValue tag="tvD">D</sc:taggedValue>
+      </appinfo>
+    </annotation>
+  </element>
   <complexType name="FT_BType">
     <complexContent>
       <extension base="gml:AbstractFeatureType">
