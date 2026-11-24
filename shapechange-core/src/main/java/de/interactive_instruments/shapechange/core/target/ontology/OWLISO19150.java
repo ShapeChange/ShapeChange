@@ -241,6 +241,13 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 
     public static final String PARAM_CODE_NAMESPACE = "codeNamespace";
     public static final String PARAM_CODE_NAMESPACE_FOR_ENUMERATIONS = "codeNamespaceForEnumerations";
+    /**
+     * Separator appended to the code-list ontology name when creating that
+     * ontology's rdfNamespace. If unset, {@link #PARAM_RDF_NAMESPACE_SEPARATOR}
+     * is used (default '#'). Set to '/' to follow ISO 19150-2 table 8
+     * (codeNamespace = ontologyName "/code/").
+     */
+    public static final String PARAM_CODE_NAMESPACE_SEPARATOR = "codeNamespaceSeparator";
     public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE = "codeListOwlClassNamespace";
     public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE_FOR_ENUMERATIONS = "codeListOwlClassNamespaceForEnumerations";
 
@@ -382,6 +389,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     private static String uriBase = null;
     private static String rdfXmlWriterBlockRules = null;
     private static String rdfNamespaceSeparator = "#";
+    private static String codeNamespaceSeparator = null;
     private static String language = "en";
     private static String outputFormat = "TURTLE";
     private static RDFFormat rdfFormat = RDFFormat.TURTLE;
@@ -510,6 +518,11 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	String rdfNamespaceSeparatorFromConfig = config.getParameterValue(PARAM_RDF_NAMESPACE_SEPARATOR);
 	if (rdfNamespaceSeparatorFromConfig != null) {
 	    rdfNamespaceSeparator = rdfNamespaceSeparatorFromConfig.trim();
+	}
+
+	String codeNamespaceSeparatorFromConfig = config.getParameterValue(PARAM_CODE_NAMESPACE_SEPARATOR);
+	if (codeNamespaceSeparatorFromConfig != null && codeNamespaceSeparatorFromConfig.trim().length() > 0) {
+	    codeNamespaceSeparator = codeNamespaceSeparatorFromConfig.trim();
 	}
 
 	String langFromConfig = config.getParameterValue(PARAM_LANGUAGE);
@@ -673,7 +686,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		    fileNameOntIndividuals = baseFileName + "_codes";
 		}
 
-		String rdfnsOntIndividuals = nameOntIndividuals + getRdfNamespaceSeparator();
+		String rdfnsOntIndividuals = nameOntIndividuals + getCodeNamespaceSeparator();
 
 		/*
 		 * We have to check if the ontology exists because use of the codeNamespace
@@ -836,7 +849,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 		nameOntIndividuals = om.getName() + "/" + "code";
 	    }
 
-	    String rdfnsOntIndividuals = nameOntIndividuals + getRdfNamespaceSeparator();
+	    String rdfnsOntIndividuals = nameOntIndividuals + getCodeNamespaceSeparator();
 
 	    return ontologyByRdfNs.get(rdfnsOntIndividuals);
 	} else {
@@ -1280,6 +1293,7 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	OWLISO19150.uriBase = null;
 	OWLISO19150.rdfXmlWriterBlockRules = null;
 	OWLISO19150.rdfNamespaceSeparator = "#";
+	OWLISO19150.codeNamespaceSeparator = null;
 	OWLISO19150.language = "en";
 	OWLISO19150.outputFormat = "TURTLE";
 	OWLISO19150.rdfFormat = RDFFormat.TURTLE;
@@ -1402,6 +1416,15 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      */
     public String getRdfNamespaceSeparator() {
 	return rdfNamespaceSeparator;
+    }
+
+    /**
+     * @return the separator for the rdfNamespace of a code-list individuals
+     *         ontology; {@link #PARAM_CODE_NAMESPACE_SEPARATOR} if set, otherwise
+     *         {@link #getRdfNamespaceSeparator()}
+     */
+    public String getCodeNamespaceSeparator() {
+	return codeNamespaceSeparator != null ? codeNamespaceSeparator : rdfNamespaceSeparator;
     }
 
     /**
