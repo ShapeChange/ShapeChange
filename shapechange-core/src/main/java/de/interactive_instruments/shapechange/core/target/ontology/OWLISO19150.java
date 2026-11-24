@@ -243,9 +243,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
     public static final String PARAM_CODE_NAMESPACE_FOR_ENUMERATIONS = "codeNamespaceForEnumerations";
     /**
      * Separator appended to the code-list ontology name when creating that
-     * ontology's rdfNamespace. If unset, {@link #PARAM_RDF_NAMESPACE_SEPARATOR}
-     * is used (default '#'). Set to '/' to follow ISO 19150-2 table 8
-     * (codeNamespace = ontologyName "/code/").
+     * ontology's rdfNamespace. If unset, {@link #PARAM_RDF_NAMESPACE_SEPARATOR} is
+     * used (default '#'). Set to '/' to follow ISO 19150-2 table 8 (codeNamespace =
+     * ontologyName "/code/").
      */
     public static final String PARAM_CODE_NAMESPACE_SEPARATOR = "codeNamespaceSeparator";
     public static final String PARAM_CODE_LIST_OWL_CLASS_NAMESPACE = "codeListOwlClassNamespace";
@@ -329,9 +329,9 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
      * encodes an enumeration as an OWL 2 datatype definition: the named
      * rdfs:Datatype is owl:equivalentClass to an anonymous rdfs:Datatype that
      * carries the owl:oneOf list of literals (W3C OWL 2 Structural Specification,
-     * Sec. 9.4; OWL 2 Mapping to RDF Graphs, Sec. 2.1, Table 1). By
-     * default, the owl:oneOf list is added directly to the named datatype, which
-     * the OWL 2 mapping to RDF does not read as an enumeration of literals.
+     * Sec. 9.4; OWL 2 Mapping to RDF Graphs, Sec. 2.1, Table 1). By default, the
+     * owl:oneOf list is added directly to the named datatype, which the OWL 2
+     * mapping to RDF does not read as an enumeration of literals.
      */
     public static final String PARAM_ISO191502_ENUMERATION_AS_DATATYPE_DEFINITION = "iso191502EnumerationAsDatatypeDefinition";
 
@@ -520,10 +520,12 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	    rdfNamespaceSeparator = rdfNamespaceSeparatorFromConfig.trim();
 	}
 
-	String codeNamespaceSeparatorFromConfig = config.getParameterValue(PARAM_CODE_NAMESPACE_SEPARATOR);
-	if (codeNamespaceSeparatorFromConfig != null && codeNamespaceSeparatorFromConfig.trim().length() > 0) {
-	    codeNamespaceSeparator = codeNamespaceSeparatorFromConfig.trim();
-	}
+	/*
+	 * NOTE: Must be computed after rdfNamespaceSeparator, since that is the default
+	 * value
+	 */
+	codeNamespaceSeparator = options.parameterAsString(this.getClass().getName(), PARAM_CODE_NAMESPACE_SEPARATOR,
+		rdfNamespaceSeparator, false, true);
 
 	String langFromConfig = config.getParameterValue(PARAM_LANGUAGE);
 	if (langFromConfig != null) {
@@ -1418,13 +1420,8 @@ public class OWLISO19150 implements SingleTarget, MessageSource {
 	return rdfNamespaceSeparator;
     }
 
-    /**
-     * @return the separator for the rdfNamespace of a code-list individuals
-     *         ontology; {@link #PARAM_CODE_NAMESPACE_SEPARATOR} if set, otherwise
-     *         {@link #getRdfNamespaceSeparator()}
-     */
     public String getCodeNamespaceSeparator() {
-	return codeNamespaceSeparator != null ? codeNamespaceSeparator : rdfNamespaceSeparator;
+	return codeNamespaceSeparator;
     }
 
     /**

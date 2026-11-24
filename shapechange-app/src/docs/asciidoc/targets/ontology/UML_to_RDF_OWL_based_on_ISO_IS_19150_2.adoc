@@ -1095,11 +1095,12 @@ xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCod
 [[codeNamespaceSeparator]]
 ==== codeNamespaceSeparator
 
+(since v4.1.0)
+
 Type: String
 
-Default Value: _none_ - the value of
+Default Value: the value of target parameter
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rdfNamespaceSeparator[_rdfNamespaceSeparator_]
-is used (default "#")
 
 Explanation:
 
@@ -1110,8 +1111,6 @@ _ontologyName_ "/code/". With the default _rdfNamespaceSeparator_ "#",
 code IRIs take the form _ontologyName_/code#_className_/_codeValue_. 
 Set this parameter to "/" to follow the ISO 19150-2 production without 
 changing the separator used for classes, properties, and datatypes.
-
-If this parameter is omitted, _rdfNamespaceSeparator_ is used.
 
 Applies to Rule(s):
 
