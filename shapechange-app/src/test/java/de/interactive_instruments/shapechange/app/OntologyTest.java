@@ -167,4 +167,22 @@ public class OntologyTest extends BasicTestSCXML {
 		new String[] { "ttl" }, "testResults/owl/iso191502EnumerationAsDatatypeDefinition",
 		"src/integrationtests/owl/iso191502EnumerationAsDatatypeDefinition/reference");
     }
+
+    @Test
+    public void testOwl_codeNamespaceSeparator() {
+
+	/*
+	 * Target parameter codeNamespaceSeparator is used for the rdfNamespace of the
+	 * SKOS individuals ontology only. With value "/", code IRIs follow ISO 19150-2
+	 * table 8 (ontologyName "/code/"), while class terms keep rdfNamespaceSeparator
+	 * "#". The model is the one of testOwl_enumerationDatatypeProperty.
+	 *
+	 * The model is provided directly as SCXML rather than derived from an Enterprise
+	 * Architect repository, so the test runs without EA on any platform.
+	 */
+	multiTest(
+		"src/integrationtests/owl/codeNamespaceSeparator/testEA_owl_codeNamespaceSeparator_runWithSCXML.xml",
+		new String[] { "ttl" }, "testResults/owl/codeNamespaceSeparator",
+		"src/integrationtests/owl/codeNamespaceSeparator/reference");
+    }
 }

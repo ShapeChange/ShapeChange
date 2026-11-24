@@ -1092,6 +1092,31 @@ Applies to Rule(s):
 ** For enumerations encoded as code lists under
 xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-enumerationAsCodelist[rule-owl-cls-enumerationAsCodelist]
 
+[[codeNamespaceSeparator]]
+==== codeNamespaceSeparator
+
+Type: String
+
+Default Value: _none_ - the value of
+xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rdfNamespaceSeparator[_rdfNamespaceSeparator_]
+is used (default "#")
+
+Explanation:
+
+Defines the character to append to the code list ontology name when
+creating the _rdfNamespace_ of that ontology (the SKOS concept scheme
+and code individuals). ISO 19150-2 constructs the _codeNamespace_ as 
+_ontologyName_ "/code/". With the default _rdfNamespaceSeparator_ "#", 
+code IRIs take the form _ontologyName_/code#_className_/_codeValue_. 
+Set this parameter to "/" to follow the ISO 19150-2 production without 
+changing the separator used for classes, properties, and datatypes.
+
+If this parameter is omitted, _rdfNamespaceSeparator_ is used.
+
+Applies to Rule(s):
+
+* xref:./UML_to_RDF_OWL_based_on_ISO_IS_19150_2.adoc#rule-owl-cls-codelist-19150-2[rule-owl-cls-codelist-19150-2]
+
 [[defaultEncodingRule]]
 ==== defaultEncodingRule
 
