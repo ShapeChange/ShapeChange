@@ -7,7 +7,7 @@
 
 <http://ontology.base.uri/s2>
         a                owl:Ontology ;
-        owl:versionIRI   "http://ontology.base.uri/s2/2.2" ;
+        owl:versionIRI   <http://ontology.base.uri/s2/2.2> ;
         owl:versionInfo  "2.2" .
 
 s2:FeatureTypeS2  a  owl:Class .

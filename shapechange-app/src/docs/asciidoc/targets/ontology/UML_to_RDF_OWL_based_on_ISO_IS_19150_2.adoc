@@ -607,12 +607,13 @@ schema.
 ==== rule-owl-pkg-versionIRI
 
 If this rule is enabled and a package that is converted into an ontology
-has version information, then the versionIRI of the ontology is
-constructed as follows:
+has version information, then the versionIRI is the concatenation
+ontologyName "/" version, emitted as an IRI (W3C OWL 2 Mapping to RDF
+Graphs, Sec. 2.1):
 
 [source,turtle,linenumbers]
 ----------
-ontologyName "/" version
+<ontologyName> owl:versionIRI <ontologyName/version> .
 ----------
 
 NOTE: ShapeChange looks up the version of a package either directly in
@@ -624,6 +625,14 @@ Because of this, «leaf» packages of an application schema usually have
 the same version as the application schema. This can be useful if
 ontologies are created for all packages within a given application
 schema.
+
+NOTE: The same version string is used for `owl:versionInfo`, where a
+value such as "Edition 2" is a legal literal. If the constructed
+versionIRI contains whitespace or other characters that cannot appear
+unescaped in an IRI, ShapeChange logs a warning and emits
+`owl:versionIRI` as a string literal instead. `owl:versionInfo` is not
+modified. To emit an IRI, edit the UML tagged value or specify a
+PackageInfo element in the configuration.
 
 [[rule-owl-pkg-versionIRI-avoid-duplicate-version]]
 ==== rule-owl-pkg-versionIRI-avoid-duplicate-version

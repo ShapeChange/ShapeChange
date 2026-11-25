@@ -15,7 +15,7 @@
         rdfs:label        "Schema2 alias"@en ;
         dct:source        "source by config"@en ;
         owl:imports       <http://www.opengis.net/ont/geosparql> , <http://example.org/1> ;
-        owl:versionIRI    "http://ontology.base.uri/s2/1.2.3" ;
+        owl:versionIRI    <http://ontology.base.uri/s2/1.2.3> ;
         owl:versionInfo   "1.2.3" ;
         skos:altLabel     "Schema2 label3"@en , "Schema2 label2"@en , "Schema2 label1"@en ;
         skos:note         "TV char: A, B, C, TV num: 1, 2, 3" ;
