@@ -79,6 +79,8 @@ public class ModelElementSelectionInfo implements MessageSource {
     private Pattern propertyValueTypeNamePattern = null;
     private String applicationSchemaName = null;
     private Pattern applicationSchemaNamePattern = null;
+    private String applicationSchemaVersion = null;
+    private Pattern applicationSchemaVersionPattern = null;
     private Boolean classIsAbstract = null;
 
     /**
@@ -93,7 +95,7 @@ public class ModelElementSelectionInfo implements MessageSource {
     public ModelElementSelectionInfo(ModelElementType modelElementType, String modelElementStereotype,
 	    String modelElementName, String modelElementOwnerName, String modelElementOwnerStereotype,
 	    String propertyValueTypeStereotype, String propertyValueTypeName, String applicationSchemaName,
-	    Boolean classIsAbstract) {
+	    String applicationSchemaVersion, Boolean classIsAbstract) {
 
 	super();
 	this.modelElementType = modelElementType;
@@ -104,6 +106,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	this.propertyValueTypeStereotype = propertyValueTypeStereotype;
 	this.propertyValueTypeName = propertyValueTypeName;
 	this.applicationSchemaName = applicationSchemaName;
+	this.applicationSchemaVersion = applicationSchemaVersion;
 	this.classIsAbstract = classIsAbstract;
     }
 
@@ -174,6 +177,15 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    } catch (PatternSyntaxException e) {
 		compileErrors.add(
 			"@applicationSchemaName - invalid value (" + applicationSchemaName + "): " + e.getMessage());
+	    }
+	}
+
+	if (this.applicationSchemaVersion != null) {
+	    try {
+		applicationSchemaVersionPattern = Pattern.compile(applicationSchemaVersion);
+	    } catch (PatternSyntaxException e) {
+		compileErrors.add("@applicationSchemaVersion - invalid value (" + applicationSchemaVersion + "): "
+			+ e.getMessage());
 	    }
 	}
 
@@ -253,6 +265,16 @@ public class ModelElementSelectionInfo implements MessageSource {
     }
 
     /**
+     * @return the pattern representing the regular expression of the
+     *         applicationSchemaVersion attribute, or <code>null</code> if this
+     *         filter criterium was not set in the configuration.
+     */
+    public Pattern getApplicationSchemaVersionPattern() {
+	validate();
+	return applicationSchemaVersionPattern;
+    }
+
+    /**
      * @return <code>true</code> if this configuration entry has a value for the
      *         modelElementName attribute, else <code>false</code>
      */
@@ -313,6 +335,15 @@ public class ModelElementSelectionInfo implements MessageSource {
 
     /**
      * @return <code>true</code> if this configuration entry has a value for the
+     *         applicationSchemaVersion attribute, else <code>false</code>
+     */
+    public boolean hasApplicationSchemaVersionPattern() {
+	validate();
+	return applicationSchemaVersionPattern != null;
+    }
+
+    /**
+     * @return <code>true</code> if this configuration entry has a value for the
      *         modelElementType attribute, else <code>false</code>
      */
     public boolean hasModelElementType() {
@@ -345,6 +376,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	boolean modelElementOwnerNameMatch = true;
 	boolean modelElementOwnerStereotypeMatch = true;
 	boolean applicationSchemaNameMatch = true;
+	boolean applicationSchemaVersionMatch = true;
 	boolean modelElementTypeMatch = true;
 	boolean classIsAbstractMatch = true;
 
@@ -600,7 +632,10 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	    applicationSchemaNameMatch = false;
 
-	    SortedSet<String> applicationSchemaNames = determineApplicationSchemaName(infoType);
+	    SortedSet<String> applicationSchemaNames = new TreeSet<>();
+	    for (PackageInfo appSchema : determineApplicationSchemas(infoType)) {
+		applicationSchemaNames.add(appSchema.name());
+	    }
 
 	    for (String applicationSchemaName : applicationSchemaNames) {
 
@@ -615,6 +650,37 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    }
 	    
 	    overallMatch = overallMatch && applicationSchemaNameMatch;
+	}
+
+	if (overallMatch && hasApplicationSchemaVersionPattern()) {
+
+	    applicationSchemaVersionMatch = false;
+
+	    SortedSet<String> applicationSchemaVersions = new TreeSet<>();
+	    for (PackageInfo appSchema : determineApplicationSchemas(infoType)) {
+		/*
+		 * NOTE: An application schema without version information is ignored, i.e.,
+		 * it cannot contribute to a match.
+		 */
+		String version = appSchema.version();
+		if (version != null) {
+		    applicationSchemaVersions.add(version);
+		}
+	    }
+
+	    for (String applicationSchemaVersion : applicationSchemaVersions) {
+
+		Matcher matcher = applicationSchemaVersionPattern.matcher(applicationSchemaVersion);
+
+		if (matcher.matches()) {
+		    applicationSchemaVersionMatch = true;
+		    result.addDebug(this, 100, applicationSchemaVersion, applicationSchemaVersionPattern.pattern());
+		} else {
+		    result.addDebug(this, 101, applicationSchemaVersion, applicationSchemaVersionPattern.pattern());
+		}
+	    }
+
+	    overallMatch = overallMatch && applicationSchemaVersionMatch;
 	}
 
 	if (overallMatch && classIsAbstract != null && infoType instanceof ClassInfo ci) {
@@ -633,7 +699,8 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 //	return modelElementStereotypeMatch && modelElementNameMatch && modelElementOwnerNameMatch
 //		&& modelElementOwnerStereotypeMatch && propertyValueTypeStereotypeMatch && propertyValueTypeNameMatch
-//		&& modelElementTypeMatch && applicationSchemaNameMatch && classIsAbstractMatch;
+//		&& modelElementTypeMatch && applicationSchemaNameMatch && applicationSchemaVersionMatch
+//		&& classIsAbstractMatch;
 	
 	return overallMatch;
     }
@@ -682,6 +749,12 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    applicationSchemaName = element.getAttribute("applicationSchemaName");
 	}
 
+	String applicationSchemaVersion = null;
+
+	if (element.hasAttribute("applicationSchemaVersion")) {
+	    applicationSchemaVersion = element.getAttribute("applicationSchemaVersion");
+	}
+
 	ModelElementType modelElementType = null;
 
 	if (element.hasAttribute("modelElementType")) {
@@ -712,14 +785,19 @@ public class ModelElementSelectionInfo implements MessageSource {
 
 	return new ModelElementSelectionInfo(modelElementType, modelElementStereotype, modelElementName,
 		modelElementOwnerName, modelElementOwnerStereotype, propertyValueTypeStereotype, propertyValueTypeName,
-		applicationSchemaName, classIsAbstract);
+		applicationSchemaName, applicationSchemaVersion, classIsAbstract);
     }
 
     /**
-     * @param infoType
+     * Determines the application schema(s) to which the given model element
+     * belongs. For an association, these are the application schemas of the
+     * classes at both association ends and - if it exists - of the association
+     * class.
+     * 
+     * @param infoType the model element
      * @return can be empty but not <code>null</code>
      */
-    private SortedSet<String> determineApplicationSchemaName(Info infoType) {
+    private SortedSet<PackageInfo> determineApplicationSchemas(Info infoType) {
 
 	ShapeChangeResult result = infoType.result();
 
@@ -746,20 +824,20 @@ public class ModelElementSelectionInfo implements MessageSource {
 	    result.addWarning(this, 103, infoType.name());
 	}
 
-	SortedSet<String> asNames = new TreeSet<>();
+	SortedSet<PackageInfo> appSchemas = new TreeSet<>();
 
 	for (PackageInfo pi : pis) {
 	    PackageInfo piAS = identifyApplicationSchema(pi);
 	    if (piAS != null) {
-		asNames.add(piAS.name());
+		appSchemas.add(piAS);
 	    }
 	}
 
-//	if (asNames.isEmpty()) {
+//	if (appSchemas.isEmpty()) {
 //	    result.addWarning(this, 102, infoType.name());
 //	}
 
-	return asNames;
+	return appSchemas;
     }
 
     private PackageInfo identifyApplicationSchema(PackageInfo pi) {
@@ -792,7 +870,7 @@ public class ModelElementSelectionInfo implements MessageSource {
 	case 101 -> "??'$1$' does not match regex '$2$'";
 	case 102 -> "Could not find application schema for Info type '$1$'";
 	case 103 ->
-	    "Class type of Info object '$1$' not recognized by logic to determine the name of its application schema";
+	    "Class type of Info object '$1$' not recognized by logic to determine its application schema";
 	case 104 ->
 	    "??Could not find value type '$1$' of property '$2$' in the model. The propertyValueTypeStereotype filter criterium cannot be evaluated (and defaults to true, i.e., it matches).";
 	case 105 -> "??Class '$1$' matches the classIsAbstract filter criterium.";
