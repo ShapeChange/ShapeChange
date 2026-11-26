@@ -316,11 +316,21 @@ public class OntologyModel implements MessageSource {
 	if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_VERSION_IRI) && mpackage.version() != null
 		&& !mpackage.version().trim().isEmpty()) {
 
+	    String versionIri;
 	    if (mpackage.matches(OWLISO19150.RULE_OWL_PKG_ONTOLOGY_NAME_APPEND_VERSION)
 		    && mpackage.matches(OWLISO19150.RULE_OWL_PKG_VERSION_IRI_AVOID_DUPLICATE_VERSION)) {
-		ontology.addProperty(OWL2.versionIRI, name);
+		versionIri = name;
 	    } else {
-		ontology.addProperty(OWL2.versionIRI, name + "/" + mpackage.version());
+		versionIri = name + "/" + mpackage.version();
+	    }
+	    if (versionIriHasUnsafeCharacters(versionIri)) {
+		/*
+		 * The constructed owl:versionIRI contains characters that cannot appear unescaped in an IRI.
+		 */
+		result.addWarning(this, 56, versionIri, mpackage.fullNameInSchema());
+		ontology.addProperty(OWL2.versionIRI, versionIri);
+	    } else {
+		ontology.addProperty(OWL2.versionIRI, ontmodel.createResource(versionIri));
 	    }
 	}
 
@@ -334,6 +344,13 @@ public class OntologyModel implements MessageSource {
 	}
 
 	applyDescriptorTargets(ontology, mpackage, DescriptorTarget.AppliesTo.ONTOLOGY);
+    }
+
+    /**
+     * Quick check for unsafe characters in an IRI such as whitespace, XML delimiters. Not a full validation for IRIs based on RFC 3986.
+     */
+    private boolean versionIriHasUnsafeCharacters(String iri) {
+	return StringUtils.containsWhitespace(iri) || StringUtils.containsAny(iri, "<>\"{}|\\^`");
     }
 
     /**
@@ -3393,6 +3410,7 @@ public class OntologyModel implements MessageSource {
 	case 53 -> "Domain of general property '$1$' shall be defined as a union of the domains of its direct and indirect sub properties. No sub property was found, therefore no domain will be specified for '$1$'";
 	case 54 -> "??Expected QName, but found '$1$'. Mapping to '$2$'. Fix the QName (typically in the configuration, but potentially also in a tagged value). Check configuration entries and tagged values where a QName is expected (search for '$1$'). Look in the output for occurrences of '$2$' (keep in mind that this URI may have been turned into a QName itself when searching for it in the output files); that may give you a hint on the origin of the non-QName '$1$'.";
 	case 55 -> "??Could not find a namespace for prefix '$1$' of QName '$2$'. Fix the QName. Check configuration entries and tagged values where a QName is expected (search for '$2$').";
+	case 56 -> "The constructed owl:versionIRI '$1$' of package '$2$' contains characters that cannot appear unescaped in an IRI. Emitting a string literal instead. owl:versionInfo is unchanged. Edit the UML tagged value or specify a PackageInfo element in the configuration.";
 
 	case 10000 -> "--- Context - Class: $1$";
 	case 10001 -> "--- Context - Property: $1$";
